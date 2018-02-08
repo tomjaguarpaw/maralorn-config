@@ -23,8 +23,8 @@ in
 
   imports = [
     ./hardware-configuration.nix
-    ../snippets/common.nix
-    ../snippets/init_ssh.nix
+    ../../snippets/common.nix
+    ../../snippets/init_ssh.nix
     /etc/nixos/local/config.nix
   ];
 

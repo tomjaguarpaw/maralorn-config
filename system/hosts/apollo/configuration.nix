@@ -11,8 +11,8 @@ i18n.consoleKeyMap = "neo";
 
 imports = [
    ./hardware-configuration.nix
-   ../modules/cdarknet
-   ../snippets/common.nix
+   ../../modules/cdarknet
+   ../../snippets/common.nix
 ];
 
 # Use the systemd-boot EFI boot loader.
@@ -40,7 +40,7 @@ cdark_net = {
   enable = true;
   hostName = "maralorn_apollo";
   ed25519PrivateKeyFile = /etc/nixos/local/tinc/ed25519_key.priv;
-  hostsDirectory = /etc/nixos/config/cdarknet/hosts;
+  hostsDirectory = /etc/nixos/config/modules/cdarknet/hosts;
   ip6address = "fd23:42:cda:4342::2";
   ip4address = "172.20.71.2";
 };

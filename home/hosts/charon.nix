@@ -1,7 +1,7 @@
 { pkgs, ... }:
 let
   unstable = import (fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz) {};
-  habitask = with pkgs; with unstable.rustPlatform; buildRustPackage rec {
+  habitask = with pkgs; with rustPlatform; buildRustPackage rec {
      name = "habitask";
      version = "0.1.0";
      src = ~/data/aktuell/it/code/habitask;
