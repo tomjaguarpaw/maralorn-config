@@ -1,10 +1,6 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 let
-  unstable = import <unstable> {};
+  unstable = import (fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz) {};
 in
 {
 
@@ -13,6 +9,8 @@ in
   };
   time.timeZone = "Europe/Berlin";
   boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };
+
+  # So that boot does not fill up with old kernels
   boot.loader.grub.configurationLimit = 5;
 
   nix = {
