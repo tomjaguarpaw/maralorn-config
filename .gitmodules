@@ -1,0 +1,6 @@
+[submodule "system/modules/cdarknet/nixdark"]
+	path = system/modules/cdarknet/nixdark
+	url = git@git.darmstadt.ccc.de:cdark.net/nixdark
+[submodule "system/modules/cdarknet/hosts"]
+	path = system/modules/cdarknet/hosts
+	url = git@git.darmstadt.ccc.de:cdark.net/hosts
