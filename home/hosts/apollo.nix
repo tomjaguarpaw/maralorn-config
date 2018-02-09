@@ -5,6 +5,7 @@ in {
   imports = [
     ../snippets/everywhere.nix
     ../snippets/my-systems.nix
+    ../snippets/graphical.nix
   ];
   home.packages = with pkgs; [
     # config

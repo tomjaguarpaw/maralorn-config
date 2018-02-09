@@ -5,8 +5,9 @@ let
     name = "tasktree";
     version = "0.1.0";
     src = ~/data/aktuell/it/code/tasktree;
-    depsSha256 = "";
-    cargoSha256 = "";
+    depsSha256 = "1p06yqrwc3nlf9jsd50ic76qvkg9hnfb5bgnqwzrna941dk4v4sj";
+    cargoSha256 = "1p06yqrwc3nlf9jsd50ic76qvkg9hnfb5bgnqwzrna941dk4v4sj";
+
     buildInputs = [ gnome3.gtk atk cairo gdk_pixbuf glib pango ];
   };
 in {
