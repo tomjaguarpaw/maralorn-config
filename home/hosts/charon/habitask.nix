@@ -9,5 +9,18 @@ let
      buildInputs = [ openssl pkgconfig ];
   };
 in {
-  home.packages = [ habitask ];
+  systemd.user = {
+    services.habitask = {
+      Unit = {
+        Description = "Update habitica Tasks";
+      };
+      Service = {
+        Type = "oneshot";
+        ExecStart="{habitask}/bin/habitask";
+      };
+    };
+    timers.habitask = {
+      Timer.OnCalendar = "6:00";
+    };
+  };
 }
