@@ -3,9 +3,9 @@ let
   unstable = import (fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz) {};
 in {
   imports = [
-    ../snippets/everywhere.nix
-    ../snippets/my-systems.nix
-    ../snippets/graphical.nix
+    ../../snippets/everywhere.nix
+    ../../snippets/my-systems.nix
+    ../../snippets/graphical.nix
   ];
   home.packages = with pkgs; [
     # config
@@ -25,6 +25,10 @@ in {
     musescore
     handbrake
     octave
+
+    #dev
+    rustup
+    gnome3.glade
 
     # look & feel
     arc-theme
