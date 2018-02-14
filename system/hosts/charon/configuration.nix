@@ -14,10 +14,6 @@
     nameservers = [ "108.61.10.10" "2001:19f0:300:1704::6" ];
   };
 
-  environment.systemPackages = with pkgs; [
-    pandoc
-  ];
-
   imports = [
     ./hardware-configuration.nix
     ../../snippets/common.nix
