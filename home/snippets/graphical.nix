@@ -1,14 +1,40 @@
+with import <nixpkgs> {};
 { pkgs, ... }:
 let
-  unstable = import (fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz) {};
+   desktopItem = makeDesktopItem {
+    name = "Tasktree";
+    exec = "tasktree";
+    icon = "tasktree";
+    comment = "A taskwarrior UI";
+    desktopName = "Tasktree";
+    genericName = "Tasktree";
+    categories = "Office;";
+  };
   tasktree = with pkgs; with rustPlatform; buildRustPackage rec {
     name = "tasktree";
-    version = "0.1.0";
-    src = ~/data/aktuell/it/code/tasktree;
-    depsSha256 = "1p06yqrwc3nlf9jsd50ic76qvkg9hnfb5bgnqwzrna941dk4v4sj";
-    cargoSha256 = "1p06yqrwc3nlf9jsd50ic76qvkg9hnfb5bgnqwzrna941dk4v4sj";
+    version = "abb312f";
+    src = fetchFromGitHub {
+      rev = version;
+      owner = "maralorn";
+      repo = "tasktree";
+      sha256 = "139xjvi7b62k3075b4md9hdkb1xafhhiyz2yhbb96d73j1gkqs77";
+    };
+    depsSha256 = "1iw9n1bj7h1v6nz2m3y6045qjavvim3hk5cli3y8x2zakmx88mia";
+    cargoSha256 = "1iw9n1bj7h1v6nz2m3y6045qjavvim3hk5cli3y8x2zakmx88mia";
 
-    buildInputs = [ gnome3.gtk atk cairo gdk_pixbuf glib pango ];
+    propagatedBuildInputs = [ gnome3.gtk atk cairo gdk_pixbuf glib pango ];
+    postInstall = ''
+      function installIcon () {
+          mkdir -p $out/share/icons/hicolor/$1/apps/
+          cp icons/$1.png $out/share/icons/hicolor/$1/apps/tasktree.png
+      }
+      installIcon "16x16"
+      installIcon "32x32"
+      installIcon "64x64"
+
+      mkdir -p $out/share/applications
+      ln -s ${desktopItem}/share/applications/* $out/share/applications/
+    '';
   };
 in {
   home.packages = with pkgs; [
