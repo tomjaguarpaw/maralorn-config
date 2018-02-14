@@ -6,6 +6,10 @@
   };
   systemd.user.startServices = true;
 
+  imports = [
+#    ./update-hm.nix
+  ];
+
   home.packages = with pkgs; [
     htop
     tree
