@@ -43,6 +43,5 @@ in {
     python27Packages.syncthing-gtk
     rxvt_unicode
     tasktree
-    gnome3.gnome_terminal
   ];
 }
