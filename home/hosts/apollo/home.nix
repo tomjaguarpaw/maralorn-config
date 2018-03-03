@@ -2,18 +2,31 @@
 let
   unstable = import (fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz) {};
 in {
+
   imports = [
     ../../snippets/everywhere.nix
     ../../snippets/my-systems.nix
     ../../snippets/graphical.nix
+    ../../snippets/latex.nix
   ];
-  home.packages = with pkgs; [
-    # config
-    gnome3.gnome_session
-    gnome3.gnome-dictionary
 
+  programs = {
+    firefox = {
+      enable = true;
+      package = unstable.firefox;
+    };
+  };
+
+  services = {
+    udiskie = {
+      enable = true;
+      notify = true;
+      tray = "auto";
+    };
+  };
+
+  home.packages = with pkgs; [
     # web
-    unstable.firefox
     chromium
 
     # tools & office
@@ -26,13 +39,11 @@ in {
     handbrake
     octave
 
-    #dev
+    # dev
     rustup
     gnome3.glade
 
     # look & feel
-    arc-theme
-    arc-icon-theme
     libertine
     nerdfonts
 

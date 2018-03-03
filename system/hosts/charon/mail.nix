@@ -79,7 +79,8 @@ je-orga: :include:/etc/nixos/local/lists/je-orga
       lookupMX = true;
       extraConfig =
       ''
-message_size_limit = 30720000
+message_size_limit = 100000000
+mailbox_size_limit = 100000000
 
 mailbox_command = ${pkgs.dovecot}/libexec/dovecot/dovecot-lda -f "$SENDER" -a "$RECIPIENT" -d "$USER"
 

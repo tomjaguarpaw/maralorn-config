@@ -7,8 +7,16 @@ in {
     let
       sort-mail-script = pkgs.writeShellScriptBin "sort-mail" ''
         ${unstable.isync}/bin/mbsync -a
+
         mv $HOME/data/aktuell/it/mail/.Move.kiva/cur/* $HOME/data/aktuell/it/mail-accounts/fb4/INBOX/new/
+        mv $HOME/data/aktuell/it/mail/.Move.Auslandskoordination/cur/* $HOME/data/aktuell/it/mail-accounts/auslandskoordination/Malte/bearbeiten/new/
+
         mv $HOME/data/aktuell/it/mail-accounts/fb4/Move/privat/cur/* $HOME/data/aktuell/it/mail/new/
+        mv $HOME/data/aktuell/it/mail-accounts/fb4/Move/Auslandskoordination/cur/* $HOME/data/aktuell/it/mail-accounts/auslandskoordination/Malte/bearbeiten/new/
+
+        mv $HOME/data/aktuell/it/mail-accounts/auslandskoordination/Malte/privat/cur/* $HOME/data/aktuell/it/mail/new/
+        mv $HOME/data/aktuell/it/mail-accounts/auslandskoordination/Malte/kiva/cur/* $HOME/data/aktuell/it/mail-accounts/fb4/INBOX/new/
+
         ${unstable.isync}/bin/mbsync -a
       '';
     in {

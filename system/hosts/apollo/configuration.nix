@@ -51,20 +51,21 @@ services = {
      enable = true;
      drivers = [pkgs.hplip];
    };
-	xserver = {
-		enable = true;
-		layout = "de";
-		xkbVariant = "neo";
-		desktopManager.gnome3.enable = true;
-      displayManager.gdm = {
-        autoLogin = {
-          delay = 3;
-          enable = true;
-          user = "maralorn";
-        };
-        wayland = false;
-        enable = true;
-      };
+	 xserver = {
+	 	enable = true;
+	 	layout = "de";
+	 	xkbVariant = "neo";
+	 	#desktopManager.gnome3.enable = true;
+      #windowManager.i3.enable = true;
+      # displayManager.gdm = {
+      #   autoLogin = {
+      #     delay = 3;
+      #     enable = true;
+      #     user = "maralorn";
+      #   };
+      #   wayland = false;
+      #   enable = true;
+      # };
 		libinput.enable = true;
 		config = ''
 			Section "InputClass"

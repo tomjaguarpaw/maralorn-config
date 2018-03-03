@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 let
-   unstable = import (fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz) {};
+   unstable = import (fetchTarball  https://github.com/NixOS/nixpkgs-channels/archive/f022cc679486ec5f21a13dab9a336ba1f5543910.tar.gz) {};
 in
 {
   networking.firewall.allowedTCPPorts = [ 8448 ];

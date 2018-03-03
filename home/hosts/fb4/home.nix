@@ -3,15 +3,15 @@
   imports = [
     ../../snippets/everywhere.nix
     ../../snippets/graphical.nix
+    ../../snippets/latex.nix
     # ./syncthing.nix
     # ./nix-gc.nix
     # ./nix-update-channel.nix
   ];
 
-  home.packages = with pkgs; [
-    xautolock
-    syncthing
-  ];
-
   systemd.user.systemctlPath = "/usr/bin/systemctl";
+  services.syncthing = {
+    enable = true;
+    tray = true;
+  };
 }

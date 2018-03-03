@@ -37,11 +37,71 @@ let
     '';
   };
 in {
-  home.packages = with pkgs; [
-    vimPlugins.vimtex
-    redshift
-    python27Packages.syncthing-gtk
-    rxvt_unicode
-    tasktree
-  ];
+  home = {
+    packages = with pkgs; [
+      vimPlugins.vimtex
+      redshift
+      python27Packages.syncthing-gtk
+      rxvt_unicode
+      tasktree
+      tilda
+    ];
+    keyboard = {
+      layout = "de";
+      variant = "neo";
+    };
+  };
+  gtk = {
+    enable = true;
+    iconeTheme = {
+      name = "Arc";
+      package = "arc-icon-theme";
+    };
+    theme = {
+      name = "Arc";
+      packages = "arc-theme";
+    };
+  };
+  service = {
+    compton = {
+      enable = true;
+      fade = true;
+      shadow = true;
+    };
+    dunst = {
+      enable = true;
+    };
+    gnome-keyring = {
+      enable = true;
+      components = [
+        "secrets"
+        "ssh"
+      ];
+    };
+    gpg-agent = {
+      enable = true;
+    };
+    network-manager-applet.enable = true;
+    redshift = {
+      enable = true;
+      temperature.day = 6500;
+      latitude = 49.86667;
+      longitude = 8.65;
+    };
+    screen-locker = {
+      enable = true;
+      lockCmd = "${pkgs.i3lock}/bin/i3lock";
+    };
+  };
+  xsession = {
+    enable = true;
+    windowManager.i3 = {
+      enable = true;
+      gaps = {
+        inner = 3;
+        outer = 6;
+        smartBorders = "on";
+      };
+    };
+  };
 }
