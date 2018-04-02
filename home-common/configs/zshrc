@@ -1,0 +1,29 @@
+if [[ -z "$TMUX" ]] {
+	session=$(tmux ls | grep -v attached | head -1 | cut -f1 -d:)
+	if [[ -n $session ]] {
+		exec tmux attach -t $session;
+	} else {
+		exec tmux;
+	}
+}
+precmd() {
+	local s=$? c=( $(fc -l -d -1 ) )
+	if [[ $launched && "''${c[2]}" != "0:00" ]] {
+		eventc command $([[ ''${s} == 0 ]] && echo success || echo failure) -d command="\"''${c[3,-1]}\"" -d time="\"''${c[2]}\"" -d host="\"$host\""
+	} else {
+		export launched=true;
+	}
+}
+
+alias c=cdr
+alias s='sudo systemctl'
+alias u='systemctl --user'
+alias m=man
+alias t="tmux attach"
+alias tn="tmux new-session"
+alias w="develop-here"
+alias ls=exa
+
+export BROWSER=qutebrowser
+export EDITOR=nvim
+export MANPAGER="most -s"

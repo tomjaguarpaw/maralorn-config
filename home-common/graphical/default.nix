@@ -19,7 +19,7 @@ in {
       "leisure"
       "config"
     ];
-    terminal = "xterm";
+    terminal = "urxvt";
       colors = {
         "foreground" = "#dddbff";
         "background" = "#05004a";

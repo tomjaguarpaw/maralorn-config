@@ -1,0 +1,68 @@
+set spell spelllang=de,en
+set background=dark
+set autoindent
+set nosmartindent
+set listchars=tab:»\ ,trail:.,extends:#
+set list
+set ts=3
+set number
+set scrolloff=5
+set sidescrolloff=5
+set laststatus=2
+set incsearch
+set mouse=
+set dir=~/.vimhist/
+set backupdir=~/.vimhist/bak
+set showcmd
+nnoremap <silent><cr> :nohlsearch<CR>
+vnoremap < <gv
+vnoremap > >gv  u
+nnoremap <C-Down> <C-W><C-J>
+nnoremap <C-Up> <C-W><C-K>
+nnoremap <C-Right> <C-W><C-L>
+nnoremap <C-Left> <C-W><C-H>
+nnoremap <A-Left> gT
+nnoremap <A-Right> gt
+
+set colorcolumn=81,121
+hi ColorColumn ctermbg=black
+
+set winaltkeys=no
+set noai
+set si
+set sw=3
+set pt=<F4>
+set ignorecase
+set wildmenu
+set hlsearch
+noremap  <buffer> <silent> <Up>   gk
+noremap  <buffer> <silent> <Down> gj
+noremap  <buffer> <silent> <Home> g<Home>
+noremap  <buffer> <silent> <End>  g<End>
+if !exists('g:deoplete#omni#input_patterns')
+  let g:deoplete#omni#input_patterns = {}
+endif
+set statusline+=%#warningmsg#
+set statusline+=%{syntasticstatuslineflag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_enable_highlighting = 0
+let g:syntastic_loc_list_height = 3
+let g:rustfmt_autosave = 1
+"let g:ycm_rust_src_path = '/usr/src/rust/src'
+"let g:ftplugin_rust_source_path = '/usr/src/rust/src'
+let g:syntastic_rust_checkers = [ 'cargo']
+let g:rust_recommend_style = 1
+let g:rust_fold =1
+let g:syntastic_rust_rustc_exe = 'cargo check'
+let g:syntastic_rust_rustc_fname = ""
+let g:syntastic_rust_rustc_args = '--'
+
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#auto_complete_start_length = 1
+
+let g:deoplete#sources#rust#racer_binary='racer'

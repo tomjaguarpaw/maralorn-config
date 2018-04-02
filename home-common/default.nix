@@ -73,37 +73,7 @@
         save = 100000;
         size = 100000;
       };
-      initExtra = ''
-        if [[ -z "$TMUX" ]] {
-          session=$(tmux ls | grep -v attached | head -1 | cut -f1 -d:)
-          if [[ -n $session ]] {
-            exec tmux attach -t $session;
-          } else {
-            exec tmux;
-          }
-        }
-        precmd() {
-          local s=$? c=( $(fc -l -D -1 ) )
-          if [[ $launched && "''${c[2]}" != "0:00" ]] {
-            eventc command $([[ ''${s} == 0 ]] && echo success || echo failure) -d command="\"''${c[3,-1]}\"" -d time="\"''${c[2]}\"" -d host="\"$HOST\""
-          } else {
-            export launched=true;
-          }
-        }
-
-        alias c=cdr
-        alias s='sudo systemctl'
-        alias u='systemctl --user'
-        alias m=man
-        alias t="tmux attach"
-        alias tn="tmux new-session"
-        alias w="develop-here"
-        alias ls=exa
-
-        export BROWSER=qutebrowser
-        export EDITOR=nvim
-        export MANPAGER="most -s"
-      '';
+      initExtra = builtins.readFile ./configs/zshrc;
     };
   };
 
@@ -137,52 +107,7 @@
     (pkgs.neovim.override {
       vimAlias = true;
       configure = {
-        customRC = ''
-          set spell spelllang=de,en
-          set background=dark
-          set autoindent
-          set nosmartindent
-          set listchars=tab:»\ ,trail:.,extends:#
-          set list
-          set ts=3
-          set number
-          set scrolloff=5
-          set sidescrolloff=5
-          set laststatus=2
-          set incsearch
-          set mouse=
-          set dir=~/.vimhist/
-          set backupdir=~/.vimhist/bak
-          set showcmd
-          nnoremap <silent><cr> :nohlsearch<CR>
-          vnoremap < <gv
-          vnoremap > >gv
-          nnoremap <silent><cr> :nohlsearch<CR>
-          vnoremap < <gv
-          vnoremap > >gv  u
-          nnoremap <C-Down> <C-W><C-J>
-          nnoremap <C-Up> <C-W><C-K>
-          nnoremap <C-Right> <C-W><C-L>
-          nnoremap <C-Left> <C-W><C-H>
-          nnoremap <A-Left> gT
-          nnoremap <A-Right> gt
-
-          set colorcolumn=81,121
-          hi ColorColumn ctermbg=black
-
-          set winaltkeys=no
-          set noai
-          set si
-          set sw=3
-          set pt=<F4>
-          set ignorecase
-          set wildmenu
-          set hlsearch
-          noremap  <buffer> <silent> <Up>   gk
-          noremap  <buffer> <silent> <Down> gj
-          noremap  <buffer> <silent> <Home> g<Home>
-          noremap  <buffer> <silent> <End>  g<End>
-        '';
+        customRC = builtins.readFile ./configs/vimrc;
         packages.myVimPackage = with pkgs.vimPlugins; {
           start = [
             deoplete-nvim
@@ -200,6 +125,7 @@
             vim-racer
             vim-pandoc
             nerdcommenter
+            vim-signify
           ];
         };
       };
