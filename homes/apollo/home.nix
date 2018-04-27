@@ -37,6 +37,8 @@
     arandr
     qutebrowser
 
+    mumble
+
     # tools & office
     gimp
     imagemagick

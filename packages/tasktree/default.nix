@@ -35,4 +35,5 @@ with rustPlatform; buildRustPackage rec {
     mkdir -p $out/share/applications
     ln -s ${desktopItem}/share/applications/* $out/share/applications/
   '';
+  doCheck = false;
 }

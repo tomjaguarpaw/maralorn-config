@@ -9,6 +9,9 @@
     youtubeDL
 
     cargo
+    gcc
+    binutils-unwrapped
     rustfmt
+    carnix
   ];
 }

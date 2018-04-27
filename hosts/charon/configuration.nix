@@ -16,8 +16,8 @@
 
   imports = [
     ./hardware-configuration.nix
-    ../../snippets/common.nix
-    ../../snippets/init_ssh.nix
+    ../../host-common/common.nix
+    ../../host-common/init_ssh.nix
     /etc/nixos/local/config.nix
     ./dav.nix
     ./mail.nix

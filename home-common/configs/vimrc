@@ -16,13 +16,14 @@ set backupdir=~/.vimhist/bak
 set showcmd
 nnoremap <silent><cr> :nohlsearch<CR>
 vnoremap < <gv
-vnoremap > >gv  u
-nnoremap <C-Down> <C-W><C-J>
-nnoremap <C-Up> <C-W><C-K>
-nnoremap <C-Right> <C-W><C-L>
-nnoremap <C-Left> <C-W><C-H>
-nnoremap <A-Left> gT
-nnoremap <A-Right> gt
+vnoremap > >gv
+nnoremap <c-down> <c-w><c-j>
+nnoremap <c-up> <c-w><c-k>
+nnoremap <c-right> <c-w><c-l>
+nnoremap <c-left> <c-w><c-h>
+nnoremap <a-left> gT
+nnoremap <a-right> gt
+let mapleader=","
 
 set colorcolumn=81,121
 hi ColorColumn ctermbg=black
@@ -42,6 +43,7 @@ noremap  <buffer> <silent> <End>  g<End>
 if !exists('g:deoplete#omni#input_patterns')
   let g:deoplete#omni#input_patterns = {}
 endif
+let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 set statusline+=%#warningmsg#
 set statusline+=%{syntasticstatuslineflag()}
 set statusline+=%*
@@ -50,19 +52,19 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_aggregate_errors = 1
-let g:syntastic_enable_highlighting = 0
-let g:syntastic_loc_list_height = 3
+let g:syntastic_enable_highlighting = 1
+let g:syntastic_loc_list_height = 5
 let g:rustfmt_autosave = 1
 "let g:ycm_rust_src_path = '/usr/src/rust/src'
 "let g:ftplugin_rust_source_path = '/usr/src/rust/src'
 let g:syntastic_rust_checkers = [ 'cargo']
 let g:rust_recommend_style = 1
 let g:rust_fold =1
-let g:syntastic_rust_rustc_exe = 'cargo check'
-let g:syntastic_rust_rustc_fname = ""
-let g:syntastic_rust_rustc_args = '--'
+"let g:syntastic_rust_rustc_exe = 'cargo check'
 
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#auto_complete_start_length = 1
 
-let g:deoplete#sources#rust#racer_binary='racer'
+"let g:deoplete#sources#rust#racer_binary='racer'
+"let g:rustfmt_command = "rustfmt"
+"let g:racer_cmd = "racer"

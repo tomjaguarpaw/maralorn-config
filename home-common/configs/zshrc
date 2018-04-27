@@ -7,9 +7,9 @@ if [[ -z "$TMUX" ]] {
 	}
 }
 precmd() {
-	local s=$? c=( $(fc -l -d -1 ) )
-	if [[ $launched && "''${c[2]}" != "0:00" ]] {
-		eventc command $([[ ''${s} == 0 ]] && echo success || echo failure) -d command="\"''${c[3,-1]}\"" -d time="\"''${c[2]}\"" -d host="\"$host\""
+	local s=$? c=( $(fc -L -D -l -1) )
+	if [[ $launched && "${c[2]}" != "0:00" ]] {
+		eventc command $([[ ${s} == 0 ]] && echo success || echo failure) -d command="\"${c[3,-1]}\"" -d time="\"${c[2]}\"" -d host="\"$HOST\""
 	} else {
 		export launched=true;
 	}
@@ -27,3 +27,5 @@ alias ls=exa
 export BROWSER=qutebrowser
 export EDITOR=nvim
 export MANPAGER="most -s"
+
+bindkey '^R' history-incremental-pattern-search-backward

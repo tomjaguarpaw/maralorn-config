@@ -1,5 +1,7 @@
 { pkgs, ... }:
-{
+let
+  rust-scripts = with pkgs; callPackage ../packages/rust-scripts {};
+in {
   programs = {
     home-manager = {
       enable = true;
@@ -103,33 +105,45 @@
     pythonPackages.qrcode
     ranger
 
+#    rust-scripts
 
     (pkgs.neovim.override {
       vimAlias = true;
+      withPython3 = true;
       configure = {
-        customRC = builtins.readFile ./configs/vimrc;
+        customRC = ''
+          let $RUST_SRC_PATH="${pkgs.rustPlatform.rustcSrc}"
+          let g:rustfmt_command = "${pkgs.rustfmt}/bin/rustfmt"
+          let g:racer_cmd = "${pkgs.rustracer}/bin/racer"
+          let g:deoplete#sources#rust#racer_binary='${pkgs.rustracer}/bin/racer'
+          let g:syntastic_rust_rustc_exe = '${pkgs.cargo}/bin/cargo check'
+          ${builtins.readFile ./configs/vimrc}
+       '';
         packages.myVimPackage = with pkgs.vimPlugins; {
           start = [
-            deoplete-nvim
+#            deoplete-nvim
             vim-nix
+            ctrlp
             vimtex
             Syntastic
             UltiSnips
             airline
             rust-vim
-            deoplete-rust
+#           deoplete-rust
             fugitive
             airline
-            vim-snippets
+#            ale
+#            vim-snippets
             vim-trailing-whitespace
-            vim-racer
+            vim-polyglot
+            nvim-cm-racer
+            nvim-completion-manager
             vim-pandoc
             nerdcommenter
             vim-signify
           ];
         };
       };
-      withPython3 = true;
     })
   ];
   xdg.enable = true;

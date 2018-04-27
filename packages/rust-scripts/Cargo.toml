@@ -1,0 +1,8 @@
+[package]
+name = "rust-scripts"
+version = "0.1.0"
+authors = ["Malte Brandy <malte.brandy@maralorn.de>"]
+
+[dependencies]
+task-hookrs = { git = "https://github.com/maralorn/task-hookrs.git", branch = "preview"}
+dialog = { git = "https://git.darmstadt.ccc.de/maralorn/dialog-rs.git" }

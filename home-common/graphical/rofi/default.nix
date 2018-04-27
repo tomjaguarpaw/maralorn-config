@@ -47,30 +47,68 @@ in {
         rofi.sidebar-mode: true
         rofi.combi-modi: window,drun,run
         '';
-      separator = "solid";
+      borderWidth = 0;
+      separator = "none";
+      fullscreen = false;
+      width = 1920;
       terminal = terminal;
-      location = "left";
+      location = "center";
       scrollbar = false;
-      width = 1500;
-      yoffset = -10;
-      lines = 35;
+      padding = 200;
+      lines = 30;
       colors = {
-        window = {
-          background = colors.background;
-          border = colors.blue;
-          separator = colors.blue;
-        };
-        rows = {
-          normal = {
-            background = colors.background;
-            foreground = colors.foreground;
-            backgroundAlt = colors.black;
-            highlight = {
-              background = colors.blue;
-              foreground = colors.white;
-            };
-          };
-        };
+                 window = {
+                   background = "argb:a0${builtins.substring 1 6 colors.background}";
+                   border = colors.blue;
+                   separator = colors.blue;
+                 };
+
+                 rows = {
+                   normal = {
+                     background = colors.background;
+                     foreground = colors.foreground;
+                     backgroundAlt = colors.black;
+                     highlight = {
+                       background = colors.blue;
+                       foreground = colors.white;
+                     };
+                   };
+                   active = {
+                     background = colors.background;
+                     foreground = colors.foreground;
+                     backgroundAlt = colors.black;
+                     highlight = {
+                       background = colors.blue;
+                       foreground = colors.white;
+                     };
+                   };
+                   urgent = {
+                     background = colors.background;
+                     foreground = colors.foreground;
+                     backgroundAlt = colors.black;
+                     highlight = {
+                       background = colors.blue;
+                       foreground = colors.white;
+                     };
+                   };
+                 };
+      #colors = {
+        #window = {
+          #background = "argb:${builtins.substring 1 6 colors.background}22";
+          #border = colors.blue;
+          #separator = colors.blue;
+        #};
+        #rows = {
+          #normal = {
+            #background = colors.background;
+            #foreground = colors.foreground;
+            #backgroundAlt = colors.black;
+            #highlight = {
+              #background = colors.blue;
+              #foreground = colors.white;
+            #};
+          #};
+        #};
       };
     };
   };

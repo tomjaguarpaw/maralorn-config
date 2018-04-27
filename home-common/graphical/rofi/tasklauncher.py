@@ -20,7 +20,7 @@ while True:
     with open(filename) as filterfile:
         filter = filterfile.read().strip()
     tasklist = call_task(["default"] + filter.split())
-    rofi_list_cmd = ['rofi', '-dmenu', '-p', 'task: ', '-mesg', '\n'.join([lastresult, "filter: {}".format(filter)]).strip()]
+    rofi_list_cmd = ['rofi', '-dmenu', '-p', 'task', '-mesg', '\n'.join([lastresult, "filter: {}".format(filter)]).strip()]
     rofi = subprocess.Popen(rofi_list_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     entered_command = rofi.communicate(input=tasklist)[0].decode('utf8').strip()
     if entered_command == "":

@@ -1,7 +1,7 @@
 { pkgs, lib, config, ... }:
 let
   eventd-pkgs = import (fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/fe61c3b84e8e81a8ec2bf6b3ed2a0e8652cea190.tar.gz) {};
-  eventd = with eventd-pkgs; callPackage ../../packages/eventd {};
+  eventd = eventd-pkgs.callPackage ../../packages/eventd {};
   colors = config.common.colors;
 in {
   home = {

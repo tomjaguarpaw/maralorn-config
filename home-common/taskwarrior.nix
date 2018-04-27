@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 {
   home = {
-    packages = with pkgs; [ taskwarrior ];
+    packages = [ pkgs.taskwarrior ];
     file = {
       taskwarrior-on-add-hook = {
         target = ".task/hooks/on-add.eventd-notification";
