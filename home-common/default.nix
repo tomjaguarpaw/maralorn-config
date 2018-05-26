@@ -1,7 +1,21 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 let
   rust-scripts = with pkgs; callPackage ../packages/rust-scripts {};
+  unstable-pkgs = import <unstable> {};
+  eventd = unstable-pkgs.callPackage ../packages/eventd {};
+  st = import graphical/st;
 in {
+  nixpkgs.config.packageOverrides = pkgs: {
+    eventd = eventd;
+    st = st pkgs config.common.colors;
+  };
+  home.file.".tmux.conf".text = ''
+    set -g default-terminal "st-256color"
+    set -ga terminal-overrides ",st-256color:Tc"
+    set -g history-limit 50000
+    set -g status off
+    set -g escape-time 1
+  '';
   programs = {
     home-manager = {
       enable = true;
@@ -46,7 +60,7 @@ in {
       treeView = true;
     };
     ssh = {
-      controlMaster = "autoask";
+      controlMaster = "yes";
       enable = true;
       matchBlocks = let
           matheGwProxy =  "ssh -q gw nc -q0 %h %p";
@@ -55,16 +69,16 @@ in {
         in [
           { host = "charon"; hostname = "charon.olymp.space"; }
           { host = "*.olymp.space"; user = "maralorn"; }
-          { host = "ag-forward"; hostname = agHost; proxyCommand = matheGwProxy; }
-          { host = "ag"; hostname = agHost; }
-          { host = "kiva-forward"; hostname = kivaHost; proxyCommand = matheGwProxy; }
-          { host = "kiva"; hostname = kivaHost; }
-          { host = "gw"; hostname = "gwres4.mathematik.tu-darmstadt.de"; }
-          { host = "*.mathematik.tu-darmstadt.de"; user = "brandy"; }
+          { host = "ag-forward"; hostname = agHost; proxyCommand = matheGwProxy;user="brandy";}
+          { host = "ag"; hostname = agHost;user="brandy";}
+          { host = "kiva-forward"; hostname = kivaHost; proxyCommand = matheGwProxy;user="brandy";}
+          { host = "kiva"; hostname = kivaHost;user="brandy";}
+          { host = "gw"; hostname = "gwres4.mathematik.tu-darmstadt.de";user="brandy";}
           { host = "shells"; hostname = "shells.darmstadt.ccc.de"; }
           { host = "vorstand"; hostname = "vorstand.darmstadt.ccc.de"; }
           { host = "*.darmstadt.ccc.de"; user = "maralorn"; }
           { host = "whisky"; hostname = "whisky.w17.io"; user = "chaos"; }
+          { host = "door.w17.io"; identityFile = "~/.ssh/door_rsa";}
         ];
     };
     zsh = {
@@ -76,9 +90,20 @@ in {
         size = 100000;
       };
       initExtra = builtins.readFile ./configs/zshrc;
+      oh-my-zsh = {
+        enable = true;
+        plugins = [ "colored-man-pages" "git-prompt" ];
+      };
     };
   };
 
+
+
+  home.sessionVariables = {
+    BROWSER="${pkgs.firefox}/bin/firefox";
+    EDITOR="${pkgs.neovim}/bin/nvim";
+    TERMINAL=config.common.terminal;
+  };
   systemd.user.startServices = true;
 
   imports = [
@@ -101,6 +126,7 @@ in {
     tig
     exa
     fzf
+    ag
 
     pythonPackages.qrcode
     ranger

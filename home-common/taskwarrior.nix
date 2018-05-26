@@ -60,6 +60,9 @@
         Notification = {
           Text = template;
         };
+        NotificationBubble = {
+          Queue = "tasks";
+        };
       };
     };
   in {

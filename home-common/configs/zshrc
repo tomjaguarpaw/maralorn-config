@@ -6,6 +6,25 @@ if [[ -z "$TMUX" ]] {
 		exec tmux;
 	}
 }
+
+# Prompt
+function default_host () {
+	H="${HOST}%{%}:"
+	REPLY=${H/apollo%{%}:/}
+	REPLY=${REPLY/.olymp.space/}
+	echo $REPLY
+}
+function default_user () {
+	U=${USER}@
+	REPLY=${U/maralorn@/}
+	echo $REPLY
+}
+
+
+setopt prompt_subst
+autoload -U colors && colors # Enable colors in prompt
+PROMPT='%{%F{red}%}$(default_user)$(default_host)%{%F{blue}%}%~%{%}> %{%f%}'
+
 precmd() {
 	local s=$? c=( $(fc -L -D -l -1) )
 	if [[ $launched && "${c[2]}" != "0:00" ]] {
@@ -22,10 +41,14 @@ alias m=man
 alias t="tmux attach"
 alias tn="tmux new-session"
 alias w="develop-here"
-alias ls=exa
+alias ls='exa -lh --git'
 
-export BROWSER=qutebrowser
-export EDITOR=nvim
-export MANPAGER="most -s"
+autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+add-zsh-hook chpwd chpwd_recent_dirs
+zstyle ':chpwd:*' recent-dirs-max 25
+
+if [[ $PWD == "$HOME" ]] {
+	cd "$(head -n1 ~/.chpwd-recent-dirs | sed s/\\$// | sed s/\'//g)"
+}
 
 bindkey '^R' history-incremental-pattern-search-backward

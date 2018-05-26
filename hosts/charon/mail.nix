@@ -31,7 +31,7 @@
       socketActivation = false;
       rspamd = {
         extraConfig = ''
-          extended_spam_headers = yes;
+          extended_spam_headers = true;
         '';
         enable = true;
       };
@@ -45,6 +45,8 @@
       sslServerKey = "/var/lib/acme/charon.olymp.space/key.pem";
       extraConfig =
       ''
+        postmaster_address=postmaster@charon.olymp.space
+
         ssl = required
         service auth {
           unix_listener /var/lib/postfix/queue/private/auth {

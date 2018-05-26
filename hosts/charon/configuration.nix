@@ -7,8 +7,8 @@
     hostName = "charon.olymp.space";
 
     interfaces.ens3 = {
-      ip4 = [ { address = "45.32.154.139"; prefixLength = 22; } ];
-      ip6 = [ { address = "2001:19f0:6c01:b0d::1"; prefixLength = 64; } ];
+      ipv4.addresses = [{ address = "45.32.154.139"; prefixLength = 22; }];
+      ipv6.addresses = [{ address = "2001:19f0:6c01:b0d::1"; prefixLength = 64; }];
     };
     defaultGateway = "45.32.152.1";
     nameservers = [ "108.61.10.10" "2001:19f0:300:1704::6" ];

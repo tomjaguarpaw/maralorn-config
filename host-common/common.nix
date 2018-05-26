@@ -21,7 +21,6 @@
        automatic = true;
        options = "--delete-older-than 5d";
     };
-    package = pkgs.nixUnstable;
     optimise.automatic = true;
   };
   system.autoUpgrade.enable = true;
@@ -31,6 +30,10 @@
     defaultUserShell = pkgs.zsh;
     mutableUsers = false;
   };
+
+  security.sudo.extraConfig = "
+    Defaults timestamp_type=global, timestamp_timeout=15
+  ";
 
   networking.firewall.allowPing = true;
 
@@ -44,7 +47,6 @@
       gnumake
       python3
       python
-      pandoc
       mkpasswd
       rxvt_unicode.terminfo
       htop

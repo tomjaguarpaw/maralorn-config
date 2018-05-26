@@ -53,6 +53,7 @@
       server_name = "maralorn.de";
       database_type = "psycopg2";
       max_upload_size = "30M";
+      create_local_database = false;
       database_args = {
         user = "matrix-synapse";
         database = "matrix-synapse";

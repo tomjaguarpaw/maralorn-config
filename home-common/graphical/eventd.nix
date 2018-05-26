@@ -1,7 +1,5 @@
 { pkgs, lib, config, ... }:
 let
-  eventd-pkgs = import (fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/fe61c3b84e8e81a8ec2bf6b3ed2a0e8652cea190.tar.gz) {};
-  eventd = eventd-pkgs.callPackage ../../packages/eventd {};
   colors = config.common.colors;
 in {
   home = {
@@ -23,8 +21,8 @@ in {
         Service = {
           Type="notify";
           Sockets="eventd-control.socket eventd.socket";
-          ExecStart="${eventd}/bin/eventd --listen systemd";
-          ExecReload="${eventd}/bin/eventdctl reload";
+          ExecStart="${pkgs.eventd}/bin/eventd --listen systemd";
+          ExecReload="${pkgs.eventd}/bin/eventdctl reload";
         };
       };
     };
@@ -58,21 +56,6 @@ in {
           Spacing = 2;
           Limit = 10;
         };
-        "Queue mode" = {
-          Anchor = "top";
-          Margin = 300;
-          Limit = 1;
-        };
-        "Queue feedback" = {
-          Anchor = "top";
-          Margin = 450;
-          Limit = 1;
-        };
-        "Queue workspace" = {
-          Anchor = "bottom-left";
-          Margin = 10;
-          Limit = 1;
-        };
         "Queue command" = {
           Anchor = "bottom-right";
           Margin = 10;
@@ -81,20 +64,15 @@ in {
         };
         "Queue critical" = {
           Anchor = "top";
-          Margin = 10;
+          Margin = 450;
           Spacing = 2;
           Limit = 10;
         };
-        "Queue state" = {
-          Anchor = "top-left";
-          Margin = 10;
-          Spacing = 2;
-          Limit = 10;
-        };
-        "Queue music" = {
+        "Queue tasks" = {
           Anchor = "bottom";
-          Margin = 10;
-          Limit = 1;
+          Margin = 0;
+          Spacing = 1;
+          Limit = 20;
         };
         Notification = {
           Text = "\${message}";
@@ -113,17 +91,11 @@ in {
         };
       };
       "eventd/notification.event".text = lib.generators.toINI {} {
-        "Event mode *" = {
-          Actions = "mode";
-        };
         "Event notification *" = {
           Actions = "notification";
         };
-        "Event feedback *" = {
-          Actions = "feedback";
-        };
-        "Event workspace *" = {
-          Actions = "workspace";
+        "Event notification kassandra" = {
+          Actions = "kassandra";
         };
         "Event command success" = {
           Actions = "command-success";
@@ -133,25 +105,6 @@ in {
         };
         "Event critical *" = {
           Actions = "critical";
-        };
-        "Event state *" = {
-          Actions = "state";
-        };
-      };
-      "eventd/mode.action".text = lib.generators.toINI {} {
-        Action = {
-          Name = "mode";
-        };
-        Notification = {
-        };
-        NotificationBubble = {
-          Timeout = 0;
-          Queue = "mode";
-          Padding = 40;
-          MinWidth = 10;
-        };
-        NotificationText = {
-          Font = "Linux Libertine 40";
         };
       };
       "eventd/command-success.action".text = lib.generators.toINI {} {
@@ -163,6 +116,7 @@ in {
         };
         NotificationBubble = {
           Colour = colors.black;
+          Queue = "command";
         };
       };
       "eventd/command-failure.action".text = lib.generators.toINI {} {
@@ -173,30 +127,31 @@ in {
           Text="<b>\${command}</b>\\nfailed after \${time} @ \${host}";
         };
         NotificationBubble = {
+          Queue = "critical";
           Colour = colors.red;
         };
       };
-      "eventd/workspace.action".text = lib.generators.toINI {} {
+      "eventd/critical.action".text = lib.generators.toINI {} {
         Action = {
-          Name = "workspace";
+          Name = "critical";
         };
         Notification = {
+          Text = "<b>\${title}</b>\${message/^/\\n}";
         };
         NotificationBubble = {
-          Queue = "workspace";
-          MinWidth = 10;
+          Queue = "critical";
+          Colour = colors.red;
         };
       };
-      "eventd/feedback.action".text = lib.generators.toINI {} {
+      "eventd/kassandra.action".text = lib.generators.toINI {} {
         Action = {
-          Name = "feedback";
+          Name = "kassandra";
         };
         Notification = {
+          Text = "<b>\${title}</b>\${message/^/\\n}";
         };
         NotificationBubble = {
-          Timeout = 500;
-          Queue = "feedback";
-          Colour = colors.red;
+          Queue = "critical";
         };
       };
       "eventd/notification.action".text = lib.generators.toINI {} {

@@ -4,6 +4,18 @@ let
   workspaces = config.common.workspaces;
   terminal = config.common.terminal;
   exec = "exec --no-startup-id";
+  taskstatus = pkgs.writeShellScriptBin "taskstatus" ''
+    while true;
+    do
+      echo \
+      $(date "+%Y-%m-%d %a %H:%M") "|" \
+      $(cat ~/.kassandra_state | tail -n3 | sed "s/$/ | /") \
+      Inbox: $(task +PENDING -BLOCKED -TAGGED count) "|" \
+      Active Task: $(task rc.verbose=nothing active || echo "No task active") "|" \
+      Tags: $(task +PENDING -BLOCKED -project -optional -later rc.verbose=nothing tags | sed "s/\(.\)$/\1 |/" )
+      sleep 10s;
+    done
+    '';
   addMods = oldbindings: builtins.foldl' (newbindings: key:
     newbindings // {
       "Mod4+${key}" = oldbindings.${key};
@@ -12,7 +24,7 @@ let
     {}
     (builtins.attrNames oldbindings);
 in {
-  imports = [ 
+  imports = [
     ./eventd.nix
     ./rofi
     ./urxvt.nix
@@ -56,7 +68,18 @@ in {
             text = colors.foreground;
           };
         };
-        bars = [ {
+        bars = [
+          {
+            statusCommand = "${taskstatus}/bin/taskstatus";
+            position = "top";
+            mode = "dock";
+            workspaceButtons = false;
+            colors = {
+              separator = colors.white;
+              background = colors.background;
+            };
+          }
+          {
           mode = "hide";
           colors = {
             separator = colors.white;
@@ -87,28 +110,32 @@ in {
           titlebar = false;
           border = 1;
         };
-        gaps = {
-          inner = 0;
-          outer = 0;
-          smartBorders = "off";
-          smartGaps = false;
-        };
-        keybindings = addMods ({
+#        gaps = {
+#          inner = 0;
+#          outer = 0;
+#          smartBorders = "off";
+#          smartGaps = false;
+#        };
+        keybindings = {
+            "XF86AudioMute" = "exec pactl set-sink-mute '@DEFAULT_SINK@' toggle";
+            "XF86AudioLowerVolume" = "exec pactl set-sink-volume '@DEFAULT_SINK@' -5%";
+            "XF86AudioRaiseVolume" = "exec pactl set-sink-volume '@DEFAULT_SINK@' +5%";
+            "XF86AudioMicMute" = "exec pactl set-source-mute '@DEFAULT_SOURCE@' toggle";
+            "XF86MonBrightnessUp" = "exec xbacklight +5";
+            "XF86MonBrightnessDown" = "exec xbacklight -5";
+            "XF86Display" = "exec arandr";
+            "Ctrl+Escape" = "${exec} loginctl lock-session;";
+        } //
+        addMods ({
             "Left" = "focus left";
             "Down" = "focus down";
             "Up" = "focus up";
             "Right" = "focus right";
-            "Tab" = "${exec} rofi -show window";
-            "w" = "${exec} skippy-xd";
+            "Tab" = "${exec} skippy-xd";
             "Prior" = "focus parent";
             "Next" = "focus child";
-            "Ctrl+Escape" = "${exec} loginctl lock-session;";
             "Return" = "${exec} ${terminal}";
             "p" = "${exec} rofi-pass";
-            "r" = "${exec} rofi -show combi";
-            "o" = "${exec} rofi -show web";
-            "n" = "${exec} rofi -show ssh";
-            "a" = "${exec} tasklauncher";
             "shift+Left" = "move left";
             "shift+Down" = "move down";
             "shift+Up" = "move up";
@@ -118,8 +145,11 @@ in {
             "t" = "layout tabbed";
             "s" = "layout toggle split";
             "q" = "kill";
+            "m" = "move workspace to output up";
+            "n" = "move workspace to output right";
             "shift+space" = "floating toggle";
             "shift+q" = "exec i3-nagbar -t warning -m 'do you want to exit i3?' -b 'yes' 'i3-msg exit'";
+            "space" = "exec ~/config/nixos/packages/rust-scripts/target/release/hotkeys";
           } // builtins.foldl' (bindings: name: let
             number = toString ((builtins.length (builtins.attrNames bindings)) / 2);
           in

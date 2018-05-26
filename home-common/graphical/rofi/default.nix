@@ -3,25 +3,25 @@ let
   workspaces = config.common.workspaces;
   terminal = config.common.terminal;
   colors = config.common.colors;
-  rofiScriptWeb = pkgs.writeShellScriptBin "rofi-script-web" ''
-    if [[ -z $@ ]]; then
-       sed 's/^[0-9]*\(-r\)\? \?//;s/^\([^[:space:]]*\).*$/\1/' $HOME/.local/share/qutebrowser/history | tac
-    else
-       ${pkgs.qutebrowser}/bin/qutebrowser "$1" > /dev/null &
-    fi
-  '';
-  rofiScriptI3 = pkgs.writeShellScriptBin "rofi-script-i3" ''
-    if [ -z $@ ]; then
-      (i3-msg -t get_workspaces | tr ',' '\n' | grep "name" | sed 's/"name":"\(.*\)"/\1/g';
-      echo "${builtins.concatStringsSep "\n" (builtins.foldl' (labels: name: let
-            number = toString (builtins.length labels);
-          in
-          labels ++ [ "${number}:${name}" ]
-          ) [] workspaces)}") | sort -u
-    else
-      i3-msg workspace "$@" >/dev/null
-    fi
-  '';
+  #rofiScriptWeb = pkgs.writeShellScriptBin "rofi-script-web" ''
+    #if [[ -z $@ ]]; then
+       #sed 's/^[0-9]*\(-r\)\? \?//;s/^\([^[:space:]]*\).*$/\1/' $HOME/.local/share/qutebrowser/history | tac
+    #else
+       #${pkgs.qutebrowser}/bin/qutebrowser "$1" > /dev/null &
+    #fi
+  #'';
+  #rofiScriptI3 = pkgs.writeShellScriptBin "rofi-script-i3" ''
+    #if [ -z $@ ]; then
+      #(i3-msg -t get_workspaces | tr ',' '\n' | grep "name" | sed 's/"name":"\(.*\)"/\1/g';
+      #echo "${builtins.concatStringsSep "\n" (builtins.foldl' (labels: name: let
+            #number = toString (builtins.length labels);
+          #in
+          #labels ++ [ "${number}:${name}" ]
+          #) [] workspaces)}") | sort -u
+    #else
+      #i3-msg workspace "$@" >/dev/null
+    #fi
+  #'';
   rofiTask = pkgs.writeScriptBin "tasklauncher" (builtins.readFile ./tasklauncher.py);
 #  recollPython = pkgs.python2.withPackages (ps: [
 #    pkgs.recoll
@@ -31,8 +31,8 @@ in {
   home = {
     packages = with pkgs; [
       rofi
-      rofiScriptWeb
-      rofiScriptI3
+      #rofiScriptWeb
+      #rofiScriptI3
       rofiTask
 #      rofiFind
       rofi-pass
@@ -43,22 +43,22 @@ in {
     rofi = {
       enable = true;
       extraConfig = ''
-        rofi.modi: combi,window,drun,run,ssh,keys,web:rofi-script-web,i3:rofi-script-i3
-        rofi.sidebar-mode: true
+        rofi.modi: combi,window,drun,run,ssh,keys
         rofi.combi-modi: window,drun,run
         '';
       borderWidth = 0;
       separator = "none";
       fullscreen = false;
-      width = 1920;
       terminal = terminal;
-      location = "center";
+      yoffset = 19;
+      location = "top";
       scrollbar = false;
-      padding = 200;
+      padding = 10;
+      cycle = false;
       lines = 30;
       colors = {
                  window = {
-                   background = "argb:a0${builtins.substring 1 6 colors.background}";
+                   background = "argb:c0${builtins.substring 1 6 colors.background}";
                    border = colors.blue;
                    separator = colors.blue;
                  };

@@ -1,7 +1,7 @@
 { fetchFromGitHub, stdenv, ninja, meson, pkgconfig, glib, cairo, gdk_pixbuf, glib_networking, pango, libudev, xorg, libxslt, docbook_xml_xslt, git, libuuid, dbus, libsoup, docbook_xml_dtd_45, docbook5_xsl, gettext, autoconf, libtool, utillinux, libxkbcommon }:
 stdenv.mkDerivation rec {
   name = "eventd";
-  version = "279d3c3";
+  version = "v0.24.1";
   src = fetchFromGitHub {
     owner = "sardemff7";
     repo = "eventd";
@@ -9,9 +9,6 @@ stdenv.mkDerivation rec {
     sha256 = "162gr3agmjn6d0wdj3lixv8qfvgfm9qg3wphbvwywdp4qcwvnjz8";
     fetchSubmodules = true;
   };
-  patchPhase = ''
-    sed s/0.44.1/0.43.0/ -i meson.build
-  '';
   buildInputs = [
     ninja
     meson

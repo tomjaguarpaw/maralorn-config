@@ -1,4 +1,19 @@
 { pkgs, ... }:
+let
+  jali = with pkgs.python36Packages; buildPythonApplication rec {
+    name = "${pname}-${version}";
+    pname = "jali";
+    doCheck = false;
+    version = "1d1c5d0a";
+    src = pkgs.fetchgit {
+      url = "https://git.darmstadt.ccc.de/jali/jali.git";
+      rev = version;
+      sha256 = "1nzzangp7yr2gq66qz7wk2cqqwjlhrfaqmc85qigjv4vpfmlphl0";
+    };
+    propagatedBuildInputs = with pkgs; [ jinja2 pendulum GitPython aqbanking ];
+  };
+in
+
 {
 
   imports = [
@@ -6,6 +21,8 @@
     ../../home-common/my-systems.nix
     ../../home-common/graphical
     ../../home-common/latex.nix
+    ./battery.nix
+    ./sleep-nag.nix
   ];
 
   programs = {
@@ -18,6 +35,9 @@
         key = "6C3D12CD88CDF46C5EAF4D12226A2D41EF5378C9";
       };
     };
+  };
+  home.sessionVariables = {
+    MOZ_USE_XINPUT2 = "1";
   };
 
   services = {
@@ -32,14 +52,31 @@
     ] ++ (with pkgs; [
     # web
     chromium
+    signal-desktop
+    tdesktop
     acpi
+    dino
+
+    rustracer
 
     arandr
     qutebrowser
 
     mumble
 
+    xorg.xev
+    xorg.xbacklight
+    meld
+
+    icedtea8_web
+
+    hledger
+    haskellPackages.hledger-ui
+    ledger
+    jali
+
     # tools & office
+    feh
     gimp
     imagemagick
     libreoffice-fresh

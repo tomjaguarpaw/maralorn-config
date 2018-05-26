@@ -19,7 +19,7 @@ in {
       "leisure"
       "config"
     ];
-    terminal = "urxvt";
+    terminal = "${pkgs.st}/bin/st";
       colors = {
         "foreground" = "#dddbff";
         "background" = "#05004a";
@@ -44,6 +44,7 @@ in {
   home = {
     packages = with pkgs; [
       tasktree
+      st
     ];
     keyboard = {
       layout = "de";
@@ -73,7 +74,6 @@ in {
       enable = true;
       components = [
         "secrets"
-        "ssh"
       ];
     };
     random-background = {
@@ -83,6 +83,9 @@ in {
     };
     gpg-agent = {
       enable = true;
+      enableSshSupport = true;
+      defaultCacheTtl = 900;
+      defaultCacheTtlSsh = 900;
     };
     redshift = {
       enable = true;
