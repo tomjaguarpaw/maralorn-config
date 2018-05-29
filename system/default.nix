@@ -3,28 +3,22 @@
   # channel = 18.03
 
   imports = [
+    ./laptop.nix
     ./admin.nix
     ./syncthing.nix
+    modules/cdarknet
   ];
-
 
   i18n = {
     defaultLocale = "en_US.UTF-8";
   };
+
   time.timeZone = "Europe/Berlin";
+
+  security.rngd.enable = true;
 
   # So that boot does not fill up with old kernels
   boot.loader.grub.configurationLimit = 5;
-
-  nix = {
-    gc = {
-       automatic = true;
-       options = "--delete-older-than 5d";
-    };
-    optimise.automatic = true;
-  };
-  system.autoUpgrade.enable = true;
-  system.autoUpgrade.dates = "22:00";
 
   users = {
     defaultUserShell = pkgs.zsh;
@@ -46,7 +40,6 @@
       git
       gnumake
       python3
-      python
       mkpasswd
       rxvt_unicode.terminfo
       htop

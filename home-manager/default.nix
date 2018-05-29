@@ -1,14 +1,12 @@
 { pkgs, config, ... }:
-let
-  rust-scripts = with pkgs; callPackage ../packages/rust-scripts {};
-  unstable-pkgs = import <unstable> {};
-  eventd = unstable-pkgs.callPackage ../packages/eventd {};
-  st = import graphical/st;
-in {
+{
   nixpkgs.config.packageOverrides = pkgs: {
-    eventd = eventd;
-    st = st pkgs config.common.colors;
+    rust-scripts = pkgs.callPackage ./packages/rust-scripts {};
+    jali = pkgs.callPackage ./packages/jali {};
+    eventd = (import <unstable> {}).callPackage ./packages/eventd {};
+    st = (import graphical/st) pkgs config.common.colors;
   };
+
   home.file.".tmux.conf".text = ''
     set -g default-terminal "st-256color"
     set -ga terminal-overrides ",st-256color:Tc"
@@ -16,6 +14,7 @@ in {
     set -g status off
     set -g escape-time 1
   '';
+
   programs = {
     home-manager = {
       enable = true;
@@ -129,8 +128,6 @@ in {
     pythonPackages.qrcode
     ranger
 
-#    rust-scripts
-
     (pkgs.neovim.override {
       vimAlias = true;
       withPython3 = true;
@@ -145,7 +142,6 @@ in {
        '';
         packages.myVimPackage = with pkgs.vimPlugins; {
           start = [
-#            deoplete-nvim
             vim-nix
             ctrlp
             vimtex
@@ -153,11 +149,8 @@ in {
             UltiSnips
             airline
             rust-vim
-#           deoplete-rust
             fugitive
             airline
-#            ale
-#            vim-snippets
             vim-trailing-whitespace
             vim-polyglot
             nvim-cm-racer
