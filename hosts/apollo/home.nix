@@ -89,6 +89,12 @@ in
     # look & feel
     libertine
     nerdfonts
+    dina-font
+    envypn-font
+    google-fonts
+    gnome3.gnome-font-viewer
+    unscii
+    xfontsel
 
     # media
     ncmpcpp

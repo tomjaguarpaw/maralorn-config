@@ -10,10 +10,13 @@ networking = {
 i18n.consoleKeyMap = "neo";
 
 imports = [
+   <home-manager/nixos>
    ./hardware-configuration.nix
    ../../modules/cdarknet
    ../../host-common/common.nix
 ];
+
+home-manager.users = {};
 
 # Use the systemd-boot EFI boot loader.
 boot = {

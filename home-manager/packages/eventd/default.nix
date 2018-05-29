@@ -6,7 +6,7 @@ stdenv.mkDerivation rec {
     owner = "sardemff7";
     repo = "eventd";
     rev = version;
-    sha256 = "162gr3agmjn6d0wdj3lixv8qfvgfm9qg3wphbvwywdp4qcwvnjz8";
+    sha256 = "1xjkary1lq8yk1nqw039hrxwax1h0l0vi1dmcyqrgvzb1igsfa6y";
     fetchSubmodules = true;
   };
   buildInputs = [
@@ -30,6 +30,6 @@ stdenv.mkDerivation rec {
     dbus
   ];
   preConfigure = ''
-    export mesonFlags="-Denable-systemd=true -Denable-introspection=false -Denable-nd-wayland=false -Denable-im=false -Denable-sound=false -Ddbussessionservicedir=$prefix/share/dbus-1/services -Dsystemduserunitdir=$prefix/lib/systemd/user -Dsystemdsystemunitdir=$prefix/lib/systemd/system"
+    export mesonFlags="-Dsystemd=true -Dintrospection=false -Dnd-wayland=false -Dim=false -Dsound=false -Ddbussessionservicedir=$prefix/share/dbus-1/services -Dsystemduserunitdir=$prefix/lib/systemd/user -Dsystemdsystemunitdir=$prefix/lib/systemd/system"
   '';
 }

@@ -5,7 +5,8 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char font[] = "Roboto Mono:pixelsize=12:antialias=true:autohint=true";
+static char font[] = "Monofur Nerd Font:pixelsize=16:antialias=true:autohint=true";
+//static char font[] = "-misc-fixed-medium-r-normal--14-130-75-75-c-70-iso8859-1";
 static int borderpx = 2;
 #define histsize 20000
 

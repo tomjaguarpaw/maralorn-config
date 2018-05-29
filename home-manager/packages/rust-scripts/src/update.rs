@@ -5,6 +5,7 @@ use generate::GeneratedTask;
 use refresh::{TaskRefresher, Timer};
 use tasktree::TreeCache;
 use chrono::NaiveDate;
+use chrono::Duration;
 use kairos::timetype::TimeType as TT;
 use kairos::iter::extensions::{Weekly, Monthly, Daily};
 
@@ -52,17 +53,17 @@ pub fn update_tasks(cache: &mut TaskCache) -> Result<()> {
             "Putze Waschbecken",
             "Wäsche sortieren und entscheiden, welche Waschgänge notwendig sind",
         ]),
-        Timer::DeadTime(TT::weeks(2)),
+        Timer::DeadTime(Duration::weeks(2)),
     )?;
     cache.reactivate(
         simple_tasks(
             vec!["Reinige Toilette", "Zehennägel schneiden"],
         ),
-        Timer::DeadTime(TT::weeks(4)),
+        Timer::DeadTime(Duration::weeks(4)),
     )?;
     cache.reactivate(
         simple_tasks(vec!["Friseurtermin machen"]),
-        Timer::DeadTime(TT::weeks(6)),
+        Timer::DeadTime(Duration::weeks(6)),
     )?;
     cache.reactivate(
         simple_tasks(vec![

@@ -97,8 +97,6 @@ in {
     };
   };
 
-
-
   home.sessionVariables = {
     BROWSER="${pkgs.firefox}/bin/firefox";
     EDITOR="${pkgs.neovim}/bin/nvim";

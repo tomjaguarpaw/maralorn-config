@@ -22,7 +22,7 @@ use tasktree::{TreeCache, TaskNode};
 fn print_task_short(task: &Task) -> String {
     let mut info = vec![task.description().clone()];
     if let Some(tags) = task.tags() {
-        info.push(format!("+{}", tags.join(",+")));
+        info.push(format!("+{}", tags.join(", +")));
     }
     if let Some(project) = task.project() {
         info.push(format!("({})", project));

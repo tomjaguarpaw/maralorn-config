@@ -1,4 +1,5 @@
 use chrono::offset::{Local, TimeZone};
+use chrono::Duration;
 
 use kairos::timetype::TimeType as TT;
 use kairos::iter::Iter;
@@ -7,14 +8,14 @@ use kairos::error::Result as KairosResult;
 use task_hookrs::status::TaskStatus as TS;
 use task_hookrs::task::Task;
 use task_hookrs::cache::TaskCache;
-use task_hookrs::error::{Result, ResultExt};
+use task_hookrs::error::Result;
 use task_hookrs::date::Date;
 
 use generate::TaskGenerator;
 use tasktree::TaskNode;
 
 pub enum Timer {
-    DeadTime(TT),
+    DeadTime(Duration),
     Repetition(Iter),
 }
 
@@ -29,16 +30,13 @@ impl TaskRefresher for TaskCache {
     where
         T: IntoIterator<Item = Task>,
     {
-        let now = TT::Moment(Local::now().naive_local());
+        let now = Local::now();
+        let now_moment = TT::Moment(Local::now().naive_local());
         let recent = match recurrence {
-            Timer::DeadTime(time) => {
-                (now - time).calculate().chain_err(
-                    || "Failed to calculate recent from deadtime",
-                )?
-            }
+            Timer::DeadTime(time) => TT::Moment((now - time).naive_local()),
             Timer::Repetition(iter) => {
                 iter.filter_map(KairosResult::ok)
-                    .take_while(|t| *t <= now)
+                    .take_while(|t| *t <= now_moment)
                     .last()
                     .ok_or("Repetition starts in the future")?
                     .clone()
