@@ -17,7 +17,7 @@ in
 {
 
   imports = [
-    ../../home-common
+    ../../home-manager
     ../../home-common/my-systems.nix
     ../../home-common/graphical
     ../../home-common/latex.nix
