@@ -105,19 +105,20 @@
 
   imports = [
     ./taskwarrior.nix
-    ../modules/force-copies.nix
+    ./force-copies.nix
   ];
 
   home.packages = with pkgs; [
     htop
     tree
-    rxvt_unicode.terminfo
+    st.terminfo
     most
 
     socat
     nmap
     tcpdump
 
+    git-crypt
     rcm
     tmux
     tig

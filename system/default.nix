@@ -3,10 +3,11 @@
   # channel = 18.03
 
   imports = [
+    ./secret-option.nix
     ./laptop.nix
     ./admin.nix
     ./syncthing.nix
-    modules/cdarknet
+    ./cdarknet
   ];
 
   i18n = {
@@ -37,6 +38,7 @@
 
   environment = {
     systemPackages = with pkgs; [
+      git-crypt
       git
       gnumake
       python3
