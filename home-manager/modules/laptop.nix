@@ -28,20 +28,23 @@ config = mkIf config.m-0.laptop.enable {
   };
 
   home.packages = with pkgs; [
+    # web
     chromium
+
+    # communication
     signal-desktop
     tdesktop
     acpi
     dino
-
-    arandr
-
     mumble
 
+    # config
+    arandr
     xorg.xev
     xorg.xbacklight
-    meld
 
+    #dev
+    meld
     icedtea8_web
 
     # tools & office
@@ -50,7 +53,7 @@ config = mkIf config.m-0.laptop.enable {
     imagemagick
     libreoffice-fresh
     pandoc
-    xournal
+#    xournal
     musescore
     handbrake
     octave

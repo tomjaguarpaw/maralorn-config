@@ -22,6 +22,8 @@
     rxvt_unicode.terminfo
     st
 
+    (import <unstable> {}).home-manager
+
     socat
     nmap
     tcpdump
