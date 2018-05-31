@@ -1,11 +1,31 @@
 { pkgs, config, ... }:
 {
-  nixpkgs.config.packageOverrides = pkgs: {
-    rust-scripts = pkgs.callPackage ./packages/rust-scripts {};
-    jali = pkgs.callPackage ./packages/jali {};
+  imports = [
+    ./zsh
+    ./modules/taskwarrior.nix
+    ./modules/force-copies.nix
+    ./modules/battery.nix
+    ./modules/laptop.nix
+    ./modules/accounting.nix
+    ./modules/rustdev.nix
+    ./modules/latex.nix
+    ./modules/sleep-nag.nix
+    ./modules/graphical
+    ./modules/home-options.nix
+#   ./sort-mail.nix
+#   ./morgenreport.nix
+#   ./my-systems.nix
+  ];
+
+  nixpkgs.config.packageOverrides = pkgs: with pkgs; {
+    tasktree = callPackage ./packages/tasktree {};
+    rust-scripts = callPackage ./packages/rust-scripts {};
+    jali = with pkgs; callPackage ./packages/jali {};
     eventd = (import <unstable> {}).callPackage ./packages/eventd {};
-    st = (import graphical/st) pkgs config.common.colors;
+    st = (import packages/st) pkgs config.common.colors;
+    neovim = (import ./nvim) pkgs config.m-0.rustdev.enable;
   };
+
 
   home.file.".tmux.conf".text = ''
     set -g default-terminal "st-256color"
@@ -80,20 +100,6 @@
           { host = "door.w17.io"; identityFile = "~/.ssh/door_rsa";}
         ];
     };
-    zsh = {
-      enable = true;
-      enableAutosuggestions = true;
-      enableCompletion = true;
-      history = {
-        save = 100000;
-        size = 100000;
-      };
-      initExtra = builtins.readFile ./configs/zshrc;
-      oh-my-zsh = {
-        enable = true;
-        plugins = [ "colored-man-pages" "git-prompt" ];
-      };
-    };
   };
 
   home.sessionVariables = {
@@ -103,66 +109,8 @@
   };
   systemd.user.startServices = true;
 
-  imports = [
-    ./taskwarrior.nix
-    ./force-copies.nix
-  ];
-
   home.packages = with pkgs; [
-    htop
-    tree
-    st.terminfo
-    most
-
-    socat
-    nmap
-    tcpdump
-
-    git-crypt
-    rcm
-    tmux
-    tig
-    exa
-    fzf
-    ag
-
-    pythonPackages.qrcode
-    ranger
-
-    (pkgs.neovim.override {
-      vimAlias = true;
-      withPython3 = true;
-      configure = {
-        customRC = ''
-          let $RUST_SRC_PATH="${pkgs.rustPlatform.rustcSrc}"
-          let g:rustfmt_command = "${pkgs.rustfmt}/bin/rustfmt"
-          let g:racer_cmd = "${pkgs.rustracer}/bin/racer"
-          let g:deoplete#sources#rust#racer_binary='${pkgs.rustracer}/bin/racer'
-          let g:syntastic_rust_rustc_exe = '${pkgs.cargo}/bin/cargo check'
-          ${builtins.readFile ./configs/vimrc}
-       '';
-        packages.myVimPackage = with pkgs.vimPlugins; {
-          start = [
-            vim-nix
-            ctrlp
-            vimtex
-            Syntastic
-            UltiSnips
-            airline
-            rust-vim
-            fugitive
-            airline
-            vim-trailing-whitespace
-            vim-polyglot
-            nvim-cm-racer
-            nvim-completion-manager
-            vim-pandoc
-            nerdcommenter
-            vim-signify
-          ];
-        };
-      };
-    })
+    neovim
   ];
   xdg.enable = true;
 }

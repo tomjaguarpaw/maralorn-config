@@ -1,4 +1,4 @@
-{ jinja2, pendulum, GitPython, aqbanking, python36Packages, fetchgit }:
+{ aqbanking, python36Packages, fetchgit }:
 with python36Packages; buildPythonApplication rec {
   name = "${pname}-${version}";
   pname = "jali";

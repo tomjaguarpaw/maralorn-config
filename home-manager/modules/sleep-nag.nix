@@ -1,4 +1,5 @@
-{pkgs, ... }:
+{ lib, pkgs, config, ... }:
+with lib;
 let
   sleep-nag = pkgs.writeShellScriptBin "sleep-nag" ''
 while true
@@ -10,6 +11,10 @@ do
 done
 '';
 in {
+
+options.m-0.sleep-nag.enable = mkEnableOption "Sleep Nag";
+
+config = mkIf config.m-0.sleep-nag.enable {
   systemd.user = {
     services.sleep-nag = {
       Unit = {
@@ -23,4 +28,6 @@ in {
       };
     };
   };
+};
+
 }

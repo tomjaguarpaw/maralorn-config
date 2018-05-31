@@ -54,17 +54,5 @@ let g:syntastic_check_on_wq = 0
 let g:syntastic_aggregate_errors = 1
 let g:syntastic_enable_highlighting = 1
 let g:syntastic_loc_list_height = 5
-let g:rustfmt_autosave = 1
-"let g:ycm_rust_src_path = '/usr/src/rust/src'
-"let g:ftplugin_rust_source_path = '/usr/src/rust/src'
-let g:syntastic_rust_checkers = [ 'cargo']
-let g:rust_recommend_style = 1
-let g:rust_fold =1
-"let g:syntastic_rust_rustc_exe = 'cargo check'
-
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#auto_complete_start_length = 1
-
-"let g:deoplete#sources#rust#racer_binary='racer'
-"let g:rustfmt_command = "rustfmt"
-"let g:racer_cmd = "racer"

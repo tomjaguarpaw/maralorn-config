@@ -1,5 +1,8 @@
-{ pkgs, lib, ... }:
+{ lib, pkgs, config, ...}:
+with lib;
 {
+options.m-0.taskwarrior.enable = mkEnableOption "Taskwarrior";
+config = mkIf config.m-0.taskwarrior.enable {
   home = {
     packages = [ pkgs.taskwarrior ];
     file = {
@@ -53,7 +56,7 @@
   };
   xdg = let
     taskAction = name: template: {
-      "eventd/task-${name}.action".text = lib.generators.toINI {} {
+      "eventd/task-${name}.action".text = generators.toINI {} {
         Action = {
           Name = "task-${name}";
         };
@@ -67,7 +70,7 @@
     };
   in {
     configFile = {
-      "eventd/task.event".text = lib.generators.toINI {} {
+      "eventd/task.event".text = generators.toINI {} {
         "Event task add" = {
           Actions = "task-new";
         };
@@ -79,4 +82,6 @@
     taskAction "changed" "Changes in task:\\n<b>\${description}</b>\${status:+\\nStatus: }\${status}\${tags:+\\nTags: }\${tags}\${project:+\\nProject: }\${project}" //
     taskAction "new" "New \${status} task\${tags:! in inbox}:\\n<b>\${description}</b>\${tags:+\\nTags: }\${tags}\${project:+\\nProject: }\${project}";
   };
+};
+
 }

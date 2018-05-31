@@ -1,8 +1,8 @@
 { pkgs, lib, config, ... }:
 let
-  colors = config.common.colors;
-  workspaces = config.common.workspaces;
-  terminal = config.common.terminal;
+  colors = config.m-0.colors;
+  workspaces = config.m-0.workspaces;
+  terminal = config.m-0.terminal;
   exec = "exec --no-startup-id";
   taskstatus = pkgs.writeShellScriptBin "taskstatus" ''
     while true;
@@ -29,7 +29,6 @@ in {
     ./rofi
     ./urxvt.nix
   ];
-  home.packages = [ pkgs.skippy-xd ];
   xsession = {
     windowManager.i3 = {
       enable = true;
@@ -123,7 +122,7 @@ in {
             "XF86AudioMicMute" = "exec pactl set-source-mute '@DEFAULT_SOURCE@' toggle";
             "XF86MonBrightnessUp" = "exec xbacklight +5";
             "XF86MonBrightnessDown" = "exec xbacklight -5";
-            "XF86Display" = "exec arandr";
+            "XF86Display" = "${exec} ${pkgs.arandr}/bin/arandr";
             "Ctrl+Escape" = "${exec} loginctl lock-session;";
         } //
         addMods ({
@@ -131,7 +130,7 @@ in {
             "Down" = "focus down";
             "Up" = "focus up";
             "Right" = "focus right";
-            "Tab" = "${exec} skippy-xd";
+            "Tab" = "${exec} ${pkgs.skippy-xd}/bin/skippy-xd";
             "Prior" = "focus parent";
             "Next" = "focus child";
             "Return" = "${exec} ${terminal}";

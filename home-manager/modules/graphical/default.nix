@@ -1,12 +1,13 @@
-{ pkgs, lib, ... }:
-let
-  tasktree = with pkgs; callPackage ../../packages/tasktree {};
-in {
-  imports = [
-    ./i3.nix
-    ../../modules/home-options.nix
-  ];
-  common = {
+{ pkgs, lib, config, ... }:
+with lib;
+{
+
+options.m-0.graphical.enable = mkEnableOption "Window Manager";
+
+#imports = if config.m-0.graphical.enable then [ ./i3.nix ] else [];
+
+config = mkIf config.m-0.graphical.enable {
+  m-0 = {
     workspaces = [
       "tasks"
       "chat"
@@ -20,26 +21,26 @@ in {
       "config"
     ];
     terminal = "${pkgs.st}/bin/st";
-      colors = {
-        "foreground" = "#dddbff";
-        "background" = "#05004a";
-        "black" = "#030031";
-        "brightBlack" = "#55508f";
-        "red" = "#e34b4f";
-        "brightRed" = "#e34b4f";
-        "green" = "#67b779";
-        "brightGreen" = "#45b75e";
-        "yellow" = "#ff9c00";
-        "brightYellow" = "#ff9c00";
-        "blue" = "#5c67ff";
-        "brightBlue" = "#5c67ff";
-        "magenta" = "#cb85ff";
-        "brightMagenta" = "#cb85ff";
-        "cyan" = "#17d0f4";
-        "brightCyan" = "#17d0f4";
-        "white" = "#dddbff";
-        "brightWhite" = "#ffffff";
-      };
+    colors = {
+      "foreground" = "#dddbff";
+      "background" = "#05004a";
+      "black" = "#030031";
+      "brightBlack" = "#55508f";
+      "red" = "#e34b4f";
+      "brightRed" = "#e34b4f";
+      "green" = "#67b779";
+      "brightGreen" = "#45b75e";
+      "yellow" = "#ff9c00";
+      "brightYellow" = "#ff9c00";
+      "blue" = "#5c67ff";
+      "brightBlue" = "#5c67ff";
+      "magenta" = "#cb85ff";
+      "brightMagenta" = "#cb85ff";
+      "cyan" = "#17d0f4";
+      "brightCyan" = "#17d0f4";
+      "white" = "#dddbff";
+      "brightWhite" = "#ffffff";
+    };
   };
   home = {
     packages = with pkgs; [
@@ -99,4 +100,6 @@ in {
     };
   };
   xsession.enable = true;
+};
+
 }

@@ -3,11 +3,12 @@
   # channel = 18.03
 
   imports = [
-    ./secret-option.nix
-    ./laptop.nix
+    ./secret
+    ./modules/private-options.nix
+    ./modules/laptop.nix
     ./admin.nix
-    ./syncthing.nix
-    ./cdarknet
+#    ./syncthing.nix
+    ./modules/cdarknet
   ];
 
   i18n = {
@@ -37,22 +38,9 @@
   };
 
   environment = {
-    systemPackages = with pkgs; [
-      git-crypt
-      git
-      gnumake
-      python3
-      mkpasswd
-      rxvt_unicode.terminfo
-      htop
-      file
-      tmux
-      socat
-      tcpdump
-      wget
-      curl
-      neovim
-    ];
+    # Put these into an extra file so the essential packages can also be included on non selfadminstrated systems from home-manager
+    systemPackages = let essentials = import ../system/essentials.nix;
+  in (essentials.core pkgs) ++ (essentials.extra pkgs);
     sessionVariables = {
       TERMINFO = "/run/current-system/sw/share/terminfo";
     };
@@ -65,6 +53,5 @@
       enableCompletion = true;
       syntaxHighlighting.enable = true;
     };
-    vim.defaultEditor = true;
   };
 }

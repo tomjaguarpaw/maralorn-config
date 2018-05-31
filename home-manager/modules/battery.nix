@@ -1,4 +1,5 @@
-{pkgs, ... }:
+{ lib, pkgs, ... }:
+with lib;
 let
   battery-watch = pkgs.writeShellScriptBin "battery-watch" ''
 critical_level=20    #percent
@@ -18,6 +19,10 @@ do
 done
 '';
 in {
+
+options.m-0.battery.enable = mkEnableOption "Battery";
+
+config = mkIf config.m-0.battery.enable {
   systemd.user = {
     services.battery = {
       Unit = {
@@ -31,4 +36,6 @@ in {
       };
     };
   };
+};
+
 }

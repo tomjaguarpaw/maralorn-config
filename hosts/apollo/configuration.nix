@@ -1,10 +1,14 @@
 { config, pkgs, ... }:
-{
 
-  imports = [
-   <home-manager/nixos>
-   ./hardware-configuration.nix
-   ../../system
+let
+  me = config.m-0.private.me;
+in {
+
+imports = [
+ <home-manager/nixos>
+ ./secret
+ ./hardware-configuration.nix
+ ../../system
 ];
 
 networking = {
@@ -15,9 +19,7 @@ m-0 = {
   laptop.enable = true;
 };
 
-home-manager.users.maralorn = {
-  imports = [ ./home.nix ];
-};
+home-manager.users."${me.user}" = (import ./home.nix);
 
 # Use the systemd-boot EFI boot loader.
 boot = {
@@ -30,11 +32,20 @@ boot = {
 
 cdark_net = {
   enable = true;
-  hostName = "maralorn_apollo";
+  hostName = "${me.user}_${config.networking.hostName}";
   ed25519PrivateKeyFile = /etc/nixos/hosts/apollo/secret/tinc/ed25519_key.priv;
   hostsDirectory = /etc/nixos/system/modules/cdarknet/hosts;
   ip6address = "fd23:42:cda:4342::2";
   ip4address = "172.20.71.2";
 };
+
+services = {
+  mpd = {
+      enable = true;
+      network.listenAddress = "::0";
+      musicDirectory = "/home/maralorn/data/aktuell/media/musik";
+  };
+};
+
 
 }
