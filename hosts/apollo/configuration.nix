@@ -7,6 +7,8 @@ let
 in {
 
 imports = [
+  <nixos-hardware/lenovo/thinkpad>
+  <nixos-hardware/common/pc/ssd>
  ./hardware-configuration.nix
  ../../system
 ];

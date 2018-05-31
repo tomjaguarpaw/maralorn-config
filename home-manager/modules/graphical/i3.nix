@@ -33,6 +33,7 @@ config = mkIf config.m-0.graphical.enable {
           followMouse = false;
           forceWrapping = true;
         };
+        fonts = [ "Monofur Nerd Font 10.5" ];
         colors = {
           focused = {
             background = colors.blue;

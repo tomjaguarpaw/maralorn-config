@@ -21,7 +21,6 @@ imports = [
   ../common/secret
 #   ./sort-mail.nix
 #   ./morgenreport.nix
-#   ./my-systems.nix
 ];
 
 nixpkgs.config.packageOverrides = pkgs: with pkgs; {
@@ -111,6 +110,7 @@ home.sessionVariables = {
   EDITOR="${pkgs.neovim}/bin/nvim";
   TERMINAL=config.m-0.terminal;
 };
+
 systemd.user.startServices = true;
 
 home.packages = with pkgs; [
