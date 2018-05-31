@@ -14,7 +14,7 @@ config = mkIf config.m-0.latex.enable {
         collection-latexextra
         collection-bibtexextra
         collection-luatex
-        collection-scimath
+        collection-mathscience
         collection-fontsextra;
       };
     };

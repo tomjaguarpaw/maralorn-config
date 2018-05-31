@@ -67,6 +67,7 @@ config = mkIf config.m-0.laptop.enable {
     gmpc
     calibre
     mpv
+    youtubeDL
   ];
 };
 

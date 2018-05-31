@@ -1,7 +1,12 @@
 { pkgs, lib, config, ... }:
+with lib;
 let
-  colors = config.common.colors;
+  colors = config.m-0.colors;
 in {
+
+options.m-0.eventd.enable = mkEnableOption "Eventd";
+
+config = mkIf config.m-0.eventd.enable {
   home = {
     packages = with pkgs; [
       eventd
@@ -164,4 +169,6 @@ in {
       };
     };
   };
+};
+
 }

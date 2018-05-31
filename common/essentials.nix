@@ -7,14 +7,20 @@
     file
     wget
     curl
-    (pkgs.neovim.override {vimAlias = true;})
+    (pkgs.neovim.override {
+      vimAlias = true;
+      withPython3 = true;
+    })
+    gnupg
+    mutt
     ];
+
   extra = pkgs: with pkgs; [
     git-crypt
     htop
     tree
     rxvt_unicode.terminfo
-    st.terminfo
+    st
 
     socat
     nmap
@@ -29,5 +35,9 @@
 
     pythonPackages.qrcode
     ranger
+
+    pass
+    sshuttle
+    mtr
     ];
 }

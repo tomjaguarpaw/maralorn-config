@@ -4,7 +4,10 @@ with lib;
 
 options.m-0.graphical.enable = mkEnableOption "Window Manager";
 
-#imports = if config.m-0.graphical.enable then [ ./i3.nix ] else [];
+imports = [
+  ./i3.nix
+  ./rofi
+];
 
 config = mkIf config.m-0.graphical.enable {
   m-0 = {

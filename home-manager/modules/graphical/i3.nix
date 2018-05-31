@@ -1,8 +1,7 @@
 { pkgs, lib, config, ... }:
+with lib;
 let
-  colors = config.m-0.colors;
-  workspaces = config.m-0.workspaces;
-  terminal = config.m-0.terminal;
+  inherit (config.m-0) colors workspaces terminal;
   exec = "exec --no-startup-id";
   taskstatus = pkgs.writeShellScriptBin "taskstatus" ''
     while true;
@@ -24,11 +23,8 @@ let
     {}
     (builtins.attrNames oldbindings);
 in {
-  imports = [
-    ./eventd.nix
-    ./rofi
-    ./urxvt.nix
-  ];
+
+config = mkIf config.m-0.graphical.enable {
   xsession = {
     windowManager.i3 = {
       enable = true;
@@ -109,12 +105,12 @@ in {
           titlebar = false;
           border = 1;
         };
-#        gaps = {
-#          inner = 0;
-#          outer = 0;
-#          smartBorders = "off";
-#          smartGaps = false;
-#        };
+        gaps = {
+          inner = 0;
+          outer = 0;
+          smartBorders = "off";
+          smartGaps = false;
+        };
         keybindings = {
             "XF86AudioMute" = "exec pactl set-sink-mute '@DEFAULT_SINK@' toggle";
             "XF86AudioLowerVolume" = "exec pactl set-sink-volume '@DEFAULT_SINK@' -5%";
@@ -160,4 +156,6 @@ in {
       };
     };
   };
+};
+
 }

@@ -3,11 +3,12 @@
   # channel = 18.03
 
   imports = [
-    ./secret
-    ./modules/private-options.nix
+    <home-manager/nixos>
+    ../common/secret
+    ../common/private-options.nix
     ./modules/laptop.nix
     ./admin.nix
-#    ./syncthing.nix
+    ./syncthing.nix
     ./modules/cdarknet
   ];
 
@@ -39,7 +40,7 @@
 
   environment = {
     # Put these into an extra file so the essential packages can also be included on non selfadminstrated systems from home-manager
-    systemPackages = let essentials = import ../system/essentials.nix;
+    systemPackages = let essentials = import ../common/essentials.nix;
   in (essentials.core pkgs) ++ (essentials.extra pkgs);
     sessionVariables = {
       TERMINFO = "/run/current-system/sw/share/terminfo";

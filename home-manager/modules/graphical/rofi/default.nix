@@ -1,14 +1,13 @@
 { pkgs, lib, config, ... }:
+with lib;
 let
-  workspaces = config.m-0.workspaces;
-  terminal = config.m-0.terminal;
-  colors = config.m-0.colors;
-  rofiTask = pkgs.writeScriptBin "tasklauncher" (builtins.readFile ./tasklauncher.py);
+  inherit (config.m-0) colors workspaces terminal;
 in {
+
+config = mkIf config.m-0.graphical.enable {
   home = {
     packages = with pkgs; [
-      rofi
-      rofiTask
+      (writeScriptBin "tasklauncher" (builtins.readFile ./tasklauncher.py))
       rofi-pass
     ];
   };
@@ -67,4 +66,6 @@ in {
       };
     };
   };
+};
+
 }

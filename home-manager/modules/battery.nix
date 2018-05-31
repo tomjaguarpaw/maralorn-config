@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, config, ... }:
 with lib;
 let
   battery-watch = pkgs.writeShellScriptBin "battery-watch" ''

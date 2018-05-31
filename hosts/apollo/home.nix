@@ -13,5 +13,6 @@ m-0.accounting.enable = true;
 m-0.graphical.enable = true;
 m-0.rustdev.enable = true;
 m-0.taskwarrior.enable = true;
+m-0.eventd.enable = true;
 
 }
