@@ -16,7 +16,7 @@ use dialog::errors::ErrorKind as DEK;
 use update::update_tasks;
 use generate::GeneratedTask;
 use error::{Result, ResultExt, ErrorKind as EK, Error};
-use hotkeys::str2cmd;
+use hotkeys::{str2cmd, term_cmd};
 use tasktree::{TreeCache, TaskNode};
 
 fn print_task_short(task: &Task) -> String {
@@ -707,7 +707,7 @@ What's the progress?",
             })
             .len() > 0
         {
-            str2cmd("urxvt -e sh -c")
+            str2cmd(&term_cmd("sh -c"))
                 .arg("jali -l. && task gen_id:'Aktualisiere Buchhaltung' done")
                 .output()?;
         }

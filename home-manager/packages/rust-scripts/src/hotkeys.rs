@@ -4,6 +4,7 @@ use dialog::errors::{Error, ErrorKind as EK};
 use dialog::rofi::RofiDialogProvider;
 use std::process::Command as StdCommand;
 use std::os::unix::process::CommandExt;
+use std::env::var;
 use error::{Result, ResultExt};
 
 use hotkeys::Next::*;
@@ -19,12 +20,16 @@ pub fn run<T: Into<String>>(name: T, command: &str) -> Item {
     )
 }
 
-pub fn term<T: Into<String>>(name: T, command: &str) -> Item {
-    run(name, &format!("urxvt -e {}", command))
+pub fn term_cmd(command: &str) -> String {
+    format!(
+        "{} -e {}",
+        var("TERMINAL").unwrap_or("urxvt".into()),
+        command
+    )
 }
 
-pub fn holdterm<T: Into<String>>(name: T, command: &str) -> Item {
-    run(name, &format!("urxvt -hold -e {}", command))
+pub fn term<T: Into<String>>(name: T, command: &str) -> Item {
+    run(name, &term_cmd(command))
 }
 
 pub fn menu<T: Into<String>>(name: T, options: Vec<Item>) -> Item {

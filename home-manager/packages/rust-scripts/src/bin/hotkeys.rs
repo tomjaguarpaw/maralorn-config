@@ -4,15 +4,15 @@ extern crate task_hookrs;
 extern crate error_chain;
 
 use std::rc::Rc;
-use rust_scripts::hotkeys::{run, term, holdterm, menu, main_loop, Next};
+use rust_scripts::hotkeys::{run, term, menu, main_loop, Next};
 use rust_scripts::kassandra::{kassandra, change_state, new_tasks};
 use rust_scripts::error::Result;
 
 quick_main!(|| -> Result<()> {
     let w17menu = {
-        let summer = holdterm("Summer", "ssh summer@door.w17.io");
-        let lock = holdterm("Lock", "ssh close@door.w17.io");
-        let unlock = holdterm("Unlock", "ssh open@door.w17.io");
+        let summer = term("Summer", "ssh summer@door.w17.io");
+        let lock = term("Lock", "ssh close@door.w17.io");
+        let unlock = term("Unlock", "ssh open@door.w17.io");
         let mpd_whisky = term("MPD Whisky", "ncmpcpp -h whisky");
         let hub = run("Hub", "firefox --new-window https://hub.w17.io");
         let kitchen = run("Kitchen", "firefox --new-window http://kitchen.w17.io");
@@ -67,7 +67,7 @@ quick_main!(|| -> Result<()> {
                 menu(
                     "Accounting",
                     vec![
-                        holdterm("Jali", "jali -l ."),
+                        term("Jali", "jali -l ."),
                         run(
                             "Beschlüsse",
                             "firefox --new-window https://git.darmstadt.ccc.de/vorstand/beschluesse/raw/master/beschl%C3%BCsse"
@@ -95,10 +95,10 @@ quick_main!(|| -> Result<()> {
         );
         let monitor = term("Monitor", "htop");
         let wifi = term("WLAN", "nmtui");
-        let update_home = holdterm("Update Home", "home-manager switch");
-        let update_sys = holdterm("Update Sys", "sudo nixos-rebuild switch");
-        let gc = holdterm("Collect Garbage", "nix-collect-garbage -d");
-        let optimise = holdterm("Optimise", "nix optimise-store");
+        let update_home = term("Update Home", "home-manager switch");
+        let update_sys = term("Update Sys", "sudo nixos-rebuild switch");
+        let gc = term("Collect Garbage", "nix-collect-garbage -d");
+        let optimise = term("Optimise", "nix optimise-store");
         menu(
             "Maintenance",
             vec![
@@ -119,6 +119,7 @@ quick_main!(|| -> Result<()> {
             ("kiva", "brandy@kiva-forward"),
             ("ag", "brandy@ag-forward"),
             ("whisky", "whisky"),
+            ("kitchen", "kitchen"),
             ("vorstand", "vorstand"),
             ("shells", "shells"),
             ("charon", "charon"),
