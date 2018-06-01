@@ -44,6 +44,8 @@ cdark_net = {
 services = {
   mpd = {
       enable = true;
+      user = me.user;
+      group = "users";
       network.listenAddress = "::0";
       musicDirectory = "/home/${me.user}/data/aktuell/media/musik";
   };
