@@ -40,6 +40,5 @@
 
     pass
     sshuttle
-    mtr
     ];
 }
