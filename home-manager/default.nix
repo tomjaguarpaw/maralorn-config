@@ -17,6 +17,7 @@ imports = [
   ./modules/graphical
   ./modules/home-options.nix
   ./modules/eventd.nix
+  ./modules/unlock.nix
   ../common/private-options.nix
   ../common/secret
 #   ./sort-mail.nix
@@ -89,6 +90,7 @@ programs = {
         agHost = "fb04217.mathematik.tu-darmstadt.de";
       in [
         { host = "charon"; hostname = "charon.olymp.space"; }
+        { host = "hera"; hostname = "hera.m-0.eu"; }
         { host = "*.olymp.space"; user = me.user; }
         { host = "ag-forward"; hostname = agHost; proxyCommand = matheGwProxy; user = meWork.user; }
         { host = "ag"; hostname = agHost; user = meWork.user; }
