@@ -1,5 +1,11 @@
 { config, pkgs, lib, ... }:
 with lib;
+
+let
+
+  me = config.m-0.private.me;
+
+in
 {
   options = {
     m-0.laptop.enable = mkOption {
@@ -12,8 +18,31 @@ with lib;
       networkmanager.enable = true;
     };
     i18n.consoleKeyMap = "neo";
-    hardware.pulseaudio.enable = true;
+
+    sound.enable = true;
+    hardware.pulseaudio = {
+      enable = true;
+      tcp = {
+        enable = true;
+        anonymousClients.allowedIpRanges = [ "127.0.0.1" "::1" ];
+      };
+    };
+
     services = {
+      mpd = {
+          enable = true;
+          user = me.user;
+          group = "users";
+          network.listenAddress = "::1";
+          musicDirectory = "/home/${me.user}/data/aktuell/media/musik";
+          extraConfig = ''
+          audio_output {
+                type "pulse"
+                name "Pulseaudio"
+                server "localhost"
+          }
+          '';
+      };
       xserver = {
         enable = true;
         layout = "de";

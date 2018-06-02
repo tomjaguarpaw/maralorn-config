@@ -41,15 +41,6 @@ cdark_net = {
   ip4address = "172.20.71.2";
 };
 
-services = {
-  mpd = {
-      enable = true;
-      user = me.user;
-      group = "users";
-      network.listenAddress = "::0";
-      musicDirectory = "/home/${me.user}/data/aktuell/media/musik";
-  };
-};
 
 
 }
