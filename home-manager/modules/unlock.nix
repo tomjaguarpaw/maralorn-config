@@ -9,7 +9,9 @@ let
     '';
   in
     pkgs.writeShellScriptBin "unlock-${name}" ''
+    /run/wrappers/bin/ping -4 ${name}.m-0.eu -c 1
     ${pkgs.pass}/bin/pass eu/m-0/${name}/disk | ssh -4 root@${name}.m-0.eu -o UserKnownHostsFile=${knownHosts} cryptsetup-askpass
+    echo "Unlocking of ${name} completed"
   '';
 in
 {
