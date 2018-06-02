@@ -7,6 +7,7 @@
     ../common/secret
     ../common/private-options.nix
     ./modules/laptop.nix
+    ./modules/server.nix
     ./admin.nix
     ./syncthing.nix
     ./modules/cdarknet
@@ -17,8 +18,6 @@
   };
 
   time.timeZone = "Europe/Berlin";
-
-  security.rngd.enable = true;
 
   # So that boot does not fill up with old kernels
   boot.loader.grub.configurationLimit = 5;
@@ -32,7 +31,10 @@
     Defaults timestamp_type=global, timestamp_timeout=15
   ";
 
-  networking.firewall.allowPing = true;
+  networking = {
+    firewall.allowPing = true;
+    useDHCP = false;
+  };
 
   services = {
     sshd.enable = true;

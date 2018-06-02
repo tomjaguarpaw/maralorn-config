@@ -4,9 +4,11 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [ ];
+  imports = [
+  	<nixpkgs/nixos/modules/profiles/qemu-guest.nix>
+  ];
 
-  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" ];
+  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "sr_mod" "virtio_blk" ];
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
 
@@ -16,7 +18,7 @@
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/A8E7-3962";
+    { device = "/dev/disk/by-uuid/3D8A-20F0";
       fsType = "vfat";
     };
 

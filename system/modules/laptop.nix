@@ -4,6 +4,7 @@ with lib;
   options = {
     m-0.laptop.enable = mkOption {
       type = types.bool;
+      default = false;
     };
   };
   config = mkIf config.m-0.laptop.enable {
