@@ -2,27 +2,31 @@
 with lib;
 
 let
-  makeScripts = name:
+  makeUnlocker = { name, hostName, pubKey, passPath }:
   let
-    knownHosts = pkgs.writeText "KnownBootHosts" ''
-      hera.m-0.eu,213.136.94.190 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCHkqWlFLtmIlTSKahr2PcL++K75YgfsSU6jwVYW5df3JCkowu/M16SIBxABxYSQrKej5uIz/OFCjqSxHJQ8D5wSYBvn2gYr/BbBcz4rfIJmZ55Od2jckaqlj/M8TtkuPPhsQG7S730vXxK5hbMT8iW5WWv8sIKY/WtaRbZOFMX/53WCLEHtnMu5zFJFWf92+mjIHSLyW8ggl1m525RUiaAfCge2vnuzIFq4kUqJxaWzxIvEWIncKWN10K/HMvdI+yOtbSen41uKedwSFhUFs3xHy1mJddYOrlcJQPt5zuuffZ/nTDVXMZoh5QNwg8ZlkkueVChaS1Y5STjb7cem1Mt
-    '';
+    knownHosts = pkgs.writeText "KnownBootHosts" "${hostName} ${pubKey}";
   in
     pkgs.writeShellScriptBin "unlock-${name}" ''
-    /run/wrappers/bin/ping -4 ${name}.m-0.eu -c 1
-    ${pkgs.pass}/bin/pass eu/m-0/${name}/disk | ssh -4 root@${name}.m-0.eu -o UserKnownHostsFile=${knownHosts} cryptsetup-askpass
-    echo "Unlocking of ${name} completed"
+    echo "Waiting for host to come up";
+    while true; do
+      echo -n .
+      /run/wrappers/bin/ping -4 ${hostName} -c 1 -w 1 > /dev/null && break;
+      sleep 1s;
+    done;
+    echo
+    echo "Ping successful; Entering disk encryption password"
+    ${pkgs.pass}/bin/pass ${passPath} | ssh -4 root@${hostName} -o UserKnownHostsFile=${knownHosts} cryptsetup-askpass && echo "Unlocking of ${name} successful" || echo "Unlockung of ${name} failed"
   '';
 in
 {
 
 options.m-0.unlocker = mkOption {
   default = [];
-  type = types.listOf types.str;
+  type = types.listOf types.attrs;
 };
 
 config = {
-  home.packages = map makeScripts config.m-0.unlocker;
+  home.packages = map makeUnlocker config.m-0.unlocker;
 };
 
 }
