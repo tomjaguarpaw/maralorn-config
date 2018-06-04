@@ -13,7 +13,7 @@ config = mkIf config.m-0.server.enable {
         # generate file with
         # dropbearkey -t rsa -f /etc/nixos/boot_rsa
         # nix-env -iA nixos.dropbear
-        hostRSAKey = ../../local/secret/boot_rsa;
+        hostRSAKey = builtins.toPath "/etc/nixos/hosts/${config.networking.hostName}/secret/boot_rsa";
       };
     };
     postMountCommands = "ip link set eth0 down";
