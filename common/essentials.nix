@@ -21,6 +21,7 @@
     tree
     rxvt_unicode.terminfo
     st
+    pwgen
 
     (import <unstable> {}).home-manager
 
