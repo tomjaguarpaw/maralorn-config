@@ -18,7 +18,7 @@ imports = [
   ./modules/home-options.nix
   ./modules/eventd.nix
   ./modules/unlock.nix
-  ./modules/weechat.nix
+  ./modules/weechat
   ../common/private-options.nix
   ../common/secret
 #   ./sort-mail.nix
