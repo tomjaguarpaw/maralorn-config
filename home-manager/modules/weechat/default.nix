@@ -27,14 +27,25 @@ config = mkIf config.m-0.weechat.enable {
       target = ".weechat/perl";
       source = ./plugins/perl;
     };
+    plugins = {
+      target = ".weechat/plugins.conf";
+      text = ''
+[var]
+python.buffer_autohide.hide_inactive = on
+python.buffer_autohide.hide_private = on
+        '';
+    };
     weechat = {
       target = ".weechat/weechat.conf";
       text = ''
-[color]
-chat_nick_colors = "cyan,magenta,green,brown,lightblue,default,lightcyan,lightmagenta,lightgreen,blue,31,35,38,40,49,63,70,80,92,99,112,126,130,138,142,148,160,162,167,169,174,176,178,184,186,210,212,215,228"
+        [look]
+        buffer_notify_default = "highlight"
 
-[network]
-gnutls_ca_file = "/etc/nixos/home-manager/modules/weechat/rootca.crt"
+        [color]
+        chat_nick_colors = "cyan,magenta,green,brown,lightblue,default,lightcyan,lightmagenta,lightgreen,blue,31,35,38,40,49,63,70,80,92,99,112,126,130,138,142,148,160,162,167,169,174,176,178,184,186,210,212,215,228"
+
+        [network]
+        gnutls_ca_file = "/etc/nixos/home-manager/modules/weechat/rootca.crt"
         '';
     };
     logger = {
