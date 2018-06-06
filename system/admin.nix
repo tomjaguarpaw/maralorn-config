@@ -4,6 +4,7 @@ let
 in {
   users.users = {
     "${me.user}" = {
+      linger = true;
       description = me.name;
       isNormalUser = true;
       uid = 1000;

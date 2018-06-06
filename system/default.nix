@@ -11,6 +11,7 @@
     ./admin.nix
     ./syncthing.nix
     ./modules/cdarknet
+    ./modules/loginctl-linger.nix
   ];
 
   i18n = {
