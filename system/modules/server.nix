@@ -20,7 +20,7 @@ config = mkIf config.m-0.server.enable {
     optimise.automatic = true;
   };
   system.autoUpgrade.enable = true;
-  system.autoUpgrade.dates = "22:00";
+  system.autoUpgrade.dates = "2:45";
 };
 
 }
