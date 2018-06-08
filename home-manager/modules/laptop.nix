@@ -53,7 +53,7 @@ config = mkIf config.m-0.laptop.enable {
     imagemagick
     libreoffice-fresh
     pandoc
-#    xournal
+    xournal
     musescore
     handbrake
     octave
