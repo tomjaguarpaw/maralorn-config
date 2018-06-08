@@ -11,6 +11,7 @@ imports = [
   <nixos-hardware/common/pc/ssd>
  ./hardware-configuration.nix
  ../../system
+ ./syncthing.nix
 ];
 
 networking = {
@@ -19,6 +20,7 @@ networking = {
 
 m-0 = {
   laptop.enable = true;
+  standalone.enable = true;
 };
 
 home-manager.users."${me.user}" = (import ./home.nix);

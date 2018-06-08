@@ -1,8 +1,9 @@
-{config, ...}:
+{config, lib, ...}:
+with lib;
 let
   me = config.m-0.private.me;
 in {
-  users.users = {
+  users.users = mkIf config.m-0.standalone.enable {
     "${me.user}" = {
       linger = true;
       description = me.name;
