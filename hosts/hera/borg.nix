@@ -20,6 +20,7 @@ in {
       services = {
         borgbackup.repos.backups = {
           authorizedKeys = me.keys;
+          authorizedKeysAppendOnly = me.backupkeys;
           quota = "150G";
         };
         sshd.enable = true;

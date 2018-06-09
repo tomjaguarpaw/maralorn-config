@@ -22,6 +22,7 @@
     rxvt_unicode.terminfo
     st
     pwgen
+    borgbackup
 
     (import <unstable> {}).home-manager
 
