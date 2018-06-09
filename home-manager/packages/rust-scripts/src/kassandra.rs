@@ -460,6 +460,35 @@ What's the progress?",
         }
     }
 
+    pub fn select_priority(&mut self, uuid: &Uuid) -> Result<()> {
+        {
+            let task = self.cache.get_mut(uuid).chain_err(
+                || "select_priority: missing uuid",
+            )?;
+            match self.dialog.select_option(
+                format!(
+                    "Choose a priority for task\n{}",
+                    print_task(task)
+                ),
+                vec![
+                    (prio_name(Some(&TaskPriority::High)), "h"),
+                    (prio_name(Some(&TaskPriority::Medium)), "m"),
+                    (prio_name(Some(&TaskPriority::Low)), "l"),
+                    (prio_name(None), "n"),
+                    ("Optional", "o"),
+                ],
+            )? {
+                "h" => task.set_priority(Some(TaskPriority::High)),
+                "l" => task.set_priority(Some(TaskPriority::Medium)),
+                "m" => task.set_priority(Some(TaskPriority::Low)),
+                "n" => task.set_priority(None as Option<TaskPriority>),
+                "o" => task.add_tag("optional"),
+                other => bail!("Unknown option {}", other),
+            }
+        }
+        Ok(self.cache.write()?)
+    }
+
     pub fn edit_task(&mut self, uuid: &Uuid) -> Result<()> {
         loop {
             let task_name = print_task(
@@ -471,14 +500,15 @@ What's the progress?",
                 task_name
             ),
             vec![
-                ("Do it: I'll get to it", "do"),
+                ("Now: I'll get to it", "do"),
                 ("Done: I already did this", "done"),
                 ("Delete: This does not need to be done anymore","delete"),
+                ("Priority","prio"),
                 ("Edit description: I want to change the description", "edit"),
                 ("Move: Change position in tasktree", "move"),
                 ("Split: Give this tasks subtasks", "split"),
                 ("Depend: Set dependency", "depend"),
-                ("Postpone: Set wait time", "postpone"),
+                ("Wait: Set wait time", "postpone"),
                 ("Tag: Add a tag", "tag"),
                 ("Clear tags", "clear_tags"),
                 ("Manual: I have to change something by hand", "manual"),
@@ -546,29 +576,7 @@ What's the progress?",
                 self.cache.write()?;
             }
             "tag" => {
-                let tag = self.dialog.input_line(
-                    format!("Enter tag for {}", task_name),
-                    vec![
-                        "alber",
-                        "await",
-                        "city",
-                        "home",
-                        "pc",
-                        "research",
-                        "streicher",
-                        "uni",
-                        "work",
-                        "claire",
-                        "burkhard",
-                        "cornelia",
-                        "nathalie",
-                    ],
-                )?;
-                self.cache
-                    .get_mut(uuid)
-                    .chain_err(|| "missing uuid")?
-                    .add_tag(tag);
-                self.cache.write()?;
+                self.add_tag(uuid)?;
             }
             "clear_tags" => {
                 self.cache
@@ -576,6 +584,9 @@ What's the progress?",
                     .chain_err(|| "missing uuid")?
                     .set_tags(None as Option<Vec<String>>);
                 self.cache.write()?;
+            }
+            "prio" => {
+                self.select_priority(uuid)?;
             }
             "postpone" => {
                 str2cmd(&format!(
@@ -655,6 +666,88 @@ What's the progress?",
 
     }
 
+    pub fn add_tag(&mut self, uuid: &Uuid) -> Result<()> {
+        enum Select {
+            Edit,
+            More,
+            Tag(&'static str),
+        };
+        match self.dialog.select_option(
+            format!(
+                "Handling Task: {}\nWhen will you do this?",
+                print_task(
+                    self.cache.get(uuid).chain_err(|| "missing uuid")?,
+                )
+            ),
+            vec![
+                (
+                    "Await: Somebody else has to do this",
+                    Select::Tag("await")
+                ),
+                (
+                    "PC: When I'm at my computer",
+                    Select::Tag("pc")
+                ),
+                ("Work: While working", Select::Tag("work")),
+                (
+                    "Research: While doing research",
+                    Select::Tag("research")
+                ),
+                (
+                    "Home: When I'm at home",
+                    Select::Tag("home")
+                ),
+                (
+                    "Uni: At the university",
+                    Select::Tag("uni")
+                ),
+                ("City: In the city", Select::Tag("city")),
+                (
+                    "More: Set other or multiple tag",
+                    Select::More
+                ),
+                ("Edit: This task instead", Select::Edit),
+            ],
+        )? {
+            Select::Tag(tag) => {
+                {
+                    let task = self.cache.get_mut(uuid).chain_err(|| "missing uuid")?;
+                    task.set_tags(None as Option<Vec<String>>);
+                    task.add_tag(tag);
+                }
+                self.cache.write()?;
+            }
+            Select::More => {
+                let tags = self.dialog.input_line(
+                    format!(
+                        "Enter tag(s) for:\n{}",
+                        print_task(
+                            self.cache.get(uuid).chain_err(|| "missing uuid")?,
+                        )
+                    ),
+                    vec![
+                        "alber",
+                        "streicher",
+                        "burkhard",
+                        "cornelia",
+                        "nathalie",
+                    ],
+                )?;
+                {
+                    let task = self.cache.get_mut(uuid).chain_err(|| "missing uuid")?;
+                    task.set_tags(None as Option<Vec<String>>);
+                    for tag in tags.split_whitespace() {
+                        task.add_tag(tag);
+                    }
+                }
+                self.cache.write()?;
+            }
+
+            Select::Edit => self.edit_task(uuid)?,
+        }
+        Ok(())
+    }
+
     pub fn handle_task(&mut self, uuid: &Uuid) -> Result<()> {
         let task_name = print_task(self.cache.get(uuid).chain_err(
             || "handle_task: missing uuid",
@@ -707,40 +800,16 @@ What's the progress?",
             self.sort(uuid)?;
         }
         if !self.make_project(uuid)? {
-            if let Some(tag) = self.dialog.select_option(
-                format!(
-                    "Handling Task: {}\nWhen will you do this?",
-                    print_task(
-                        self.cache.get(uuid).chain_err(|| "missing uuid")?,
-                    )
-                ),
-                vec![
-                    ("Optional: I might never", Some("optional")),
-                    ("Later: This has to wait", Some("later")),
-                    (
-                        "Await: Somebody else has to do this",
-                        Some("await")
-                    ),
-                    ("PC: When I'm at my computer", Some("pc")),
-                    ("Work: While working", Some("work")),
-                    (
-                        "Research: While doing research",
-                        Some("research")
-                    ),
-                    ("Home: When I'm at home", Some("home")),
-                    ("Edit: This task instead", None),
-                ],
-            )?
+            if self.cache
+                .get(uuid)
+                .chain_err(|| "missing uuid")?
+                .priority()
+                .is_none()
             {
-                self.cache
-                    .get_mut(uuid)
-                    .chain_err(|| "missing uuid")?
-                    .add_tag(tag);
-                self.cache.write()?;
-            } else {
-                self.edit_task(uuid)?;
+                self.select_priority(uuid)?;
             }
         }
+        self.add_tag(uuid)?;
         Ok(())
     }
 
