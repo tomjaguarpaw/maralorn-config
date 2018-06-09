@@ -13,5 +13,8 @@ in {
       openssh.authorizedKeys.keys = me.keys;
       passwordFile = me.pw-file;
     };
+    root = {
+      passwordFile = me.pw-file;
+    };
   };
 }
