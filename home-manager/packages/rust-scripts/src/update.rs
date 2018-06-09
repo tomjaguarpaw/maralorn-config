@@ -1,13 +1,16 @@
-use task_hookrs::error::Result;
-use task_hookrs::cache::TaskCache;
-use task_hookrs::task::{Task, TaskBuilder};
+use task_hookrs::{
+    error::Result,
+    cache::TaskCache,
+    task::{Task, TaskBuilder}
+};
 use generate::GeneratedTask;
 use refresh::{TaskRefresher, Timer};
 use tasktree::TreeCache;
-use chrono::NaiveDate;
-use chrono::Duration;
-use kairos::timetype::TimeType as TT;
-use kairos::iter::extensions::{Weekly, Monthly, Daily};
+use chrono::{NaiveDate,Duration};
+use kairos::{
+    timetype::TimeType as TT,
+    iter::extensions::{Weekly, Monthly, Daily}
+};
 
 fn simple_task(name: &str) -> Task {
     let mut task = TaskBuilder::default().description(name).build().expect(
