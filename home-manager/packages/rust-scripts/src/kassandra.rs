@@ -208,7 +208,7 @@ impl Kassandra {
         Ok(())
     }
 
-    fn get_sorted_uuids<T: Fn(&Task) -> bool>(&self, filter: T) -> Vec<Uuid> {
+    fn get_sorted_uuids(&self, filter: impl Fn(&Task) -> bool) -> Vec<Uuid> {
         self.get_sorted_tasks(filter)
             .into_iter()
             .map(|x| x.uuid().clone())

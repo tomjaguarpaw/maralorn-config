@@ -17,7 +17,7 @@ use error::{Result, ResultExt};
 
 use hotkeys::Next::*;
 
-pub fn run<T: Into<String>>(name: T, command: &str) -> Item {
+pub fn run(name: impl Into<String>, command: &str) -> Item {
     let command = command.to_owned();
     (
         name.into(),
@@ -28,7 +28,7 @@ pub fn run<T: Into<String>>(name: T, command: &str) -> Item {
     )
 }
 
-pub fn run_cmd<T: Into<String>>(name: T, command: Command) -> Item {
+pub fn run_cmd(name: impl Into<String>, command: Command) -> Item {
     (
         name.into(),
         Do(Rc::new(move || {
@@ -47,11 +47,11 @@ pub fn term_cmd(command: &str) -> String {
     )
 }
 
-pub fn term<T: Into<String>>(name: T, command: &str) -> Item {
+pub fn term(name: impl Into<String>, command: &str) -> Item {
     run(name, &term_cmd(command))
 }
 
-pub fn menu<T: Into<String>>(name: T, options: Vec<Item>) -> Item {
+pub fn menu(name: impl Into<String>, options: Vec<Item>) -> Item {
     let name = name.into();
     (name.clone(), Menu((name.clone(), options)))
 }
@@ -71,7 +71,7 @@ type Item = (String, Next);
 
 type Command = Vec<String>;
 
-fn show_menu<T: DialogProvider>(dialog_provider: &mut T, menu: Dialog) -> Result<Next> {
+fn show_menu(dialog_provider: &mut impl DialogProvider, menu: Dialog) -> Result<Next> {
     let (msg, mut options) = menu;
     options.insert(0, (".Back".into(), Back));
     match dialog_provider.select_option(msg, options) {
