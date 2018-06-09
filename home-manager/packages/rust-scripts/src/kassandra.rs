@@ -1,6 +1,5 @@
 use std::fs::File;
 use std::env::home_dir;
-use std::iter::once;
 
 use serde_yaml::{from_reader, to_writer, to_string};
 
@@ -746,39 +745,144 @@ What's the progress?",
     }
 
     pub fn select_next_task(&mut self) -> Result<()> {
-        while self.cache
-            .filter(|t| t.start().is_some() && t.pending())
-            .next()
-            .is_none() &&
-            self.cache
-                .filter(|t| {
-                    t.pending() && self.is_relevant(t) && !task_blocked(&self.cache, t)
-                })
-                .next()
-                .is_some()
-        {
-            if let Some(uuid) = {
-                let next_tasks = self.get_sorted_tasks(|t| {
-                    t.pending() && self.is_relevant(t) && !task_blocked(&self.cache, t)
-                }).into_iter()
-                    .map(|t| (print_task_short(t), Some(t.uuid().clone())))
-                    .collect::<Vec<_>>();
-                self.dialog.select_option(
-                    "What are you going to do now?",
-                    once(("Manual: Edit my tasks".into(), None))
-                        .chain(next_tasks.into_iter()),
-                )?
+        #[derive(PartialEq)]
+        enum State {
+            Promote,
+            Demote,
+            Pick,
+        };
+        enum Select {
+            S(State),
+            P(Option<TaskPriority>),
+            T(Uuid),
+            Manual,
+        };
+        use task_hookrs::priority::TaskPriority::*;
+        let mut state = State::Pick;
+        let mut prio = Some(TaskPriority::High);
+        loop {
+            let (m, o) = {
+                let tasks = self.get_sorted_tasks(|t| {
+                    t.pending() && self.is_relevant(t) && !task_blocked(&self.cache, t) &&
+                        t.priority() == prio.as_ref()
+                });
+                if tasks.len() == 0 {
+                    if self.cache
+                        .filter(|t| {
+                            t.pending() && self.is_relevant(t) && !task_blocked(&self.cache, t)
+                        })
+                        .next()
+                        .is_some()
+                    {
+                        let (s, p) = match &prio {
+                            Some(High) => (State::Promote, Some(Medium)),
+                            Some(Medium) => (State::Promote, Some(Low)),
+                            Some(Low) => (State::Promote, None),
+                            None => (State::Pick, Some(High)),
+                        };
+                        state = s;
+                        prio = p;
+                        continue;
+                    } else {
+                        break;
+                    }
+                }
+                let options = {
+                    let mut options = vec![("Manual: Edit my tasks".into(), Select::Manual)];
+                    if state != State::Pick {
+                        options.push(("Pick: Change to pick mode".into(), Select::S(State::Pick)));
+                    }
+                    if state != State::Promote {
+                        options.push((
+                            "Promote: Change to promote mode".into(),
+                            Select::S(State::Promote),
+                        ));
+                    }
+                    if state != State::Demote {
+                        options.push((
+                            "Demote: Change to demote mode".into(),
+                            Select::S(State::Demote),
+                        ));
+                    }
+                    let (less, more) = (
+                        "Lower: Show less important tasks",
+                        "Higher: Show more important tasks",
+                    );
+                    match prio {
+                        Some(TaskPriority::High) => {
+                            options.push((less.into(), Select::P(Some(Medium))));
+                        }
+                        Some(TaskPriority::Medium) => {
+                            options.push((more.into(), Select::P(Some(High))));
+                            options.push((less.into(), Select::P(Some(Low))));
+                        }
+                        Some(TaskPriority::Low) => {
+                            options.push((more.into(), Select::P(Some(Medium))));
+                            options.push((less.into(), Select::P(None)));
+                        }
+                        None => {
+                            options.push((more.into(), Select::P(Some(Low))));
+                        }
+                    }
+                    options.into_iter().chain(tasks.into_iter().map(|t| {
+                        (print_task_short(t), Select::T(t.uuid().clone()))
+                    }))
+                };
+                let msg = match state {
+                    State::Promote => {
+                        format!("Promote tasks | Priority: {}", prio_name(prio.as_ref()))
+                    }
+                    State::Pick => {
+                        format!(
+                            "What do you want to do now? | Priority: {}",
+                            prio_name(prio.as_ref())
+                        )
+                    }
+                    State::Demote => {
+                        format!("Demote tasks | Priority: {}", prio_name(prio.as_ref()))
+                    }
+                };
+                (msg, options.collect::<Vec<_>>())
+            };
+
+            match (self.dialog.select_option(m, o)?, &state, &prio) {
+                (Select::Manual, _, _) => {
+                    str2cmd("tasklauncher").output()?;
+                    self.cache.refresh()?;
+                }
+                (Select::S(new_state), _, _) => state = new_state,
+                (Select::T(u), State::Pick, _) => self.edit_task(&u)?,
+                (Select::T(u), State::Promote, Some(Medium)) => {
+                    self.cache.get_mut(&u).chain_err(|| "Bug")?.set_priority(
+                        Some(High),
+                    )
+                }
+                (Select::T(u), State::Promote, Some(Low)) |
+                (Select::T(u), State::Demote, Some(High)) => {
+                    self.cache.get_mut(&u).chain_err(|| "Bug")?.set_priority(
+                        Some(Medium),
+                    )
+                }
+                (Select::T(u), State::Promote, None) |
+                (Select::T(u), State::Demote, Some(Medium)) => {
+                    self.cache.get_mut(&u).chain_err(|| "Bug")?.set_priority(
+                        Some(Low),
+                    )
+                }
+                (Select::T(u), State::Demote, Some(Low)) => {
+                    self.cache.get_mut(&u).chain_err(|| "Bug")?.set_priority(
+                        None as Option<TaskPriority>,
+                    )
+                }
+                (Select::T(_), State::Promote, Some(High)) |
+                (Select::T(_), State::Demote, None) => bail!("Impossible state change"),
+                (Select::P(new_prio), _, _) => prio = new_prio,
             }
-            {
-                self.edit_task(&uuid)?;
-            } else {
-                str2cmd("tasklauncher").output()?;
-                self.cache.refresh()?;
-                return self.select_next_task();
-            }
+            self.cache.write()?;
         }
         Ok(())
     }
+
     fn is_relevant(&self, task: &Task) -> bool {
         let can_do_this_here = |location| match location {
             Location::Home => task.has_tag("home"),
