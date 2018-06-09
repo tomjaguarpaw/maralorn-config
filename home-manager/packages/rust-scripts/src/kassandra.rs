@@ -124,9 +124,6 @@ fn task_blocked(cache: &TaskCache, task: &Task) -> bool {
         .unwrap_or(false)
 }
 
-fn task_needs_sorting(cache: &TaskCache, uuid: &Uuid) -> Result<bool> {
-    Ok(!cache.is_project(&uuid) && cache.get_parent(&uuid)? == None)
-}
 
 fn task_inbox(cache: &TaskCache, task: &Task) -> bool {
     task.pending() && !task.tagged() && !task_blocked(cache, task)
@@ -170,6 +167,9 @@ fn enter_new_task<T: DialogProvider, S: Into<String>>(dialog: &mut T, msg: S) ->
         .build()?)
 }
 
+fn needs_sorting(task: &Task) -> bool {
+    !task.has_tag("project") && task.partof().map(|x| x.is_none()).unwrap_or(false)
+}
 
 struct Kassandra {
     state: State,
@@ -194,6 +194,7 @@ impl Kassandra {
         self.cache.write()?;
         self.handle_active_tasks()?;
         self.clear_inbox()?;
+        self.cache.refresh_tree();
         self.assure_all_sorted()?;
 
         // check unread E-Mail + ak?
@@ -348,9 +349,8 @@ What's the progress?",
             .next()
             .is_some()
         {
-            while let Some(uuid) = self.get_sorted_uuids(|t| {
-                !t.obsolete() && task_needs_sorting(&self.cache, t.uuid()).unwrap_or(false)
-            }).into_iter()
+            while let Some(uuid) = self.get_sorted_uuids(|t| !t.obsolete() && needs_sorting(t))
+                .into_iter()
                 .next()
             {
                 self.sort(&uuid)?;
@@ -406,7 +406,7 @@ What's the progress?",
                 let mut options = self.cache
                     .filter(|t| {
                         t.pending() && t.partof().map(|partof| partof == parent).unwrap_or(false) &&
-                            (parent.is_some() || self.cache.is_project(t.uuid()))
+                            (parent.is_some() || t.has_tag("project"))
                     })
                     .collect::<Vec<_>>();
                 options.sort_unstable_by_key(|t| t.entry().date());
@@ -688,7 +688,7 @@ What's the progress?",
                 return Ok(());
             }
         }
-        if task_needs_sorting(&self.cache, uuid)? {
+        if needs_sorting(self.cache.get(uuid).chain_err(|| "unknown task")?) {
             self.sort(uuid)?;
         }
         if !self.make_project(uuid)? {

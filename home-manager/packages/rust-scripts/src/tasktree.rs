@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use uuid::Uuid;
 
 use task_hookrs::task::Task;
@@ -85,7 +87,6 @@ pub trait TreeCache {
     fn get_children(&self, uuid: &Uuid) -> Vec<&Task>;
     fn get_children_mut(&mut self, uuid: &Uuid) -> Vec<&mut Task>;
     fn get_project_path(&self, uuid: &Uuid) -> Result<String>;
-    fn is_project(&self, uuid: &Uuid) -> bool;
     fn refresh_tree(&mut self);
 }
 fn get_project_name(cache: &TaskCache, task: &Task) -> Result<Option<String>> {
@@ -138,33 +139,48 @@ impl TreeCache for TaskCache {
         })
     }
 
-    fn is_project(&self, uuid: &Uuid) -> bool {
-        self.get_children(uuid)
-            .iter()
-            .filter(|t| !t.obsolete())
-            .count() > 0
-    }
-
     fn refresh_tree(&mut self) {
-        let task_uuids = self.filter(|t| {
-            !t.obsolete() &&
-                (get_project_name(self, t)
-                     .map(|path| path.as_ref() != t.project())
-                     .unwrap_or(false) ||
-                     (self.is_project(t.uuid()) != t.has_tag("project")))
-        }).map(|t| t.uuid().clone())
-            .collect::<Vec<_>>();
-        for task_uuid in task_uuids {
-            let new_project_name = get_project_name(self, self.get(&task_uuid).expect("Bug"))
-                .expect("Bug");
-            let is_project = self.is_project(&task_uuid);
-            let task = self.get_mut(&task_uuid).expect("Bug");
-            task.set_project(new_project_name);
-            if is_project {
-                task.add_tag("project");
+        let parents = self.filter(|t| !t.obsolete())
+            .filter_map(|t| t.partof().unwrap_or(None))
+            .collect::<HashSet<_>>();
+        let mut add = vec![];
+        let mut remove = vec![];
+        let mut set = vec![];
+
+        for (project_name, project, tagged, uuid) in
+            self.filter(|t| !t.obsolete()).map(|t| {
+                (
+                    get_project_name(self, t),
+                    t.project(),
+                    t.has_tag("project"),
+                    t.uuid().clone(),
+                )
+            })
+        {
+            if parents.contains(&uuid) {
+                if !tagged {
+                    add.push(uuid);
+                }
             } else {
-                task.remove_tag("project");
+                if tagged {
+                    remove.push(uuid);
+                }
             }
+            if let Ok(project_name) = project_name {
+                if project != project_name.as_ref() {
+                    set.push((uuid, project_name))
+                }
+            }
+        }
+
+        for uuid in add {
+            self.get_mut(&uuid).expect("Bug").add_tag("project");
+        }
+        for uuid in remove {
+            self.get_mut(&uuid).expect("Bug").remove_tag("project");
+        }
+        for (uuid, name) in set {
+            self.get_mut(&uuid).expect("Bug").set_project(name);
         }
     }
 }
