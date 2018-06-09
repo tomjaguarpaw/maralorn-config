@@ -1,7 +1,10 @@
 extern crate rust_scripts;
-#[macro_use]
-extern crate error_chain;
 
-use rust_scripts::kassandra::kassandra;
+use rust_scripts::{
+    error::Result,
+    kassandra::kassandra
+};
 
-quick_main!(kassandra);
+fn main() -> Result<()> {
+    kassandra()
+}
