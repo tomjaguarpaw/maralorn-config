@@ -73,14 +73,13 @@ pub fn update_tasks(cache: &mut TaskCache) -> Result<()> {
             "Sortiere Inbox",
             "Sortiere Inbox Auslandskoordination",
             "Sortiere Inbox Kiva",
-            "Update nixos apollo",
-            "Update home hephaistos",
             "Klavier üben",
+            "Tasks der Woche kontrollieren"
         ]),
         daily(),
     )?;
     cache.reactivate(
-        simple_tasks(vec!["Verbuche Kontoauszüge"]),
+        simple_tasks(vec!["Kontrolliere +optional","Verbuche Kontoauszüge"]),
         monthly(),
     )?;
     cache.reactivate(
@@ -91,11 +90,15 @@ pub fn update_tasks(cache: &mut TaskCache) -> Result<()> {
             "Sortiere Archiv Kiva",
             "Sortiere Archiv Auslandskoordination",
             "Kontrolliere +later",
-            "Kontrolliere +optional",
+            
             "Kontrolliere +await",
             "Block leeren und wegsortieren",
             "Leere Kiva Fächer",
             "Inbox zu Hause wegsortieren",
+            "Cryptpads sichern",
+            "Update nixos apollo",
+            "Update home hephaistos",
+            "Tasks des Monats kontrollieren"
         ]),
         weekly(),
     )?;
