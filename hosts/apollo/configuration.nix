@@ -34,6 +34,18 @@ boot = {
 	supportedFilesystems = [ "exfat" ];
 };
 
+services = {
+  borgbackup.jobs.data = {
+    doInit = false;
+    startAt = [];
+    exclude = [ "/home/${me.user}/data/media" ];
+    encryption.mode = "none";
+    paths = "/home/${me.user}/data";
+    repo = "borg@borg:.";
+    compression = "zstd,22";
+  };
+};
+
 cdark_net = {
   enable = true;
   hostName = "${me.user}_${config.networking.hostName}";
