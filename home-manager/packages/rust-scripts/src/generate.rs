@@ -279,10 +279,10 @@ fn gen_match(a: &Task, b: &Task) -> bool {
 }
 impl TaskGenerator for TaskCache {
     fn get_by_gen(&self, generator: &Task) -> Option<&Task> {
-        self.filter(|t| gen_match(t, generator)).into_iter().next()
+        self.filter(|t| gen_match(t, generator)).next()
     }
     fn get_by_gen_mut(&mut self, generator: &Task) -> Option<&mut Task> {
-        self.filter_mut(|t| gen_match(t, generator)).into_iter().next()
+        self.filter_mut(|t| gen_match(t, generator)).next()
     }
 
 fn generate<T>(&mut self, generators: T) -> Result<()>
@@ -304,7 +304,6 @@ where
                     .or_insert_with(|| {
                         self
                             .filter(|t| t.gen_name() == Some(name))
-                            .iter()
                             .filter_map(|t| t.gen_id().map(|id| (id.clone(), t.uuid().clone())))
                             .collect()
                     })

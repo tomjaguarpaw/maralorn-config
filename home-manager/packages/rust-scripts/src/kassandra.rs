@@ -215,8 +215,8 @@ impl Kassandra {
             .collect()
     }
 
-    fn get_sorted_tasks<T: Fn(&Task) -> bool>(&self, filter: T) -> Vec<&Task> {
-        let mut tasks = self.cache.filter(filter);
+    fn get_sorted_tasks(&self, filter: impl Fn(&Task) -> bool) -> Vec<&Task> {
+        let mut tasks = self.cache.filter(filter).collect::<Vec<_>>();
         tasks.sort_unstable_by_key(|t| t.entry().date());
         tasks
     }
@@ -333,7 +333,8 @@ What's the progress?",
             .filter(|t| {
                 t.gen_name() == Some(&"Sortiere Tasktree".into()) && t.pending()
             })
-            .len() > 0
+            .next()
+            .is_some()
         {
             while let Some(uuid) = self.get_sorted_uuids(|t| {
                 !t.obsolete() && task_needs_sorting(&self.cache, t.uuid()).unwrap_or(false)
@@ -390,10 +391,12 @@ What's the progress?",
         let mut parent = None;
         loop {
             match {
-                let mut options = self.cache.filter(|t| {
-                    t.pending() && t.partof().map(|partof| partof == parent).unwrap_or(false) &&
-                        (parent.is_some() || self.cache.is_project(t.uuid()))
-                });
+                let mut options = self.cache
+                    .filter(|t| {
+                        t.pending() && t.partof().map(|partof| partof == parent).unwrap_or(false) &&
+                            (parent.is_some() || self.cache.is_project(t.uuid()))
+                    })
+                    .collect::<Vec<_>>();
                 options.sort_unstable_by_key(|t| t.entry().date());
                 match self.dialog.select_option(
                     format_msg(&self.cache, parent, "currently at")?,
@@ -588,7 +591,8 @@ What's the progress?",
             .filter(|t| {
                 t.gen_name() == Some(&"Leere Inbox".into()) && t.pending()
             })
-            .len() > 0
+            .next()
+            .is_some()
         {
             while let Some(uuid) = self.get_sorted_uuids(|t| task_inbox(&self.cache, t))
                 .into_iter()
@@ -718,7 +722,8 @@ What's the progress?",
             .filter(|t| {
                 t.gen_name() == Some(&"Aktualisiere Buchhaltung".into()) && t.pending()
             })
-            .len() > 0
+            .next()
+            .is_some()
         {
             str2cmd(&term_cmd("sh -c"))
                 .arg("jali -l. && task gen_id:'Aktualisiere Buchhaltung' done")
@@ -731,12 +736,14 @@ What's the progress?",
     pub fn select_next_task(&mut self) -> Result<()> {
         while self.cache
             .filter(|t| t.start().is_some() && t.pending())
-            .len() == 0 &&
+            .next()
+            .is_none() &&
             self.cache
                 .filter(|t| {
                     t.pending() && self.is_relevant(t) && !task_blocked(&self.cache, t)
                 })
-                .len() > 0
+                .next()
+                .is_some()
         {
             if let Some(uuid) = {
                 let next_tasks = self.get_sorted_tasks(|t| {

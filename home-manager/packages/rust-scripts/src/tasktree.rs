@@ -117,10 +117,12 @@ impl TreeCache for TaskCache {
 
     fn get_children(&self, uuid: &Uuid) -> Vec<&Task> {
         self.filter(|t| t.partof().unwrap_or(None) == Some(*uuid))
+            .collect()
     }
 
     fn get_children_mut(&mut self, uuid: &Uuid) -> Vec<&mut Task> {
         self.filter_mut(|t| t.partof().unwrap_or(None) == Some(*uuid))
+            .collect()
     }
 
     fn get_project_path(&self, uuid: &Uuid) -> Result<String> {
@@ -150,8 +152,7 @@ impl TreeCache for TaskCache {
                      .map(|path| path.as_ref() != t.project())
                      .unwrap_or(false) ||
                      (self.is_project(t.uuid()) != t.has_tag("project")))
-        }).iter()
-            .map(|t| t.uuid().clone())
+        }).map(|t| t.uuid().clone())
             .collect::<Vec<_>>();
         for task_uuid in task_uuids {
             let new_project_name = get_project_name(self, self.get(&task_uuid).expect("Bug"))
