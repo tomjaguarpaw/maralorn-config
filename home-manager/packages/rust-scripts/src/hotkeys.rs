@@ -20,6 +20,17 @@ pub fn run<T: Into<String>>(name: T, command: &str) -> Item {
     )
 }
 
+pub fn run_cmd<T: Into<String>>(name: T, command: Command) -> Item {
+    (
+        name.into(),
+        Do(Rc::new(move || {
+            mk_cmd(command.clone()).exec();
+            Ok(Exit)
+        })),
+    )
+}
+
+
 pub fn term_cmd(command: &str) -> String {
     format!(
         "{} -e {}",

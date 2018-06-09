@@ -79,10 +79,21 @@ enum Location {
 }
 
 #[derive(Copy, Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
+enum MPD {
+    #[serde(rename = "apollo")]
+    Apollo,
+    #[serde(rename = "whisky")]
+    Whisky,
+    #[serde(rename = "kitchen")]
+    Kitchen,
+}
+
+#[derive(Copy, Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
 struct State {
     mode: Mode,
     location: Location,
     connectivity: Connectivity,
+    mpd: MPD,
 }
 
 fn task_blocked(cache: &TaskCache, task: &Task) -> bool {
@@ -126,17 +137,19 @@ fn get_state() -> Result<State> {
         s.push(".kassandra_state");
         s
     };
-    Ok(if let Ok(state_file) = File::open(&state_path) {
-        from_reader(state_file)?
-    } else {
-        let state = State {
-            mode: Mode::Orga,
-            connectivity: Connectivity::Online,
-            location: Location::Anywhere,
-        };
-        save_state(&state)?;
-        state
-    })
+    if let Ok(state_file) = File::open(&state_path) {
+        if let Ok(state) = from_reader(state_file) {
+            return Ok(state);
+        }
+    }
+    let state = State {
+        mode: Mode::Orga,
+        connectivity: Connectivity::Online,
+        location: Location::Anywhere,
+        mpd: MPD::Apollo,
+    };
+    save_state(&state)?;
+    Ok(state)
 }
 
 fn enter_new_task<T: DialogProvider, S: Into<String>>(dialog: &mut T, msg: S) -> Result<Task> {

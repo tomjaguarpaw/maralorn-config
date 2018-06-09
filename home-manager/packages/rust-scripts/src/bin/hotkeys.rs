@@ -4,7 +4,7 @@ extern crate task_hookrs;
 extern crate error_chain;
 
 use std::rc::Rc;
-use rust_scripts::hotkeys::{run, term, menu, main_loop, Next};
+use rust_scripts::hotkeys::{run, run_cmd, term, menu, main_loop, Next};
 use rust_scripts::kassandra::{kassandra, change_state, new_tasks};
 use rust_scripts::error::Result;
 
@@ -53,6 +53,17 @@ quick_main!(|| -> Result<()> {
                     "Messaging",
                     vec![
                         run("Mails", "evolution"),
+                        run_cmd(
+                            "Weechat",
+                            vec![
+                                "st".into(),
+                                "-e".into(),
+                                "ssh".into(),
+                                "-t".into(),
+                                "hera".into(),
+                                "tmux -L weechat attach".into(),
+                            ]
+                        ),
                         run("Riot", "firefox --new-window https://riot.im/app"),
                         run("WhatsApp", "firefox  --new-window https://web.whatsapp.com"),
                         run("Telegram", "telegram-desktop"),
@@ -91,6 +102,7 @@ quick_main!(|| -> Result<()> {
             vec![
                 run("neo", "setxkbmap de neo"),
                 run("qwertz", "setxkbmap de"),
+                run("qwerty", "setxkbmap us"),
             ],
         );
         let monitor = term("Monitor", "htop");
@@ -122,6 +134,7 @@ quick_main!(|| -> Result<()> {
             ("kitchen", "kitchen"),
             ("vorstand", "vorstand"),
             ("shells", "shells"),
+            ("hera", "hera"),
             ("charon", "charon"),
         ].into_iter()
             .map(|(name, login)| term(name, &format!("ssh {}", login)))
