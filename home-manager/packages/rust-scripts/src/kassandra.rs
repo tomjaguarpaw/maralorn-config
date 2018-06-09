@@ -229,7 +229,7 @@ impl Kassandra {
 
     fn get_sorted_tasks(&self, filter: impl Fn(&Task) -> bool) -> Vec<&Task> {
         let mut tasks = self.cache.filter(filter).collect::<Vec<_>>();
-        tasks.sort_unstable_by_key(|t| t.entry().date());
+        tasks.sort_by_key(|t| t.entry().date());
         tasks
     }
 
@@ -285,7 +285,7 @@ Do you want to change the state? (Esc to cancel)",
                 "idle" => self.state.mode = Mode::Idle,
                 "uni" => self.state.location = Location::Uni,
                 "anywhere" => self.state.location = Location::Anywhere,
-                _ => (),
+                other => bail!("Unkown option {}", other),
             };
             save_state(&self.state)?;
         }
@@ -381,9 +381,9 @@ What's the progress?",
         Ok(())
     }
 
-    pub fn select_entry_point<T: Into<String>>(
+    pub fn select_entry_point(
         &mut self,
-        msg: T,
+        msg: impl Into<String>,
         uuid: &Uuid,
     ) -> Result<Option<Uuid>> {
         let msg = msg.into();
@@ -412,23 +412,23 @@ What's the progress?",
                 match self.dialog.select_option(
                     format_msg(&self.cache, parent, "currently at")?,
                     vec![
-                        ("select this level".into(), Err(0)),
-                        ("insert new node".into(), Err(1)),
-                        ("go one level up".into(), Err(2)),
-                        ("edit task".into(), Err(4)),
+                        ("select this level".into(), Err("here")),
+                        ("insert new node".into(), Err("new")),
+                        ("go one level up".into(), Err("up")),
+                        ("edit task".into(), Err("edit")),
                     ].into_iter()
                         .chain(options.into_iter().map(|t| (print_task_short(t), Ok(t)))),
                 )? {
                     Ok(task) => {
                         parent = Some(task.uuid().clone());
-                        3
+                        "stay"
                     }
-                    Err(n) => n,
+                    Err(other) => other,
                 }
             } {
 
-                0 => return Ok(parent),
-                1 => {
+                "here" => return Ok(parent),
+                "new" => {
                     let mut task = enter_new_task(
                         &mut self.dialog,
                         format_msg(&self.cache, parent, "inserting new node at")?,
@@ -439,7 +439,7 @@ What's the progress?",
                     self.cache.write()?;
                 }
 
-                2 => {
+                "up" => {
                     parent = if let Some(parent) = parent {
                         if let Some(parent) = self.cache.get(&parent) {
                             parent.partof()?
@@ -450,12 +450,12 @@ What's the progress?",
                         None
                     }
                 }
-                3 => (),
-                4 => {
+                "stay" => (),
+                "edit" => {
                     self.edit_task(uuid)?;
                     parent = None;
                 }
-                _ => bail!("Hö?"),
+                other => bail!("Unkown option {}", other),
             }
         }
     }
@@ -591,7 +591,7 @@ What's the progress?",
                 )).output()?;
                 self.cache.refresh()?;
             }
-            _ => {}
+            other => bail!("unknown option: {}", other)
         }
         }
         Ok(())
@@ -665,27 +665,43 @@ What's the progress?",
                 task_name
             ),
             vec![
-                ("Yes: I'll get to it", Some(true)),
+                ("Yes: I'll get to it", "do"),
                 (
                     "No: Do you know how short 2 minutes are?",
-                    Some(false)
+                    "process"
                 ),
+                ("Done: I already did this", "done"),
+                ("Delete: This task is obsolete", "delete"),
                 (
                     "Edit: I'll change that task on my own",
-                    None
+                    "edit"
                 ),
             ],
         )? {
-            Some(true) => {
+            "do" => {
                 self.cache.get_mut(uuid).chain_err(|| "BUG!")?.tw_start();
                 self.cache.write()?;
                 bail!("Work on Task now!");
             }
-            Some(false) => (),
-            None => {
+            "done" => {
+                self.cache.get_mut(uuid).chain_err(|| "BUG!")?.tw_done();
+                self.cache.write()?;
+                return Ok(());
+            }
+            "delete" => {
+                self.cache
+                    .get_mut(uuid)
+                    .chain_err(|| "missing uuid")?
+                    .tw_delete();
+                self.cache.write()?;
+                return Ok(());
+            }
+            "process" => (),
+            "edit" => {
                 self.edit_task(uuid)?;
                 return Ok(());
             }
+            other => bail!("Unknown option: {}", other),
         }
         if needs_sorting(self.cache.get(uuid).chain_err(|| "unknown task")?) {
             self.sort(uuid)?;
