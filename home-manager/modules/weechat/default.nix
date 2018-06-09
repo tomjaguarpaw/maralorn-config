@@ -52,11 +52,11 @@ python.buffer_autohide.hide_private = on
       target = ".weechat/logger.conf";
       text = ''
 [look]
-backlog = 100
+backlog = 1000
 
 [file]
 mask = "$name/%Y"
-path = "${config.home.homeDirectory}/logs/"
+path = "${config.home.homeDirectory}/data/logs/"
         '';
     };
     irc = {
