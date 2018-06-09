@@ -2,6 +2,8 @@
 let
   me = config.m-0.private.me;
   meWork = config.m-0.private.meWork;
+  rustPkgs = import <rust126> {};
+  unstablePkgs = import <unstable> {};
 in {
 
 imports = [
@@ -26,9 +28,9 @@ imports = [
 
 nixpkgs.config.packageOverrides = pkgs: with pkgs; {
   tasktree = callPackage ./packages/tasktree {};
-  rust-scripts = callPackage ./packages/rust-scripts {};
-  jali = with pkgs; callPackage ./packages/jali {};
-  eventd = (import <unstable> {}).callPackage ./packages/eventd {};
+  rust_scripts = rustPkgs.callPackage ./packages/rust-scripts {};
+  jali = callPackage ./packages/jali {};
+  eventd = unstablePkgs.callPackage ./packages/eventd {};
   st = (import packages/st) pkgs config.m-0.colors;
   neovim = (import ./nvim) pkgs config.m-0.rustdev.enable;
 };
@@ -117,7 +119,7 @@ systemd.user.startServices = true;
 
 home.packages = with pkgs; [
   neovim
-  rust-scripts
+  rust_scripts
 ];
 xdg.enable = true;
 }

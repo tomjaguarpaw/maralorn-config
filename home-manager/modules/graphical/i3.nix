@@ -144,8 +144,8 @@ config = mkIf config.m-0.graphical.enable {
             "m" = "move workspace to output up";
             "n" = "move workspace to output right";
             "shift+space" = "floating toggle";
-            "shift+q" = "exec i3-nagbar -t warning -m 'do you want to exit i3?' -b 'yes' 'i3-msg exit'";
-            "space" = "exec ~/config/nixos/packages/rust-scripts/target/release/hotkeys";
+            "shift+q" = "${exec} ${pkgs.i3}/bin/i3-nagbar -t warning -m 'do you want to exit i3?' -b 'yes' 'i3-msg exit'";
+            "space" = "${exec} ${pkgs.rust_scripts}/bin/hotkeys";
           } // builtins.foldl' (bindings: name: let
             number = toString ((builtins.length (builtins.attrNames bindings)) / 2);
           in

@@ -14,8 +14,8 @@ config = mkIf config.m-0.rustdev.enable {
     rustPkgs.rustc
     gcc
     binutils-unwrapped
-    rustfmt
-    carnix
+    rustPkgs.rustfmt
+#    rustPkgs.carnix
   ];
 };
 
