@@ -19,8 +19,7 @@ imports = [
   ./modules/eventd.nix
   ./modules/unlock.nix
   ./modules/weechat
-  ../common/private-options.nix
-  ../common/secret
+  ../common
 #   ./sort-mail.nix
 #   ./morgenreport.nix
 ];

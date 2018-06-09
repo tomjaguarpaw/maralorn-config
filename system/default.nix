@@ -1,11 +1,12 @@
 { pkgs, config, lib, ... }:
-{
+let
+  me = config.m-0.private.me;
+in {
   # channel = 18.03
 
   imports = [
     <home-manager/nixos>
-    ../common/secret
-    ../common/private-options.nix
+    ../common
     ./modules/laptop.nix
     ./modules/server
     ./modules/standalone
@@ -23,6 +24,7 @@
   networking = {
     firewall.allowPing = true;
     useDHCP = false;
+    hosts = lib.zipAttrs (lib.mapAttrsToList (host: ip: {"${ip}" = host; } ) config.m-0.hosts);
   };
 
   users = {
