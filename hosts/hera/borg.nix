@@ -17,9 +17,12 @@ in {
         defaultGateway6 = { address = config.m-0.hosts.hera-intern; interface = "eth0"; };
       };
 
-      services.borgbackup.repos.backups = {
-        authorizedKeys = me.keys;
-        quota = "150G";
+      services = {
+        borgbackup.repos.backups = {
+          authorizedKeys = me.keys;
+          quota = "150G";
+        };
+        sshd.enable = true;
       };
     };
   };
