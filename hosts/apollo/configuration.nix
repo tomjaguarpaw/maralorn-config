@@ -38,11 +38,14 @@ services = {
   borgbackup.jobs.data = {
     doInit = false;
     startAt = [];
-    exclude = [ "/home/${me.user}/data/media" ];
+    exclude = [
+      "/home/${me.user}/data/aktuell/media"
+      "/home/${me.user}/data/.stversions"
+    ];
     encryption.mode = "none";
     paths = "/home/${me.user}/data";
     repo = "borg@borg:.";
-    compression = "zstd,22";
+    compression = "zstd,15";
   };
 };
 
