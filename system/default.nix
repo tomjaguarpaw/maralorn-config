@@ -27,5 +27,9 @@
 
   users = {
     mutableUsers = false;
+    users.root = {
+      openssh.authorizedKeys.keys = me.keys;
+      passwordFile = me.pw-file;
+    };
   };
 }
