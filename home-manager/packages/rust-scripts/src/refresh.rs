@@ -20,16 +20,19 @@ pub enum Timer {
 }
 
 pub trait TaskRefresher {
-    fn reactivate<T>(&mut self, tasks: T, recurrence: Timer) -> Result<()>
-    where
-        T: IntoIterator<Item = Task>;
+    fn reactivate(
+        &mut self,
+        tasks: impl IntoIterator<Item = Task>,
+        recurrence: Timer,
+    ) -> Result<()>;
 }
 
 impl TaskRefresher for TaskCache {
-    fn reactivate<T>(&mut self, tasks: T, recurrence: Timer) -> Result<()>
-    where
-        T: IntoIterator<Item = Task>,
-    {
+    fn reactivate(
+        &mut self,
+        tasks: impl IntoIterator<Item = Task>,
+        recurrence: Timer,
+    ) -> Result<()> {
         let now = Local::now();
         let now_moment = TT::Moment(Local::now().naive_local());
         let recent = match recurrence {

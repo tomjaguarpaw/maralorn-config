@@ -18,11 +18,8 @@ fn simple_task(name: &str) -> Task {
     task
 }
 
-fn simple_tasks<'a, T>(names: T) -> Vec<Task>
-where
-    T: IntoIterator<Item = &'a str>,
-{
-    names.into_iter().map(simple_task).collect()
+fn simple_tasks<'a>(names: impl IntoIterator<Item = &'a str>) -> impl Iterator<Item = Task> {
+    names.into_iter().map(simple_task)
 }
 
 pub fn update_tasks(cache: &mut TaskCache) -> Result<()> {
