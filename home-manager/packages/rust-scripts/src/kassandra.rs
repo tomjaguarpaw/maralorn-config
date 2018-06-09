@@ -8,6 +8,7 @@ use uuid::Uuid;
 
 use task_hookrs::cache::TaskCache;
 use task_hookrs::task::{Task, TaskBuilder};
+use task_hookrs::priority::TaskPriority;
 
 use dialog::rofi::RofiDialogProvider;
 use dialog::DialogProvider;
@@ -19,15 +20,25 @@ use error::{Result, ResultExt, ErrorKind as EK, Error};
 use hotkeys::{str2cmd, term_cmd};
 use tasktree::{TreeCache, TaskNode};
 
+fn prio_name(prio: Option<&TaskPriority>) -> &'static str {
+    match prio {
+        None => "Sometime",
+        Some(TaskPriority::High) => "Today",
+        Some(TaskPriority::Medium) => "This week",
+        Some(TaskPriority::Low) => "This month",
+    }
+}
+
 fn print_task_short(task: &Task) -> String {
     let mut info = vec![task.description().clone()];
     if let Some(tags) = task.tags() {
-        info.push(format!("+{}", tags.join(", +")));
+        info.push(format!("+{}", tags.join(",+")));
     }
     if let Some(project) = task.project() {
-        info.push(format!("({})", project));
+        info.push(format!("{}", project));
     }
-    info.join(" ")
+    info.push(prio_name(task.priority()).into());
+    info.join("  |  ")
 }
 
 fn print_task(task: &Task) -> String {
@@ -37,8 +48,9 @@ fn print_task(task: &Task) -> String {
         info.push(format!("project: {}", project));
     }
     if let Some(tags) = task.tags() {
-        info.push(format!("tags: {}", tags.join(", ")));
+        info.push(format!("tags: +{}", tags.join(", +")));
     }
+    info.push(format!("priority: {}", prio_name(task.priority())));
     info.join("\n")
 }
 
