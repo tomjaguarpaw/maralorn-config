@@ -128,25 +128,11 @@ rec {
     sha256 = "08jp1zxrm9jbrr6l26bjal4dbm8bxfy57ickdgibsqxr1n9j3hf5";
     inherit dependencies buildDependencies features;
   };
-  iso8601_0_2_0_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
-    crateName = "iso8601";
-    version = "0.2.0";
-    authors = [ "Jan-Erik Rediger <janerik@fnordig.de>" "Hendrik Sollich <hendrik@hoodie.de>" ];
-    sha256 = "18zm5pnc26q1q8l65r702bcnvkdzzbdmsq96gxcwa00lxja7l2d4";
-    inherit dependencies buildDependencies features;
-  };
   itoa_0_4_1_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
     crateName = "itoa";
     version = "0.4.1";
     authors = [ "David Tolnay <dtolnay@gmail.com>" ];
     sha256 = "1jyrsmrm5q4r2ipmq5hvvkqg0mgnlbk44lm7gr0v9ymvbrh2gbij";
-    inherit dependencies buildDependencies features;
-  };
-  kairos_0_1_1_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
-    crateName = "kairos";
-    version = "0.1.1";
-    authors = [ "Matthias Beyer <mail@beyermatthias.de>" ];
-    sha256 = "15i75h698zsbb8m5q8ffia5q6r039r0gmxm9pyfmw9pn2gfxzgg9";
     inherit dependencies buildDependencies features;
   };
   kernel32_sys_0_2_2_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
@@ -186,25 +172,11 @@ rec {
     sha256 = "10f8wyygpff3i5j4v4bcmsy637vzsaah7qx615y74vibn3f8fbyd";
     inherit dependencies buildDependencies features;
   };
-  memchr_1_0_2_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
-    crateName = "memchr";
-    version = "1.0.2";
-    authors = [ "Andrew Gallant <jamslam@gmail.com>" "bluss" ];
-    sha256 = "0dfb8ifl9nrc9kzgd5z91q6qg87sh285q1ih7xgrsglmqfav9lg7";
-    inherit dependencies buildDependencies features;
-  };
   nix_0_5_1_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
     crateName = "nix";
     version = "0.5.1";
     authors = [ "Carl Lerche <me@carllerche.com>" ];
     sha256 = "17dp0x440bl6a4dc3rxqnj7p2sx46isg2hhvdqpjkdlca84qd7b2";
-    inherit dependencies buildDependencies features;
-  };
-  nom_3_2_1_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
-    crateName = "nom";
-    version = "3.2.1";
-    authors = [ "contact@geoffroycouprie.com" ];
-    sha256 = "1vcllxrz9hdw6j25kn020ka3psz1vkaqh1hm3yfak2240zrxgi07";
     inherit dependencies buildDependencies features;
   };
   num_integer_0_1_38_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
@@ -655,13 +627,6 @@ rec {
   fuchsia_zircon_sys_0_3_3_features = f: updateFeatures f (rec {
     fuchsia_zircon_sys_0_3_3.default = (f.fuchsia_zircon_sys_0_3_3.default or true);
   }) [];
-  iso8601_0_2_0 = { features?(iso8601_0_2_0_features {}) }: iso8601_0_2_0_ {
-    dependencies = mapFeatures features ([ nom_3_2_1 ]);
-  };
-  iso8601_0_2_0_features = f: updateFeatures f (rec {
-    iso8601_0_2_0.default = (f.iso8601_0_2_0.default or true);
-    nom_3_2_1.default = true;
-  }) [ nom_3_2_1_features ];
   itoa_0_4_1 = { features?(itoa_0_4_1_features {}) }: itoa_0_4_1_ {
     features = mkFeatures (features.itoa_0_4_1 or {});
   };
@@ -672,21 +637,6 @@ rec {
       (f.itoa_0_4_1.default or false) ||
       (itoa_0_4_1.default or false);
   }) [];
-  kairos_0_1_1 = { features?(kairos_0_1_1_features {}) }: kairos_0_1_1_ {
-    dependencies = mapFeatures features ([ chrono_0_4_2 error_chain_0_11_0 iso8601_0_2_0 nom_3_2_1 ]);
-    features = mkFeatures (features.kairos_0_1_1 or {});
-  };
-  kairos_0_1_1_features = f: updateFeatures f (rec {
-    chrono_0_4_2.default = true;
-    error_chain_0_11_0.default = true;
-    iso8601_0_2_0.default = true;
-    kairos_0_1_1.default = (f.kairos_0_1_1.default or true);
-    kairos_0_1_1.filters =
-      (f.kairos_0_1_1.filters or false) ||
-      (f.kairos_0_1_1.with-filters or false) ||
-      (kairos_0_1_1.with-filters or false);
-    nom_3_2_1.default = true;
-  }) [ chrono_0_4_2_features error_chain_0_11_0_features iso8601_0_2_0_features nom_3_2_1_features ];
   kernel32_sys_0_2_2 = { features?(kernel32_sys_0_2_2_features {}) }: kernel32_sys_0_2_2_ {
     dependencies = mapFeatures features ([ winapi_0_2_8 ]);
     buildDependencies = mapFeatures features ([ winapi_build_0_1_1 ]);
@@ -748,29 +698,6 @@ rec {
     cfg_if_0_1_3.default = true;
     log_0_4_2.default = (f.log_0_4_2.default or true);
   }) [ cfg_if_0_1_3_features ];
-  memchr_1_0_2 = { features?(memchr_1_0_2_features {}) }: memchr_1_0_2_ {
-    dependencies = mapFeatures features ([ ]
-      ++ (if features.memchr_1_0_2.libc or false then [ libc_0_2_42 ] else []));
-    features = mkFeatures (features.memchr_1_0_2 or {});
-  };
-  memchr_1_0_2_features = f: updateFeatures f (rec {
-    libc_0_2_42.default = (f.libc_0_2_42.default or false);
-    libc_0_2_42.use_std =
-      (f.libc_0_2_42.use_std or false) ||
-      (memchr_1_0_2.use_std or false) ||
-      (f.memchr_1_0_2.use_std or false);
-    memchr_1_0_2.default = (f.memchr_1_0_2.default or true);
-    memchr_1_0_2.libc =
-      (f.memchr_1_0_2.libc or false) ||
-      (f.memchr_1_0_2.default or false) ||
-      (memchr_1_0_2.default or false) ||
-      (f.memchr_1_0_2.use_std or false) ||
-      (memchr_1_0_2.use_std or false);
-    memchr_1_0_2.use_std =
-      (f.memchr_1_0_2.use_std or false) ||
-      (f.memchr_1_0_2.default or false) ||
-      (memchr_1_0_2.default or false);
-  }) [ libc_0_2_42_features ];
   nix_0_5_1 = { features?(nix_0_5_1_features {}) }: nix_0_5_1_ {
     dependencies = mapFeatures features ([ bitflags_0_4_0 libc_0_2_42 ]);
     features = mkFeatures (features.nix_0_5_1 or {});
@@ -780,42 +707,6 @@ rec {
     libc_0_2_42.default = true;
     nix_0_5_1.default = (f.nix_0_5_1.default or true);
   }) [ bitflags_0_4_0_features libc_0_2_42_features ];
-  nom_3_2_1 = { features?(nom_3_2_1_features {}) }: nom_3_2_1_ {
-    dependencies = mapFeatures features ([ memchr_1_0_2 ]);
-    features = mkFeatures (features.nom_3_2_1 or {});
-  };
-  nom_3_2_1_features = f: updateFeatures f (rec {
-    memchr_1_0_2.default = (f.memchr_1_0_2.default or false);
-    memchr_1_0_2.use_std =
-      (f.memchr_1_0_2.use_std or false) ||
-      (nom_3_2_1.std or false) ||
-      (f.nom_3_2_1.std or false);
-    nom_3_2_1.compiler_error =
-      (f.nom_3_2_1.compiler_error or false) ||
-      (f.nom_3_2_1.nightly or false) ||
-      (nom_3_2_1.nightly or false);
-    nom_3_2_1.default = (f.nom_3_2_1.default or true);
-    nom_3_2_1.lazy_static =
-      (f.nom_3_2_1.lazy_static or false) ||
-      (f.nom_3_2_1.regexp_macros or false) ||
-      (nom_3_2_1.regexp_macros or false);
-    nom_3_2_1.regex =
-      (f.nom_3_2_1.regex or false) ||
-      (f.nom_3_2_1.regexp or false) ||
-      (nom_3_2_1.regexp or false);
-    nom_3_2_1.regexp =
-      (f.nom_3_2_1.regexp or false) ||
-      (f.nom_3_2_1.regexp_macros or false) ||
-      (nom_3_2_1.regexp_macros or false);
-    nom_3_2_1.std =
-      (f.nom_3_2_1.std or false) ||
-      (f.nom_3_2_1.default or false) ||
-      (nom_3_2_1.default or false);
-    nom_3_2_1.stream =
-      (f.nom_3_2_1.stream or false) ||
-      (f.nom_3_2_1.default or false) ||
-      (nom_3_2_1.default or false);
-  }) [ memchr_1_0_2_features ];
   num_integer_0_1_38 = { features?(num_integer_0_1_38_features {}) }: num_integer_0_1_38_ {
     dependencies = mapFeatures features ([ num_traits_0_2_4 ]);
     features = mkFeatures (features.num_integer_0_1_38 or {});
@@ -914,13 +805,12 @@ rec {
     redox_syscall_0_1_40.default = (f.redox_syscall_0_1_40.default or true);
   }) [];
   rust_scripts_0_1_0 = { features?(rust_scripts_0_1_0_features {}) }: rust_scripts_0_1_0_ {
-    dependencies = mapFeatures features ([ chrono_0_4_2 dialog_0_1_0 error_chain_0_11_0 kairos_0_1_1 lazy_static_1_0_1 serde_1_0_66 serde_derive_1_0_66 serde_yaml_0_7_4 task_hookrs_0_5_0 uuid_0_6_5 ]);
+    dependencies = mapFeatures features ([ chrono_0_4_2 dialog_0_1_0 error_chain_0_11_0 lazy_static_1_0_1 serde_1_0_66 serde_derive_1_0_66 serde_yaml_0_7_4 task_hookrs_0_5_0 uuid_0_6_5 ]);
   };
   rust_scripts_0_1_0_features = f: updateFeatures f (rec {
     chrono_0_4_2.default = true;
     dialog_0_1_0.default = true;
     error_chain_0_11_0.default = true;
-    kairos_0_1_1.default = true;
     lazy_static_1_0_1.default = true;
     rust_scripts_0_1_0.default = (f.rust_scripts_0_1_0.default or true);
     serde_1_0_66.default = true;
@@ -928,7 +818,7 @@ rec {
     serde_yaml_0_7_4.default = true;
     task_hookrs_0_5_0.default = true;
     uuid_0_6_5.default = true;
-  }) [ chrono_0_4_2_features dialog_0_1_0_features error_chain_0_11_0_features kairos_0_1_1_features lazy_static_1_0_1_features serde_1_0_66_features serde_derive_1_0_66_features serde_yaml_0_7_4_features task_hookrs_0_5_0_features uuid_0_6_5_features ];
+  }) [ chrono_0_4_2_features dialog_0_1_0_features error_chain_0_11_0_features lazy_static_1_0_1_features serde_1_0_66_features serde_derive_1_0_66_features serde_yaml_0_7_4_features task_hookrs_0_5_0_features uuid_0_6_5_features ];
   rustc_demangle_0_1_8 = { features?(rustc_demangle_0_1_8_features {}) }: rustc_demangle_0_1_8_ {};
   rustc_demangle_0_1_8_features = f: updateFeatures f (rec {
     rustc_demangle_0_1_8.default = (f.rustc_demangle_0_1_8.default or true);

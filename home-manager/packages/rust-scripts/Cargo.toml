@@ -9,7 +9,6 @@ task-hookrs = { path = "/home/maralorn/code/task-hookrs"}
 dialog = { path = "/home/maralorn/code/dialog-rs" }
 lazy_static = "1.0.0"
 uuid = "0.6"
-kairos = "0.1.0"
 chrono = "0.4.2"
 error-chain = "0.11.0"
 serde_derive = "1.0"
