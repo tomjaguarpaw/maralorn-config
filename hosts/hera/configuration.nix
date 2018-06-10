@@ -48,7 +48,7 @@ services = {
     encryption.mode = "none";
     paths = "/home/${me.user}/data";
     repo = "borg@borg:.";
-    compression = "zstd,22";
+    compression = "zstd,5";
   };
 };
 
