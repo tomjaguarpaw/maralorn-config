@@ -3,7 +3,6 @@ extern crate uuid;
 extern crate task_hookrs;
 #[macro_use]
 extern crate lazy_static;
-extern crate kairos;
 extern crate chrono;
 #[macro_use]
 extern crate error_chain;
@@ -17,6 +16,7 @@ pub mod refresh;
 pub mod update;
 pub mod kassandra;
 pub mod tasktree;
+pub mod well_known;
 
 pub mod error {
     use task_hookrs::error as terror;

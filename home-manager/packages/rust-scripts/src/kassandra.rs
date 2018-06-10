@@ -100,7 +100,7 @@ enum MPD {
 }
 
 #[derive(Copy, Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
-struct State {
+pub struct State {
     mode: Mode,
     location: Location,
     connectivity: Connectivity,

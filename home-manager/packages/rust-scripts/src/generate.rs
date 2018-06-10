@@ -274,7 +274,7 @@ where
     T::Item: Into<Task>;
 }
 
-fn gen_match(a: &Task, b: &Task) -> bool {
+pub fn gen_match(a: &Task, b: &Task) -> bool {
     a.gen_name() == b.gen_name() && a.gen_id() == b.gen_id()
 }
 impl TaskGenerator for TaskCache {
