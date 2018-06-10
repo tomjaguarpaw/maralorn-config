@@ -8,7 +8,7 @@ let
     do
       echo \
       $(date "+%Y-%m-%d %a %H:%M") "|" \
-      $(cat ~/.kassandra_state | tail -n3 | sed "s/$/ | /") \
+      $(cat ~/.kassandra_state | tail -n4 | sed "s/$/ | /") \
       =inbox= $(task +PENDING -BLOCKED -TAGGED count) "|" \
       =active task= $(task rc.verbose=nothing active || echo "none") "|" \
       =tags= $(task +PENDING -BLOCKED -project -optional -later rc.verbose=nothing tags | sed "s/\(.\)$/\1 |/" )
