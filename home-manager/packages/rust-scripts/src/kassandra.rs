@@ -703,7 +703,7 @@ What's the progress?",
                 ),
                 ("City: In the city", Select::Tag("city")),
                 (
-                    "More: Set other or multiple tag",
+                    "More: Set other or multiple tags",
                     Select::More
                 ),
                 ("Edit: This task instead", Select::Edit),
