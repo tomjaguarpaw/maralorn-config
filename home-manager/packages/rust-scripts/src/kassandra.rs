@@ -961,6 +961,11 @@ What's the progress?",
                 }
                 (Select::T(_), State::Promote, Some(High)) |
                 (Select::T(_), State::Demote, None) => bail!("Impossible state change"),
+                (Select::P(new_prio @ Some(High)), State::Promote, _) |
+                (Select::P(new_prio @ None), State::Demote, _) => {
+                    prio = new_prio;
+                    state = State::Pick
+                }
                 (Select::P(new_prio), _, _) => prio = new_prio,
             }
             self.cache.write()?;
