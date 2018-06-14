@@ -8,6 +8,7 @@ use uuid::Uuid;
 use task_hookrs::cache::TaskCache;
 use task_hookrs::task::{Task, TaskBuilder};
 use task_hookrs::priority::TaskPriority;
+use task_hookrs::status::TaskStatus;
 
 use dialog::rofi::RofiDialogProvider;
 use dialog::DialogProvider;
@@ -183,7 +184,7 @@ impl Kassandra {
         Ok(Kassandra {
             state: get_state()?,
             dialog: RofiDialogProvider {},
-            cache: TaskCache::new(vec![]),
+            cache: TaskCache::new(vec![TaskStatus::Deleted]),
         })
     }
 

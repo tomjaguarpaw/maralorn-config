@@ -153,8 +153,8 @@ impl GeneratedTask for Task {
 }
 
 fn check_ignores(cache: &TaskCache) -> Result<()> {
-    if cache.ignore().len() > 0 {
-        return Err("Don't use generate with a TaskCache with ignores".into());
+    if *cache.ignore() != vec![TS::Deleted] {
+        return Err("Don't use generate with a TaskCache with ignores other than 'TaskStatus::Deleted'".into());
     };
     Ok(())
 }
