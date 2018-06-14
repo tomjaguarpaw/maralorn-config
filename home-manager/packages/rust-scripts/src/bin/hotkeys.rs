@@ -54,6 +54,7 @@ fn main() -> Result<()> {
                     "Messaging",
                     vec![
                         run("Mails", "evolution"),
+                        term("Mutt", "neomutt"),
                         run_cmd(
                             "Weechat",
                             vec![

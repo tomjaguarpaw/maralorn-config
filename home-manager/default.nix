@@ -17,6 +17,7 @@ imports = [
   ./modules/latex.nix
   ./modules/sleep-nag.nix
   ./modules/graphical
+  ./modules/mail.nix
   ./modules/home-options.nix
   ./modules/eventd.nix
   ./modules/unlock.nix
