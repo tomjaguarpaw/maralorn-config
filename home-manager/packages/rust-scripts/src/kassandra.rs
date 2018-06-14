@@ -13,11 +13,11 @@ use dialog::rofi::RofiDialogProvider;
 use dialog::DialogProvider;
 use dialog::errors::ErrorKind as DEK;
 
-use update::update_tasks;
-use generate::GeneratedTask;
+use update::{update_tasks, process_task};
 use error::{Result, ResultExt, ErrorKind as EK, Error};
-use hotkeys::{str2cmd, term_cmd};
+use hotkeys::str2cmd;
 use tasktree::{TreeCache, TaskNode};
+use well_known::{INBOX, ACCOUNTING, TREESORT};
 
 fn prio_name(prio: Option<&TaskPriority>) -> &'static str {
     match prio {
@@ -47,7 +47,9 @@ fn print_task(task: &Task) -> String {
         info.push(format!("project: {}", project));
     }
     if let Some(tags) = task.tags() {
-        info.push(format!("tags: +{}", tags.join(", +")));
+        if tags.len() > 0 {
+            info.push(format!("tags: +{}", tags.join(", +")));
+        }
     }
     info.push(format!("priority: {}", prio_name(task.priority())));
     info.join("\n")
@@ -107,7 +109,7 @@ pub struct State {
     mpd: MPD,
 }
 
-fn task_blocked(cache: &TaskCache, task: &Task) -> bool {
+pub fn task_blocked(cache: &TaskCache, task: &Task) -> bool {
     task.depends()
         .map(|dependencies| {
             for dependency in dependencies {
@@ -123,8 +125,7 @@ fn task_blocked(cache: &TaskCache, task: &Task) -> bool {
         .unwrap_or(false)
 }
 
-
-fn task_inbox(cache: &TaskCache, task: &Task) -> bool {
+pub fn task_in_inbox(cache: &TaskCache, task: &Task) -> bool {
     task.pending() && !task.tagged() && !task_blocked(cache, task)
 }
 
@@ -166,14 +167,14 @@ fn enter_new_task<T: DialogProvider, S: Into<String>>(dialog: &mut T, msg: S) ->
         .build()?)
 }
 
-fn needs_sorting(task: &Task) -> bool {
+pub fn needs_sorting(task: &Task) -> bool {
     !task.has_tag("project") && task.partof().map(|x| x.is_none()).unwrap_or(false)
 }
 
-struct Kassandra {
-    state: State,
-    dialog: RofiDialogProvider,
-    cache: TaskCache,
+pub struct Kassandra {
+    pub state: State,
+    pub dialog: RofiDialogProvider,
+    pub cache: TaskCache,
 }
 
 
@@ -186,36 +187,21 @@ impl Kassandra {
         })
     }
 
-
     fn run(&mut self) -> Result<()> {
         self.cache.load()?;
         update_tasks(&mut self.cache)?;
         self.cache.write()?;
         self.handle_active_tasks()?;
-        self.clear_inbox()?;
-        self.cache.refresh_tree();
-        self.assure_all_sorted()?;
 
-        // check unread E-Mail + ak?
-        // update
-        //   system
-        //   home
-        // mails
-        //   sort inbox
-        //   sort inboxkiva
-        //   sort inboxak
-        //   sort to sort
-        //   go trough todo
-        //   go trough toread
-        //   go trough readlater
-        // pick tasks
-        // optional, later
-        // await
-        // dirty gits
 
-        // task generator
-        // task completion helper
-        self.update_accounting()?;
+        // CHECK_UNREAD_CHATS
+        // CHECK_INBOXES
+        //  maralorn.de
+        //  kiva
+        //  ak
+        process_task(self, &*INBOX)?;
+        process_task(self, &*TREESORT)?;
+        process_task(self, &*ACCOUNTING)?;
         self.select_next_task()?;
         Ok(())
     }
@@ -341,27 +327,13 @@ What's the progress?",
     }
 
     pub fn assure_all_sorted(&mut self) -> Result<()> {
-        if self.cache
-            .filter(|t| {
-                t.gen_name() == Some(&"Sortiere Tasktree".into()) && t.pending()
-            })
+        self.cache.refresh_tree();
+        while let Some(uuid) = self.get_sorted_uuids(|t| !t.obsolete() && needs_sorting(t))
+            .into_iter()
             .next()
-            .is_some()
         {
-            while let Some(uuid) = self.get_sorted_uuids(|t| !t.obsolete() && needs_sorting(t))
-                .into_iter()
-                .next()
-            {
-                self.sort(&uuid)?;
-            }
-            for task in self.cache.filter_mut(|t| {
-                t.gen_name() == Some(&"Sortiere Tasktree".into()) && t.pending()
-            })
-            {
-                task.tw_done()
-            }
+            self.sort(&uuid)?;
             self.cache.refresh_tree();
-            self.cache.write()?;
         }
         Ok(())
     }
@@ -609,26 +581,11 @@ What's the progress?",
     }
 
     pub fn clear_inbox(&mut self) -> Result<()> {
-        if self.cache
-            .filter(|t| {
-                t.gen_name() == Some(&"Leere Inbox".into()) && t.pending()
-            })
+        while let Some(uuid) = self.get_sorted_uuids(|t| task_in_inbox(&self.cache, t))
+            .into_iter()
             .next()
-            .is_some()
         {
-            while let Some(uuid) = self.get_sorted_uuids(|t| task_inbox(&self.cache, t))
-                .into_iter()
-                .next()
-            {
-                self.handle_task(&uuid)?;
-            }
-            for task in self.cache.filter_mut(|t| {
-                t.gen_name() == Some(&"Leere Inbox".into()) && t.pending()
-            })
-            {
-                task.tw_done()
-            }
-            self.cache.write()?;
+            self.handle_task(&uuid)?;
         }
         Ok(())
     }
@@ -813,22 +770,6 @@ What's the progress?",
         Ok(())
     }
 
-    pub fn update_accounting(&mut self) -> Result<()> {
-        if self.cache
-            .filter(|t| {
-                t.gen_name() == Some(&"Aktualisiere Buchhaltung".into()) && t.pending()
-            })
-            .next()
-            .is_some()
-        {
-            str2cmd(&term_cmd("sh -c"))
-                .arg("jali -l. && task gen_id:'Aktualisiere Buchhaltung' done")
-                .output()?;
-        }
-        self.cache.write()?;
-        Ok(())
-    }
-
     pub fn select_next_task(&mut self) -> Result<()> {
         #[derive(PartialEq)]
         enum State {
@@ -983,9 +924,7 @@ What's the progress?",
 
         match self.state.mode {
             Mode::Research => task.has_tag("research"),
-            Mode::Work => {
-                task.has_tag("work") || task.has_tag("pc") || can_do_this_here(self.state.location)
-            }
+            Mode::Work => task.has_tag("work") || can_do_this_here(self.state.location),
             Mode::Orga => task.has_tag("pc") || can_do_this_here(self.state.location),
             Mode::Idle => false,
         }
