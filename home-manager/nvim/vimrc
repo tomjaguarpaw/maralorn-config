@@ -30,6 +30,8 @@ hi ColorColumn ctermbg=black
 
 set winaltkeys=no
 set noai
+set cursorline
+set cursorcolumn
 set si
 set sw=3
 set pt=<F4>
