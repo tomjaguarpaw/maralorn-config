@@ -58,7 +58,8 @@ in {
         bind index,pager \CO sidebar-open
         color sidebar_indicator black white
         color sidebar_highlight white blue
-        set sidebar_format = "%B%?F? [%F]?%* %?N?%N/?%S"
+        set sidebar_format = "%B%* %?N?%N/?%S"
+        set header_cache = "~/.cache/neomutt"
       '';
     };
   };
