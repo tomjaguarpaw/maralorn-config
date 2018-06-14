@@ -37,6 +37,12 @@ fn print_task_short(task: &Task) -> String {
     if let Some(project) = task.project() {
         info.push(format!("{}", project));
     }
+    if let Some(due) = task.due() {
+        info.push(format!("due: {}", **due));
+    }
+    if let Some(wait) = task.wait() {
+        info.push(format!("wait: {}", **wait));
+    }
     info.push(prio_name(task.priority()).into());
     info.join("  |  ")
 }
@@ -51,6 +57,12 @@ fn print_task(task: &Task) -> String {
         if tags.len() > 0 {
             info.push(format!("tags: +{}", tags.join(", +")));
         }
+    }
+    if let Some(due) = task.due() {
+        info.push(format!("due: {}", **due));
+    }
+    if let Some(wait) = task.wait() {
+        info.push(format!("wait: {}", **wait));
     }
     info.push(format!("priority: {}", prio_name(task.priority())));
     info.join("\n")
@@ -482,6 +494,7 @@ What's the progress?",
                 ("Split: Give this tasks subtasks", "split"),
                 ("Depend: Set dependency", "depend"),
                 ("Wait: Set wait time", "postpone"),
+                ("Due: Set a deadline", "due"),
                 ("Tag: Add a tag", "tag"),
                 ("Clear tags", "clear_tags"),
                 ("Manual: I have to change something by hand", "manual"),
@@ -560,6 +573,20 @@ What's the progress?",
             }
             "prio" => {
                 self.select_priority(uuid)?;
+            }
+            "due" => {
+                str2cmd(&format!(
+                    "task {} mod due:{}",
+                    uuid,
+                    self.dialog.input_line(
+                        format!(
+                            "Select a deadline for {}",
+                            task_name
+                        ),
+                        vec!["tomorrow"],
+                    )?
+                )).output()?;
+                self.cache.refresh()?;
             }
             "postpone" => {
                 str2cmd(&format!(
