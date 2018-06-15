@@ -2,7 +2,6 @@
 let
   me = config.m-0.private.me;
   meWork = config.m-0.private.meWork;
-  rustPkgs = import <rust126> {};
   unstablePkgs = import <unstable> {};
 in {
 
@@ -29,7 +28,7 @@ imports = [
 
 nixpkgs.config.packageOverrides = pkgs: with pkgs; {
   tasktree = callPackage ./packages/tasktree {};
-  rust_scripts = rustPkgs.callPackage ./packages/rust-scripts {};
+  rust_scripts = unstablePkgs.callPackage ./packages/rust-scripts {};
   jali = callPackage ./packages/jali {};
   eventd = unstablePkgs.callPackage ./packages/eventd {};
   st = (import packages/st) pkgs config.m-0.colors;

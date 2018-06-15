@@ -1,20 +1,20 @@
 { lib, pkgs, config, ...}:
 with lib;
 let
-  rustPkgs = import <rust126> {};
+  unstablePkgs = import <unstable> {};
 in {
 
 options.m-0.rustdev.enable = mkEnableOption "Rust Dev";
 
 config = mkIf config.m-0.rustdev.enable {
   home.packages = with pkgs; [
-#    gnome3.glade
-    rustPkgs.rustracer
-    rustPkgs.cargo
-    rustPkgs.rustc
+    gnome3.glade
+    unstablePkgs.rustracer
+    unstablePkgs.cargo
+    unstablePkgs.rustc
     gcc
     binutils-unwrapped
-    rustPkgs.rustfmt
+    unstablePkgs.rustfmt
 #    rustPkgs.carnix
   ];
 };
