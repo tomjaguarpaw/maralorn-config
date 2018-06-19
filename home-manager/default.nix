@@ -21,6 +21,7 @@ imports = [
   ./modules/eventd.nix
   ./modules/unlock.nix
   ./modules/weechat
+  ./modules/update_tasks.nix
   ../common
 #   ./sort-mail.nix
 #   ./morgenreport.nix
