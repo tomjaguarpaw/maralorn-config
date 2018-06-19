@@ -6,6 +6,29 @@ config = mkIf config.m-0.taskwarrior.enable {
   home = {
     packages = [ pkgs.taskwarrior ];
     file = {
+      ".taskrc".text = ''
+        data.location=~/.task
+        default.command=default
+        alias.inbox=+PENDING -TAGGED limit:1
+        alias.inboxall=+PENDING -TAGGED
+
+        verbose=blank,header,footnote,label,new-id,affected,edit,special,sync
+        nag=
+
+        report.default.columns=id,tags,priority,description,due,start.active,project
+        report.default.description=List tasks
+        report.default.filter=status:pending -BLOCKED
+        report.default.labels=ID,Tags,,Beschreibung,Bis,Start,Projekt
+        report.default.sort=modified-
+
+        uda.partof.type=string
+        uda.partof.label=parent task
+        uda.generated.type=string
+        uda.gen_name.type=string
+        uda.gen_name.label=generator name
+        uda.gen_id.type=string
+        uda.gen_id.label=generator id
+      '';
       taskwarrior-on-add-hook = {
         target = ".task/hooks/on-add.eventd-notification";
         text = ''
