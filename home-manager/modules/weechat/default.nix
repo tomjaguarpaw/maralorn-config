@@ -44,6 +44,9 @@ python.buffer_autohide.hide_private = on
         [color]
         chat_nick_colors = "cyan,magenta,green,brown,lightblue,default,lightcyan,lightmagenta,lightgreen,blue,31,35,38,40,49,63,70,80,92,99,112,126,130,138,142,148,160,162,167,169,174,176,178,184,186,210,212,215,228"
 
+        [filter]
+        irc_smart = on;*;irc_smart_filter;*
+
         [network]
         gnutls_ca_file = "/etc/nixos/home-manager/modules/weechat/rootca.crt"
         '';
