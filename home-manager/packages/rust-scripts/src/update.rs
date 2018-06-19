@@ -2,9 +2,11 @@ use task_hookrs::cache::TaskCache;
 
 use refresh::TaskRefresher;
 use tasktree::{TreeCache, TaskNode};
-use well_known::{SIMPLE, WellKnown, INBOX, ACCOUNTING, TREESORT};
+use well_known::{SIMPLE, WellKnown, INBOX, ACCOUNTING, TREESORT, SORT_INBOX, SORT_INBOX_AK,
+                 SORT_INBOX_KIVA};
 use error::Result;
 use kassandra::Kassandra;
+use mail::create_tasks;
 
 fn check_completion(cache: &mut TaskCache, task: &impl WellKnown) -> Result<()> {
     if !task.action_necessary(cache)? {
@@ -50,6 +52,13 @@ pub fn update_tasks(cache: &mut TaskCache) -> Result<()> {
     for simple_task in SIMPLE.iter() {
         update_task(cache, simple_task)?;
     }
+    create_tasks(cache, "m-0/Bearbeiten/todo", "m-0/Archiv/unsortiert")?;
+    create_tasks(cache, "fb4/Bearbeiten/todo", "fb4/Archiv/sortieren")?;
+    create_tasks(cache, "ak/Malte/bearbeiten", "ak/Malte/sortieren")?;
+
+    update_task(cache, &*SORT_INBOX)?;
+    update_task(cache, &*SORT_INBOX_KIVA)?;
+    update_task(cache, &*SORT_INBOX_AK)?;
     update_task(cache, &*INBOX)?;
     update_task(cache, &*TREESORT)?;
     update_task(cache, &*ACCOUNTING)?;

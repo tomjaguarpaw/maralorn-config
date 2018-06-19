@@ -67,6 +67,7 @@ fn main() -> Result<()> {
                             ]
                         ),
                         run("Riot", "firefox --new-window https://riot.im/app"),
+                        run("Mastodon", "firefox --new-window https://chaos.social"),
                         run("WhatsApp", "firefox  --new-window https://web.whatsapp.com"),
                         run("Telegram", "telegram-desktop"),
                         run("Signal", "signal-desktop"),

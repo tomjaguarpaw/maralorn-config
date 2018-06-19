@@ -18,7 +18,9 @@ use update::{update_tasks, process_task};
 use error::{Result, ResultExt, ErrorKind as EK, Error};
 use hotkeys::str2cmd;
 use tasktree::{TreeCache, TaskNode};
-use well_known::{INBOX, ACCOUNTING, TREESORT};
+use well_known::{INBOX, ACCOUNTING, TREESORT, PRIVATE_MAILBOX, KIVA_MAILBOX, AK_MAILBOX,
+                 SORT_INBOX, SORT_INBOX_AK, SORT_INBOX_KIVA};
+use mail::{sort_mailbox, SortBox};
 
 fn prio_name(prio: Option<&TaskPriority>) -> &'static str {
     match prio {
@@ -43,7 +45,9 @@ fn print_task_short(task: &Task) -> String {
     if let Some(wait) = task.wait() {
         info.push(format!("wait: {}", **wait));
     }
-    info.push(prio_name(task.priority()).into());
+    if task.priority().is_some() {
+        info.push(prio_name(task.priority()).into());
+    }
     info.join("  |  ")
 }
 
@@ -206,12 +210,19 @@ impl Kassandra {
         self.cache.write()?;
         self.handle_active_tasks()?;
 
+        self.sort_mailbox(&*PRIVATE_MAILBOX, false)?;
+        self.sort_mailbox(&*KIVA_MAILBOX, false)?;
+        self.sort_mailbox(&*AK_MAILBOX, false)?;
 
         // CHECK_UNREAD_CHATS
         // CHECK_INBOXES
         //  maralorn.de
         //  kiva
         //  ak
+        process_task(self, &*SORT_INBOX)?;
+        process_task(self, &*SORT_INBOX_KIVA)?;
+        process_task(self, &*SORT_INBOX_AK)?;
+        update_tasks(&mut self.cache)?;
         process_task(self, &*INBOX)?;
         process_task(self, &*TREESORT)?;
         process_task(self, &*ACCOUNTING)?;
@@ -956,6 +967,11 @@ What's the progress?",
             Mode::Orga => task.has_tag("pc") || can_do_this_here(self.state.location),
             Mode::Idle => false,
         }
+    }
+
+
+    pub fn sort_mailbox(&mut self, mailbox: &SortBox, sort_read: bool) -> Result<()> {
+        sort_mailbox(&mut self.dialog, mailbox, sort_read)
     }
 }
 

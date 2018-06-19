@@ -7,6 +7,7 @@ use refresh::{Timer, CalendarRepeater, Interval};
 use kassandra::{Kassandra, task_in_inbox, needs_sorting};
 use hotkeys::{str2cmd, term_cmd};
 use tasktree::TaskNode;
+use mail::{mailbox_dirty, SortBox};
 
 use chrono::{NaiveDate, NaiveTime, Duration};
 
@@ -25,33 +26,23 @@ pub trait WellKnown {
 }
 
 lazy_static! {
+    pub static ref DAILY: Timer = Timer::Repetition(CalendarRepeater {
+        date: NaiveDate::from_ymd(2018, 5, 8),
+        time: NaiveTime::from_hms(20, 0, 0),
+        repeat: Interval::Day(1)
+    });
     pub static ref SIMPLE: Vec<SimpleTask> = make_simple();
-    pub static ref INBOX: Inbox = Inbox {
-        timer: Timer::Repetition(CalendarRepeater {
-                date: NaiveDate::from_ymd(2018, 5, 8),
-                time: NaiveTime::from_hms(20, 0, 0),
-                repeat: Interval::Day(1),
-    })};
-    pub static ref TREESORT: Treesort = Treesort {
-        timer: Timer::Repetition(CalendarRepeater {
-                date: NaiveDate::from_ymd(2018, 5, 8),
-                time: NaiveTime::from_hms(20, 0, 0),
-                repeat: Interval::Day(1),
-    })};
-    pub static ref ACCOUNTING: Accounting = Accounting {
-        timer: Timer::Repetition(CalendarRepeater {
-                date: NaiveDate::from_ymd(2018, 5, 8),
-                time: NaiveTime::from_hms(20, 0, 0),
-                repeat: Interval::Day(1),
-    })};
+    pub static ref INBOX: Inbox = Inbox { timer: DAILY.clone() };
+    pub static ref TREESORT: Treesort = Treesort { timer: DAILY.clone() };
+    pub static ref ACCOUNTING: Accounting = Accounting { timer: DAILY.clone() };
     pub static ref CHECK_MEDIUM: SimpleTask = unimplemented!(); // auch +await // einfach
     pub static ref CHECK_LOW: SimpleTask = unimplemented!(); // einfach
     pub static ref CHECK_NONE: SimpleTask = unimplemented!(); //einfach
     pub static ref CHECK_OPTIONAL: SimpleTask = unimplemented!(); // zufällig 10 //einfach
     pub static ref CHECK_DIRTY_GITS: SimpleTask = unimplemented!(); // nicht so wichtig
-    pub static ref SORT_INBOX: SimpleTask = unimplemented!(); // wichtig
-    pub static ref SORT_INBOX_KIVA: SimpleTask = unimplemented!(); // wichtig
-    pub static ref SORT_INBOX_AK: SimpleTask = unimplemented!(); // wichtig
+    pub static ref SORT_INBOX: Mailsort = Mailsort::new(DAILY.clone(), &PRIVATE_MAILBOX); // wichtig
+    pub static ref SORT_INBOX_KIVA: Mailsort = Mailsort::new(DAILY.clone(), &KIVA_MAILBOX); // wichtig
+    pub static ref SORT_INBOX_AK: Mailsort = Mailsort::new(DAILY.clone(), &AK_MAILBOX); // wichtig
     pub static ref SORT_MAIL: SimpleTask = unimplemented!(); // zufällige 50? nicht so wichtig
     pub static ref SORT_MAIL_KIVA: SimpleTask = unimplemented!(); // nicht so wichtig
     pub static ref SORT_MAIL_AK: SimpleTask = unimplemented!(); // nicht so wichtig
@@ -60,6 +51,43 @@ lazy_static! {
     pub static ref GC_APOLLO: SimpleTask = unimplemented!(); // einfach aber nicht dringend
     pub static ref OPT_APOLLO: SimpleTask = unimplemented!(); // einfach aber nicht dringend
     pub static ref BACKUP_APOLLO: SimpleTask = unimplemented!(); // einfach aber nicht dringend
+    pub static ref PRIVATE_MAILBOX: SortBox = SortBox {
+        mailbox: "m-0/INBOX",
+        option_dirs: vec![
+            ("Todo","m-0/Bearbeiten/todo"),
+            ("Spam","m-0/Spam"),
+            ("Delete","m-0/Trash"),
+            ("Archiv","m-0/Archiv/unsortiert"),
+            ("Readlater","m-0/Move/readlater"),
+            ("Lesen","m-0/Bearbeiten/lesen"),
+            ("Kiva","fb4/INBOX"),
+            ("Auslandskoordination","ak/INBOX"),
+        ]
+    };
+    pub static ref KIVA_MAILBOX: SortBox = SortBox {
+        mailbox: "fb4/INBOX",
+        option_dirs: vec![("Archiv","fb4/Archiv/sortieren"),
+            ("Todo","fb4/Bearbeiten/todo"),
+            ("Spam","fb4/SPAM"),
+            ("Delete","fb4/Trash"),
+            ("Archiv","fb4/Archiv/sortieren"),
+            ("Lesen","fb4/Bearbeiten/lesen"),
+            ("Privat","m-0/INBOX"),
+            ("Auslandskoordination","ak/INBOX")
+        ]
+    };
+    pub static ref AK_MAILBOX: SortBox = SortBox {
+        mailbox: "ak/INBOX",
+        option_dirs: vec![("Archiv","ak/Malte/sortieren"),
+            ("Todo","ak/Malte/bearbeiten"),
+            ("Spam","ak/SPAM"),
+            ("Delete","ak/Trash"),
+            ("Archiv","ak/Malte/sortieren"),
+            ("Lesen","ak/Malte/lesen"),
+            ("Privat","m-0/INBOX"),
+            ("Kiva","fb4/INBOX")
+        ]
+    };
 }
 
 pub struct SimpleTask {
@@ -113,7 +141,7 @@ fn simple_tasks(
 fn make_simple() -> Vec<SimpleTask> {
     let daily = Timer::Repetition(CalendarRepeater {
         date: NaiveDate::from_ymd(2018, 5, 8),
-        time: NaiveTime::from_hms(20, 0, 0),
+        time: NaiveTime::from_hms(6, 0, 0),
         repeat: Interval::Day(1),
     });
     let weekly = Timer::Repetition(CalendarRepeater {
@@ -256,6 +284,49 @@ impl WellKnown for Treesort {
 
     fn process(&self, kassandra: &mut Kassandra) -> Result<()> {
         kassandra.assure_all_sorted()
+    }
+
+    fn refresh(&self) -> Timer {
+        self.timer.clone()
+    }
+}
+
+
+pub struct Mailsort {
+    timer: Timer,
+    mailbox: &'static SortBox,
+    task: Task,
+}
+
+impl Mailsort {
+    fn new(timer: Timer, mailbox: &'static SortBox) -> Mailsort {
+        Mailsort {
+            timer,
+            mailbox,
+            task: {
+                let mut t = TaskBuilder::default()
+                    .description(format!("Sortiere Mailbox {}", &mailbox.mailbox))
+                    .build()
+                    .expect("TaskBuilding failed inspite of set description");
+                t.set_gen_name(Some("mailboxsort"));
+                t.set_gen_id(Some(mailbox.mailbox));
+                t
+            },
+        }
+    }
+}
+
+impl WellKnown for Mailsort {
+    fn definition(&self) -> &Task {
+        &self.task
+    }
+
+    fn action_necessary(&self, _cache: &TaskCache) -> Result<bool> {
+        mailbox_dirty(&self.mailbox.mailbox)
+    }
+
+    fn process(&self, kassandra: &mut Kassandra) -> Result<()> {
+        kassandra.sort_mailbox(&self.mailbox, true)
     }
 
     fn refresh(&self) -> Timer {
