@@ -25,8 +25,7 @@ nnoremap <a-left> gT
 nnoremap <a-right> gt
 let mapleader=","
 
-set colorcolumn=81,121
-hi ColorColumn ctermbg=black
+hi CursorColumn ctermbg=black
 
 set winaltkeys=no
 set noai
