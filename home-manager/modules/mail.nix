@@ -2,6 +2,7 @@
 with lib;
 let
   mail = config.m-0.mail;
+  me = config.m-0.private.me;
   mkMailbox = {password, user, host, name}:
   ''
     IMAPAccount ${name}
@@ -39,12 +40,16 @@ in {
     services.mbsync = {
       enable = true;
       configFile = builtins.toFile "mbsync-conf" (builtins.concatStringsSep "\n" (builtins.map mkMailbox mail.boxes));
+      frequency = "*:0/1";
+      verbose = false;
     };
     home = {
       packages = [ pkgs.neomutt ];
       file.".neomuttrc".text = ''
         set folder="~/mail/"
         mailboxes `find ~/mail -type d -name INBOX -printf '"%h" '` `find ~/mail -type d -name cur -printf '"%h" '`
+        set sort=threads
+        set realname="${me.name}"
         set spoolfile="~/mail/m-0/INBOX"
         set sidebar_folder_indent=yes
         set sidebar_short_path=yes
