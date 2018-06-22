@@ -9,14 +9,7 @@ programs = {
       save = 100000;
       size = 100000;
     };
-    initExtra = let
-      print-pw = pkgs.writeShellScriptBin "print-pw" ''
-        pass space/olymp/apollo
-        '';
-      in
-      ''
-        export SUDO_ASKPASS="${print-pw}"/bin/print-pw
-      '' + builtins.readFile ./zshrc;
+    initExtra = builtins.readFile ./zshrc;
     oh-my-zsh = {
       enable = true;
       plugins = [ "colored-man-pages" "git-prompt" ];
