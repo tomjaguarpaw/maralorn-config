@@ -21,6 +21,7 @@ use tasktree::{TreeCache, TaskNode};
 use well_known::{INBOX, ACCOUNTING, TREESORT, PRIVATE_MAILBOX, KIVA_MAILBOX, AK_MAILBOX,
                  SORT_INBOX, SORT_INBOX_AK, SORT_INBOX_KIVA};
 use mail::{sort_mailbox, SortBox};
+use generate::GeneratedTask;
 
 fn prio_name(prio: Option<&TaskPriority>) -> &'static str {
     match prio {
@@ -342,7 +343,9 @@ Do you want to change the state? (Esc to cancel)",
                     self.cache.write()?;
                     self.edit_task(&uuid)?;
                 }
-                _ => bail!("Continuing with task"),
+                _ => {
+                    self.work_on_task(&uuid)?;
+                }
             };
         }
         Ok(())
@@ -511,9 +514,8 @@ Do you want to change the state? (Esc to cancel)",
             ],
         )? {
             "do" => {
-                self.cache.get_mut(uuid).chain_err(|| "BUG!")?.tw_start();
-                self.cache.write()?;
-                bail!("Work on Task now!");
+                self.work_on_task(uuid)?;
+                break;
             }
             "done" => {
                 self.cache.get_mut(uuid).chain_err(|| "BUG!")?.tw_done();
@@ -742,6 +744,39 @@ Do you want to change the state? (Esc to cancel)",
         Ok(())
     }
 
+    pub fn work_on_task(&mut self, uuid: &Uuid) -> Result<()> {
+        self.cache
+            .get_mut(uuid)
+            .chain_err(|| "Uuid not found")?
+            .tw_start();
+        self.cache.write()?;
+        {
+            let task = self.cache.get(uuid).chain_err(|| "Uuid not found")?;
+            if task.gen_name() == Some(&"mail-task".to_owned()) {
+                let message_id = task.gen_id()
+                    .chain_err(|| "mail-task has no genid")?
+                    .trim_matches(|x| x == '<' || x == '>');
+                let read_command = format!(
+                    "push <vfolder-from-query>id:{}<return><search>~i{}<return><display-message>",
+                    message_id,
+                    message_id
+                );
+                str2cmd(&term_cmd("neomutt"))
+                    .arg("-e")
+                    .arg(read_command)
+                    .output()?;
+            } else {
+                bail!(EK::WorkingOnTask(print_task(task)));
+            }
+        }
+        self.cache
+            .get_mut(uuid)
+            .chain_err(|| "Uuid not found")?
+            .tw_stop();
+        self.cache.write()?;
+        Ok(())
+    }
+
     pub fn handle_task(&mut self, uuid: &Uuid) -> Result<()> {
         let task_name = print_task(self.cache.get(uuid).chain_err(
             || "handle_task: missing uuid",
@@ -766,9 +801,7 @@ Do you want to change the state? (Esc to cancel)",
             ],
         )? {
             "do" => {
-                self.cache.get_mut(uuid).chain_err(|| "BUG!")?.tw_start();
-                self.cache.write()?;
-                bail!("Work on Task now!");
+                self.work_on_task(uuid)?;
             }
             "done" => {
                 self.cache.get_mut(uuid).chain_err(|| "BUG!")?.tw_done();
