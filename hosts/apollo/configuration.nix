@@ -3,7 +3,7 @@
 # You need pw-files for every configured user in ./secret/pw-useralias for login to work.
 
 let
-  me = config.m-0.private.me;
+  inherit (config.m-0.private) me;
 in {
 
 imports = [
