@@ -11,6 +11,7 @@ morgenreport-script = pkgs.writeShellScriptBin "morgenreport" ''
     echo "File created, sending to kindle now …"
     echo 'Siehe Anhang' | ${pkgs.mutt}/bin/mutt -s "Morgenreport $DATE" -a morgenreport-$DATE.mobi -- maralorn@kindle.com
   '';
+urls = [ "https://erdspektive.org/feed/" ];
 in {
   home.packages = [ morgenreport-script];
   systemd.user = {
