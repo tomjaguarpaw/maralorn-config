@@ -40,5 +40,11 @@ pub mod error {
             MailDir(maildir::MailEntryError);
             MailParse(mailparse::MailParseError);
         }
+        errors {
+            WorkingOnTask(t: String) {
+                description("Working on task")
+                display("Working on task:\n{}", t)
+            }
+        }
     }
 }
