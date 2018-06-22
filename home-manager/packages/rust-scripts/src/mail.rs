@@ -141,10 +141,14 @@ fn sort_mail(
     mailbox: &SortBox,
 ) -> Result<()> {
     enum Options {
+        Ignore,
         ReadNow,
         MoveTo(String),
     };
-    let mut options = vec![("Read now: Open in mutt now".to_owned(), Options::ReadNow)];
+    let mut options = vec![
+        ("Read now: Open in mutt now".to_owned(), Options::ReadNow),
+        ("Ignore: Ignore this mail".to_owned(), Options::Ignore),
+    ];
     if mail.is_seen() == false {
         options.push((
             "Mark Read: Mark as read".to_owned(),
@@ -158,8 +162,12 @@ fn sort_mail(
     let msg = format!("Handling E-mail:\n{}", print_headers(&mut mail)?);
     let choice = dialog.select_option(msg, options)?;
     match choice {
+        Options::Ignore => {}
         Options::ReadNow => {
             read_mail(mailbox.mailbox, &mut mail)?;
+            if let Some(mail) = get_maildir(mailbox.mailbox).find(mail.id()) {
+                return sort_mail(dialog, mail, mailbox);
+            }
         }
         Options::MoveTo(new_mailbox) => move_mail(&mail, mailbox.mailbox, &new_mailbox)?,
     };
