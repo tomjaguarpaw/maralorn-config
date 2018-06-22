@@ -16,7 +16,7 @@ use dialog::errors::ErrorKind as DEK;
 
 use update::{update_tasks, process_task};
 use error::{Result, ResultExt, ErrorKind as EK, Error};
-use hotkeys::str2cmd;
+use hotkeys::{term_cmd, str2cmd};
 use tasktree::{TreeCache, TaskNode};
 use well_known::{INBOX, ACCOUNTING, TREESORT, PRIVATE_MAILBOX, KIVA_MAILBOX, AK_MAILBOX,
                  SORT_INBOX, SORT_INBOX_AK, SORT_INBOX_KIVA};
@@ -973,6 +973,27 @@ Do you want to change the state? (Esc to cancel)",
     }
 }
 
+fn notify_result(result: Result<()>) -> Result<()> {
+    fn show(msg: &str) -> Result<()> {
+        let msg = format!("message='{}'", msg);
+        str2cmd("eventc notification kassandra")
+            .arg("-d")
+            .arg("title='Kassandra'")
+            .arg("-d")
+            .arg(&msg)
+            .output()?;
+        Ok(())
+    }
+    match result {
+        Err(Error(EK::DialogError(DEK::InputCanceled), _)) => Ok(()),
+        Err(err) => {
+            show(&format!("{}", err))?;
+            Err(err)
+        }
+        Ok(()) => show("Kassandra finished"),
+    }
+}
+
 pub fn change_state() -> Result<()> {
     Kassandra::new()?.confirm_state()
 }
@@ -982,5 +1003,5 @@ pub fn new_tasks() -> Result<()> {
 }
 
 pub fn kassandra() -> Result<()> {
-    Kassandra::new()?.run()
+    notify_result(Kassandra::new()?.run())
 }
