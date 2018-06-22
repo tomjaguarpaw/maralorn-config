@@ -23,7 +23,8 @@ m-0.unlocker = [ {
 } ];
 m-0.mail = {
   enable = true;
-  boxes = [ config.m-0.private.mail.private config.m-0.private.mail.work config.m-0.private.mail.work2 ];
+  boxes = with config.m-0.private.mail; [ private work work2 ];
+  sendmail = with config.m-0.private.sendmail; [ private work work2 club club2 ];
 };
 
 }
