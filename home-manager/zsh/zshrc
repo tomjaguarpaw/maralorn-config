@@ -35,7 +35,8 @@ precmd() {
 }
 
 alias c=cdr
-alias s='sudo systemctl'
+alias sudo='sudo -A'
+alias s='sudo -A systemctl'
 alias u='systemctl --user'
 alias m=man
 alias t="tmux attach"
