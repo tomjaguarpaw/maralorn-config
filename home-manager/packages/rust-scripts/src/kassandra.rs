@@ -306,13 +306,11 @@ Do you want to change the state? (Esc to cancel)",
             .into_iter()
             .next()
         {
+            let description = print_task(self.cache.get(&uuid).chain_err(|| "uuid miss")?);
             match self.dialog.select_option(
                 format!(
-                    "You are currently working on {}
-What's the progress?",
-                    print_task(
-                        self.cache.get(&uuid).chain_err(|| "uuid miss")?,
-                    )
+                    "You are currently working on\n{}\nWhat's the progress?",
+                    description
                 ),
                 vec![
                     ("Continue: I'll get back to it", "continue"),
