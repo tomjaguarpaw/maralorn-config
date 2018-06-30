@@ -460,6 +460,13 @@ Do you want to change the state? (Esc to cancel)",
 
     pub fn select_priority(&mut self, uuid: &Uuid) -> Result<()> {
         {
+            enum O {
+                H,
+                M,
+                L,
+                N,
+                O,
+            }
             let task = self.cache.get_mut(uuid).chain_err(
                 || "select_priority: missing uuid",
             )?;
@@ -469,19 +476,21 @@ Do you want to change the state? (Esc to cancel)",
                     print_task(task)
                 ),
                 vec![
-                    (prio_name(Some(&TaskPriority::High)), "h"),
-                    (prio_name(Some(&TaskPriority::Medium)), "m"),
-                    (prio_name(Some(&TaskPriority::Low)), "l"),
-                    (prio_name(None), "n"),
-                    ("Optional", "o"),
+                    (prio_name(Some(&TaskPriority::High)), O::H),
+                    (
+                        prio_name(Some(&TaskPriority::Medium)),
+                        O::M
+                    ),
+                    (prio_name(Some(&TaskPriority::Low)), O::L),
+                    (prio_name(None), O::N),
+                    ("Optional", O::O),
                 ],
             )? {
-                "h" => task.set_priority(Some(TaskPriority::High)),
-                "l" => task.set_priority(Some(TaskPriority::Medium)),
-                "m" => task.set_priority(Some(TaskPriority::Low)),
-                "n" => task.set_priority(None as Option<TaskPriority>),
-                "o" => task.add_tag("optional"),
-                other => bail!("Unknown option {}", other),
+                O::H => task.set_priority(Some(TaskPriority::High)),
+                O::M => task.set_priority(Some(TaskPriority::Medium)),
+                O::L => task.set_priority(Some(TaskPriority::Low)),
+                O::N => task.set_priority(None as Option<TaskPriority>),
+                O::O => task.add_tag("optional"),
             }
         }
         Ok(self.cache.write()?)
