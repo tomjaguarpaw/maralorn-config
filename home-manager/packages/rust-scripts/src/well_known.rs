@@ -63,7 +63,7 @@ lazy_static! {
     };
     pub static ref KIVA_MAILBOX: SortBox = SortBox {
         mailbox: "fb4/INBOX",
-        option_dirs: vec![("Archiv","fb4/Archiv/sortieren"),
+        option_dirs: vec![
             ("Todo","fb4/Bearbeiten/todo"),
             ("Spam","fb4/SPAM"),
             ("Delete","fb4/Trash"),
@@ -75,7 +75,7 @@ lazy_static! {
     };
     pub static ref AK_MAILBOX: SortBox = SortBox {
         mailbox: "ak/INBOX",
-        option_dirs: vec![("Archiv","ak/Malte/sortieren"),
+        option_dirs: vec![
             ("Todo","ak/Malte/bearbeiten"),
             ("Spam","ak/SPAM"),
             ("Delete","ak/Trash"),
