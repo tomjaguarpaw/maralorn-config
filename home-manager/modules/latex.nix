@@ -10,6 +10,7 @@ config = mkIf config.m-0.latex.enable {
       enable = true;
       extraPackages = tpkgs: {inherit (tpkgs)
         scheme-small
+        pdfjam
         latexmk
         collection-latexextra
         collection-bibtexextra
