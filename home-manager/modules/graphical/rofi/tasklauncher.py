@@ -25,5 +25,5 @@ while True:
     entered_command = rofi.communicate(input=tasklist)[0].decode('utf8').strip()
     if entered_command == "":
         sys.exit(0)
-    task_result = subprocess.Popen(["task", "rc.confirmation=no", "default.command=execute \"$HOME/bin/taskfilter\""] + entered_command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+    task_result = subprocess.Popen(["task", "rc.confirmation=no", "rc.default.command=execute \"$HOME/bin/taskfilter\""] + entered_command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
     lastresult = '\n'.join([task_result[0].decode('utf8'), task_result[1].decode('utf8')]).strip()
