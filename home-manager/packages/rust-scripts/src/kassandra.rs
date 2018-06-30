@@ -525,7 +525,6 @@ Do you want to change the state? (Esc to cancel)",
         )? {
             "do" => {
                 self.work_on_task(uuid)?;
-                break;
             }
             "done" => {
                 self.cache.get_mut(uuid).chain_err(|| "BUG!")?.tw_done();
