@@ -7,6 +7,7 @@ options.m-0.graphical.enable = mkEnableOption "Window Manager";
 imports = [
   ./i3.nix
   ./rofi
+  ./ssh-agent.nix
 ];
 
 config = mkIf config.m-0.graphical.enable {
@@ -87,7 +88,6 @@ config = mkIf config.m-0.graphical.enable {
     };
     gpg-agent = {
       enable = true;
-      enableSshSupport = true;
       defaultCacheTtl = 900;
       defaultCacheTtlSsh = 900;
     };
