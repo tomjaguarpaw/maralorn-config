@@ -114,6 +114,7 @@ home.sessionVariables = {
   BROWSER = "${pkgs.firefox}/bin/firefox";
   EDITOR = "${pkgs.neovim}/bin/nvim";
   TERMINAL = config.m-0.terminal;
+  EMAIL = me.mail;
   SUDO_ASKPASS = let
        print-pw = pkgs.writeShellScriptBin "print-pw" "pass eu/m-0/$HOST";
     in

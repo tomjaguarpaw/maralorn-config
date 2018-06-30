@@ -2,7 +2,7 @@
 with lib;
 let
   mail = config.m-0.mail;
-  me = config.m-0.private.me;
+  inherit (config.m-0.private) sendmail me;
   mkMailbox = {password, user, host, name}: ''
     IMAPAccount ${name}
     Host ${host}
@@ -28,7 +28,8 @@ let
     Remove Both
     SyncState *
   '';
-  mkSendconfig = {password, user, host, name, from ? null, default ? false , start_tls ? true }: ''
+
+  mkSendconfig = {password, user, host, name, from ? null, default ? false , start_tls ? true , ... }: ''
     account ${name}
     host ${host}
     port ${if start_tls then "587" else "465"}
@@ -48,6 +49,9 @@ options.m-0.mail.boxes = mkOption {
 options.m-0.mail.sendmail = mkOption {
   type = types.listOf types.attrs;
 };
+options.m-0.mail.default = mkOption {
+  type = types.attrs;
+};
 
 config = mkIf mail.enable {
   services.mbsync = {
@@ -55,7 +59,14 @@ config = mkIf mail.enable {
     configFile = pkgs.writeText "mbsync-conf" (builtins.concatStringsSep "\n" (builtins.map mkMailbox mail.boxes));
     frequency = "*:0/1";
     verbose = false;
-    postExec = "${pkgs.notmuch}/bin/notmuch new";
+    postExec = "${(pkgs.writeShellScriptBin "mail-filter" ''
+      ${pkgs.notmuch}/bin/notmuch new
+      ${pkgs.notmuch}/bin/notmuch tag -new -- tag:new
+      ${pkgs.notmuch}/bin/notmuch tag +deleted -- "folder:/Trash/ (not tag:deleted)"
+      ${pkgs.notmuch}/bin/notmuch tag -deleted -- "(not folder:/Trash/) tag:deleted"
+      ${pkgs.notmuch}/bin/notmuch tag +spam -- "folder:/Spam|SPAM/ (not tag:spam)"
+      ${pkgs.notmuch}/bin/notmuch tag -spam -- "(not folder:/Spam|SPAM/) tag:spam"
+    '')}/bin/mail-filter";
   };
   home = {
     packages = with pkgs; [
@@ -70,7 +81,7 @@ config = mkIf mail.enable {
           tls            on
           tls_trust_file /etc/ssl/certs/ca-certificates.crt
         '' + (builtins.concatStringsSep "\n" (builtins.map mkSendconfig mail.sendmail)));
-        mutt_alternates = "@maralorn.de" + (builtins.concatStringsSep " " me.alternates);
+        mutt_alternates = "@maralorn.de " + (builtins.concatStringsSep " " me.alternates);
         notmuch_alternates = builtins.concatStringsSep ";" me.alternates;
         show-sidebar = pkgs.writeText "show-sidebar" ''
           set sidebar_visible=yes
@@ -92,6 +103,20 @@ config = mkIf mail.enable {
           bind index <return> display-message
           bind index <enter> display-message
           '';
+        mkFccString = { from , name,  sent }: ''
+          send2-hook '${from}' "macro compose y <edit-fcc><kill-line>${config.home.homeDirectory}/mail/${name}/${sent}<enter><send-message>"
+        '';
+        mkFcc = { from ? null, name,  sent ? null, ... }:
+          lib.optionalString
+            (from != null && sent != null)
+            (mkFccString { inherit name sent; from = "=f ${from}"; });
+        mailcap = pkgs.writeText "mailcap" ''
+          text/html; ${pkgs.lynx}/bin/lynx -stdin -dump -force_html ; copiousoutput
+          application/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
+          image/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
+          video/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
+          audio/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
+        '';
       in {
       ".notmuch-config".text = ''
         [database]
@@ -113,6 +138,17 @@ config = mkIf mail.enable {
         synchronize_flags=true
       '';
       ".neomuttrc".text = ''
+        alternative_order text/plain text/html
+        auto_view text/*
+        auto_view message/*
+        unset wait_key
+
+        set query_format="%4c %t %-70.70a %-70.70n %?e?(%e)?"
+        set query_command = "${pkgs.notmuch}/bin/notmuch address --output=recipients --deduplicate=address '%s' | grep -i '%s'"
+        bind editor <Tab> complete-query
+        bind editor ^T complete
+
+
         alternates ${mutt_alternates}
         set folder="${config.home.homeDirectory}/mail/"
         mailboxes `find ${config.home.homeDirectory}/mail -type d -name INBOX -printf '"%h" '` `find ~/mail -type d -name cur -printf '"%h" '`
@@ -120,24 +156,40 @@ config = mkIf mail.enable {
         set sort=threads
         set sort_aux=date-sent
         set realname="${me.name}"
+        set from=fill-later
+        set use_from=yes
+        set fast_reply=yes
+        set mailcap_path=${mailcap};
+        set include=yes
         set edit_headers=yes
         set mbox_type=Maildir
-        set spoolfile="${config.home.homeDirectory}/mail/m-0/INBOX"
+        set spoolfile="${config.home.homeDirectory}/mail/${mail.default.name}/INBOX"
+        set mail_check_stats=yes
+        bind index / vfolder-from-query
+        set header_cache = "~/.cache/neomutt"
+        set date_format="!%y-%m-%d %H:%M"
+        set mime_forward=yes
+        set mime_forward_rest=yes
+
+        macro index <F5> "!systemctl --user start mbsync > /dev/null<enter>"
+
+        source "${hide-sidebar}"
+        macro index <right> "<enter-command>source ${hide-sidebar}<enter>"
+        macro index <left> "<enter-command>source ${show-sidebar}<enter>"
         set sidebar_folder_indent=yes
         set sidebar_short_path=yes
         set sidebar_width=40
         set sidebar_sort_method="alpha"
         set sidebar_indent_string=" "
-        set mail_check_stats=yes
-        bind index / vfolder-from-query
         color sidebar_indicator black white
         color sidebar_highlight white blue
         set sidebar_format = "%B%* %?N?%N/?%S"
-        set header_cache = "~/.cache/neomutt"
-        set date_format="!%y-%m-%d %H:%M"
-        source "${hide-sidebar}"
-        macro index <right> "<enter-command>source ${hide-sidebar}<enter>"
-        macro index <left> "<enter-command>source ${show-sidebar}<enter>"
+
+        alias f__0 ${me.name} <${me.mail}>
+        ${builtins.concatStringsSep "\n" (lib.imap1 (n: x: "alias f__${toString n} ${me.name} <${x}>") me.alternates)}
+        send2-hook '~f fill-later' "push <edit-from><kill-line>f__<complete><search>${me.mail}<enter>"
+        ${mkFccString  { from = "~A"; inherit (mail.default) name sent; }}
+        ${builtins.concatStringsSep "\n" (builtins.map mkFcc mail.sendmail)}
       '';
     };
   };

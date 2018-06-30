@@ -5,6 +5,7 @@ imports = [
   ../../home-manager
 ];
 
+m-0.hostName = "apollo";
 m-0.laptop.enable = true;
 m-0.sleep-nag.enable = true;
 m-0.battery.enable = true;
@@ -25,6 +26,7 @@ m-0.mail = {
   enable = true;
   boxes = with config.m-0.private.mail; [ private work work2 ];
   sendmail = with config.m-0.private.sendmail; [ private work work2 club club2 ];
+  default = config.m-0.private.sendmail.private;
 };
 
 }
