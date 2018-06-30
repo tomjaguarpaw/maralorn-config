@@ -110,18 +110,10 @@ fn main() -> Result<()> {
         );
         let monitor = term("Monitor", "htop");
         let wifi = term("WLAN", "nmtui");
-        let update_home = term("Update Home", "home-manager switch");
-        let update_sys = term("Update Sys", "sudo nixos-rebuild switch");
-        let gc = term("Collect Garbage", "nix-collect-garbage -d");
-        let optimise = term("Optimise", "nix optimise-store");
         menu(
             "Maintenance",
             vec![
                 wifi,
-                update_home,
-                update_sys,
-                gc,
-                optimise,
                 monitor,
                 keymenu,
                 run("Bildschirme", "arandr"),

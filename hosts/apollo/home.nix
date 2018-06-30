@@ -28,5 +28,14 @@ m-0.mail = {
   sendmail = with config.m-0.private.sendmail; [ private work work2 club club2 ];
   default = config.m-0.private.sendmail.private;
 };
+home.packages = [
+  (pkgs.writeShellScriptBin "maintenance" ''
+    sudo -A nix-channel --update
+    sudo -A nixos-rebuild switch
+    sudo -A nix-collect-garbage -d
+    nix optimise-store
+    sudo -A systemctl start borgbackup-job-data.service
+  '')
+];
 
 }

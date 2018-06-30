@@ -19,7 +19,7 @@ use error::{Result, ResultExt, ErrorKind as EK, Error};
 use hotkeys::{term_cmd, str2cmd};
 use tasktree::{TreeCache, TaskNode};
 use well_known::{INBOX, ACCOUNTING, TREESORT, PRIVATE_MAILBOX, KIVA_MAILBOX, AK_MAILBOX,
-                 SORT_INBOX, SORT_INBOX_AK, SORT_INBOX_KIVA};
+                 SORT_INBOX, SORT_INBOX_AK, SORT_INBOX_KIVA, MAINTENANCE};
 use mail::{sort_mailbox, SortBox};
 use generate::GeneratedTask;
 
@@ -220,6 +220,7 @@ impl Kassandra {
         //  maralorn.de
         //  kiva
         //  ak
+        process_task(self, &*MAINTENANCE)?;
         process_task(self, &*SORT_INBOX)?;
         process_task(self, &*SORT_INBOX_KIVA)?;
         process_task(self, &*SORT_INBOX_AK)?;

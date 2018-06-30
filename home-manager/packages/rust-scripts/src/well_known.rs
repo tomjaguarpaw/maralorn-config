@@ -35,6 +35,7 @@ lazy_static! {
     pub static ref INBOX: Inbox = Inbox { timer: DAILY.clone() };
     pub static ref TREESORT: Treesort = Treesort { timer: DAILY.clone() };
     pub static ref ACCOUNTING: Accounting = Accounting { timer: DAILY.clone() };
+    pub static ref MAINTENANCE: Maintenance = Maintenance { timer: DAILY.clone() };
     pub static ref CHECK_MEDIUM: SimpleTask = unimplemented!(); // auch +await // einfach
     pub static ref CHECK_LOW: SimpleTask = unimplemented!(); // einfach
     pub static ref CHECK_NONE: SimpleTask = unimplemented!(); //einfach
@@ -47,10 +48,6 @@ lazy_static! {
     pub static ref SORT_MAIL_KIVA: SimpleTask = unimplemented!(); // nicht so wichtig
     pub static ref SORT_MAIL_AK: SimpleTask = unimplemented!(); // nicht so wichtig
     pub static ref SORT_SPAM: SimpleTask = unimplemented!(); // nicht so wichtig
-    pub static ref UPDATE_APOLLO: SimpleTask = unimplemented!(); // einfach aber nicht dringend
-    pub static ref GC_APOLLO: SimpleTask = unimplemented!(); // einfach aber nicht dringend
-    pub static ref OPT_APOLLO: SimpleTask = unimplemented!(); // einfach aber nicht dringend
-    pub static ref BACKUP_APOLLO: SimpleTask = unimplemented!(); // einfach aber nicht dringend
     pub static ref PRIVATE_MAILBOX: SortBox = SortBox {
         mailbox: "m-0/INBOX",
         option_dirs: vec![
@@ -327,6 +324,44 @@ impl WellKnown for Mailsort {
 
     fn process(&self, kassandra: &mut Kassandra) -> Result<()> {
         kassandra.sort_mailbox(&self.mailbox, true)
+    }
+
+    fn refresh(&self) -> Timer {
+        self.timer.clone()
+    }
+}
+
+pub struct Maintenance {
+    timer: Timer,
+}
+
+impl WellKnown for Maintenance {
+    fn definition(&self) -> &Task {
+        lazy_static! {
+            static ref TASK: Task = {
+                let mut t = TaskBuilder::default()
+                    .description("Run system Maintenance")
+                    .build()
+                    .expect("TaskBuilding failed inspite of set description");
+                t.set_gen_name(Some("maintenance"));
+                t.set_gen_id(Some("apollo"));
+                t
+            };
+        };
+        &TASK
+    }
+
+    fn action_necessary(&self, _cache: &TaskCache) -> Result<bool> {
+        Ok(true)
+    }
+
+    fn process(&self, kassandra: &mut Kassandra) -> Result<()> {
+        str2cmd(&term_cmd("maintenance")).spawn()?;
+        for task in kassandra.cache.filter_mut(|t| self.is_this(t)) {
+            task.tw_done()
+        }
+        kassandra.cache.write()?;
+        Ok(())
     }
 
     fn refresh(&self) -> Timer {
