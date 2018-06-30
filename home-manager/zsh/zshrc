@@ -34,6 +34,7 @@ precmd() {
 	}
 }
 
+alias o=xdg-open
 alias c=cdr
 alias sudo='sudo -A'
 alias s='sudo -A systemctl'
