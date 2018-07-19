@@ -50,6 +50,7 @@ config = mkIf config.m-0.graphical.enable {
     packages = with pkgs; [
       tasktree
       st
+      shutter
     ];
     keyboard = {
       layout = "de";
