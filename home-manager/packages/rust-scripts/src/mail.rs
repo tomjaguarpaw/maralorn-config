@@ -86,7 +86,9 @@ fn print_headers(mail: &mut MailEntry) -> Result<String> {
 fn get_message_id(mail: &mut MailEntry) -> Result<String> {
     for header in mail.headers()? {
         if header.get_key()?.to_lowercase().as_str() == "message-id" {
-            return Ok(header.get_value()?);
+            let message_id = header.get_value()?;
+            let message_id = message_id.trim().trim_matches(|x| x == '<' || x == '>');
+            return Ok(message_id.into());
         }
     }
     bail!("Parsed mail without Message-ID: {},", mail.id())
@@ -242,7 +244,6 @@ fn create_task(mail: &mut MailEntry) -> Result<Task> {
     let from = MAIL_REGEX.replace(&from, "");
     let from = from.trim_matches(|x: char| x.is_whitespace() || x == '"');
     let message_id = get_message_id(mail)?;
-    let message_id = message_id.trim().trim_matches(|x| x == '<' || x == '>');
     let mut t = TaskBuilder::default()
         .description(format!("Mail: {}: {}", from, subject))
         .build()
