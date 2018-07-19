@@ -31,9 +31,10 @@ m-0.mail = {
 home.packages = [
   (pkgs.writeShellScriptBin "maintenance" ''
     sudo -A nix-channel --update
-    sudo -A nixos-rebuild switch
-    sudo -A nix-collect-garbage -d
-    nix optimise-store
+    sleep 5s
+    sudo -A systemctl start nixos-upgrade
+    sudo -A systemctl start nix-gc
+    sudo -A systemctl start nix-optimise
     sudo -A systemctl start borgbackup-job-data.service
   '')
 ];
