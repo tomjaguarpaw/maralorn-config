@@ -9,12 +9,13 @@ options.m-0.rustdev.enable = mkEnableOption "Rust Dev";
 config = mkIf config.m-0.rustdev.enable {
   home.packages = with pkgs; [
     gnome3.glade
-    unstablePkgs.rustracer
+    rustracer
     unstablePkgs.cargo
     unstablePkgs.rustc
-    gcc
-    binutils-unwrapped
+    unstablePkgs.rustfmt
     unstablePkgs.carnix
+    binutils-unwrapped
+    gcc
   ];
 };
 
