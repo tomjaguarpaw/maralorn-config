@@ -51,6 +51,7 @@ config = mkIf config.m-0.laptop.enable {
     feh
     gimp
     imagemagick
+    ghostscript
     libreoffice-fresh
     pandoc
     xournal
