@@ -4,7 +4,8 @@ use task_hookrs::cache::TaskCache;
 use error::Result;
 use generate::{gen_match, GeneratedTask};
 use refresh::{Timer, CalendarRepeater, Interval};
-use kassandra::{Kassandra, task_in_inbox, needs_sorting};
+use kassandra::{Kassandra, task_in_inbox, needs_sorting, prio_name, PriorityState, PS,
+                get_stale_tasks};
 use hotkeys::{str2cmd, term_cmd};
 use tasktree::TaskNode;
 use mail::{mailbox_dirty, SortBox};
@@ -36,10 +37,15 @@ lazy_static! {
     pub static ref TREESORT: Treesort = Treesort { timer: DAILY.clone() };
     pub static ref ACCOUNTING: Accounting = Accounting { timer: DAILY.clone() };
     pub static ref MAINTENANCE: Maintenance = Maintenance { timer: DAILY.clone() };
-    pub static ref CHECK_MEDIUM: SimpleTask = unimplemented!(); // auch +await // einfach
-    pub static ref CHECK_LOW: SimpleTask = unimplemented!(); // einfach
-    pub static ref CHECK_NONE: SimpleTask = unimplemented!(); //einfach
-    pub static ref CHECK_OPTIONAL: SimpleTask = unimplemented!(); // zufällig 10 //einfach
+    pub static ref CHECK_MEDIUM: TaskCheck = TaskCheck { timer: Timer::Repetition(CalendarRepeater {
+            date: NaiveDate::from_ymd(2018, 5, 8),
+            time: NaiveTime::from_hms(6, 0, 0),
+            repeat: Interval::Day(1)
+        }),
+        priority: (PS::Medium, false) };
+    pub static ref CHECK_LOW: TaskCheck = TaskCheck { timer: DAILY.clone(), priority: (PS::Low, false) };
+    pub static ref CHECK_NONE: TaskCheck = TaskCheck { timer: DAILY.clone(), priority: (PS::None, false) };
+    pub static ref CHECK_OPTIONAL: TaskCheck = TaskCheck { timer: DAILY.clone(), priority: (PS::Optional,false) };
     pub static ref CHECK_DIRTY_GITS: SimpleTask = unimplemented!(); // nicht so wichtig
     pub static ref SORT_INBOX: Mailsort = Mailsort::new(DAILY.clone(), &PRIVATE_MAILBOX); // wichtig
     pub static ref SORT_INBOX_KIVA: Mailsort = Mailsort::new(DAILY.clone(), &KIVA_MAILBOX); // wichtig

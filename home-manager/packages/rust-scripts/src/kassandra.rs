@@ -3,6 +3,9 @@ use std::env::home_dir;
 
 use serde_yaml::{from_reader, to_writer, to_string};
 
+use chrono::offset::Local;
+use chrono::{NaiveDateTime, TimeZone, Duration};
+
 use uuid::Uuid;
 
 use task_hookrs::cache::TaskCache;
@@ -19,11 +22,85 @@ use error::{Result, ResultExt, ErrorKind as EK, Error};
 use hotkeys::{term_cmd, str2cmd};
 use tasktree::{TreeCache, TaskNode};
 use well_known::{INBOX, ACCOUNTING, TREESORT, PRIVATE_MAILBOX, KIVA_MAILBOX, AK_MAILBOX,
-                 SORT_INBOX, SORT_INBOX_AK, SORT_INBOX_KIVA, MAINTENANCE};
+                 SORT_INBOX, SORT_INBOX_AK, SORT_INBOX_KIVA, MAINTENANCE, CHECK_MEDIUM, CHECK_LOW,
+                 CHECK_NONE, CHECK_OPTIONAL};
 use mail::{sort_mailbox, SortBox};
 use generate::GeneratedTask;
 
-fn prio_name(prio: Option<&TaskPriority>) -> &'static str {
+
+pub type PriorityState = (PS, bool);
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum PS {
+    High,
+    Medium,
+    Low,
+    None,
+    Optional,
+}
+
+fn get_sorted_uuids(cache: &TaskCache, filter: impl Fn(&Task) -> bool) -> Vec<Uuid> {
+    get_sorted_tasks(cache, filter)
+        .into_iter()
+        .map(|x| x.uuid().clone())
+        .collect()
+}
+
+fn get_sorted_tasks(cache: &TaskCache, filter: impl Fn(&Task) -> bool) -> Vec<&Task> {
+    let mut tasks = cache.filter(filter).collect::<Vec<_>>();
+    tasks.sort_by_key(|t| t.entry().date());
+    tasks
+}
+
+pub fn get_stale_tasks(cache: &TaskCache, priority: PriorityState) -> Vec<&Task> {
+    let upper_bound = priority.0.upper_bound();
+    let only_optional = priority.0.only_optional();
+    let prio = priority.0.prio();
+    let prio = prio.as_ref();
+    let mut tasks = cache
+        .filter(|t| {
+            t.pending() && !task_blocked(cache, t) && t.priority() == prio &&
+                !t.has_tag("project") && !t.has_tag("kategorie") &&
+                (only_optional == t.has_tag("optional")) &&
+                (priority.1 ||
+                     t.modified()
+                         .map(|m| {
+                        Local.from_utc_datetime(&**m).naive_local() < upper_bound
+                    })
+                         .unwrap_or(true))
+        })
+        .collect::<Vec<_>>();
+    tasks.sort_by_key(|t| t.modified().map(|t| t.date()));
+    tasks
+}
+
+impl PS {
+    pub fn prio(&self) -> Option<TaskPriority> {
+        match self {
+            PS::High => Some(TaskPriority::High),
+            PS::Medium => Some(TaskPriority::Medium),
+            PS::Low => Some(TaskPriority::Low),
+            PS::None | PS::Optional => None,
+        }
+    }
+    pub fn timeout(&self) -> i64 {
+        match self {
+            PS::High => 1,
+            PS::Medium => 1,
+            PS::Low => 7,
+            PS::None | PS::Optional => 30,
+        }
+    }
+
+    pub fn only_optional(&self) -> bool {
+        *self == PS::Optional
+    }
+
+    pub fn upper_bound(&self) -> NaiveDateTime {
+        (Local::now() - Duration::days(self.timeout())).naive_local()
+    }
+}
+
+pub fn prio_name(prio: Option<&TaskPriority>) -> &'static str {
     match prio {
         None => "Sometime",
         Some(TaskPriority::High) => "Today",
@@ -32,10 +109,14 @@ fn prio_name(prio: Option<&TaskPriority>) -> &'static str {
     }
 }
 
+pub fn tags_string(tags: &Vec<String>) -> String {
+    format!("+{}", tags.join(",+"))
+}
+
 fn print_task_short(task: &Task) -> String {
     let mut info = vec![task.description().clone()];
     if let Some(tags) = task.tags() {
-        info.push(format!("+{}", tags.join(",+")));
+        info.push(tags_string(tags));
     }
     if let Some(project) = task.project() {
         info.push(format!("{}", project));
@@ -186,7 +267,7 @@ fn enter_new_task<T: DialogProvider, S: Into<String>>(dialog: &mut T, msg: S) ->
 }
 
 pub fn needs_sorting(task: &Task) -> bool {
-    !task.has_tag("project") && task.partof().map(|x| x.is_none()).unwrap_or(false)
+    !task.has_tag("project") && !task.has_tag("kategorie")
 }
 
 pub struct Kassandra {
@@ -227,23 +308,15 @@ impl Kassandra {
         update_tasks(&mut self.cache)?;
         process_task(self, &*INBOX)?;
         process_task(self, &*TREESORT)?;
+        process_task(self, &*CHECK_MEDIUM)?;
+        process_task(self, &*CHECK_LOW)?;
+        process_task(self, &*CHECK_NONE)?;
+        process_task(self, &*CHECK_OPTIONAL)?;
         process_task(self, &*ACCOUNTING)?;
         self.select_next_task()?;
         Ok(())
     }
 
-    fn get_sorted_uuids(&self, filter: impl Fn(&Task) -> bool) -> Vec<Uuid> {
-        self.get_sorted_tasks(filter)
-            .into_iter()
-            .map(|x| x.uuid().clone())
-            .collect()
-    }
-
-    fn get_sorted_tasks(&self, filter: impl Fn(&Task) -> bool) -> Vec<&Task> {
-        let mut tasks = self.cache.filter(filter).collect::<Vec<_>>();
-        tasks.sort_by_key(|t| t.entry().date());
-        tasks
-    }
 
     fn get_notes(&mut self) -> Result<()> {
         loop {
@@ -304,8 +377,10 @@ Do you want to change the state? (Esc to cancel)",
     }
 
     fn handle_active_tasks(&mut self) -> Result<()> {
-        while let Some(uuid) = self.get_sorted_uuids(|t| t.start().is_some() && t.pending())
-            .into_iter()
+        while let Some(uuid) = get_sorted_uuids(
+            &self.cache,
+            |t| t.start().is_some() && t.pending(),
+        ).into_iter()
             .next()
         {
             let description = print_task(self.cache.get(&uuid).chain_err(|| "uuid miss")?);
@@ -354,8 +429,10 @@ Do you want to change the state? (Esc to cancel)",
 
     pub fn assure_all_sorted(&mut self) -> Result<()> {
         self.cache.refresh_tree();
-        while let Some(uuid) = self.get_sorted_uuids(|t| !t.obsolete() && needs_sorting(t))
-            .into_iter()
+        while let Some(uuid) = get_sorted_uuids(
+            &self.cache,
+            |t| !t.obsolete() && needs_sorting(t),
+        ).into_iter()
             .next()
         {
             self.sort(&uuid)?;
@@ -400,23 +477,20 @@ Do you want to change the state? (Esc to cancel)",
         let mut parent = None;
         loop {
             match {
-                let mut options = self.cache
-                    .filter(|t| {
-                        t.pending() && t.partof().map(|partof| partof == parent).unwrap_or(false) &&
-                            (parent.is_some() || t.has_tag("project"))
-                    })
-                    .collect::<Vec<_>>();
-                options.sort_unstable_by_key(|t| t.entry().date());
-                match self.dialog.select_option(
-                    format_msg(&self.cache, parent, "currently at")?,
-                    vec![
-                        ("select this level".into(), Err("here")),
-                        ("insert new node".into(), Err("new")),
-                        ("go one level up".into(), Err("up")),
-                        ("edit task".into(), Err("edit")),
-                    ].into_iter()
-                        .chain(options.into_iter().map(|t| (print_task_short(t), Ok(t)))),
-                )? {
+                let options = get_sorted_tasks(&self.cache, |t| {
+                    t.pending() && t.partof().map(|partof| partof == parent).unwrap_or(false) &&
+                        (parent.is_some() || t.has_tag("kategorie"))
+                });
+                let options = options.into_iter().map(|t| (print_task_short(t), Ok(t)));
+                let options = vec![
+                    ("select this level".into(), Err("here")),
+                    ("insert new node".into(), Err("new")),
+                    ("go one level up".into(), Err("up")),
+                    ("edit task".into(), Err("edit")),
+                ].into_iter()
+                    .chain(options);
+                let msg = format_msg(&self.cache, parent, "currently at")?;
+                match self.dialog.select_option(msg, options)? {
                     Ok(task) => {
                         parent = Some(task.uuid().clone());
                         "stay"
@@ -629,7 +703,7 @@ Do you want to change the state? (Esc to cancel)",
     }
 
     pub fn clear_inbox(&mut self) -> Result<()> {
-        while let Some(uuid) = self.get_sorted_uuids(|t| task_in_inbox(&self.cache, t))
+        while let Some(uuid) = get_sorted_uuids(&self.cache, |t| task_in_inbox(&self.cache, t))
             .into_iter()
             .next()
         {
@@ -764,7 +838,9 @@ Do you want to change the state? (Esc to cancel)",
             if task.gen_name() == Some(&"mail-task".to_owned()) {
                 let message_id = task.gen_id()
                     .chain_err(|| "mail-task has no genid")?
-                    .trim_matches(|x| x == '<' || x == '>');
+                    .trim()
+                    .trim_matches(|x| x == '<' || x == '>')
+                    .replace("$", ".");
                 let read_command = format!(
                     "push <vfolder-from-query>id:{}<return><search>~i{}<return><display-message>",
                     message_id,
@@ -811,6 +887,7 @@ Do you want to change the state? (Esc to cancel)",
         )? {
             "do" => {
                 self.work_on_task(uuid)?;
+                return self.handle_task(uuid);
             }
             "done" => {
                 self.cache.get_mut(uuid).chain_err(|| "BUG!")?.tw_done();
@@ -845,152 +922,202 @@ Do you want to change the state? (Esc to cancel)",
                 self.select_priority(uuid)?;
             }
         }
-        self.add_tag(uuid)?;
+        if self.cache
+            .get(uuid)
+            .chain_err(|| "unknown task")?
+            .tags()
+            .map(|t| t.len() == 0)
+            .unwrap_or(true)
+        {
+            self.add_tag(uuid)?;
+        }
+        Ok(())
+    }
+
+
+    pub fn check_priorities(&mut self, priority: PriorityState) -> Result<()> {
+        let mut count = 0;
+        while let Some(uuid) = get_stale_tasks(&self.cache, priority)
+            .into_iter()
+            .next()
+            .map(|t| t.uuid().clone())
+        {
+            self.priority_check(&uuid, priority)?;
+            if priority.0 == PS::Optional {
+                count += 1;
+                if count > 10 {
+                    return Ok(());
+                }
+            }
+        }
+        Ok(())
+    }
+
+    pub fn show_priorities(&mut self, mut priority: PriorityState) -> Result<()> {
+        enum Select {
+            P(PS),
+            T(Uuid),
+        };
+        loop {
+            let options = {
+                let mut tasks = get_stale_tasks(&self.cache, priority);
+                if priority.1 {
+                    tasks.retain(|t| self.is_relevant(t));
+                }
+                let tasks = tasks.into_iter().map(|t| {
+                    (print_task_short(t), Select::T(t.uuid().clone()))
+                });
+                let mut options = vec![PS::High, PS::Low, PS::Medium, PS::None, PS::Optional];
+                options.retain(|t| *t != priority.0);
+                let options = options.into_iter().map(|t| {
+                    (
+                        format!("{:?}: Show tasks of priority {:?}", t, t),
+                        Select::P(t),
+                    )
+                });
+                options.chain(tasks).collect::<Vec<_>>()
+            };
+            let msg = format!(
+                "Showing {} tasks of priority {:?}",
+                if priority.1 { "only relevant" } else { "stale" },
+                priority.0
+            );
+            match self.dialog.select_option(msg, options)? {
+                Select::P(ps) => priority.0 = ps,
+                Select::T(uuid) => return self.priority_check(&uuid, priority),
+            };
+        }
+    }
+
+    pub fn priority_check(&mut self, uuid: &Uuid, priority: PriorityState) -> Result<()> {
+        enum Select {
+            ShowAll,
+            Edit,
+            Keep,
+            Demote,
+            Promote,
+        };
+        let mut options = vec![
+            ("Keep: Leave priority as it is", Select::Keep),
+            ("Edit", Select::Edit),
+            ("Show all: Show all tasks of this priority", Select::ShowAll),
+        ];
+        if priority.0 != PS::Optional {
+            options.insert(0, ("Demote: Lower priority", Select::Demote));
+        }
+        if priority.0 != PS::High {
+            options.insert(0, ("Promote: Raise priority", Select::Promote));
+        }
+        let e = &format!("Called priority_check with missing uuid {}", uuid);
+        let msg = format!(
+            "Checking up on the following task, because of elapsed timeout:\n{}",
+            print_task(self.cache.get(uuid).expect(e))
+        );
+        match (self.dialog.select_option(msg, options)?, priority.0) {
+            (Select::ShowAll, _) => {
+                self.show_priorities(priority)?;
+            }
+            (Select::Edit, _) => {
+                self.edit_task(uuid)?;
+            }
+            (Select::Keep, _) => {
+                self.cache.get_mut(uuid).expect(e).add_tag("toggle");
+                self.cache.write()?;
+                self.cache.get_mut(uuid).expect(e).remove_tag("toggle");
+                self.cache.refresh()?;
+            }
+            (Select::Promote, PS::Medium) => {
+                self.cache.get_mut(uuid).expect(e).set_priority(
+                    Some(TaskPriority::High),
+                );
+                self.cache.write()?;
+            }
+            (Select::Demote, PS::High) |
+            (Select::Promote, PS::Low) => {
+                self.cache.get_mut(uuid).expect(e).set_priority(
+                    Some(TaskPriority::Medium),
+                );
+                self.cache.write()?;
+            }
+            (Select::Demote, PS::Medium) |
+            (Select::Promote, PS::None) => {
+                self.cache.get_mut(uuid).expect(e).set_priority(
+                    Some(TaskPriority::Low),
+                );
+                self.cache.write()?;
+            }
+            (Select::Demote, PS::Low) |
+            (Select::Promote, PS::Optional) => {
+                {
+                    let t = self.cache.get_mut(uuid).expect(e);
+                    t.set_priority(None as Option<TaskPriority>);
+                    t.remove_tag("optional");
+                }
+                self.cache.write()?;
+            }
+            (Select::Demote, PS::None) => {
+                {
+                    let t = self.cache.get_mut(uuid).expect(e);
+                    t.set_tags(None as Option<Vec<String>>);
+                    t.add_tag("optional");
+                }
+                self.cache.write()?;
+            }
+            (_, _) => bail!("invalid demotion/promotion"),
+        }
         Ok(())
     }
 
     pub fn select_next_task(&mut self) -> Result<()> {
-        #[derive(PartialEq)]
-        enum State {
-            Promote,
-            Demote,
-            Pick,
-        };
         enum Select {
-            S(State),
-            P(Option<TaskPriority>),
             T(Uuid),
             Manual,
+            PromoteTasks,
+            ChangeState,
         };
-        use task_hookrs::priority::TaskPriority::*;
-        let mut state = State::Pick;
-        let mut prio = Some(TaskPriority::High);
         loop {
-            let (m, o) = {
-                let tasks = self.get_sorted_tasks(|t| {
+            let mut empty = true;
+            let options = {
+                let options = vec![
+                    ("Manual: Edit my tasks".into(), Select::Manual),
+                    (
+                        "Promote: Pick tasks with lower priority".into(),
+                        Select::PromoteTasks
+                    ),
+                    ("Status: Change status".into(), Select::ChangeState),
+                ].into_iter();
+                let tasks = get_sorted_tasks(&self.cache, |t| {
                     t.pending() && self.is_relevant(t) && !task_blocked(&self.cache, t) &&
-                        t.priority() == prio.as_ref()
+                        t.priority() == Some(TaskPriority::High).as_ref()
+                }).into_iter();
+                let tasks = tasks.map(|t| {
+                    empty = false;
+                    (print_task_short(t), Select::T(t.uuid().clone()))
                 });
-                if tasks.len() == 0 {
-                    if self.cache
-                        .filter(|t| {
-                            t.pending() && self.is_relevant(t) && !task_blocked(&self.cache, t)
-                        })
-                        .next()
-                        .is_some()
-                    {
-                        let (s, p) = match &prio {
-                            Some(High) => (State::Promote, Some(Medium)),
-                            Some(Medium) => (State::Promote, Some(Low)),
-                            Some(Low) => (State::Promote, None),
-                            None => (State::Pick, Some(High)),
-                        };
-                        state = s;
-                        prio = p;
-                        continue;
-                    } else {
-                        break;
-                    }
-                }
-                let options = {
-                    let mut options = vec![("Manual: Edit my tasks".into(), Select::Manual)];
-                    if state != State::Pick {
-                        options.push(("Pick: Change to pick mode".into(), Select::S(State::Pick)));
-                    }
-                    if state != State::Promote {
-                        options.push((
-                            "Promote: Change to promote mode".into(),
-                            Select::S(State::Promote),
-                        ));
-                    }
-                    if state != State::Demote {
-                        options.push((
-                            "Demote: Change to demote mode".into(),
-                            Select::S(State::Demote),
-                        ));
-                    }
-                    let (less, more) = (
-                        "Lower: Show less important tasks",
-                        "Higher: Show more important tasks",
-                    );
-                    match prio {
-                        Some(TaskPriority::High) => {
-                            options.push((less.into(), Select::P(Some(Medium))));
-                        }
-                        Some(TaskPriority::Medium) => {
-                            options.push((more.into(), Select::P(Some(High))));
-                            options.push((less.into(), Select::P(Some(Low))));
-                        }
-                        Some(TaskPriority::Low) => {
-                            options.push((more.into(), Select::P(Some(Medium))));
-                            options.push((less.into(), Select::P(None)));
-                        }
-                        None => {
-                            options.push((more.into(), Select::P(Some(Low))));
-                        }
-                    }
-                    options.into_iter().chain(tasks.into_iter().map(|t| {
-                        (print_task_short(t), Select::T(t.uuid().clone()))
-                    }))
-                };
-                let msg = match state {
-                    State::Promote => {
-                        format!("Promote tasks | Priority: {}", prio_name(prio.as_ref()))
-                    }
-                    State::Pick => {
-                        format!(
-                            "What do you want to do now? | Priority: {}",
-                            prio_name(prio.as_ref())
-                        )
-                    }
-                    State::Demote => {
-                        format!("Demote tasks | Priority: {}", prio_name(prio.as_ref()))
-                    }
-                };
-                (msg, options.collect::<Vec<_>>())
+                options.chain(tasks).collect::<Vec<_>>()
             };
+            if empty {
+                return self.show_priorities((PS::Medium, true));
+            };
+            let msg = format!("What do you want to do now?");
 
-            match (self.dialog.select_option(m, o)?, &state, &prio) {
-                (Select::Manual, _, _) => {
+            match self.dialog.select_option(msg, options)? {
+                Select::Manual => {
                     str2cmd("tasklauncher").output()?;
                     self.cache.refresh()?;
                 }
-                (Select::S(new_state), _, _) => state = new_state,
-                (Select::T(u), State::Pick, _) => self.edit_task(&u)?,
-                (Select::T(u), State::Promote, Some(Medium)) => {
-                    self.cache.get_mut(&u).chain_err(|| "Bug")?.set_priority(
-                        Some(High),
-                    )
+                Select::PromoteTasks => {
+                    self.show_priorities((PS::Medium, true))?;
+                    self.cache.refresh()?;
                 }
-                (Select::T(u), State::Promote, Some(Low)) |
-                (Select::T(u), State::Demote, Some(High)) => {
-                    self.cache.get_mut(&u).chain_err(|| "Bug")?.set_priority(
-                        Some(Medium),
-                    )
+                Select::ChangeState => {
+                    self.confirm_state()?;
+                    self.cache.refresh()?;
                 }
-                (Select::T(u), State::Promote, None) |
-                (Select::T(u), State::Demote, Some(Medium)) => {
-                    self.cache.get_mut(&u).chain_err(|| "Bug")?.set_priority(
-                        Some(Low),
-                    )
-                }
-                (Select::T(u), State::Demote, Some(Low)) => {
-                    self.cache.get_mut(&u).chain_err(|| "Bug")?.set_priority(
-                        None as Option<TaskPriority>,
-                    )
-                }
-                (Select::T(_), State::Promote, Some(High)) |
-                (Select::T(_), State::Demote, None) => bail!("Impossible state change"),
-                (Select::P(new_prio @ Some(High)), State::Promote, _) |
-                (Select::P(new_prio @ None), State::Demote, _) => {
-                    prio = new_prio;
-                    state = State::Pick
-                }
-                (Select::P(new_prio), _, _) => prio = new_prio,
+                Select::T(u) => self.edit_task(&u)?,
             }
             self.cache.write()?;
         }
-        Ok(())
     }
 
     fn is_relevant(&self, task: &Task) -> bool {

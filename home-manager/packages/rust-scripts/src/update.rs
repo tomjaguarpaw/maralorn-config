@@ -3,7 +3,7 @@ use task_hookrs::cache::TaskCache;
 use refresh::TaskRefresher;
 use tasktree::{TreeCache, TaskNode};
 use well_known::{SIMPLE, WellKnown, INBOX, ACCOUNTING, TREESORT, SORT_INBOX, SORT_INBOX_AK,
-                 SORT_INBOX_KIVA, MAINTENANCE};
+                 SORT_INBOX_KIVA, MAINTENANCE, CHECK_MEDIUM, CHECK_LOW, CHECK_NONE, CHECK_OPTIONAL};
 use error::Result;
 use kassandra::Kassandra;
 use mail::create_tasks;
@@ -62,6 +62,10 @@ pub fn update_tasks(cache: &mut TaskCache) -> Result<()> {
     update_task(cache, &*MAINTENANCE)?;
     update_task(cache, &*INBOX)?;
     update_task(cache, &*TREESORT)?;
+    update_task(cache, &*CHECK_MEDIUM)?;
+    update_task(cache, &*CHECK_LOW)?;
+    update_task(cache, &*CHECK_NONE)?;
+    update_task(cache, &*CHECK_OPTIONAL)?;
     update_task(cache, &*ACCOUNTING)?;
     cache.refresh_tree();
     // CREATE TODOS FROM MAIL
