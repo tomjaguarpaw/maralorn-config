@@ -267,7 +267,7 @@ fn enter_new_task<T: DialogProvider, S: Into<String>>(dialog: &mut T, msg: S) ->
 }
 
 pub fn needs_sorting(task: &Task) -> bool {
-    !task.has_tag("project") && !task.has_tag("kategorie")
+    !task.has_tag("kategorie") && task.partof().map(|x| x.is_none()).unwrap_or(false)
 }
 
 pub struct Kassandra {
