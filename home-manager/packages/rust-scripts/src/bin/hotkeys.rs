@@ -3,11 +3,9 @@ extern crate task_hookrs;
 extern crate error_chain;
 
 use std::rc::Rc;
-use rust_scripts::{
-    hotkeys::{run, run_cmd, term, menu, main_loop, Next},
-    kassandra::{kassandra, change_state, new_tasks},
-    error::Result
-};
+use rust_scripts::hotkeys::{run, run_cmd, term, menu, main_loop, Next};
+use rust_scripts::kassandra::{kassandra, change_state, new_tasks};
+use rust_scripts::error::Result;
 
 fn main() -> Result<()> {
     let w17menu = {
@@ -112,12 +110,7 @@ fn main() -> Result<()> {
         let wifi = term("WLAN", "nmtui");
         menu(
             "Maintenance",
-            vec![
-                wifi,
-                monitor,
-                keymenu,
-                run("Bildschirme", "arandr"),
-            ],
+            vec![wifi, monitor, keymenu, run("Bildschirme", "arandr")],
         )
     };
     let ssh = menu(
