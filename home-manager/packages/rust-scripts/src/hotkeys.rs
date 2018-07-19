@@ -1,17 +1,11 @@
-use dialog::{
-    DialogProvider,
-    errors::{
-        Error,
-        ErrorKind as EK},
-    rofi::RofiDialogProvider
-};
+use dialog::DialogProvider;
+use dialog::errors::{Error, ErrorKind as EK};
+use dialog::rofi::RofiDialogProvider;
 
-use std::{
-    process::Command as StdCommand,
-    os::unix::process::CommandExt,
-    env::var,
-    rc::Rc
-};
+use std::process::Command as StdCommand;
+use std::os::unix::process::CommandExt;
+use std::env::var;
+use std::rc::Rc;
 
 use error::{Result, ResultExt};
 
