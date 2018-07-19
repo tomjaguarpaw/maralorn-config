@@ -47,23 +47,11 @@ fn make_mail_path(mailbox: &str, id: &str, flags: &str) -> PathBuf {
     path
 }
 
-fn debug(msg: &str) {
-    print!("{}", &msg);
-    use std::fs::OpenOptions;
-    use std::io::Write;
-    let mut file = OpenOptions::new()
-        .append(true)
-        .open("/home/maralorn/.mailmovements")
-        .unwrap();
-    file.write_all(msg.as_bytes()).ok();
-}
-
 fn move_mail(mail: &MailEntry, oldbox: &str, newbox: &str) -> Result<()> {
     let old_flags = mail.flags();
     let old_path = make_mail_path(oldbox, mail.id(), old_flags);
     let new_flags = set_seen_flags(&old_flags);
     let new_path = make_mail_path(newbox, mail.id(), &new_flags);
-    debug(&format!("moving {:?} -> {:?}\n", old_path, new_path));
     rename(old_path, new_path)?;
     Ok(())
 }
@@ -214,14 +202,8 @@ fn update_mailbox(mailbox: &str) -> Result<()> {
             old_path.push(id);
             let mut new_path = make_mailbox_path(mailbox);
             new_path.push(id);
-            debug(&format!(
-                "moving (Standardviolation) {:?} -> {:?}\n",
-                old_path,
-                new_path
-            ));
             rename(old_path, new_path)?;
         } else {
-            debug(&format!("new_to_cur {:?}\n", mail.id()));
             maildir.move_new_to_cur(mail.id())?;
         }
     }
