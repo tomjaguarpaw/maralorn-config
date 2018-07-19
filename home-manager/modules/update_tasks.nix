@@ -34,6 +34,9 @@ config = mkIf config.m-0.update_tasks.enable {
       Timer = {
         OnCalendar = "hourly";
       };
+      Install = {
+        WantedBy = [ "timers.target" ];
+      };
     };
   };
 };
