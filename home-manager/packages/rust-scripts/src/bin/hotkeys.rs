@@ -149,6 +149,7 @@ fn main() -> Result<()> {
                 "Change State".into(),
                 Next::Do(Rc::new(|| change_state().map(|_| Next::Exit)))
             ),
+            run("Habitica", "firefox --new-window https://habitica.com"),
             ssh,
             apps,
             run("Tasks", "tasklauncher"),
