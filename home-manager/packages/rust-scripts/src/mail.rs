@@ -156,7 +156,11 @@ fn sort_mail(
         ((*name).to_owned(), Options::MoveTo((*mailbox).to_owned()))
     });
     let options = options.into_iter().chain(option_dirs);
-    let msg = format!("Handling E-mail:\n{}", print_headers(&mut mail)?);
+    let msg = format!(
+        "Handling mail from box {}:\n{}",
+        mailbox.mailbox,
+        print_headers(&mut mail)?
+    );
     let choice = dialog.select_option(msg, options)?;
     match choice {
         Options::Ignore => {
