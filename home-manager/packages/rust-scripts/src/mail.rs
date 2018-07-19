@@ -91,7 +91,7 @@ fn get_message_id(mail: &mut MailEntry) -> Result<String> {
             return Ok(message_id.into());
         }
     }
-    bail!("Parsed mail without Message-ID: {},", mail.id())
+    bail!("Parsed mail without message-id: {},", mail.id())
 }
 
 fn get_subject(mail: &mut MailEntry) -> Result<String> {
@@ -100,7 +100,7 @@ fn get_subject(mail: &mut MailEntry) -> Result<String> {
             return Ok(header.get_value()?);
         }
     }
-    bail!("Parsed mail without Message-ID: {},", mail.id())
+    bail!("Parsed mail without subject: {},", mail.id())
 }
 
 fn get_from(mail: &mut MailEntry) -> Result<String> {
@@ -109,7 +109,7 @@ fn get_from(mail: &mut MailEntry) -> Result<String> {
             return Ok(header.get_value()?);
         }
     }
-    bail!("Parsed mail without Message-ID: {},", mail.id())
+    bail!("Parsed mail without sender: {},", mail.id())
 }
 
 fn read_mail(mailbox: &str, mail: &mut MailEntry) -> Result<()> {
