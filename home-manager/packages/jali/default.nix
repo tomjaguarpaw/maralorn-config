@@ -3,11 +3,11 @@ with python36Packages; buildPythonApplication rec {
   name = "${pname}-${version}";
   pname = "jali";
   doCheck = false;
-  version = "1d1c5d0a";
+  version = "b97317f";
   src = fetchgit {
     url = "https://git.darmstadt.ccc.de/jali/jali.git";
     rev = version;
-    sha256 = "1nzzangp7yr2gq66qz7wk2cqqwjlhrfaqmc85qigjv4vpfmlphl0";
+    sha256 = "1sj9hmjij0b3jzj2hkny3isn1ni8q3d9bmmasswxwwjcvn4g6nk4";
   };
   propagatedBuildInputs = [ jinja2 pendulum GitPython aqbanking ];
 }
