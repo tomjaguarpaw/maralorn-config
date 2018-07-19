@@ -112,6 +112,7 @@ fn read_mail(mailbox: &str, mail: &mut MailEntry) -> Result<()> {
     let mailbox = make_maildir_path(mailbox);
     let mailbox = mailbox.to_str().chain_err(|| "Invalid path")?;
     let message_id = get_message_id(mail)?;
+    let message_id = message_id.replace("$", ".");
     let read_command = format!(
         "push <limit>~(~i{})<return><search>~i{}<return><display-message>",
         message_id,
@@ -129,12 +130,14 @@ fn sort_mail(
     dialog: &mut impl DialogProvider,
     mut mail: MailEntry,
     mailbox: &SortBox,
+    blacklist: &mut HashSet<String>,
 ) -> Result<()> {
     enum Options {
         Ignore,
         ReadNow,
         MoveTo(String),
     };
+    let message_id = get_message_id(&mut mail).unwrap_or("".to_owned());
     let mut options = vec![
         ("Read now: Open in mutt now".to_owned(), Options::ReadNow),
         ("Ignore: Ignore this mail".to_owned(), Options::Ignore),
@@ -152,11 +155,13 @@ fn sort_mail(
     let msg = format!("Handling E-mail:\n{}", print_headers(&mut mail)?);
     let choice = dialog.select_option(msg, options)?;
     match choice {
-        Options::Ignore => {}
+        Options::Ignore => {
+            blacklist.insert(message_id);
+        }
         Options::ReadNow => {
             read_mail(mailbox.mailbox, &mut mail)?;
             if let Some(mail) = get_maildir(mailbox.mailbox).find(mail.id()) {
-                return sort_mail(dialog, mail, mailbox);
+                return sort_mail(dialog, mail, mailbox, blacklist);
             }
         }
         Options::MoveTo(new_mailbox) => move_mail(&mail, mailbox.mailbox, &new_mailbox)?,
@@ -164,11 +169,16 @@ fn sort_mail(
     Ok(())
 }
 
-fn next_mail(mailbox: &SortBox, read: bool) -> Result<Option<MailEntry>> {
+fn next_mail(
+    mailbox: &SortBox,
+    read: bool,
+    blacklist: &mut HashSet<String>,
+) -> Result<Option<MailEntry>> {
     let maildir = get_maildir(mailbox.mailbox);
     for mail in maildir.list_cur() {
-        let mail = mail?;
-        if !mail.is_seen() || read {
+        let mut mail = mail?;
+        let message_id = get_message_id(&mut mail).unwrap_or("".to_owned());
+        if (!mail.is_seen() || read) && !blacklist.contains(&message_id) {
             return Ok(Some(mail));
         }
     }
@@ -181,8 +191,9 @@ pub fn sort_mailbox(
     sort_read: bool,
 ) -> Result<()> {
     update_mailbox(mailbox.mailbox)?;
-    while let Some(mail) = next_mail(mailbox, sort_read)? {
-        sort_mail(dialog, mail, mailbox)?;
+    let mut blacklist = HashSet::default();
+    while let Some(mail) = next_mail(mailbox, sort_read, &mut blacklist)? {
+        sort_mail(dialog, mail, mailbox, &mut blacklist)?;
     }
     Ok(())
 }
@@ -229,6 +240,7 @@ fn create_task(mail: &mut MailEntry) -> Result<Task> {
     let from = MAIL_REGEX.replace(&from, "");
     let from = from.trim_matches(|x: char| x.is_whitespace() || x == '"');
     let message_id = get_message_id(mail)?;
+    let message_id = message_id.trim().trim_matches(|x| x == '<' || x == '>');
     let mut t = TaskBuilder::default()
         .description(format!("Mail: {}: {}", from, subject))
         .build()
