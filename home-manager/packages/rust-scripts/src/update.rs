@@ -29,10 +29,7 @@ fn is_active(cache: &TaskCache, task: &impl WellKnown) -> bool {
 }
 
 fn update_task(cache: &mut TaskCache, task: &impl WellKnown) -> Result<()> {
-    cache.reactivate(
-        Some(task.definition().clone()),
-        task.refresh(),
-    )?;
+    cache.reactivate(Some(task.definition()), task.refresh())?;
     check_completion(cache, task)
 }
 
@@ -40,9 +37,12 @@ pub fn process_task(kassandra: &mut Kassandra, task: &impl WellKnown) -> Result<
     update_task(&mut kassandra.cache, task)?;
     if is_active(&mut kassandra.cache, task) {
         kassandra.cache.write()?;
-        task.process(kassandra)?;
+        if task.process(kassandra)? {
+            for task in kassandra.cache.filter_mut(|t| task.is_this(t)) {
+                task.tw_done()
+            }
+        }
         kassandra.cache.refresh()?;
-        update_task(&mut kassandra.cache, task)?;
     }
     kassandra.cache.write()?;
     Ok(())

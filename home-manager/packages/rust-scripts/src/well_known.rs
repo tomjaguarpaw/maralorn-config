@@ -12,15 +12,15 @@ use mail::{mailbox_dirty, SortBox};
 use chrono::{NaiveDate, NaiveTime, Duration};
 
 pub trait WellKnown {
-    fn definition(&self) -> &Task;
+    fn definition(&self) -> Task;
     fn is_this(&self, task: &Task) -> bool {
-        gen_match(task, self.definition())
+        gen_match(task, &self.definition())
     }
     fn action_necessary(&self, &TaskCache) -> Result<bool> {
         Ok(true)
     }
-    fn process(&self, &mut Kassandra) -> Result<()> {
-        Ok(())
+    fn process(&self, &mut Kassandra) -> Result<bool> {
+        Ok(false)
     }
     fn refresh(&self) -> Timer;
 }
@@ -114,8 +114,8 @@ impl SimpleTask {
 
 
 impl WellKnown for SimpleTask {
-    fn definition(&self) -> &Task {
-        &self.definition
+    fn definition(&self) -> Task {
+        self.definition.clone()
     }
     fn refresh(&self) -> Timer {
         self.timer.clone()
@@ -136,11 +136,6 @@ fn simple_tasks(
 }
 
 fn make_simple() -> Vec<SimpleTask> {
-    let daily = Timer::Repetition(CalendarRepeater {
-        date: NaiveDate::from_ymd(2018, 5, 8),
-        time: NaiveTime::from_hms(6, 0, 0),
-        repeat: Interval::Day(1),
-    });
     let weekly = Timer::Repetition(CalendarRepeater {
         date: NaiveDate::from_ymd(2018, 5, 8),
         time: NaiveTime::from_hms(20, 0, 0),
@@ -166,7 +161,6 @@ fn make_simple() -> Vec<SimpleTask> {
             vec!["Friseurtermin machen"],
             Timer::DeadTime(Duration::weeks(6)),
         ))
-        .chain(simple_tasks(vec!["Klavier üben"], daily))
         .chain(simple_tasks(vec!["Verbuche Kontoauszüge"], monthly))
         .chain(simple_tasks(
             vec![
@@ -186,27 +180,23 @@ pub struct Inbox {
 }
 
 impl WellKnown for Inbox {
-    fn definition(&self) -> &Task {
-        lazy_static! {
-            static ref TASK: Task = {
-                let mut t = TaskBuilder::default()
-                    .description("Leere Inbox")
-                    .build()
-                    .expect("TaskBuilding failed inspite of set description");
-                t.set_gen_name(Some("inbox"));
-                t.set_gen_id(Some("inbox"));
-                t
-            };
-        };
-        &TASK
+    fn definition(&self) -> Task {
+        let mut t = TaskBuilder::default()
+            .description("Leere Inbox")
+            .build()
+            .expect("TaskBuilding failed inspite of set description");
+        t.set_gen_name(Some("inbox"));
+        t.set_gen_id(Some("inbox"));
+        t
     }
 
     fn action_necessary(&self, cache: &TaskCache) -> Result<bool> {
         Ok(cache.filter(|t| task_in_inbox(&cache, t)).next().is_some())
     }
 
-    fn process(&self, kassandra: &mut Kassandra) -> Result<()> {
-        kassandra.clear_inbox()
+    fn process(&self, kassandra: &mut Kassandra) -> Result<bool> {
+        kassandra.clear_inbox()?;
+        Ok(true)
     }
 
     fn refresh(&self) -> Timer {
@@ -219,30 +209,25 @@ pub struct Accounting {
 }
 
 impl WellKnown for Accounting {
-    fn definition(&self) -> &Task {
-        lazy_static! {
-            static ref TASK: Task = {
-                let mut t = TaskBuilder::default()
-                    .description("Aktualisiere Buchhaltung")
-                    .build()
-                    .expect("TaskBuilding failed inspite of set description");
-                t.set_gen_name(Some("accounting"));
-                t.set_gen_id(Some("accounting"));
-                t
-            };
-        };
-        &TASK
+    fn definition(&self) -> Task {
+        let mut t = TaskBuilder::default()
+            .description("Aktualisiere Buchhaltung")
+            .build()
+            .expect("TaskBuilding failed inspite of set description");
+        t.set_gen_name(Some("accounting"));
+        t.set_gen_id(Some("accounting"));
+        t
     }
 
     fn action_necessary(&self, _cache: &TaskCache) -> Result<bool> {
         Ok(true)
     }
 
-    fn process(&self, _kassandra: &mut Kassandra) -> Result<()> {
+    fn process(&self, _kassandra: &mut Kassandra) -> Result<bool> {
         str2cmd(&term_cmd("sh -c"))
             .arg("jali -l. && task gen_id:accounting done")
             .output()?;
-        Ok(())
+        Ok(false)
     }
 
     fn refresh(&self) -> Timer {
@@ -255,19 +240,14 @@ pub struct Treesort {
 }
 
 impl WellKnown for Treesort {
-    fn definition(&self) -> &Task {
-        lazy_static! {
-            static ref TASK: Task = {
-                let mut t = TaskBuilder::default()
-                    .description("Sortiere Tasktree")
-                    .build()
-                    .expect("TaskBuilding failed inspite of set description");
-                t.set_gen_name(Some("treesort"));
-                t.set_gen_id(Some("treesort"));
-                t
-            };
-        };
-        &TASK
+    fn definition(&self) -> Task {
+        let mut t = TaskBuilder::default()
+            .description("Sortiere Tasktree")
+            .build()
+            .expect("TaskBuilding failed inspite of set description");
+        t.set_gen_name(Some("treesort"));
+        t.set_gen_id(Some("treesort"));
+        t
     }
 
     fn action_necessary(&self, cache: &TaskCache) -> Result<bool> {
@@ -279,8 +259,9 @@ impl WellKnown for Treesort {
         )
     }
 
-    fn process(&self, kassandra: &mut Kassandra) -> Result<()> {
-        kassandra.assure_all_sorted()
+    fn process(&self, kassandra: &mut Kassandra) -> Result<bool> {
+        kassandra.assure_all_sorted()?;
+        Ok(true)
     }
 
     fn refresh(&self) -> Timer {
@@ -314,16 +295,17 @@ impl Mailsort {
 }
 
 impl WellKnown for Mailsort {
-    fn definition(&self) -> &Task {
-        &self.task
+    fn definition(&self) -> Task {
+        self.task.clone()
     }
 
     fn action_necessary(&self, _cache: &TaskCache) -> Result<bool> {
         mailbox_dirty(&self.mailbox.mailbox)
     }
 
-    fn process(&self, kassandra: &mut Kassandra) -> Result<()> {
-        kassandra.sort_mailbox(&self.mailbox, true)
+    fn process(&self, kassandra: &mut Kassandra) -> Result<bool> {
+        kassandra.sort_mailbox(&self.mailbox, true)?;
+        Ok(true)
     }
 
     fn refresh(&self) -> Timer {
@@ -336,32 +318,60 @@ pub struct Maintenance {
 }
 
 impl WellKnown for Maintenance {
-    fn definition(&self) -> &Task {
-        lazy_static! {
-            static ref TASK: Task = {
-                let mut t = TaskBuilder::default()
-                    .description("Run system Maintenance")
-                    .build()
-                    .expect("TaskBuilding failed inspite of set description");
-                t.set_gen_name(Some("maintenance"));
-                t.set_gen_id(Some("apollo"));
-                t
-            };
-        };
-        &TASK
+    fn definition(&self) -> Task {
+        let mut t = TaskBuilder::default()
+            .description("Run system Maintenance")
+            .build()
+            .expect("TaskBuilding failed inspite of set description");
+        t.set_gen_name(Some("maintenance"));
+        t.set_gen_id(Some("apollo"));
+        t
     }
 
     fn action_necessary(&self, _cache: &TaskCache) -> Result<bool> {
         Ok(true)
     }
 
-    fn process(&self, kassandra: &mut Kassandra) -> Result<()> {
-        str2cmd(&term_cmd("maintenance")).spawn()?;
-        for task in kassandra.cache.filter_mut(|t| self.is_this(t)) {
-            task.tw_done()
-        }
-        kassandra.cache.write()?;
-        Ok(())
+    fn process(&self, _kassandra: &mut Kassandra) -> Result<bool> {
+        str2cmd("maintenance").spawn()?;
+        Ok(true)
+    }
+
+    fn refresh(&self) -> Timer {
+        self.timer.clone()
+    }
+}
+
+pub struct TaskCheck {
+    timer: Timer,
+    priority: PriorityState,
+}
+
+impl WellKnown for TaskCheck {
+    fn definition(&self) -> Task {
+        let mut t = TaskBuilder::default()
+            .description(format!(
+                "Check tasks matching \"{:}\"",
+                if self.priority.0.only_optional() {
+                    "+optional"
+                } else {
+                    prio_name(self.priority.0.prio().as_ref())
+                }
+            ))
+            .build()
+            .expect("TaskBuilding failed inspite of set description");
+        t.set_gen_name(Some("task_check"));
+        t.set_gen_id(Some(format!("{:?}", self.priority)));
+        t
+    }
+
+    fn action_necessary(&self, cache: &TaskCache) -> Result<bool> {
+        Ok(get_stale_tasks(cache, self.priority).len() > 0)
+    }
+
+    fn process(&self, kassandra: &mut Kassandra) -> Result<bool> {
+        kassandra.check_priorities(self.priority)?;
+        Ok(true)
     }
 
     fn refresh(&self) -> Timer {
