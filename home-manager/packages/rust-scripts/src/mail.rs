@@ -58,7 +58,7 @@ fn move_mail(mail: &MailEntry, oldbox: &str, newbox: &str) -> Result<()> {
 
 lazy_static!{
     static ref SHOWN_HEADERS: Vec<String> = {
-        let raw = ["From", "Subject", "Cc", "Bcc", "Date", "To" ];
+        let raw = ["from", "subject", "cc", "bcc", "date", "to" ];
         raw.iter().map(|&x| x.into()).collect()
     };
 }
@@ -67,11 +67,13 @@ fn print_headers(mail: &mut MailEntry) -> Result<String> {
     let mut headers = vec![];
     for header in mail.headers()? {
         let key = header.get_key()?;
-        if SHOWN_HEADERS.contains(&key) {
+        if SHOWN_HEADERS.contains(&key.to_lowercase()) {
             headers.push((key, header.get_value()?))
         }
     }
-    headers.sort_by_key(|(k, _)| SHOWN_HEADERS.binary_search(&k).unwrap_or(10));
+    headers.sort_by_key(|(k, _)| {
+        SHOWN_HEADERS.binary_search(&k.to_lowercase()).unwrap_or(10)
+    });
     headers.reverse();
     let headers = headers
         .iter()
