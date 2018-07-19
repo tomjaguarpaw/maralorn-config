@@ -21,6 +21,7 @@ pub mod kassandra;
 pub mod tasktree;
 pub mod well_known;
 pub mod mail;
+#[allow(renamed_and_removed_lints)]
 
 pub mod error {
     use task_hookrs::error as terror;
