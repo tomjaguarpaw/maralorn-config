@@ -22,8 +22,8 @@ use error::{Result, ResultExt, ErrorKind as EK, Error};
 use hotkeys::{term_cmd, str2cmd};
 use tasktree::{TreeCache, TaskNode};
 use well_known::{INBOX, ACCOUNTING, TREESORT, PRIVATE_MAILBOX, KIVA_MAILBOX, AK_MAILBOX,
-                 SORT_INBOX, SORT_INBOX_AK, SORT_INBOX_KIVA, MAINTENANCE, CHECK_MEDIUM, CHECK_LOW,
-                 CHECK_NONE, CHECK_OPTIONAL};
+                 SORT_INBOX, SORT_INBOX_AK, SORT_INBOX_KIVA, MAINTENANCE, CHECK_HIGH,
+                 CHECK_MEDIUM, CHECK_LOW, CHECK_NONE, CHECK_OPTIONAL};
 use mail::{sort_mailbox, SortBox};
 use generate::GeneratedTask;
 
@@ -308,11 +308,12 @@ impl Kassandra {
         update_tasks(&mut self.cache)?;
         process_task(self, &*INBOX)?;
         process_task(self, &*TREESORT)?;
-        process_task(self, &*CHECK_MEDIUM)?;
         process_task(self, &*CHECK_LOW)?;
         process_task(self, &*CHECK_NONE)?;
         process_task(self, &*CHECK_OPTIONAL)?;
         process_task(self, &*ACCOUNTING)?;
+        process_task(self, &*CHECK_MEDIUM)?;
+        process_task(self, &*CHECK_HIGH)?;
         self.select_next_task()?;
         Ok(())
     }

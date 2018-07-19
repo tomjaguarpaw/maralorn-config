@@ -32,17 +32,18 @@ lazy_static! {
         time: NaiveTime::from_hms(20, 0, 0),
         repeat: Interval::Day(1)
     });
+    pub static ref MORNING: Timer = Timer::Repetition(CalendarRepeater {
+        date: NaiveDate::from_ymd(2018, 5, 8),
+            time: NaiveTime::from_hms(6, 0, 0),
+        repeat: Interval::Day(1)
+    });
     pub static ref SIMPLE: Vec<SimpleTask> = make_simple();
     pub static ref INBOX: Inbox = Inbox { timer: DAILY.clone() };
     pub static ref TREESORT: Treesort = Treesort { timer: DAILY.clone() };
     pub static ref ACCOUNTING: Accounting = Accounting { timer: DAILY.clone() };
     pub static ref MAINTENANCE: Maintenance = Maintenance { timer: DAILY.clone() };
-    pub static ref CHECK_MEDIUM: TaskCheck = TaskCheck { timer: Timer::Repetition(CalendarRepeater {
-            date: NaiveDate::from_ymd(2018, 5, 8),
-            time: NaiveTime::from_hms(6, 0, 0),
-            repeat: Interval::Day(1)
-        }),
-        priority: (PS::Medium, false) };
+    pub static ref CHECK_HIGH: TaskCheck = TaskCheck { timer: MORNING.clone(), priority: (PS::High, false) };
+    pub static ref CHECK_MEDIUM: TaskCheck = TaskCheck { timer: MORNING.clone(), priority: (PS::Medium, false) };
     pub static ref CHECK_LOW: TaskCheck = TaskCheck { timer: DAILY.clone(), priority: (PS::Low, false) };
     pub static ref CHECK_NONE: TaskCheck = TaskCheck { timer: DAILY.clone(), priority: (PS::None, false) };
     pub static ref CHECK_OPTIONAL: TaskCheck = TaskCheck { timer: DAILY.clone(), priority: (PS::Optional,false) };
