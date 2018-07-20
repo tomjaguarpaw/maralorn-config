@@ -7,6 +7,7 @@
     file
     wget
     curl
+    wireguard
     (pkgs.neovim.override {
       vimAlias = true;
       withPython3 = true;
