@@ -14,6 +14,7 @@ config = mkIf config.m-0.rustdev.enable {
     unstablePkgs.rustc
     unstablePkgs.rustfmt
     unstablePkgs.carnix
+    nix-prefetch-scripts
     binutils-unwrapped
     gcc
   ];
