@@ -125,7 +125,6 @@ systemd.user.startServices = true;
 
 home.packages = with pkgs; [
   neovim
-  rust_scripts
 ];
 xdg.enable = true;
 }

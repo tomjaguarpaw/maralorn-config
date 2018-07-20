@@ -48,6 +48,7 @@ config = mkIf config.m-0.graphical.enable {
   };
   home = {
     packages = with pkgs; [
+      rust_scripts
       tasktree
       st
       shutter
