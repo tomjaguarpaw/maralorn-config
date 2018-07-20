@@ -946,7 +946,7 @@ Do you want to change the state? (Esc to cancel)",
             self.priority_check(&uuid, priority)?;
             if priority.0 == PS::Optional {
                 count += 1;
-                if count > 10 {
+                if count > 2 {
                     return Ok(());
                 }
             }
@@ -1098,7 +1098,15 @@ Do you want to change the state? (Esc to cancel)",
                 options.chain(tasks).collect::<Vec<_>>()
             };
             if empty {
-                return self.show_priorities((PS::Medium, true));
+                let msg = format!("\nCongratulations! It seems you are done for today\n");
+                let options = vec![
+                    ("Yay! I'll leave it that way", false),
+                    ("Show me some more tasks", true),
+                ];
+                if self.dialog.select_option(msg, options)? {
+                    self.show_priorities((PS::Medium, true))?;
+                }
+                return Ok(());
             };
             let msg = format!("What do you want to do now?");
 
