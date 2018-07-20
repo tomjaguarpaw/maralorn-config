@@ -1105,27 +1105,29 @@ Do you want to change the state? (Esc to cancel)",
                 ];
                 if self.dialog.select_option(msg, options)? {
                     self.show_priorities((PS::Medium, true))?;
+                } else {
+                    return Ok(());
                 }
-                return Ok(());
-            };
-            let msg = format!("What do you want to do now?");
+            } else {
+                let msg = format!("What do you want to do now?");
 
-            match self.dialog.select_option(msg, options)? {
-                Select::Manual => {
-                    str2cmd("tasklauncher").output()?;
-                    self.cache.refresh()?;
+                match self.dialog.select_option(msg, options)? {
+                    Select::Manual => {
+                        str2cmd("tasklauncher").output()?;
+                        self.cache.refresh()?;
+                    }
+                    Select::PromoteTasks => {
+                        self.show_priorities((PS::Medium, true))?;
+                        self.cache.refresh()?;
+                    }
+                    Select::ChangeState => {
+                        self.confirm_state()?;
+                        self.cache.refresh()?;
+                    }
+                    Select::T(u) => self.edit_task(&u)?,
                 }
-                Select::PromoteTasks => {
-                    self.show_priorities((PS::Medium, true))?;
-                    self.cache.refresh()?;
-                }
-                Select::ChangeState => {
-                    self.confirm_state()?;
-                    self.cache.refresh()?;
-                }
-                Select::T(u) => self.edit_task(&u)?,
+                self.cache.write()?;
             }
-            self.cache.write()?;
         }
     }
 
