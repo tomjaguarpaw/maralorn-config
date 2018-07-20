@@ -6,6 +6,7 @@ imports = [
   ./secret
 ];
 
+m-0.hostName = "hera";
 m-0.weechat = {
   enable = true;
   user = config.m-0.private.hackint.user;
