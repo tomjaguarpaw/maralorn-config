@@ -4,9 +4,8 @@ version = "0.1.0"
 authors = ["Malte Brandy <malte.brandy@maralorn.de>"]
 
 [dependencies]
-#task-hookrs = { git = "https://github.com/maralorn/task-hookrs.git", branch = "preview"}
-task-hookrs = { path = "/home/maralorn/code/task-hookrs"}
-dialog = { path = "/home/maralorn/code/dialog-rs" }
+dialog = { git = "https://git.darmstadt.ccc.de/maralorn/dialog-rs.git" }
+task-hookrs = { git = "https://git.darmstadt.ccc.de/maralorn/task-hookrs.git"}
 lazy_static = "1.0.0"
 uuid = "0.6"
 chrono = "0.4.2"

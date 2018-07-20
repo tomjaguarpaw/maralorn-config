@@ -106,7 +106,11 @@ rec {
     crateName = "dialog";
     version = "0.1.0";
     authors = [ "Malte Brandy <malte.brandy@maralorn.de>" ];
-    src = /home/maralorn/data/aktuell/it/code/dialog-rs;
+    src = fetchgit {
+       url = "https://git.darmstadt.ccc.de/maralorn/dialog-rs.git";
+       rev = "ebada0712e5c0e55d2a3447907a8065aa8c600af";
+       sha256 = "081w7rs9v2225963d5rbl352w3d6lz965yd7v63p9awcnfk48kni";
+    };
     inherit dependencies buildDependencies features;
   };
   dtoa_0_4_3_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
@@ -307,11 +311,11 @@ rec {
     build = "build.rs";
     inherit dependencies buildDependencies features;
   };
-  proc_macro2_0_4_6_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
+  proc_macro2_0_4_8_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
     crateName = "proc-macro2";
-    version = "0.4.6";
+    version = "0.4.8";
     authors = [ "Alex Crichton <alex@alexcrichton.com>" ];
-    sha256 = "0lnxcavz5nqxypjyz6isffqiyxb3h0021nkn8djsl33a4qd4pxv6";
+    sha256 = "00rns5yzh5p38p6y5g9vrwqhchmqypcsk7bji1xmvjkhj8f3ghd0";
     inherit dependencies buildDependencies features;
   };
   pulldown_cmark_0_0_3_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
@@ -385,11 +389,11 @@ rec {
     src = ./.;
     inherit dependencies buildDependencies features;
   };
-  rustc_demangle_0_1_8_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
+  rustc_demangle_0_1_9_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
     crateName = "rustc-demangle";
-    version = "0.1.8";
+    version = "0.1.9";
     authors = [ "Alex Crichton <alex@alexcrichton.com>" ];
-    sha256 = "0xn5l86qfwngmdsjbglj30wh37zplvch96jl9raysl3k06gkkv3c";
+    sha256 = "00ma4r9haq0zv5krps617mym6y74056pfcivyld0kpci156vfaax";
     inherit dependencies buildDependencies features;
   };
   rustyline_1_0_0_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
@@ -462,7 +466,11 @@ rec {
     crateName = "task-hookrs";
     version = "0.5.0";
     authors = [ "Matthias Beyer <mail@beyermatthias.de>" "Mario Krehl <mario-krehl@gmx.de>" "Malte Brandy <malte.brandy@maralorn.de>" ];
-    src = /home/maralorn/data/aktuell/it/code/task-hookrs;
+    src = fetchgit {
+       url = "https://git.darmstadt.ccc.de/maralorn/task-hookrs.git";
+       rev = "45ffb137ef97f0f998f4ee06da9fd849f192b3be";
+       sha256 = "1wq3ac608xlps1gfrkbgjz24i4rjf1xhcr5r75z6arlakw3gmynp";
+    };
     inherit dependencies buildDependencies features;
   };
   tempdir_0_3_7_ = { dependencies?[], buildDependencies?[], features?[] }: buildRustCrate {
@@ -603,7 +611,7 @@ rec {
     memchr_2_0_1.default = true;
   }) [ memchr_2_0_1_features ];
   backtrace_0_3_9 = { features?(backtrace_0_3_9_features {}) }: backtrace_0_3_9_ {
-    dependencies = mapFeatures features ([ cfg_if_0_1_4 rustc_demangle_0_1_8 ])
+    dependencies = mapFeatures features ([ cfg_if_0_1_4 rustc_demangle_0_1_9 ])
       ++ (if (kernel == "linux" || kernel == "darwin") && !(kernel == "fuchsia") && !(kernel == "emscripten") && !(kernel == "darwin") && !(kernel == "ios") then mapFeatures features ([ ]
       ++ (if features.backtrace_0_3_9.backtrace-sys or false then [ backtrace_sys_0_1_23 ] else [])) else [])
       ++ (if (kernel == "linux" || kernel == "darwin") then mapFeatures features ([ libc_0_2_42 ]) else [])
@@ -676,14 +684,14 @@ rec {
     backtrace_sys_0_1_23.default = true;
     cfg_if_0_1_4.default = true;
     libc_0_2_42.default = true;
-    rustc_demangle_0_1_8.default = true;
+    rustc_demangle_0_1_9.default = true;
     winapi_0_3_5.dbghelp = true;
     winapi_0_3_5.default = true;
     winapi_0_3_5.minwindef = true;
     winapi_0_3_5.processthreadsapi = true;
     winapi_0_3_5.std = true;
     winapi_0_3_5.winnt = true;
-  }) [ cfg_if_0_1_4_features rustc_demangle_0_1_8_features backtrace_sys_0_1_23_features libc_0_2_42_features winapi_0_3_5_features ];
+  }) [ cfg_if_0_1_4_features rustc_demangle_0_1_9_features backtrace_sys_0_1_23_features libc_0_2_42_features winapi_0_3_5_features ];
   backtrace_sys_0_1_23 = { features?(backtrace_sys_0_1_23_features {}) }: backtrace_sys_0_1_23_ {
     dependencies = mapFeatures features ([ libc_0_2_42 ]);
     buildDependencies = mapFeatures features ([ cc_1_0_18 ]);
@@ -1048,18 +1056,18 @@ rec {
       (f.num_traits_0_2_5.default or false) ||
       (num_traits_0_2_5.default or false);
   }) [];
-  proc_macro2_0_4_6 = { features?(proc_macro2_0_4_6_features {}) }: proc_macro2_0_4_6_ {
+  proc_macro2_0_4_8 = { features?(proc_macro2_0_4_8_features {}) }: proc_macro2_0_4_8_ {
     dependencies = mapFeatures features ([ unicode_xid_0_1_0 ]);
-    features = mkFeatures (features.proc_macro2_0_4_6 or {});
+    features = mkFeatures (features.proc_macro2_0_4_8 or {});
   };
-  proc_macro2_0_4_6_features = f: updateFeatures f (rec {
-    proc_macro2_0_4_6.default = (f.proc_macro2_0_4_6.default or true);
-    proc_macro2_0_4_6.proc-macro =
-      (f.proc_macro2_0_4_6.proc-macro or false) ||
-      (f.proc_macro2_0_4_6.default or false) ||
-      (proc_macro2_0_4_6.default or false) ||
-      (f.proc_macro2_0_4_6.nightly or false) ||
-      (proc_macro2_0_4_6.nightly or false);
+  proc_macro2_0_4_8_features = f: updateFeatures f (rec {
+    proc_macro2_0_4_8.default = (f.proc_macro2_0_4_8.default or true);
+    proc_macro2_0_4_8.proc-macro =
+      (f.proc_macro2_0_4_8.proc-macro or false) ||
+      (f.proc_macro2_0_4_8.default or false) ||
+      (proc_macro2_0_4_8.default or false) ||
+      (f.proc_macro2_0_4_8.nightly or false) ||
+      (proc_macro2_0_4_8.nightly or false);
     unicode_xid_0_1_0.default = true;
   }) [ unicode_xid_0_1_0_features ];
   pulldown_cmark_0_0_3 = { features?(pulldown_cmark_0_0_3_features {}) }: pulldown_cmark_0_0_3_ {
@@ -1074,13 +1082,13 @@ rec {
     quote_0_3_15.default = (f.quote_0_3_15.default or true);
   }) [];
   quote_0_6_3 = { features?(quote_0_6_3_features {}) }: quote_0_6_3_ {
-    dependencies = mapFeatures features ([ proc_macro2_0_4_6 ]);
+    dependencies = mapFeatures features ([ proc_macro2_0_4_8 ]);
     features = mkFeatures (features.quote_0_6_3 or {});
   };
   quote_0_6_3_features = f: updateFeatures f (rec {
-    proc_macro2_0_4_6.default = (f.proc_macro2_0_4_6.default or false);
-    proc_macro2_0_4_6.proc-macro =
-      (f.proc_macro2_0_4_6.proc-macro or false) ||
+    proc_macro2_0_4_8.default = (f.proc_macro2_0_4_8.default or false);
+    proc_macro2_0_4_8.proc-macro =
+      (f.proc_macro2_0_4_8.proc-macro or false) ||
       (quote_0_6_3.proc-macro or false) ||
       (f.quote_0_6_3.proc-macro or false);
     quote_0_6_3.default = (f.quote_0_6_3.default or true);
@@ -1088,7 +1096,7 @@ rec {
       (f.quote_0_6_3.proc-macro or false) ||
       (f.quote_0_6_3.default or false) ||
       (quote_0_6_3.default or false);
-  }) [ proc_macro2_0_4_6_features ];
+  }) [ proc_macro2_0_4_8_features ];
   quoted_printable_0_3_3 = { features?(quoted_printable_0_3_3_features {}) }: quoted_printable_0_3_3_ {};
   quoted_printable_0_3_3_features = f: updateFeatures f (rec {
     quoted_printable_0_3_3.default = (f.quoted_printable_0_3_3.default or true);
@@ -1179,9 +1187,9 @@ rec {
     task_hookrs_0_5_0.default = true;
     uuid_0_6_5.default = true;
   }) [ chrono_0_4_4_features dialog_0_1_0_features error_chain_0_11_0_features lazy_static_1_0_2_features maildir_0_1_1_features mailparse_0_5_1_features regex_0_2_11_features serde_1_0_70_features serde_derive_1_0_70_features serde_yaml_0_7_5_features task_hookrs_0_5_0_features uuid_0_6_5_features ];
-  rustc_demangle_0_1_8 = { features?(rustc_demangle_0_1_8_features {}) }: rustc_demangle_0_1_8_ {};
-  rustc_demangle_0_1_8_features = f: updateFeatures f (rec {
-    rustc_demangle_0_1_8.default = (f.rustc_demangle_0_1_8.default or true);
+  rustc_demangle_0_1_9 = { features?(rustc_demangle_0_1_9_features {}) }: rustc_demangle_0_1_9_ {};
+  rustc_demangle_0_1_9_features = f: updateFeatures f (rec {
+    rustc_demangle_0_1_9.default = (f.rustc_demangle_0_1_9.default or true);
   }) [];
   rustyline_1_0_0 = { features?(rustyline_1_0_0_features {}) }: rustyline_1_0_0_ {
     dependencies = mapFeatures features ([ encode_unicode_0_1_3 libc_0_2_42 unicode_width_0_1_5 ])
@@ -1217,16 +1225,16 @@ rec {
       (serde_1_0_70.alloc or false);
   }) [];
   serde_derive_1_0_70 = { features?(serde_derive_1_0_70_features {}) }: serde_derive_1_0_70_ {
-    dependencies = mapFeatures features ([ proc_macro2_0_4_6 quote_0_6_3 syn_0_14_4 ]);
+    dependencies = mapFeatures features ([ proc_macro2_0_4_8 quote_0_6_3 syn_0_14_4 ]);
     features = mkFeatures (features.serde_derive_1_0_70 or {});
   };
   serde_derive_1_0_70_features = f: updateFeatures f (rec {
-    proc_macro2_0_4_6.default = true;
+    proc_macro2_0_4_8.default = true;
     quote_0_6_3.default = true;
     serde_derive_1_0_70.default = (f.serde_derive_1_0_70.default or true);
     syn_0_14_4.default = true;
     syn_0_14_4.visit = true;
-  }) [ proc_macro2_0_4_6_features quote_0_6_3_features syn_0_14_4_features ];
+  }) [ proc_macro2_0_4_8_features quote_0_6_3_features syn_0_14_4_features ];
   serde_json_1_0_24 = { features?(serde_json_1_0_24_features {}) }: serde_json_1_0_24_ {
     dependencies = mapFeatures features ([ dtoa_0_4_3 itoa_0_4_2 serde_1_0_70 ]);
     features = mkFeatures (features.serde_json_1_0_24 or {});
@@ -1293,14 +1301,14 @@ rec {
     unicode_xid_0_0_4.default = true;
   }) [ quote_0_3_15_features synom_0_11_3_features unicode_xid_0_0_4_features ];
   syn_0_14_4 = { features?(syn_0_14_4_features {}) }: syn_0_14_4_ {
-    dependencies = mapFeatures features ([ proc_macro2_0_4_6 unicode_xid_0_1_0 ]
+    dependencies = mapFeatures features ([ proc_macro2_0_4_8 unicode_xid_0_1_0 ]
       ++ (if features.syn_0_14_4.quote or false then [ quote_0_6_3 ] else []));
     features = mkFeatures (features.syn_0_14_4 or {});
   };
   syn_0_14_4_features = f: updateFeatures f (rec {
-    proc_macro2_0_4_6.default = (f.proc_macro2_0_4_6.default or false);
-    proc_macro2_0_4_6.proc-macro =
-      (f.proc_macro2_0_4_6.proc-macro or false) ||
+    proc_macro2_0_4_8.default = (f.proc_macro2_0_4_8.default or false);
+    proc_macro2_0_4_8.proc-macro =
+      (f.proc_macro2_0_4_8.proc-macro or false) ||
       (syn_0_14_4.proc-macro or false) ||
       (f.syn_0_14_4.proc-macro or false);
     quote_0_6_3.default = (f.quote_0_6_3.default or false);
@@ -1334,7 +1342,7 @@ rec {
       (f.syn_0_14_4.printing or false) ||
       (syn_0_14_4.printing or false);
     unicode_xid_0_1_0.default = true;
-  }) [ proc_macro2_0_4_6_features quote_0_6_3_features unicode_xid_0_1_0_features ];
+  }) [ proc_macro2_0_4_8_features quote_0_6_3_features unicode_xid_0_1_0_features ];
   synom_0_11_3 = { features?(synom_0_11_3_features {}) }: synom_0_11_3_ {
     dependencies = mapFeatures features ([ unicode_xid_0_0_4 ]);
   };
