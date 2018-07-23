@@ -1080,6 +1080,7 @@ Do you want to change the state? (Esc to cancel)",
             Manual,
             PromoteTasks,
             ChangeState,
+            Exit,
         };
         loop {
             let mut empty = true;
@@ -1091,6 +1092,7 @@ Do you want to change the state? (Esc to cancel)",
                         Select::PromoteTasks
                     ),
                     ("Status: Change status".into(), Select::ChangeState),
+                    ("Exit: Whatever …".into(), Select::Exit),
                 ].into_iter();
                 let tasks = get_sorted_tasks(&self.cache, |t| {
                     t.pending() && self.is_relevant(t) && !task_blocked(&self.cache, t) &&
@@ -1105,13 +1107,28 @@ Do you want to change the state? (Esc to cancel)",
             if empty {
                 let msg = format!("\nCongratulations! It seems you are done for today\n");
                 let options = vec![
-                    ("Yay! I'll leave it that way", false),
-                    ("Show me some more tasks", true),
+                    ("Yay! I'll leave it that way", Select::Exit),
+                    ("Manual: Edit my tasks".into(), Select::Manual),
+                    (
+                        "Promote: Pick tasks with lower priority".into(),
+                        Select::PromoteTasks
+                    ),
+                    ("Status: Change status".into(), Select::ChangeState),
                 ];
-                if self.dialog.select_option(msg, options)? {
-                    self.show_priorities((PS::Medium, true))?;
-                } else {
-                    return Ok(());
+                match self.dialog.select_option(msg, options)? {
+                    Select::Manual => {
+                        str2cmd("tasklauncher").output()?;
+                        self.cache.refresh()?;
+                    }
+                    Select::PromoteTasks => {
+                        self.show_priorities((PS::Medium, true))?;
+                        self.cache.refresh()?;
+                    }
+                    Select::ChangeState => {
+                        self.confirm_state()?;
+                        self.cache.refresh()?;
+                    }
+                    _ => return Ok(()),
                 }
             } else {
                 let msg = format!("What do you want to do now?");
@@ -1130,6 +1147,7 @@ Do you want to change the state? (Esc to cancel)",
                         self.cache.refresh()?;
                     }
                     Select::T(u) => self.edit_task(&u)?,
+                    Select::Exit => return Ok(()),
                 }
                 self.cache.write()?;
             }
