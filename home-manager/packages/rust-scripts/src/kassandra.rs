@@ -869,7 +869,7 @@ Do you want to change the state? (Esc to cancel)",
         )?);
         match self.dialog.select_option(
             format!(
-                "Handling Task: {}\nCan this be done in under 2 minutes?",
+                "New task in inbox\nCan this be done in under 2 minutes?\n{}",
                 task_name
             ),
             vec![
@@ -913,7 +913,10 @@ Do you want to change the state? (Esc to cancel)",
         if needs_sorting(self.cache.get(uuid).chain_err(|| "unknown task")?) {
             self.sort(uuid)?;
         }
-        if !self.make_project(uuid)? {
+
+        if !(self.dialog.confirm("\nDoes this task have subtasks?\n")? &&
+            self.make_project(uuid)?)
+        {
             if self.cache
                 .get(uuid)
                 .chain_err(|| "missing uuid")?
