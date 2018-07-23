@@ -360,6 +360,7 @@ Do you want to change the state? (Esc to cancel)",
                         "idle: I am not interested in doing anything",
                         "idle"
                     ),
+                    ("exit: Leave the state as it is", "exit"),
                 ],
             )? {
                 "work" => self.state.mode = Mode::Work,
@@ -371,6 +372,7 @@ Do you want to change the state? (Esc to cancel)",
                 "idle" => self.state.mode = Mode::Idle,
                 "uni" => self.state.location = Location::Uni,
                 "anywhere" => self.state.location = Location::Anywhere,
+                "exit" => return Ok(()),
                 other => bail!("Unkown option {}", other),
             };
             save_state(&self.state)?;
