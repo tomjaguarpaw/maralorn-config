@@ -916,8 +916,10 @@ Do you want to change the state? (Esc to cancel)",
             self.sort(uuid)?;
         }
 
-        if !(self.dialog.confirm("\nDoes this task have subtasks?\n")? &&
-            self.make_project(uuid)?)
+        if !(self.dialog.confirm(format!(
+            "\nDoes this task have subtasks?\n{}",
+            task_name
+        ))? && self.make_project(uuid)?)
         {
             if self.cache
                 .get(uuid)
