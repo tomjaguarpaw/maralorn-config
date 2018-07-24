@@ -10,7 +10,7 @@ let
       $(date "+%Y-%m-%d %a %H:%M") "|" \
       $(cat ~/.kassandra_state | tail -n4 | sed "s/$/ | /") \
       =active task= $(task rc.verbose=nothing active || echo "none") "|" \
-      =tags= $(task +PENDING -BLOCKED -project -optional -kategorie rc.verbose=nothing tags | sed "s/\(.\)$/\1 |/" )
+      $(task +PENDING -BLOCKED +auto rc.verbose=nothing tags | sed "s/auto/=runable routines=/" )
       sleep 10s;
     done
     '';
