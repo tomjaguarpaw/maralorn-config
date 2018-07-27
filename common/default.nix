@@ -18,7 +18,6 @@ with lib;
         hera-intern = "${p}::3:1";
         git = "${p}::3:2";
         borg = "${p}::3:3";
-        task = "${p}::3:4";
         dav = "${p}::3:5";
         blog = "${p}::3:6";
         chor = "${p}::3:7";
