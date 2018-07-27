@@ -16,7 +16,7 @@ with lib;
       default = let p = config.m-0.prefix; in {
         hera-v4 = "213.136.94.190";
         hera = "${p}::1";
-        hera-wg = "${p}::2";
+        hera-wg = "${p}::1:0:1";
         hera-intern = "${p}::3:1";
         git = "${p}::3:2";
         borg = "${p}::3:3";
@@ -24,6 +24,7 @@ with lib;
         blog = "${p}::3:6";
         chor = "${p}::3:7";
         matrix = "${p}::3:8";
+        apollo-wg = "${p}::1:1:1";
         apollo = "${p}::1:1";
         athene = "${p}::2:1";
       };

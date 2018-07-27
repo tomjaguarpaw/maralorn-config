@@ -33,14 +33,14 @@ networking = {
   };
   nameservers = [ "213.136.95.10" "2a02:c207::1:53" "2a02:c207::2:53" ];
   wireguard.interfaces = {
-    wireguard = {
-      ips = [ "${hosts.hera-wg}/128" ];
+    m0wire = {
+      ips = [ "${hosts.hera-wg}/96" ];
       privateKeyFile = "/etc/nixos/hosts/hera/secret/wireguard-private";
       listenPort = wireguard.port;
       peers = [
         {
           publicKey = wireguard.pub.apollo;
-          allowedIPs = [ "${hosts.apollo}::/120" ];
+          allowedIPs = [ "${hosts.apollo-wg}/128" ];
           presharedKeyFile = "/etc/nixos/common/secret/wireguard-psk";
         }
       ];
