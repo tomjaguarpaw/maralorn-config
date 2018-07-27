@@ -1,6 +1,6 @@
 { config, ... }:
 let
-  me = config.m-0.private.me;
+  inherit (config.m-0.private) me gitpw;
 in {
   containers.git = {
     autoStart = true;
@@ -38,6 +38,7 @@ in {
             forceSSL = true;
             enableACME = true;
             default = true;
+            basicAuth.git = gitpw;
             locations = {
               "~ (/.*)" = {
                 extraConfig = ''
