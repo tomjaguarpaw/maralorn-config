@@ -25,8 +25,9 @@ networking = {
         {
           publicKey = wireguard.pub.hera;
           allowedIPs = [ "${hosts.hera-wg}/128" ];
-          endpoint = "hera.m-0.eu:${builtins.toString wireguard.port}";
+          endpoint = "${hosts.hera-v4}:${builtins.toString wireguard.port}";
           presharedKeyFile = "/etc/nixos/common/secret/wireguard-psk";
+          persistentKeepalive = 25;
         }
       ];
     };
