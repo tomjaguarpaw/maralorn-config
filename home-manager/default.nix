@@ -22,6 +22,7 @@ imports = [
   ./modules/unlock.nix
   ./modules/weechat
   ./modules/update_tasks.nix
+  ./modules/habitask.nix
   ../common
 #   ./sort-mail.nix
 #   ./morgenreport.nix

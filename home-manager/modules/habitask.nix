@@ -16,7 +16,7 @@ config = mkIf config.m-0.habitask.enable {
         ExecStart="${pkgs.habitask}/bin/habitask";
       };
     };
-    timers.update_tasks = {
+    timers.habitask = {
       Timer = {
         OnCalendar = "19:56:00";
       };

@@ -66,7 +66,7 @@ struct Response {
 impl Habitask {
     fn new() -> Habitask {
         let mut s = Config::new();
-        s.merge(Environment::with_prefix("habatisk"));
+        s.merge(Environment::with_prefix("habitask"));
         let s: Settings = s.try_into().unwrap();
         Habitask {
             client: Client::new(),
@@ -112,7 +112,6 @@ impl Habitask {
             .json(&map)
             .send()
             .unwrap();
-        println!("{:?}", res);
         let Response { data } = res.json().unwrap();
         data
     }
@@ -125,7 +124,6 @@ impl Habitask {
         ).json(&map)
             .send()
             .unwrap();
-        println!("{:?}", res);
         let Response { data } = res.json().unwrap();
         data
     }
@@ -138,7 +136,6 @@ impl Habitask {
         ).json(&map)
             .send()
             .unwrap();
-        println!("{:?}", res);
     }
     fn score_task(&self, id: &str) {
         let client = Client::new();
@@ -148,7 +145,6 @@ impl Habitask {
         ).json(&map)
             .send()
             .unwrap();
-        println!("{:?}", res);
     }
 }
 
@@ -156,8 +152,8 @@ fn main() {
     let habitask = Habitask::new();
     let new = "-DELETED entry.after:now-24h";
     let done = "+COMPLETED end.after:now-24h";
-    let after = "entry.after:new-";
-    let before = "entry.before:new-";
+    let after = "entry.after:now-";
+    let before = "entry.before:now-";
     let mask = "-auto";
     let habitask = Habitask::new();
     let instant_done = query(format!("{} -TAGGED {}48h {}", done, after, mask));
@@ -174,17 +170,6 @@ fn main() {
     ));
     let very_old = query(format!("{} {}1year {}3month {}", done, after, before, mask));
     let crazy_old = query(format!("{} {}1year {}", done, before, mask));
-    println!(
-        "{},{},{},{},{},{},{},{}",
-        tasks.len(),
-        routines.len(),
-        instant_done.len(),
-        created.len(),
-        a_little_old.len(),
-        old.len(),
-        very_old.len(),
-        crazy_old.len()
-    );
     for _ in created {
         habitask.score_task("note");
         blink();
