@@ -31,7 +31,7 @@ networking = {
           persistentKeepalive = 25;
         }
       ];
-      postSetup = [ "${pkgs.iproute}/bin/ip route add ${prefix}::/64 via ${hosts.hera-wg} dev m0wire" ];
+      postSetup = [ "${pkgs.iproute}/bin/ip route add ${prefix}::/64 dev m0wire" ];
     };
   };
 };
