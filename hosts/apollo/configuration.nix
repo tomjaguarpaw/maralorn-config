@@ -4,7 +4,7 @@
 
 let
   inherit (config.m-0.private) me wireguard;
-  inherit (config.m-0) hosts;
+  inherit (config.m-0) hosts prefix;
 in {
 
 imports = [
@@ -19,17 +19,19 @@ networking = {
   hostName = "apollo";
   wireguard.interfaces = {
     m0wire = {
-      ips = [ "${hosts.apollo-wg}/96" ];
+      allowedIPsAsRoutes = false;
+      ips = [ "${hosts.apollo-wg}/112" ];
       privateKeyFile = "/etc/nixos/hosts/apollo/secret/wireguard-private";
       peers = [
         {
           publicKey = wireguard.pub.hera;
-          allowedIPs = [ "${hosts.hera-wg}/128" ];
+          allowedIPs = [ "::/0" ];
           endpoint = "${hosts.hera-v4}:${builtins.toString wireguard.port}";
           presharedKeyFile = "/etc/nixos/common/secret/wireguard-psk";
           persistentKeepalive = 25;
         }
       ];
+      postSetup = [ "${pkgs.iproute}/bin/ip route add ${prefix}::/64 via ${hosts.hera-wg} dev m0wire" ];
     };
   };
 };
