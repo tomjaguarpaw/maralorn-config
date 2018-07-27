@@ -1,15 +1,3 @@
-[submodule "system/modules/cdarknet/nixdark"]
-	path = system/modules/cdarknet/nixdark
-	url = git@git.darmstadt.ccc.de:cdark.net/nixdark
-[submodule "system/modules/cdarknet/hosts"]
-	path = system/modules/cdarknet/hosts
-	url = git@git.darmstadt.ccc.de:cdark.net/hosts
-[submodule "home-common/rofi/zzzfoo"]
-	path = home-common/rofi/zzzfoo
-	url = https://github.com/andersju/zzzfoo.git
-[submodule "home-common/graphical/rofi/zzzfoo"]
-	path = home-common/graphical/rofi/zzzfoo
-	url = https://github.com/andersju/zzzfoo.git
 [submodule "modules/cdarknet/hosts"]
 	path = system/modules/cdarknet/hosts
 	url = git@git.darmstadt.ccc.de:cdark.net/hosts
