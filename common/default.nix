@@ -18,9 +18,9 @@ with lib;
         hera-p = "${p}::3";
         apollo-p = "${p}::1";
         wg-p = "${p}::100";
-      in {
-        hera-wg = "${wg-p}::1";
-        apollo-wg = "${wg-p}::2";
+      in rec {
+        hera-wg = "${wg-p}:1";
+        apollo-wg = "${wg-p}:2";
 
         hera-v4 = "213.136.94.190";
         hera = "${p}::1";
