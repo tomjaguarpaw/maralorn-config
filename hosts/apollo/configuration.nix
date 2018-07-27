@@ -19,13 +19,13 @@ networking = {
   hostName = "apollo";
   wireguard.interfaces = {
     wireguard = {
-      ips = [ "${hosts.apollo}/128" ];
+      ips = [ "${hosts.apollo}/64" ];
       privateKeyFile = "/etc/nixos/hosts/apollo/secret/wireguard-private";
       peers = [
         {
           publicKey = wireguard.pub.hera;
-          allowedIPs = [ "::/0" ];
-          endpoint = "hera.m-0.eu:${wireguard.port}";
+          allowedIPs = [ "${hosts.hera}/64" ];
+          endpoint = "${hosts.hera-v4}:${builtins.toString wireguard.port}";
           presharedKeyFile = "/etc/nixos/common/secret/wireguard-psk";
         }
       ];

@@ -14,6 +14,7 @@ with lib;
     m-0.hosts = mkOption {
       type = types.attrs;
       default = let p = config.m-0.prefix; in {
+        hera-v4 = "213.136.94.190";
         hera = "${p}::1";
         hera-intern = "${p}::3:1";
         git = "${p}::3:2";
