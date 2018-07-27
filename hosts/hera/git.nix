@@ -19,7 +19,7 @@ in {
       };
       networking = {
         interfaces.eth0 = {
-          ipv6.addresses = [{ address = config.m-0.hosts.git; prefixLength = 64; }];
+          ipv6.addresses = [{ address = config.m-0.hosts.git; prefixLength = 112; }];
         };
         inherit (config.networking) nameservers;
         defaultGateway6 = { address = config.m-0.hosts.hera-intern; interface = "eth0"; };
