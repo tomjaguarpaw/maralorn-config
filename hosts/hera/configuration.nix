@@ -3,7 +3,8 @@
 # You need pw-files for every configured user in ./secret/pw-useralias for login to work.
 
 let
-  me = config.m-0.private.me;
+  inherit (config.m-0.private) me wireguard;
+  inherit (config.m-0) hosts;
   unstable-pkgs = import <unstable> {};
 in {
 
@@ -31,6 +32,20 @@ networking = {
     ipv6.addresses = [{ address = config.m-0.hosts.hera-intern; prefixLength = 112; }];
   };
   nameservers = [ "213.136.95.10" "2a02:c207::1:53" "2a02:c207::2:53" ];
+  wireguard.interfaces = {
+    wireguard = {
+      ips = [ "${hosts.hera}/128" ];
+      privateKeyFile = "/etc/nixos/hosts/hera/secret/wireguard-private";
+      listenPort = wireguard.port;
+      peers = [
+        {
+          publicKey = wireguard.pub.apollo;
+          allowedIPs = [ "${hosts.apollo}::/120" ];
+          presharedKeyFile = "/etc/nixos/common/secret/wireguard-psk";
+        }
+      ];
+    };
+  };
 };
 
 nixpkgs.config.packageOverrides = pkgs: {
