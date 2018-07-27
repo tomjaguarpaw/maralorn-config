@@ -1,10 +1,37 @@
 { lib, pkgs, config, ...}:
 with lib;
-{
+let
+  tasksync = pkgs.writeShellScriptBin "tasksync" ''
+    cd ${config.home.homeDirectory}/.task
+    ${pkgs.git}/bin/git add completed.data pending.data
+    ${pkgs.git}/bin/git commit -m 'Updating task data'
+    ${pkgs.git}/bin/git pull -r
+    ${pkgs.git}/bin/git push
+  '';
+in {
 options.m-0.taskwarrior.enable = mkEnableOption "Taskwarrior";
 config = mkIf config.m-0.taskwarrior.enable {
+  systemd.user = {
+    services.tasksync = {
+      Unit = {
+        Description = "Update tasks";
+      };
+      Service = {
+        ExecStart="/bin/sh ${tasksync}/bin/tasksync";
+        Type="oneshot";
+      };
+    };
+    timers.tasksync = {
+      Timer = {
+        OnCalendar = "*:0/5";
+      };
+      Install = {
+        WantedBy = [ "timers.target" ];
+      };
+    };
+  };
   home = {
-    packages = [ pkgs.taskwarrior ];
+    packages = [ pkgs.taskwarrior tasksync ];
     file = {
       ".taskrc".text = ''
         data.location=~/.task
