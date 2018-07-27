@@ -32,6 +32,7 @@ networking = {
     ipv6.addresses = [{ address = config.m-0.hosts.hera-intern; prefixLength = 112; }];
   };
   nameservers = [ "213.136.95.10" "2a02:c207::1:53" "2a02:c207::2:53" ];
+  firewall.allowedUDPPorts = [ wireguard.port ];
   wireguard.interfaces = {
     m0wire = {
       ips = [ "${hosts.hera-wg}/96" ];
