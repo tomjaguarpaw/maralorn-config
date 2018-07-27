@@ -29,6 +29,7 @@ imports = [
 
 nixpkgs.config.packageOverrides = pkgs: with pkgs; {
   tasktree = callPackage ./packages/tasktree {};
+  habitask = unstablePkgs.callPackage ./packages/habitask {};
   rust_scripts = unstablePkgs.callPackage ./packages/rust-scripts {};
   jali = callPackage ./packages/jali {};
   eventd = unstablePkgs.callPackage ./packages/eventd {};
