@@ -12,6 +12,7 @@ extern crate config;
 use reqwest::{IntoUrl, Client, RequestBuilder};
 use task_hookrs::task::Task;
 use serde_json::from_str;
+use std::str::from_utf8;
 use std::process::Command;
 use std::thread::sleep;
 use std::time::Duration;
@@ -33,15 +34,14 @@ fn blink() {
 }
 
 
-fn query(filter: String) -> Vec<task_hookrs::task::Task> {
+fn query(filter: String) -> Vec<Task> {
     let stdout = &Command::new("task")
         .arg("export")
         .arg(filter)
         .output()
         .unwrap()
         .stdout;
-    let string = std::str::from_utf8(stdout).unwrap();
-    from_str::<Vec<Task>>(string).unwrap()
+    from_str(from_utf8(stdout).unwrap()).unwrap()
 }
 
 #[derive(Deserialize)]
@@ -66,8 +66,8 @@ struct Response {
 impl Habitask {
     fn new() -> Habitask {
         let mut s = Config::new();
-        s.merge(Environment::with_prefix("habitask"));
-        let s: Settings = s.try_into().unwrap();
+        s.merge(Environment::with_prefix("habitask")).unwrap();
+        let s = s.try_into().unwrap();
         Habitask {
             client: Client::new(),
             settings: s,
@@ -104,58 +104,55 @@ impl Habitask {
     }
 
     fn create_todo(&self, name: &str, prio: &str) -> Todo {
-        let mut map = std::collections::HashMap::new();
-        map.insert("text", name);
-        map.insert("type", "todo");
-        map.insert("priority", prio);
-        let mut res = self.post("https://habitica.com/api/v3/tasks/user")
+        let map = vec![("text", name), ("type", "todo"), ("priority", prio)];
+        self.post("https://habitica.com/api/v3/tasks/user")
             .json(&map)
             .send()
-            .unwrap();
-        let Response { data } = res.json().unwrap();
-        data
+            .unwrap()
+            .json::<Response>()
+            .unwrap()
+            .data
     }
 
     fn add_item(&self, id: &str, item: &str) -> Todo {
-        let mut map = std::collections::HashMap::new();
-        map.insert("text", item);
-        let mut res = self.post(
-            &("https://habitica.com/api/v3/tasks/".to_owned() + id + "/checklist"),
-        ).json(&map)
+        let map = vec![("text", item)];
+        let url = format!("https://habitica.com/api/v3/tasks/{}/checklist", id);
+        self.post(&url)
+            .json(&map)
             .send()
-            .unwrap();
-        let Response { data } = res.json().unwrap();
-        data
+            .unwrap()
+            .json::<Response>()
+            .unwrap()
+            .data
     }
 
     fn check_item(&self, id: &str, item: &str) {
-        let map: std::collections::HashMap<String, String> = std::collections::HashMap::new();
-        let res = self.post(
-            &("https://habitica.com/api/v3/tasks/".to_owned() + id + "/checklist/" +
-                  item + "/score"),
-        ).json(&map)
+        let url = format!(
+            "https://habitica.com/api/v3/tasks/{}/checklist/{}/score",
+            id,
+            item
+        );
+        self.post(&url)
+            .json(&Vec::<(&str, &str)>::new())
             .send()
             .unwrap();
     }
+
     fn score_task(&self, id: &str) {
-        let client = Client::new();
-        let map: std::collections::HashMap<String, String> = std::collections::HashMap::new();
-        let res = self.post(
-            &("https://habitica.com/api/v3/tasks/".to_owned() + id + "/score/up"),
-        ).json(&map)
+        let url = format!("https://habitica.com/api/v3/tasks/{}/score/up", id);
+        self.post(&url)
+            .json(&Vec::<(&str, &str)>::new())
             .send()
             .unwrap();
     }
 }
 
 fn main() {
-    let habitask = Habitask::new();
     let new = "-DELETED entry.after:now-24h";
     let done = "+COMPLETED end.after:now-24h";
     let after = "entry.after:now-";
     let before = "entry.before:now-";
     let mask = "-auto";
-    let habitask = Habitask::new();
     let instant_done = query(format!("{} -TAGGED {}48h {}", done, after, mask));
     let created = query(format!("{} {}", new, mask));
     let routines = query(format!("{} +auto", done));
@@ -170,6 +167,7 @@ fn main() {
     ));
     let very_old = query(format!("{} {}1year {}3month {}", done, after, before, mask));
     let crazy_old = query(format!("{} {}1year {}", done, before, mask));
+    let habitask = Habitask::new();
     for _ in created {
         habitask.score_task("note");
         blink();
