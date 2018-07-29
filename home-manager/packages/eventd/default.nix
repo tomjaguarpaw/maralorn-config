@@ -1,4 +1,4 @@
-{ fetchFromGitHub, stdenv, ninja, meson, pkgconfig, glib, cairo, gdk_pixbuf, glib_networking, pango, libudev, xorg, libxslt, docbook_xml_xslt, git, libuuid, dbus, libsoup, docbook_xml_dtd_45, docbook5_xsl, gettext, autoconf, libtool, utillinux, libxkbcommon }:
+{ fetchFromGitHub, intltool, stdenv, ninja, meson, pkgconfig, glib, cairo, gdk_pixbuf, glib_networking, pango, libudev, xorg, libxslt, docbook_xml_xslt, git, libuuid, dbus, libsoup, docbook_xml_dtd_45, docbook5_xsl, gettext, autoconf, libtool, utillinux, libxkbcommon }:
 stdenv.mkDerivation rec {
   name = "eventd";
   version = "v0.24.1";
@@ -27,6 +27,7 @@ stdenv.mkDerivation rec {
     docbook_xml_xslt
     docbook_xml_dtd_45
     libuuid
+    intltool
     dbus
   ];
   preConfigure = ''

@@ -12,6 +12,7 @@ use task_hookrs::cache::TaskCache;
 use task_hookrs::task::{Task, TaskBuilder};
 use task_hookrs::priority::TaskPriority;
 use task_hookrs::status::TaskStatus;
+use task_hookrs::uda::UDAValue::Str as UDAStr;
 
 use dialog::rofi::RofiDialogProvider;
 use dialog::DialogProvider;
@@ -297,10 +298,6 @@ impl Kassandra {
         self.sort_mailbox(&*AK_MAILBOX, false)?;
 
         // CHECK_UNREAD_CHATS
-        // CHECK_INBOXES
-        //  maralorn.de
-        //  kiva
-        //  ak
         process_task(self, &*MAINTENANCE)?;
         process_task(self, &*SORT_INBOX)?;
         process_task(self, &*SORT_INBOX_KIVA)?;
@@ -445,7 +442,7 @@ Do you want to change the state? (Esc to cancel)",
     }
 
     pub fn sort(&mut self, uuid: &Uuid) -> Result<()> {
-        let task_name = print_task(self.cache.get(uuid).chain_err(|| "mising uuid")?);
+        let task_name = print_task(self.cache.get(uuid).chain_err(|| "missing uuid")?);
         let partof = self.select_entry_point(
             format!("Select Project for Task\n{}", task_name),
             uuid,
@@ -838,6 +835,14 @@ Do you want to change the state? (Esc to cancel)",
         self.cache.write()?;
         {
             let task = self.cache.get(uuid).chain_err(|| "Uuid not found")?;
+            let github_url = task.uda().get("githuburl");
+            let gitlab_url = task.uda().get("gitlaburl");
+            if let Some(UDAStr(url)) = github_url {
+                str2cmd("firefox --new-window").arg(url).output()?;
+            }
+            if let Some(UDAStr(url)) = gitlab_url {
+                str2cmd("firefox --new-window").arg(url).output()?;
+            }
             if task.gen_name() == Some(&"mail-task".to_owned()) {
                 let message_id = task.gen_id()
                     .chain_err(|| "mail-task has no genid")?
