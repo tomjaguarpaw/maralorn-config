@@ -32,7 +32,7 @@ config = mkIf config.m-0.bugwarrior.enable {
     github.description_template = {{githubrepo}} {{githubtype[:1]}}#{{githubnumber}}: {{githubtitle}}
     github.include_user_issues = False
     github.include_user_repos = False
-    github.query = is:open involves:maralorn archived:false -repo:maxtaco/coffee-script -repo:QMatrixClient/libqmatrixclient -repo:QMatrixClient/Quaternion -repo:trollhoehle/pythonlights
+    github.query = is:open involves:maralorn archived:false -repo:maxtaco/coffee-script -repo:QMatrixClient/libqmatrixclient -repo:QMatrixClient/Quaternion -repo:trollhoehle/pythonlights -repo:MirakelX/mirakel-android
     github.default_priority= L
     github.project_template =
   '';
