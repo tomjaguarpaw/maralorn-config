@@ -55,6 +55,65 @@ config = mkIf config.m-0.taskwarrior.enable {
         uda.gen_name.label=generator name
         uda.gen_id.type=string
         uda.gen_id.label=generator id
+
+        # Bugwarrior UDAs
+        uda.githubtitle.type=string
+        uda.githubtitle.label=Github Title
+        uda.githubbody.type=string
+        uda.githubbody.label=Github Body
+        uda.githubcreatedon.type=date
+        uda.githubcreatedon.label=Github Created
+        uda.githubupdatedat.type=date
+        uda.githubupdatedat.label=Github Updated
+        uda.githubmilestone.type=string
+        uda.githubmilestone.label=Github Milestone
+        uda.githubrepo.type=string
+        uda.githubrepo.label=Github Repo Slug
+        uda.githuburl.type=string
+        uda.githuburl.label=Github URL
+        uda.githubtype.type=string
+        uda.githubtype.label=Github Type
+        uda.githubnumber.type=numeric
+        uda.githubnumber.label=Github Issue/PR #
+        uda.githubuser.type=string
+        uda.githubuser.label=Github User
+        uda.gitlabtitle.type=string
+        uda.gitlabtitle.label=Gitlab Title
+        uda.gitlabdescription.type=string
+        uda.gitlabdescription.label=Gitlab Description
+        uda.gitlabcreatedon.type=date
+        uda.gitlabcreatedon.label=Gitlab Created
+        uda.gitlabupdatedat.type=date
+        uda.gitlabupdatedat.label=Gitlab Updated
+        uda.gitlabduedate.type=date
+        uda.gitlabduedate.label=Gitlab Due Date
+        uda.gitlabmilestone.type=string
+        uda.gitlabmilestone.label=Gitlab Milestone
+        uda.gitlaburl.type=string
+        uda.gitlaburl.label=Gitlab URL
+        uda.gitlabrepo.type=string
+        uda.gitlabrepo.label=Gitlab Repo Slug
+        uda.gitlabtype.type=string
+        uda.gitlabtype.label=Gitlab Type
+        uda.gitlabnumber.type=numeric
+        uda.gitlabnumber.label=Gitlab Issue/MR #
+        uda.gitlabstate.type=string
+        uda.gitlabstate.label=Gitlab Issue/MR State
+        uda.gitlabupvotes.type=numeric
+        uda.gitlabupvotes.label=Gitlab Upvotes
+        uda.gitlabdownvotes.type=numeric
+        uda.gitlabdownvotes.label=Gitlab Downvotes
+        uda.gitlabwip.type=numeric
+        uda.gitlabwip.label=Gitlab MR Work-In-Progress Flag
+        uda.gitlabauthor.type=string
+        uda.gitlabauthor.label=Gitlab Author
+        uda.gitlabassignee.type=string
+        uda.gitlabassignee.label=Gitlab Assignee
+        uda.gitlabnamespace.type=string
+        uda.gitlabnamespace.label=Gitlab Namespace
+        uda.gitlabweight.type=numeric
+        uda.gitlabweight.label=Gitlab Weight
+        # END Bugwarrior UDAs
       '';
       taskwarrior-on-add-hook = {
         target = ".task/hooks/on-add.eventd-notification";
@@ -71,7 +130,7 @@ config = mkIf config.m-0.taskwarrior.enable {
             command.append("-d")
             if type(value) == list:
               value = ', '.join(value)
-            command.append(name+"='"+value+"'")
+            command.append(name+"='"+str(value)+"'")
           subprocess.Popen(command)
           print(input_string)
           '';
@@ -95,8 +154,8 @@ config = mkIf config.m-0.taskwarrior.enable {
               value = new.get(name, "")
               command.append("-d")
               if type(value) == list:
-                value = ', '.join(value)
-              command.append(name+"='"+value+"'")
+                value = ', '.join([str(item) for item in value])
+              command.append(name+"='"+str(value)+"'")
           subprocess.Popen(command)
           print(input_string)
           '';
