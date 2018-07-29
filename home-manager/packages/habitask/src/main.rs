@@ -17,6 +17,7 @@ use std::str::from_utf8;
 use std::process::Command;
 use std::thread::sleep;
 use std::time::Duration;
+use std::collections::HashMap;
 use config::{Config, Environment};
 
 error_chain! {
@@ -103,10 +104,12 @@ impl Habitask {
         }
         let Todo { id, .. } = self.create_todo(name, prio)?;
         let mut checklist: Vec<Item> = Vec::new();
+        println!("Making task");
         for task in tasks {
             checklist = self.add_item(&id, &task.description())?.checklist;
             blink();
         }
+        println!("Adding items");
         for item in checklist {
             self.check_item(&id, &item.id)?;
             blink();
@@ -116,19 +119,21 @@ impl Habitask {
 
     fn create_todo(&self, name: &str, prio: &str) -> Result<Todo> {
         let map = vec![("text", name), ("type", "todo"), ("priority", prio)];
-        Ok(
-            self.post("https://habitica.com/api/v3/tasks/user")
-                .json(&map)
-                .send()?
-                .json::<Response>()?
-                .data,
-        )
+        let map = map.into_iter().collect::<HashMap<_, _>>();
+        let request = self.post("https://habitica.com/api/v3/tasks/user")
+            .json(&map)
+            .build()?;
+        let mut response = self.client.execute(request)?;
+        Ok(response.json::<Response>()?.data)
     }
 
     fn add_item(&self, id: &str, item: &str) -> Result<Todo> {
         let map = vec![("text", item)];
+        let map = map.into_iter().collect::<HashMap<_, _>>();
         let url = format!("https://habitica.com/api/v3/tasks/{}/checklist", id);
-        Ok(self.post(&url).json(&map).send()?.json::<Response>()?.data)
+        let request = self.post(&url).json(&map).build()?;
+        let mut response = self.client.execute(request)?;
+        Ok(response.json::<Response>()?.data)
     }
 
     fn check_item(&self, id: &str, item: &str) -> Result<()> {
@@ -169,35 +174,43 @@ fn main() -> Result<()> {
     let very_old = query(format!("{} {}1year {}3month {}", done, after, before, mask))?;
     let crazy_old = query(format!("{} {}1year {}", done, before, mask))?;
     let habitask = Habitask::new()?;
+    println!("New notes");
     for _ in created {
         habitask.score_task("note")?;
         blink();
     }
+    println!("Instant dones");
     for _ in instant_done {
         habitask.score_task("do-it")?;
         blink();
     }
+    println!("routines");
     habitask.make_todo("Routinen erledigt!", "0.1", routines)?;
+    println!("tasks");
     habitask.make_todo(
         "Herausforderungen bezwungen!",
         "1",
         tasks,
     )?;
+    println!("week old tasks");
     habitask.make_todo(
         "Ein paar Tage alte Herausforderungen bezwungen!",
         "1.5",
         a_little_old,
     )?;
+    println!("week old tasks");
     habitask.make_todo(
         "Einige Wochen alte Herausforderungen bezwungen!",
         "2",
         old,
     )?;
+    println!("month old tasks");
     habitask.make_todo(
         "Monate alte Herausforderungen bezwungen!",
         "2",
         very_old,
     )?;
+    println!("many months old tasks");
     habitask.make_todo(
         "Uralte Herausforderungen bezwungen!",
         "2",
