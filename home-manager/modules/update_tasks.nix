@@ -18,7 +18,7 @@ config = mkIf config.m-0.update_tasks.enable {
     gitlab.only_if_assigned=${me.user}
     gitlab.only_if_author=${me.user}
   '';
-  home.packages = [ pkgs.python2Packages.bugwarrior ];
+  home.packages = [ pkgs.bugwarrior ];
   systemd.user = {
     services.update_tasks = {
       Unit = {

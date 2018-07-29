@@ -36,6 +36,15 @@ nixpkgs.config.packageOverrides = pkgs: with pkgs; {
   eventd = unstablePkgs.callPackage ./packages/eventd {};
   st = (import packages/st) pkgs config.m-0.colors;
   neovim = (import ./nvim) pkgs config.m-0.rustdev.enable;
+  bugwarrior = unstablePkgs.python3Packages.bugwarrior.overrideAttrs (oldAttrs: rec {
+    version = "d48f735";
+    src = fetchFromGitHub {
+      owner = "ralphbean";
+      repo = "bugwarrior";
+      rev = version;
+      sha256 = "1facsqp1x3mcfal0c8rh6n12bavy6a9w2frlgmvv0by93y7a4nhj";
+    };
+  });
 };
 
 
