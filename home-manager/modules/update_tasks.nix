@@ -13,7 +13,14 @@ config = mkIf config.m-0.update_tasks.enable {
       Service = {
         Type = "oneshot";
         Environment="PATH=${pkgs.taskwarrior}/bin:${pkgs.eventd}/bin";
-        ExecStart="${pkgs.rust_scripts}/bin/update_tasks";
+        ExecStart= let
+          update = pkgs.writeShellScriptBin "update" ''
+            ${pkgs.rust_scripts}/bin/update_tasks
+            ${pkgs.taskwarrior}/bin/task +PENDING due.before:now+1month prio: mod prio:L
+            ${pkgs.taskwarrior}/bin/task +PENDING due.before:now+1week prio:L mod prio:M
+            ${pkgs.taskwarrior}/bin/task +PENDING due.before:now+1day prio:M mod prio:L
+            true
+          ''; in "${update}/bin/update";
       };
     };
     timers.update_tasks = {
