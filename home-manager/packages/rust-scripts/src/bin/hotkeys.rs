@@ -86,11 +86,11 @@ fn main() -> Result<()> {
                         ),
                         term(
                             "Private Buchhaltung",
-                            "hledger -f data/aktuell/lebenshaltung/buchhaltung/buchhaltung.ledger ui"
+                            "hledger -f ~/git/buchhaltung.ledger ui"
                         ),
                         term(
                             "CDA Buchhaltung",
-                            "hledger -f data/aktuell/ccc/cda/vorstand/buchhaltung/buchhaltung.ledger ui"
+                            "hledger -f ~/git/cda/buchhaltung/buchhaltung.ledger ui"
                         ),
                     ]
                 ),

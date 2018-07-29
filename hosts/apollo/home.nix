@@ -10,7 +10,10 @@ m-0.laptop.enable = true;
 m-0.sleep-nag.enable = true;
 m-0.battery.enable = true;
 m-0.latex.enable = true;
-m-0.accounting.enable = true;
+m-0.accounting = {
+  enable = true;
+  config = builtins.readFile secret/jaliconfig.py;
+};
 m-0.graphical.enable = true;
 m-0.rustdev.enable = true;
 m-0.taskwarrior.enable = true;

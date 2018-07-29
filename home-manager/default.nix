@@ -11,7 +11,7 @@ imports = [
   ./modules/force-copies.nix
   ./modules/battery.nix
   ./modules/laptop.nix
-  ./modules/accounting.nix
+  ./modules/accounting
   ./modules/rustdev.nix
   ./modules/latex.nix
   ./modules/sleep-nag.nix
