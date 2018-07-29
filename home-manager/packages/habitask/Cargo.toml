@@ -5,6 +5,7 @@ authors = ["Malte Brandy <malte.brandy@maralorn.de>"]
 
 [dependencies]
 task-hookrs = { git = "https://git.darmstadt.ccc.de/maralorn/task-hookrs.git"}
+error-chain = "0.11.0"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"

@@ -11,6 +11,7 @@ m-0 = {
   taskwarrior.enable = true;
   habitask.enable = true;
   bugwarrior.enable = true;
+  rustdev.enable = true;
   weechat = {
     enable = true;
     user = config.m-0.private.hackint.user;
