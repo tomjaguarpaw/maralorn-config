@@ -560,11 +560,26 @@ Do you want to change the state? (Esc to cancel)",
                     ("Optional", O::O),
                 ],
             )? {
-                O::H => task.set_priority(Some(TaskPriority::High)),
-                O::M => task.set_priority(Some(TaskPriority::Medium)),
-                O::L => task.set_priority(Some(TaskPriority::Low)),
-                O::N => task.set_priority(None as Option<TaskPriority>),
-                O::O => task.add_tag("optional"),
+                O::H => {
+                    task.set_priority(Some(TaskPriority::High));
+                    task.remove_tag("optional");
+                }
+                O::M => {
+                    task.set_priority(Some(TaskPriority::Medium));
+                    task.remove_tag("optional");
+                }
+                O::L => {
+                    task.set_priority(Some(TaskPriority::Low));
+                    task.remove_tag("optional");
+                }
+                O::N => {
+                    task.set_priority(None as Option<TaskPriority>);
+                    task.remove_tag("optional");
+                }
+                O::O => {
+                    task.set_priority(None as Option<TaskPriority>);
+                    task.add_tag("optional");
+                }
             }
         }
         Ok(self.cache.write()?)
@@ -1007,76 +1022,36 @@ Do you want to change the state? (Esc to cancel)",
             ShowAll,
             Edit,
             Keep,
-            Demote,
-            Promote,
+            Change,
         };
-        let mut options = vec![
+        let options = vec![
             ("Keep: Leave priority as it is", Select::Keep),
+            ("Change: Change priority", Select::Change),
             ("Edit", Select::Edit),
             ("Show all: Show all tasks of this priority", Select::ShowAll),
         ];
-        if priority.0 != PS::Optional {
-            options.insert(0, ("Demote: Lower priority", Select::Demote));
-        }
-        if priority.0 != PS::High {
-            options.insert(0, ("Promote: Raise priority", Select::Promote));
-        }
         let e = &format!("Called priority_check with missing uuid {}", uuid);
         let msg = format!(
             "Checking up on the following task, because of elapsed timeout:\n{}",
             print_task(self.cache.get(uuid).expect(e))
         );
-        match (self.dialog.select_option(msg, options)?, priority.0) {
-            (Select::ShowAll, _) => {
+        match self.dialog.select_option(msg, options)? {
+            Select::ShowAll => {
                 self.show_priorities(priority)?;
             }
-            (Select::Edit, _) => {
+            Select::Edit => {
                 self.edit_task(uuid)?;
             }
-            (Select::Keep, _) => {
+            Select::Keep => {
                 self.cache.get_mut(uuid).expect(e).add_tag("toggle");
                 self.cache.write()?;
                 self.cache.get_mut(uuid).expect(e).remove_tag("toggle");
                 self.cache.refresh()?;
             }
-            (Select::Promote, PS::Medium) => {
-                self.cache.get_mut(uuid).expect(e).set_priority(
-                    Some(TaskPriority::High),
-                );
+            Select::Change => {
+                self.select_priority(uuid)?;
                 self.cache.write()?;
             }
-            (Select::Demote, PS::High) |
-            (Select::Promote, PS::Low) => {
-                self.cache.get_mut(uuid).expect(e).set_priority(
-                    Some(TaskPriority::Medium),
-                );
-                self.cache.write()?;
-            }
-            (Select::Demote, PS::Medium) |
-            (Select::Promote, PS::None) => {
-                self.cache.get_mut(uuid).expect(e).set_priority(
-                    Some(TaskPriority::Low),
-                );
-                self.cache.write()?;
-            }
-            (Select::Demote, PS::Low) |
-            (Select::Promote, PS::Optional) => {
-                {
-                    let t = self.cache.get_mut(uuid).expect(e);
-                    t.set_priority(None as Option<TaskPriority>);
-                    t.remove_tag("optional");
-                }
-                self.cache.write()?;
-            }
-            (Select::Demote, PS::None) => {
-                {
-                    let t = self.cache.get_mut(uuid).expect(e);
-                    t.set_tags(None as Option<Vec<String>>);
-                    t.add_tag("optional");
-                }
-                self.cache.write()?;
-            }
-            (_, _) => bail!("invalid demotion/promotion"),
         }
         Ok(())
     }
