@@ -176,7 +176,7 @@ fn main() {
         habitask.score_task("do-it");
         blink();
     }
-    habitask.make_todo("Routinen erledigt!", "1", routines);
+    habitask.make_todo("Routinen erledigt!", "0.1", routines);
     habitask.make_todo("Herausforderungen bezwungen!", "1", tasks);
     habitask.make_todo(
         "Ein paar Tage alte Herausforderungen bezwungen!",
