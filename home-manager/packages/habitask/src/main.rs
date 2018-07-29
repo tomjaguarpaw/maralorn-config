@@ -22,6 +22,10 @@ use config::{Config, Environment};
 error_chain! {
     foreign_links {
         Io(::std::io::Error);
+        Reqwust(::reqwest::Error);
+        Utf8(::std::str::Utf8Error);
+        JSON(::serde_json::Error);
+        Config(::config::ConfigError);
     }
 }
 
@@ -74,10 +78,10 @@ impl Habitask {
         let mut s = Config::new();
         s.merge(Environment::with_prefix("habitask"))?;
         let s = s.try_into()?;
-        Habitask {
+        Ok(Habitask {
             client: Client::new(),
             settings: s,
-        }
+        })
     }
 
     fn login(&self, mut builder: RequestBuilder) -> RequestBuilder {
@@ -95,7 +99,7 @@ impl Habitask {
 
     fn make_todo(&self, name: &str, prio: &str, tasks: Vec<Task>) -> Result<()> {
         if tasks.len() == 0 {
-            return;
+            return Ok(());
         }
         let Todo { id, .. } = self.create_todo(name, prio)?;
         let mut checklist: Vec<Item> = Vec::new();
@@ -112,40 +116,34 @@ impl Habitask {
 
     fn create_todo(&self, name: &str, prio: &str) -> Result<Todo> {
         let map = vec![("text", name), ("type", "todo"), ("priority", prio)];
-        self.post("https://habitica.com/api/v3/tasks/user")
-            .json(&map)
-            .send()?
-            .json::<Response>()?
-            .data
+        Ok(
+            self.post("https://habitica.com/api/v3/tasks/user")
+                .json(&map)
+                .send()?
+                .json::<Response>()?
+                .data,
+        )
     }
 
     fn add_item(&self, id: &str, item: &str) -> Result<Todo> {
         let map = vec![("text", item)];
         let url = format!("https://habitica.com/api/v3/tasks/{}/checklist", id);
-        Ok(self.post(&url)
-            .json(&map)
-            .send()?
-            .json::<Response>()?
-            .data)
+        Ok(self.post(&url).json(&map).send()?.json::<Response>()?.data)
     }
 
-    fn check_item(&self, id: &str, item: &str) -> Result<()>{
+    fn check_item(&self, id: &str, item: &str) -> Result<()> {
         let url = format!(
             "https://habitica.com/api/v3/tasks/{}/checklist/{}/score",
             id,
             item
         );
-        self.post(&url)
-            .json(&Vec::<(&str, &str)>::new())
-            .send()?;
+        self.post(&url).json(&Vec::<(&str, &str)>::new()).send()?;
         Ok(())
     }
 
-    fn score_task(&self, id: &str) -> Result<()>{
+    fn score_task(&self, id: &str) -> Result<()> {
         let url = format!("https://habitica.com/api/v3/tasks/{}/score/up", id);
-        self.post(&url)
-            .json(&Vec::<(&str, &str)>::new())
-            .send();
+        self.post(&url).json(&Vec::<(&str, &str)>::new()).send()?;
         Ok(())
     }
 }
@@ -180,14 +178,30 @@ fn main() -> Result<()> {
         blink();
     }
     habitask.make_todo("Routinen erledigt!", "0.1", routines)?;
-    habitask.make_todo("Herausforderungen bezwungen!", "1", tasks)?;
+    habitask.make_todo(
+        "Herausforderungen bezwungen!",
+        "1",
+        tasks,
+    )?;
     habitask.make_todo(
         "Ein paar Tage alte Herausforderungen bezwungen!",
         "1.5",
         a_little_old,
     )?;
-    habitask.make_todo("Einige Wochen alte Herausforderungen bezwungen!", "2", old)?;
-    habitask.make_todo("Monate alte Herausforderungen bezwungen!", "2", very_old)?;
-    habitask.make_todo("Uralte Herausforderungen bezwungen!", "2", crazy_old)?;
+    habitask.make_todo(
+        "Einige Wochen alte Herausforderungen bezwungen!",
+        "2",
+        old,
+    )?;
+    habitask.make_todo(
+        "Monate alte Herausforderungen bezwungen!",
+        "2",
+        very_old,
+    )?;
+    habitask.make_todo(
+        "Uralte Herausforderungen bezwungen!",
+        "2",
+        crazy_old,
+    )?;
     Ok(())
 }

@@ -1567,10 +1567,11 @@ rec {
     num_cpus_1_8_0.default = true;
   }) [ futures_0_1_23_features num_cpus_1_8_0_features ];
   habitask_0_1_0 = { features?(habitask_0_1_0_features {}) }: habitask_0_1_0_ {
-    dependencies = mapFeatures features ([ config_0_9_0 hyper_0_11_27 reqwest_0_8_6 serde_1_0_70 serde_derive_1_0_70 serde_json_1_0_24 task_hookrs_0_5_0 ]);
+    dependencies = mapFeatures features ([ config_0_9_0 error_chain_0_11_0 hyper_0_11_27 reqwest_0_8_6 serde_1_0_70 serde_derive_1_0_70 serde_json_1_0_24 task_hookrs_0_5_0 ]);
   };
   habitask_0_1_0_features = f: updateFeatures f (rec {
     config_0_9_0.default = true;
+    error_chain_0_11_0.default = true;
     habitask_0_1_0.default = (f.habitask_0_1_0.default or true);
     hyper_0_11_27.default = true;
     reqwest_0_8_6.default = true;
@@ -1578,7 +1579,7 @@ rec {
     serde_derive_1_0_70.default = true;
     serde_json_1_0_24.default = true;
     task_hookrs_0_5_0.default = true;
-  }) [ config_0_9_0_features hyper_0_11_27_features reqwest_0_8_6_features serde_1_0_70_features serde_derive_1_0_70_features serde_json_1_0_24_features task_hookrs_0_5_0_features ];
+  }) [ config_0_9_0_features error_chain_0_11_0_features hyper_0_11_27_features reqwest_0_8_6_features serde_1_0_70_features serde_derive_1_0_70_features serde_json_1_0_24_features task_hookrs_0_5_0_features ];
   httparse_1_3_2 = { features?(httparse_1_3_2_features {}) }: httparse_1_3_2_ {
     features = mkFeatures (features.httparse_1_3_2 or {});
   };
