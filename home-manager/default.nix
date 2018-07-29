@@ -132,6 +132,7 @@ home.sessionVariables = {
     in
       "${print-pw}/bin/print-pw";
 };
+fonts.fontconfig.enableProfileFonts = true;
 
 systemd.user.startServices = true;
 
