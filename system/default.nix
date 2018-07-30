@@ -5,7 +5,7 @@ in {
   # channel = 18.03
 
   imports = [
-    /home/maralorn/git/home-manager/nixos
+    <home-manager/nixos>
     ../common
     ./modules/laptop.nix
     ./modules/server
