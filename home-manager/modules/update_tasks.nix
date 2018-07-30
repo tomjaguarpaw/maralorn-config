@@ -1,7 +1,7 @@
 { config, lib, pkgs , ... }:
 with lib;
 let
-  inherit (config.m-0.private) me gitlab;
+  inherit (config.m-0.private) me;
 in {
 options.m-0.update_tasks.enable = mkEnableOption "Update Tasks";
 config = mkIf config.m-0.update_tasks.enable {

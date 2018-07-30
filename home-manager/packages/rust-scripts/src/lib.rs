@@ -12,6 +12,8 @@ extern crate serde_yaml;
 extern crate maildir;
 extern crate mailparse;
 extern crate regex;
+extern crate reqwest;
+extern crate config;
 
 pub mod hotkeys;
 pub mod generate;
@@ -21,14 +23,12 @@ pub mod kassandra;
 pub mod tasktree;
 pub mod well_known;
 pub mod mail;
+pub mod otrs;
 #[allow(renamed_and_removed_lints)]
 
 pub mod error {
     use task_hookrs::error as terror;
     use dialog::errors as derror;
-    use serde_yaml;
-    use maildir;
-    use mailparse;
     error_chain! {
         links {
             TaskError(terror::Error, terror::ErrorKind);
@@ -36,10 +36,12 @@ pub mod error {
         }
         foreign_links {
             Io(::std::io::Error);
-            Yaml(serde_yaml::Error);
+            Yaml(::serde_yaml::Error);
             PathError(::std::env::JoinPathsError);
-            MailDir(maildir::MailEntryError);
-            MailParse(mailparse::MailParseError);
+            MailDir(::maildir::MailEntryError);
+            MailParse(::mailparse::MailParseError);
+            Config(::config::ConfigError);
+            HttpError(::reqwest::Error);
         }
         errors {
             WorkingOnTask(t: String) {

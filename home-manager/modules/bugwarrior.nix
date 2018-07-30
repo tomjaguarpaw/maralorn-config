@@ -1,7 +1,7 @@
 { config, lib, pkgs , ... }:
 with lib;
 let
-  inherit (config.m-0.private) me gitlab github;
+  inherit (config.m-0.private) me gitlab github otrs;
 in {
 options.m-0.bugwarrior.enable = mkEnableOption "Sync tasks from issuetrackers";
 config = mkIf config.m-0.bugwarrior.enable {
@@ -43,8 +43,13 @@ config = mkIf config.m-0.bugwarrior.enable {
       };
       Service = {
         Type = "oneshot";
-        Environment="PATH=${pkgs.taskwarrior}/bin:${pkgs.eventd}/bin:${pkgs.gnugrep}/bin";
-        ExecStart="${pkgs.bugwarrior}/bin/bugwarrior-pull";
+        Environment=''PATH=${pkgs.taskwarrior}/bin:${pkgs.eventd}/bin OTRS_USER=${me.user} OTRS_PASSWORD=${otrs.password} OTRS_QUEUES="${otrs.queues}" OTRS_OWNERS="${otrs.owners}" OTRS_HOST=${otrs.host}'';
+        ExecStart= let
+          update = pkgs.writeShellScriptBin "update" ''
+            ${pkgs.bugwarrior}/bin/bugwarrior-pull
+            ${pkgs.rust_scripts}/bin/sync_otrs
+            true
+          ''; in "${update}/bin/update";
       };
     };
     timers.bugwarrior = {

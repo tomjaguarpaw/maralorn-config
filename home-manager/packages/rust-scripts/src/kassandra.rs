@@ -874,6 +874,14 @@ Do you want to change the state? (Esc to cancel)",
                     .arg("-e")
                     .arg(read_command)
                     .output()?;
+            } else if task.gen_name() == Some(&"cda-otrs".to_owned()) {
+                let ticket_number = task.gen_id().chain_err(|| "Missing Ticketnumber")?;
+                let url = format!(
+                    "https://tickets.darmstadt.ccc.de/otrs/index.pl?Action=AgentTicketZoom;TicketID={}",
+                    ticket_number
+                );
+                str2cmd("firefox --new-window").arg(url).output()?;
+                bail!(EK::WorkingOnTask(print_task(task)));
             } else {
                 bail!(EK::WorkingOnTask(print_task(task)));
             }
