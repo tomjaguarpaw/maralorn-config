@@ -1012,7 +1012,9 @@ Do you want to change the state? (Esc to cancel)",
             );
             match self.dialog.select_option(msg, options)? {
                 Select::P(ps) => priority.0 = ps,
-                Select::T(uuid) => return self.priority_check(&uuid, priority),
+                Select::T(uuid) => {
+                    self.priority_check(&uuid, priority)?;
+                }
             };
         }
     }
