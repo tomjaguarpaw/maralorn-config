@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::env::home_dir;
+use std::iter::once;
 
 use serde_yaml::{from_reader, to_writer, to_string};
 
@@ -985,6 +986,7 @@ Do you want to change the state? (Esc to cancel)",
         enum Select {
             P(PS),
             T(Uuid),
+            Exit,
         };
         loop {
             let options = {
@@ -1003,7 +1005,10 @@ Do you want to change the state? (Esc to cancel)",
                         Select::P(t),
                     )
                 });
-                options.chain(tasks).collect::<Vec<_>>()
+                options
+                    .chain(once(("Exit".into(), Select::Exit)))
+                    .chain(tasks)
+                    .collect::<Vec<_>>()
             };
             let msg = format!(
                 "Showing {} tasks of priority {:?}",
@@ -1015,6 +1020,7 @@ Do you want to change the state? (Esc to cancel)",
                 Select::T(uuid) => {
                     self.priority_check(&uuid, priority)?;
                 }
+                Select::Exit => return Ok(()),
             };
         }
     }
@@ -1034,7 +1040,7 @@ Do you want to change the state? (Esc to cancel)",
         ];
         let e = &format!("Called priority_check with missing uuid {}", uuid);
         let msg = format!(
-            "Checking up on the following task, because of elapsed timeout:\n{}",
+            "Checking up on the following task, because of elapsed timeout (or manually):\n{}",
             print_task(self.cache.get(uuid).expect(e))
         );
         match self.dialog.select_option(msg, options)? {
