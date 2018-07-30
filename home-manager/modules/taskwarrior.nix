@@ -3,10 +3,11 @@ with lib;
 let
   tasksync = pkgs.writeShellScriptBin "tasksync" ''
     cd ${config.home.homeDirectory}/.task
-    ${pkgs.git}/bin/git add completed.data pending.data
-    ${pkgs.git}/bin/git commit -m 'Updating task data'
-    ${pkgs.git}/bin/git pull
-    ${pkgs.git}/bin/git push
+    ${pkgs.git}/bin/git add completed.data pending.data > /dev/null
+    ${pkgs.git}/bin/git commit -m 'Updating task data' > /dev/null
+    ${pkgs.git}/bin/git pull | ${pkgs.gnugrep}/bin/grep -v "Already up to date."
+    ${pkgs.git}/bin/git push 2>&1 | ${pkgs.gnugrep}/bin/grep -v "Everything up-to-date"
+    true
   '';
 in {
 options.m-0.taskwarrior.enable = mkEnableOption "Taskwarrior";
@@ -23,7 +24,7 @@ config = mkIf config.m-0.taskwarrior.enable {
     };
     timers.tasksync = {
       Timer = {
-        OnCalendar = "*:0/5";
+        OnCalendar = "*:0/1";
       };
       Install = {
         WantedBy = [ "timers.target" ];
