@@ -5,7 +5,7 @@ let
     cd ${config.home.homeDirectory}/.task
     ${pkgs.git}/bin/git add completed.data pending.data
     ${pkgs.git}/bin/git commit -m 'Updating task data'
-    ${pkgs.git}/bin/git pull -r
+    ${pkgs.git}/bin/git pull
     ${pkgs.git}/bin/git push
   '';
 in {
