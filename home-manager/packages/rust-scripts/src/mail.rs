@@ -117,6 +117,7 @@ fn read_mail(mailbox: &str, mail: &mut MailEntry) -> Result<()> {
     let mailbox = mailbox.to_str().chain_err(|| "Invalid path")?;
     let message_id = get_message_id(mail)?;
     let message_id = message_id.replace("$", ".");
+    let message_id = message_id.replace("+", ".");
     let read_command = format!(
         "push <limit>~(~i{})<return><search>~i{}<return><display-message>",
         message_id,
