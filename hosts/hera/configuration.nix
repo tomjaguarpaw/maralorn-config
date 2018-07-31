@@ -56,8 +56,13 @@ nixpkgs.config.packageOverrides = pkgs: {
 services = {
   ndppd = {
     enable = true;
-    interface = "ens18";
-    network = "${config.m-0.prefix}::/64";
+    configFile = ''
+      proxy ens18 {
+        rule ${config.m-0.prefix}::/64 {
+          static
+        }
+      }
+    '';
   };
   borgbackup.jobs.data = {
     doInit = false;
