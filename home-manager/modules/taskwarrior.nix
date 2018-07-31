@@ -50,12 +50,14 @@ config = mkIf config.m-0.taskwarrior.enable {
         report.default.sort=modified-
 
         uda.partof.type=string
-        uda.partof.label=parent task
+        uda.partof.label=Parent task
         uda.generated.type=string
         uda.gen_name.type=string
-        uda.gen_name.label=generator name
+        uda.gen_name.label=Generator name
         uda.gen_id.type=string
-        uda.gen_id.label=generator id
+        uda.gen_id.label=Generator id
+        uda.gen_orphan.type=string
+        uda.gen_orphan.label=Generated orphan behavior
 
         # Bugwarrior UDAs
         uda.githubtitle.type=string
