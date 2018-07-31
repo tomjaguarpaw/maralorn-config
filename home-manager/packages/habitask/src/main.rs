@@ -158,10 +158,12 @@ fn main() -> Result<()> {
     let done = "+COMPLETED end.after:now-24h";
     let after = "entry.after:now-";
     let before = "entry.before:now-";
-    let mask = "-auto";
+    let mask = "(gen_name: or gen_name:mail-task) githubtitle: gitlabtitle:";
     let instant_done = query(format!("{} -TAGGED {}48h {}", done, after, mask))?;
     let created = query(format!("{} {}", new, mask))?;
     let routines = query(format!("{} +auto", done))?;
+    let generated = query(format!("{} gen_name.any: gen_name.isnt:mail-task", done))?;
+    let bugs = query(format!("{} (githubtitle.any: or gitlabtitle.any:)", done))?;
     let tasks = query(format!("{} {}1week {}", done, after, mask))?;
     let a_little_old = query(format!("{} {}1month {}1week {}", done, after, before, mask))?;
     let old = query(format!(
@@ -186,6 +188,14 @@ fn main() -> Result<()> {
     }
     println!("routines");
     habitask.make_todo("Routinen erledigt!", "0.1", routines)?;
+    println!("generated");
+    habitask.make_todo(
+        "Erzeugte Aufgaben beendet!",
+        "0.1",
+        generated,
+    )?;
+    println!("bugs");
+    habitask.make_todo("Bugs squashed!", "0.1", bugs)?;
     println!("tasks");
     habitask.make_todo(
         "Herausforderungen bezwungen!",
