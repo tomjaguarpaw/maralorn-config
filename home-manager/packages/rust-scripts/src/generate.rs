@@ -29,25 +29,21 @@ pub trait GeneratedTask {
     /// The name of this generator type. e.g. "mail", mutable
     fn gen_name_mut(&mut self) -> Option<&mut String>;
     /// Set the name of this generator type. e.g. "mail"
-    fn set_gen_name<T>(&mut self, new: Option<T>)
-    where
-        T: Into<String>;
+    fn set_gen_name(&mut self, new: Option<impl Into<String>>);
     /// The id of the generator type, which should be unique for all generator Tasks with the same
     /// name
     fn gen_id(&self) -> Option<&String>;
     /// The generator id, mutable
     fn gen_id_mut(&mut self) -> Option<&mut String>;
     /// Set the generator id
-    fn set_gen_id<T>(&mut self, new: Option<T>)
-    where
-        T: Into<String>;
+    fn set_gen_id(&mut self, new: Option<impl Into<String>>);
     /// What should happen with the task, when the generator is missing.
     /// This is relevant, when the generate method is called with one or more tasks with a
     /// generator name set, all existing tasks with that generator name will be dealt with
     /// according to this field.
     fn gen_orphan(&self) -> OrphanBehavior;
     /// Set the OrphanBehavior
-    fn set_gen_orphan<T>(&mut self, new: OrphanBehavior);
+    fn set_gen_orphan(&mut self, new: OrphanBehavior);
 }
 
 lazy_static! {
@@ -90,10 +86,7 @@ impl GeneratedTask for Task {
         })
     }
 
-    fn set_gen_name<T>(&mut self, new: Option<T>)
-    where
-        T: Into<String>,
-    {
+    fn set_gen_name(&mut self, new: Option<impl Into<String>>) {
         if let Some(new) = new {
             self.uda_mut().insert(GEN_NAME.into(), U::Str(new.into()));
         } else {
@@ -121,10 +114,7 @@ impl GeneratedTask for Task {
         })
     }
 
-    fn set_gen_id<T>(&mut self, new: Option<T>)
-    where
-        T: Into<String>,
-    {
+    fn set_gen_id(&mut self, new: Option<impl Into<String>>) {
         if let Some(new) = new {
             self.uda_mut().insert(GEN_ID.into(), U::Str(new.into()));
         } else {
@@ -143,7 +133,7 @@ impl GeneratedTask for Task {
         }
     }
 
-    fn set_gen_orphan<T>(&mut self, new: OrphanBehavior) {
+    fn set_gen_orphan(&mut self, new: OrphanBehavior) {
         match new {
             O::DeleteOrphan => self.uda_mut().insert(GEN_ORPHAN.into(), DELETE.clone()),
             O::CompleteOrphan => self.uda_mut().insert(GEN_ORPHAN.into(), COMPLETE.clone()),
