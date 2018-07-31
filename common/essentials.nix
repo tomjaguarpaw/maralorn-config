@@ -31,7 +31,6 @@
     nmap
     tcpdump
 
-    git-crypt
     tmux
     tig
     exa
