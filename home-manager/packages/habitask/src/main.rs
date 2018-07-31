@@ -49,10 +49,17 @@ fn blink() {
 fn query(filter: String) -> Result<Vec<Task>> {
     let stdout = &Command::new("task")
         .arg("export")
-        .arg(filter)
+        .arg(&filter)
         .output()?
         .stdout;
-    Ok(from_str(from_utf8(stdout)?)?)
+    let output = from_utf8(stdout)?;
+    match from_str(output) {
+        Ok(tasks) => Ok(tasks),
+        Err(err) => {
+            println!("Failed to parse tasks, with filter {}\n{}", filter, output);
+            Err(err.into())
+        }
+    }
 }
 
 #[derive(Deserialize)]
@@ -123,8 +130,25 @@ impl Habitask {
         let request = self.post("https://habitica.com/api/v3/tasks/user")
             .json(&map)
             .build()?;
+        let requeststring = format!(
+            "Request: {:?}\nRequestBody: {:?}\n",
+            &request,
+            &request.body()
+        );
         let mut response = self.client.execute(request)?;
-        Ok(response.json::<Response>()?.data)
+        match response.json::<Response>() {
+            Ok(Response { data }) => Ok(data),
+            Err(err) => {
+                let text = response.text();
+                println!(
+                    "Failed to create todo.\n{}Response: {:?}\nResponseBody: {:?}",
+                    requeststring,
+                    response,
+                    text
+                );
+                Err(err.into())
+            }
+        }
     }
 
     fn add_item(&self, id: &str, item: &str) -> Result<Todo> {
@@ -132,8 +156,25 @@ impl Habitask {
         let map = map.into_iter().collect::<HashMap<_, _>>();
         let url = format!("https://habitica.com/api/v3/tasks/{}/checklist", id);
         let request = self.post(&url).json(&map).build()?;
+        let requeststring = format!(
+            "Request: {:?}\nRequestBody: {:?}\n",
+            &request,
+            &request.body()
+        );
         let mut response = self.client.execute(request)?;
-        Ok(response.json::<Response>()?.data)
+        match response.json::<Response>() {
+            Ok(Response { data }) => Ok(data),
+            Err(err) => {
+                let text = response.text();
+                println!(
+                    "Failed to add item.\n{}Response: {:?}\nResponseBody: {:?}",
+                    requeststring,
+                    response,
+                    text
+                );
+                Err(err.into())
+            }
+        }
     }
 
     fn check_item(&self, id: &str, item: &str) -> Result<()> {
@@ -142,7 +183,13 @@ impl Habitask {
             id,
             item
         );
-        self.post(&url).json(&Vec::<(&str, &str)>::new()).send()?;
+        let request = self.post(&url).json(&Vec::<(&str, &str)>::new()).build()?;
+        let requeststring = format!(
+            "Request: {:?}\nRequestBody: {:?}\n",
+            &request,
+            &request.body()
+        );
+        self.client.execute(request)?;
         Ok(())
     }
 
@@ -158,12 +205,12 @@ fn main() -> Result<()> {
     let done = "+COMPLETED end.after:now-24h";
     let after = "entry.after:now-";
     let before = "entry.before:now-";
-    let mask = "(gen_name: or gen_name:mail-task) githubtitle: gitlabtitle:";
+    let mask = "( gen_name: or gen_name:mail-task ) githubtitle: gitlabtitle:";
     let instant_done = query(format!("{} -TAGGED {}48h {}", done, after, mask))?;
     let created = query(format!("{} {}", new, mask))?;
     let routines = query(format!("{} +auto", done))?;
     let generated = query(format!("{} gen_name.any: gen_name.isnt:mail-task", done))?;
-    let bugs = query(format!("{} (githubtitle.any: or gitlabtitle.any:)", done))?;
+    let bugs = query(format!("{} ( githubtitle.any: or gitlabtitle.any: )", done))?;
     let tasks = query(format!("{} {}1week {}", done, after, mask))?;
     let a_little_old = query(format!("{} {}1month {}1week {}", done, after, before, mask))?;
     let old = query(format!(
