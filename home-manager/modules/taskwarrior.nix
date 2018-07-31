@@ -5,12 +5,13 @@ let
     cd ${config.home.homeDirectory}/.task
     ${pkgs.git}/bin/git add completed.data pending.data > /dev/null
     ${pkgs.git}/bin/git commit -m 'Updating task data' > /dev/null
-    ${pkgs.git}/bin/git pull | ${pkgs.gnugrep}/bin/grep -v "Already up to date."
+    ${pkgs.git}/bin/git pull -X ${if config.m-0.taskwarrior.git_active then "ours" else "theirs"} | ${pkgs.gnugrep}/bin/grep -v "Already up to date."
     ${pkgs.git}/bin/git push 2>&1 | ${pkgs.gnugrep}/bin/grep -v "Everything up-to-date"
     true
   '';
 in {
 options.m-0.taskwarrior.enable = mkEnableOption "Taskwarrior";
+options.m-0.taskwarrior.git_active = mkEnableOption "This machine will prefer its own state in case of a merge conflict, if enabled.";
 config = mkIf config.m-0.taskwarrior.enable {
   systemd.user = {
     services.tasksync = {
