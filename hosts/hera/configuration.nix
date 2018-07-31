@@ -56,7 +56,7 @@ nixpkgs.config.packageOverrides = pkgs: {
 services = {
   ndppd = {
     enable = true;
-    configFile = ''
+    configFile = pkgs.writeText "ndppd.conf" ''
       proxy ens18 {
         rule ${config.m-0.prefix}::/64 {
           static
