@@ -1,6 +1,7 @@
 { pkgs, config, lib, ... }:
 let
   me = config.m-0.private.me;
+  unstable = import <unstable> {};
 in {
   # channel = 18.03
 
@@ -32,5 +33,8 @@ in {
     users.root = {
       openssh.authorizedKeys.keys = me.keys;
     };
+  };
+  environment.sessionVariables = {
+    LOCALE_ARCHIVE_2_27 = "${unstable.glibcLocales}/lib/locale/locale-archive";
   };
 }
