@@ -2,7 +2,7 @@ use task_hookrs::task::TaskBuilder;
 use task_hookrs::cache::TaskCache;
 
 use error::{Result, ResultExt};
-use generate::{GeneratedTask, TaskGenerator};
+use generate::{GeneratedTask, TaskGenerator, OrphanBehavior};
 use reqwest::Client;
 use config::{Config, Environment};
 
@@ -165,6 +165,7 @@ pub fn sync_otrs(cache: &mut TaskCache) -> Result<()> {
             .expect("TaskBuilding failed inspite of set description");
         t.set_gen_name(Some("cda-otrs"));
         t.set_gen_id(Some(ticket.number.to_string()));
+        t.set_gen_orphan(OrphanBehavior::CompleteOrphan);
         t
     });
     cache.generate(tasks)?;
