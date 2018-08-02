@@ -208,7 +208,6 @@ fn main() -> Result<()> {
     let mask = "( gen_name: or gen_name:mail-task ) githubtitle: gitlabtitle:";
     let instant_done = query(format!("{} -TAGGED {}48h {}", done, after, mask))?;
     let created = query(format!("{} {}", new, mask))?;
-    let routines = query(format!("{} +auto", done))?;
     let generated = query(format!("{} gen_name.any: gen_name.isnt:mail-task", done))?;
     let bugs = query(format!("{} ( githubtitle.any: or gitlabtitle.any: )", done))?;
     let tasks = query(format!("{} {}1week {}", done, after, mask))?;
