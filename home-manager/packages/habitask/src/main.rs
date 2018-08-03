@@ -184,11 +184,6 @@ impl Habitask {
             item
         );
         let request = self.post(&url).json(&Vec::<(&str, &str)>::new()).build()?;
-        let requeststring = format!(
-            "Request: {:?}\nRequestBody: {:?}\n",
-            &request,
-            &request.body()
-        );
         self.client.execute(request)?;
         Ok(())
     }
@@ -232,8 +227,6 @@ fn main() -> Result<()> {
         habitask.score_task("do-it")?;
         blink();
     }
-    println!("routines");
-    habitask.make_todo("Routinen erledigt!", "0.1", routines)?;
     println!("generated");
     habitask.make_todo(
         "Erzeugte Aufgaben beendet!",
