@@ -57,7 +57,7 @@ config = mkIf mail.enable {
   services.mbsync = {
     enable = true;
     configFile = pkgs.writeText "mbsync-conf" (builtins.concatStringsSep "\n" (builtins.map mkMailbox mail.boxes));
-    frequency = "*:0/1";
+    frequency = "*:0/3";
     verbose = false;
     postExec = "${(pkgs.writeShellScriptBin "mail-filter" ''
       ${pkgs.notmuch}/bin/notmuch new

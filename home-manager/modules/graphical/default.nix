@@ -52,6 +52,7 @@ config = mkIf config.m-0.graphical.enable {
       tasktree
       st
       shutter
+      xautolock
     ];
     keyboard = {
       layout = "de";
