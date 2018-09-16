@@ -20,6 +20,10 @@ in
     i18n.consoleKeyMap = "neo";
 
     sound.enable = true;
+    hardware.opengl = {
+      driSupport = true;
+      driSupport32Bit = true;
+    };
     hardware.pulseaudio = {
       enable = true;
       tcp = {
