@@ -863,9 +863,12 @@ Do you want to change the state? (Esc to cancel)",
                     .chain_err(|| "mail-task has no genid")?
                     .trim()
                     .trim_matches(|x| x == '<' || x == '>')
-                    .replace("$", ".");
+                    .replace("$", ".")
+                    .replace("=", ".")
+                    .replace("+", ".")
+                    .replace("-", ".");
                 let read_command = format!(
-                    "push <vfolder-from-query>id:{}<return><search>~i{}<return><display-message>",
+                    "push <vfolder-from-query>mid:/{}/<return><search>~i{}<return><display-message>",
                     message_id,
                     message_id
                 );
