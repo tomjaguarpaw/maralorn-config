@@ -17,9 +17,13 @@ m-0 = {
   };
   graphical.enable = true;
   rustdev.enable = true;
-  taskwarrior.enable = true;
+  taskwarrior = {
+    enable = true;
+    git_active = true;
+  };
   update_tasks.enable = true;
   eventd.enable = true;
+  pythia.enable = true;
   unlocker = [ {
     name = "hera";
     hostName = "hera.m-0.eu";

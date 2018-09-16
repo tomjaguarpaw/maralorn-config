@@ -3,8 +3,8 @@ use task_hookrs::cache::TaskCache;
 use refresh::TaskRefresher;
 use tasktree::{TreeCache, TaskNode};
 use well_known::{SIMPLE, WellKnown, INBOX, ACCOUNTING, TREESORT, SORT_INBOX, SORT_INBOX_AK,
-                 SORT_INBOX_KIVA, MAINTENANCE, CHECK_HIGH, CHECK_MEDIUM, CHECK_LOW, CHECK_NONE,
-                 CHECK_OPTIONAL};
+                 MEDITATION, SORT_INBOX_KIVA, MAINTENANCE, CHECK_HIGH, CHECK_MEDIUM, CHECK_LOW,
+                 CHECK_NONE, CHECK_OPTIONAL};
 use error::Result;
 use kassandra::Kassandra;
 use mail::create_tasks;
@@ -22,7 +22,7 @@ fn check_completion(cache: &mut TaskCache, task: &impl WellKnown) -> Result<()> 
     Ok(())
 }
 
-fn is_active(cache: &TaskCache, task: &impl WellKnown) -> bool {
+pub fn is_active(cache: &TaskCache, task: &impl WellKnown) -> bool {
     cache
         .filter(|t| task.is_this(t) && t.pending())
         .next()
@@ -69,6 +69,7 @@ pub fn update_tasks(cache: &mut TaskCache) -> Result<()> {
     update_task(cache, &*CHECK_NONE)?;
     update_task(cache, &*CHECK_OPTIONAL)?;
     update_task(cache, &*ACCOUNTING)?;
+    update_task(cache, &*MEDITATION)?;
     cache.refresh_tree();
     // CREATE TODOS FROM MAIL
     // FROM GITLAB

@@ -24,6 +24,7 @@ imports = [
   ./modules/update_tasks.nix
   ./modules/bugwarrior.nix
   ./modules/habitask.nix
+  ./modules/pythia.nix
   ../common
 #   ./sort-mail.nix
 #   ./morgenreport.nix

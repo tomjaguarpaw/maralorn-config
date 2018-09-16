@@ -19,13 +19,13 @@ use dialog::rofi::RofiDialogProvider;
 use dialog::DialogProvider;
 use dialog::errors::ErrorKind as DEK;
 
-use update::{update_tasks, process_task};
+use update::{update_tasks, process_task, is_active};
 use error::{Result, ResultExt, ErrorKind as EK, Error};
 use hotkeys::{term_cmd, str2cmd};
 use tasktree::{TreeCache, TaskNode};
 use well_known::{INBOX, ACCOUNTING, TREESORT, PRIVATE_MAILBOX, KIVA_MAILBOX, AK_MAILBOX,
                  SORT_INBOX, SORT_INBOX_AK, SORT_INBOX_KIVA, MAINTENANCE, CHECK_HIGH,
-                 CHECK_MEDIUM, CHECK_LOW, CHECK_NONE, CHECK_OPTIONAL};
+                 CHECK_MEDIUM, CHECK_LOW, CHECK_NONE, CHECK_OPTIONAL, MEDITATION};
 use mail::{sort_mailbox, SortBox};
 use generate::GeneratedTask;
 
@@ -315,7 +315,6 @@ impl Kassandra {
         self.select_next_task()?;
         Ok(())
     }
-
 
     fn get_notes(&mut self) -> Result<()> {
         loop {
@@ -1078,20 +1077,24 @@ Do you want to change the state? (Esc to cancel)",
             Manual,
             PromoteTasks,
             ChangeState,
+            Meditate,
             Exit,
         };
         loop {
             let mut empty = true;
             let options = {
-                let options = vec![
+                let mut options = vec![
+                    ("Exit".into(), Select::Exit),
                     ("Manual: Edit my tasks".into(), Select::Manual),
                     (
                         "Promote: Pick tasks with lower priority".into(),
                         Select::PromoteTasks
                     ),
                     ("Status: Change status".into(), Select::ChangeState),
-                    ("Exit: Whatever …".into(), Select::Exit),
-                ].into_iter();
+                ];
+                if is_active(&self.cache, &*MEDITATION) {
+                    options.push(("Meditate".to_owned(), Select::Meditate));
+                }
                 let tasks = get_sorted_tasks(&self.cache, |t| {
                     t.pending() && self.is_relevant(t) && !task_blocked(&self.cache, t) &&
                         t.priority() == Some(TaskPriority::High).as_ref()
@@ -1100,55 +1103,35 @@ Do you want to change the state? (Esc to cancel)",
                     empty = false;
                     (print_task_short(t), Select::T(t.uuid().clone()))
                 });
-                options.chain(tasks).collect::<Vec<_>>()
+                options.into_iter().chain(tasks).collect::<Vec<_>>()
             };
-            if empty {
-                let msg = format!("\nCongratulations! It seems you are done for today\n");
-                let options = vec![
-                    ("Yay! I'll leave it that way", Select::Exit),
-                    ("Manual: Edit my tasks".into(), Select::Manual),
-                    (
-                        "Promote: Pick tasks with lower priority".into(),
-                        Select::PromoteTasks
-                    ),
-                    ("Status: Change status".into(), Select::ChangeState),
-                ];
-                match self.dialog.select_option(msg, options)? {
-                    Select::Manual => {
-                        str2cmd("tasklauncher").output()?;
-                        self.cache.refresh()?;
-                    }
-                    Select::PromoteTasks => {
-                        self.show_priorities((PS::Medium, true))?;
-                        self.cache.refresh()?;
-                    }
-                    Select::ChangeState => {
-                        self.confirm_state()?;
-                        self.cache.refresh()?;
-                    }
-                    _ => return Ok(()),
-                }
+            let msg = if empty {
+                format!("\nCongratulations! It seems you are done for today\n")
             } else {
-                let msg = format!("What do you want to do now?");
+                format!("What do you want to do now?")
+            };
 
-                match self.dialog.select_option(msg, options)? {
-                    Select::Manual => {
-                        str2cmd("tasklauncher").output()?;
-                        self.cache.refresh()?;
-                    }
-                    Select::PromoteTasks => {
-                        self.show_priorities((PS::Medium, true))?;
-                        self.cache.refresh()?;
-                    }
-                    Select::ChangeState => {
-                        self.confirm_state()?;
-                        self.cache.refresh()?;
-                    }
-                    Select::T(u) => self.edit_task(&u)?,
-                    Select::Exit => return Ok(()),
+            match self.dialog.select_option(msg, options)? {
+                Select::Manual => {
+                    str2cmd("tasklauncher").output()?;
+                    self.cache.refresh()?;
                 }
-                self.cache.write()?;
+                Select::Meditate => {
+                    process_task(self, &*MEDITATION)?;
+                    self.cache.refresh()?;
+                }
+                Select::PromoteTasks => {
+                    self.show_priorities((PS::Medium, true))?;
+                    self.cache.refresh()?;
+                }
+                Select::ChangeState => {
+                    self.confirm_state()?;
+                    self.cache.refresh()?;
+                }
+                Select::T(u) => self.edit_task(&u)?,
+                Select::Exit => return Ok(()),
             }
+            self.cache.write()?;
         }
     }
 

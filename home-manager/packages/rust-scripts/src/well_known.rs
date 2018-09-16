@@ -41,6 +41,7 @@ lazy_static! {
     pub static ref INBOX: Inbox = Inbox { timer: DAILY.clone() };
     pub static ref TREESORT: Treesort = Treesort { timer: DAILY.clone() };
     pub static ref ACCOUNTING: Accounting = Accounting { timer: DAILY.clone() };
+    pub static ref MEDITATION: Meditation = Meditation { timer: MORNING.clone() };
     pub static ref MAINTENANCE: Maintenance = Maintenance { timer: DAILY.clone() };
     pub static ref CHECK_HIGH: TaskCheck = TaskCheck { timer: MORNING.clone(), priority: (PS::High, false) };
     pub static ref CHECK_MEDIUM: TaskCheck = TaskCheck { timer: MORNING.clone(), priority: (PS::Medium, false) };
@@ -161,7 +162,11 @@ fn make_simple() -> Vec<SimpleTask> {
         ],
         Timer::DeadTime(Duration::weeks(2)),
     ).chain(simple_tasks(
-        vec!["Reinige Toilette", "Zehennägel schneiden"],
+        vec![
+            "Reinige Toilette",
+            "Zehennägel schneiden",
+            "Matekasse leeren",
+        ],
         Timer::DeadTime(Duration::weeks(4)),
     ))
         .chain(simple_tasks(
@@ -204,6 +209,35 @@ impl WellKnown for Inbox {
     fn process(&self, kassandra: &mut Kassandra) -> Result<bool> {
         kassandra.clear_inbox()?;
         Ok(true)
+    }
+
+    fn refresh(&self) -> Timer {
+        self.timer.clone()
+    }
+}
+
+pub struct Meditation {
+    timer: Timer,
+}
+
+impl WellKnown for Meditation {
+    fn definition(&self) -> Task {
+        let mut t = TaskBuilder::default()
+            .description("Meditation")
+            .build()
+            .expect("TaskBuilding failed inspite of set description");
+        t.set_gen_name(Some("meditation"));
+        t.set_gen_id(Some("meditation"));
+        t
+    }
+
+    fn action_necessary(&self, _cache: &TaskCache) -> Result<bool> {
+        Ok(true)
+    }
+
+    fn process(&self, _kassandra: &mut Kassandra) -> Result<bool> {
+        str2cmd(&term_cmd("sh -c")).arg("meditate").output()?;
+        Ok(false)
     }
 
     fn refresh(&self) -> Timer {

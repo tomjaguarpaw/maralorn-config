@@ -153,6 +153,8 @@ fn main() -> Result<()> {
             apps,
             run("Tasks", "tasklauncher"),
             run("Tasktree", "tasktree"),
+            term("Meditate", "meditate"),
+            term("Pythia", "pythia"),
             term("Files", "ranger"),
             soundmenu,
             w17menu,
