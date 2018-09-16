@@ -14,6 +14,8 @@
     })
     gnupg
     mutt
+    bind
+    liboping
     ];
 
   extra = pkgs: with pkgs; [
@@ -36,6 +38,8 @@
     exa
     fzf
     ag
+    fd
+    ripgrep
 
     pythonPackages.qrcode
     ranger
