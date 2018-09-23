@@ -129,7 +129,7 @@ home.sessionVariables = {
   TERMINAL = config.m-0.terminal;
   EMAIL = me.mail;
   SUDO_ASKPASS = let
-       print-pw = pkgs.writeShellScriptBin "print-pw" "pass eu/m-0/${config.m-0.hostName}";
+       print-pw = pkgs.writeShellScriptBin "print-pw" "pass show eu/m-0/${config.m-0.hostName}/user/${config.home.username}";
     in
       "${print-pw}/bin/print-pw";
 };
