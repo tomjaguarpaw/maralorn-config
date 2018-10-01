@@ -13,20 +13,21 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/d01fd9f1-f5b1-4199-a736-54c1698682d7";
-      fsType = "ext4";
+    { device = "/dev/disk/by-uuid/ce5b0ac6-6eaf-45a6-b6c8-bd4958caf335";
+      fsType = "btrfs";
     };
 
-  boot.initrd.luks.devices."nixos".device = "/dev/disk/by-uuid/d10217d6-d703-42d3-af7d-2f5d06095ff3";
+  boot.initrd.luks.devices."nixos".device = "/dev/disk/by-uuid/78acaebe-952a-43b1-acc8-66c35a60577e";
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/F51A-2EE0";
+    { device = "/dev/disk/by-uuid/C4A6-3DB5";
       fsType = "vfat";
     };
 
-  swapDevices = [ ];
+  swapDevices =
+    [ { device = "/dev/disk/by-uuid/b80468d0-d834-419f-8985-c6fa2274909e"; }
+    ];
 
-  nix.maxJobs = lib.mkDefault 4;
-  powerManagement.cpuFreqGovernor = "ondemand";
-  security.rngd.enable = true;
+  nix.maxJobs = lib.mkDefault 8;
+  powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";
 }
