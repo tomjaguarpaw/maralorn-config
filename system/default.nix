@@ -25,7 +25,7 @@ in {
   networking = {
     firewall.allowPing = true;
     useDHCP = false;
-    hosts = lib.zipAttrs (lib.mapAttrsToList (host: ip: {"${ip}" = host; } ) config.m-0.hosts);
+    hosts = lib.zipAttrs (lib.mapAttrsToList (host: ip: {"${ip}" = "${host} ${host}.m-0.eu";} ) config.m-0.hosts);
   };
 
   users = {
