@@ -46,9 +46,10 @@ home-manager.users."${me.user}" = (import ./home.nix);
 # Use the systemd-boot EFI boot loader.
 boot = {
 	loader = {
-		systemd-boot.enable = true;
-		efi.canTouchEfiVariables = true;
-		efi.efiSysMountPoint = "/boot/EFI";
+      efi = {
+        canTouchEfiVariables = true;
+        efiSysMountPoint = "/boot/EFI";
+      };
 		grub = {
 			enable = true;
 			version = 2;
@@ -77,14 +78,14 @@ services = {
   };
 };
 
-#cdark_net = {
-#  enable = true;
-#  hostName = "${me.user}_${config.networking.hostName}";
-#  ed25519PrivateKeyFile = builtins.toPath "/etc/nixos/hosts/${config.networking.hostName}/secret/tinc/ed25519_key.priv";
-#  hostsDirectory = /etc/nixos/system/modules/cdarknet/hosts;
-#  ip6address = "fd23:42:cda:4342::2";
-#  ip4address = "172.20.71.2";
-#};
+cdark_net = {
+  enable = true;
+  hostName = "${me.user}_${config.networking.hostName}";
+  ed25519PrivateKeyFile = builtins.toPath "/etc/nixos/hosts/${config.networking.hostName}/secret/tinc/ed25519_key.priv";
+  hostsDirectory = /etc/nixos/system/modules/cdarknet/hosts;
+  ip6address = "fd23:42:cda:4342::2";
+  ip4address = "172.20.71.2";
+};
 
 
 

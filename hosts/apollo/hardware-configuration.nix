@@ -19,7 +19,7 @@
 
   boot.initrd.luks.devices."nixos".device = "/dev/disk/by-uuid/78acaebe-952a-43b1-acc8-66c35a60577e";
 
-  fileSystems."/boot" =
+  fileSystems."/boot/EFI" =
     { device = "/dev/disk/by-uuid/C4A6-3DB5";
       fsType = "vfat";
     };
