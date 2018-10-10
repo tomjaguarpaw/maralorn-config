@@ -137,8 +137,16 @@ fonts.fontconfig.enableProfileFonts = true;
 
 systemd.user.startServices = true;
 
+services = {
+  gpg-agent = {
+    enable = true;
+    defaultCacheTtl = 31536000;
+  };
+};
+
 home.packages = with pkgs; [
   neovim
+  rust_scripts
 ];
 xdg.enable = true;
 }

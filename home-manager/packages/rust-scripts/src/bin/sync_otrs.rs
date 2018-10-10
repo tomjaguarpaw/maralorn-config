@@ -1,12 +1,16 @@
 extern crate rust_scripts;
 extern crate task_hookrs;
+#[macro_use]
+extern crate error_chain;
 
 use rust_scripts::error::Result;
 use rust_scripts::otrs::sync_otrs;
 use task_hookrs::cache::TaskCache;
 use task_hookrs::status::TaskStatus;
 
-fn main() -> Result<()> {
+quick_main!(my_main);
+
+fn my_main() -> Result<()> {
     let mut cache = TaskCache::new(vec![TaskStatus::Deleted]);
     cache.load()?;
     sync_otrs(&mut cache)?;

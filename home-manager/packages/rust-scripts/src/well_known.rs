@@ -1,7 +1,9 @@
+use hostname::get_hostname;
+
 use task_hookrs::task::{Task, TaskBuilder};
 use task_hookrs::cache::TaskCache;
 
-use error::Result;
+use error::{Result, ResultExt};
 use generate::{gen_match, GeneratedTask};
 use refresh::{Timer, CalendarRepeater, Interval};
 use kassandra::{Kassandra, task_in_inbox, needs_sorting, prio_name, PriorityState, PS,
@@ -42,7 +44,7 @@ lazy_static! {
     pub static ref TREESORT: Treesort = Treesort { timer: DAILY.clone() };
     pub static ref ACCOUNTING: Accounting = Accounting { timer: DAILY.clone() };
     pub static ref MEDITATION: Meditation = Meditation { timer: MORNING.clone() };
-    pub static ref MAINTENANCE: Maintenance = Maintenance { timer: DAILY.clone() };
+    pub static ref MAINTENANCE_APOLLO: Maintenance = Maintenance { timer: DAILY.clone() , host: "apollo".into() };
     pub static ref CHECK_HIGH: TaskCheck = TaskCheck { timer: MORNING.clone(), priority: (PS::High, false) };
     pub static ref CHECK_MEDIUM: TaskCheck = TaskCheck { timer: MORNING.clone(), priority: (PS::Medium, false) };
     pub static ref CHECK_LOW: TaskCheck = TaskCheck { timer: DAILY.clone(), priority: (PS::Low, false) };
@@ -236,7 +238,7 @@ impl WellKnown for Meditation {
     }
 
     fn process(&self, _kassandra: &mut Kassandra) -> Result<bool> {
-        str2cmd(&term_cmd("sh -c")).arg("meditate").output()?;
+        str2cmd(&term_cmd("sh -c")).arg("meditate").spawn()?.wait()?;
         Ok(false)
     }
 
@@ -267,7 +269,8 @@ impl WellKnown for Accounting {
     fn process(&self, _kassandra: &mut Kassandra) -> Result<bool> {
         str2cmd(&term_cmd("sh -c"))
             .arg("jali -l. && task gen_id:accounting done")
-            .output()?;
+            .spawn()?
+            .wait()?;
         Ok(false)
     }
 
@@ -356,16 +359,17 @@ impl WellKnown for Mailsort {
 
 pub struct Maintenance {
     timer: Timer,
+    host: String,
 }
 
 impl WellKnown for Maintenance {
     fn definition(&self) -> Task {
         let mut t = TaskBuilder::default()
-            .description("Run system Maintenance")
+            .description(format!("Run system Maintenance on {}", &self.host))
             .build()
             .expect("TaskBuilding failed inspite of set description");
         t.set_gen_name(Some("maintenance"));
-        t.set_gen_id(Some("apollo"));
+        t.set_gen_id(Some(self.host.clone()));
         t
     }
 
@@ -374,8 +378,13 @@ impl WellKnown for Maintenance {
     }
 
     fn process(&self, _kassandra: &mut Kassandra) -> Result<bool> {
-        str2cmd("maintenance").spawn()?;
-        Ok(true)
+        let host = get_hostname().chain_err(|| "Failed to get_hostname")?;
+        if host == self.host {
+            str2cmd("maintenance").spawn()?;
+            Ok(true)
+        } else {
+            Ok(false)
+        }
     }
 
     fn refresh(&self) -> Timer {

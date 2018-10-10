@@ -15,7 +15,7 @@ use task_hookrs::priority::TaskPriority;
 use task_hookrs::status::TaskStatus;
 use task_hookrs::uda::UDAValue::Str as UDAStr;
 
-use dialog::rofi::RofiDialogProvider;
+use dialog::smart::SmartDialogProvider;
 use dialog::DialogProvider;
 use dialog::errors::ErrorKind as DEK;
 
@@ -24,7 +24,7 @@ use error::{Result, ResultExt, ErrorKind as EK, Error};
 use hotkeys::{term_cmd, str2cmd};
 use tasktree::{TreeCache, TaskNode};
 use well_known::{INBOX, ACCOUNTING, TREESORT, PRIVATE_MAILBOX, KIVA_MAILBOX, AK_MAILBOX,
-                 SORT_INBOX, SORT_INBOX_AK, SORT_INBOX_KIVA, MAINTENANCE, CHECK_HIGH,
+                 SORT_INBOX, SORT_INBOX_AK, SORT_INBOX_KIVA, MAINTENANCE_APOLLO, CHECK_HIGH,
                  CHECK_MEDIUM, CHECK_LOW, CHECK_NONE, CHECK_OPTIONAL, MEDITATION};
 use mail::{sort_mailbox, SortBox};
 use generate::GeneratedTask;
@@ -274,7 +274,7 @@ pub fn needs_sorting(task: &Task) -> bool {
 
 pub struct Kassandra {
     pub state: State,
-    pub dialog: RofiDialogProvider,
+    pub dialog: SmartDialogProvider,
     pub cache: TaskCache,
 }
 
@@ -283,7 +283,7 @@ impl Kassandra {
     fn new() -> Result<Self> {
         Ok(Kassandra {
             state: get_state()?,
-            dialog: RofiDialogProvider {},
+            dialog: SmartDialogProvider::new(),
             cache: TaskCache::new(vec![TaskStatus::Deleted]),
         })
     }
@@ -294,16 +294,32 @@ impl Kassandra {
         self.cache.write()?;
         self.handle_active_tasks()?;
 
-        self.sort_mailbox(&*PRIVATE_MAILBOX, false)?;
-        self.sort_mailbox(&*KIVA_MAILBOX, false)?;
-        self.sort_mailbox(&*AK_MAILBOX, false)?;
+        self.sort_mailbox(&*PRIVATE_MAILBOX, false).chain_err(
+            || "Failed to sort privat mailbox",
+        )?;
+        self.sort_mailbox(&*KIVA_MAILBOX, false).chain_err(
+            || "Failed to sort kiva mailbox",
+        )?;
+        self.sort_mailbox(&*AK_MAILBOX, false).chain_err(
+            || "Failed to sort ak mailbox",
+        )?;
 
         // CHECK_UNREAD_CHATS
-        process_task(self, &*MAINTENANCE)?;
-        process_task(self, &*SORT_INBOX)?;
-        process_task(self, &*SORT_INBOX_KIVA)?;
-        process_task(self, &*SORT_INBOX_AK)?;
-        update_tasks(&mut self.cache)?;
+        process_task(self, &*MAINTENANCE_APOLLO).chain_err(
+            || "Failed to run maintenance",
+        )?;
+        process_task(self, &*SORT_INBOX).chain_err(
+            || "Failed to sort inbox",
+        )?;
+        process_task(self, &*SORT_INBOX_KIVA).chain_err(
+            || "Failed to sort kiva inbox",
+        )?;
+        process_task(self, &*SORT_INBOX_AK).chain_err(
+            || "Failed to sort ak inbox",
+        )?;
+        update_tasks(&mut self.cache).chain_err(
+            || "Failed to update_tasks",
+        )?;
         process_task(self, &*INBOX)?;
         process_task(self, &*TREESORT)?;
         process_task(self, &*CHECK_LOW)?;
@@ -843,6 +859,9 @@ Do you want to change the state? (Esc to cancel)",
     }
 
     pub fn work_on_task(&mut self, uuid: &Uuid) -> Result<()> {
+        let open = |url: &str| if str2cmd("firefox --new-window").arg(url).output().is_err() {
+            println!("Failed to open url {}", url);
+        };
         self.cache
             .get_mut(uuid)
             .chain_err(|| "Uuid not found")?
@@ -853,10 +872,10 @@ Do you want to change the state? (Esc to cancel)",
             let github_url = task.uda().get("githuburl");
             let gitlab_url = task.uda().get("gitlaburl");
             if let Some(UDAStr(url)) = github_url {
-                str2cmd("firefox --new-window").arg(url).output()?;
+                open(url);
             }
             if let Some(UDAStr(url)) = gitlab_url {
-                str2cmd("firefox --new-window").arg(url).output()?;
+                open(url);
             }
             if task.gen_name() == Some(&"mail-task".to_owned()) {
                 let message_id = task.gen_id()
@@ -875,14 +894,15 @@ Do you want to change the state? (Esc to cancel)",
                 str2cmd(&term_cmd("neomutt"))
                     .arg("-e")
                     .arg(read_command)
-                    .output()?;
+                    .spawn()?
+                    .wait()?;
             } else if task.gen_name() == Some(&"cda-otrs".to_owned()) {
                 let ticket_number = task.gen_id().chain_err(|| "Missing Ticketnumber")?;
                 let url = format!(
                     "https://tickets.darmstadt.ccc.de/otrs/index.pl?Action=AgentTicketZoom;TicketID={}",
                     ticket_number
                 );
-                str2cmd("firefox --new-window").arg(url).output()?;
+                open(&url);
                 bail!(EK::WorkingOnTask(print_task(task)));
             } else {
                 bail!(EK::WorkingOnTask(print_task(task)));
@@ -917,6 +937,10 @@ Do you want to change the state? (Esc to cancel)",
                     "Edit: I'll change that task on my own",
                     "edit"
                 ),
+                (
+                    "Suppress: Don't bother me with this",
+                    "suppress"
+                ),
             ],
         )? {
             "do" => {
@@ -939,6 +963,11 @@ Do you want to change the state? (Esc to cancel)",
             "process" => (),
             "edit" => {
                 self.edit_task(uuid)?;
+                return Ok(());
+            }
+            "suppress" => {
+                str2cmd(&format!("task {} mod wait:1month", uuid)).output()?;
+                self.cache.refresh()?;
                 return Ok(());
             }
             other => bail!("Unknown option: {}", other),

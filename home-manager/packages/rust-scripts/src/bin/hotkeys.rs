@@ -1,5 +1,6 @@
 extern crate rust_scripts;
 extern crate task_hookrs;
+#[macro_use]
 extern crate error_chain;
 
 use std::rc::Rc;
@@ -7,7 +8,9 @@ use rust_scripts::hotkeys::{run, run_cmd, term, menu, main_loop, Next};
 use rust_scripts::kassandra::{kassandra, change_state, new_tasks};
 use rust_scripts::error::Result;
 
-fn main() -> Result<()> {
+quick_main!(main_function);
+
+fn main_function() -> Result<()> {
     let w17menu = {
         let summer = term("Summer", "ssh summer@door.w17.io");
         let lock = term("Lock", "ssh close@door.w17.io");

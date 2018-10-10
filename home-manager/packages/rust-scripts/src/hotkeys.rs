@@ -34,11 +34,15 @@ pub fn run_cmd(name: impl Into<String>, command: Command) -> Item {
 
 
 pub fn term_cmd(command: &str) -> String {
-    format!(
-        "{} -e {}",
-        var("TERMINAL").unwrap_or("urxvt".into()),
-        command
-    )
+    if var("DISPLAY").is_ok() {
+        format!(
+            "{} -e {}",
+            var("TERMINAL").unwrap_or("urxvt".into()),
+            command
+        )
+    } else {
+        format!("{}", command)
+    }
 }
 
 pub fn term(name: impl Into<String>, command: &str) -> Item {

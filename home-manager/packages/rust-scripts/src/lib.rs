@@ -1,6 +1,7 @@
 extern crate dialog;
 extern crate uuid;
 extern crate task_hookrs;
+extern crate hostname;
 #[macro_use]
 extern crate lazy_static;
 extern crate chrono;
