@@ -21,7 +21,7 @@ config = mkIf config.m-0.eventd.enable {
           PartOf = [ "graphical-session.target" ];
         };
         Install = {
-          WantedBy = [ "graphical-session.target" ];
+          WantedBy = [ "default.target" ];
         };
         Service = {
           Type="notify";
@@ -54,7 +54,7 @@ config = mkIf config.m-0.eventd.enable {
     };
   };
   xdg = {
-    configFile = {
+    configFile = mkIf config.m-0.graphical.enable {
       "eventd/eventd.conf".text = lib.generators.toINI {} {
         "Queue default" = {
           Margin = 10;

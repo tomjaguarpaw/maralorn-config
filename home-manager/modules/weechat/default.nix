@@ -77,6 +77,16 @@ config = mkIf config.m-0.weechat.enable {
         hackint.autojoin = "${config.m-0.weechat.channels}"
       '';
     };
+    alias = {
+      target = ".weechat/alias.conf";
+      text = ''
+        [cmd]
+        yes = "/msg beschlussbot .yes"
+        no = "/msg beschlussbot .no"
+        cancel = "/msg beschlussbot .cancel"
+        votes = "/msg beschlussbot .votes"
+      '';
+    };
   };
 
   systemd.user.services = {

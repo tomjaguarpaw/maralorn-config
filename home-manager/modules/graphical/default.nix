@@ -48,7 +48,6 @@ config = mkIf config.m-0.graphical.enable {
   };
   home = {
     packages = with pkgs; [
-      rust_scripts
       tasktree
       st
       shutter
@@ -88,11 +87,6 @@ config = mkIf config.m-0.graphical.enable {
       enable = true;
       imageDirectory = "%h/data/aktuell/media/bilder/wallpaper/";
       interval = "15minutes";
-    };
-    gpg-agent = {
-      enable = true;
-      defaultCacheTtl = 900;
-      defaultCacheTtlSsh = 900;
     };
     redshift = {
       enable = true;
