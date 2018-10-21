@@ -27,7 +27,7 @@
     pwgen
     borgbackup
 
-    (import <unstable> {}).home-manager
+    home-manager
 
     socat
     nmap
