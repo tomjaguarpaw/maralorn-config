@@ -445,10 +445,9 @@ Do you want to change the state? (Esc to cancel)",
 
     pub fn assure_all_sorted(&mut self) -> Result<()> {
         self.cache.refresh_tree();
-        while let Some(uuid) = get_sorted_uuids(
-            &self.cache,
-            |t| !t.obsolete() && needs_sorting(t),
-        ).into_iter()
+        while let Some(uuid) = get_sorted_uuids(&self.cache, |t| {
+            *t.status() == TaskStatus::Pending && needs_sorting(t)
+        }).into_iter()
             .next()
         {
             self.sort(&uuid)?;
