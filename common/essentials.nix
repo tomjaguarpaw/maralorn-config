@@ -39,6 +39,8 @@
     fzf
     ag
     fd
+    (import <unstable> {}).bat
+
     ripgrep
 
     pythonPackages.qrcode
