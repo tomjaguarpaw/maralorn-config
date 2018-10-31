@@ -175,14 +175,16 @@ fn make_simple() -> Vec<SimpleTask> {
             vec!["Friseurtermin machen"],
             Timer::DeadTime(Duration::weeks(6)),
         ))
-        .chain(simple_tasks(vec!["Verbuche Kontoauszüge"], monthly))
+        .chain(simple_tasks(
+            vec!["Verbuche Kontoauszüge", "Cryptpads sichern"],
+            monthly,
+        ))
         .chain(simple_tasks(
             vec![
                 "Korrigiere Portemonnaiezählstand",
                 "Block leeren und wegsortieren",
                 "Leere Kiva Fächer",
                 "Inbox zu Hause wegsortieren",
-                "Cryptpads sichern",
             ],
             weekly,
         ))
