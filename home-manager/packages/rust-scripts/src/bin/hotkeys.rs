@@ -88,7 +88,7 @@ fn main_function() -> Result<()> {
                         ),
                         term(
                             "Private Buchhaltung",
-                            "hledger -f ~/git/buchhaltung.ledger ui"
+                            "hledger -f ~/git/buchhaltung/buchhaltung.ledger ui"
                         ),
                         term(
                             "CDA Buchhaltung",
