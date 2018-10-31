@@ -660,6 +660,7 @@ Do you want to change the state? (Esc to cancel)",
                             .clone(),
                     ],
                 )?;
+                self.cache.write()?;
             }
             "manual" => {
                 str2cmd("tasklauncher").output()?;
