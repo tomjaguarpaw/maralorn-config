@@ -2,18 +2,72 @@
 with lib;
 let
   inherit (config.m-0) colors workspaces terminal;
+  unstablePkgs = import <unstable> {};
   exec = "exec --no-startup-id";
-  taskstatus = pkgs.writeShellScriptBin "taskstatus" ''
-    while true;
-    do
-      echo \
-      $(date "+%Y-%m-%d %a %H:%M") "|" \
-      $(cat ~/.kassandra_state | tail -n4 | sed "s/$/ | /") \
-      =active task= $(task rc.verbose=nothing active || echo "none") "|" \
-      $(task +PENDING -BLOCKED +auto rc.verbose=nothing tags | sed "s/auto/=runable routines=/" )
-      sleep 10s;
-    done
+  conkyConfig = pkgs.writeText "conky.conf" ''
+    conky.config = {
+    alignment = 'top_right',
+    background = true,
+    border_width = 0,
+    cpu_avg_samples = 2,
+    draw_borders = false,
+    draw_graph_borders = true,
+    draw_outline = false,
+    draw_shades = false,
+        double_buffer = true,
+    use_xft = true,
+    font = 'Monofur Nerd Font:size=10.5',
+    gap_x = 0,
+    gap_y = 0,
+    minimum_height = 1440,
+    minimum_width = 316,
+    maximum_width = 316,
+    net_avg_samples = 2,
+    no_buffers = true,
+    out_to_console = false,
+    out_to_stderr = false,
+    extra_newline = false,
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'override',
+    own_window_transparent = false,
+    own_window_color = '#000000',
+    own_window_hints = 'undecorated,below,skip_taskbar,skip_pager,sticky',
+    stippled_borders = 0,
+    update_interval = 1.0,
+    mpd_host = "::0",
+    mpd_port = 6600
+}
+
+conky.text = [[
+''${font Monofur Nerd Font:bold:size=18}''${color #8888ff}$alignc''${exec date '+%a %_d. %B, %H:%M:%S'}
+''${font Monofur Nerd Font:size=12}
+''${color #d0d0d0}''${execpi 60 ${pkgs.gcal}/bin/gcal | sed -ne '3,10p' | sed -e 's/</ ''${color 8888ff}/'| sed -e 's/>/ ''${color}/' | sed 's/^/$alignc/'}
+$font
+$hr
+''${exec cat ~/.kassandra_state | tail -n4}
+$hr
+''${exec cat ~/data/aktuell/orga/listen/`date +%F`}
+$hr
+MPD $mpd_status | Vol: $mpd_vol% | Ran: $mpd_random | Rep: $mpd_repeat
+$mpd_artist
+$mpd_album
+$mpd_title
+$mpd_elapsed/$mpd_length ($mpd_percent%) $mpd_bar
+]]
+
     '';
+  #taskstatus = pkgs.writeShellScriptBin "taskstatus" ''
+    #while true;
+    #do
+      #echo \
+      #$(date "+%Y-%m-%d %a %H:%M") "|" \
+      #$(cat ~/.kassandra_state | tail -n4 | sed "s/$/ | /") \
+      #=active task= $(task rc.verbose=nothing active || echo "none") "|" \
+      #$(task +PENDING -BLOCKED +auto rc.verbose=nothing tags | sed "s/auto/=runable routines=/" )
+      #sleep 10s;
+    #done
+    #'';
   addMods = oldbindings: builtins.foldl' (newbindings: key:
     newbindings // {
       "Mod4+${key}" = oldbindings.${key};
@@ -27,7 +81,24 @@ config = mkIf config.m-0.graphical.enable {
   xsession = {
     windowManager.i3 = {
       enable = true;
+      extraConfig = ''
+            gaps right 320
+        '';
+        package = unstablePkgs.i3-gaps.overrideAttrs (oldattrs: rec {
+          name = "i3-gaps-next";
+          version = "a42646369c0fab7dfe531c4043cbd3ce9f8984a8";
+          src = pkgs.fetchurl {
+            url = "https://github.com/Airblader/i3/archive/${version}.tar.gz";
+            sha256 = "00nzzkh17f3almifairjfkry9m32sx0n2wzx7fdzy9pwrfkil6kq";
+          };
+          postUnpack = ''
+              echo -n "4.16" > ./i3-${version}/I3_VERSION
+            '';
+        });
       config = {
+        startup = [
+          { command = "${pkgs.conky}/bin/conky -c ${conkyConfig}"; notification = false; }
+        ];
         focus = {
           followMouse = false;
           forceWrapping = true;
@@ -65,16 +136,6 @@ config = mkIf config.m-0.graphical.enable {
         };
         bars = [
           {
-            statusCommand = "${taskstatus}/bin/taskstatus";
-            position = "top";
-            mode = "dock";
-            workspaceButtons = false;
-            colors = {
-              separator = colors.white;
-              background = colors.background;
-            };
-          }
-          {
           mode = "hide";
           colors = {
             separator = colors.white;
@@ -104,12 +165,6 @@ config = mkIf config.m-0.graphical.enable {
         window = {
           titlebar = false;
           border = 1;
-        };
-        gaps = {
-          inner = 0;
-          outer = 0;
-          smartBorders = "off";
-          smartGaps = false;
         };
         keybindings = {
             "XF86AudioMute" = "exec pactl set-sink-mute '@DEFAULT_SINK@' toggle";
