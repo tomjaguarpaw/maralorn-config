@@ -6,6 +6,9 @@ let
     ${pkgs.git}/bin/git add completed.data pending.data > /dev/null
     ${pkgs.git}/bin/git commit -m 'Updating task data' > /dev/null
     ${pkgs.git}/bin/git pull -X ${if config.m-0.taskwarrior.git_active then "ours" else "theirs"} | ${pkgs.gnugrep}/bin/grep -v "Already up to date."
+    ${pkgs.taskwarrior}/bin/task diagnostics | ${pkgs.gnugrep}/bin/grep "Found duplicate" | ${pkgs.gnused}/bin/sed 's/.*Found duplicate //' | ${pkgs.findutils}/bin/xargs -i ${pkgs.gnused}/bin/sed -i '0,/uuid:"{}"/{/uuid:"{}"/d}' completed.data > /dev/null
+    ${pkgs.git}/bin/git add completed.data > /dev/null
+    ${pkgs.git}/bin/git commit -m 'Fixing duplicates' > /dev/null
     ${pkgs.git}/bin/git push 2>&1 | ${pkgs.gnugrep}/bin/grep -v "Everything up-to-date"
     true
   '';
