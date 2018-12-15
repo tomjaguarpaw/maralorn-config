@@ -966,7 +966,7 @@ Do you want to change the state? (Esc to cancel)",
                 return Ok(());
             }
             "suppress" => {
-                str2cmd(&format!("task {} mod wait:1month", uuid)).output()?;
+                str2cmd(&format!("task {} mod wait:1year", uuid)).output()?;
                 self.cache.refresh()?;
                 return Ok(());
             }
@@ -1070,12 +1070,14 @@ Do you want to change the state? (Esc to cancel)",
             Edit,
             Keep,
             Change,
+            Suppress,
         };
         let options = vec![
             ("Keep: Leave priority as it is", Select::Keep),
             ("Change: Change priority", Select::Change),
             ("Edit", Select::Edit),
             ("Show all: Show all tasks of this priority", Select::ShowAll),
+            ("Supress: Don't bother me with this", Select::Suppress),
         ];
         let e = &format!("Called priority_check with missing uuid {}", uuid);
         let msg = format!(
@@ -1098,6 +1100,11 @@ Do you want to change the state? (Esc to cancel)",
             Select::Change => {
                 self.select_priority(uuid)?;
                 self.cache.write()?;
+            }
+            Select::Suppress => {
+                str2cmd(&format!("task {} mod wait:1year", uuid)).output()?;
+                self.cache.refresh()?;
+                return Ok(());
             }
         }
         Ok(())
