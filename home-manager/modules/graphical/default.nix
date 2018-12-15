@@ -52,6 +52,8 @@ config = mkIf config.m-0.graphical.enable {
       st
       shutter
       xautolock
+      filezilla
+      spotify
     ];
     keyboard = {
       layout = "de";
