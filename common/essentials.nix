@@ -16,6 +16,9 @@
     mutt
     bind
     liboping
+    psmisc
+    unzip
+
     ];
 
   extra = pkgs: with pkgs; [
