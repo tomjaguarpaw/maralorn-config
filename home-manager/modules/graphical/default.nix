@@ -68,7 +68,7 @@ config = mkIf config.m-0.graphical.enable {
       package = pkgs.arc-icon-theme;
     };
     theme = {
-      name = "Arc-Dark";
+      name = "Arc";
       package = pkgs.arc-theme;
     };
   };
