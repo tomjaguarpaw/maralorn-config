@@ -191,6 +191,7 @@ fn make_simple() -> Vec<SimpleTask> {
         .collect::<Vec<_>>()
 }
 
+#[derive(Clone, Copy)]
 pub struct Inbox {
     timer: Timer,
 }
@@ -220,6 +221,7 @@ impl WellKnown for Inbox {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct Meditation {
     timer: Timer,
 }
@@ -249,6 +251,7 @@ impl WellKnown for Meditation {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct Accounting {
     timer: Timer,
 }
@@ -281,6 +284,7 @@ impl WellKnown for Accounting {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct Treesort {
     timer: Timer,
 }
@@ -394,6 +398,7 @@ impl WellKnown for Maintenance {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct TaskCheck {
     timer: Timer,
     priority: PriorityState,

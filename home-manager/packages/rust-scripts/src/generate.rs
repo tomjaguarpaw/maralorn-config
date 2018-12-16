@@ -56,6 +56,7 @@ static GEN_ID: &str = "gen_id";
 static GEN_ORPHAN: &str = "gen_orphan";
 
 /// The behavior if a task with missing generator is encountered.
+#[derive(Copy, Clone)]
 pub enum OrphanBehavior {
     /// Complete generated tasks, with missing generator
     CompleteOrphan,

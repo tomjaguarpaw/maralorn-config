@@ -588,11 +588,11 @@ Do you want to change the state? (Esc to cancel)",
                     task.remove_tag("optional");
                 }
                 O::N => {
-                    task.set_priority(None as Option<TaskPriority>);
+                    task.set_priority(None::<TaskPriority>);
                     task.remove_tag("optional");
                 }
                 O::O => {
-                    task.set_priority(None as Option<TaskPriority>);
+                    task.set_priority(None::<TaskPriority>);
                     task.add_tag("optional");
                 }
             }
@@ -693,7 +693,7 @@ Do you want to change the state? (Esc to cancel)",
                 self.cache
                     .get_mut(uuid)
                     .chain_err(|| "missing uuid")?
-                    .set_tags(None as Option<Vec<String>>);
+                    .set_tags(None::<Vec<String>>);
                 self.cache.write()?;
             }
             "prio" => {
@@ -822,7 +822,7 @@ Do you want to change the state? (Esc to cancel)",
             Select::Tag(tag) => {
                 {
                     let task = self.cache.get_mut(uuid).chain_err(|| "missing uuid")?;
-                    task.set_tags(None as Option<Vec<String>>);
+                    task.set_tags(None::<Vec<String>>);
                     task.add_tag(tag);
                 }
                 self.cache.write()?;
@@ -845,7 +845,7 @@ Do you want to change the state? (Esc to cancel)",
                 )?;
                 {
                     let task = self.cache.get_mut(uuid).chain_err(|| "missing uuid")?;
-                    task.set_tags(None as Option<Vec<String>>);
+                    task.set_tags(None::<Vec<String>>);
                     for tag in tags.split_whitespace() {
                         task.add_tag(tag);
                     }

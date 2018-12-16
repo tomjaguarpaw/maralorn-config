@@ -98,7 +98,7 @@ impl TaskRefresher for TaskCache {
         for uuid in uuids {
             let old = self.get_mut(&uuid).expect("BUG!");
             *old.status_mut() = TS::Pending;
-            old.set_end(None as Option<Date>);
+            old.set_end(None::<Date>);
         }
         self.generate(changes)
     }
