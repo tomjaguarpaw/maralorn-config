@@ -7,7 +7,6 @@ pkgs.neovim.override {
       let $RUST_SRC_PATH="${pkgs.rustPlatform.rustcSrc}"
       let g:rustfmt_command = "${pkgs.rustfmt}/bin/rustfmt"
       let g:racer_cmd = "${pkgs.rustracer}/bin/racer"
-      let g:syntastic_rust_rustc_exe = '${pkgs.cargo}/bin/cargo check'
       let g:rustfmt_autosave = 1
       let g:syntastic_rust_checkers = [ 'cargo']
       let g:rust_recommend_style = 1
