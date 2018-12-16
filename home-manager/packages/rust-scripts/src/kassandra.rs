@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::env::home_dir;
+use dirs::home_dir;
 use std::iter::once;
 
 use serde_yaml::{from_reader, to_writer, to_string};

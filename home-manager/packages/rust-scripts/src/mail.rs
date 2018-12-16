@@ -1,5 +1,5 @@
 use std::fs::rename;
-use std::env::home_dir;
+use dirs::home_dir;
 use std::path::PathBuf;
 use std::collections::HashSet;
 
