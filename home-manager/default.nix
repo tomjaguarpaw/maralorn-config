@@ -35,7 +35,7 @@ nixpkgs.config = {
   packageOverrides = pkgs: with pkgs; {
     tasktree = callPackage ./packages/tasktree {};
     habitask = unstablePkgs.callPackage ./packages/habitask {};
-    rust_scripts = unstablePkgs.callPackage ./packages/rust-scripts {};
+#    rust_scripts = unstablePkgs.callPackage ./packages/rust-scripts {};
     jali = callPackage ./packages/jali {};
     eventd = unstablePkgs.callPackage ./packages/eventd {};
     st = (import packages/st) pkgs config.m-0.colors;
@@ -127,6 +127,7 @@ programs = {
 };
 
 home.sessionVariables = {
+  PATH = "$HOME/.cargo/bin:$PATH";
   BROWSER = "${pkgs.firefox}/bin/firefox";
   EDITOR = "${pkgs.neovim}/bin/nvim";
   TERMINAL = config.m-0.terminal;
@@ -149,7 +150,6 @@ services = {
 
 home.packages = with pkgs; [
   neovim
-  rust_scripts
 ];
 xdg.enable = true;
 }

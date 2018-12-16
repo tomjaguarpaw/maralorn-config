@@ -57,17 +57,6 @@ $mpd_elapsed/$mpd_length ($mpd_percent%) $mpd_bar
 ]]
 
     '';
-  #taskstatus = pkgs.writeShellScriptBin "taskstatus" ''
-    #while true;
-    #do
-      #echo \
-      #$(date "+%Y-%m-%d %a %H:%M") "|" \
-      #$(cat ~/.kassandra_state | tail -n4 | sed "s/$/ | /") \
-      #=active task= $(task rc.verbose=nothing active || echo "none") "|" \
-      #$(task +PENDING -BLOCKED +auto rc.verbose=nothing tags | sed "s/auto/=runable routines=/" )
-      #sleep 10s;
-    #done
-    #'';
   addMods = oldbindings: builtins.foldl' (newbindings: key:
     newbindings // {
       "Mod4+${key}" = oldbindings.${key};
@@ -199,7 +188,7 @@ config = mkIf config.m-0.graphical.enable {
             "n" = "move workspace to output right";
             "shift+space" = "floating toggle";
             "shift+q" = "${exec} ${pkgs.i3}/bin/i3-nagbar -t warning -m 'do you want to exit i3?' -b 'yes' 'i3-msg exit'";
-            "space" = "${exec} ${pkgs.rust_scripts}/bin/hotkeys";
+            "space" = "${exec} hotkeys";
           } // builtins.foldl' (bindings: name: let
             number = toString ((builtins.length (builtins.attrNames bindings)) / 2);
           in
