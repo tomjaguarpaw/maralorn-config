@@ -42,12 +42,12 @@ let
 conky.text = [[
 ''${font Monofur Nerd Font:bold:size=18}''${color #8888ff}$alignc''${exec date '+%a %_d. %B, %H:%M:%S'}
 ''${font Monofur Nerd Font:size=12}
-''${color #d0d0d0}''${execpi 60 ${pkgs.gcal}/bin/gcal | sed -ne '3,10p' | sed -e 's/</ ''${color 8888ff}/'| sed -e 's/>/ ''${color}/' | sed 's/^/$alignc/'}
+''${color #d0d0d0}''${execpi 60 ${pkgs.gcal}/bin/gcal -K -s1 --iso-week-number=yes | sed -e 's|5\d/1|01|' | sed -ne '3,10p' | sed -e 's/</ ''${color 8888ff}/'| sed -e 's/>/ ''${color}/' | sed 's/^/$alignc/'}
 $font
 $hr
 ''${exec cat ~/.kassandra_state | tail -n4}
 $hr
-''${exec cat ~/data/aktuell/orga/listen/`date +%F`}
+''${exec cat ~/data/aktuell/orga/listen/`date +%F`.md}
 $hr
 MPD $mpd_status | Vol: $mpd_vol% | Ran: $mpd_random | Rep: $mpd_repeat
 $mpd_artist
