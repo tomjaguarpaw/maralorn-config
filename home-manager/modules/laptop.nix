@@ -57,13 +57,20 @@ config = mkIf config.m-0.laptop.enable {
     xournal
     musescore
     handbrake
+
+    #dev
     octave
+    stack
+    cabal2nix
+    filezilla
+    vscode
 
     # look & feel
     libertine
     nerdfonts
 
     # media
+    spotify
     ncmpcpp
     pavucontrol
     deluge
