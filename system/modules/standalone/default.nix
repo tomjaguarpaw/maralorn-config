@@ -39,7 +39,7 @@ config = mkIf config.m-0.standalone.enable {
     mtr.enable = true;
     zsh = {
       enable = true;
-      enableAutosuggestions = true;
+      autosuggestions.enable = true;
       enableCompletion = true;
       syntaxHighlighting.enable = true;
     };
