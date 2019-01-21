@@ -33,6 +33,17 @@ in
     };
 
     services = {
+      unbound = {
+        enable = true;
+        extraConfig = ''
+          server:
+            domain-insecure: dn42.
+
+          forward-zone:
+            name: "dn42."
+            forward-addr: 172.23.0.53
+        '';
+      };
       mpd = {
           enable = true;
           user = me.user;
