@@ -6,10 +6,8 @@ let
 in
   pkgs.st.overrideDerivation (old: {
     patches = old.patches ++ [
-          # scrollback patches from https://st.suckless.org/patches/scrollback/
-          # https://st.suckless.org/patches/scrollback/st-scrollback-0.7.diff
-          ./st-alpha-0.7.diff
-          ./st-externalpipe-0.7.diff
+          ./st-externalpipe-0.8.1.diff
+          ./st-alpha-0.8.1.diff
     ];
     enableParallelBuilds = true;
     prePatch = ''
