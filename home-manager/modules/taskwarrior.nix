@@ -62,6 +62,7 @@ config = mkIf config.m-0.taskwarrior.enable {
         uda.gen_id.label=Generator id
         uda.gen_orphan.type=string
         uda.gen_orphan.label=Generated orphan behavior
+        uda.listposition.type=numeric
 
         # Bugwarrior UDAs
         uda.githubtitle.type=string
