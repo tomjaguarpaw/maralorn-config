@@ -20,9 +20,6 @@ config = mkIf config.m-0.latex.enable {
       };
     };
   };
-  home.packages = [
-    pkgs.biber
-  ];
 };
 
 }
