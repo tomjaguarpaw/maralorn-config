@@ -36,7 +36,7 @@ config = mkIf config.m-0.taskwarrior.enable {
     };
   };
   home = {
-    packages = [ pkgs.taskwarrior tasksync ];
+    packages = [ pkgs.taskwarrior tasksync pkgs.tasksh ];
     file = {
       ".taskrc".text = ''
         data.location=~/.task
