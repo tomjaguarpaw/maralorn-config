@@ -24,7 +24,7 @@ config = mkIf config.m-0.graphical.enable {
       "leisure"
       "config"
     ];
-    terminal = "${pkgs.st}/bin/st";
+    terminal = "${pkgs.my-st}/bin/st";
     colors = {
       "foreground" = "#dddbff";
       "background" = "#05004a";
@@ -49,7 +49,7 @@ config = mkIf config.m-0.graphical.enable {
   home = {
     packages = with pkgs; [
       tasktree
-      st
+      my-st
       shutter
       xautolock
     ];
