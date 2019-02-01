@@ -47,7 +47,7 @@ nixpkgs.config = {
         repo = "bugwarrior";
         rev = version;
         sha256 = "1facsqp1x3mcfal0c8rh6n12bavy6a9w2frlgmvv0by93y7a4nhj";
-      };
+     };
     });
   };
 };
