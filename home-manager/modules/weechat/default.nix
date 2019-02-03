@@ -47,9 +47,6 @@ config = mkIf config.m-0.weechat.enable {
 
         [filter]
         irc_smart = on;*;irc_smart_filter;*
-
-        [network]
-        gnutls_ca_file = "/etc/nixos/home-manager/modules/weechat/rootca.crt"
       '';
     };
     logger = {
