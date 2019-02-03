@@ -13,7 +13,6 @@ imports = [
  ../../system
  ./git.nix
  ./borg.nix
- <unstable/nixos/modules/services/networking/ndppd.nix>
 ];
 
 networking = {
@@ -47,10 +46,6 @@ networking = {
       ];
     };
   };
-};
-
-nixpkgs.config.packageOverrides = pkgs: {
-  ndppd = unstable-pkgs.ndppd;
 };
 
 services = {
