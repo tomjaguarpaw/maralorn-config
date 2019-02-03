@@ -43,13 +43,8 @@ config = mkIf config.m-0.bugwarrior.enable {
       };
       Service = {
         Type = "oneshot";
-        Environment=''PATH=${pkgs.taskwarrior}/bin:${pkgs.eventd}/bin:${pkgs.gnugrep}/bin OTRS_USER=${me.user} OTRS_PASSWORD=${otrs.password} OTRS_QUEUES="${otrs.queues}" OTRS_OWNERS="${otrs.owners}" OTRS_HOST=${otrs.host}'';
-        ExecStart= let
-          update = pkgs.writeShellScriptBin "update" ''
-            ${pkgs.bugwarrior}/bin/bugwarrior-pull
-            ${pkgs.rust_scripts}/bin/sync_otrs
-            true
-          ''; in "${update}/bin/update";
+        Environment=''PATH=${pkgs.taskwarrior}/bin:${pkgs.eventd}/bin:${pkgs.gnugrep}/bin'';
+        ExecStart= "${pkgs.bugwarrior}/bin/bugwarrior-pull";
       };
     };
     timers.bugwarrior = {
