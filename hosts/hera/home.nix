@@ -12,7 +12,6 @@ m-0 = {
   habitask.enable = true;
   bugwarrior.enable = true;
   rustdev.enable = true;
-  update_tasks.enable = true;
   eventd.enable = true;
   weechat = {
     enable = true;
