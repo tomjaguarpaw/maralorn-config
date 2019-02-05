@@ -62,19 +62,10 @@ in
         enable = true;
         layout = "de";
         xkbVariant = "neo";
-        libinput.enable = true;
-        desktopManager.gnome3.enable = true;
         displayManager.auto = {
           enable = true;
           user = "maralorn";
         };
-        config = ''
-          Section "InputClass"
-          Identifier "Enable libinput for TrackPoint"
-          MatchIsPointer "on"
-          Driver "libinput"
-          EndSection
-        '';
       };
     };
   };

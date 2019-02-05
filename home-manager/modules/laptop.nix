@@ -57,6 +57,7 @@ config = mkIf config.m-0.laptop.enable {
     xournal
     musescore
     handbrake
+    evince
 
     #dev
     octave

@@ -60,8 +60,8 @@ mkIf config.m-0.graphical.enable {
       terminal
       tasktree
       my-st
-      shutter
       xautolock
+      gnome3.dconf
     ];
     keyboard = {
       layout = "de";
@@ -121,19 +121,7 @@ mkIf config.m-0.graphical.enable {
       package = pkgs.arc-theme;
     };
   };
-  xdg.enable = true;
   services = {
-    compton = {
-      enable = true;
-      fade = true;
-      fadeDelta = 5;
-    };
-    gnome-keyring = {
-      enable = true;
-      components = [
-        "secrets"
-      ];
-    };
     random-background = {
       enable = true;
       imageDirectory = "%h/data/aktuell/media/bilder/wallpaper/";
