@@ -127,7 +127,7 @@ programs = {
 };
 
 home.sessionVariables = {
-  PATH = "$HOME/.cargo/bin:$PATH";
+  PATH = "$HOME/.cargo/bin:/etc/profiles/per-user/${config.home.username}/bin:$PATH";
   BROWSER = "${pkgs.firefox}/bin/firefox";
   EDITOR = "${pkgs.neovim}/bin/nvim";
   TERMINAL = config.m-0.terminal;
