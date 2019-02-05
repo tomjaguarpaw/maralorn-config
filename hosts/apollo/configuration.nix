@@ -93,6 +93,7 @@ boot = {
 };
 
 services = {
+  autorandr.enable = true;
   borgbackup.jobs.data = {
     doInit = false;
     startAt = [];

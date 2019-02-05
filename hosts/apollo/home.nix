@@ -37,6 +37,50 @@ m-0 = {
     default = config.m-0.private.sendmail.private;
   };
 };
+programs.autorandr = {
+  enable = true;
+  hooks = {
+    postswitch = {
+     "restart-i3" = "${pkgs.i3}/bin/i3-msg restart";
+     "update-background" = "${pkgs.systemd}/bin/systemctl --user restart random-background.service";
+    };
+  };
+  profiles = {
+    "work" = {
+      fingerprint = {
+        "DP2" = "00ffffffffffff0009d1ce7845540000101a01030e351e782e6b35a455559f270c5054a56b80d1c081c081008180a9c0b30001010101023a801871382d40582c4500132b2100001e000000ff005334473034343238534c300a20000000fd00324c1e5315000a202020202020000000fc0042656e5120474c323436300a2000e2";
+        "eDP1" = "00ffffffffffff0006af362300000000001b0104a51f117802f4f5a4544d9c270f505400000001010101010101010101010101010101e65f00a0a0a040503020350035ae100000180000000f0000000000000000000000000020000000fe0041554f0a202020202020202020000000fe004231343051414e30322e33200a00b2";
+      };
+      config = {
+        eDP1 = {
+          enable = true;
+          primary = true;
+          position = "0x0";
+          mode = "2560x1440";
+        };
+        DP2 = {
+          enable = true;
+          position = "2560x0";
+          mode = "1920x1080";
+        };
+      };
+    };
+    "default" = {
+      fingerprint = {
+        "eDP1" = "00ffffffffffff0006af362300000000001b0104a51f117802f4f5a4544d9c270f505400000001010101010101010101010101010101e65f00a0a0a040503020350035ae100000180000000f0000000000000000000000000020000000fe0041554f0a202020202020202020000000fe004231343051414e30322e33200a00b2";
+      };
+      config = {
+        eDP1 = {
+          enable = true;
+          primary = true;
+          position = "0x0";
+          mode = "2560x1440";
+        };
+      };
+    };
+  };
+};
+
 home.packages = [
   (pkgs.writeShellScriptBin "maintenance" ''
     sudo -A nix-channel --update
