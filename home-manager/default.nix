@@ -144,7 +144,8 @@ systemd.user.startServices = true;
 services = {
   gpg-agent = {
     enable = true;
-    defaultCacheTtl = 31536000;
+    defaultCacheTtl = 31536000; # 1year
+    maxCacheTtl = 31536000; #1year
   };
 };
 
