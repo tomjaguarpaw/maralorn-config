@@ -1,1 +1,0 @@
-nixdark/default.nix

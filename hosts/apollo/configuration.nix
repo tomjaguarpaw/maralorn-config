@@ -111,12 +111,10 @@ services = {
 cdark_net = {
   enable = true;
   hostName = "${me.user}_${config.networking.hostName}";
-  ed25519PrivateKeyFile = builtins.toPath "/etc/nixos/hosts/${config.networking.hostName}/secret/tinc/ed25519_key.priv";
-  hostsDirectory = /etc/nixos/system/modules/cdarknet/hosts;
+  ed25519PrivateKeyFile = /etc/nixos/hosts + "/${config.networking.hostName}" + /secret/tinc/ed25519_key.priv;
+  hostsDirectory = (builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/hosts");
   ip6address = "fd23:42:cda:4342::2";
   ip4address = "172.20.71.2";
 };
-
-
 
 }

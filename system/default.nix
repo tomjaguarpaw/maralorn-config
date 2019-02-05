@@ -1,17 +1,14 @@
 { pkgs, config, lib, ... }:
 let
   me = config.m-0.private.me;
-  unstable = import <unstable> {};
 in {
-  # channel = 18.03
-
   imports = [
     <home-manager/nixos>
     ../common
     ./modules/laptop.nix
     ./modules/server
     ./modules/standalone
-    ./modules/cdarknet
+    "${builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark"}/default.nix"
     ./modules/loginctl-linger.nix
   ];
 
