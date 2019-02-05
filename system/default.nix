@@ -31,7 +31,4 @@ in {
       openssh.authorizedKeys.keys = me.keys;
     };
   };
-  environment.sessionVariables = {
-    LOCALE_ARCHIVE_2_27 = "${unstable.glibcLocales}/lib/locale/locale-archive";
-  };
 }
