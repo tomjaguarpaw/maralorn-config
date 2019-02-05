@@ -53,15 +53,15 @@ nixpkgs.config = {
 };
 
 
-home.file.".tmux.conf".text = ''
-  set -g default-terminal "st-256color"
-  set -ga terminal-overrides ",st-256color:Tc"
-  set -g history-limit 50000
-  set -g status off
-  set -g escape-time 1
-'';
-
 programs = {
+  tmux = {
+    enable = true;
+    extraConfig = ''
+      set -g set-titles on
+      set -g status off
+      set -g escape-time 1
+    '';
+  };
   git = {
     enable = true;
     ignores = [
