@@ -4,57 +4,65 @@ let
   inherit (config.m-0) colors workspaces terminal;
   unstablePkgs = import <unstable> {};
   exec = "exec --no-startup-id";
-  conkyConfig = pkgs.writeText "conky.conf" ''
+  conkyCommon = ''
+      background = true,
+      border_width = 0,
+      cpu_avg_samples = 2,
+      draw_borders = false,
+      draw_graph_borders = true,
+      draw_outline = false,
+      draw_shades = false,
+      double_buffer = true,
+      use_xft = true,
+      font = 'Roboto Mono Nerd Font:size=8',
+      gap_x = 0,
+      gap_y = 0,
+      minimum_width = 316,
+      maximum_width = 316,
+      net_avg_samples = 2,
+      no_buffers = true,
+      out_to_console = false,
+      out_to_stderr = false,
+      extra_newline = false,
+      own_window = true,
+      own_window_class = 'Conky',
+      own_window_type = 'override',
+      own_window_colour = "${config.m-0.colors.background}",
+      own_window_hints = 'undecorated,below,skip_taskbar,skip_pager,sticky',
+      stippled_borders = 0,
+      update_interval = 1.0,
+'';
+  conkyOrgaConfig = pkgs.writeText "conky.conf" ''
     conky.config = {
-    alignment = 'top_right',
-    background = true,
-    border_width = 0,
-    cpu_avg_samples = 2,
-    draw_borders = false,
-    draw_graph_borders = true,
-    draw_outline = false,
-    draw_shades = false,
-        double_buffer = true,
-    use_xft = true,
-    font = 'Monofur Nerd Font:size=10.5',
-    gap_x = 0,
-    gap_y = 0,
-    minimum_height = 1440,
-    minimum_width = 316,
-    maximum_width = 316,
-    net_avg_samples = 2,
-    no_buffers = true,
-    out_to_console = false,
-    out_to_stderr = false,
-    extra_newline = false,
-    own_window = true,
-    own_window_class = 'Conky',
-    own_window_type = 'override',
-    own_window_transparent = false,
-    own_window_color = '#000000',
-    own_window_hints = 'undecorated,below,skip_taskbar,skip_pager,sticky',
-    stippled_borders = 0,
-    update_interval = 1.0,
-    mpd_host = "::0",
-    mpd_port = 6600
-}
+      alignment = 'top_right',
+      ${conkyCommon}
+    }
 
-conky.text = [[
-''${font Monofur Nerd Font:bold:size=18}''${color #8888ff}$alignc''${exec date '+%a %_d. %B, %H:%M:%S'}
-''${font Monofur Nerd Font:size=12}
-''${color #d0d0d0}''${execpi 60 ${pkgs.gcal}/bin/gcal -K -s1 --iso-week-number=yes | sed -e 's|5\d/1|01|' | sed -ne '3,10p' | sed -e 's/</ ''${color 8888ff}/'| sed -e 's/>/ ''${color}/' | sed 's/^/$alignc/'}
-$font
-$hr
-''${exec cat ~/.kassandra_state | tail -n4}
-$hr
-''${exec cat ~/data/aktuell/orga/listen/`date +%F`.md}
-$hr
-MPD $mpd_status | Vol: $mpd_vol% | Ran: $mpd_random | Rep: $mpd_repeat
-$mpd_artist
-$mpd_album
-$mpd_title
-$mpd_elapsed/$mpd_length ($mpd_percent%) $mpd_bar
-]]
+    conky.text = [[
+    ''${font Roboto Mono Nerd Font:bold:size=14}''${color #8888ff}$alignc''${exec date '+%a %_d. %B, %H:%M:%S'}
+    ''${font Roboto Mono Nerd Font:size=12}
+    ''${color #d0d0d0}''${execpi 60 ${pkgs.gcal}/bin/gcal -K -s1 --iso-week-number=yes | sed -e 's|5\d/1|01|' | sed -ne '3,10p' | sed -e 's/</ ''${color 8888ff}/'| sed -e 's/>/ ''${color}/' | sed 's/^/$alignc/'}
+    $font
+    $hr
+    ''${execi 5 cat ~/.kassandra_state | tail -n4}
+    $hr
+    ''${execi 5 cat ~/tmp/today.md}
+    ]]
+    '';
+  conkyMPDConfig = pkgs.writeText "conky.conf" ''
+    conky.config = {
+      alignment = 'bottom_right',
+      ${conkyCommon}
+      mpd_host = "::0",
+      mpd_port = 6600
+    }
+
+    conky.text = [[
+    MPD $mpd_status | Vol: $mpd_vol% | Ran: $mpd_random | Rep: $mpd_repeat
+    $mpd_smart
+    $mpd_album
+    $mpd_elapsed/$mpd_length ($mpd_percent%) $mpd_bar
+    ]]
 
     '';
   addMods = oldbindings: builtins.foldl' (newbindings: key:
@@ -73,20 +81,21 @@ config = mkIf config.m-0.graphical.enable {
       extraConfig = ''
             gaps right 320
         '';
-        package = unstablePkgs.i3-gaps.overrideAttrs (oldattrs: rec {
-          name = "i3-gaps-next";
-          version = "a42646369c0fab7dfe531c4043cbd3ce9f8984a8";
-          src = pkgs.fetchurl {
-            url = "https://github.com/Airblader/i3/archive/${version}.tar.gz";
-            sha256 = "00nzzkh17f3almifairjfkry9m32sx0n2wzx7fdzy9pwrfkil6kq";
-          };
-          postUnpack = ''
-              echo -n "4.16" > ./i3-${version}/I3_VERSION
-            '';
-        });
+      package = unstablePkgs.i3-gaps.overrideAttrs (oldattrs: rec {
+        name = "i3-gaps-next";
+        version = "41264e54b7a3039ce46919851ac73e22ae29d207";
+        src = pkgs.fetchurl {
+          url = "https://github.com/Airblader/i3/archive/${version}.tar.gz";
+          sha256 = "10d80p8bsldx4pld76y8my1zyww03shkcg3fndsxkrkwhfpk0lbh";
+        };
+        postUnpack = ''
+            echo -n "4.16.1" > ./i3-${version}/I3_VERSION
+          '';
+      });
       config = {
         startup = [
-          { command = "${pkgs.conky}/bin/conky -c ${conkyConfig}"; notification = false; }
+          { command = "${pkgs.conky}/bin/conky -c ${conkyOrgaConfig}"; notification = false; }
+          { command = "${pkgs.conky}/bin/conky -c ${conkyMPDConfig}"; notification = false; }
         ];
         focus = {
           followMouse = false;

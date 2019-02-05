@@ -20,6 +20,7 @@ function default_user () {
 	echo $REPLY
 }
 
+mkdir -p /var/run/user/$UID/tmp/
 
 setopt prompt_subst
 autoload -U colors && colors # Enable colors in prompt
