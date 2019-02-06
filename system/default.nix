@@ -6,7 +6,7 @@ in {
     <home-manager/nixos>
     ../common
     ./modules/laptop.nix
-    ./modules/git-server.nix
+    ./modules/server/git.nix
     ./modules/server
     ./modules/server/mathechor.de.nix
     ./modules/standalone

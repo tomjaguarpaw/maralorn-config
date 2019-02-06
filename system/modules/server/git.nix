@@ -22,8 +22,8 @@ in
         $RC{AUTH_OPTIONS} = 'no-port-forwarding,no-X11-forwarding,no-pty';
       '';
       commonHooks = [ "${pkgs.writeShellScriptBin "post-update" ''
-        [ -z $GL_OPTION_MIRROR ] && exit
-	git push --all $GL_OPTION_MIRROR
+        if [ -n "$GL_OPTION_MIRROR" ]; then git push --all $GL_OPTION_MIRROR; fi
+        if [ -n "$GL_OPTION_REBUILD" ]; then sudo nixos-rebuild switch --option tarball-ttl 0; fi
       ''}/bin/post-update" ];
     };
   };
