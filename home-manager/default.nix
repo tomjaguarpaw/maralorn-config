@@ -109,7 +109,7 @@ programs = {
         agHost = "fb04217.mathematik.tu-darmstadt.de";
       in [
         { host = "charon"; hostname = "charon.olymp.space"; }
-        { host = "hera"; hostname = "hera.m-0.eu"; }
+        { host = "hera"; hostname = "hera.m-0.eu"; forwardAgent = true; }
         { host = "*.olymp.space"; user = me.user; }
         { host = "ag-forward"; hostname = agHost; proxyCommand = matheGwProxy; user = meWork.user; }
         { host = "ag"; hostname = agHost; user = meWork.user; }
