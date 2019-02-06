@@ -13,18 +13,25 @@ in
       default = false;
     };
   };
-  config = mkIf config.m-0.git-server.enable {
-    security.sudo.extraRules = [ { commands = [ { command = "sudo nixos-rebuild switch --option tarball-ttl 0"; options = [ "SETENV" "NOPASSWD" ]; users = "git"; } ]; } ];
+  config = let
+    upgrade-command = "${pkgs.systemd}/bin/systemctl start nixos-upgrade.service";
+  in
+    mkIf config.m-0.git-server.enable {
+    security.sudo.extraRules = [ { commands = [ { command = upgrade-command; options = [ "NOPASSWD" ]; } ];  users = [ "git" ]; } ];
     services.gitolite = {
       enable = true;
       user = "git";
       adminPubkey = builtins.elemAt me.keys 0;
-      extraGitoliteRc = ''
-        $RC{AUTH_OPTIONS} = 'no-port-forwarding,no-X11-forwarding,no-pty';
-      '';
       commonHooks = [ "${pkgs.writeShellScriptBin "post-update" ''
-        if [ -n "$GL_OPTION_MIRROR" ]; then git push --all $GL_OPTION_MIRROR; fi
-        if [ -n "$GL_OPTION_REBUILD" ]; then sudo nixos-rebuild switch --option tarball-ttl 0; fi
+        if [ -n "$GL_OPTION_MIRROR" ]; then
+          echo "Forwarding push to $GL_OPTION_MIRROR";
+          git push --all $GL_OPTION_MIRROR;
+        fi
+        if [ -n "$GL_OPTION_REBUILD" ]; then
+          echo "Triggering a system update … You can wait or disconnect";
+          sudo ${upgrade-command};
+          echo "Done";
+        fi
       ''}/bin/post-update" ];
     };
   };

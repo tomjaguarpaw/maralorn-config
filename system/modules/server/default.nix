@@ -19,8 +19,12 @@ config = mkIf config.m-0.server.enable {
     };
     optimise.automatic = true;
   };
-  system.autoUpgrade.enable = true;
-  system.autoUpgrade.dates = "2:45";
+  system.autoUpgrade = {
+    enable = true;
+    dates = "2:45";
+    flags = [ "--option" "tarball-ttl" "0" ];
+  };
+  systemd.services.nixos-upgrade.path = [ pkgs.gnutar pkgs.xz.bin pkgs.gitMinimal config.nix.package.out ];
 };
 
 }
