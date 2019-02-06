@@ -6,6 +6,7 @@ in {
     <home-manager/nixos>
     ../common
     ./modules/laptop.nix
+    ./modules/git-server.nix
     ./modules/server
     ./modules/standalone
     "${builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark"}/default.nix"

@@ -72,6 +72,7 @@ m-0 = {
   # dropbearkey -t rsa -f /etc/nixos/hosts/<hostname>/secret/boot_rsa
   server.enable = true;
   standalone.enable = true;
+  git-server.enable = true;
 };
 
 home-manager.users."${me.user}" = (import ./home.nix);
