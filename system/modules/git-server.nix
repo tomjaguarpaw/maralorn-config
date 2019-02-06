@@ -21,10 +21,10 @@ in
       extraGitoliteRc = ''
         $RC{AUTH_OPTIONS} = 'no-port-forwarding,no-X11-forwarding,no-pty';
       '';
-      commonHooks = [ (builtins.toFile "post-update" ''
+      commonHooks = [ "${pkgs.writeShellScriptBin "post-update" ''
         [ -z $GL_OPTION_MIRROR ] && exit
 	git push --all $GL_OPTION_MIRROR
-      '') ];
+      ''}/bin/post-update" ];
     };
   };
 }
