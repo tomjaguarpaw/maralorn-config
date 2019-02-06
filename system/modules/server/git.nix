@@ -14,6 +14,7 @@ in
     };
   };
   config = mkIf config.m-0.git-server.enable {
+    security.sudo.extraRules = [ { commands = [ { command = "sudo nixos-rebuild switch --option tarball-ttl 0"; options = [ "SETENV" "NOPASSWD" ]; users = "git"; } ]; } ];
     services.gitolite = {
       enable = true;
       user = "git";
