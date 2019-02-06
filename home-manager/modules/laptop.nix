@@ -4,7 +4,14 @@ with lib;
 
 options.m-0.laptop.enable = mkEnableOption "Laptop";
 
-config = mkIf config.m-0.laptop.enable {
+config = let
+  rewlan = pkgs.writeShellScriptBin "rewlan" ''
+    nmcli r wifi off;
+    sleep 0.1s;
+    nmcli r wifi on;
+  '';
+in
+  mkIf config.m-0.laptop.enable {
   programs = {
     firefox = {
       enable = true;
@@ -15,9 +22,6 @@ config = mkIf config.m-0.laptop.enable {
         key = "6C3D12CD88CDF46C5EAF4D12226A2D41EF5378C9";
       };
     };
-  };
-  home.sessionVariables = {
-    MOZ_USE_XINPUT2 = "1";
   };
 
   services = {
@@ -42,6 +46,7 @@ config = mkIf config.m-0.laptop.enable {
     arandr
     xorg.xev
     xorg.xbacklight
+    rewlan
 
     #dev
     meld
