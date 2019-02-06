@@ -8,6 +8,7 @@ in {
     ./modules/laptop.nix
     ./modules/git-server.nix
     ./modules/server
+    ./modules/server/mathechor.de.nix
     ./modules/standalone
     "${builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark"}/default.nix"
     ./modules/loginctl-linger.nix
