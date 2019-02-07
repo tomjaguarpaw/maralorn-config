@@ -42,7 +42,7 @@
     fzf
     ag
     fd
-    (import <unstable> {}).bat
+    bat
 
     ripgrep
 

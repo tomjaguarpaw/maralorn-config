@@ -1,19 +1,19 @@
 { pkgs, config, lib, ... }:
 let
   me = config.m-0.private.me;
+  home-manager = (builtins.fetchGit { url = "https://github.com/rycee/home-manager/"; ref = "nixos-module-user-pkgs";});
 in {
   imports = [
-    <home-manager/nixos>
+    "${home-manager}/nixos"
     ../common
     ./modules/laptop.nix
     ./modules/server/git.nix
     ./modules/server
     ./modules/server/mathechor.de.nix
     ./modules/standalone
-    "${builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark"}/default.nix"
+    "${builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark"}"
     ./modules/loginctl-linger.nix
   ];
-
 
   i18n = {
     defaultLocale = "en_US.UTF-8";

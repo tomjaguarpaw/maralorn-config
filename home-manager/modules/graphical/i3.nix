@@ -2,7 +2,6 @@
 with lib;
 let
   inherit (config.m-0) colors workspaces terminal;
-  unstablePkgs = import <unstable> {};
   exec = "exec --no-startup-id";
   conkyCommon = ''
       background = true,
@@ -81,7 +80,7 @@ config = mkIf config.m-0.graphical.enable {
       extraConfig = ''
             gaps right 320
         '';
-      package = unstablePkgs.i3-gaps.overrideAttrs (oldattrs: rec {
+      package = pkgs.unstable.i3-gaps.overrideAttrs (oldattrs: rec {
         name = "i3-gaps-next";
         version = "41264e54b7a3039ce46919851ac73e22ae29d207";
         src = pkgs.fetchurl {

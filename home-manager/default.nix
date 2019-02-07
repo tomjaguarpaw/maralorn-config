@@ -1,8 +1,6 @@
 { pkgs, config, ... }:
 let
-  me = config.m-0.private.me;
-  meWork = config.m-0.private.meWork;
-  unstablePkgs = import <unstable> {};
+  inherit (config.m-0.private) me meWork;
 in {
 
 imports = [
@@ -30,26 +28,26 @@ imports = [
 #   ./morgenreport.nix
 ];
 
+nixpkgs.overlays = [ (self: super: {
+  tasktree = super.callPackage ./packages/tasktree {};
+#    habitask = unstable.callPackage ./packages/habitask {};
+  jali = super.callPackage ./packages/jali {};
+  eventd = super.unstable.callPackage ./packages/eventd {};
+  my-st = (import packages/st) super config.m-0.colors;
+  neovim = (import ./nvim) super config.m-0.rustdev.enable;
+  bugwarrior = super.unstable.python3Packages.bugwarrior.overrideAttrs (oldAttrs: rec {
+    version = "d48f735";
+    src = super.fetchFromGitHub {
+      owner = "ralphbean";
+      repo = "bugwarrior";
+      rev = version;
+      sha256 = "1facsqp1x3mcfal0c8rh6n12bavy6a9w2frlgmvv0by93y7a4nhj";
+   };
+  });
+})];
+
 nixpkgs.config = {
   allowUnfree = true;
-  packageOverrides = pkgs: with pkgs; {
-    tasktree = callPackage ./packages/tasktree {};
-    habitask = unstablePkgs.callPackage ./packages/habitask {};
-#    rust_scripts = unstablePkgs.callPackage ./packages/rust-scripts {};
-    jali = callPackage ./packages/jali {};
-    eventd = unstablePkgs.callPackage ./packages/eventd {};
-    my-st = (import packages/st) pkgs config.m-0.colors;
-    neovim = (import ./nvim) pkgs config.m-0.rustdev.enable;
-    bugwarrior = unstablePkgs.python3Packages.bugwarrior.overrideAttrs (oldAttrs: rec {
-      version = "d48f735";
-      src = fetchFromGitHub {
-        owner = "ralphbean";
-        repo = "bugwarrior";
-        rev = version;
-        sha256 = "1facsqp1x3mcfal0c8rh6n12bavy6a9w2frlgmvv0by93y7a4nhj";
-     };
-    });
-  };
 };
 
 

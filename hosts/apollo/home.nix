@@ -83,8 +83,6 @@ programs.autorandr = {
 
 home.packages = [
   (pkgs.writeShellScriptBin "maintenance" ''
-    sudo -A nix-channel --update
-    sleep 5s
     sudo -A systemctl start nixos-upgrade
     sudo -A systemctl start nix-gc
     sudo -A systemctl start nix-optimise

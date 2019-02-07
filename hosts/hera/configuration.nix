@@ -5,7 +5,6 @@
 let
   inherit (config.m-0.private) me wireguard;
   inherit (config.m-0) hosts;
-  unstable-pkgs = import <unstable> {};
 in {
 
 imports = [

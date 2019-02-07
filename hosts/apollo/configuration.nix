@@ -5,11 +5,12 @@
 let
   inherit (config.m-0.private) me wireguard;
   inherit (config.m-0) hosts prefix;
+  nixos-hardware = (builtins.fetchGit "https://github.com/nixos/nixos-hardware");
 in {
 
 imports = [
-  <nixos-hardware/lenovo/thinkpad>
-  <nixos-hardware/common/pc/ssd>
+  "${nixos-hardware}/lenovo/thinkpad"
+  "${nixos-hardware}/common/pc/ssd"
  ./hardware-configuration.nix
  ../../system
  ./syncthing.nix
