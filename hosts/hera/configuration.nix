@@ -3,61 +3,20 @@
 # You need pw-files for every configured user in ./secret/pw-useralias for login to work.
 
 let
-  inherit (config.m-0.private) me wireguard;
-  inherit (config.m-0) hosts;
+  inherit (config.m-0.private) me;
 in {
 
 imports = [
  ./hardware-configuration.nix
  ../../system
- ./git.nix
  ./borg.nix
+ ./mail.nix
+ ./boot.nix
+ ./network.nix
+ ./secret
 ];
 
-networking = {
-  hostName = "hera";
-  interfaces.ens18 = {
-    proxyARP = true;
-    ipv4.addresses = [{ address = "213.136.94.190"; prefixLength = 24; }];
-    ipv6.addresses = [{ address = config.m-0.hosts.hera; prefixLength = 128; }];
-  };
-  defaultGateway = "213.136.94.1";
-  defaultGateway6 = { address = "fe80::1"; interface = "ens18"; };
-
-  bridges.bridge.interfaces = [ ];
-  interfaces.bridge = {
-    proxyARP = true;
-    ipv6.addresses = [{ address = config.m-0.hosts.hera-intern; prefixLength = 112; }];
-  };
-  nameservers = [ "213.136.95.10" "2a02:c207::1:53" "2a02:c207::2:53" ];
-  firewall.allowedUDPPorts = [ wireguard.port ];
-  wireguard.interfaces = {
-    m0wire = {
-      ips = [ "${hosts.hera-wg}/112" ];
-      privateKeyFile = "/etc/nixos/hosts/hera/secret/wireguard-private";
-      listenPort = wireguard.port;
-      peers = [
-        {
-          publicKey = wireguard.pub.apollo;
-          allowedIPs = [ "${hosts.apollo-wg}/128" ];
-          presharedKeyFile = "/etc/nixos/common/secret/wireguard-psk";
-        }
-      ];
-    };
-  };
-};
-
 services = {
-  ndppd = {
-    enable = true;
-    configFile = pkgs.writeText "ndppd.conf" ''
-      proxy ens18 {
-        rule ${config.m-0.prefix}::/64 {
-          static
-        }
-      }
-    '';
-  };
   borgbackup.jobs.data = {
     doInit = false;
     encryption.mode = "none";
@@ -79,33 +38,6 @@ m-0 = {
 };
 
 home-manager.users."${me.user}" = (import ./home.nix);
-
-# Use the systemd-boot EFI boot loader.
-boot = {
-  loader = {
-    grub = {
-      enable = true;
-      version = 2;
-      device = "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0";
-    };
-  };
-  supportedFilesystems = [ "exfat" ];
-  kernelParams = [ "ip=213.136.94.190::213.136.94.1:255.255.255.0:hera" ];
-  initrd = {
-    postMountCommands = ''
-      ip address flush dev eth0
-      ip link set eth0 down
-    '';
-    luks.devices = [
-    {
-      name = "root";
-      device = "/dev/disk/by-uuid/536fe284-36f2-425c-b0c5-a737280f9470";
-      preLVM = true;
-      allowDiscards = true;
-    }
-    ];
-  };
-};
 
 # This value determines the NixOS release with which your system is to be
 # compatible, in order to avoid breaking some software such as database

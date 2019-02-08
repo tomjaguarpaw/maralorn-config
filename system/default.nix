@@ -11,26 +11,30 @@ in {
     ./modules/server
     ./modules/server/mathechor.de.nix
     ./modules/standalone
-    "${builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark"}"
+    "${(builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark")}"
+    "${(builtins.fetchGit "ssh://git@hera/nixos-mailserver")}"
     ./modules/loginctl-linger.nix
   ];
 
-  i18n = {
-    defaultLocale = "en_US.UTF-8";
-  };
+  config = {
 
-  time.timeZone = "Europe/Berlin";
+    i18n = {
+      defaultLocale = "en_US.UTF-8";
+    };
 
-  networking = {
-    firewall.allowPing = true;
-    useDHCP = false;
-    hosts = lib.zipAttrs (lib.mapAttrsToList (host: ip: {"${ip}" = "${host} ${host}.m-0.eu";} ) config.m-0.hosts);
-  };
+    time.timeZone = "Europe/Berlin";
 
-  users = {
-    mutableUsers = false;
-    users.root = {
-      openssh.authorizedKeys.keys = me.keys;
+    networking = {
+      firewall.allowPing = true;
+      useDHCP = false;
+      hosts = lib.zipAttrs (lib.mapAttrsToList (host: ip: {"${ip}" = "${host} ${host}.m-0.eu";} ) config.m-0.hosts);
+    };
+
+    users = {
+      mutableUsers = false;
+      users.root = {
+        openssh.authorizedKeys.keys = me.keys;
+      };
     };
   };
 }
