@@ -3,7 +3,7 @@ let
   certPath = "/var/lib/acme/hera.m-0.eu";
 in
 {
-
+networking.firewall.allowedTCPPorts = [ 25 143 587 ];
 
 services = {
   nginx = {
@@ -28,11 +28,7 @@ containers.mail = {
       certificateScheme = 1;
       certificateFile = "${certPath}/fullchain.pem";
       keyFile = "${certPath}/key.pem";
-      monitoring = {
-        enable = true;
-        alertAddress = "mail-alert@maralorn.de";
-      };
-      extraVirtualAliases = { "forward@maralorn.de" = ["maralorn@dermstadt.ccc.de" ]; }; # include junge-erwachsene hier.
+      extraVirtualAliases = { "forward@maralorn.de" = ["maralorn@darmstadt.ccc.de" ]; }; # include junge-erwachsene hier.
     };
   };
 };
