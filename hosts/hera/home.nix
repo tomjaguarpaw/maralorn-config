@@ -8,22 +8,16 @@ imports = [
 
 m-0 = {
   hostName = "hera";
-  taskwarrior.enable = true;
+  taskwarrior.enable = false;
   habitask.enable = false;
-  bugwarrior.enable = true;
-  rustdev.enable = true;
-  eventd.enable = true;
+  bugwarrior.enable = false;
+  rustdev.enable = false;
+  eventd.enable = false;
   weechat = {
     enable = true;
     user = config.m-0.private.hackint.user;
     pw = config.m-0.private.hackint.hackint_pw;
     channels = config.m-0.private.hackint.channels;
-  };
-  mail = {
-    enable = true;
-    boxes = with config.m-0.private.mail; [ private work work2 ];
-    sendmail = with config.m-0.private.sendmail; [ private work work2 club club2 ];
-    default = config.m-0.private.sendmail.private;
   };
 };
 
