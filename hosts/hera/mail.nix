@@ -28,7 +28,7 @@ containers.mail = {
       certificateScheme = 1;
       certificateFile = "${certPath}/fullchain.pem";
       keyFile = "${certPath}/key.pem";
-      extraVirtualAliases = { "forward@maralorn.de" = ["maralorn@darmstadt.ccc.de" ]; }; # include junge-erwachsene hier.
+      extraVirtualAliases = config.m-0.private.lists;
     };
   };
 };
