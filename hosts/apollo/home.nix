@@ -32,11 +32,11 @@ m-0 = {
   } ];
   mail = {
     enable = true;
-    boxes = with config.m-0.private.mail; [ private work work2 ];
-    sendmail = with config.m-0.private.sendmail; [ private work work2 club club2 ];
-    default = config.m-0.private.sendmail.private;
+    accounts = config.m-0.private.mail_accounts;
   };
 };
+
+
 programs.autorandr = {
   enable = true;
   hooks = {
