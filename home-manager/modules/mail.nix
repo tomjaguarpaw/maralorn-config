@@ -15,12 +15,53 @@ config = mkIf mail.enable {
 
 services.mbsync = {
   enable = true;
-  frequency = "*:0/5";
+  frequency = "*:0/30";
   verbose = false;
-  postExec = "${pkgs.notmuch}/bin/notmuch new";
+  postExec = "${pkgs.notmuch}/bin/notmuch --config=${config.home.sessionVariables.NOTMUCH_CONFIG} new";
 };
 
 accounts.email.accounts = config.m-0.mail.accounts;
+
+systemd.user.services = let
+  mkService = name: account: let
+    configjs = pkgs.writeText "config.js" ''
+      var child_process = require('child_process');
+
+      function getStdout(cmd) {
+          var stdout = child_process.execSync(cmd);
+          return stdout.toString().trim();
+      }
+
+      exports.host = "${account.imap.host}"
+      exports.port = 993
+      exports.tls = true;
+      exports.tlsOptions = { "rejectUnauthorized": false };
+      exports.username = "${account.userName}";
+      exports.password = getStdout("${toString account.passwordCommand}");
+      exports.onNotify = "${pkgs.isync}/bin/mbsync ${name}"
+      exports.onNotifyPost = "${pkgs.notmuch}/bin/notmuch new"
+      exports.boxes = [ "Inbox" ];
+    '';
+  in
+    {
+      Unit = {
+        Description = "Run imapnotify for imap account ${name}";
+      };
+      Service = {
+        ExecStart= "${pkgs.imapnotify}/bin/imapnotify -c ${configjs}";
+      };
+      Install = {
+        WantedBy = [ "default.target" ];
+      };
+    };
+  mkServiceWithName = name: account: {
+    name = "imapnotify-${name}-inbox";
+    value = mkService name account;
+  };
+  hasImapHost = name: account: account.imap != null;
+in
+  mapAttrs' mkServiceWithName (filterAttrs hasImapHost config.accounts.email.accounts);
+
 programs.msmtp.enable = true;
 programs.mbsync.enable = true;
 programs.notmuch = {
@@ -28,8 +69,8 @@ programs.notmuch = {
   hooks.postInsert = ''
     ${pkgs.notmuch}/bin/notmuch tag +deleted -- "folder:/Trash/ (not tag:deleted)"
     ${pkgs.notmuch}/bin/notmuch tag -deleted -- "(not folder:/Trash/) tag:deleted"
-    ${pkgs.notmuch}/bin/notmuch tag +spam -- "folder:/Spam|SPAM/ (not tag:spam)"
-    ${pkgs.notmuch}/bin/notmuch tag -spam -- "(not folder:/Spam|SPAM/) tag:spam"
+    ${pkgs.notmuch}/bin/notmuch tag +spam -- "folder:/Junk|Spam|SPAM/ (not tag:spam)"
+    ${pkgs.notmuch}/bin/notmuch tag -spam -- "(not folder:/Junk|Spam|SPAM/) tag:spam"
   '';
   new.tags = [];
   maildir.synchronizeFlags = true;
