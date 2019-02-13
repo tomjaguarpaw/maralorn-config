@@ -3,7 +3,7 @@ let
   certPath = "/var/lib/acme/hera.m-0.eu";
 in
 {
-networking.firewall.allowedTCPPorts = [ 25 143 587 ];
+networking.firewall.allowedTCPPorts = [ 25 143 587 993 ];
 
 services = {
   nginx = {
@@ -21,6 +21,7 @@ containers.mail = {
     imports = [../../system];
     mailserver = {
       enable = true;
+      enableImapSsl = true;
       fqdn = "hera.m-0.eu";
       domains = [ "m-0.eu" "maralorn.de" "choreutes.de" "mathechor.de" ];
       loginAccounts = config.m-0.private.mailUsers;
