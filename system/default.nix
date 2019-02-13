@@ -1,7 +1,7 @@
 { pkgs, config, lib, ... }:
 let
   me = config.m-0.private.me;
-  home-manager = (builtins.fetchGit { url = "https://github.com/rycee/home-manager/"; ref = "nixos-module-user-pkgs";});
+  home-manager = (builtins.fetchGit { url = "https://github.com/rycee/home-manager/"; ref = "nixos-module-user-pkgs-v2";});
 in {
   imports = [
     "${home-manager}/nixos"
@@ -23,6 +23,8 @@ in {
     };
 
     time.timeZone = "Europe/Berlin";
+
+    home-manager.useUserPackages = true;
 
     networking = {
       firewall.allowPing = true;
