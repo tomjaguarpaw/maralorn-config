@@ -131,6 +131,7 @@ programs.notmuch = {
         set pgp_sign_as="${me.gpg}"
         set pgp_use_gpg_agent = yes
         set pgp_default_key="${me.gpg}"
+        set timeout = 5
 
 
         alternates ${mutt_alternates}
