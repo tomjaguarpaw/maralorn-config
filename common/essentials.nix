@@ -18,7 +18,7 @@
     liboping
     psmisc
     unzip
-
+    rename
     ];
 
   extra = pkgs: with pkgs; [
@@ -26,7 +26,6 @@
     htop
     tree
     rxvt_unicode.terminfo
-    st
     pwgen
     borgbackup
 
