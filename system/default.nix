@@ -19,7 +19,9 @@ in {
     ./modules/loginctl-linger.nix
   ];
 
+
   config = {
+#    nix.nixPath = [ "unstable=channel:nixos-unstable" "nixos-config=/etc/nixos/" "stable=channel:nixos-18.09" ];
 
     i18n = {
       defaultLocale = "en_US.UTF-8";
