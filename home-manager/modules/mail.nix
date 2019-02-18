@@ -78,6 +78,7 @@ programs.notmuch = {
   home = {
     packages = with pkgs; [
       neomutt
+      (writeShellScriptBin "open-mail" ''strace -e trace=none -e signal=none -qq ${pkgs.neomutt}/bin/neomutt -e "push <vfolder-from-query>mid:/$1/<return><search>~i$1<return><display-message>"'')
     ];
     file = let
         mutt_alternates = "@maralorn.de " + (builtins.concatStringsSep " " me.alternates);
