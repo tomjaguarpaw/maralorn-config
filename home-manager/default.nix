@@ -61,6 +61,9 @@ programs = {
     '';
   };
   git = {
+    aliases = {
+      sync = "!git pull -r && git push";
+    };
     enable = true;
     ignores = [
       ".syncthing*.tmp"
