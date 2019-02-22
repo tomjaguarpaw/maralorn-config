@@ -44,5 +44,13 @@ in {
       };
     };
     systemd.services.nixos-upgrade.path = [ pkgs.gnutar pkgs.xz.bin pkgs.gitMinimal config.nix.package.out ];
+
+    services = {
+      nginx = {
+        recommendedOptimisation = true;
+        recommendedGzipSettings = true;
+        recommendedTlsSettings = true;
+      };
+    };
   };
 }

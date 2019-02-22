@@ -42,6 +42,8 @@ options = {
       blog = "${hera-p}:6";
       chor = "${hera-p}:7";
       matrix = "${hera-p}:8";
+      cloud = "${hera-p}:9";
+      web = "${hera-p}:a";
 
       apollo = apollo-wg;
     };

@@ -12,6 +12,8 @@ imports = [
  ./borg.nix
  ./mail.nix
  ./boot.nix
+ ./cloud.nix
+ ./web.nix
  ./network.nix
  ./secret
 ];
@@ -31,10 +33,6 @@ m-0 = {
   server.enable = true;
   standalone.enable = true;
   git-server.enable = true;
-  mathechor-de = {
-    enable = true;
-    password = config.m-0.private.mathechor-pw;
-  };
 };
 
 home-manager.users."${me.user}" = (import ./home.nix);

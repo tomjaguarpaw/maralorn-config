@@ -5,15 +5,6 @@ in
 {
 networking.firewall.allowedTCPPorts = [ 25 143 587 993 ];
 
-services = {
-  nginx = {
-    enable = true;
-    virtualHosts."hera.m-0.eu" = {
-      enableACME = true;
-    };
-  };
-};
-
 containers.mail = {
   bindMounts = { "${certPath}" = { hostPath = certPath; }; };
   autoStart = true;
