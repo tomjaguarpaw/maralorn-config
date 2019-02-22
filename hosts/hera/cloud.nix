@@ -7,7 +7,7 @@ in {
     privateNetwork = true;
     hostBridge = "bridge";
     config = { pkgs, ... }: {
-      disabledModules = [ "services/wep-apps/nextcloud.nix" ];
+      disabledModules = [ "services/web-apps/nextcloud.nix" ];
       imports = [
         ../../system
         ./nextcloud.nix
