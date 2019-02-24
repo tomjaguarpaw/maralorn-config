@@ -22,6 +22,7 @@ services.sniproxy = {
     }
     table {
       cloud.maralorn.de ${hosts.cloud}
+      cloud.mathechor.de ${hosts.mathechor-cloud}
       .* ${hosts.web}
     }
   '';

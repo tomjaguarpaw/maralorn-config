@@ -59,6 +59,13 @@ config = mkIf config.m-0.mathechor-de.enable {
             root = "${page}/intern";
             index = "index.html";
           };
+          "/mathechor.ics" = {
+            proxyPass = "https://cloud.mathechor.de/remote.php/dav/public-calendars/nebsfFTzQKGSSsDc?export";
+            extraConfig = ''
+              proxy_ssl_name cloud.mathechor.de;
+              proxy_ssl_server_name on;
+            '';
+          };
         };
       };
     };

@@ -1,8 +1,8 @@
 { config, ... }:
 let
   inherit (config.m-0.private) me cloud;
-in {
-  containers.cloud = {
+  inherit (config.m-0) hosts;
+  nextcloud-container = { v6, v4, hostname }: {
     autoStart = true;
     privateNetwork = true;
     hostBridge = "bridge";
@@ -15,17 +15,19 @@ in {
 
       networking = {
         interfaces.eth0 = {
-          ipv6.addresses = [{ address = config.m-0.hosts.cloud; prefixLength = 112; }];
+          ipv6.addresses = [{ address = v6; prefixLength = 112; }];
+          ipv4.addresses = [{ address = v4; prefixLength = 24; }];
         };
         inherit (config.networking) nameservers;
-        defaultGateway6 = { address = config.m-0.hosts.hera-intern; interface = "eth0"; };
+        defaultGateway6 = { address = hosts.hera-intern; interface = "eth0"; };
+        defaultGateway = { address = hosts.hera-intern-v4; interface = "eth0"; };
         firewall.allowedTCPPorts = [ 80 443 ];
       };
 
       services = {
 
         nginx = {
-          virtualHosts."cloud.maralorn.de" = {
+          virtualHosts."${hostname}" = {
             forceSSL = true;
             enableACME = true;
           };
@@ -33,7 +35,7 @@ in {
 
         nextcloud = {
           enable = true;
-          hostName = "cloud.maralorn.de";
+          hostName = hostname;
           nginx.enable = true;
           caching = {
             redis = true;
@@ -67,6 +69,20 @@ in {
           "postgresql.service"
         ];
       };
+    };
+  };
+
+in {
+  containers = {
+    mathechor-cloud = nextcloud-container {
+      hostname = "cloud.mathechor.de";
+      v6 = hosts.mathechor-cloud;
+      v4 = hosts.mathechor-cloud-intern-v4;
+    };
+    cloud = nextcloud-container {
+      hostname = "cloud.maralorn.de";
+      v6 = hosts.cloud;
+      v4 = hosts.cloud-intern-v4;
     };
   };
 }

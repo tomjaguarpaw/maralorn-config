@@ -18,6 +18,12 @@ networking = {
   interfaces.bridge = {
     proxyARP = true;
     ipv6.addresses = [{ address = hosts.hera-intern; prefixLength = 112; }];
+    ipv4.addresses = [{ address = "10.0.0.1"; prefixLength = 24; }];
+  };
+  nat = {
+    enable = true;
+    externalInterface = "ens18";
+    internalInterfaces = [ "bridge" ];
   };
   nameservers = [ "213.136.95.10" "2a02:c207::1:53" "2a02:c207::2:53" ];
   firewall.allowedUDPPorts = [ wireguard.port ];

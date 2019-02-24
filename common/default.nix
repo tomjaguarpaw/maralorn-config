@@ -29,12 +29,15 @@ options = {
       hera-p = "${p}::3";
       apollo-p = "${p}::1";
       wg-p = "${p}::100";
+      v4-p = "10.0.0";
     in rec {
+      hera = "${p}::1";
+
+      hera-v4 = "213.136.94.190";
+
       hera-wg = "${wg-p}:1";
       apollo-wg = "${wg-p}:2";
 
-      hera-v4 = "213.136.94.190";
-      hera = "${p}::1";
       hera-intern = "${hera-p}:1";
       git = "${hera-p}:2";
       borg = "${hera-p}:3";
@@ -44,8 +47,13 @@ options = {
       matrix = "${hera-p}:8";
       cloud = "${hera-p}:9";
       web = "${hera-p}:a";
+      mathechor-cloud = "${hera-p}:b";
 
       apollo = apollo-wg;
+
+      hera-intern-v4 = "${v4-p}.1";
+      cloud-intern-v4 = "${v4-p}.2";
+      mathechor-cloud-intern-v4 = "${v4-p}.3";
     };
   };
 };
