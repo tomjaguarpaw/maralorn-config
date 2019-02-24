@@ -13,7 +13,6 @@ imports = [
   "${nixos-hardware}/common/pc/ssd"
  ./hardware-configuration.nix
  ../../system
- ./syncthing.nix
 ];
 
 networking = {

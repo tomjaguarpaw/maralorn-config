@@ -122,6 +122,7 @@ mkIf config.m-0.graphical.enable {
     };
   };
   services = {
+    nextcloud-client.enable = true;
     random-background = {
       enable = true;
       imageDirectory = "%h/data/aktuell/media/bilder/wallpaper/";
