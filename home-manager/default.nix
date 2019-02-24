@@ -55,6 +55,7 @@ programs = {
   tmux = {
     enable = true;
     extraConfig = ''
+      set default-terminal "screen-256color"
       set -g set-titles on
       set -g status off
       set -g escape-time 1
