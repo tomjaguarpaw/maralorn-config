@@ -442,7 +442,7 @@ in {
                 try_files $uri/ =404;
                 index index.php;
               '';
-              "~ \\.(?:css|js|woff|svg|gif)$".extraConfig = ''
+              "~ \\.(?:css|js|woff2?|svg|gif)$".extraConfig = ''
                 try_files $uri /index.php$uri$is_args$args;
                 add_header Cache-Control "public, max-age=15778463";
                 add_header X-Content-Type-Options nosniff;
@@ -463,6 +463,8 @@ in {
               add_header X-Robots-Tag none;
               add_header X-Download-Options noopen;
               add_header X-Permitted-Cross-Domain-Policies none;
+              add_header Referrer-Policy strict-origin;
+              add_header Strict-Transport-Security "max-age=15552000; includeSubDomains";
               error_page 403 /core/templates/403.php;
               error_page 404 /core/templates/404.php;
               client_max_body_size ${cfg.maxUploadSize};
