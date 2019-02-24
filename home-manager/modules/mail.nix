@@ -49,6 +49,8 @@ systemd.user.services = let
       };
       Service = {
         ExecStart= "${pkgs.imapnotify}/bin/imapnotify -c ${configjs}";
+        Restart = "always";
+        RestartSec = "1min";
       };
       Install = {
         WantedBy = [ "default.target" ];
