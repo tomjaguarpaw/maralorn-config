@@ -12,6 +12,7 @@ in {
     ./modules/git.nix
     ./modules/mathechor.de.nix
     ./modules/server
+    ./modules/blog.nix
     ./modules/standalone
     "${(builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark")}"
     "${(builtins.fetchGit "ssh://git@hera/nixos-mailserver")}"

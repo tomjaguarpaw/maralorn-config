@@ -43,6 +43,7 @@ containers.web = {
       firewall.allowedTCPPorts = [ 80 443 ];
     };
     m-0 = {
+      blog.enable = true;
       mathechor-de = {
         enable = true;
         password = config.m-0.private.mathechor-pw;
