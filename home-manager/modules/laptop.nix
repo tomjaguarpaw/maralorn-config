@@ -75,9 +75,11 @@ in
     libertine
     nerdfonts
 
+    networkmanagerapplet
+
     # media
-    spotify
     ncmpcpp
+    ncpamixer
     pavucontrol
     deluge
     mpd
