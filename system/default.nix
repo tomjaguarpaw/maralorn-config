@@ -9,9 +9,9 @@ in {
     "${home-manager}/nixos"
     ../common
     ./modules/laptop.nix
-    ./modules/server/git.nix
+    ./modules/git.nix
+    ./modules/mathechor.de.nix
     ./modules/server
-    ./modules/server/mathechor.de.nix
     ./modules/standalone
     "${(builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark")}"
     "${(builtins.fetchGit "ssh://git@hera/nixos-mailserver")}"
