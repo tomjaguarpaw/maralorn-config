@@ -29,6 +29,7 @@ in
       enable = true;
       notify = true;
     };
+    network-manager-applet.enable = true;
   };
 
   home.packages = with pkgs; [
