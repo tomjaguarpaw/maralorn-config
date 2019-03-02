@@ -153,6 +153,14 @@ services = {
 
 home.packages = with pkgs; [
   neovim
+  (pkgs.writeShellScriptBin "print215" ''
+    scp "$@" ag-forward:
+    ssh ag-forward lpr -Zduplex -r "$@"
+  '')
+  (pkgs.writeShellScriptBin "print215single" ''
+    scp "$@" ag-forward:
+    ssh ag-forward lpr -r "$@"
+  '')
 ];
 xdg.enable = true;
 }
