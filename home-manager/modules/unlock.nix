@@ -15,7 +15,7 @@ let
     done;
     echo
     echo "Ping successful; Entering disk encryption password"
-    ${pkgs.pass}/bin/pass ${passPath} | ssh -4 root@${hostName} -o UserKnownHostsFile=${knownHosts} cryptsetup-askpass && echo "Unlocking of ${name} successful" || echo "Unlockung of ${name} failed"
+    ${pkgs.pass}/bin/pass ${passPath} | ssh -4 root@${hostName} -o UserKnownHostsFile=${knownHosts} cryptsetup-askpass && echo "Unlocking of ${name} successful" || echo "Unlocking of ${name} failed"
   '';
 in
 {
