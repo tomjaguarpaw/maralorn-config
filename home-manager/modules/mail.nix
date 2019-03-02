@@ -74,7 +74,10 @@ programs.notmuch = {
     ${pkgs.notmuch}/bin/notmuch tag +spam -- "folder:/Junk|Spam|SPAM/ (not tag:spam)"
     ${pkgs.notmuch}/bin/notmuch tag -spam -- "(not folder:/Junk|Spam|SPAM/) tag:spam"
   '';
-  new.tags = [];
+  new = {
+    tags = [];
+    ignore = [ ".isyncuidmap.db" ];
+  };
   maildir.synchronizeFlags = true;
 };
   home = {
@@ -151,6 +154,8 @@ programs.notmuch = {
         set edit_headers=yes
         set mbox_type=Maildir
         set spoolfile="${maildir}/hera/Inbox"
+        set record="${maildir}/hera/Archiv/unsortiert"
+        set postponed="${maildir}/hera/Drafts"
         set mail_check_stats=yes
         bind index / vfolder-from-query
         set header_cache = "~/.cache/neomutt"
