@@ -1,8 +1,9 @@
-{ config, ... }:
+{ config, lib, ... }:
+with lib;
 let
   inherit (config.m-0.private) me cloud;
   inherit (config.m-0) hosts;
-  nextcloud-container = { v6, v4, hostname }: {
+  nextcloud-container = { v6, v4, hostname , news-updater ? false}: {
     autoStart = true;
     privateNetwork = true;
     hostBridge = "bridge";
@@ -37,6 +38,7 @@ let
           enable = true;
           hostName = hostname;
           nginx.enable = true;
+          maxUploadSize = "10g";
           caching = {
             redis = true;
             apcu = false;
@@ -63,11 +65,31 @@ let
           '';
         };
       };
-      systemd.services."nextcloud-setup"= {
-        requires = ["postgresql.service"];
-        after = [
-          "postgresql.service"
-        ];
+      systemd = {
+        services ={
+          "nextcloud-setup"= {
+            requires = ["postgresql.service"];
+            after = [
+              "postgresql.service"
+            ];
+          };
+          "nextcloud-news-updater" = mkIf news-updater {
+            startAt = "20:00";
+            serviceConfig = {
+              Type = "oneshot";
+            };
+            script = let
+              config = pkgs.writeText "updater.ini" (toINI {} {
+                updater = {
+                  user = cloud.adminuser;
+                  password = cloud.adminpass;
+                  url = "https://${hostname}/";
+                  mode = "singlerun";
+                };});
+            in
+              "${pkgs.nextcloud-news-updater}/bin/nextcloud-news-updater -c ${config}";
+          };
+        };
       };
     };
   };
@@ -83,6 +105,7 @@ in {
       hostname = "cloud.maralorn.de";
       v6 = hosts.cloud;
       v4 = hosts.cloud-intern-v4;
+      news-updater = true;
     };
   };
 }
