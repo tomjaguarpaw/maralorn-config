@@ -64,6 +64,7 @@ in
     musescore
     handbrake
     evince
+    gnome3.nautilus
 
     #dev
     octave
