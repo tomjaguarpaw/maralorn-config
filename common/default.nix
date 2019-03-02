@@ -54,6 +54,7 @@ options = {
       hera-intern-v4 = "${v4-p}.1";
       cloud-intern-v4 = "${v4-p}.2";
       mathechor-cloud-intern-v4 = "${v4-p}.3";
+      matrix-intern-v4 = "${v4-p}.4";
     };
   };
 };

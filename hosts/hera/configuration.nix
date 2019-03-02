@@ -15,6 +15,7 @@ imports = [
  ./cloud.nix
  ./web.nix
  ./network.nix
+ ./matrix.nix
  ./secret
 ];
 

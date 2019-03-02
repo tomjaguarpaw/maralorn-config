@@ -20,10 +20,21 @@ services.sniproxy = {
     listen 443 {
       proto tls
     }
+    listen 8448 {
+      proto tls
+      table matrix
+
+      fallback ${hosts.matrix}:8448
+    }
     table {
       cloud.maralorn.de ${hosts.cloud}
       cloud.mathechor.de ${hosts.mathechor-cloud}
+      matrix.maralorn.de ${hosts.matrix}
+      riot.maralorn.de ${hosts.matrix}
       .* ${hosts.web}
+    }
+    table matrix {
+      .* ${hosts.matrix}
     }
   '';
 };
@@ -54,6 +65,31 @@ containers.web = {
         enable = true;
         virtualHosts."hera.m-0.eu" = {
           enableACME = true;
+          forceSSL = true;
+          locations = {
+            "/" = {
+              extraConfig = ''
+                return 200 "Hello there. I hope you are having a very nice day! If you don't know what to find here, you probably don't care about this domain.";
+              '';
+            };
+          };
+        };
+        virtualHosts."maralorn.de" = {
+          enableACME = true;
+          forceSSL = true;
+          locations = {
+            "/.well-known/matrix/server" = {
+              extraConfig = ''
+                default_type application/json;
+                return 200 "{\"m.server\": \"matrix.maralorn.de:443\"}";
+              '';
+            };
+            "/" = {
+              extraConfig = ''
+                return 200 "Hello there. I hope you are having a very nice day! If you don't know what to find here, you probably don't care about this domain.";
+              '';
+            };
+          };
         };
       };
     };
