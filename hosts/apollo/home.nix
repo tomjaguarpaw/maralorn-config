@@ -55,12 +55,12 @@ programs.autorandr = {
         eDP1 = {
           enable = true;
           primary = true;
-          position = "1920x0";
+          position = "0x0";
           mode = "2560x1440";
         };
         DP2-2 = {
           enable = true;
-          position = "0x0";
+          position = "2560x0";
           mode = "1920x1080";
         };
       };
