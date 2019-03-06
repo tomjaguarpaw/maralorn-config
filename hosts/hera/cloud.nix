@@ -79,7 +79,7 @@ let
               Type = "oneshot";
             };
             script = let
-              config = pkgs.writeText "updater.ini" (toINI {} {
+              config = pkgs.writeText "updater.ini" (generators.toINI {} {
                 updater = {
                   user = cloud.adminuser;
                   password = cloud.adminpass;
