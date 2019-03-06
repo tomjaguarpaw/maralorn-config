@@ -86,10 +86,7 @@ config = mkIf config.m-0.weechat.enable {
       };
       Service = {
         Type = "forking";
-        RemainAfterExit = "yes";
-        KillMode = "none";
         ExecStart = "${pkgs.tmux}/bin/tmux -L weechat -2 new-session -d -s irc -n weechat '${pkgs.weechat}/bin/weechat'";
-        ExecStop = "${pkgs.tmux}/bin/tmux -L weechat kill-session -t irc";
         Restart = "always";
       };
       Install = {
