@@ -14,6 +14,7 @@ imports = [
  ./boot.nix
  ./cloud.nix
  ./web.nix
+ ./monitoring.nix
  ./network.nix
  ./matrix.nix
  ./secret

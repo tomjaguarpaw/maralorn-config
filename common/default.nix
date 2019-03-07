@@ -48,6 +48,7 @@ options = {
       cloud = "${hera-p}:9";
       web = "${hera-p}:a";
       mathechor-cloud = "${hera-p}:b";
+      monitoring = "${hera-p}:c";
 
       apollo = apollo-wg;
 
