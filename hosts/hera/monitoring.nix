@@ -9,6 +9,8 @@ services.prometheus.exporters.node = {
   firewallFilter = "! -i ens18 -p tcp -m tcp --dport 9100";
   enabledCollectors = [ "systemd" "logind" ];
 };
+m-0.monitoring = [ { name = "hera"; host = "hera-intern.m-0.eu:9100";  } ];
+m-0.monitoring = [ { name = "monitoring-container"; host = "localhost:9100"; } ];
 
 containers.monitoring = {
   autoStart = true;
@@ -31,7 +33,10 @@ containers.monitoring = {
       scrapeConfigs = [
         {
           job_name = "nodes";
-          static_configs = [{targets = [ "localhost:9100" "${hosts.hera-intern}:9100" ];}];
+          static_configs = map entry: {
+            targets = [ entry.host ];
+            labels = [ entry.name ];
+          } config.m-0.monitoring;
         }
       ];
       exporters.node.enable = true;

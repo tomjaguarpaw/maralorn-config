@@ -22,6 +22,19 @@ options = {
     default = "2a02:c207:3002:7584";
     type = types.str;
   };
+  m-0.monitoring = mkOption {
+    type = types.listOf types.submodule {
+      options = {
+        name = mkOption {
+          type = types.str;
+        };
+        host = mkOption {
+          type = types.str;
+        };
+      };
+    };
+    default = [];
+  };
   m-0.hosts = mkOption {
     type = types.attrs;
     default = let
