@@ -48,7 +48,19 @@ in {
     systemd.services.nixos-upgrade.path = [ pkgs.gnutar pkgs.xz.bin pkgs.gitMinimal config.nix.package.out ];
 
     services = {
+      prometheus.exporters = {
+        node = {
+          enable = true;
+          openFirewall = true;
+          enabledCollectors = [ "systemd" "logind" ];
+        };
+        nginx = {
+          enable = config.services.nginx.enable;
+          openFirewall = true;
+        };
+      };
       nginx = {
+        statusPage = true;
         recommendedOptimisation = true;
         recommendedGzipSettings = true;
         recommendedTlsSettings = true;

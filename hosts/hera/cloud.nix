@@ -95,6 +95,12 @@ let
   };
 
 in {
+  m-0.monitoring = [
+    { name = "mathechor-cloud"; host = "mathechor-cloud:9100"; }
+    { name = "mathechor-cloud-nginx"; host = "mathechor-cloud:9113"; }
+    { name = "cloud"; host = "cloud:9100"; }
+    { name = "cloud-nginx"; host = "cloud:9113"; }
+  ];
   containers = {
     mathechor-cloud = nextcloud-container {
       hostname = "cloud.mathechor.de";

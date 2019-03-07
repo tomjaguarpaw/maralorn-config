@@ -1,15 +1,37 @@
 { config, ... }:
 let
   certPath = "/var/lib/acme/hera.m-0.eu";
+  inherit (config.services.prometheus.exporters.node) firewallFilter;
 in
 {
 networking.firewall.allowedTCPPorts = [ 25 143 587 993 ];
+
+m-0.monitoring = [
+  { name = "mail-server"; host = "hera-intern:9101"; }
+  { name = "postfix"; host = "hera-intern:9154"; }
+  { name = "dovecot"; host = "hera-intern:9166"; }
+];
 
 containers.mail = {
   bindMounts = { "${certPath}" = { hostPath = certPath; }; };
   autoStart = true;
   config = { pkgs, lib, ... }: {
     imports = [../../system];
+    services.prometheus.exporters = {
+      node.port = 9101;
+      postfix = {
+        enable = true;
+        openFirewall = true;
+        inherit firewallFilter;
+        systemd.enable = true;
+      };
+      dovecot = {
+        enable = true;
+        openFirewall = true;
+        inherit firewallFilter;
+      };
+
+    };
     mailserver = {
       enable = true;
       enableImapSsl = true;

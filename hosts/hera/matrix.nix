@@ -8,6 +8,11 @@ in
 {
 networking.firewall.allowedTCPPorts = [ 3478 8448 ];
 
+m-0.monitoring = [
+    { name = "matrix"; host = "matrix:9100"; }
+    { name = "matrix-nginx"; host = "matrix:9113"; }
+];
+
 services.coturn = {
   enable = true;
   pkey = "/var/lib/acme/hera.m-0.eu/key.pem";

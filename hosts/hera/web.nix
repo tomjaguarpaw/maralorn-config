@@ -5,6 +5,10 @@ let
 in
 {
 networking.firewall.allowedTCPPorts = [ 80 443 ];
+m-0.monitoring = [
+    { name = "web"; host = "web:9100"; }
+    { name = "web-nginx"; host = "web:9113"; }
+];
 services.sniproxy = {
   enable = true;
   config = ''

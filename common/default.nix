@@ -10,6 +10,10 @@ config = {
   nixpkgs.overlays = [ (self: super: {
     unstable = import (builtins.fetchGit { url = "https://github.com/NixOS/nixpkgs-channels"; ref = "nixos-unstable";}) {};
   })];
+  m-0.monitoring = [ {
+    host = "apollo.m-0.eu:9100";
+    name = "apollo";
+  } ];
 };
 
 
@@ -23,7 +27,7 @@ options = {
     type = types.str;
   };
   m-0.monitoring = mkOption {
-    type = types.listOf types.submodule {
+    type = types.listOf (types.submodule {
       options = {
         name = mkOption {
           type = types.str;
@@ -32,7 +36,7 @@ options = {
           type = types.str;
         };
       };
-    };
+    });
     default = [];
   };
   m-0.hosts = mkOption {
