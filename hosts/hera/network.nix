@@ -15,12 +15,11 @@ networking = {
   defaultGateway6 = { address = "fe80::1"; interface = "ens18"; };
 
   firewall = {
-    extraCommands = "
-      ip6tables -F FORWARD
-      ip6tables -A FORWARD -p ipv6-icmp -j nixos-fw-accept
-      ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j nixos-fw-accept
-      ip6tables -A FORWARD ! -s ${config.m-0.prefix}::/64 -j nixos-fw-log-refuse
-    ";
+    extraCommands = ''
+      ip6tables -A FORWARD -p ipv6-icmp -j ACCEPT
+      ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+      ip6tables -A FORWARD ! -s ${config.m-0.prefix}::/64 -j DROP
+    '';
   };
 
 
