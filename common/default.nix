@@ -11,7 +11,7 @@ config = {
     unstable = import (builtins.fetchGit { url = "https://github.com/NixOS/nixpkgs-channels"; ref = "nixos-unstable";}) {};
   })];
   m-0.monitoring = [ {
-    host = "apollo.m-0.eu:9100";
+    host = "apollo:9100";
     name = "apollo";
   } ];
 };

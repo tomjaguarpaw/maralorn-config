@@ -16,12 +16,10 @@ networking = {
 
   firewall = {
     extraCommands = "
+      ip6tables -F FORWARD
       ip6tables -A FORWARD -p ipv6-icmp -j nixos-fw-accept
       ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j nixos-fw-accept
       ip6tables -A FORWARD ! -s ${config.m-0.prefix}::/64 -j nixos-fw-log-refuse
-    ";
-    extraStopCommands = "
-      ip6tables -F FORWARD
     ";
   };
 

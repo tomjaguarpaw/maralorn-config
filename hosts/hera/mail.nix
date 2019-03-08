@@ -4,7 +4,14 @@ let
   inherit (config.services.prometheus.exporters.node) firewallFilter;
 in
 {
-networking.firewall.allowedTCPPorts = [ 25 143 587 993 ];
+networking.firewall = {
+  allowedTCPPorts = [ 25 143 587 993 ];
+  extraCommands = ''
+    ip6tables -A nixos-fw  -s ${config.m-0.prefix}::/64 -p tcp -m tcp --dport 9101 -j nixos-fw-accept
+    ip6tables -A nixos-fw  -s ${config.m-0.prefix}::/64 -p tcp -m tcp --dport 9154 -j nixos-fw-accept
+    ip6tables -A nixos-fw  -s ${config.m-0.prefix}::/64 -p tcp -m tcp --dport 9166 -j nixos-fw-accept
+  '';
+};
 
 m-0.monitoring = [
   { name = "mail-server"; host = "hera-intern:9101"; }

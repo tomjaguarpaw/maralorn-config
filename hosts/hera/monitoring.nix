@@ -4,13 +4,10 @@ let
 in
 {
 services.prometheus.exporters.node = {
-  enable = true;
-  openFirewall = true;
   firewallFilter = "! -i ens18 -p tcp -m tcp --dport 9100";
-  enabledCollectors = [ "systemd" "logind" ];
 };
 m-0.monitoring = [
-  { name = "hera"; host = "hera-intern.m-0.eu:9100";  }
+  { name = "hera"; host = "hera-intern:9100";  }
   { name = "monitoring-container"; host = "localhost:9100"; }
 ];
 
