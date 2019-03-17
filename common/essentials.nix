@@ -19,6 +19,7 @@
     psmisc
     unzip
     rename
+    whois
     ];
 
   extra = pkgs: with pkgs; [
