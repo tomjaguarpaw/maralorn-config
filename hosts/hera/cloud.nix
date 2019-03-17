@@ -31,6 +31,7 @@ let
           virtualHosts."${hostname}" = {
             forceSSL = true;
             enableACME = true;
+            default = true;
           };
         };
 
