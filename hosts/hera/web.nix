@@ -14,9 +14,11 @@ services.sniproxy = {
   config = ''
     error_log {
       syslog daemon
+      priority warn
     }
     access_log {
       syslog daemon
+      priority error
     }
     listen 80 {
       proto http
