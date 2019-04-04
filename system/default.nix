@@ -1,7 +1,7 @@
 { pkgs, config, lib, ... }:
 let
   me = config.m-0.private.me;
-  home-manager = (builtins.fetchGit "https://github.com/rycee/home-manager/");
+  home-manager = (builtins.fetchGit { url = "https://github.com/rycee/home-manager/"; ref = "release-18.09";});
   unstable = builtins.fetchGit { url = "https://github.com/NixOS/nixpkgs-channels"; ref = "nixos-unstable";};
 in {
   disabledModules = [ "services/mail/rspamd.nix" ];
