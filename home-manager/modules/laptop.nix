@@ -87,6 +87,7 @@ mkIf config.m-0.laptop.enable {
     nerdfonts
 
     networkmanagerapplet
+    teamviewer
 
     # media
     ncmpcpp

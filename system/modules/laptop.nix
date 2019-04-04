@@ -31,8 +31,10 @@ in
         anonymousClients.allowedIpRanges = [ "127.0.0.1" "::1" ];
       };
     };
+    nixpkgs.config.allowUnfree = true;
 
     services = {
+      teamviewer.enable = true;
       unbound = {
         enable = true;
         extraConfig = ''
