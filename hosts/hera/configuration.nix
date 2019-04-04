@@ -39,6 +39,15 @@ m-0 = {
 
 home-manager.users."${me.user}" = (import ./home.nix);
 
+users.users.choreutes = {
+      linger = true;
+      description = "choreutes";
+      isNormalUser = true;
+      uid = 1001;
+      extraGroups = [ "wheel" "systemd-journal" ];
+      passwordFile = "/etc/nixos/hosts/hera/secret/pw-choreutes";
+};
+
 # This value determines the NixOS release with which your system is to be
 # compatible, in order to avoid breaking some software such as database
 # servers. You should change this only after NixOS release notes say you
