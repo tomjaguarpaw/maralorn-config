@@ -89,7 +89,6 @@ containers.matrix = {
       # Synapse
       matrix-synapse = {
         enable = true;
-        package = (import synapse-bump {}).matrix-synapse;
         enable_metrics = true;
         server_name = "maralorn.de";
         public_baseurl = "https://${hostName}";
