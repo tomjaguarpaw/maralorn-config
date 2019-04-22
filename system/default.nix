@@ -1,8 +1,7 @@
 { pkgs, config, lib, ... }:
 let
   me = config.m-0.private.me;
-  home-manager = (builtins.fetchGit { url = "https://github.com/rycee/home-manager/"; ref = "release-18.09";});
-  unstable = builtins.fetchGit { url = "https://github.com/NixOS/nixpkgs-channels"; ref = "nixos-unstable";};
+  home-manager = (builtins.fetchGit { url = "https://github.com/rycee/home-manager/"; ref = "release-19.03";});
 in {
   imports = [
     "${home-manager}/nixos"
@@ -21,7 +20,6 @@ in {
 
 
   config = {
-#    nix.nixPath = [ "unstable=channel:nixos-unstable" "nixos-config=/etc/nixos/" "stable=channel:nixos-18.09" ];
 
     i18n = {
       defaultLocale = "en_US.UTF-8";

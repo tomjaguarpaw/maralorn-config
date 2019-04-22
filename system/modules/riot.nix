@@ -28,7 +28,7 @@ config = mkIf cfg.enable {
       virtualHosts."${cfg.hostname}" = {
         enableACME = true;
         forceSSL = true;
-        root = pkgs.unstable.riot-web;
+        root = pkgs.riot-web;
         locations."/config.json" = {
           extraConfig = ''
             default_type application/json;

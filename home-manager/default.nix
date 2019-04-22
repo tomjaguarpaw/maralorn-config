@@ -30,20 +30,10 @@ imports = [
 
 nixpkgs.overlays = [ (self: super: {
   tasktree = super.callPackage ./packages/tasktree {};
-#    habitask = unstable.callPackage ./packages/habitask {};
   jali = super.callPackage ./packages/jali {};
-  eventd = super.unstable.callPackage ./packages/eventd {};
+  eventd = super.callPackage ./packages/eventd {};
   my-st = (import packages/st) super config.m-0.colors;
   neovim = (import ./nvim) super config.m-0.rustdev.enable;
-  bugwarrior = super.unstable.python3Packages.bugwarrior.overrideAttrs (oldAttrs: rec {
-    version = "d48f735";
-    src = super.fetchFromGitHub {
-      owner = "ralphbean";
-      repo = "bugwarrior";
-      rev = version;
-      sha256 = "1facsqp1x3mcfal0c8rh6n12bavy6a9w2frlgmvv0by93y7a4nhj";
-   };
-  });
 })];
 
 nixpkgs.config = {

@@ -80,7 +80,7 @@ config = mkIf config.m-0.graphical.enable {
       extraConfig = ''
             gaps right 320
         '';
-      package = pkgs.unstable.i3-gaps.overrideAttrs (oldattrs: rec {
+      package = pkgs.i3-gaps.overrideAttrs (oldattrs: rec {
         name = "i3-gaps-next";
         version = "41264e54b7a3039ce46919851ac73e22ae29d207";
         src = pkgs.fetchurl {

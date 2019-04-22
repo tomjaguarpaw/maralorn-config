@@ -8,7 +8,7 @@ imports = [ ./secret ];
 
 config = {
   nixpkgs.overlays = [ (self: super: {
-    unstable = import (builtins.fetchGit { url = "https://github.com/NixOS/nixpkgs-channels"; ref = "nixos-unstable";}) {};
+#    unstable = import (builtins.fetchGit { url = "https://github.com/NixOS/nixpkgs-channels"; ref = "nixos-unstable";}) {};
   })];
   m-0.monitoring = [ {
     host = "apollo:9100";

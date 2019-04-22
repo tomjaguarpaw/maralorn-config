@@ -2,8 +2,6 @@
 let
   hostName = "matrix.maralorn.de";
   inherit (config.m-0) hosts;
-  synapse-bump = builtins.fetchGit { url = "https://github.com/NixOS/nixpkgs"; ref = "master"; rev = "5fa2c13696a749850d562aa73465cb5d80b57d07";};
-  #unstable = builtins.fetchGit { url = "https://github.com/NixOS/nixpkgs-channels"; ref = "nixos-unstable";};
 in
 {
 networking.firewall.allowedTCPPorts = [ 3478 8448 ];
@@ -28,10 +26,8 @@ containers.matrix = {
   privateNetwork = true;
   hostBridge = "bridge";
   config = { pkgs, lib, ... }: {
-    disabledModules = [ "services/misc/matrix-synapse.nix" ];
     imports = [
       ../../system
-      "${synapse-bump}/nixos/modules/services/misc/matrix-synapse.nix"
   ];
     networking = {
       interfaces.eth0 = {
