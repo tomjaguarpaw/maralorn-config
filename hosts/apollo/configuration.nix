@@ -18,6 +18,7 @@ imports = [
 
 networking = {
   hostName = "apollo";
+  firewall.allowedTCPPorts = [ 8888 ];
   wireguard.interfaces = {
     m0wire = {
       allowedIPsAsRoutes = false;
