@@ -59,7 +59,6 @@ mkIf config.m-0.graphical.enable {
     packages = with pkgs; [
       terminal
       tasktree
-      my-st
       xautolock
       gnome3.dconf
     ];
