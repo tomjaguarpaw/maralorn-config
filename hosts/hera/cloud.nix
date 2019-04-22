@@ -101,7 +101,7 @@ in {
     { name = "cloud-nginx"; host = "cloud:9113"; }
   ];
   containers = {
-    mathechor-cloud = nextcloud-container {
+    chor-cloud = nextcloud-container {
       hostname = "cloud.mathechor.de";
       v6 = hosts.mathechor-cloud;
       v4 = hosts.mathechor-cloud-intern-v4;
