@@ -45,7 +45,7 @@ services.sniproxy = {
   '';
 };
 containers.web = {
-  bindMounts = { "${certPath}" = { hostPath = certPath; }; };
+  bindMounts = { "${certPath}" = { hostPath = certPath; isReadOnly = false; }; };
   autoStart = true;
   privateNetwork = true;
   hostBridge = "bridge";
