@@ -4,7 +4,6 @@ let
   home-manager = (builtins.fetchGit { url = "https://github.com/rycee/home-manager/"; ref = "release-18.09";});
   unstable = builtins.fetchGit { url = "https://github.com/NixOS/nixpkgs-channels"; ref = "nixos-unstable";};
 in {
-  disabledModules = [ "services/mail/rspamd.nix" ];
   imports = [
     "${home-manager}/nixos"
     ../common
@@ -17,7 +16,6 @@ in {
     ./modules/standalone
     "${(builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark")}"
     "${(builtins.fetchGit "ssh://git@hera/nixos-mailserver")}"
-    ./rspamd.nix
     ./modules/loginctl-linger.nix
   ];
 
