@@ -21,7 +21,6 @@ imports = [
   ./modules/weechat
   ./modules/update_tasks.nix
   ./modules/bugwarrior.nix
-  ./modules/habitask.nix
   ./modules/pythia.nix
   ../common
 #   ./sort-mail.nix
@@ -32,7 +31,6 @@ nixpkgs.overlays = [ (self: super: {
   tasktree = super.callPackage ./packages/tasktree {};
   jali = super.callPackage ./packages/jali {};
   eventd = super.callPackage ./packages/eventd {};
-  my-st = (import packages/st) super config.m-0.colors;
   neovim = (import ./nvim) super config.m-0.rustdev.enable;
 })];
 

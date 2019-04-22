@@ -9,7 +9,6 @@ imports = [
 m-0 = {
   hostName = "hera";
   taskwarrior.enable = false;
-  habitask.enable = false;
   bugwarrior.enable = false;
   rustdev.enable = false;
   eventd.enable = true;
