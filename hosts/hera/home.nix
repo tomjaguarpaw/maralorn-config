@@ -13,6 +13,10 @@ m-0 = {
   bugwarrior.enable = false;
   rustdev.enable = false;
   eventd.enable = true;
+  mail = {
+    enable = true;
+    accounts = config.m-0.private.mail_accounts;
+  };
   weechat = {
     enable = true;
     user = config.m-0.private.hackint.user;
