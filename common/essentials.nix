@@ -35,6 +35,7 @@
     socat
     nmap
     tcpdump
+    haskellPackages.hserv
 
     tmux
     tig
