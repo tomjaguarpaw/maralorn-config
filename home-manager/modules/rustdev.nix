@@ -8,7 +8,6 @@ config = mkIf config.m-0.rustdev.enable {
   home.packages = with pkgs; [
     rustup
     nix-prefetch-scripts
-    binutils-unwrapped
     gcc
   ];
 };

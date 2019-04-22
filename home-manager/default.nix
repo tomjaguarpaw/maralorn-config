@@ -23,8 +23,6 @@ imports = [
   ./modules/bugwarrior.nix
   ./modules/pythia.nix
   ../common
-#   ./sort-mail.nix
-#   ./morgenreport.nix
 ];
 
 nixpkgs.overlays = [ (self: super: {
