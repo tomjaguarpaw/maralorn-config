@@ -23,7 +23,10 @@ containers.mail = {
   bindMounts = { "${certPath}" = { hostPath = certPath; }; };
   autoStart = true;
   config = { pkgs, lib, ... }: {
-    imports = [../../system];
+    imports = [
+      ../../system
+      "${(builtins.fetchGit "ssh://git@hera/nixos-mailserver")}"
+    ];
     services.prometheus.exporters = {
       node.port = 9101;
       postfix = {

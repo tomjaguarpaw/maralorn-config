@@ -11,6 +11,7 @@ in {
 imports = [
   "${nixos-hardware}/lenovo/thinkpad"
   "${nixos-hardware}/common/pc/ssd"
+  "${(builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark")}"
  ./hardware-configuration.nix
  ../../system
 ];

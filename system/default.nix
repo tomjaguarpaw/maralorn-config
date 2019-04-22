@@ -13,8 +13,6 @@ in {
     ./modules/blog.nix
     ./modules/riot.nix
     ./modules/standalone
-    "${(builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark")}"
-    "${(builtins.fetchGit "ssh://git@hera/nixos-mailserver")}"
     ./modules/loginctl-linger.nix
   ];
 
