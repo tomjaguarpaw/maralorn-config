@@ -10,6 +10,7 @@ networking.firewall = {
     ip6tables -A nixos-fw  -s ${config.m-0.prefix}::/64 -p tcp -m tcp --dport 9101 -j nixos-fw-accept
     ip6tables -A nixos-fw  -s ${config.m-0.prefix}::/64 -p tcp -m tcp --dport 9154 -j nixos-fw-accept
     ip6tables -A nixos-fw  -s ${config.m-0.prefix}::/64 -p tcp -m tcp --dport 9166 -j nixos-fw-accept
+    iptables -A nixos-fw  -s 10.0.0.0/24 -p tcp -m tcp --dport 8842 -j nixos-fw-accept
   '';
 };
 
@@ -40,8 +41,26 @@ containers.mail = {
         openFirewall = true;
         inherit firewallFilter;
       };
-
     };
+    systemd.services = {
+      atomail = {
+        script = ''
+          ${pkgs.python}/bin/python ${builtins.fetchGit "https://github.com/remko/atomail.git"}/atomail.py --title "Readlater-E-Mails" --uri="http://hera-intern-v4:8842/rss.xml" /var/www/rss.xml --mode=maildir --file "/var/vmail/maralorn.de/malte.brandy/.Move.readlater/" --max-items=100
+          ${pkgs.rsync}/bin/rsync -a /var/vmail/maralorn.de/malte.brandy/.Move.readlater/cur/ /var/vmail/maralorn.de/malte.brandy/.Archiv.unsortiert/cur --remove-source-files
+        '';
+        startAt = "19:58:00";
+        serviceConfig.Type = "oneshot";
+      };
+      rss-server = {
+        preStart = "mkdir -p /var/www";
+        script = ''
+          cd /var/www
+          ${pkgs.haskellPackages.hserv}/bin/hserv -p8842
+        '';
+        wantedBy = [ "multi-user.target" ];
+      };
+    };
+    services.postfix.networks = [ "[${config.m-0.prefix}::]/64" "10.0.0.0/24" ];
     mailserver = {
       enable = true;
       enableImapSsl = true;
