@@ -73,6 +73,7 @@ options = {
       cloud-intern-v4 = "${v4-p}.2";
       mathechor-cloud-intern-v4 = "${v4-p}.3";
       matrix-intern-v4 = "${v4-p}.4";
+      monitoring-intern-v4 = "${v4-p}.5";
     };
   };
 };
