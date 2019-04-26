@@ -17,6 +17,7 @@ in
     upgrade-command = "${pkgs.systemd}/bin/systemctl start nixos-upgrade.service";
   in
     mkIf config.m-0.git-server.enable {
+    users.users.git.linger = true; # Frequent restarting of the systemd-user-unit leads to errors
     security.sudo.extraRules = [ { commands = [ { command = upgrade-command; options = [ "NOPASSWD" ]; } ];  users = [ "git" ]; } ];
     services.gitolite = {
       enable = true;
