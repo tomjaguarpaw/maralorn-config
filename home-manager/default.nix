@@ -38,6 +38,10 @@ nixpkgs.config = {
 
 
 programs = {
+  direnv = {
+    enable = true;
+    enableZshIntegration = true;
+  };
   tmux = {
     enable = true;
     extraConfig = ''

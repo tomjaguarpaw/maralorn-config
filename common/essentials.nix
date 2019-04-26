@@ -22,7 +22,11 @@
     whois
     ];
 
-  extra = pkgs: with pkgs; [
+    extra = pkgs: with pkgs; let
+      lorriSrc = builtins.fetchGit { url = "https://github.com/target/lorri.git"; ref = "rolling-release"; };
+      lorri = import "${lorriSrc}/default.nix" { src = lorriSrc; inherit pkgs; };
+    in
+      [
     git-crypt
     htop
     tree
@@ -31,6 +35,8 @@
     borgbackup
 
     home-manager
+    direnv
+    lorri
 
     socat
     nmap
