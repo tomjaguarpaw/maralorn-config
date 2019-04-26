@@ -47,6 +47,7 @@ in {
           enable = true;
           openFirewall = true;
           enabledCollectors = [ "systemd" "logind" ];
+          disabledCollectors = [ "timex" ];
         };
         nginx = {
           enable = config.services.nginx.enable;
