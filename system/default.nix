@@ -41,6 +41,8 @@ in {
     };
     systemd.services.nixos-upgrade.path = [ pkgs.gnutar pkgs.xz.bin pkgs.gitMinimal config.nix.package.out ];
 
+    nix.gc.options = "--delete-older-than 5d";
+
     services = {
       prometheus.exporters = {
         node = {

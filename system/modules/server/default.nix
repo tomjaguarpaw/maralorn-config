@@ -15,7 +15,6 @@ config = mkIf config.m-0.server.enable {
   nix = {
     gc = {
        automatic = true;
-       options = "--delete-older-than 5d";
     };
     optimise.automatic = true;
   };
