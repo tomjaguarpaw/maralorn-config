@@ -93,7 +93,7 @@ programs = {
     treeView = true;
   };
   ssh = {
-    controlMaster = "yes";
+    controlMaster = "auto";
     enable = true;
     matchBlocks = let
         matheGwProxy =  "ssh -q gw nc -q0 %h %p";
@@ -102,11 +102,8 @@ programs = {
       in [
         { host = "charon"; hostname = "charon.olymp.space"; }
         { host = "hera"; hostname = "hera.m-0.eu"; forwardAgent = true; }
-        { host = "*.olymp.space"; user = me.user; }
         { host = "ag-forward"; hostname = agHost; proxyCommand = matheGwProxy; user = meWork.user; }
         { host = "ag"; hostname = agHost; user = meWork.user; }
-        { host = "kiva-forward"; hostname = kivaHost; proxyCommand = matheGwProxy; user = meWork.user; }
-        { host = "kiva"; hostname = kivaHost; user = meWork.user; }
         { host = "gw"; hostname = "gwres4.mathematik.tu-darmstadt.de"; user = meWork.user; }
         { host = "shells"; hostname = "shells.darmstadt.ccc.de"; }
         { host = "vorstand"; hostname = "vorstand.darmstadt.ccc.de"; }
