@@ -94,7 +94,7 @@ programs = {
   };
   ssh = {
     controlMaster = "auto";
-    controlPersist = "yes";
+    controlPersist = "120";
     enable = true;
     matchBlocks = let
         matheGwProxy =  "ssh -q gw nc -q0 %h %p";
