@@ -34,7 +34,7 @@ containers.monitoring = {
       rules = [
                 ''
           ALERT node_down
-          IF up == 0
+          IF (up{name!="apollo"} == 0)
           FOR 5m
           LABELS {
             severity="page"
