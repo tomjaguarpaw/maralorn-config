@@ -52,6 +52,10 @@ let
             dbhost = "localhost";
             inherit (cloud) adminpass dbpass adminuser;
           };
+          autoUpdateApps = {
+            enable = true;
+            startAt = "20:30";
+          };
         };
 
         redis = {
