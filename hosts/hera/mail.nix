@@ -53,10 +53,10 @@ containers.mail = {
       };
       rss-server = {
         preStart = "mkdir -p /var/www";
-        script = ''
-          cd /var/www
-          ${pkgs.haskellPackages.hserv}/bin/hserv -p8842
-        '';
+        serviceConfig = {
+          WorkingDirectory = "/var/www";
+          ExecStart = "${pkgs.python3}/bin/python -m http.server 8842";
+        };
         wantedBy = [ "multi-user.target" ];
       };
     };
