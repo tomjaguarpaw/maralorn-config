@@ -8,8 +8,10 @@ let
     privateNetwork = true;
     hostBridge = "bridge";
     config = { pkgs, ... }: {
+      disabledModules = [ "services/web-apps/nextcloud.nix" ];
       imports = [
         ../../system
+        ./nextcloud.nix
       ];
 
       networking = {
