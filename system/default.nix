@@ -5,6 +5,7 @@ let
 in {
   imports = [
     "${home-manager}/nixos"
+    ../cachix.nix
     ../common
     ./modules/laptop.nix
     ./modules/git.nix
