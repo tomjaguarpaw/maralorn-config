@@ -61,6 +61,9 @@ mkIf config.m-0.laptop.enable {
     #dev
     meld
     icedtea8_web
+    octave
+    filezilla
+    vscode
 
     # tools & office
     feh
