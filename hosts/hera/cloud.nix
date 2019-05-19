@@ -74,25 +74,24 @@ let
         services ={
           "nextcloud-setup"= {
             requires = ["postgresql.service"];
-            after = [
-              "postgresql.service"
-            ];
+            after = ["postgresql.service"];
           };
           "nextcloud-news-updater" = mkIf news-updater {
             startAt = "20:00";
             serviceConfig = {
               Type = "oneshot";
+              User = "nextcloud";
+              ExecStart = let
+                config = pkgs.writeText "updater.ini" (generators.toINI {} {
+                  updater = {
+                    user = cloud.adminuser;
+                    password = cloud.adminpass;
+                    url = "https://${hostname}/";
+                    mode = "singlerun";
+                  };});
+                in
+                  "${pkgs.nextcloud-news-updater}/bin/nextcloud-news-updater -c ${config}";
             };
-            script = let
-              config = pkgs.writeText "updater.ini" (generators.toINI {} {
-                updater = {
-                  user = cloud.adminuser;
-                  password = cloud.adminpass;
-                  url = "https://${hostname}/";
-                  mode = "singlerun";
-                };});
-            in
-              "${pkgs.nextcloud-news-updater}/bin/nextcloud-news-updater -c ${config}";
           };
         };
       };
