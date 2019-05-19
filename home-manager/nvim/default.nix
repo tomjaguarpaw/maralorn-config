@@ -27,7 +27,6 @@ pkgs.neovim.override {
         vim-trailing-whitespace
         vim-polyglot
         nvim-cm-racer
-        nvim-completion-manager
         vim-pandoc
         nerdcommenter
         vim-signify
