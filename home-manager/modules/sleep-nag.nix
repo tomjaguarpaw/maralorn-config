@@ -1,7 +1,9 @@
 { lib, pkgs, config, ... }:
 with lib;
 let
-  sleep-nag = pkgs.writeShellScriptBin "sleep-nag" ''
+  sleep-nag = pkgs.writeScript "sleep-nag" ''
+#!${pkgs.stdenv.shell}
+
 while true
 do
     if [[ `date +%H` -ge 23 ]] || [[ `date +%H` -lt 6 ]]; then
@@ -21,7 +23,7 @@ config = mkIf config.m-0.sleep-nag.enable {
         Description = "Sleep nag";
       };
       Service = {
-        ExecStart="/bin/sh ${sleep-nag}/bin/sleep-nag";
+        ExecStart=toString sleep-nag;
       };
       Install = {
         WantedBy = [ "graphical-session.target" ];
