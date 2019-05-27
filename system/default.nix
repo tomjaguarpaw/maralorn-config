@@ -40,7 +40,7 @@ in {
         openssh.authorizedKeys.keys = me.keys;
       };
     };
-    systemd.services.nixos-upgrade.path = [ pkgs.gnutar pkgs.xz.bin pkgs.gitMinimal config.nix.package.out ];
+    #systemd.services.nixos-upgrade.path = [ pkgs.gzip ];
 
     nix.gc.options = "--delete-older-than 5d";
 
