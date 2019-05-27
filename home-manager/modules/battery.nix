@@ -1,7 +1,9 @@
 { lib, pkgs, config, ... }:
 with lib;
 let
-  battery-watch = pkgs.writeShellScriptBin "battery-watch" ''
+  battery-watch = pkgs.writeScript "battery-watch" ''
+#!${pkgs.stdenv.shell}
+
 critical_level=20    #percent
 
 while true
@@ -29,7 +31,7 @@ config = mkIf config.m-0.battery.enable {
         Description = "Watch battery state and warn user";
       };
       Service = {
-        ExecStart="/bin/sh ${battery-watch}/bin/battery-watch";
+        ExecStart=toString battery-watch;
       };
       Install = {
         WantedBy = [ "graphical-session.target" ];
