@@ -16,21 +16,14 @@ pkgs.neovim.override {
     packages.myVimPackage = with pkgs.vimPlugins; {
       start = [
         vim-nix
-        #ctrlp
-        #vimtex
-        Syntastic
-        #UltiSnips
+        vimtex
         airline
-        #rust-vim
+        rust-vim
         fugitive
         vim-trailing-whitespace
-        #vim-polyglot
-        #nvim-cm-racer
         vim-pandoc
-        #nerdcommenter
-        #vim-signify
         haskell-vim
-        LanguageClient-neovim
+        vim-hindent
       ];
     };
   };
