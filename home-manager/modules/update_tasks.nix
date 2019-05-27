@@ -8,19 +8,12 @@ config = mkIf config.m-0.update_tasks.enable {
   systemd.user = {
     services.update_tasks = {
       Unit = {
-        Description = "Update Tasks";
+        Description = "Update taskwarrior tasks";
       };
       Service = {
         Type = "oneshot";
         Environment="PATH=${pkgs.taskwarrior}/bin:${pkgs.eventd}/bin";
-        ExecStart= let
-          update = pkgs.writeShellScriptBin "update" ''
-            ${config.home.homeDirectory}/.cargo/bin/update_tasks
-            ${pkgs.taskwarrior}/bin/task +PENDING due.before:now+1month prio: mod prio:L
-            ${pkgs.taskwarrior}/bin/task +PENDING due.before:now+1week prio:L mod prio:M
-            ${pkgs.taskwarrior}/bin/task +PENDING due.before:now+1day prio:M mod prio:H
-            true
-          ''; in "${update}/bin/update";
+        ExecStart= "${config.home.homeDirectory}/.cargo/bin/update_tasks";
       };
     };
     timers.update_tasks = {
