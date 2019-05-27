@@ -2,6 +2,7 @@
 with lib;
 let
   tasksync = pkgs.writeShellScriptBin "tasksync" ''
+    #!${pkgs.stdenv.shell}
     cd ${config.home.homeDirectory}/.task
     ${pkgs.git}/bin/git add completed.data pending.data > /dev/null
     ${pkgs.git}/bin/git commit -m 'Updating task data' > /dev/null
@@ -22,7 +23,7 @@ config = mkIf config.m-0.taskwarrior.enable {
         Description = "Update tasks";
       };
       Service = {
-        ExecStart="/bin/sh ${tasksync}/bin/tasksync";
+        ExecStart="${tasksync}/bin/tasksync";
         Type="oneshot";
       };
     };
