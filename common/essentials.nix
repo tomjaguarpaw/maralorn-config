@@ -1,6 +1,6 @@
 {
   core = pkgs: with pkgs; [
-    git
+    gitFull
     gnumake
     python3
     mkpasswd
