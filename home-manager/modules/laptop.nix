@@ -78,12 +78,7 @@ mkIf config.m-0.laptop.enable {
     evince
     gnome3.nautilus
 
-    #dev
-    octave
-    stack
-    cabal2nix
-    filezilla
-    vscode
+    (import (fetchTarball https://cachix.org/api/v1/install) {}).cachix
 
     # look & feel
     libertine
@@ -102,6 +97,8 @@ mkIf config.m-0.laptop.enable {
     calibre
     mpv
     youtubeDL
+
+    minetest
   ];
 };
 
