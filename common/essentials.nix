@@ -28,6 +28,7 @@
     in
       [
     git-crypt
+    gitAndTools.git-annex
     htop
     tree
     rxvt_unicode.terminfo
