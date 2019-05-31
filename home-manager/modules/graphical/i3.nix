@@ -162,6 +162,7 @@ config = mkIf config.m-0.graphical.enable {
         window = {
           titlebar = false;
           border = 1;
+          commands = [ { command = "floating disable"; criteria = { class = "Firefox";};} ];
         };
         keybindings = {
             "XF86AudioMute" = "exec pactl set-sink-mute '@DEFAULT_SINK@' toggle";
