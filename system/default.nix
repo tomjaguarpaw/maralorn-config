@@ -5,7 +5,7 @@ let
 in {
   imports = [
     "${home-manager}/nixos"
-    ../cachix.nix
+#    ../cachix.nix
     ../common
     ./modules/laptop.nix
     ./modules/git.nix
@@ -40,7 +40,7 @@ in {
         openssh.authorizedKeys.keys = me.keys;
       };
     };
-    #systemd.services.nixos-upgrade.path = [ pkgs.gzip ];
+#    systemd.services.nixos-upgrade.path = [ pkgs.gzip ];
 
     nix.gc.options = "--delete-older-than 5d";
 
