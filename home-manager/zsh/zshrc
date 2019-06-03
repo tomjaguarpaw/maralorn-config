@@ -11,7 +11,7 @@ if [[ -z "$TMUX" ]] {
 function default_host () {
 	H="${HOST}%{%}:"
 	REPLY=${H/apollo%{%}:/}
-	REPLY=${REPLY/.olymp.space/}
+	REPLY=${REPLY/fb04217/hephaistos}
 	echo $REPLY
 }
 function default_user () {
