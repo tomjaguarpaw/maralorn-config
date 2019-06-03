@@ -14,6 +14,7 @@ set mouse=
 set dir=~/.vimhist/
 set backupdir=~/.vimhist/bak
 set showcmd
+highlight Normal ctermfg=white ctermbg=black
 nnoremap <silent><cr> :nohlsearch<CR>
 vnoremap < <gv
 vnoremap > >gv
