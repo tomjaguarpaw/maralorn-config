@@ -16,6 +16,7 @@ pkgs.neovim.override {
     packages.myVimPackage = with pkgs.vimPlugins; {
       start = [
         vim-nix
+        deoplete
         vimtex
         airline
         rust-vim
