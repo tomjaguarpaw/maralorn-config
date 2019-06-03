@@ -24,9 +24,24 @@ m-0 = {
 };
 
 home = {
-  language.base = "C.UTF-8";
+  language = {
+    base = "C.UTF-8";
+    address = "C.UTF-8";
+    monetary = "C.UTF-8";
+    paper = "C.UTF-8";
+    time = "C.UTF-8";
+  };
   sessionVariables = {
     NIX_PATH = "nixpkgs=$HOME/git/nixos/nixpkgs:home-manager=$HOME/git/nixos/home-manager:$HOME/.nix-defexpr/channels";
+    LANGUAGE="en_US";
+    LC_CTYPE="C.UTF-8";
+    LC_NUMERIC="C.UTF-8";
+    LC_COLLATE="C.UTF-8";
+    LC_MESSAGES="C.UTF-8";
+    LC_NAME="C.UTF-8";
+    LC_TELEPHONE="C.UTF-8";
+    LC_MEASUREMENT="C.UTF-8";
+    LC_IDENTIFICATION="C.UTF-8";
   };
   forceCopies.paths = [ "bin/proot" "bin/with-nix" "bin/run-in-nix" ".bashrc" ".zshrc" ];
   file = {
