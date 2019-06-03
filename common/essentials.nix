@@ -35,7 +35,6 @@
     pwgen
     borgbackup
 
-    home-manager
     direnv
     lorri
 

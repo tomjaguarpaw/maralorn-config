@@ -1,10 +1,10 @@
 { pkgs, config, ... }:
 {
-  imports = [
-    ../../home-manager
-  ];
+imports = [
+  ../../home-manager
+];
 
-  systemd.user.systemctlPath = "/usr/bin/systemctl";
+systemd.user.systemctlPath = "/usr/bin/systemctl";
 
 programs.home-manager.enable = true;
 
@@ -22,13 +22,37 @@ m-0 = {
   #eventd.enable = true;
   #pythia.enable = true;
 };
-home.packages = [
+
+home = {
+  language.base = "C.UTF-8";
+  sessionVariables = {
+    NIX_PATH = "nixpkgs=$HOME/git/nixos/nixpkgs:home-manager=$HOME/git/nixos/home-manager:$HOME/.nix-defexpr/channels";
+  };
+  forceCopies.paths = [ "bin/proot" "bin/with-nix" "bin/run-in-nix" ".bashrc" ".zshrc" ];
+  file = {
+    ".bashrc".text = ''
+       [ -z "$PS1" ] && return
+       unset __HM_SESS_VARS_SOURCED
+       if [[ -z "$NIX_PATH" ]]
+       then
+           exec ~/bin/with-nix zsh
+       else
+           exec zsh
+       fi
+    '';
+    "bin" = {
+      source = ./bootstrap-bin;
+      recursive = true;
+    };
+  };
+
+  packages = [
   (pkgs.writeShellScriptBin "maintenance" ''
-    nix-channel --update
     home-manager switch
     nix-collect-garbage --delete-older-than 5
     nix-optimise
   '')
-];
+  ] ++ ((import ../../common/essentials.nix).extra pkgs);
+};
 
 }
