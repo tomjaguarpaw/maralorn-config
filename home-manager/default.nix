@@ -98,7 +98,6 @@ programs = {
     enable = true;
     matchBlocks = let
         matheGwProxy =  "ssh -q gw nc -q0 %h %p";
-        kivaHost = "fb04386.mathematik.tu-darmstadt.de";
         agHost = "fb04217.mathematik.tu-darmstadt.de";
       in [
         { host = "charon"; hostname = "charon.olymp.space"; }
@@ -117,7 +116,7 @@ programs = {
 };
 
 home.sessionVariables = {
-  PATH = "$HOME/.cargo/bin:/etc/profiles/per-user/${config.home.username}/bin:$PATH";
+  PATH = "$HOME/.cargo/bin:/etc/profiles/per-user/${config.home.username}/bin:$HOME/.nix-profile/bin:$PATH";
   BROWSER = "${pkgs.firefox}/bin/firefox";
   EDITOR = "${pkgs.neovim}/bin/nvim";
   TERMINAL = config.m-0.terminal;

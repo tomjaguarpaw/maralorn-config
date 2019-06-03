@@ -22,6 +22,7 @@ pkgs.neovim.override {
         fugitive
         vim-trailing-whitespace
         vim-pandoc
+        vim-pandoc-syntax
         haskell-vim
         vim-hindent
       ];
