@@ -63,9 +63,18 @@ home = {
 
   packages = [
   (pkgs.writeShellScriptBin "maintenance" ''
+    set -e
+    cd ~/git/nixos/nixpkgs
+    git checkout nixos-local
+    git pull --no-edit upstream nixos-19.03
+    git pull --no-edit origin nixos-maralorn
+    cd ~/git/nixos/home-manager
+    git checkout home-manager-local
+    git pull --no-edit upstream release-19.03
+    git pull --no-edit origin home-manager-maralorn
     home-manager switch
-    nix-collect-garbage --delete-older-than 5
-    nix-optimise
+    nix-collect-garbage --delete-older-than 5d
+    nix-store --optimise
   '')
   ] ++ ((import ../../common/essentials.nix).extra pkgs);
 };
