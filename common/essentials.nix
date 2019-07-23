@@ -20,6 +20,7 @@
     unzip
     rename
     whois
+    lsof
     ];
 
     extra = pkgs: with pkgs; let
@@ -34,9 +35,10 @@
     rxvt_unicode.terminfo
     pwgen
     borgbackup
+    inotifyTools
 
     direnv
-    lorri
+    #lorri
 
     socat
     nmap
