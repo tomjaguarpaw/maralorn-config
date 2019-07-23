@@ -14,6 +14,7 @@ imports = [
   "${(builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark")}"
  ./hardware-configuration.nix
  ../../system
+ ../../system/modules/fonts.nix
 ];
 
 networking = {
