@@ -1,11 +1,12 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, config, lib,  ... }:
 let
+  inherit (import ../nix/my-lib.nix) writeHaskellScript getNivPath;
   me = config.m-0.private.me;
-  home-manager = (builtins.fetchGit { url = "https://github.com/rycee/home-manager/"; ref = "release-19.03";});
+  sources = import ../nix/sources.nix;
+  nixpkgsPath = sources.nixpkgs;
+  unstablePath = sources.unstable;
 in {
   imports = [
-    "${home-manager}/nixos"
-#    ../cachix.nix
     ../common
     ./modules/laptop.nix
     ./modules/git.nix
@@ -17,7 +18,6 @@ in {
     ./modules/loginctl-linger.nix
   ];
 
-
   config = {
 
     i18n = {
@@ -25,8 +25,6 @@ in {
     };
 
     time.timeZone = "Europe/Berlin";
-
-    home-manager.useUserPackages = true;
 
     networking = {
       firewall.allowPing = true;
@@ -41,7 +39,39 @@ in {
       };
     };
 
-    nix.gc.options = "--delete-older-than 5d";
+    environment = {
+      systemPackages = [
+        (writeHaskellScript {
+            name = "update-nixos";
+            imports = [ "qualified Data.ByteString.Lazy.Char8 as C" "qualified Data.List as L" ];
+            bins = [ getNivPath config.system.build.nixos-rebuild];
+          } ''
+
+          getNivAssign name = fmap process . readTrim $ get_niv_path "/etc/nixos/nix/sources.nix" name
+              where process str = ["-I", name ++ "=" ++ C.unpack str]
+
+          main = do
+              paths <- mapM getNivAssign ["nixpkgs", "unstable"]
+              nixos_rebuild (concat paths ++ ["switch"])
+        '')
+      ];
+      etc = {
+        "nix-path/nixpkgs".source = nixpkgsPath;
+        "nix-path/nixos".source = nixpkgsPath;
+        "nix-path/unstable".source = unstablePath;
+      };
+    };
+
+
+    nix = {
+      binaryCaches = [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" ];
+      binaryCachePublicKeys = [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
+      nixPath = [
+        "/etc/nix-path"
+        "nixos-config=/etc/nixos/configuration.nix"
+      ];
+      gc.options = "--delete-older-than 5d";
+    };
 
     services = {
       prometheus.exporters = {

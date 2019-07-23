@@ -45,8 +45,6 @@ m-0 = {
   standalone.enable = true;
 };
 
-home-manager.users."${me.user}" = (import ./home.nix);
-
 #let
   #secretsFile = "/var/lib/luks-secret/key";
   #secretsInitrd = "/boot/grub/secrets-initrd.gz";

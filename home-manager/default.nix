@@ -1,6 +1,39 @@
 { pkgs, config, ... }:
 let
+  inherit (import ../nix/my-lib.nix) writeHaskellScript getNivPath;
+  sources = import ../nix/sources.nix;
   inherit (config.m-0.private) me meWork;
+  configPath = "/home/${config.home.username}/git/nixos/config";
+  gcRetentionDays = 5;
+  update-home-manager = writeHaskellScript
+    {
+      name = "update-home-manager";
+      imports = [
+        "qualified Data.ByteString.Lazy.Char8 as C"
+        "qualified Data.List as L"
+      ];
+      bins = [
+        getNivPath
+        (pkgs.callPackage <home-manager/home-manager> {})
+      ];
+    }
+    ''
+
+    getNivAssign name = fmap tag . readTrim $ get_niv_path "${configPath}/nix/sources.nix" name
+      where tag str = ["-I", name ++ "=" ++ C.unpack str]
+
+    main = do
+      paths <- mapM getNivAssign ["home-manager", "nixpkgs", "unstable"]
+      home_manager (concat paths ++ ["switch"])
+    '';
+  user-maintenance = writeHaskellScript
+    { name = "user-maintenance"; imports = [ ]; bins = [ update-home-manager pkgs.nix pkgs.git];} ''
+    main = do
+      git "-C" "${configPath}" "pull"
+      update_home_manager
+      nix_collect_garbage "--delete-older-than" "${toString gcRetentionDays}"
+      nix "optimise-store"
+  '';
 in {
 
 imports = [
@@ -32,12 +65,15 @@ nixpkgs.overlays = [ (self: super: {
   neovim = (import ./nvim) super config.m-0.rustdev.enable;
 })];
 
-nixpkgs.config = {
-  allowUnfree = true;
+home.file = {
+  home-manager-source = {
+    target = ".nix-path/home-manager";
+    source = sources.home-manager;
+  };
 };
 
-
 programs = {
+  home-manager.enable = true;
   direnv = {
     enable = true;
     enableZshIntegration = true;
@@ -116,6 +152,7 @@ programs = {
 };
 
 home.sessionVariables = {
+  NIX_PATH = "$HOME/.nix-path:$NIX_PATH";
   PATH = "$HOME/.cargo/bin:/etc/profiles/per-user/${config.home.username}/bin:$HOME/.nix-profile/bin:$PATH";
   BROWSER = "${pkgs.firefox}/bin/firefox";
   EDITOR = "${pkgs.neovim}/bin/nvim";
@@ -138,16 +175,17 @@ services = {
   };
 };
 
-home.packages = with pkgs; [
-  neovim
-  (pkgs.writeShellScriptBin "print215" ''
+home.packages = builtins.attrValues {
+  inherit (pkgs) neovim;
+  inherit update-home-manager user-maintenance;
+  print215 = (pkgs.writeShellScriptBin "print215" ''
     scp "$@" ag-forward:
     ssh ag-forward lpr -Zduplex -r "$@"
-  '')
-  (pkgs.writeShellScriptBin "print215single" ''
+  '');
+  print215single = (pkgs.writeShellScriptBin "print215single" ''
     scp "$@" ag-forward:
     ssh ag-forward lpr -r "$@"
-  '')
-];
+  '');
+};
 xdg.enable = true;
 }

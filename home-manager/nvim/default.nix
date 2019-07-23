@@ -25,7 +25,7 @@ pkgs.neovim.override {
         vim-pandoc
         vim-pandoc-syntax
         haskell-vim
-        vim-hindent
+#        vim-brittany
       ];
     };
   };

@@ -6,7 +6,6 @@ imports = [
 
 systemd.user.systemctlPath = "/usr/bin/systemctl";
 
-programs.home-manager.enable = true;
 
 m-0 = {
   hostName = "fb04217";
