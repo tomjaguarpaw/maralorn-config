@@ -1,6 +1,6 @@
 { pkgs, config, ... }:
 let
-  inherit (import ../nix/my-lib.nix) writeHaskellScript getNivPath;
+  inherit (import ../common/my-lib.nix) writeHaskellScript getNivPath;
   sources = import ../nix/sources.nix;
   inherit (config.m-0.private) me meWork;
   configPath = "/home/${config.home.username}/git/nixos/config";

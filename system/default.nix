@@ -1,6 +1,6 @@
 { pkgs, config, lib,  ... }:
 let
-  inherit (import ../nix/my-lib.nix) writeHaskellScript getNivPath;
+  inherit (import ../common/my-lib.nix) writeHaskellScript getNivPath;
   me = config.m-0.private.me;
   sources = import ../nix/sources.nix;
   nixpkgsPath = sources.nixpkgs;
