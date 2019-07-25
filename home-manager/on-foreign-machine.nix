@@ -1,6 +1,7 @@
 { pkgs, config, lib,  ... }:
 let
   inherit (import ../common/lib.nix) writeHaskellScript;
+  sources = import ../nix/sources.nix;
   configPath = "/home/${config.home.username}/git/nixos/config";
   gcRetentionDays = 5;
   update-home-manager = (import ./lib.nix).update-home-manager configPath;
@@ -12,8 +13,9 @@ let
       nix_collect_garbage "--delete-older-than" "${toString gcRetentionDays}d"
       nix "optimise-store"
   '';
+in
 {
-  home =
+  home = {
     sessionVariables = {
       NIX_PATH = "$HOME/.nix-path";
     };
