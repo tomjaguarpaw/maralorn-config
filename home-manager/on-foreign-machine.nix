@@ -4,7 +4,6 @@ let
   configPath = "/home/${config.home.username}/git/nixos/config";
   gcRetentionDays = 5;
   update-home-manager = (import ./lib.nix).update-home-manager configPath;
-  gcRetentionDays = 5;
   user-maintenance = writeHaskellScript
     { name = "user-maintenance"; imports = [ ]; bins = [ update-home-manager pkgs.nix pkgs.git];} ''
     main = do
