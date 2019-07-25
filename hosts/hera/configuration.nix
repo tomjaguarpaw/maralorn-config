@@ -37,8 +37,6 @@ m-0 = {
   git-server.enable = true;
 };
 
-home-manager.users."${me.user}" = (import ./home.nix);
-
 users.users.choreutes = {
       linger = true;
       description = "choreutes";
