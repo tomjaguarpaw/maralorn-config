@@ -1,5 +1,6 @@
 let
   inherit (import ../common/lib.nix) niv;
+in
 {
   core = pkgs: with pkgs; [
     gitFull
@@ -30,7 +31,7 @@ let
       lorri = import "${lorriSrc}/default.nix" { src = lorriSrc; inherit pkgs; };
     in
     [
-#    niv
+    niv
     git-crypt
     gitAndTools.git-annex
     htop

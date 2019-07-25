@@ -63,7 +63,8 @@ let
           (\dir -> do
             withCurrentDirectory dir $ (do
               git_crypt "unlock"
-              niv "update")
+              --niv "update")
+              )
             mapM_ (test_system_config dir) ["apollo", "hera"]
             mapM_ (test_home_manager_config dir) ["apollo", "hera", "hephaistos"]
             git "-C" dir "commit" "-am" "Update dependencies with niv"
