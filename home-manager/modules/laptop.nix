@@ -77,7 +77,6 @@ mkIf config.m-0.laptop.enable {
     evince
     gnome3.nautilus
 
-    (import (builtins.fetchGit "https://github.com/obsidiansystems/obelisk.git") {}).command
 #    (import (fetchTarball https://cachix.org/api/v1/install) {}).cachix
 
     # look & feel

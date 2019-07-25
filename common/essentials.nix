@@ -1,3 +1,5 @@
+let
+  inherit (import ../common/lib.nix) niv;
 {
   core = pkgs: with pkgs; [
     gitFull
@@ -27,7 +29,8 @@
       lorriSrc = builtins.fetchGit { url = "https://github.com/target/lorri.git"; ref = "rolling-release"; };
       lorri = import "${lorriSrc}/default.nix" { src = lorriSrc; inherit pkgs; };
     in
-      [
+    [
+#    niv
     git-crypt
     gitAndTools.git-annex
     htop

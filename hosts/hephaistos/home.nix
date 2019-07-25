@@ -2,6 +2,7 @@
 {
 imports = [
   ../../home-manager
+  ../../home-manager/on-foreign-machine.nix
 ];
 
 systemd.user.systemctlPath = "/usr/bin/systemctl";
@@ -31,7 +32,6 @@ home = {
     time = "C.UTF-8";
   };
   sessionVariables = {
-    NIX_PATH = "nixpkgs=$HOME/git/nixos/nixpkgs:home-manager=$HOME/git/nixos/home-manager:$HOME/.nix-defexpr/channels";
     LANGUAGE="en_US";
     LC_CTYPE="C.UTF-8";
     LC_NUMERIC="C.UTF-8";

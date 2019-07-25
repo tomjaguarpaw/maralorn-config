@@ -1,13 +1,12 @@
 { pkgs, config, lib,  ... }:
 let
-  inherit (import ../common/my-lib.nix) writeHaskellScript getNivPath;
+  inherit (import ../common/lib.nix) home-manager;
   me = config.m-0.private.me;
   sources = import ../nix/sources.nix;
-  nixpkgsPath = sources.nixpkgs;
-  unstablePath = sources.unstable;
 in {
   imports = [
     ../common
+    ./update-script.nix
     ./modules/laptop.nix
     ./modules/git.nix
     ./modules/mathechor.de.nix
@@ -41,24 +40,13 @@ in {
 
     environment = {
       systemPackages = [
-        (writeHaskellScript {
-            name = "update-nixos";
-            imports = [ "qualified Data.ByteString.Lazy.Char8 as C" "qualified Data.List as L" ];
-            bins = [ getNivPath config.system.build.nixos-rebuild];
-          } ''
-
-          getNivAssign name = fmap process . readTrim $ get_niv_path "/etc/nixos/nix/sources.nix" name
-              where process str = ["-I", name ++ "=" ++ C.unpack str]
-
-          main = do
-              paths <- mapM getNivAssign ["nixpkgs", "unstable"]
-              nixos_rebuild (concat paths ++ ["switch"])
-        '')
+        home-manager
       ];
       etc = {
-        "nix-path/nixpkgs".source = nixpkgsPath;
-        "nix-path/nixos".source = nixpkgsPath;
-        "nix-path/unstable".source = unstablePath;
+        "nix-path/nixpkgs".source = sources.nixpkgs;
+        "nix-path/nixos".source = sources.nixpkgs;
+        "nix-path/unstable".source = sources.unstable;
+        "nix-path/home-manager".source = sources.home-manager;
       };
     };
 
@@ -70,7 +58,6 @@ in {
         "/etc/nix-path"
         "nixos-config=/etc/nixos/configuration.nix"
       ];
-      gc.options = "--delete-older-than 5d";
     };
 
     services = {

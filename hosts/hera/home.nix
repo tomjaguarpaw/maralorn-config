@@ -3,6 +3,7 @@
 
 imports = [
   ../../home-manager
+  ../../home-manager/on-my-machine.nix
   ./secret
 ];
 

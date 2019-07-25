@@ -3,6 +3,8 @@
 
 imports = [
   ../../home-manager
+  ../../home-manager/on-my-machine.nix
+  ../../home-manager/tests.nix
 ];
 
 m-0 = {
