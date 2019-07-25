@@ -50,8 +50,7 @@ let
   bump-config = writeHaskellScript {
     name = "bump-config";
     bins = [ test-system-config test-home-manager-config pkgs.git pkgs.coreutils niv pkgs.git-crypt ];
-    imports = ["System.Console.CmdArgs.Implicit" "Control.Exception" "System.Directory (withCurrentDirectory)" "Control.Monad (when)"];
-    libraries = [ unstable.haskellPackages.cmdargs ];
+    imports = [ "Control.Exception (bracket)" "System.Directory (withCurrentDirectory)" "Control.Monad (when)"];
   } ''
       main = do
         path <- readTrim pwd
@@ -59,7 +58,7 @@ let
           dir <- (LT.unpack . LTE.decodeUtf8 <$>) . readTrim $ mktemp "-d"
           git "clone" "${repoSrc}" dir
           return dir)
-          (\dir -> rm "-rf" dir) $
+          (rm "-rf") $
           \dir -> do
             withCurrentDirectory dir $ git_crypt "unlock" >> niv "update"
             mapM_ (test_system_config dir) ["apollo", "hera"]
