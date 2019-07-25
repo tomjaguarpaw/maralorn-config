@@ -50,7 +50,7 @@ let
   bump-config = writeHaskellScript {
     name = "bump-config";
     bins = [ test-system-config test-home-manager-config pkgs.git pkgs.coreutils niv pkgs.git-crypt ];
-    imports = ["System.Console.CmdArgs.Implicit" "Control.Exception" "System.Directory (withCurrentDirectory)"];
+    imports = ["System.Console.CmdArgs.Implicit" "Control.Exception" "System.Directory (withCurrentDirectory)" "Control.Monad (when)"];
     libraries = [ unstable.haskellPackages.cmdargs ];
   } ''
       main = do
@@ -59,17 +59,13 @@ let
           dir <- (LT.unpack . LTE.decodeUtf8 <$>) . readTrim $ mktemp "-d"
           git "clone" "${repoSrc}" dir
           return dir)
-          (\dir -> rm "-rf" dir)
-          (\dir -> do
-            withCurrentDirectory dir $ (do
-              git_crypt "unlock"
-              --niv "update")
-              )
+          (\dir -> rm "-rf" dir) $
+          \dir -> do
+            withCurrentDirectory dir $ git_crypt "unlock" >> niv "update"
             mapM_ (test_system_config dir) ["apollo", "hera"]
             mapM_ (test_home_manager_config dir) ["apollo", "hera", "hephaistos"]
-            git "-C" dir "commit" "-am" "Update dependencies with niv"
-            git "-C" dir "push"
-          )
+            changed <- ((mempty /=) <$>) . readTrim $ git "-C" dir "status" "--porcelain"
+            when changed $ git "-C" dir "commit" "-am" "Update dependencies with niv" >> git "-C" dir "push"
     '';
 in
 {
