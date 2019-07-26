@@ -109,10 +109,9 @@ programs.autorandr = {
 
 home.packages = [
   (pkgs.writeShellScriptBin "maintenance" ''
-    sudo -A systemctl start nixos-upgrade
-    sudo -A systemctl start nix-gc
-    sudo -A systemctl start nix-optimise
-    sudo -A systemctl start borgbackup-job-data.service
+    git -C ~/git/nixos/config pull
+    update-home
+    sudo system-maintenance
   '')
 ];
 

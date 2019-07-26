@@ -4,7 +4,7 @@ let
   inherit (import ./lib.nix) update-home;
   configPath = "/home/${config.home.username}/git/nixos/config";
   home-maintenance = writeHaskellScript
-    { name = "user-maintenance"; imports = [ ]; bins = [ (update-home configPath) pkgs.nix pkgs.git];} ''
+    { name = "home-maintenance"; imports = [ ]; bins = [ (update-home configPath) pkgs.nix pkgs.git];} ''
     main = do
       git "-C" "${configPath}" "pull"
       update_home
