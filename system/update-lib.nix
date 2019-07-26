@@ -1,17 +1,17 @@
-{ pkgs, config, lib,  ... }:
+nixos-rebuild:
 let
+  pkgs = import <nixpkgs> {};
   inherit (import ../common/lib.nix) writeHaskellScript get-niv-path home-manager gcRetentionDays;
   configPath = "/etc/nixos";
   update-system = writeHaskellScript {
       name = "update-system";
-      imports = [ "qualified Data.ByteString.Lazy.Char8 as C" "qualified Data.List as L" ];
-      bins = [ get-niv-path config.system.build.nixos-rebuild ];
+      bins = [ get-niv-path nixos-rebuild ];
     }
     ''
-    getNivPath = fmap C.unpack . readTrim . get_niv_path "${configPath}/nix/sources.nix"
+    getNivPath = readTrim . get_niv_path "${configPath}/nix/sources.nix"
 
-    getNivAssign name = fmap process . getNivPath $ name
-        where process str = ["-I", name ++ "=" ++ str]
+    getNivAssign name = tag <$> getNivPath name
+        where tag str = ["-I", [i|#{name}=#{str :: LBS.ByteString}|] ]
 
     main = do
         paths <- fmap concat . mapM getNivAssign $ ["nixpkgs", "unstable", "home-manager"]
@@ -27,10 +27,5 @@ let
   '';
 in
 {
-  environment = {
-    systemPackages = [
-      update-system
-      system-maintenance
-    ];
-  };
+  inherit update-system system-maintenance;
 }

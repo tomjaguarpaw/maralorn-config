@@ -3,7 +3,7 @@ with lib;
 let
   me = config.m-0.private.me;
 in {
-  users.users = mkIf config.m-0.standalone.enable {
+  users.users = {
     "${me.user}" = {
       linger = true;
       description = me.name;

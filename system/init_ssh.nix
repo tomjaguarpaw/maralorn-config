@@ -7,7 +7,7 @@ options = {
   };
 };
 
-config = mkIf config.m-0.server.enable {
+config = {
   boot.initrd = {
     network = {
       enable = true;

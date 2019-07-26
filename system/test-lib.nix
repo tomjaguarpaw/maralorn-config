@@ -1,5 +1,5 @@
-{ pkgs, config, lib,  ... }:
 let
+  pkgs = import <nixpkgs> {};
   inherit (import ../common/lib.nix) writeHaskellScript get-niv-path home-manager unstable niv;
   haskellBody = commandline:
     ''
@@ -46,33 +46,46 @@ let
     '');
 
   repoSrc = "git@hera.m-0.eu:nixos-config";
-  configPath = "/home/${config.home.username}/git/nixos/config";
+  configPath = "/etc/config";
   test-and-bump-config = writeHaskellScript {
     name = "test-and-bump-config";
     bins = [ test-system-config test-home-config pkgs.git pkgs.coreutils niv pkgs.git-crypt ];
     imports = [ "Control.Exception (bracket)" "System.Directory (withCurrentDirectory)" "Control.Monad (when)"];
   } ''
+      checkout :: IO FilePath
+      checkout = do
+        dir <- (LT.unpack . LTE.decodeUtf8 <$>) . readTrim $ mktemp "-d"
+        git "clone" "${repoSrc}" dir
+        return dir
+
+      cleanup :: String -> IO ()
+      cleanup = (rm "-rf")
+
+      unlock :: IO ()
+      unlock = mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ["default", "apollo", "hera"]
+
+      update :: IO ()
+      update = niv "update"
+
+      testBuild :: FilePath -> IO ()
+      testBuild dir = do
+        mapM_ (test_system_config dir) ["apollo", "hera"]
+        mapM_ (test_home_config dir) ["apollo", "hera", "hephaistos"]
+
+      push :: FilePath -> IO()
+      push dir = do
+        changed <- ((mempty /=) <$>) . readTrim $ git "-C" dir "status" "--porcelain"
+        when changed $ git "-C" dir "commit" "-am" "Update dependencies with niv" >> git "-C" dir "push"
+
+      main :: IO ()
       main = do
         path <- readTrim pwd
-        bracket (do
-          dir <- (LT.unpack . LTE.decodeUtf8 <$>) . readTrim $ mktemp "-d"
-          git "clone" "${repoSrc}" dir
-          return dir)
-          (rm "-rf") $
-          \dir -> do
-            cp "-r" "${configPath}/.git/git-crypt" ([i|#{dir}/.git|] :: String)
-            mapM_ (git "-C" dir "checkout") ["common/secret", "hosts/apollo/secret", "hosts/hera/secret"]
-            --withCurrentDirectory dir $ niv "update"
-            mapM_ (test_system_config dir) ["apollo", "hera"]
-            mapM_ (test_home_config dir) ["apollo", "hera", "hephaistos"]
-            changed <- ((mempty /=) <$>) . readTrim $ git "-C" dir "status" "--porcelain"
-            when changed $ git "-C" dir "commit" "-am" "Update dependencies with niv" >> git "-C" dir "push"
+        bracket checkout cleanup $ \dir -> do
+          withCurrentDirectory dir $ unlock >> update
+          testBuild dir
+          push dir
     '';
 in
 {
-  home.packages = [
-    test-system-config
-    test-home-config
-    test-and-bump-config
-  ];
+  inherit test-system-config test-home-config test-and-bump-config;
 }

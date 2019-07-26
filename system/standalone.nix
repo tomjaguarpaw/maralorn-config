@@ -2,14 +2,8 @@
 with lib;
 {
 
-imports = [ ./admin.nix ];
+  imports = [ ./admin.nix ];
 
-options.m-0.standalone.enable = mkOption {
-  type = types.bool;
-  default = false;
-};
-
-config = mkIf config.m-0.standalone.enable {
   # So that boot does not fill up with old kernels
   boot.loader.grub.configurationLimit = 5;
 
@@ -26,10 +20,16 @@ config = mkIf config.m-0.standalone.enable {
     sshd.enable = true;
   };
 
+  nix.nixPath = [ "nixos-config=/etc/nixos/configuration.nix" ];
+
   environment = {
     # Put these into an extra file so the essential packages can also be included on non selfadminstrated systems from home-manager
-    systemPackages = let essentials = import ../../../common/essentials.nix;
-  in (essentials.core pkgs) ++ (essentials.extra pkgs);
+    systemPackages = let essentials = import ../common/essentials.nix;
+  in (essentials.core pkgs) ++ (essentials.extra pkgs) ++ (builtins.attrValues {
+        inherit (import ./test-lib.nix) test-system-config test-home-config test-and-bump-config;
+        inherit (import ../common/lib.nix) home-manager;
+        inherit (import ./update-lib.nix config.system.build.nixos-rebuild) update-system system-maintenance;
+      });
     sessionVariables = {
       TERMINFO = "/run/current-system/sw/share/terminfo";
     };
@@ -44,6 +44,5 @@ config = mkIf config.m-0.standalone.enable {
       syntaxHighlighting.enable = true;
     };
   };
-};
 
 }

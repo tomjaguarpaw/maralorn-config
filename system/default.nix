@@ -1,18 +1,15 @@
 { pkgs, config, lib,  ... }:
 let
-  inherit (import ../common/lib.nix) home-manager sources;
+  inherit (import ../common/lib.nix) sources;
   me = config.m-0.private.me;
 in {
   imports = [
     ../common
-    ./update-script.nix
     ./modules/laptop.nix
     ./modules/git.nix
     ./modules/mathechor.de.nix
-    ./modules/server
     ./modules/blog.nix
     ./modules/riot.nix
-    ./modules/standalone
     ./modules/loginctl-linger.nix
   ];
 
@@ -38,9 +35,6 @@ in {
     };
 
     environment = {
-      systemPackages = [
-        home-manager
-      ];
       etc = {
         "nix-path/nixpkgs".source = sources.nixpkgs;
         "nix-path/nixos".source = sources.nixpkgs;

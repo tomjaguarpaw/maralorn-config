@@ -15,6 +15,7 @@ imports = [
   ./hardware-configuration.nix
   ../../system
   ../../system/fonts.nix
+  ../../system/standalone.nix
 ];
 
 networking = {
@@ -42,7 +43,6 @@ networking = {
 
 m-0 = {
   laptop.enable = true;
-  standalone.enable = true;
 };
 
 #let

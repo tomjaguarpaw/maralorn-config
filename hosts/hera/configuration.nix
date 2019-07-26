@@ -9,6 +9,9 @@ in {
 imports = [
  ./hardware-configuration.nix
  ../../system
+ ../../system/test-timer.nix
+ ../../system/standalone.nix
+ ../../system/server.nix
  ./borg.nix
  ./mail.nix
  ./boot.nix
@@ -32,8 +35,6 @@ services = {
 
 m-0 = {
   # dropbearkey -t rsa -f /etc/nixos/hosts/<hostname>/secret/boot_rsa
-  server.enable = true;
-  standalone.enable = true;
   git-server.enable = true;
 };
 
