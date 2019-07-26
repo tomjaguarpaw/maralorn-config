@@ -2,17 +2,6 @@
 let
   inherit (import ../common/lib.nix) writeHaskellScript;
   sources = import ../nix/sources.nix;
-  configPath = "/home/${config.home.username}/git/nixos/config";
-  gcRetentionDays = 5;
-  update-home-manager = (import ./lib.nix).update-home-manager configPath;
-  user-maintenance = writeHaskellScript
-    { name = "user-maintenance"; imports = [ ]; bins = [ update-home-manager pkgs.nix pkgs.git];} ''
-    main = do
-      git "-C" "${configPath}" "pull"
-      update_home_manager
-      nix_collect_garbage "--delete-older-than" "${toString gcRetentionDays}d"
-      nix "optimise-store"
-  '';
 in
 {
   home = {
@@ -36,9 +25,6 @@ in
         target = ".nix-path/unstable";
         source = sources.unstable;
       };
-    };
-    packages = builtins.attrValues {
-      inherit user-maintenance update-home-manager;
     };
   };
 }

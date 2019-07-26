@@ -24,6 +24,7 @@ m-0 = {
 };
 
 home = {
+  username = "brandy";
   language = {
     base = "C.UTF-8";
     address = "C.UTF-8";

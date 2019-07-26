@@ -1,26 +1,24 @@
 let
-  inherit (import ../common/lib.nix) home-manager writeHaskellScript getNivPath;
+  inherit (import ../common/lib.nix) home-manager writeHaskellScript get-niv-path;
 in
 {
-  update-home-manager = configPath: writeHaskellScript
+  update-home = configPath: writeHaskellScript
     {
-      name = "update-home-manager";
-      imports = [
-        "qualified Data.ByteString.Lazy.Char8 as C"
-        "qualified Data.List as L"
-      ];
+      name = "update-home";
       bins = [
-        getNivPath
+        get-niv-path
         home-manager
       ];
     }
     ''
 
-    getNivAssign name = fmap tag . readTrim $ get_niv_path "${configPath}/nix/sources.nix" name
-      where tag str = ["-I", name ++ "=" ++ C.unpack str]
+    getNivPath = get_niv_path "${configPath}/nix/sources.nix"
+
+    getNivAssign name = (tag <$>) . readTrim . getNivPath $ name
+      where tag str = ["-I", [i|#{name}=#{str :: LBS.ByteString}|]]
 
     main = do
-      paths <- mapM getNivAssign ["home-manager", "nixpkgs", "unstable"]
-      home_manager (concat paths ++ ["switch"])
+      paths <- concat <$> mapM getNivAssign ["home-manager", "nixpkgs", "unstable"]
+      home_manager $ paths ++ ["switch"]
     '';
 }

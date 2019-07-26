@@ -1,6 +1,6 @@
 { pkgs, config, lib,  ... }:
 let
-  inherit (import ../common/lib.nix) writeHaskellScript getNivPath home-manager unstable niv;
+  inherit (import ../common/lib.nix) writeHaskellScript get-niv-path home-manager unstable niv;
   haskellBody = commandline:
     ''
 
@@ -25,31 +25,31 @@ let
       paths <- (concat <$>) . mapM (getNivAssign $ configDir host) $ ["nixpkgs", "unstable", "home-manager"]
       ${commandline}
     '';
+  bins = [ get-niv-path pkgs.nix ];
+  imports = ["System.Console.CmdArgs.Implicit"];
+  libraries = [ unstable.haskellPackages.cmdargs ];
 
   test-system-config = writeHaskellScript {
     name = "test-system-config";
-    bins = [ getNivPath pkgs.nix ];
-    imports = ["System.Console.CmdArgs.Implicit"];
-    libraries = [ unstable.haskellPackages.cmdargs ];
+    inherit bins imports libraries;
   } (haskellBody
     ''
       nix $ ["build", "-f", "<nixpkgs/nixos>", "system"] ++ paths ++ ["-I", [i|nixos-config=#{configDir host}/hosts/#{hostname host}/configuration.nix|], "-o", [i|result-system-#{hostname host}|]]
     '');
 
-  test-home-manager-config = writeHaskellScript {
-    name = "test-home-manager-config";
-    bins = [ getNivPath pkgs.nix ];
-    imports = ["System.Console.CmdArgs.Implicit"];
-    libraries = [ unstable.haskellPackages.cmdargs ];
+  test-home-config = writeHaskellScript {
+    name = "test-home-config";
+    inherit bins imports libraries;
   } (haskellBody
     ''
       nix $ ["build", "-f", "<home-manager/home-manager/home-manager.nix>"] ++ paths ++ ["--argstr", "confPath", [i|#{configDir host}/hosts/#{hostname host}/home.nix|], "--argstr", "confAttr", "", "--out-link", [i|result-home-manager-#{hostname host}|], "activationPackage"]
     '');
 
   repoSrc = "git@hera.m-0.eu:nixos-config";
-  bump-config = writeHaskellScript {
-    name = "bump-config";
-    bins = [ test-system-config test-home-manager-config pkgs.git pkgs.coreutils niv pkgs.git-crypt ];
+  configPath = "/home/${config.home.username}/git/nixos/config";
+  test-and-bump-config = writeHaskellScript {
+    name = "test-and-bump-config";
+    bins = [ test-system-config test-home-config pkgs.git pkgs.coreutils niv pkgs.git-crypt ];
     imports = [ "Control.Exception (bracket)" "System.Directory (withCurrentDirectory)" "Control.Monad (when)"];
   } ''
       main = do
@@ -60,9 +60,11 @@ let
           return dir)
           (rm "-rf") $
           \dir -> do
-            withCurrentDirectory dir $ git_crypt "unlock" >> niv "update"
+            cp "-r" "${configPath}/.git/git-crypt" ([i|#{dir}/.git|] :: String)
+            mapM_ (git "-C" dir "checkout") ["common/secret", "hosts/apollo/secret", "hosts/hera/secret"]
+            --withCurrentDirectory dir $ niv "update"
             mapM_ (test_system_config dir) ["apollo", "hera"]
-            mapM_ (test_home_manager_config dir) ["apollo", "hera", "hephaistos"]
+            mapM_ (test_home_config dir) ["apollo", "hera", "hephaistos"]
             changed <- ((mempty /=) <$>) . readTrim $ git "-C" dir "status" "--porcelain"
             when changed $ git "-C" dir "commit" "-am" "Update dependencies with niv" >> git "-C" dir "push"
     '';
@@ -70,7 +72,7 @@ in
 {
   home.packages = [
     test-system-config
-    test-home-manager-config
-    bump-config
+    test-home-config
+    test-and-bump-config
   ];
 }

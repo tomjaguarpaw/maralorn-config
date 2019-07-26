@@ -5,6 +5,7 @@ in {
 
 imports = [
   ./zsh
+  ./update-script.nix
   ./modules/taskwarrior.nix
   ./modules/force-copies.nix
   ./modules/battery.nix

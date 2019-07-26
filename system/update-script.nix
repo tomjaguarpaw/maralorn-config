@@ -1,11 +1,11 @@
 { pkgs, config, lib,  ... }:
 let
-  inherit (import ../common/lib.nix) writeHaskellScript getNivPath getNivAssign home-manager;
+  inherit (import ../common/lib.nix) writeHaskellScript get-niv-path home-manager gcRetentionDays;
   configPath = "/etc/nixos";
   update-system = writeHaskellScript {
       name = "update-system";
       imports = [ "qualified Data.ByteString.Lazy.Char8 as C" "qualified Data.List as L" ];
-      bins = [ getNivPath config.system.build.nixos-rebuild ];
+      bins = [ get-niv-path config.system.build.nixos-rebuild ];
     }
     ''
     getNivPath = fmap C.unpack . readTrim . get_niv_path "${configPath}/nix/sources.nix"
@@ -17,13 +17,20 @@ let
         paths <- fmap concat . mapM getNivAssign $ ["nixpkgs", "unstable", "home-manager"]
         nixos_rebuild (paths ++ ["switch"])
     '';
+  system-maintenance = writeHaskellScript
+    { name = "system-maintenance"; bins = [ pkgs.nix pkgs.git update-system ];} ''
+    main = do
+      git "-C" "${configPath}" "pull"
+      update_system
+      nix_collect_garbage "--delete-older-than" "${toString gcRetentionDays}d"
+      nix "optimise-store"
+  '';
 in
 {
-  config = {
-    environment = {
-      systemPackages = [
-        update-system
-      ];
-    };
+  environment = {
+    systemPackages = [
+      update-system
+      system-maintenance
+    ];
   };
 }

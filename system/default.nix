@@ -1,8 +1,7 @@
 { pkgs, config, lib,  ... }:
 let
-  inherit (import ../common/lib.nix) home-manager;
+  inherit (import ../common/lib.nix) home-manager sources;
   me = config.m-0.private.me;
-  sources = import ../nix/sources.nix;
 in {
   imports = [
     ../common

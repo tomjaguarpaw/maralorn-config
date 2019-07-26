@@ -28,7 +28,7 @@ let
 
       ${code}
     '';
-  getNivPath = writeHaskellScript {
+  get-niv-path = writeHaskellScript {
     name = "get-niv-path";
     bins = [pkgs.nix];
     imports = ["System.Console.CmdArgs.Implicit"];
@@ -51,8 +51,9 @@ let
           nix_build ["-Q", "-E", expr, "--no-out-link"] &> devNull
           nix_instantiate ["--eval", "-E", [i|toString #{expr}|]] |> trimQuotation
     '';
-  home-manager = pkgs.callPackage <home-manager/home-manager> {};
-  niv = (import sources.niv {}).niv;
 in {
-    inherit writeHaskellScript home-manager getNivPath unstable niv;
+  inherit writeHaskellScript get-niv-path unstable sources;
+  niv = (import sources.niv {}).niv;
+  home-manager = pkgs.callPackage <home-manager/home-manager> {};
+  gcRetentionDays = 5;
 }
