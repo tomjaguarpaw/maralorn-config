@@ -22,6 +22,11 @@ imports = [
  ./matrix.nix
  ./secret
 ];
+  
+nix.sshServe = {
+  enable = true;
+  keys = me.keys;
+};
 
 services = {
   borgbackup.jobs.data = {

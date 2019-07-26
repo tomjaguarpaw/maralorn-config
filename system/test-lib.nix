@@ -46,7 +46,7 @@ let
     '');
 
   repoSrc = "git@hera.m-0.eu:nixos-config";
-  configPath = "/etc/config";
+  configPath = "/etc/nixos";
   test-and-bump-config = writeHaskellScript {
     name = "test-and-bump-config";
     bins = [ test-system-config test-home-config pkgs.git pkgs.coreutils niv pkgs.git-crypt ];
