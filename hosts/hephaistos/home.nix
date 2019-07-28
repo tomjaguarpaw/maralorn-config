@@ -25,6 +25,7 @@ m-0 = {
 
 home = {
   username = "brandy";
+  homeDirectory = "/home/brandy";
   language = {
     base = "C.UTF-8";
     address = "C.UTF-8";
