@@ -22,10 +22,11 @@ imports = [
  ./matrix.nix
  ./secret
 ];
-  
+
 nix.sshServe = {
   enable = true;
   keys = me.keys;
+  protocol = "ssh-ng";
 };
 
 services = {

@@ -2,6 +2,7 @@
 let
   hostName = "matrix.maralorn.de";
   inherit (config.m-0) hosts;
+  inherit (../../common/lib.nix) unstable;
 in
 {
 networking.firewall.allowedTCPPorts = [ 3478 8448 ];

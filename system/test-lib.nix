@@ -65,7 +65,7 @@ let
       unlock = mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ["default", "apollo", "hera"]
 
       update :: IO ()
-      update = niv "update"
+      update = ignoreFailure $ niv "update"
 
       testBuild :: FilePath -> IO ()
       testBuild dir = do
