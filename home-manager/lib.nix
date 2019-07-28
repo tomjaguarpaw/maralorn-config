@@ -18,7 +18,8 @@ in
       where tag str = ["-I", [i|#{name}=#{str :: LBS.ByteString}|]]
 
     main = do
+      args <- getArgs
       paths <- concat <$> mapM getNivAssign ["home-manager", "nixpkgs", "unstable"]
-      home_manager $ paths ++ ["switch"]
+      home_manager $ paths ++ ["switch"] ++ args
     '';
 }

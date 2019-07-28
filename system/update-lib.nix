@@ -15,7 +15,8 @@ let
 
     main = do
         paths <- fmap concat . mapM getNivAssign $ ["nixpkgs", "unstable", "home-manager"]
-        nixos_rebuild (paths ++ ["switch"])
+        args <- getArgs
+        nixos_rebuild (paths ++ ["switch"] ++ args)
     '';
   system-maintenance = writeHaskellScript
     { name = "system-maintenance"; bins = [ pkgs.nix pkgs.git update-system ];} ''

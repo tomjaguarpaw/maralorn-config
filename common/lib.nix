@@ -16,10 +16,12 @@ let
       import Data.String.Interpolate (i)
       import qualified Data.ByteString as BS
       import qualified Data.ByteString.Lazy as LBS
+      import qualified Data.ByteString.Lazy.Char8 as LBSC
       import qualified Data.Text as T
       import qualified Data.Text.Lazy as LT
       import qualified Data.Text.Encoding as TE
       import qualified Data.Text.Lazy.Encoding as LTE
+      import System.Environment (getArgs)
       ${builtins.concatStringsSep "\n" (map (x: "import ${x}") imports)}
 
       -- Load binaries from Nix packages. The dependencies will be captured
@@ -35,19 +37,11 @@ let
     libraries = [ unstable.haskellPackages.cmdargs unstable.haskellPackages.text ];
   } ''
 
-    data Path = Path {
-      sources :: String,
-      channel :: String
-    } deriving (Show, Data, Typeable)
-
-    path = Path{ sources = def &= argPos 0, channel = def &= argPos 1}
-
     trimQuotation = pureProc $ LTE.encodeUtf8 . LT.dropAround ('"' ==) . LTE.decodeUtf8 . trim
 
-    main :: IO ()
     main = do
-          path <- cmdArgs path
-          let expr = [i|(import #{sources path}).#{channel path}|]
+          [sources, channel] <- getArgs
+          let expr = [i|(import #{sources}).#{channel}|]
           nix_build ["-Q", "-E", expr, "--no-out-link"] &> devNull
           nix_instantiate ["--eval", "-E", [i|toString #{expr}|]] |> trimQuotation
     '';
