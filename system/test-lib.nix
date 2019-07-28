@@ -75,7 +75,11 @@ let
       push :: FilePath -> IO()
       push dir = do
         changed <- ((mempty /=) <$>) . readTrim $ git "-C" dir "status" "--porcelain"
-        when changed $ git "-C" dir "commit" "-am" "Update dependencies with niv" >> git "-C" dir "push"
+        when changed $ do
+          git "-C" dir "config" "user.email" "maralorn@maralorn.de"
+          git "-C" dir "config" "user.name" "maralorn (nix-auto-updater)"
+          git "-C" dir "commit" "-am" "Update dependencies with niv"
+          git "-C" dir "push"
 
       main :: IO ()
       main = do

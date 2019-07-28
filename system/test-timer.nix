@@ -2,7 +2,7 @@
 {
   systemd.services."test-and-bump-config" = {
     startAt = "20:30";
-    path = [ pkgs.nix pkgs.gnutar pkgs.gzip pkgs.git ];
+    path = [ pkgs.nix pkgs.gnutar pkgs.gzip pkgs.git pkgs.git-crypt ];
     serviceConfig = {
       Type = "oneshot";
       WorkingDirectory = "/var/cache/gc-links";
