@@ -45,7 +45,7 @@ in {
 
 
     nix = {
-      binaryCaches = [ "ssh://nix-ssh@hera.m-0.eu" "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" ];
+      binaryCaches = [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" ];
       binaryCachePublicKeys = [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
       nixPath = [ "/etc/nix-path" ];
     };
