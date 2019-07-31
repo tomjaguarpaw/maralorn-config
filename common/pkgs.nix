@@ -57,7 +57,6 @@ rec {
     cachix = import sources.cachix { };
     nixfmt = import sources.nixfmt { };
     inherit (pkgs.gnome3) nautilus;
-    inherit (unstable.haskellPackages) brittany;
     inherit (pkgs.xorg) xev xbacklight;
     inherit (pkgs)
     # web

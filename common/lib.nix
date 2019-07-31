@@ -2,12 +2,14 @@ rec {
   pkgs = import <nixpkgs> { };
   unstable = import <unstable> { };
   sources = import ../nix/sources.nix;
-  unBreak = pkg: unstable.haskell.lib.overrideCabal pkg (drv: {
-    broken = false;
-    doCheck = false;
-  });
+  unBreak = pkg:
+    unstable.haskell.lib.overrideCabal pkg (drv: {
+      broken = false;
+      doCheck = false;
+    });
   shh = unBreak unstable.haskellPackages.shh;
-  ghc = unstable.ghc.withPackages (p: [ (unBreak p.shh) ]);
+  ghc = unstable.ghc.withPackages
+    (p: [ (unBreak p.shh) p.brittany p.hlint p.ghcid ]);
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
   writeHaskellScript = { name ? "haskell-script", bins ? [ pkgs.coreutils ]
     , libraries ? [ ], imports ? [ ] }:
@@ -34,7 +36,9 @@ rec {
 
       -- Load binaries from Nix packages. The dependencies will be captured
       -- in the closure.
-      loadFromBins ${haskellList (builtins.map toString (bins ++ [pkgs.coreutils]))}
+      loadFromBins ${
+        haskellList (builtins.map toString (bins ++ [ pkgs.coreutils ]))
+      }
 
       ${code}
     '';
