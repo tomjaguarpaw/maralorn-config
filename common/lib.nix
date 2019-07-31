@@ -7,7 +7,7 @@ rec {
     doCheck = false;
   });
   shh = unBreak unstable.haskellPackages.shh;
-  ghc = unstable.ghc.withPackages (p: [ (unBreak p.shh) (unBreak p.shh-extras) ]);
+  ghc = unstable.ghc.withPackages (p: [ (unBreak p.shh) ]);
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
   writeHaskellScript = { name ? "haskell-script", bins ? [ pkgs.coreutils ]
     , libraries ? [ ], imports ? [ ] }:
