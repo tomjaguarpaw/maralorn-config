@@ -24,12 +24,9 @@ with lib;
 
   environment = {
     # Put these into an extra file so the essential packages can also be included on non selfadminstrated systems from home-manager
-    systemPackages = let essentials = import ../common/essentials.nix;
-  in essentials.core ++ essentials.extra ++ (builtins.attrValues {
-        inherit (import ./test-lib.nix) test-system-config test-home-config test-and-bump-config;
-        inherit (import ../common/lib.nix) home-manager;
+    systemPackages = builtins.attrValues ({
         inherit (import ./update-lib.nix config.system.build.nixos-rebuild) update-system system-maintenance;
-      });
+      } // (import ../common/pkgs.nix).system-pkgs);
     sessionVariables = {
       TERMINFO = "/run/current-system/sw/share/terminfo";
     };

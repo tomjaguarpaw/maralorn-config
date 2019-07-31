@@ -9,12 +9,7 @@ options.m-0.accounting.config = mkOption {
 
 config = mkIf config.m-0.accounting.enable {
   home.file.".config/jali/config.py".text = config.m-0.accounting.config;
-  home.packages = with pkgs; [
-    hledger
-    haskellPackages.hledger-ui
-    ledger
-    jali
-  ];
+  home.packages = builtins.attrValues (import ../../../common/pkgs.nix).accounting-pkgs;
 };
 
 }

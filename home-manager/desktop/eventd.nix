@@ -1,17 +1,10 @@
 { pkgs, lib, config, ... }:
-with lib;
 let
   colors = config.m-0.colors;
+  inherit (import ../../common/pkgs.nix) eventd;
 in {
 
-options.m-0.eventd.enable = mkEnableOption "Eventd";
-
-config = mkIf config.m-0.eventd.enable {
-  home = {
-    packages = with pkgs; [
-      eventd
-    ];
-  };
+  home.packages = [ eventd ];
   systemd.user = {
     services = {
       eventd = {
@@ -26,8 +19,8 @@ config = mkIf config.m-0.eventd.enable {
         Service = {
           Type="notify";
           Sockets="eventd-control.socket eventd.socket";
-          ExecStart="${pkgs.eventd}/bin/eventd --listen systemd";
-          ExecReload="${pkgs.eventd}/bin/eventdctl reload";
+          ExecStart="${eventd}/bin/eventd --listen systemd";
+          ExecReload="${eventd}/bin/eventdctl reload";
         };
       };
     };
@@ -54,7 +47,7 @@ config = mkIf config.m-0.eventd.enable {
     };
   };
   xdg = {
-    configFile = mkIf config.m-0.graphical.enable {
+    configFile = {
       "eventd/eventd.conf".text = lib.generators.toINI {} {
         "Queue default" = {
           Margin = 10;
@@ -169,6 +162,5 @@ config = mkIf config.m-0.eventd.enable {
       };
     };
   };
-};
 
 }

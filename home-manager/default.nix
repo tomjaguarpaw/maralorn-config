@@ -8,30 +8,18 @@ imports = [
   ./update-script.nix
   ./modules/taskwarrior.nix
   ./modules/force-copies.nix
-  ./modules/battery.nix
-  ./modules/laptop.nix
   ./modules/accounting
   ./modules/rustdev.nix
   ./modules/latex.nix
-  ./modules/sleep-nag.nix
-  ./modules/graphical
   ./modules/mail.nix
   ./modules/home-options.nix
-  ./modules/eventd.nix
   ./modules/unlock.nix
   ./modules/weechat
-  ./modules/update_tasks.nix
   ./modules/bugwarrior.nix
   ./modules/pythia.nix
   ../common
 ];
 
-nixpkgs.overlays = [ (self: super: {
-  tasktree = super.callPackage ./packages/tasktree {};
-  jali = super.callPackage ./packages/jali {};
-  eventd = super.callPackage ./packages/eventd {};
-  neovim = (import ./nvim) super config.m-0.rustdev.enable;
-})];
 
 programs = {
   home-manager.enable = true;
@@ -112,7 +100,9 @@ programs = {
   };
 };
 
-home.sessionVariables = {
+home = {
+packages = builtins.attrValues (import ../common/pkgs.nix).home-pkgs;
+  sessionVariables = {
   PATH = "$HOME/.cargo/bin:/etc/profiles/per-user/${config.home.username}/bin:$HOME/.nix-profile/bin:$PATH";
   BROWSER = "${pkgs.firefox}/bin/firefox";
   EDITOR = "${pkgs.neovim}/bin/nvim";
@@ -122,6 +112,7 @@ home.sessionVariables = {
        print-pw = pkgs.writeShellScriptBin "print-pw" "pass show eu/m-0/${config.m-0.hostName}/user/${config.home.username}";
     in
       "${print-pw}/bin/print-pw";
+  };
 };
 fonts.fontconfig.enableProfileFonts = true;
 
@@ -135,16 +126,6 @@ services = {
   };
 };
 
-home.packages = builtins.attrValues {
-  inherit (pkgs) neovim;
-  print215 = (pkgs.writeShellScriptBin "print215" ''
-    scp "$@" ag-forward:
-    ssh ag-forward lpr -Zduplex -r "$@"
-  '');
-  print215single = (pkgs.writeShellScriptBin "print215single" ''
-    scp "$@" ag-forward:
-    ssh ag-forward lpr -r "$@"
-  '');
-};
+
 xdg.enable = true;
 }

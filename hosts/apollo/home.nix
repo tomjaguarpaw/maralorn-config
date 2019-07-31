@@ -4,26 +4,25 @@
 imports = [
   ../../home-manager
   ../../home-manager/on-my-machine.nix
+  ../../home-manager/battery.nix
+  ../../home-manager/update_tasks.nix
+  ../../home-manager/desktop
 ];
+
+home.packages = builtins.attrValues (import ../../common/pkgs.nix).laptop-home-pkgs;
 
 m-0 = {
   hostName = "apollo";
-  laptop.enable = true;
-  sleep-nag.enable = true;
-  battery.enable = true;
   latex.enable = true;
   accounting = {
     enable = true;
     config = builtins.readFile secret/jaliconfig.py;
   };
-  graphical.enable = true;
   rustdev.enable = true;
   taskwarrior = {
     enable = true;
     git_active = true;
   };
-  update_tasks.enable = true;
-  eventd.enable = true;
   pythia.enable = true;
   unlocker = [ {
     name = "hera";
@@ -37,6 +36,34 @@ m-0 = {
   };
 };
 
+  home.file.".ncmpcpp/config".text = ''
+    ask_before_clearing_playlists=no
+    mouse_support = yes
+    song_columns_list_format = "(24)[red]{a} $R(48)[blue]{t} (24)[green]{b} (4)[magenta]{l}"
+    playlist_display_mode = columns
+    search_engine_display_mode = columns
+    browser_display_mode = columns
+    user_interface = alternative
+  '';
+  programs = {
+    firefox = {
+      enable = true;
+    };
+    git = {
+      signing = {
+        signByDefault = true;
+        key = "6C3D12CD88CDF46C5EAF4D12226A2D41EF5378C9";
+      };
+    };
+  };
+
+  services = {
+    udiskie = {
+      enable = true;
+      notify = true;
+    };
+    network-manager-applet.enable = true;
+  };
 
 programs.autorandr = {
   enable = true;
@@ -107,12 +134,5 @@ programs.autorandr = {
   };
 };
 
-home.packages = [
-  (pkgs.writeShellScriptBin "maintenance" ''
-    git -C ~/git/nixos/config pull
-    update-home
-    sudo system-maintenance
-  '')
-];
 
 }

@@ -1,10 +1,8 @@
 { config, lib, pkgs , ... }:
-with lib;
 let
-  inherit (config.m-0.private) me;
-in {
-options.m-0.update_tasks.enable = mkEnableOption "Update Tasks";
-config = mkIf config.m-0.update_tasks.enable {
+  inherit (import ../common/pkgs.nix) eventd;
+in
+{
   systemd.user = {
     services.update_tasks = {
       Unit = {
@@ -12,7 +10,7 @@ config = mkIf config.m-0.update_tasks.enable {
       };
       Service = {
         Type = "oneshot";
-        Environment="PATH=${pkgs.taskwarrior}/bin:${pkgs.eventd}/bin";
+        Environment="PATH=${pkgs.taskwarrior}/bin:${eventd}/bin";
         ExecStart= "${config.home.homeDirectory}/.cargo/bin/update_tasks";
       };
     };
@@ -25,6 +23,5 @@ config = mkIf config.m-0.update_tasks.enable {
       };
     };
   };
-};
 
 }

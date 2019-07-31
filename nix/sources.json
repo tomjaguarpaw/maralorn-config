@@ -47,6 +47,18 @@
         "url": "https://github.com/nmattia/niv/archive/8b7b70465c130d8d7a98fba1396ad1481daee518.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "nixfmt": {
+        "branch": "master",
+        "description": "A formatter for Nix code",
+        "homepage": "https://nixfmt.serokell.io",
+        "owner": "serokell",
+        "repo": "nixfmt",
+        "rev": "af09262aa7d08d2b0905b11d2e8958889aadcf46",
+        "sha256": "0njgjv6syv3sk97v8kq0cb4mhgrb7nag2shsj7rphs6h5b7k9nbx",
+        "type": "tarball",
+        "url": "https://github.com/serokell/nixfmt/archive/af09262aa7d08d2b0905b11d2e8958889aadcf46.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "nixos-hardware": {
         "branch": "master",
         "description": "A collection of NixOS modules covering hardware quirks.",

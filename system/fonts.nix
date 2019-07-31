@@ -18,38 +18,39 @@
     };
     enableDefaultFonts = true;
     enableFontDir = true;
-    fonts = [
-      pkgs.anonymousPro
-      pkgs.arkpandora_ttf
-      pkgs.caladea
-      pkgs.carlito
-      pkgs.comfortaa
-      pkgs.comic-relief
-      pkgs.crimson
-      pkgs.dejavu_fonts
-      pkgs.google-fonts
-      pkgs.inconsolata
-      pkgs.iosevka
-      pkgs.liberationsansnarrow
-      pkgs.liberation_ttf
-      pkgs.libertine
-      pkgs.mononoki
-      pkgs.montserrat
-      pkgs.nerdfonts
-      pkgs.norwester-font
-      pkgs.opensans-ttf
-      pkgs.powerline-fonts
-      pkgs.roboto
-      pkgs.sampradaya
-      pkgs.source-code-pro
-      pkgs.source-sans-pro
-      pkgs.source-serif-pro
-      pkgs.tai-ahom
-      pkgs.tempora_lgc
-      pkgs.terminus_font
-      pkgs.theano
-      pkgs.ubuntu_font_family
-    ];
+    fonts = builtins.attrValues {
+      inherit (pkgs)
+      anonymousPro
+      arkpandora_ttf
+      caladea
+      carlito
+      comfortaa
+      comic-relief
+      crimson
+      dejavu_fonts
+      google-fonts
+      inconsolata
+      iosevka
+      liberationsansnarrow
+      liberation_ttf
+      libertine
+      mononoki
+      montserrat
+      nerdfonts
+      norwester-font
+      opensans-ttf
+      powerline-fonts
+      roboto
+      sampradaya
+      source-code-pro
+      source-sans-pro
+      source-serif-pro
+      tai-ahom
+      tempora_lgc
+      terminus_font
+      theano
+      ubuntu_font_family;
+    };
   };
 
 

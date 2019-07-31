@@ -4,6 +4,7 @@ let
   me = config.m-0.private.me;
 in {
   imports = [
+    ../cachix.nix
     ../common
     ./modules/laptop.nix
     ./modules/mathechor.de.nix

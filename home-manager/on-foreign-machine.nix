@@ -5,6 +5,7 @@ let
 in
 {
   home = {
+    packages = builtins.attrValues (import ../common/pkgs.nix).foreign-home-pkgs;
     sessionVariables = {
       NIX_PATH = "$HOME/.nix-path";
     };

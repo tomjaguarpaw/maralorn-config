@@ -1,25 +1,16 @@
 { pkgs, lib, config, ... }:
-with lib;
+let
+  inherit (import ../../common/pkgs.nix) desktop-pkgs;
+in
 {
-
-options.m-0.graphical.enable = mkEnableOption "Window Manager";
 
 imports = [
   ./i3.nix
-  ./rofi
+  ./rofi.nix
   ./ssh-agent.nix
+  ./eventd.nix
+  ./sleep-nag.nix
 ];
-config = let
-  urxvt = pkgs.rxvt_unicode-with-plugins;
-  terminal = pkgs.writeShellScriptBin "terminal" ''
-      ${urxvt}/bin/urxvtc "$@"
-      if [ $? -eq 2 ]; then
-         ${urxvt}/bin/urxvtd -q -o -f
-         ${urxvt}/bin/urxvtc "$@"
-      fi
-    '';
-in
-mkIf config.m-0.graphical.enable {
   m-0 = {
     workspaces = [
       "tasks"
@@ -33,7 +24,7 @@ mkIf config.m-0.graphical.enable {
       "leisure"
       "config"
     ];
-    terminal = "${terminal}/bin/terminal";
+    terminal = "${desktop-pkgs.terminal}/bin/terminal";
     colors = {
       "foreground" = "#dddbff";
       "background" = "#05004a";
@@ -56,12 +47,7 @@ mkIf config.m-0.graphical.enable {
     };
   };
   home = {
-    packages = with pkgs; [
-      terminal
-      tasktree
-      xautolock
-      gnome3.dconf
-    ];
+    packages = builtins.attrValues desktop-pkgs;
     keyboard = {
       layout = "de";
       variant = "neo";
@@ -70,7 +56,7 @@ mkIf config.m-0.graphical.enable {
   };
   programs.urxvt = {
     enable = true;
-    package = pkgs.rxvt_unicode-with-plugins;
+    package = desktop-pkgs.urxvt;
     fonts = [ "6x13" ];
     keybindings = {
       "C-1" = "command:\\033]710;6x13\\007";
@@ -122,11 +108,6 @@ mkIf config.m-0.graphical.enable {
   };
   services = {
     nextcloud-client.enable = true;
-    random-background = {
-      enable = true;
-      imageDirectory = "%h/data/aktuell/media/bilder/wallpaper/";
-      interval = "15minutes";
-    };
     redshift = {
       enable = true;
       temperature.day = 6500;
@@ -139,6 +120,5 @@ mkIf config.m-0.graphical.enable {
     };
   };
   xsession.enable = true;
-};
 
 }

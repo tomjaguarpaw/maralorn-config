@@ -4,10 +4,8 @@ let
   inherit (config.m-0) colors workspaces terminal;
 in {
 
-config = mkIf config.m-0.graphical.enable {
   home = {
     packages = with pkgs; [
-      (writeScriptBin "tasklauncher" (builtins.readFile ./tasklauncher.py))
       rofi-pass
     ];
   };
@@ -67,6 +65,5 @@ config = mkIf config.m-0.graphical.enable {
       };
     };
   };
-};
 
 }

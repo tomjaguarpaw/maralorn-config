@@ -73,7 +73,6 @@ let
     (builtins.attrNames oldbindings);
 in {
 
-config = mkIf config.m-0.graphical.enable {
   xsession = {
     windowManager.i3 = {
       enable = true;
@@ -209,6 +208,5 @@ config = mkIf config.m-0.graphical.enable {
       };
     };
   };
-};
 
 }

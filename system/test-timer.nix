@@ -6,7 +6,7 @@
     serviceConfig = {
       Type = "oneshot";
       WorkingDirectory = "/var/cache/gc-links";
-      ExecStart = "${(import ./test-lib.nix).test-and-bump-config}/bin/test-and-bump-config";
+      ExecStart = "${(import ../common/test-lib.nix).test-and-bump-config}/bin/test-and-bump-config";
     };
   };
 }

@@ -10,10 +10,7 @@ systemd.user.systemctlPath = "/usr/bin/systemctl";
 
 m-0 = {
   hostName = "fb04217";
-  #sleep-nag.enable = true;
   #latex.enable = true;
-  #graphical.enable = true;
-  #rustdev.enable = true;
   #taskwarrior = {
   #  enable = true;
   #  git_active = true;
@@ -77,7 +74,7 @@ home = {
     nix-collect-garbage --delete-older-than 5d
     nix-store --optimise
   '')
-  ] ++ ((import ../../common/essentials.nix).extra pkgs);
+  ] ++ ((import ../../common/pkgs.nix).);
 };
 
 }

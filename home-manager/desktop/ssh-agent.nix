@@ -1,7 +1,6 @@
 { pkgs , config , lib, ... }:
-with lib; {
+{
 
-config = mkIf config.m-0.graphical.enable {
   xsession.initExtra = let
     cat-pw = pkgs.writeShellScriptBin "cat-ssh-pw" ''
       pass eu/m-0/${config.m-0.hostName}/ssh
@@ -15,6 +14,5 @@ config = mkIf config.m-0.graphical.enable {
     '';
   in
     ". ${start-agent}/bin/start-ssh-agent";
-};
 
 }

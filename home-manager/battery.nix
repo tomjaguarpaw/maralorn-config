@@ -1,6 +1,6 @@
 { lib, pkgs, config, ... }:
-with lib;
 let
+  inherit (import ../common/pkgs.nix) eventd;
   battery-watch = pkgs.writeScript "battery-watch" ''
 #!${pkgs.stdenv.shell}
 
@@ -11,9 +11,9 @@ do
     if [ "$(${pkgs.acpi}/bin/acpi -a | grep -o off)" == "off" ]; then
         battery_level=`${pkgs.acpi}/bin/acpi -b | sed 's/.*[dg], //g;s/\%,.*//g'`
         if [ $battery_level -le $critical_level ]; then
-          ${pkgs.eventd}/bin/eventc critical battery -d "title='Battery level is low!'" -d "message='Only $battery_level% of the charge remains.'"
+          ${eventd}/bin/eventc critical battery -d "title='Battery level is low!'" -d "message='Only $battery_level% of the charge remains.'"
         else
-          ${pkgs.eventd}/bin/eventc notification battery -d "title='Battery is discharging!'" -d "message='Only $battery_level% of the charge remains.'"
+          ${eventd}/bin/eventc notification battery -d "title='Battery is discharging!'" -d "message='Only $battery_level% of the charge remains.'"
           sleep 18m
         fi
     fi
@@ -22,9 +22,6 @@ done
 '';
 in {
 
-options.m-0.battery.enable = mkEnableOption "Battery";
-
-config = mkIf config.m-0.battery.enable {
   systemd.user = {
     services.battery = {
       Unit = {
@@ -38,6 +35,5 @@ config = mkIf config.m-0.battery.enable {
       };
     };
   };
-};
 
 }
