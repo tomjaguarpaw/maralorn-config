@@ -1,8 +1,12 @@
-let
+rec {
   pkgs = import <nixpkgs> {};
   unstable = import <unstable> {};
   sources = import ../nix/sources.nix;
   shh = unstable.haskell.lib.overrideCabal unstable.haskellPackages.shh (drv: {
+    broken = false;
+    doCheck = false;
+  });
+  shh-extras = unstable.haskell.lib.overrideCabal unstable.haskellPackages.shh-extras (drv: {
     broken = false;
     doCheck = false;
   });
@@ -46,9 +50,6 @@ let
           nix_build ["-Q", "-E", expr, "--no-out-link"] &> devNull
           nix_instantiate ["--eval", "-E", [i|toString #{expr}|]] |> trimQuotation
     '';
-in {
-  inherit writeHaskellScript get-niv-path unstable sources haskellList;
-  niv = (import sources.niv {}).niv;
   home-manager = pkgs.callPackage <home-manager/home-manager> {};
   gcRetentionDays = 5;
 }

@@ -1,15 +1,13 @@
 rec {
-  inherit (import ../common/lib.nix) niv;
-  pkgs = import <nixpkgs> {};
-  unstable = import <unstable> {};
-  lorriSrc = (import ../nix/sources.nix).lorri;
-  lorri = import lorriSrc { src = lorriSrc; pkgs = unstable; };
+  my-lib = import ../common/lib.nix;
+  inherit (my-lib) pkgs unstable sources;
   tasktree = pkgs.callPackage ../packages/tasktree {};
   neovim = pkgs.neovim.override {
       vimAlias = true;
       withPython3 = true;
     };
   home-neovim = (import ../home-manager/nvim) neovim;
+  niv = (import sources.niv {}).niv;
 
   # pkgs assumed to be present on a non nixos host
   core-system-pkgs = {
@@ -35,7 +33,8 @@ rec {
   };
 
   extra-system-pkgs = {
-    inherit lorri niv;
+    lorri = import sources.lorri { src = sources.lorri; pkgs = unstable; };
+    inherit niv;
     inherit (pkgs.gitAndTools) git-annex;
     inherit (pkgs.rxvt_unicode) terminfo;
     inherit (pkgs.pythonPackages) qrcode;
@@ -81,8 +80,8 @@ rec {
       sleep 0.1s;
       nmcli r wifi on;
     '';
-    cachix = import (import ../nix/sources.nix).cachix {};
-    nixfmt = import (import ../nix/sources.nix).nixfmt {};
+    cachix = import sources.cachix {};
+    nixfmt = import sources.nixfmt {};
     inherit (pkgs.gnome3) nautilus;
     inherit (unstable.haskellPackages) brittany;
     inherit (pkgs.xorg) xev xbacklight;
@@ -160,6 +159,7 @@ rec {
   };
 home-pkgs = {
   inherit (pkgs) ncmpcpp;
+  inherit (my-lib) shh;
   inherit home-neovim;
 };
 accounting-pkgs = {
