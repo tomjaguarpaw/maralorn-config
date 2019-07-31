@@ -26,7 +26,7 @@ containers.mail = {
   config = { pkgs, lib, ... }: {
     imports = [
       ../../system
-      "${(builtins.fetchGit "ssh://git@hera/nixos-mailserver")}"
+      "${(import ../../nix/sources.nix).nixos-mailserver}"
     ];
     services.prometheus.exporters = {
       node.port = 9101;
@@ -44,8 +44,16 @@ containers.mail = {
     };
     systemd.services = {
       atomail = {
-        script = ''
-          ${pkgs.python}/bin/python ${builtins.fetchGit "https://github.com/remko/atomail.git"}/atomail.py --title "Readlater-E-Mails" --uri="http://hera-intern-v4:8842/rss.xml" /var/www/rss.xml --mode=maildir --file "/var/vmail/maralorn.de/malte.brandy/.Move.readlater/" --max-items=100
+        script =
+        let
+          atomail = pkgs.fetchFromGitHub {
+            owner = "remko";
+            repo = "atomail";
+            rev = "f079966cb808f51fcc67be91b609942cdb49898a";
+            sha256 = "0a4j4xajn2yysgcb17jmb6ak148kk0kwf7khml7dbnh7807fv9b6";
+          };
+        in ''
+          ${pkgs.python}/bin/python ${atomail}/atomail.py --title "Readlater-E-Mails" --uri="http://hera-intern-v4:8842/rss.xml" /var/www/rss.xml --mode=maildir --file "/var/vmail/maralorn.de/malte.brandy/.Move.readlater/" --max-items=100
           ${pkgs.rsync}/bin/rsync -a /var/vmail/maralorn.de/malte.brandy/.Move.readlater/cur/ /var/vmail/maralorn.de/malte.brandy/.Archiv.unsortiert/cur --remove-source-files
         '';
         startAt = "19:58:00";

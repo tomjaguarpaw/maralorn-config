@@ -1,4 +1,16 @@
 {
+    "cachix": {
+        "branch": "master",
+        "description": "Command line client for Nix binary cache hosting:",
+        "homepage": "https://cachix.org",
+        "owner": "cachix",
+        "repo": "cachix",
+        "rev": "53e15349b45679fd47a97bf4d030b024dbada9fd",
+        "sha256": "0ir92v4hk60hvvgqbjp97mlrks3wm7881gd2wc177r1hy24wvxdi",
+        "type": "tarball",
+        "url": "https://github.com/cachix/cachix/archive/53e15349b45679fd47a97bf4d030b024dbada9fd.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "home-manager": {
         "branch": "release-19.03",
         "description": "Manage a user environment using Nix",
@@ -11,6 +23,18 @@
         "url": "https://github.com/rycee/home-manager/archive/a85f22164d56052f027e71718c99ec0a1c3d25d1.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "lorri": {
+        "branch": "rolling-release",
+        "description": "Your project's nix-env",
+        "homepage": "",
+        "owner": "target",
+        "repo": "lorri",
+        "rev": "d3e452ebc2b24ab86aec18af44c8217b2e469b2a",
+        "sha256": "07yf3gl9sixh7acxayq4q8h7z4q8a66412z0r49sr69yxb7b4q89",
+        "type": "tarball",
+        "url": "https://github.com/target/lorri/archive/d3e452ebc2b24ab86aec18af44c8217b2e469b2a.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "niv": {
         "branch": "master",
         "description": "Easy dependency management for Nix projects",
@@ -21,6 +45,30 @@
         "sha256": "0fgdrxn2vzpnzr6pxaiyn5zzbd812c6f7xjjhfir0kpzamjnxwwl",
         "type": "tarball",
         "url": "https://github.com/nmattia/niv/archive/8b7b70465c130d8d7a98fba1396ad1481daee518.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixos-hardware": {
+        "branch": "master",
+        "description": "A collection of NixOS modules covering hardware quirks.",
+        "homepage": "",
+        "owner": "nixos",
+        "repo": "nixos-hardware",
+        "rev": "03db9669a6fc712e9537201d55639287eb606765",
+        "sha256": "1g8kap5qzva58pcwn2xj1cs0k9w9mpbrlk5diaaarlgizp4l2x0z",
+        "type": "tarball",
+        "url": "https://github.com/nixos/nixos-hardware/archive/03db9669a6fc712e9537201d55639287eb606765.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixos-mailserver": {
+        "branch": "master",
+        "description": "Fork of https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git",
+        "homepage": "",
+        "owner": "maralorn",
+        "repo": "nixos-mailserver",
+        "rev": "36f0b7ed587be92bfa9032d45bcc3c9b3520ed6b",
+        "sha256": "1bydmapzvw71qd5lkxkb706jfd8cc5zmnv7dcdxiqd73hyfydpas",
+        "type": "tarball",
+        "url": "https://github.com/maralorn/nixos-mailserver/archive/36f0b7ed587be92bfa9032d45bcc3c9b3520ed6b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {

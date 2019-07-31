@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 
 # You need pw-files for every configured user in ./secret/pw-useralias for login to work.
+# dropbearkey -t rsa -f /etc/nixos/hosts/<hostname>/secret/boot_rsa
 
 let
   inherit (config.m-0.private) me;
@@ -12,6 +13,7 @@ imports = [
  ../../system/test-timer.nix
  ../../system/standalone.nix
  ../../system/server.nix
+ ../../system/git.nix
  ./borg.nix
  ./mail.nix
  ./boot.nix
@@ -37,11 +39,6 @@ services = {
     repo = "borg@borg:.";
     compression = "zstd,5";
   };
-};
-
-m-0 = {
-  # dropbearkey -t rsa -f /etc/nixos/hosts/<hostname>/secret/boot_rsa
-  git-server.enable = true;
 };
 
 users.users.choreutes = {

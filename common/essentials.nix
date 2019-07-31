@@ -1,8 +1,18 @@
 let
   inherit (import ../common/lib.nix) niv;
+  pkgs = import <nixpkgs> {};
+  unstable = import <unstable> {};
+  lorriSrc = (import ../nix/sources.nix).lorri;
+  lorri = import lorriSrc { src = lorriSrc; pkgs = unstable; };
+  neovim = pkgs.neovim.override {
+      vimAlias = true;
+      withPython3 = true;
+    };
 in
 {
-  core = pkgs: with pkgs; [
+  core = builtins.attrValues {
+    inherit neovim;
+      inherit (pkgs)
     gitFull
     gnumake
     python3
@@ -11,10 +21,6 @@ in
     wget
     curl
     wireguard
-    (pkgs.neovim.override {
-      vimAlias = true;
-      withPython3 = true;
-    })
     gnupg
     mutt
     bind
@@ -23,26 +29,24 @@ in
     unzip
     rename
     whois
-    lsof
-    ];
+    lsof;
+  };
 
-    extra = pkgs: with pkgs; let
-      lorriSrc = builtins.fetchGit { url = "https://github.com/target/lorri.git"; ref = "rolling-release"; };
-      lorri = import "${lorriSrc}/default.nix" { src = lorriSrc; inherit pkgs; };
-    in
-    [
-    niv
+  extra = builtins.attrValues {
+    inherit lorri niv;
+    inherit (pkgs.gitAndTools) git-annex;
+    inherit (pkgs.rxvt_unicode) terminfo;
+    inherit (pkgs.pythonPackages) qrcode;
+    inherit (pkgs)
+
     git-crypt
-    gitAndTools.git-annex
     htop
     tree
-    rxvt_unicode.terminfo
     pwgen
     borgbackup
     inotifyTools
 
     direnv
-    #lorri
 
     socat
     nmap
@@ -58,10 +62,9 @@ in
 
     ripgrep
 
-    pythonPackages.qrcode
     ranger
 
     pass
-    sshuttle
-    ];
+    sshuttle;
+  };
 }

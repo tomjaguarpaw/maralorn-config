@@ -1,6 +1,6 @@
 let
   pkgs = import <nixpkgs> {};
-  inherit (import ../common/lib.nix) writeHaskellScript get-niv-path home-manager unstable niv;
+  inherit (import ../common/lib.nix) writeHaskellScript get-niv-path home-manager unstable niv haskellList;
   haskellBody = commandline:
     ''
     getNivPath dir = readTrim . get_niv_path ([i|#{dir :: String}/nix/sources.nix|] :: String)
@@ -33,6 +33,9 @@ let
 
   repoSrc = "git@hera.m-0.eu:nixos-config";
   configPath = "/etc/nixos";
+  systems = ["apollo"  "hera"];
+  homes = ["apollo"  "hera"  "hephaistos"];
+  keys = ["default"  "apollo"  "hera"];
   test-and-bump-config = writeHaskellScript {
     name = "test-and-bump-config";
     bins = [ test-system-config test-home-config pkgs.git pkgs.coreutils niv pkgs.git-crypt ];
@@ -48,10 +51,10 @@ let
         path <- readTrim pwd
         bracket checkout (rm "-rf") $ \dir -> do
           withCurrentDirectory dir $ do
-            mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ["default", "apollo", "hera"]
+            mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ${haskellList keys}
             ignoreFailure $ niv "update"
-          mapM_ (test_system_config dir) ["apollo", "hera"]
-          mapM_ (test_home_config dir) ["apollo", "hera", "hephaistos"]
+          mapM_ (test_system_config dir) ${haskellList systems}
+          mapM_ (test_home_config dir) ${haskellList homes}
           changed <- ((mempty /=) <$>) . readTrim $ git "-C" dir "status" "--porcelain"
           when changed $ do
             git "-C" dir "config" "user.email" "maralorn@maralorn.de"

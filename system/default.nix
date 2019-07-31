@@ -6,7 +6,6 @@ in {
   imports = [
     ../common
     ./modules/laptop.nix
-    ./modules/git.nix
     ./modules/mathechor.de.nix
     ./modules/blog.nix
     ./modules/riot.nix

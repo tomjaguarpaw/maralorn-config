@@ -6,6 +6,7 @@ let
     broken = false;
     doCheck = false;
   });
+  haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
   writeHaskellScript = { name ? "haskell-script", bins ? [pkgs.coreutils], libraries ? [], imports ? []}: code:
     unstable.writers.writeHaskellBin name { libraries = libraries ++ [shh unstable.haskellPackages.string-interpolate ]; } ''
       {-# LANGUAGE DeriveDataTypeable #-}
@@ -26,7 +27,7 @@ let
 
       -- Load binaries from Nix packages. The dependencies will be captured
       -- in the closure.
-      loadFromBins ["${builtins.concatStringsSep ''", "'' (builtins.map toString bins)}"]
+      loadFromBins ${haskellList (builtins.map toString bins)}
 
       ${code}
     '';
@@ -46,7 +47,7 @@ let
           nix_instantiate ["--eval", "-E", [i|toString #{expr}|]] |> trimQuotation
     '';
 in {
-  inherit writeHaskellScript get-niv-path unstable sources;
+  inherit writeHaskellScript get-niv-path unstable sources haskellList;
   niv = (import sources.niv {}).niv;
   home-manager = pkgs.callPackage <home-manager/home-manager> {};
   gcRetentionDays = 5;

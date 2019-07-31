@@ -77,7 +77,7 @@ mkIf config.m-0.laptop.enable {
     evince
     gnome3.nautilus
 
-#    (import (fetchTarball https://cachix.org/api/v1/install) {}).cachix
+    (import ../nix/sources.nix).cachix
 
     # look & feel
     libertine

@@ -5,7 +5,7 @@
 let
   inherit (config.m-0.private) me wireguard;
   inherit (config.m-0) hosts prefix;
-  nixos-hardware = (builtins.fetchGit "https://github.com/nixos/nixos-hardware");
+  nixos-hardware = (import ../../nix/sources.nix).nixos-hardware;
 in {
 
 imports = [

@@ -25,7 +25,7 @@ with lib;
   environment = {
     # Put these into an extra file so the essential packages can also be included on non selfadminstrated systems from home-manager
     systemPackages = let essentials = import ../common/essentials.nix;
-  in (essentials.core pkgs) ++ (essentials.extra pkgs) ++ (builtins.attrValues {
+  in essentials.core ++ essentials.extra ++ (builtins.attrValues {
         inherit (import ./test-lib.nix) test-system-config test-home-config test-and-bump-config;
         inherit (import ../common/lib.nix) home-manager;
         inherit (import ./update-lib.nix config.system.build.nixos-rebuild) update-system system-maintenance;
