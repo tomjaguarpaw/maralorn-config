@@ -1,8 +1,6 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   systemd.user = {
-    services.sort-mail =
-    let
+    services.sort-mail = let
       sort-mail-script = pkgs.writeShellScriptBin "sort-mail" ''
         ${pkgs.isync}/bin/mbsync -a
 
@@ -17,20 +15,14 @@
 
         ${pkgs.isync}/bin/mbsync -a
       '';
-    in {
-      Unit = {
-        Description = "Sort E-Mails";
-      };
+      in {
+        Unit = { Description = "Sort E-Mails"; };
 
-      Service = {
-        Type = "oneshot";
-        ExecStart="/bin/sh ${sort-mail-script}/bin/sort-mail";
+        Service = {
+          Type = "oneshot";
+          ExecStart = "/bin/sh ${sort-mail-script}/bin/sort-mail";
+        };
       };
-    };
-    timers.sort-mail = {
-      Timer = {
-        OnCalendar = "minutely";
-      };
-    };
+    timers.sort-mail = { Timer = { OnCalendar = "minutely"; }; };
   };
 }

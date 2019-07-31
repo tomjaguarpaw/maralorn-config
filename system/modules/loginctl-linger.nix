@@ -12,11 +12,14 @@ let
 
   dataDir = "/var/lib/systemd/linger";
 
-  lingeringUsers = map (u: u.name) (attrValues (flip filterAttrs config.users.users (n: u: u.linger)));
+  lingeringUsers = map (u: u.name)
+    (attrValues (flip filterAttrs config.users.users (n: u: u.linger)));
 
-  lingeringUsersFile = builtins.toFile "lingering-users"
-    (concatStrings (map (s: "${s}\n")
-      (sort (a: b: a < b) lingeringUsers))); # this sorting is important for `comm` to work correctly
+  lingeringUsersFile = builtins.toFile "lingering-users" (concatStrings (map
+    (s: ''
+      ${s}
+    '') (sort (a: b: a < b)
+    lingeringUsers))); # this sorting is important for `comm` to work correctly
 
   updateLingering = pkgs.writeScript "update-lingering" ''
     # Stop when the system is not running, e.g. during nixos-install
@@ -26,14 +29,10 @@ let
     echo "$lingering" | comm -3 -2 ${lingeringUsersFile} - | xargs -r ${pkgs.systemd}/bin/loginctl enable-linger
   '';
 
-in
-
-{
+in {
   options = {
     users.users = mkOption {
-      options = [{
-        linger = mkEnableOption "lingering for the user";
-      }];
+      options = [{ linger = mkEnableOption "lingering for the user"; }];
     };
   };
 

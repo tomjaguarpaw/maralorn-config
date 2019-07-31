@@ -13,22 +13,18 @@ in {
           After = [ "graphical-session-pre.target" ];
           PartOf = [ "graphical-session.target" ];
         };
-        Install = {
-          WantedBy = [ "default.target" ];
-        };
+        Install = { WantedBy = [ "default.target" ]; };
         Service = {
-          Type="notify";
-          Sockets="eventd-control.socket eventd.socket";
-          ExecStart="${eventd}/bin/eventd --listen systemd";
-          ExecReload="${eventd}/bin/eventdctl reload";
+          Type = "notify";
+          Sockets = "eventd-control.socket eventd.socket";
+          ExecStart = "${eventd}/bin/eventd --listen systemd";
+          ExecReload = "${eventd}/bin/eventdctl reload";
         };
       };
     };
     sockets = {
       eventd-control = {
-        Unit = {
-          Description = "eventd control socket";
-        };
+        Unit = { Description = "eventd control socket"; };
         Socket = {
           Service = "eventd.service";
           SocketMode = "0600";
@@ -36,19 +32,17 @@ in {
         };
       };
       eventd = {
-        Unit = {
-          Description = "eventd sockets";
-        };
+        Unit = { Description = "eventd sockets"; };
         Socket = {
           SocketMode = "0660";
-          ListenStream= "%t/eventd/evp";
+          ListenStream = "%t/eventd/evp";
         };
       };
     };
   };
   xdg = {
     configFile = {
-      "eventd/eventd.conf".text = lib.generators.toINI {} {
+      "eventd/eventd.conf".text = lib.generators.toINI { } {
         "Queue default" = {
           Margin = 10;
           Spacing = 2;
@@ -72,9 +66,7 @@ in {
           Spacing = 1;
           Limit = 20;
         };
-        Notification = {
-          Text = "\${message}";
-        };
+        Notification = { Text = "\${message}"; };
         NotificationBubble = {
           Padding = 10;
           Radius = 0;
@@ -88,77 +80,49 @@ in {
           Colour = colors.foreground;
         };
       };
-      "eventd/notification.event".text = lib.generators.toINI {} {
-        "Event notification *" = {
-          Actions = "notification";
-        };
-        "Event notification kassandra" = {
-          Actions = "kassandra";
-        };
-        "Event command success" = {
-          Actions = "command-success";
-        };
-        "Event command failure" = {
-          Actions = "command-failure";
-        };
-        "Event critical *" = {
-          Actions = "critical";
-        };
+      "eventd/notification.event".text = lib.generators.toINI { } {
+        "Event notification *" = { Actions = "notification"; };
+        "Event notification kassandra" = { Actions = "kassandra"; };
+        "Event command success" = { Actions = "command-success"; };
+        "Event command failure" = { Actions = "command-failure"; };
+        "Event critical *" = { Actions = "critical"; };
       };
-      "eventd/command-success.action".text = lib.generators.toINI {} {
-        Action = {
-          Name = "command-success";
-        };
+      "eventd/command-success.action".text = lib.generators.toINI { } {
+        Action = { Name = "command-success"; };
         Notification = {
-          Text="<b>\${command}</b>\\nsucceeded after \${time} @ \${host}";
+          Text = "<b>\${command}</b>\\nsucceeded after \${time} @ \${host}";
         };
         NotificationBubble = {
           Colour = colors.black;
           Queue = "command";
         };
       };
-      "eventd/command-failure.action".text = lib.generators.toINI {} {
-        Action = {
-          Name = "command-failure";
-        };
+      "eventd/command-failure.action".text = lib.generators.toINI { } {
+        Action = { Name = "command-failure"; };
         Notification = {
-          Text="<b>\${command}</b>\\nfailed after \${time} @ \${host}";
+          Text = "<b>\${command}</b>\\nfailed after \${time} @ \${host}";
         };
         NotificationBubble = {
           Queue = "critical";
           Colour = colors.red;
         };
       };
-      "eventd/critical.action".text = lib.generators.toINI {} {
-        Action = {
-          Name = "critical";
-        };
-        Notification = {
-          Text = "<b>\${title}</b>\${message/^/\\n}";
-        };
+      "eventd/critical.action".text = lib.generators.toINI { } {
+        Action = { Name = "critical"; };
+        Notification = { Text = "<b>\${title}</b>\${message/^/\\n}"; };
         NotificationBubble = {
           Queue = "critical";
           Colour = colors.red;
         };
       };
-      "eventd/kassandra.action".text = lib.generators.toINI {} {
-        Action = {
-          Name = "kassandra";
-        };
-        Notification = {
-          Text = "<b>\${title}</b>\${message/^/\\n}";
-        };
-        NotificationBubble = {
-          Queue = "critical";
-        };
+      "eventd/kassandra.action".text = lib.generators.toINI { } {
+        Action = { Name = "kassandra"; };
+        Notification = { Text = "<b>\${title}</b>\${message/^/\\n}"; };
+        NotificationBubble = { Queue = "critical"; };
       };
-      "eventd/notification.action".text = lib.generators.toINI {} {
-        Action = {
-          Name = "notification";
-        };
-        Notification = {
-          Text = "<b>\${title}</b>\${message/^/\\n}";
-        };
+      "eventd/notification.action".text = lib.generators.toINI { } {
+        Action = { Name = "notification"; };
+        Notification = { Text = "<b>\${title}</b>\${message/^/\\n}"; };
       };
     };
   };

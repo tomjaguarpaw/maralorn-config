@@ -1,5 +1,4 @@
-{ pkgs , config , lib, ... }:
-{
+{ pkgs, config, lib, ... }: {
 
   xsession.initExtra = let
     cat-pw = pkgs.writeShellScriptBin "cat-ssh-pw" ''
@@ -12,7 +11,6 @@
       systemctl --user set-environment SSH_AGENT_PID="$SSH_AGENT_PID"
       SSH_ASKPASS=${cat-pw}/bin/cat-ssh-pw ${pkgs.openssh}/bin/ssh-add & < /dev/null
     '';
-  in
-    ". ${start-agent}/bin/start-ssh-agent";
+    in ". ${start-agent}/bin/start-ssh-agent";
 
 }

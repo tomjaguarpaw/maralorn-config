@@ -1,5 +1,6 @@
 { aqbanking, python36Packages, fetchgit }:
-with python36Packages; buildPythonApplication rec {
+with python36Packages;
+buildPythonApplication rec {
   name = "${pname}-${version}";
   pname = "jali";
   doCheck = false;

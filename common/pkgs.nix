@@ -1,72 +1,46 @@
 rec {
   my-lib = import ../common/lib.nix;
   inherit (my-lib) pkgs unstable sources;
-  tasktree = pkgs.callPackage ../packages/tasktree {};
+  tasktree = pkgs.callPackage ../packages/tasktree { };
   neovim = pkgs.neovim.override {
-      vimAlias = true;
-      withPython3 = true;
-    };
+    vimAlias = true;
+    withPython3 = true;
+  };
   home-neovim = (import ../home-manager/nvim) neovim;
-  niv = (import sources.niv {}).niv;
+  niv = (import sources.niv { }).niv;
 
   # pkgs assumed to be present on a non nixos host
   core-system-pkgs = {
     inherit neovim;
     inherit (pkgs)
-    gitFull
-    gnumake
-    python3
-    mkpasswd
-    file
-    wget
-    curl
-    wireguard
-    gnupg
-    mutt
-    bind
-    liboping
-    psmisc
-    unzip
-    rename
-    whois
-    lsof;
+      gitFull gnumake python3 mkpasswd file wget curl wireguard gnupg mutt bind
+      liboping psmisc unzip rename whois lsof;
   };
 
   extra-system-pkgs = {
-    lorri = import sources.lorri { src = sources.lorri; pkgs = unstable; };
+    lorri = import sources.lorri {
+      src = sources.lorri;
+      pkgs = unstable;
+    };
     inherit niv;
     inherit (pkgs.gitAndTools) git-annex;
     inherit (pkgs.rxvt_unicode) terminfo;
     inherit (pkgs.pythonPackages) qrcode;
     inherit (pkgs)
 
-    git-crypt
-    htop
-    tree
-    pwgen
-    borgbackup
-    inotifyTools
+      git-crypt htop tree pwgen borgbackup inotifyTools
 
-    direnv
+      direnv
 
-    socat
-    nmap
-    tcpdump
+      socat nmap tcpdump
 
-    tmux
-    tig
-    exa
-    fzf
-    ag
-    fd
-    bat
+      tmux tig exa fzf ag fd bat
 
-    ripgrep
+      ripgrep
 
-    ranger
+      ranger
 
-    pass
-    sshuttle;
+      pass sshuttle;
   };
 
   laptop-home-pkgs = {
@@ -80,97 +54,75 @@ rec {
       sleep 0.1s;
       nmcli r wifi on;
     '';
-    cachix = import sources.cachix {};
-    nixfmt = import sources.nixfmt {};
+    cachix = import sources.cachix { };
+    nixfmt = import sources.nixfmt { };
     inherit (pkgs.gnome3) nautilus;
     inherit (unstable.haskellPackages) brittany;
     inherit (pkgs.xorg) xev xbacklight;
     inherit (pkgs)
     # web
-    chromium
+      chromium
 
-    # communication
-    signal-desktop
-    tdesktop
-    acpi
-    dino
-    mumble
+      # communication
+      signal-desktop tdesktop acpi dino mumble
 
-    # config
-    arandr
+      # config
+      arandr
 
-    #dev
-    meld
-    icedtea8_web
-    octave
-    filezilla
+      #dev
+      meld icedtea8_web octave filezilla
 
-    # tools & office
-    feh
-    gimp
-    imagemagick
-    ghostscript
-    libreoffice-fresh
-    pandoc
-    xournal
-    musescore
-    handbrake
-    evince
+      # tools & office
+      feh gimp imagemagick ghostscript libreoffice-fresh pandoc xournal
+      musescore handbrake evince
 
+      networkmanagerapplet
+      #    teamviewer
 
-    networkmanagerapplet
-#    teamviewer
+      # media
+      ncpamixer pavucontrol deluge mpd gmpc calibre mpv youtubeDL
 
-    # media
-    ncpamixer
-    pavucontrol
-    deluge
-    mpd
-    gmpc
-    calibre
-    mpv
-    youtubeDL
-
-    minetest
-  ;};
+      minetest;
+  };
 
   my-home-pkgs = {
     print215 = pkgs.writeShellScriptBin "print215" ''
       scp "$@" ag-forward:
       ssh ag-forward lpr -Zduplex -r "$@"
     '';
-  print215single = pkgs.writeShellScriptBin "print215single" ''
-    scp "$@" ag-forward:
-    ssh ag-forward lpr -r "$@"
-  '';
-};
+    print215single = pkgs.writeShellScriptBin "print215single" ''
+      scp "$@" ag-forward:
+      ssh ag-forward lpr -r "$@"
+    '';
+  };
   urxvt = pkgs.rxvt_unicode-with-plugins;
   terminal = pkgs.writeShellScriptBin "terminal" ''
-      ${urxvt}/bin/urxvtc "$@"
-      if [ $? -eq 2 ]; then
-         ${urxvt}/bin/urxvtd -q -o -f
-         ${urxvt}/bin/urxvtc "$@"
-      fi
-    '';
+    ${urxvt}/bin/urxvtc "$@"
+    if [ $? -eq 2 ]; then
+       ${urxvt}/bin/urxvtd -q -o -f
+       ${urxvt}/bin/urxvtc "$@"
+    fi
+  '';
   desktop-pkgs = {
     inherit urxvt tasktree terminal;
     inherit (pkgs) xautolock;
     inherit (pkgs.gnome3) dconf;
   };
-home-pkgs = {
-  inherit (pkgs) ncmpcpp;
-  inherit (my-lib) shh;
-  inherit home-neovim;
-};
-accounting-pkgs = {
-  jali = pkgs.callPackage ../packages/jali {};
-  inherit (pkgs.haskellPackages) hledger hledger-ui;
-  inherit (pkgs) ledger;
-};
+  home-pkgs = {
+    inherit (pkgs) ncmpcpp;
+    inherit (my-lib) shh;
+    inherit home-neovim;
+  };
+  accounting-pkgs = {
+    jali = pkgs.callPackage ../packages/jali { };
+    inherit (pkgs.haskellPackages) hledger hledger-ui;
+    inherit (pkgs) ledger;
+  };
   system-pkgs = core-system-pkgs // extra-system-pkgs // {
-    inherit (import ./test-lib.nix) test-system-config test-home-config test-and-bump-config;
+    inherit (import ./test-lib.nix)
+      test-system-config test-home-config test-and-bump-config;
     inherit (import ../common/lib.nix) home-manager;
-   };
+  };
   foreign-home-pkgs = extra-system-pkgs;
-  eventd = pkgs.callPackage ../packages/eventd {};
+  eventd = pkgs.callPackage ../packages/eventd { };
 }

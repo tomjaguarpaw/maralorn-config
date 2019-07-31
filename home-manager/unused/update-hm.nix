@@ -1,6 +1,6 @@
 { pkgs, ... }:
 let
-  path = https://github.com/rycee/home-manager/archive/release-17.09.tar.gz;
+  path = "https://github.com/rycee/home-manager/archive/release-17.09.tar.gz";
   home-manager = (import ../../home-manager {
     inherit pkgs;
     inherit path;
@@ -8,13 +8,11 @@ let
 in {
   systemd.user = {
     services.update-hm = {
-      Unit = {
-        Description = "Update home-manager";
-      };
+      Unit = { Description = "Update home-manager"; };
 
       Service = {
         Type = "oneshot";
-        ExecStart="${home-manager}/bin/home-manager switch";
+        ExecStart = "${home-manager}/bin/home-manager switch";
       };
     };
     timers.update-hm = {

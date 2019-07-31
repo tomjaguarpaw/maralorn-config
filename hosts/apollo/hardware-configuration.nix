@@ -4,29 +4,28 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports =
-    [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
-    ];
+  imports = [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix> ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
+  boot.initrd.availableKernelModules =
+    [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/ce5b0ac6-6eaf-45a6-b6c8-bd4958caf335";
-      fsType = "btrfs";
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/ce5b0ac6-6eaf-45a6-b6c8-bd4958caf335";
+    fsType = "btrfs";
+  };
 
-  boot.initrd.luks.devices."nixos".device = "/dev/disk/by-uuid/78acaebe-952a-43b1-acc8-66c35a60577e";
+  boot.initrd.luks.devices."nixos".device =
+    "/dev/disk/by-uuid/78acaebe-952a-43b1-acc8-66c35a60577e";
 
-  fileSystems."/boot/EFI" =
-    { device = "/dev/disk/by-uuid/C4A6-3DB5";
-      fsType = "vfat";
-    };
+  fileSystems."/boot/EFI" = {
+    device = "/dev/disk/by-uuid/C4A6-3DB5";
+    fsType = "vfat";
+  };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/b80468d0-d834-419f-8985-c6fa2274909e"; }
-    ];
+    [{ device = "/dev/disk/by-uuid/b80468d0-d834-419f-8985-c6fa2274909e"; }];
 
   nix.maxJobs = lib.mkDefault 8;
   powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";

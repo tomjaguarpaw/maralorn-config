@@ -1,18 +1,25 @@
 rec {
-  pkgs = import <nixpkgs> {};
-  unstable = import <unstable> {};
+  pkgs = import <nixpkgs> { };
+  unstable = import <unstable> { };
   sources = import ../nix/sources.nix;
   shh = unstable.haskell.lib.overrideCabal unstable.haskellPackages.shh (drv: {
     broken = false;
     doCheck = false;
   });
-  shh-extras = unstable.haskell.lib.overrideCabal unstable.haskellPackages.shh-extras (drv: {
-    broken = false;
-    doCheck = false;
-  });
+  shh-extras =
+    unstable.haskell.lib.overrideCabal unstable.haskellPackages.shh-extras
+    (drv: {
+      broken = false;
+      doCheck = false;
+    });
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
-  writeHaskellScript = { name ? "haskell-script", bins ? [pkgs.coreutils], libraries ? [], imports ? []}: code:
-    unstable.writers.writeHaskellBin name { libraries = libraries ++ [shh unstable.haskellPackages.string-interpolate ]; } ''
+  writeHaskellScript = { name ? "haskell-script", bins ? [ pkgs.coreutils ]
+    , libraries ? [ ], imports ? [ ] }:
+    code:
+    unstable.writers.writeHaskellBin name {
+      libraries = libraries
+        ++ [ shh unstable.haskellPackages.string-interpolate ];
+    } ''
       {-# LANGUAGE DeriveDataTypeable #-}
       {-# LANGUAGE TemplateHaskell #-}
       {-# LANGUAGE QuasiQuotes #-}
@@ -37,9 +44,10 @@ rec {
     '';
   get-niv-path = writeHaskellScript {
     name = "get-niv-path";
-    bins = [pkgs.nix];
-    imports = ["System.Console.CmdArgs.Implicit"];
-    libraries = [ unstable.haskellPackages.cmdargs unstable.haskellPackages.text ];
+    bins = [ pkgs.nix ];
+    imports = [ "System.Console.CmdArgs.Implicit" ];
+    libraries =
+      [ unstable.haskellPackages.cmdargs unstable.haskellPackages.text ];
   } ''
 
     trimQuotation = pureProc $ LTE.encodeUtf8 . LT.dropAround ('"' ==) . LTE.decodeUtf8 . trim
@@ -49,7 +57,7 @@ rec {
           let expr = [i|(import #{sources}).#{channel}|]
           nix_build ["-Q", "-E", expr, "--no-out-link"] &> devNull
           nix_instantiate ["--eval", "-E", [i|toString #{expr}|]] |> trimQuotation
-    '';
-  home-manager = pkgs.callPackage <home-manager/home-manager> {};
+  '';
+  home-manager = pkgs.callPackage <home-manager/home-manager> { };
   gcRetentionDays = 5;
 }

@@ -20,16 +20,16 @@ let
     echo "Overwriting $HOME/${path}"
     cp --remove-destination -T $canonical $HOME/${path};
   '';
-in with lib;
-{
+in with lib; {
   options.home.forceCopies.paths = mkOption {
-        default = [];
-        type = types.listOf types.str;
-    };
+    default = [ ];
+    type = types.listOf types.str;
+  };
   config.home.activation = {
-    deleteForcedCopies = config.lib.dag.entryBefore ["checkLinkTargets"]
-      (builtins.concatStringsSep "\n" (builtins.map disableCollisionCheck paths));
-    forceCopies = config.lib.dag.entryAfter ["linkGeneration"]
+    deleteForcedCopies = config.lib.dag.entryBefore [ "checkLinkTargets" ]
+      (builtins.concatStringsSep "\n"
+      (builtins.map disableCollisionCheck paths));
+    forceCopies = config.lib.dag.entryAfter [ "linkGeneration" ]
       (builtins.concatStringsSep "\n" (builtins.map copyPath paths));
-    };
+  };
 }

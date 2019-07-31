@@ -1,21 +1,16 @@
 { pkgs, lib, config, ... }:
 with lib;
-let
-  inherit (config.m-0) colors workspaces terminal;
+let inherit (config.m-0) colors workspaces terminal;
 in {
 
-  home = {
-    packages = with pkgs; [
-      rofi-pass
-    ];
-  };
+  home = { packages = with pkgs; [ rofi-pass ]; };
   programs = {
     rofi = {
       enable = true;
       extraConfig = ''
         rofi.modi: combi,window,drun,run,ssh,keys
         rofi.combi-modi: window,drun,run
-        '';
+      '';
       borderWidth = 0;
       separator = "none";
       fullscreen = false;
@@ -29,38 +24,38 @@ in {
       font = "Monofur Nerd Font 10.5";
       colors = {
         window = {
-         background = "argb:c0${builtins.substring 1 6 colors.background}";
-         border = colors.blue;
-         separator = colors.blue;
+          background = "argb:c0${builtins.substring 1 6 colors.background}";
+          border = colors.blue;
+          separator = colors.blue;
         };
         rows = {
-         normal = {
-           background = colors.background;
-           foreground = colors.foreground;
-           backgroundAlt = colors.black;
-           highlight = {
-             background = colors.blue;
-             foreground = colors.white;
-           };
-         };
-         active = {
-           background = colors.background;
-           foreground = colors.foreground;
-           backgroundAlt = colors.black;
-           highlight = {
-             background = colors.blue;
-             foreground = colors.white;
-           };
-         };
-         urgent = {
-           background = colors.background;
-           foreground = colors.foreground;
-           backgroundAlt = colors.black;
-           highlight = {
-             background = colors.blue;
-             foreground = colors.white;
-           };
-         };
+          normal = {
+            background = colors.background;
+            foreground = colors.foreground;
+            backgroundAlt = colors.black;
+            highlight = {
+              background = colors.blue;
+              foreground = colors.white;
+            };
+          };
+          active = {
+            background = colors.background;
+            foreground = colors.foreground;
+            backgroundAlt = colors.black;
+            highlight = {
+              background = colors.blue;
+              foreground = colors.white;
+            };
+          };
+          urgent = {
+            background = colors.background;
+            foreground = colors.foreground;
+            backgroundAlt = colors.black;
+            highlight = {
+              background = colors.blue;
+              foreground = colors.white;
+            };
+          };
         };
       };
     };

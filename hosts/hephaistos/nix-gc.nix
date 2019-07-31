@@ -1,14 +1,12 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   systemd.user = {
     services.nix-gc = {
-      Unit = {
-        Description = "Collect garbage";
-      };
+      Unit = { Description = "Collect garbage"; };
 
       Service = {
         Type = "oneshot";
-        ExecStart="${pkgs.nix}/bin/nix-collect-garbage --delete-older-than 5d";
+        ExecStart =
+          "${pkgs.nix}/bin/nix-collect-garbage --delete-older-than 5d";
       };
     };
     timers.nix-gc = {

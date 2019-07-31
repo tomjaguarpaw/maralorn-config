@@ -2,12 +2,14 @@
 let
   inherit (import ../common/lib.nix) writeHaskellScript haskellList;
   me = config.m-0.private.me;
-  test-command = ["${pkgs.systemd}/bin/systemctl" "start" "test-and-bump-config.service"];
-  upgrade-command = ["${pkgs.systemd}/bin/systemctl" "start" "system-maintenance.service"];
+  test-command =
+    [ "${pkgs.systemd}/bin/systemctl" "start" "test-and-bump-config.service" ];
+  upgrade-command =
+    [ "${pkgs.systemd}/bin/systemctl" "start" "system-maintenance.service" ];
   post-update = writeHaskellScript {
     name = "post-update";
     bins = [ pkgs.git pkgs.nix ];
-    imports = [ "System.Environment (lookupEnv)" "Data.Foldable (for_)"];
+    imports = [ "System.Environment (lookupEnv)" "Data.Foldable (for_)" ];
   } ''
     main = do
       mirror <- lookupEnv "GL_OPTION_MIRROR"
@@ -26,17 +28,26 @@ let
         exe "sudo" ${haskellList upgrade-command};
         writeOutput "Done";
   '';
-in
-{
-    users.users.git.linger = true; # Frequent restarting of the systemd-user-unit leads to errors
-    security.sudo.extraRules = [ { commands = [
-      { command = builtins.concatStringsSep " " test-command; options = [ "NOPASSWD" ]; }
-      { command = builtins.concatStringsSep " " upgrade-command; options = [ "NOPASSWD" ]; }
-    ];  users = [ "git" ]; } ];
-    services.gitolite = {
-      enable = true;
-      user = "git";
-      adminPubkey = builtins.elemAt me.keys 0;
-      commonHooks = [ "${post-update}/bin/post-update" ];
-    };
+in {
+  users.users.git.linger =
+    true; # Frequent restarting of the systemd-user-unit leads to errors
+  security.sudo.extraRules = [{
+    commands = [
+      {
+        command = builtins.concatStringsSep " " test-command;
+        options = [ "NOPASSWD" ];
+      }
+      {
+        command = builtins.concatStringsSep " " upgrade-command;
+        options = [ "NOPASSWD" ];
+      }
+    ];
+    users = [ "git" ];
+  }];
+  services.gitolite = {
+    enable = true;
+    user = "git";
+    adminPubkey = builtins.elemAt me.keys 0;
+    commonHooks = [ "${post-update}/bin/post-update" ];
+  };
 }

@@ -3,25 +3,34 @@ with lib;
 let
   inherit (config.m-0.private) me cloud;
   inherit (config.m-0) hosts;
-  nextcloud-container = { v6, v4, hostname , news-updater ? false}: {
+  nextcloud-container = { v6, v4, hostname, news-updater ? false }: {
     autoStart = true;
     privateNetwork = true;
     hostBridge = "bridge";
     config = { pkgs, ... }: {
       disabledModules = [ "services/web-apps/nextcloud.nix" ];
-      imports = [
-        ../../system
-        ./nextcloud.nix
-      ];
+      imports = [ ../../system ./nextcloud.nix ];
 
       networking = {
         interfaces.eth0 = {
-          ipv6.addresses = [{ address = v6; prefixLength = 112; }];
-          ipv4.addresses = [{ address = v4; prefixLength = 24; }];
+          ipv6.addresses = [{
+            address = v6;
+            prefixLength = 112;
+          }];
+          ipv4.addresses = [{
+            address = v4;
+            prefixLength = 24;
+          }];
         };
         inherit (config.networking) nameservers;
-        defaultGateway6 = { address = hosts.hera-intern; interface = "eth0"; };
-        defaultGateway = { address = hosts.hera-intern-v4; interface = "eth0"; };
+        defaultGateway6 = {
+          address = hosts.hera-intern;
+          interface = "eth0";
+        };
+        defaultGateway = {
+          address = hosts.hera-intern-v4;
+          interface = "eth0";
+        };
         firewall.allowedTCPPorts = [ 80 443 ];
       };
 
@@ -58,9 +67,7 @@ let
           };
         };
 
-        redis = {
-          enable = true;
-        };
+        redis = { enable = true; };
 
         postgresql = {
           enable = true;
@@ -71,10 +78,10 @@ let
         };
       };
       systemd = {
-        services ={
-          "nextcloud-setup"= {
-            requires = ["postgresql.service"];
-            after = ["postgresql.service"];
+        services = {
+          "nextcloud-setup" = {
+            requires = [ "postgresql.service" ];
+            after = [ "postgresql.service" ];
           };
           "nextcloud-news-updater" = mkIf news-updater {
             startAt = "20:00";
@@ -82,15 +89,15 @@ let
               Type = "oneshot";
               User = "nextcloud";
               ExecStart = let
-                config = pkgs.writeText "updater.ini" (generators.toINI {} {
+                config = pkgs.writeText "updater.ini" (generators.toINI { } {
                   updater = {
                     user = cloud.adminuser;
                     password = cloud.adminpass;
                     url = "https://${hostname}/";
                     mode = "singlerun";
-                  };});
-                in
-                  "${pkgs.nextcloud-news-updater}/bin/nextcloud-news-updater -c ${config}";
+                  };
+                });
+                in "${pkgs.nextcloud-news-updater}/bin/nextcloud-news-updater -c ${config}";
             };
           };
         };
@@ -100,10 +107,22 @@ let
 
 in {
   m-0.monitoring = [
-    { name = "mathechor-cloud"; host = "mathechor-cloud:9100"; }
-    { name = "mathechor-cloud-nginx"; host = "mathechor-cloud:9113"; }
-    { name = "cloud"; host = "cloud:9100"; }
-    { name = "cloud-nginx"; host = "cloud:9113"; }
+    {
+      name = "mathechor-cloud";
+      host = "mathechor-cloud:9100";
+    }
+    {
+      name = "mathechor-cloud-nginx";
+      host = "mathechor-cloud:9113";
+    }
+    {
+      name = "cloud";
+      host = "cloud:9100";
+    }
+    {
+      name = "cloud-nginx";
+      host = "cloud:9113";
+    }
   ];
   containers = {
     chor-cloud = nextcloud-container {

@@ -5,8 +5,7 @@ let
 
   me = config.m-0.private.me;
 
-in
-{
+in {
   options = {
     m-0.laptop.enable = mkOption {
       type = types.bool;
@@ -14,9 +13,7 @@ in
     };
   };
   config = mkIf config.m-0.laptop.enable {
-    networking = {
-      networkmanager.enable = true;
-    };
+    networking = { networkmanager.enable = true; };
     i18n.consoleKeyMap = "neo";
 
     sound.enable = true;
@@ -47,18 +44,18 @@ in
         '';
       };
       mpd = {
-          enable = true;
-          user = me.user;
-          group = "users";
-          network.listenAddress = "::1";
-          musicDirectory = "/home/${me.user}/data/aktuell/media/musik";
-          extraConfig = ''
+        enable = true;
+        user = me.user;
+        group = "users";
+        network.listenAddress = "::1";
+        musicDirectory = "/home/${me.user}/data/aktuell/media/musik";
+        extraConfig = ''
           audio_output {
                 type "pulse"
                 name "Pulseaudio"
                 server "localhost"
           }
-          '';
+        '';
       };
       xserver = {
         enable = true;

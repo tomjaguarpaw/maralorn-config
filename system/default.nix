@@ -1,4 +1,4 @@
-{ pkgs, config, lib,  ... }:
+{ pkgs, config, lib, ... }:
 let
   inherit (import ../common/lib.nix) sources;
   me = config.m-0.private.me;
@@ -15,23 +15,21 @@ in {
 
   config = {
 
-    i18n = {
-      defaultLocale = "en_US.UTF-8";
-    };
+    i18n = { defaultLocale = "en_US.UTF-8"; };
 
     time.timeZone = "Europe/Berlin";
 
     networking = {
       firewall.allowPing = true;
       useDHCP = false;
-      hosts = lib.zipAttrs (lib.mapAttrsToList (host: ip: {"${ip}" = "${host} ${host}.m-0.eu";} ) config.m-0.hosts);
+      hosts = lib.zipAttrs
+        (lib.mapAttrsToList (host: ip: { "${ip}" = "${host} ${host}.m-0.eu"; })
+        config.m-0.hosts);
     };
 
     users = {
       mutableUsers = false;
-      users.root = {
-        openssh.authorizedKeys.keys = me.keys;
-      };
+      users.root = { openssh.authorizedKeys.keys = me.keys; };
     };
 
     environment = {
@@ -43,10 +41,11 @@ in {
       };
     };
 
-
     nix = {
-      binaryCaches = [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" ];
-      binaryCachePublicKeys = [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
+      binaryCaches =
+        [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" ];
+      binaryCachePublicKeys =
+        [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
       nixPath = [ "/etc/nix-path" ];
     };
 

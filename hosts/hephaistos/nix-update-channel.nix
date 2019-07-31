@@ -1,14 +1,11 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   systemd.user = {
     services.nix-update = {
-      Unit = {
-        Description = "Update nix-channel";
-      };
+      Unit = { Description = "Update nix-channel"; };
 
       Service = {
         Type = "oneshot";
-        ExecStart="${pkgs.nix}/bin/nix-channel --update";
+        ExecStart = "${pkgs.nix}/bin/nix-channel --update";
       };
     };
     timers.nix-update = {

@@ -1,38 +1,51 @@
 { config, ... }:
-let
-  inherit (config.m-0) hosts;
-in
-{
-services.prometheus.exporters.node = {
-  firewallFilter = "! -i ens18 -p tcp -m tcp --dport 9100";
-};
-m-0.monitoring = [
-  { name = "hera"; host = "hera-intern:9100";  }
-  { name = "monitoring-container"; host = "localhost:9100"; }
-];
+let inherit (config.m-0) hosts;
+in {
+  services.prometheus.exporters.node = {
+    firewallFilter = "! -i ens18 -p tcp -m tcp --dport 9100";
+  };
+  m-0.monitoring = [
+    {
+      name = "hera";
+      host = "hera-intern:9100";
+    }
+    {
+      name = "monitoring-container";
+      host = "localhost:9100";
+    }
+  ];
 
-containers.monitoring = {
-  autoStart = true;
-  privateNetwork = true;
-  hostBridge = "bridge";
-  config = { pkgs, lib, ... }: {
-    imports = [
-      ../../system
-    ];
-    networking = {
-      interfaces.eth0 = {
-        ipv6.addresses = [{ address = hosts.monitoring; prefixLength = 112; }];
-        ipv4.addresses = [{ address = hosts.monitoring-intern-v4; prefixLength = 24; }];
+  containers.monitoring = {
+    autoStart = true;
+    privateNetwork = true;
+    hostBridge = "bridge";
+    config = { pkgs, lib, ... }: {
+      imports = [ ../../system ];
+      networking = {
+        interfaces.eth0 = {
+          ipv6.addresses = [{
+            address = hosts.monitoring;
+            prefixLength = 112;
+          }];
+          ipv4.addresses = [{
+            address = hosts.monitoring-intern-v4;
+            prefixLength = 24;
+          }];
+        };
+        inherit (config.networking) nameservers;
+        defaultGateway6 = {
+          address = hosts.hera-intern;
+          interface = "eth0";
+        };
+        defaultGateway = {
+          address = hosts.hera-intern-v4;
+          interface = "eth0";
+        };
+        firewall.allowedTCPPorts = [ 9090 9093 ];
       };
-      inherit (config.networking) nameservers;
-      defaultGateway6 = { address = hosts.hera-intern; interface = "eth0"; };
-      defaultGateway = { address = hosts.hera-intern-v4; interface = "eth0"; };
-      firewall.allowedTCPPorts = [ 9090 9093 ];
-    };
-    services.prometheus = {
-      enable = true;
-      rules = [
-                ''
+      services.prometheus = {
+        enable = true;
+        rules = [''
           ALERT node_down
           IF (up{name!="apollo"} == 0)
           FOR 5m
@@ -123,51 +136,44 @@ containers.monitoring = {
             summary="{{$labels.alias}}: Running out of swap soon.",
             description="{{$labels.alias}} is using 80% of its swap space for at least 10 minutes now."
           }
-        ''
-        ];
-      scrapeConfigs = [
-        {
+        ''];
+        scrapeConfigs = [{
           job_name = "nodes";
           static_configs = map (entry: {
             targets = [ entry.host ];
-            labels = {"name" = entry.name; };
+            labels = { "name" = entry.name; };
           }) config.m-0.monitoring;
-        }
-      ];
-      alertmanagerURL = [ "http://localhost:9093" ];
-      alertmanager = {
-        enable = true;
-        listenAddress = "0.0.0.0";
-        configuration = {
-          "global" = {
-            "smtp_smarthost" = "hera.m-0.eu:587";
-            "smtp_from" = "alertmanager@m-0.eu";
-            "smtp_auth_username" = "alertmanager@m-0.eu";
-            "smtp_auth_password" = config.m-0.private.alertmanager-mail-pw;
-          };
-          "route" = {
-            "group_by" = [ "alertname" "alias" ];
-            "group_wait" = "30s";
-            "group_interval" = "2m";
-            "repeat_interval" = "4h";
-            "receiver" = "team-admins";
-          };
-          "receivers" = [
-            {
+        }];
+        alertmanagerURL = [ "http://localhost:9093" ];
+        alertmanager = {
+          enable = true;
+          listenAddress = "0.0.0.0";
+          configuration = {
+            "global" = {
+              "smtp_smarthost" = "hera.m-0.eu:587";
+              "smtp_from" = "alertmanager@m-0.eu";
+              "smtp_auth_username" = "alertmanager@m-0.eu";
+              "smtp_auth_password" = config.m-0.private.alertmanager-mail-pw;
+            };
+            "route" = {
+              "group_by" = [ "alertname" "alias" ];
+              "group_wait" = "30s";
+              "group_interval" = "2m";
+              "repeat_interval" = "4h";
+              "receiver" = "team-admins";
+            };
+            "receivers" = [{
               "name" = "team-admins";
-              "email_configs" = [
-                {
-                  "to" = "malte.brandy@maralorn.de";
-                  "send_resolved" = true;
-                }
-              ];
-            }
-        ];
+              "email_configs" = [{
+                "to" = "malte.brandy@maralorn.de";
+                "send_resolved" = true;
+              }];
+            }];
+          };
+        };
+        exporters.node.enable = true;
       };
     };
-      exporters.node.enable = true;
-    };
   };
-};
 
 }

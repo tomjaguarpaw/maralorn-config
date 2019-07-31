@@ -1,14 +1,12 @@
-{ pkgs, config, lib,  ... }:
+{ pkgs, config, lib, ... }:
 let
   inherit (import ../common/lib.nix) writeHaskellScript;
   sources = import ../nix/sources.nix;
-in
-{
+in {
   home = {
-    packages = builtins.attrValues (import ../common/pkgs.nix).foreign-home-pkgs;
-    sessionVariables = {
-      NIX_PATH = "$HOME/.nix-path";
-    };
+    packages =
+      builtins.attrValues (import ../common/pkgs.nix).foreign-home-pkgs;
+    sessionVariables = { NIX_PATH = "$HOME/.nix-path"; };
     file = {
       home-manager-source = {
         target = ".nix-path/home-manager";

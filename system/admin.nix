@@ -1,7 +1,6 @@
-{config, lib, ...}:
+{ config, lib, ... }:
 with lib;
-let
-  me = config.m-0.private.me;
+let me = config.m-0.private.me;
 in {
   users.users = {
     "${me.user}" = {
@@ -13,8 +12,6 @@ in {
       openssh.authorizedKeys.keys = me.keys;
       passwordFile = me.pw-file;
     };
-    root = {
-      passwordFile = me.pw-file;
-    };
+    root = { passwordFile = me.pw-file; };
   };
 }

@@ -1,6 +1,5 @@
 { pkgs, config, lib, ... }:
-with lib;
-{
+with lib; {
 
   imports = [ ./admin.nix ];
 
@@ -12,24 +11,20 @@ with lib;
     mutableUsers = false;
   };
 
-  security.sudo.extraConfig = "
-    Defaults timestamp_type=global, timestamp_timeout=15
-  ";
+  security.sudo.extraConfig =
+    "\n    Defaults timestamp_type=global, timestamp_timeout=15\n  ";
 
-  services = {
-    sshd.enable = true;
-  };
+  services = { sshd.enable = true; };
 
   nix.nixPath = [ "nixos-config=/etc/nixos/configuration.nix" ];
 
   environment = {
     # Put these into an extra file so the essential packages can also be included on non selfadminstrated systems from home-manager
     systemPackages = builtins.attrValues ({
-        inherit (import ./update-lib.nix config.system.build.nixos-rebuild) update-system system-maintenance;
-      } // (import ../common/pkgs.nix).system-pkgs);
-    sessionVariables = {
-      TERMINFO = "/run/current-system/sw/share/terminfo";
-    };
+      inherit (import ./update-lib.nix config.system.build.nixos-rebuild)
+        update-system system-maintenance;
+    } // (import ../common/pkgs.nix).system-pkgs);
+    sessionVariables = { TERMINFO = "/run/current-system/sw/share/terminfo"; };
   };
 
   programs = {

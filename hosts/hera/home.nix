@@ -1,28 +1,24 @@
-{ pkgs, config, ... }:
-{
+{ pkgs, config, ... }: {
 
-imports = [
-  ../../home-manager
-  ../../home-manager/on-my-machine.nix
-  ./secret
-];
+  imports =
+    [ ../../home-manager ../../home-manager/on-my-machine.nix ./secret ];
 
-m-0 = {
-  hostName = "hera";
-  taskwarrior.enable = false;
-  bugwarrior.enable = false;
-  rustdev.enable = false;
-  eventd.enable = false;
-  mail = {
-    enable = true;
-    accounts = config.m-0.private.mail_accounts;
+  m-0 = {
+    hostName = "hera";
+    taskwarrior.enable = false;
+    bugwarrior.enable = false;
+    rustdev.enable = false;
+    eventd.enable = false;
+    mail = {
+      enable = true;
+      accounts = config.m-0.private.mail_accounts;
+    };
+    weechat = {
+      enable = true;
+      user = config.m-0.private.hackint.user;
+      pw = config.m-0.private.hackint.hackint_pw;
+      channels = config.m-0.private.hackint.channels;
+    };
   };
-  weechat = {
-    enable = true;
-    user = config.m-0.private.hackint.user;
-    pw = config.m-0.private.hackint.hackint_pw;
-    channels = config.m-0.private.hackint.channels;
-  };
-};
 
 }

@@ -1,6 +1,6 @@
 { pkgs, ... }:
 let
-morgenreport-script = pkgs.writeShellScriptBin "morgenreport" ''
+  morgenreport-script = pkgs.writeShellScriptBin "morgenreport" ''
     cd $HOME/data/aktuell/media/ebooks/morgenreport/
     DATE=`date +%Y-%m-%d`
     PATH=$PATH:/run/wrappers/bin/
@@ -11,24 +11,18 @@ morgenreport-script = pkgs.writeShellScriptBin "morgenreport" ''
     echo "File created, sending to kindle now …"
     echo 'Siehe Anhang' | ${pkgs.mutt}/bin/mutt -s "Morgenreport $DATE" -a morgenreport-$DATE.mobi -- maralorn@kindle.com
   '';
-urls = [ "https://erdspektive.org/feed/" ];
+  urls = [ "https://erdspektive.org/feed/" ];
 in {
-  home.packages = [ morgenreport-script];
+  home.packages = [ morgenreport-script ];
   systemd.user = {
     services.morgenreport = {
-      Unit = {
-        Description = "Send morgenreport to kindle";
-      };
+      Unit = { Description = "Send morgenreport to kindle"; };
 
       Service = {
         Type = "oneshot";
-        ExecStart="/bin/sh ${morgenreport-script}/bin/morgenreport";
+        ExecStart = "/bin/sh ${morgenreport-script}/bin/morgenreport";
       };
     };
-    timers.morgenreport = {
-      Timer = {
-        OnCalendar = "20:00";
-      };
-    };
+    timers.morgenreport = { Timer = { OnCalendar = "20:00"; }; };
   };
 }

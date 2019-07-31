@@ -1,16 +1,9 @@
 { pkgs, lib, config, ... }:
-let
-  inherit (import ../../common/pkgs.nix) desktop-pkgs;
-in
-{
+let inherit (import ../../common/pkgs.nix) desktop-pkgs;
+in {
 
-imports = [
-  ./i3.nix
-  ./rofi.nix
-  ./ssh-agent.nix
-  ./eventd.nix
-  ./sleep-nag.nix
-];
+  imports =
+    [ ./i3.nix ./rofi.nix ./ssh-agent.nix ./eventd.nix ./sleep-nag.nix ];
   m-0 = {
     workspaces = [
       "tasks"
@@ -81,7 +74,7 @@ imports = [
       color6 = config.m-0.colors.cyan;
       color7 = config.m-0.colors.white;
       color8 = config.m-0.colors.brightBlack;
-      color9= config.m-0.colors.brightRed;
+      color9 = config.m-0.colors.brightRed;
       color10 = config.m-0.colors.brightGreen;
       color11 = config.m-0.colors.brightYellow;
       color12 = config.m-0.colors.brightBlue;
@@ -116,7 +109,8 @@ imports = [
     };
     screen-locker = {
       enable = true;
-      lockCmd = "${pkgs.i3lock}/bin/i3lock -n -f -i ~/data/aktuell/media/bilder/lockscreen.png";
+      lockCmd =
+        "${pkgs.i3lock}/bin/i3lock -n -f -i ~/data/aktuell/media/bilder/lockscreen.png";
     };
   };
   xsession.enable = true;

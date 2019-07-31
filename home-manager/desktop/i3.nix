@@ -4,33 +4,33 @@ let
   inherit (config.m-0) colors workspaces terminal;
   exec = "exec --no-startup-id";
   conkyCommon = ''
-      background = true,
-      border_width = 0,
-      cpu_avg_samples = 2,
-      draw_borders = false,
-      draw_graph_borders = true,
-      draw_outline = false,
-      draw_shades = false,
-      double_buffer = true,
-      use_xft = true,
-      font = 'Roboto Mono Nerd Font:size=8',
-      gap_x = 0,
-      gap_y = 0,
-      minimum_width = 316,
-      maximum_width = 316,
-      net_avg_samples = 2,
-      no_buffers = true,
-      out_to_console = false,
-      out_to_stderr = false,
-      extra_newline = false,
-      own_window = true,
-      own_window_class = 'Conky',
-      own_window_type = 'override',
-      own_window_colour = "${config.m-0.colors.background}",
-      own_window_hints = 'undecorated,below,skip_taskbar,skip_pager,sticky',
-      stippled_borders = 0,
-      update_interval = 1.0,
-'';
+    background = true,
+    border_width = 0,
+    cpu_avg_samples = 2,
+    draw_borders = false,
+    draw_graph_borders = true,
+    draw_outline = false,
+    draw_shades = false,
+    double_buffer = true,
+    use_xft = true,
+    font = 'Roboto Mono Nerd Font:size=8',
+    gap_x = 0,
+    gap_y = 0,
+    minimum_width = 316,
+    maximum_width = 316,
+    net_avg_samples = 2,
+    no_buffers = true,
+    out_to_console = false,
+    out_to_stderr = false,
+    extra_newline = false,
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'override',
+    own_window_colour = "${config.m-0.colors.background}",
+    own_window_hints = 'undecorated,below,skip_taskbar,skip_pager,sticky',
+    stippled_borders = 0,
+    update_interval = 1.0,
+  '';
   conkyOrgaConfig = pkgs.writeText "conky.conf" ''
     conky.config = {
       alignment = 'top_right',
@@ -47,7 +47,7 @@ let
     $hr
     ''${execi 5 cat ~/tmp/today.md}
     ]]
-    '';
+  '';
   conkyMPDConfig = pkgs.writeText "conky.conf" ''
     conky.config = {
       alignment = 'bottom_right',
@@ -63,22 +63,21 @@ let
     $mpd_elapsed/$mpd_length ($mpd_percent%) $mpd_bar
     ]]
 
-    '';
-  addMods = oldbindings: builtins.foldl' (newbindings: key:
+  '';
+  addMods = oldbindings:
+    builtins.foldl' (newbindings: key:
     newbindings // {
       "Mod4+${key}" = oldbindings.${key};
       "Mod3+Mod4+${key}" = oldbindings.${key};
-    })
-    {}
-    (builtins.attrNames oldbindings);
+    }) { } (builtins.attrNames oldbindings);
 in {
 
   xsession = {
     windowManager.i3 = {
       enable = true;
       extraConfig = ''
-            gaps right 320
-        '';
+        gaps right 320
+      '';
       package = pkgs.i3-gaps.overrideAttrs (oldattrs: rec {
         name = "i3-gaps-next";
         version = "41264e54b7a3039ce46919851ac73e22ae29d207";
@@ -87,13 +86,19 @@ in {
           sha256 = "10d80p8bsldx4pld76y8my1zyww03shkcg3fndsxkrkwhfpk0lbh";
         };
         postUnpack = ''
-            echo -n "4.16.1" > ./i3-${version}/I3_VERSION
-          '';
+          echo -n "4.16.1" > ./i3-${version}/I3_VERSION
+        '';
       });
       config = {
         startup = [
-          { command = "${pkgs.conky}/bin/conky -c ${conkyOrgaConfig}"; notification = false; }
-          { command = "${pkgs.conky}/bin/conky -c ${conkyMPDConfig}"; notification = false; }
+          {
+            command = "${pkgs.conky}/bin/conky -c ${conkyOrgaConfig}";
+            notification = false;
+          }
+          {
+            command = "${pkgs.conky}/bin/conky -c ${conkyMPDConfig}";
+            notification = false;
+          }
         ];
         focus = {
           followMouse = false;
@@ -130,8 +135,7 @@ in {
             text = colors.foreground;
           };
         };
-        bars = [
-          {
+        bars = [{
           mode = "hide";
           colors = {
             separator = colors.white;
@@ -157,54 +161,60 @@ in {
               text = colors.white;
             };
           };
-        } ];
+        }];
         window = {
           titlebar = false;
           border = 1;
-          commands = [ { command = "floating disable"; criteria = { class = "Firefox";};} ];
+          commands = [{
+            command = "floating disable";
+            criteria = { class = "Firefox"; };
+          }];
         };
         keybindings = {
-            "XF86AudioMute" = "exec pactl set-sink-mute '@DEFAULT_SINK@' toggle";
-            "XF86AudioLowerVolume" = "exec pactl set-sink-volume '@DEFAULT_SINK@' -5%";
-            "XF86AudioRaiseVolume" = "exec pactl set-sink-volume '@DEFAULT_SINK@' +5%";
-            "XF86AudioMicMute" = "exec pactl set-source-mute '@DEFAULT_SOURCE@' toggle";
-            "XF86MonBrightnessUp" = "exec xbacklight +5";
-            "XF86MonBrightnessDown" = "exec xbacklight -5";
-            "XF86Display" = "${exec} ${pkgs.arandr}/bin/arandr";
-            "Ctrl+Escape" = "${exec} loginctl lock-session;";
-        } //
-        addMods ({
-            "Left" = "focus left";
-            "Down" = "focus down";
-            "Up" = "focus up";
-            "Right" = "focus right";
-            "Tab" = "${exec} ${pkgs.skippy-xd}/bin/skippy-xd";
-            "Prior" = "focus parent";
-            "Next" = "focus child";
-            "Return" = "${exec} ${terminal}";
-            "p" = "${exec} rofi-pass";
-            "shift+Left" = "move left";
-            "shift+Down" = "move down";
-            "shift+Up" = "move up";
-            "shift+Right" = "move right";
-            "d" = "split h";
-            "f" = "fullscreen toggle";
-            "t" = "layout tabbed";
-            "s" = "layout toggle split";
-            "q" = "kill";
-            "m" = "move workspace to output up";
-            "n" = "move workspace to output right";
-            "shift+space" = "floating toggle";
-            "shift+q" = "${exec} ${pkgs.i3}/bin/i3-nagbar -t warning -m 'do you want to exit i3?' -b 'yes' 'i3-msg exit'";
-            "space" = "${exec} hotkeys";
-          } // builtins.foldl' (bindings: name: let
-            number = toString ((builtins.length (builtins.attrNames bindings)) / 2);
-          in
-            bindings // {
-              "${number}" = "workspace ${number}:${name}";
-              "Shift+${number}" = "move container to workspace ${number}:${name}";
-            }) {} workspaces
-        );
+          "XF86AudioMute" = "exec pactl set-sink-mute '@DEFAULT_SINK@' toggle";
+          "XF86AudioLowerVolume" =
+            "exec pactl set-sink-volume '@DEFAULT_SINK@' -5%";
+          "XF86AudioRaiseVolume" =
+            "exec pactl set-sink-volume '@DEFAULT_SINK@' +5%";
+          "XF86AudioMicMute" =
+            "exec pactl set-source-mute '@DEFAULT_SOURCE@' toggle";
+          "XF86MonBrightnessUp" = "exec xbacklight +5";
+          "XF86MonBrightnessDown" = "exec xbacklight -5";
+          "XF86Display" = "${exec} ${pkgs.arandr}/bin/arandr";
+          "Ctrl+Escape" = "${exec} loginctl lock-session;";
+        } // addMods ({
+          "Left" = "focus left";
+          "Down" = "focus down";
+          "Up" = "focus up";
+          "Right" = "focus right";
+          "Tab" = "${exec} ${pkgs.skippy-xd}/bin/skippy-xd";
+          "Prior" = "focus parent";
+          "Next" = "focus child";
+          "Return" = "${exec} ${terminal}";
+          "p" = "${exec} rofi-pass";
+          "shift+Left" = "move left";
+          "shift+Down" = "move down";
+          "shift+Up" = "move up";
+          "shift+Right" = "move right";
+          "d" = "split h";
+          "f" = "fullscreen toggle";
+          "t" = "layout tabbed";
+          "s" = "layout toggle split";
+          "q" = "kill";
+          "m" = "move workspace to output up";
+          "n" = "move workspace to output right";
+          "shift+space" = "floating toggle";
+          "shift+q" =
+            "${exec} ${pkgs.i3}/bin/i3-nagbar -t warning -m 'do you want to exit i3?' -b 'yes' 'i3-msg exit'";
+          "space" = "${exec} hotkeys";
+        } // builtins.foldl' (bindings: name:
+          let
+            number =
+              toString ((builtins.length (builtins.attrNames bindings)) / 2);
+          in bindings // {
+            "${number}" = "workspace ${number}:${name}";
+            "Shift+${number}" = "move container to workspace ${number}:${name}";
+          }) { } workspaces);
       };
     };
   };
