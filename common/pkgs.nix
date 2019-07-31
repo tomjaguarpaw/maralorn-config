@@ -110,7 +110,7 @@ rec {
   };
   home-pkgs = {
     inherit (pkgs) ncmpcpp;
-    inherit (my-lib) shh;
+    inherit (my-lib) ghc;
     inherit home-neovim;
   };
   accounting-pkgs = {

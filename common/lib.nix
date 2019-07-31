@@ -2,16 +2,12 @@ rec {
   pkgs = import <nixpkgs> { };
   unstable = import <unstable> { };
   sources = import ../nix/sources.nix;
-  shh = unstable.haskell.lib.overrideCabal unstable.haskellPackages.shh (drv: {
+  unBreak = pkg: unstable.haskell.lib.overrideCabal pkg (drv: {
     broken = false;
     doCheck = false;
   });
-  shh-extras =
-    unstable.haskell.lib.overrideCabal unstable.haskellPackages.shh-extras
-    (drv: {
-      broken = false;
-      doCheck = false;
-    });
+  shh = unBreak unstable.haskellPackages.shh;
+  ghc = unstable.ghc.withPackages (p: [ (unBreak p.shh) (unBreak p.shh-extras) ]);
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
   writeHaskellScript = { name ? "haskell-script", bins ? [ pkgs.coreutils ]
     , libraries ? [ ], imports ? [ ] }:
