@@ -1,5 +1,5 @@
-neovim:
-neovim.override {
+n:
+n.override {
   vimAlias = true;
   withPython3 = true;
   configure = {
@@ -8,7 +8,7 @@ neovim.override {
       start = builtins.attrValues {
         inherit ((import <nixpkgs> { }).vimPlugins)
           vim-nix vimtex airline rust-vim fugitive vim-trailing-whitespace
-          vim-pandoc vim-pandoc-syntax haskell-vim;
+          vim-pandoc vim-pandoc-syntax haskell-vim vim-autoformat;
       };
     };
   };

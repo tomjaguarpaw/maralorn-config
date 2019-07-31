@@ -43,3 +43,10 @@ noremap  <buffer> <silent> <Down> gj
 noremap  <buffer> <silent> <Home> g<Home>
 noremap  <buffer> <silent> <End>  g<End>
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
+
+let g:formatdef_my_haskell = '"brittany"'
+let g:formatters_hs = ['my_haskell']
+let g:formatdef_my_nix = '"nixfmt"'
+let g:formatters_nix = ['my_nix']
+
+au BufWrite * :Autoformat
