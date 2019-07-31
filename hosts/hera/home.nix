@@ -8,7 +8,6 @@
     taskwarrior.enable = false;
     bugwarrior.enable = false;
     rustdev.enable = false;
-    eventd.enable = false;
     mail = {
       enable = true;
       accounts = config.m-0.private.mail_accounts;
