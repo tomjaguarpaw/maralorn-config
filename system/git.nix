@@ -14,19 +14,19 @@ let
     main = do
       mirror <- lookupEnv "GL_OPTION_MIRROR"
       for_ mirror $ \mirror -> do
-        writeOutput ([i|Forwarding push to #{mirror}|] :: String)
+        putStrLn ([i|Forwarding push to #{mirror}|] :: String)
         git "push" "--all" mirror
       deploy <- lookupEnv "GL_OPTION_WEB_DEPLOY"
       for_ deploy $ \deploy -> do
-        writeOutput ([i|Deploying build to /var/www/#{deploy}|] :: String)
+        putStrLn ([i|Deploying build to /var/www/#{deploy}|] :: String)
         nix "build" "-o" ([i|/var/www/#{deploy}|] :: String)
-        writeOutput "Done"
+        putStrLn "Done"
       test <- lookupEnv "GL_OPTION_TEST"
       for_ test $ \_ -> do
-        writeOutput "Triggering a system update … You can wait or disconnect";
+        putStrLn "Triggering a system update … You can wait or disconnect";
         exe "sudo" ${haskellList test-command};
         exe "sudo" ${haskellList upgrade-command};
-        writeOutput "Done";
+        putStrLn "Done";
   '';
 in {
   users.users.git.linger =

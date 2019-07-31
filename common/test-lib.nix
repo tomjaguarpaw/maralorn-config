@@ -1,7 +1,7 @@
 let
-  pkgs = import <nixpkgs> { };
-  inherit (import ../common/lib.nix)
-    writeHaskellScript get-niv-path home-manager unstable niv haskellList;
+  inherit (import ../common/pkgs.nix) niv;
+  inherit (import ../common/lib.nix) pkgs
+    writeHaskellScript get-niv-path home-manager unstable haskellList;
   haskellBody = commandline: ''
     getNivPath dir = readTrim . get_niv_path ([i|#{dir :: String}/nix/sources.nix|] :: String)
 
