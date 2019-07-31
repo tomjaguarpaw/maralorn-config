@@ -34,7 +34,7 @@ rec {
 
       -- Load binaries from Nix packages. The dependencies will be captured
       -- in the closure.
-      loadFromBins ${haskellList (builtins.map toString bins)}
+      loadFromBins ${haskellList (builtins.map toString (bins ++ [pkgs.coreutils]))}
 
       ${code}
     '';
