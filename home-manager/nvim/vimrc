@@ -14,7 +14,6 @@ set mouse=
 set dir=~/.vimhist/
 set backupdir=~/.vimhist/bak
 set showcmd
-highlight Normal ctermfg=white ctermbg=17
 nnoremap <silent><cr> :nohlsearch<CR>
 vnoremap < <gv
 vnoremap > >gv
@@ -45,7 +44,7 @@ noremap  <buffer> <silent> <End>  g<End>
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
 let g:formatdef_my_haskell = '"brittany"'
-let g:formatters_hs = ['my_haskell']
+let g:formatters_haskell = ['my_haskell']
 let g:formatdef_my_nix = '"nixfmt"'
 let g:formatters_nix = ['my_nix']
 

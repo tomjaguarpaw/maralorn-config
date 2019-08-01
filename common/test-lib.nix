@@ -1,7 +1,7 @@
 let
   inherit (import ../common/pkgs.nix) niv;
-  inherit (import ../common/lib.nix) pkgs
-    writeHaskellScript get-niv-path home-manager unstable haskellList;
+  inherit (import ../common/lib.nix)
+    pkgs writeHaskellScript get-niv-path home-manager unstable haskellList;
   haskellBody = commandline: ''
     getNivPath dir = readTrim . get_niv_path ([i|#{dir :: String}/nix/sources.nix|] :: String)
 
@@ -36,14 +36,7 @@ let
   keys = [ "default" "apollo" "hera" ];
   test-and-bump-config = writeHaskellScript {
     name = "test-and-bump-config";
-    bins = [
-      test-system-config
-      test-home-config
-      pkgs.git
-      pkgs.coreutils
-      niv
-      pkgs.git-crypt
-    ];
+    bins = [ test-system-config test-home-config pkgs.git niv pkgs.git-crypt ];
     imports = [
       "Control.Exception (bracket)"
       "System.Directory (withCurrentDirectory)"

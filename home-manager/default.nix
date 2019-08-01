@@ -1,5 +1,7 @@
 { pkgs, config, ... }:
-let inherit (config.m-0.private) me meWork;
+let
+  inherit (config.m-0.private) me meWork;
+  inherit (import ../common/pkgs.nix) lorri;
 in {
 
   imports = [
@@ -153,7 +155,17 @@ in {
   };
   fonts.fontconfig.enableProfileFonts = true;
 
-  systemd.user.startServices = true;
+  systemd.user = {
+    startServices = true;
+    services.lorri-daemon = {
+      Unit = { Description = "Run lorri daemon"; };
+      Service = {
+        Environment =
+          "RUST_BACKTRACE=1 PATH=${pkgs.nix}/bin:${pkgs.coreutils}/bin";
+        ExecStart = "${lorri}/bin/lorri daemon";
+      };
+    };
+  };
 
   services = {
     gpg-agent = {

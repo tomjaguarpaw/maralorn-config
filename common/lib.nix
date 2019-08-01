@@ -25,6 +25,7 @@ rec {
       import Shh
       import Data.String.Interpolate (i)
       import qualified Data.ByteString as BS
+      import qualified Data.ByteString.Char8 as BSC
       import qualified Data.ByteString.Lazy as LBS
       import qualified Data.ByteString.Lazy.Char8 as LBSC
       import qualified Data.Text as T

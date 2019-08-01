@@ -4,7 +4,7 @@ let
   inherit (config.m-0) colors workspaces terminal;
   exec = "exec --no-startup-id";
   conkyCommon = ''
-    background = true,
+    background = false,
     border_width = 0,
     cpu_avg_samples = 2,
     draw_borders = false,

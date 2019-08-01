@@ -20,8 +20,8 @@ in {
     terminal = "${desktop-pkgs.terminal}/bin/terminal";
     colors = {
       "foreground" = "#dddbff";
-      "background" = "#05004a";
-      "black" = "#030031";
+      "background" = "#000000";
+      "black" = "#000000";
       "brightBlack" = "#55508f";
       "red" = "#e34b4f";
       "brightRed" = "#e34b4f";
@@ -39,6 +39,7 @@ in {
       "brightWhite" = "#ffffff";
     };
   };
+  xsession.initExtra = "xsetroot -solid black";
   home = {
     packages = builtins.attrValues desktop-pkgs;
     keyboard = {
@@ -86,7 +87,6 @@ in {
       bar.enable = false;
       lines = 0;
     };
-    transparent = true;
   };
   gtk = {
     enable = true;
@@ -114,5 +114,4 @@ in {
     };
   };
   xsession.enable = true;
-
 }
