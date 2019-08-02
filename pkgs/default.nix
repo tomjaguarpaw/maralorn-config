@@ -45,8 +45,8 @@ in rec {
         (BSC.isInfixOf (BSC.pack "GW2.exe") (LBSC.toStrict processes))
         waitForExit
       main = do
-      withCurrentDirectory "/home/maralorn/GW2" $ exe "./play.sh"
-      waitForExit
+        withCurrentDirectory "/home/maralorn/GW2" $ exe "./play.sh"
+        waitForExit
     '';
 
     laptop-home-pkgs = {

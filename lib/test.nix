@@ -36,7 +36,7 @@ in rec {
   homes = [ "apollo" "hera" "hephaistos" ];
   keys = [ "default" "apollo" "hera" ];
   test-config = writeHaskellScript {
-    name = "test--config";
+    name = "test-config";
     bins = [ test-system-config test-home-config pkgs.git niv pkgs.git-crypt ];
     imports = [
       "Control.Exception (bracket)"
