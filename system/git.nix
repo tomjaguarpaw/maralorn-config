@@ -2,10 +2,12 @@
 let
   inherit (import ../lib) writeHaskellScript haskellList;
   me = config.m-0.private.me;
-  test-command =
-    [ "${pkgs.systemd}/bin/systemctl" "start" "test-and-bump-config.service" ];
-  upgrade-command =
-    [ "${pkgs.systemd}/bin/systemctl" "start" "system-maintenance.service" ];
+  update-command = [
+    "${pkgs.systemd}/bin/systemctl"
+    "start"
+    "test-and-update.service"
+    "--no-block"
+  ];
   post-update = writeHaskellScript {
     name = "post-update";
     bins = [ pkgs.git pkgs.nix ];
@@ -23,25 +25,17 @@ let
         echo "Done"
       test <- lookupEnv "GL_OPTION_TEST"
       for_ test $ \_ -> do
-        echo "Triggering a system update … You can wait or disconnect";
-        exe "sudo" ${haskellList test-command};
-        exe "sudo" ${haskellList upgrade-command};
-        echo "Done";
+        echo "Triggering (an async) system update."
+        exe "sudo" ${haskellList update-command};
   '';
 in {
   users.users.git.linger =
     true; # Frequent restarting of the systemd-user-unit leads to errors
   security.sudo.extraRules = [{
-    commands = [
-      {
-        command = builtins.concatStringsSep " " test-command;
-        options = [ "NOPASSWD" ];
-      }
-      {
-        command = builtins.concatStringsSep " " upgrade-command;
-        options = [ "NOPASSWD" ];
-      }
-    ];
+    commands = [{
+      command = builtins.concatStringsSep " " update-command;
+      options = [ "NOPASSWD" ];
+    }];
     users = [ "git" ];
   }];
   services.gitolite = {
