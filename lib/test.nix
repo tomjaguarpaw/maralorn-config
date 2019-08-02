@@ -1,7 +1,7 @@
 let
   inherit (import ../pkgs) niv;
   inherit (import ../lib)
-  pkgs writeHaskellScript get-niv-path home-manager unstable haskellList;
+    pkgs writeHaskellScript get-niv-path home-manager unstable haskellList;
 in rec {
   haskellBody = commandline: ''
     getNivPath dir = readTrim . get_niv_path ([i|#{dir :: String}/nix/sources.nix|] :: String)
@@ -41,15 +41,13 @@ in rec {
     imports = [
       "Control.Exception (bracket)"
       "System.Directory (withCurrentDirectory)"
-      "Control.Monad (when)"
+      "Control.Monad (when, ap)"
       "Data.Maybe (listToMaybe)"
     ];
   } ''
     checkout :: IO FilePath
-    checkout = do
-      dir <- LBSC.unpack <$> (readTrim $ mktemp "-d")
-      git "clone" "${repoSrc}" dir
-      return dir
+    checkout = (mktemp "-d" |> captureTrim)
+      >>= ((ap (<$) $ git "clone" "${repoSrc}") . LBSC.unpack)
 
     main = do
       path <- readTrim pwd
@@ -57,7 +55,7 @@ in rec {
       bracket checkout (rm "-rf") $ \dir -> do
         withCurrentDirectory dir $ do
           mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ${
-            haskellList keys
+      haskellList keys
           }
           when bump $ ignoreFailure $ niv "update"
         mapM_ (test_system_config dir) ${haskellList systems}
