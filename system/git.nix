@@ -4,7 +4,7 @@ let
   me = config.m-0.private.me;
   update-command = [
     "${pkgs.systemd}/bin/systemctl"
-    "start"
+    "restart"
     "test-and-update.service"
     "--no-block"
   ];
