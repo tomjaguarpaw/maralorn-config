@@ -83,53 +83,64 @@ in {
       matchBlocks = let
         matheGwProxy = "ssh -q gw nc -q0 %h %p";
         agHost = "fb04217.mathematik.tu-darmstadt.de";
-        in [
-          {
-            host = "hera";
-            hostname = "hera.m-0.eu";
-            forwardAgent = true;
-            user = me.user;
-          }
-          {
-            host = "ag-forward";
-            hostname = agHost;
-            proxyCommand = matheGwProxy;
-            user = meWork.user;
-          }
-          {
-            host = "ag";
-            hostname = agHost;
-            user = meWork.user;
-          }
-          {
-            host = "gw";
-            hostname = "gwres4.mathematik.tu-darmstadt.de";
-            user = meWork.user;
-          }
-          {
-            host = "shells";
-            hostname = "shells.darmstadt.ccc.de";
-            user = me.user;
-          }
-          {
-            host = "*.darmstadt.ccc.de";
-            user = me.user;
-          }
-          {
-            host = "whisky";
-            hostname = "whisky.w17.io";
-            user = "chaos";
-          }
-          {
-            host = "kitchen";
-            hostname = "kitchen.w17.io";
-            user = "chaos";
-          }
-          {
-            host = "door.w17.io";
-            identityFile = "~/.ssh/door_rsa";
-          }
-        ];
+      in [
+        {
+          host = "git-auto";
+          hostname = "hera.m-0.eu";
+          user = "git";
+          identityFile = "~/.ssh/id_auto_ed25519";
+        }
+        {
+          host = "git";
+          hostname = "hera.m-0.eu";
+          user = "git";
+        }
+        {
+          host = "hera";
+          hostname = "hera.m-0.eu";
+          user = me.user;
+        }
+        {
+          host = "ag-forward";
+          hostname = agHost;
+          proxyCommand = matheGwProxy;
+          user = meWork.user;
+        }
+        {
+          host = "ag";
+          hostname = agHost;
+          user = meWork.user;
+        }
+        {
+          host = "gw";
+          hostname = "gwres4.mathematik.tu-darmstadt.de";
+          user = meWork.user;
+        }
+        {
+          host = "shells";
+          hostname = "shells.darmstadt.ccc.de";
+          user = me.user;
+        }
+        {
+          host = "vorstand";
+          hostname = "vorstand.darmstadt.ccc.de";
+          user = me.user;
+        }
+        {
+          host = "whisky";
+          hostname = "whisky.w17.io";
+          user = "chaos";
+        }
+        {
+          host = "kitchen";
+          hostname = "kitchen.w17.io";
+          user = "chaos";
+        }
+        {
+          host = "door.w17.io";
+          identityFile = "~/.ssh/door_rsa";
+        }
+      ];
     };
   };
 
@@ -138,37 +149,37 @@ in {
     sessionVariables = {
       PATH =
         "$HOME/.cargo/bin:/etc/profiles/per-user/${config.home.username}/bin:$HOME/.nix-profile/bin:$PATH";
-      BROWSER = "${pkgs.firefox}/bin/firefox";
-      EDITOR = "${pkgs.neovim}/bin/nvim";
-      TERMINAL = config.m-0.terminal;
-      EMAIL = me.mail;
-      SUDO_ASKPASS = let
-        print-pw = pkgs.writeShellScriptBin "print-pw"
+        BROWSER = "${pkgs.firefox}/bin/firefox";
+        EDITOR = "${pkgs.neovim}/bin/nvim";
+        TERMINAL = config.m-0.terminal;
+        EMAIL = me.mail;
+        SUDO_ASKPASS = let
+          print-pw = pkgs.writeShellScriptBin "print-pw"
           "pass show eu/m-0/${config.m-0.hostName}/user/${config.home.username}";
         in "${print-pw}/bin/print-pw";
-    };
-  };
-  fonts.fontconfig.enableProfileFonts = true;
-
-  systemd.user = {
-    startServices = true;
-    services.lorri-daemon = {
-      Unit = { Description = "Run lorri daemon"; };
-      Service = {
-        Environment =
-          "RUST_BACKTRACE=1 PATH=${pkgs.nix}/bin:${pkgs.coreutils}/bin";
-        ExecStart = "${lorri}/bin/lorri daemon";
       };
     };
-  };
+    fonts.fontconfig.enableProfileFonts = true;
 
-  services = {
-    gpg-agent = {
-      enable = true;
-      defaultCacheTtl = 31536000; # 1year
-      maxCacheTtl = 31536000; # 1year
-    };
-  };
+    systemd.user = {
+      startServices = true;
+      services.lorri-daemon = {
+        Unit = { Description = "Run lorri daemon"; };
+        Service = {
+          Environment =
+            "RUST_BACKTRACE=1 PATH=${pkgs.nix}/bin:${pkgs.coreutils}/bin";
+            ExecStart = "${lorri}/bin/lorri daemon";
+          };
+        };
+      };
 
-  xdg.enable = true;
-}
+      services = {
+        gpg-agent = {
+          enable = true;
+          defaultCacheTtl = 31536000; # 1year
+          maxCacheTtl = 31536000; # 1year
+        };
+      };
+
+      xdg.enable = true;
+    }
