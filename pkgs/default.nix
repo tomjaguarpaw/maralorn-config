@@ -39,14 +39,14 @@ in rec {
 
   } ''
     waitForExit = do
-      sleep "5s"
-      processes <- readTrim $ ps "aux"
-      when
-        (BSC.isInfixOf (BSC.pack "GW2.exe") (LBSC.toStrict processes))
-        waitForExit
-    main = do
-      withCurrentDirectory "/home/maralorn/GW2" $ exe "./play.sh"
+    sleep "5s"
+    processes <- readTrim $ ps "aux"
+    when
+      (BSC.isInfixOf (BSC.pack "GW2.exe") (LBSC.toStrict processes))
       waitForExit
+    main = do
+    withCurrentDirectory "/home/maralorn/GW2" $ exe "./play.sh"
+    waitForExit
   '';
 
   laptop-home-pkgs = {
@@ -140,11 +140,11 @@ in rec {
   };
   urxvt = pkgs.rxvt_unicode-with-plugins;
   terminal = pkgs.writeShellScriptBin "terminal" ''
-     ${urxvt}/bin/urxvtc "$@"
-     if [ $? -eq 2 ]; then
-    ${urxvt}/bin/urxvtd -q -o -f
     ${urxvt}/bin/urxvtc "$@"
-     fi
+    if [ $? -eq 2 ]; then
+     ${urxvt}/bin/urxvtd -q -o -f
+     ${urxvt}/bin/urxvtc "$@"
+    fi
   '';
   desktop-pkgs = {
     inherit urxvt tasktree terminal;
