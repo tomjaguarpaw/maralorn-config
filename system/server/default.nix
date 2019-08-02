@@ -14,6 +14,7 @@
       Type = "oneshot";
       script = ''
         ${(import ../lib/test.nix).test-config}/bin/test-config
+        sudo -u maralorn git -C /home/maralorn/git/nixos/config pull
         ${
           (import ../lib/update-system.nix
           config.system.build.nixos-rebuild).update-system

@@ -18,14 +18,4 @@ in rec {
         args <- getArgs
         nixos_rebuild (paths ++ ["switch"] ++ args)
   '';
-  system-maintenance = writeHaskellScript {
-    name = "system-maintenance";
-    bins = [ pkgs.nix pkgs.git update-system ];
-  } ''
-    main = do
-      git "-C" "${configPath}" "pull"
-      update_system
-      nix_collect_garbage "--delete-older-than" "${toString gcRetentionDays}d"
-      nix "optimise-store"
-  '';
 }

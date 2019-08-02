@@ -53,7 +53,9 @@ in rec {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       git -C ~/git/nixos/config pull
       update-home
-      sudo -A system-maintenance
+      sudo -A update-system
+      sudo -A nix_collect_garbage --delete-older-than ${toString gcRetentionDays}d
+      nix optimise-store
     '';
     rewlan = pkgs.writeShellScriptBin "rewlan" ''
       nmcli r wifi off;
