@@ -85,13 +85,10 @@ in {
         agHost = "fb04217.mathematik.tu-darmstadt.de";
         in [
           {
-            host = "charon";
-            hostname = "charon.olymp.space";
-          }
-          {
             host = "hera";
             hostname = "hera.m-0.eu";
             forwardAgent = true;
+            user = me.user;
           }
           {
             host = "ag-forward";
@@ -112,10 +109,7 @@ in {
           {
             host = "shells";
             hostname = "shells.darmstadt.ccc.de";
-          }
-          {
-            host = "vorstand";
-            hostname = "vorstand.darmstadt.ccc.de";
+            user = me.user;
           }
           {
             host = "*.darmstadt.ccc.de";
