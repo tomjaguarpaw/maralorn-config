@@ -12,7 +12,7 @@ in rec {
     main = do
       (configDir:hostname:args) <- getArgs
       paths <- concat <$> mapM (getNivAssign configDir) ["nixpkgs", "unstable", "home-manager"]
-      putStrLn [i|Trying to build ${name} config for #{hostname}]
+      putStrLn [i|Trying to build ${name} config for #{hostname}|]
       ${commandline}
   '';
   bins = [ get-niv-path pkgs.nix ];

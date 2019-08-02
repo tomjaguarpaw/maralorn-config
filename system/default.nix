@@ -8,7 +8,6 @@ in {
     ../common
     ./modules/laptop.nix
     ./modules/mathechor.de.nix
-    ./modules/blog.nix
     ./modules/riot.nix
     ./modules/loginctl-linger.nix
   ];
@@ -40,11 +39,8 @@ in {
   };
 
   nix = {
-    binaryCaches = [
-      "https://cache.nixos.org/"
-      "https://nixcache.reflex-frp.org"
-      "ssh://nix-ssh@hera.m-0.eu"
-    ];
+    binaryCaches =
+      [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" ];
     binaryCachePublicKeys =
       [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
     nixPath = [ "/etc/nix-path" ];

@@ -4,18 +4,6 @@ with lib;
 let
 
   me = config.m-0.private.me;
-  page = pkgs.stdenv.mkDerivation {
-    name = "mathechor.de";
-    src = builtins.fetchGit "git@hera:mathechor.de";
-    buildInputs = [ pkgs.pandoc pkgs.python3 ];
-    LC_ALL = "en_US.UTF-8";
-    LOCALE_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
-    installPhase = ''
-      mkdir $out
-      cp -r intern/output $out/intern
-      cp -r public/output $out/public
-    '';
-  };
 
 in {
 
@@ -41,7 +29,7 @@ in {
           enableACME = true;
           locations = {
             "/" = {
-              root = "${page}/public";
+              root = "/var/www/mathechor/public";
               index = "index.html";
               extraConfig =
                 "location ~* .(otf)$ {add_header Access-Control-Allow-Origin *;}";
@@ -54,7 +42,7 @@ in {
           basicAuth.mathechor = config.m-0.mathechor-de.password;
           locations = {
             "/" = {
-              root = "${page}/intern";
+              root = "/var/www/mathechor/intern";
               index = "index.html";
             };
             "/mathechor.ics" = {

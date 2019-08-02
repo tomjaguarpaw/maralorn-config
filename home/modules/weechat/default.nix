@@ -10,7 +10,8 @@ in {
       default = "";
     };
     user = mkOption { type = types.str; };
-    pw = mkOption { type = types.str; };
+    hackint_pw = mkOption { type = types.str; };
+    freenode_pw = mkOption { type = types.str; };
   };
 
   config = mkIf config.m-0.weechat.enable {
@@ -23,14 +24,14 @@ in {
         target = ".weechat/perl";
         source = ./plugins/perl;
       };
-      plugins = {
-        target = ".weechat/plugins.conf";
-        text = ''
-          [var]
-          python.buffer_autohide.hide_inactive = on
-          python.buffer_autohide.hide_private = on
-        '';
-      };
+      #      plugins = {
+      #        target = ".weechat/plugins.conf";
+      #        text = ''
+      #          [var]
+      #          python.buffer_autohide.hide_inactive = off
+      #          python.buffer_autohide.hide_private = off
+      #        '';
+      #      };
       weechat = {
         target = ".weechat/weechat.conf";
         text = ''
@@ -67,7 +68,7 @@ in {
           freenode.ssl = on
           freenode.sasl_mechanism = plain
           freenode.sasl_username = "${config.m-0.weechat.user}"
-          freenode.sasl_password = "${config.m-0.weechat.pw}"
+          freenode.sasl_password = "${config.m-0.weechat.freenode_pw}"
           freenode.autoconnect = on
           freenode.username = "${config.m-0.weechat.user}"
           freenode.autojoin = "#nixos,#matrix,#haskell"
@@ -77,7 +78,7 @@ in {
           hackint.ssl = on
           hackint.sasl_mechanism = plain
           hackint.sasl_username = "${config.m-0.weechat.user}"
-          hackint.sasl_password = "${config.m-0.weechat.pw}"
+          hackint.sasl_password = "${config.m-0.weechat.hackint_pw}"
           hackint.autoconnect = on
           hackint.username = "${config.m-0.weechat.user}"
           hackint.autojoin = "${config.m-0.weechat.channels}"

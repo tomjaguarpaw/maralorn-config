@@ -11,8 +11,19 @@ let
   post-update = writeHaskellScript {
     name = "post-update";
     bins = [ pkgs.git pkgs.nix ];
-    imports = [ "System.Environment (lookupEnv)" "Data.Foldable (for_)" ];
+    imports = [
+      "System.Environment (lookupEnv)"
+      "Data.Foldable (for_)"
+      "Control.Monad (ap)"
+      "Control.Exception (bracket)"
+      "System.Directory (withCurrentDirectory)"
+    ];
+
   } ''
+    checkout :: String -> IO FilePath
+    checkout pwd = (mktemp "-d" |> captureTrim)
+      >>= ((ap (<$) $ git "clone" pwd) . LBSC.unpack)
+
     main = do
       mirror <- lookupEnv "GL_OPTION_MIRROR"
       for_ mirror $ \mirror -> do
@@ -20,8 +31,9 @@ let
         git "push" "--all" mirror
       deploy <- lookupEnv "GL_OPTION_WEB_DEPLOY"
       for_ deploy $ \deploy -> do
+        path <- readTrim pwd
         echo ([i|Deploying build to /var/www/#{deploy}|] :: String)
-        nix "build" "-o" ([i|/var/www/#{deploy}|] :: String)
+        bracket (checkout $ LBSC.unpack path)(rm "-rf") $ \dir -> withCurrentDirectory dir $ nix "build" "-o" ([i|/var/www/#{deploy}|] :: String)
         echo "Done"
       test <- lookupEnv "GL_OPTION_TEST"
       for_ test $ \_ -> do

@@ -51,6 +51,7 @@ in {
   };
   containers.web = {
     bindMounts = {
+      "/var/www" = { hostPath = "/var/www"; };
       "${certPath}" = {
         hostPath = certPath;
         isReadOnly = false;
@@ -60,7 +61,7 @@ in {
     privateNetwork = true;
     hostBridge = "bridge";
     config = { pkgs, lib, ... }: {
-      imports = [ ../../system ];
+      imports = [ ../../system ../../system/blog.nix ];
       networking = {
         interfaces.eth0 = {
           ipv6.addresses = [{
@@ -76,7 +77,6 @@ in {
         firewall.allowedTCPPorts = [ 80 443 ];
       };
       m-0 = {
-        blog.enable = true;
         mathechor-de = {
           enable = true;
           password = config.m-0.private.mathechor-pw;
