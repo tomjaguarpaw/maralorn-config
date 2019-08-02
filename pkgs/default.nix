@@ -39,11 +39,11 @@ in rec {
 
     } ''
       waitForExit = do
-      sleep "5s"
-      processes <- readTrim $ ps "aux"
-      when
-        (BSC.isInfixOf (BSC.pack "GW2.exe") (LBSC.toStrict processes))
-        waitForExit
+        sleep "5s"
+        processes <- readTrim $ ps "aux"
+        when
+          (BSC.isInfixOf (BSC.pack "GW2.exe") (LBSC.toStrict processes))
+          waitForExit
       main = do
         withCurrentDirectory "/home/maralorn/GW2" $ exe "./play.sh"
         waitForExit
