@@ -13,63 +13,63 @@ in {
     ./modules/loginctl-linger.nix
   ];
 
-  config = {
+  i18n = { defaultLocale = "en_US.UTF-8"; };
 
-    i18n = { defaultLocale = "en_US.UTF-8"; };
+  time.timeZone = "Europe/Berlin";
 
-    time.timeZone = "Europe/Berlin";
+  networking = {
+    firewall.allowPing = true;
+    useDHCP = false;
+    hosts = lib.zipAttrs
+      (lib.mapAttrsToList (host: ip: { "${ip}" = "${host} ${host}.m-0.eu"; })
+      config.m-0.hosts);
+  };
 
-    networking = {
-      firewall.allowPing = true;
-      useDHCP = false;
-      hosts = lib.zipAttrs
-        (lib.mapAttrsToList (host: ip: { "${ip}" = "${host} ${host}.m-0.eu"; })
-        config.m-0.hosts);
+  users = {
+    mutableUsers = false;
+    users.root = { openssh.authorizedKeys.keys = me.keys; };
+  };
+
+  environment = {
+    etc = {
+      "nix-path/nixpkgs".source = sources.nixpkgs;
+      "nix-path/nixos".source = sources.nixpkgs;
+      "nix-path/unstable".source = sources.unstable;
+      "nix-path/home-manager".source = sources.home-manager;
     };
+  };
 
-    users = {
-      mutableUsers = false;
-      users.root = { openssh.authorizedKeys.keys = me.keys; };
-    };
+  nix = {
+    binaryCaches = [
+      "https://cache.nixos.org/"
+      "https://nixcache.reflex-frp.org"
+      "ssh://nix-ssh@hera.m-0.eu"
+    ];
+    binaryCachePublicKeys =
+      [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
+    nixPath = [ "/etc/nix-path" ];
+    extraOptions = "fallback = true";
+    gc.options = "--delete-older-than 5d";
+  };
 
-    environment = {
-      etc = {
-        "nix-path/nixpkgs".source = sources.nixpkgs;
-        "nix-path/nixos".source = sources.nixpkgs;
-        "nix-path/unstable".source = sources.unstable;
-        "nix-path/home-manager".source = sources.home-manager;
-      };
-    };
-
-    nix = {
-      binaryCaches =
-        [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" ];
-      binaryCachePublicKeys =
-        [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
-      nixPath = [ "/etc/nix-path" ];
-      extraOptions = "fallback = true";
-      gc.options = "--delete-older-than 5d";
-    };
-
-    services = {
-      prometheus.exporters = {
-        node = {
-          enable = true;
-          openFirewall = true;
-          enabledCollectors = [ "systemd" "logind" ];
-          disabledCollectors = [ "timex" ];
-        };
-        nginx = {
-          enable = config.services.nginx.enable;
-          openFirewall = true;
-        };
+  services = {
+    prometheus.exporters = {
+      node = {
+        enable = true;
+        openFirewall = true;
+        enabledCollectors = [ "systemd" "logind" ];
+        disabledCollectors = [ "timex" ];
       };
       nginx = {
-        statusPage = true;
-        recommendedOptimisation = true;
-        recommendedGzipSettings = true;
-        recommendedTlsSettings = true;
+        enable = config.services.nginx.enable;
+        openFirewall = true;
       };
+    };
+    nginx = {
+      statusPage = true;
+      recommendedOptimisation = true;
+      recommendedGzipSettings = true;
+      recommendedTlsSettings = true;
     };
   };
 }

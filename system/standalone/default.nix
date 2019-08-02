@@ -1,10 +1,15 @@
-{ pkgs, config, lib, ... }:
-{
+{ pkgs, config, lib, ... }: {
 
-  imports = [ ./admin.nix  ];
+  imports = [ ./admin.nix ];
 
   # So that boot does not fill up with old kernels
-  boot.loader.grub.configurationLimit = 5;
+  boot.loader = {
+    timeout = 0;
+    grub = {
+      backgroundColor = "#000000";
+      configurationLimit = 5;
+    };
+  };
 
   users = {
     defaultUserShell = pkgs.zsh;
@@ -14,16 +19,16 @@
   security.sudo.extraConfig =
     "\n    Defaults timestamp_type=global, timestamp_timeout=15\n  ";
 
-    services = { sshd.enable = true; };
+  services = { sshd.enable = true; };
 
-    nix.nixPath = [ "nixos-config=/etc/nixos/configuration.nix" ];
+  nix.nixPath = [ "nixos-config=/etc/nixos/configuration.nix" ];
 
-    environment = {
+  environment = {
     # Put these into an extra file so the essential packages can also be included on non selfadminstrated systems from home-manager
     systemPackages = builtins.attrValues ({
       inherit (import ../../lib/update-system.nix
       config.system.build.nixos-rebuild)
-      update-system;
+        update-system;
     } // (import ../../pkgs).system-pkgs);
     sessionVariables = { TERMINFO = "/run/current-system/sw/share/terminfo"; };
   };
