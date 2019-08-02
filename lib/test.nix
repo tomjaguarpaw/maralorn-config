@@ -1,9 +1,9 @@
 let
   inherit (import ../pkgs) niv;
   inherit (import ../lib)
-  pkgs writeHaskellScript get-niv-path home-manager unstable haskellList;
+    pkgs writeHaskellScript get-niv-path home-manager unstable haskellList;
 in rec {
-  haskellBody = commandline: ''
+  haskellBody = name: commandline: ''
     getNivPath dir = readTrim . get_niv_path ([i|#{dir :: String}/nix/sources.nix|] :: String)
 
     getNivAssign dir name = fmap process . getNivPath dir $ name
@@ -12,6 +12,7 @@ in rec {
     main = do
       (configDir:hostname:args) <- getArgs
       paths <- concat <$> mapM (getNivAssign configDir) ["nixpkgs", "unstable", "home-manager"]
+      putStrLn [i|Trying to build ${name} config for #{hostname}]
       ${commandline}
   '';
   bins = [ get-niv-path pkgs.nix ];
@@ -19,14 +20,14 @@ in rec {
   test-system-config = writeHaskellScript {
     name = "test-system-config";
     inherit bins;
-  } (haskellBody ''
+  } (haskellBody "system" ''
     nix $ ["build", "-f", "<nixpkgs/nixos>", "system"] ++ paths ++ ["-I", [i|nixos-config=#{configDir}/hosts/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ args
   '');
 
   test-home-config = writeHaskellScript {
     name = "test-home-config";
     inherit bins;
-  } (haskellBody ''
+  } (haskellBody "home" ''
     nix $ ["build", "-f", "<home-manager/home-manager/home-manager.nix>"] ++ paths ++ ["--argstr", "confPath", [i|#{configDir}/hosts/#{hostname}/home.nix|], "--argstr", "confAttr", "", "--out-link", [i|result-home-manager-#{hostname}|], "activationPackage"] ++ args
   '');
 
@@ -55,7 +56,7 @@ in rec {
       bracket checkout (rm "-rf") $ \dir -> do
         withCurrentDirectory dir $ do
           mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ${
-            haskellList keys
+      haskellList keys
           }
           when bump $ ignoreFailure $ niv "update"
         mapM_ (test_system_config dir) ${haskellList systems}
