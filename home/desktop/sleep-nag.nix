@@ -1,6 +1,6 @@
 { lib, pkgs, config, ... }:
 let
-  inherit (import ../../common/pkgs.nix) eventd;
+  inherit (import ../../pkgs) eventd;
   sleep-nag = pkgs.writeScript "sleep-nag" ''
     #!${pkgs.stdenv.shell}
 

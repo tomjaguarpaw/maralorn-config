@@ -1,6 +1,6 @@
 { config, pkgs, lib, ... }:
 let
-  inherit (import ../common/lib.nix) writeHaskellScript haskellList;
+  inherit (import ../lib) writeHaskellScript haskellList;
   me = config.m-0.private.me;
   test-command =
     [ "${pkgs.systemd}/bin/systemctl" "start" "test-and-bump-config.service" ];

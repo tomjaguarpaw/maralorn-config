@@ -1,8 +1,7 @@
 { pkgs, config, lib, ... }:
 let
-  inherit (import ../common/lib.nix)
-    writeHaskellScript get-niv-path gcRetentionDays;
-  inherit (import ./lib.nix) update-home;
+  inherit (import ../lib) writeHaskellScript get-niv-path gcRetentionDays;
+  inherit (import ../lib/update-home.nix) update-home;
   configPath = "/home/${config.home.username}/git/nixos/config";
   home-maintenance = writeHaskellScript {
     name = "home-maintenance";

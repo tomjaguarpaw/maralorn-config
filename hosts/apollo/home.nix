@@ -1,15 +1,14 @@
 { pkgs, config, ... }: {
 
   imports = [
-    ../../home-manager
-    ../../home-manager/on-my-machine.nix
-    ../../home-manager/battery.nix
-    ../../home-manager/update_tasks.nix
-    ../../home-manager/desktop
+    ../../home
+    ../../home/on-my-machine.nix
+    ../../home/battery.nix
+    ../../home/update_tasks.nix
+    ../../home/desktop
   ];
 
-  home.packages =
-    builtins.attrValues (import ../../common/pkgs.nix).laptop-home-pkgs;
+  home.packages = builtins.attrValues (import ../../pkgs).laptop-home-pkgs;
 
   m-0 = {
     hostName = "apollo";

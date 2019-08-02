@@ -1,5 +1,5 @@
 { config, lib, pkgs, ... }:
-let inherit (import ../common/pkgs.nix) eventd;
+let inherit (import ../pkgs) eventd;
 in {
   systemd.user = {
     services.update_tasks = {

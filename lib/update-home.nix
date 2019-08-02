@@ -1,6 +1,4 @@
-let
-  inherit (import ../common/lib.nix)
-    home-manager writeHaskellScript get-niv-path;
+let inherit (import ./.) home-manager writeHaskellScript get-niv-path;
 in {
   update-home = configPath:
     writeHaskellScript {

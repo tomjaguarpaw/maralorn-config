@@ -1,19 +1,9 @@
 { pkgs, config, ... }: {
-  imports = [ ../../home-manager ../../home-manager/on-foreign-machine.nix ];
+  imports = [ ../../home ../../home/on-foreign-machine.nix ];
 
   systemd.user.systemctlPath = "/usr/bin/systemctl";
 
-  m-0 = {
-    hostName = "fb04217";
-    #latex.enable = true;
-    #taskwarrior = {
-    #  enable = true;
-    #  git_active = true;
-    #};
-    #update_tasks.enable = true;
-    #eventd.enable = true;
-    #pythia.enable = true;
-  };
+  m-0 = { hostName = "fb04217"; };
 
   home = {
     username = "brandy";

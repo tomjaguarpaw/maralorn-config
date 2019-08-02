@@ -1,7 +1,7 @@
 { pkgs, config, lib, ... }:
 with lib; {
 
-  imports = [ ./admin.nix ];
+  imports = [ ./admin.nix ./boot-key.nix ];
 
   # So that boot does not fill up with old kernels
   boot.loader.grub.configurationLimit = 5;
@@ -21,9 +21,10 @@ with lib; {
   environment = {
     # Put these into an extra file so the essential packages can also be included on non selfadminstrated systems from home-manager
     systemPackages = builtins.attrValues ({
-      inherit (import ./update-lib.nix config.system.build.nixos-rebuild)
+      inherit (import ../../lib/update-system.nix
+      config.system.build.nixos-rebuild)
         update-system system-maintenance;
-    } // (import ../common/pkgs.nix).system-pkgs);
+    } // (import ../../pkgs).system-pkgs);
     sessionVariables = { TERMINFO = "/run/current-system/sw/share/terminfo"; };
   };
 

@@ -1,8 +1,8 @@
 nixos-rebuild:
 let
-  pkgs = import <nixpkgs> { };
-  inherit (import ../common/lib.nix)
-    writeHaskellScript get-niv-path home-manager gcRetentionDays;
+  inherit (import ../lib)
+    writeHaskellScript get-niv-path home-manager gcRetentionDays pkgs;
+in rec {
   configPath = "/etc/nixos";
   update-system = writeHaskellScript {
     name = "update-system";
@@ -28,4 +28,4 @@ let
       nix_collect_garbage "--delete-older-than" "${toString gcRetentionDays}d"
       nix "optimise-store"
   '';
-in { inherit update-system system-maintenance; }
+}

@@ -10,8 +10,8 @@ in {
     ./hardware-configuration.nix
     ../../system
     ../../system/test-timer.nix
-    ../../system/standalone.nix
-    ../../system/server.nix
+    ../../system/standalone
+    ../../system/server
     ../../system/git.nix
     ./borg.nix
     ./mail.nix

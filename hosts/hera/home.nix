@@ -1,7 +1,6 @@
 { pkgs, config, ... }: {
 
-  imports =
-    [ ../../home-manager ../../home-manager/on-my-machine.nix ./secret ];
+  imports = [ ../../home ../../home/on-my-machine.nix ./secret ];
 
   m-0 = {
     hostName = "hera";

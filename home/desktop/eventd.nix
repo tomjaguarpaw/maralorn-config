@@ -1,7 +1,7 @@
 { pkgs, lib, config, ... }:
 let
   colors = config.m-0.colors;
-  inherit (import ../../common/pkgs.nix) eventd;
+  inherit (import ../../pkgs) eventd;
 in {
 
   home.packages = [ eventd ];

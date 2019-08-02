@@ -6,8 +6,7 @@ with lib; {
 
   config = mkIf config.m-0.accounting.enable {
     home.file.".config/jali/config.py".text = config.m-0.accounting.config;
-    home.packages =
-      builtins.attrValues (import ../../../common/pkgs.nix).accounting-pkgs;
+    home.packages = builtins.attrValues (import ../../../pkgs).accounting-pkgs;
   };
 
 }

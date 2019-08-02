@@ -1,7 +1,8 @@
-rec {
-  my-lib = import ../common/lib.nix;
+let
+  my-lib = import ../lib;
   inherit (my-lib) pkgs unstable sources writeHaskellScript;
-  tasktree = pkgs.callPackage ../packages/tasktree { };
+in rec {
+  tasktree = pkgs.callPackage ./tasktree { };
   neovim = pkgs.neovim.override {
     vimAlias = true;
     withPython3 = true;
@@ -10,7 +11,7 @@ rec {
     src = sources.lorri;
     pkgs = unstable;
   };
-  home-neovim = (import ../home-manager/nvim) neovim;
+  home-neovim = (import ./nvim) neovim;
   niv = (import sources.niv { }).niv;
 
   # pkgs assumed to be present on a non nixos host
@@ -52,7 +53,7 @@ rec {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       git -C ~/git/nixos/config pull
       update-home
-      sudo system-maintenance
+      sudo -A system-maintenance
     '';
     rewlan = pkgs.writeShellScriptBin "rewlan" ''
       nmcli r wifi off;
@@ -153,15 +154,15 @@ rec {
     inherit home-neovim;
   };
   accounting-pkgs = {
-    jali = pkgs.callPackage ../packages/jali { };
+    jali = pkgs.callPackage ./jali { };
     inherit (pkgs.haskellPackages) hledger hledger-ui;
     inherit (pkgs) ledger;
   };
   system-pkgs = core-system-pkgs // extra-system-pkgs // {
-    inherit (import ./test-lib.nix)
+    inherit (import ../lib/test.nix)
       test-system-config test-home-config test-and-bump-config;
-    inherit (import ../common/lib.nix) home-manager;
+    inherit (my-lib) home-manager;
   };
   foreign-home-pkgs = extra-system-pkgs;
-  eventd = pkgs.callPackage ../packages/eventd { };
+  eventd = pkgs.callPackage ./eventd { };
 }

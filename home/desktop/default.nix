@@ -1,7 +1,6 @@
 { pkgs, lib, config, ... }:
-let inherit (import ../../common/pkgs.nix) desktop-pkgs;
+let inherit (import ../../pkgs) desktop-pkgs;
 in {
-
   imports =
     [ ./i3.nix ./rofi.nix ./ssh-agent.nix ./eventd.nix ./sleep-nag.nix ];
   m-0 = {

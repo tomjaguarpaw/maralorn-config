@@ -49,3 +49,4 @@ let g:formatdef_my_nix = '"nixfmt"'
 let g:formatters_nix = ['my_nix']
 
 au BufWrite * :Autoformat
+autocmd FileType ledger let b:autoformat_autoindent=0

@@ -1,7 +1,8 @@
 let
-  inherit (import ../common/pkgs.nix) niv;
-  inherit (import ../common/lib.nix)
+  inherit (import ../pkgs) niv;
+  inherit (import ../lib)
     pkgs writeHaskellScript get-niv-path home-manager unstable haskellList;
+in rec {
   haskellBody = commandline: ''
     getNivPath dir = readTrim . get_niv_path ([i|#{dir :: String}/nix/sources.nix|] :: String)
 
@@ -34,13 +35,14 @@ let
   systems = [ "apollo" "hera" ];
   homes = [ "apollo" "hera" "hephaistos" ];
   keys = [ "default" "apollo" "hera" ];
-  test-and-bump-config = writeHaskellScript {
-    name = "test-and-bump-config";
+  test-config = writeHaskellScript {
+    name = "test--config";
     bins = [ test-system-config test-home-config pkgs.git niv pkgs.git-crypt ];
     imports = [
       "Control.Exception (bracket)"
       "System.Directory (withCurrentDirectory)"
       "Control.Monad (when)"
+      "Data.Maybe (listToMaybe)"
     ];
   } ''
     checkout :: IO FilePath
@@ -51,12 +53,13 @@ let
 
     main = do
       path <- readTrim pwd
+      bump <- fmap ((== "bump") . listToMaybe) getArgs
       bracket checkout (rm "-rf") $ \dir -> do
         withCurrentDirectory dir $ do
           mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ${
       haskellList keys
           }
-          ignoreFailure $ niv "update"
+          when bump $ ignoreFailure $ niv "update"
         mapM_ (test_system_config dir) ${haskellList systems}
         mapM_ (test_home_config dir) ${haskellList homes}
         changed <- ((mempty /=) <$>) . readTrim $ git "-C" dir "status" "--porcelain"
@@ -66,4 +69,4 @@ let
           git "-C" dir "commit" "-am" "Update dependencies with niv"
           git "-C" dir "push"
   '';
-in { inherit test-system-config test-home-config test-and-bump-config; }
+}

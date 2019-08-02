@@ -1,6 +1,6 @@
 { pkgs, config, lib, ... }:
 let
-  inherit (import ../common/lib.nix) sources;
+  inherit (import ../lib) sources;
   me = config.m-0.private.me;
 in {
   imports = [
@@ -47,6 +47,8 @@ in {
       binaryCachePublicKeys =
         [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
       nixPath = [ "/etc/nix-path" ];
+      extraOptions = "fallback = true";
+      gc.options = "--delete-older-than 5d";
     };
 
     services = {

@@ -1,6 +1,6 @@
 { lib, pkgs, config, ... }:
 let
-  inherit (import ../common/pkgs.nix) eventd;
+  inherit (import ../pkgs) eventd;
   battery-watch = pkgs.writeScript "battery-watch" ''
     #!${pkgs.stdenv.shell}
 

@@ -1,7 +1,8 @@
 { pkgs, config, ... }:
 let
   inherit (config.m-0.private) me meWork;
-  inherit (import ../common/pkgs.nix) lorri;
+  my-pkgs = import ../pkgs;
+  inherit (my-pkgs) lorri;
 in {
 
   imports = [
@@ -139,7 +140,7 @@ in {
   };
 
   home = {
-    packages = builtins.attrValues (import ../common/pkgs.nix).home-pkgs;
+    packages = builtins.attrValues my-pkgs.home-pkgs;
     sessionVariables = {
       PATH =
         "$HOME/.cargo/bin:/etc/profiles/per-user/${config.home.username}/bin:$HOME/.nix-profile/bin:$PATH";
