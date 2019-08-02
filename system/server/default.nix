@@ -1,4 +1,6 @@
-{ config, pkgs, lib, ... }: {
+{ config, pkgs, lib, ... }:
+
+{
 
   imports = [ ./init_ssh.nix ];
 
@@ -6,25 +8,26 @@
     startAt = "2:45";
     environment.NIX_PATH =
       "/etc/nix-path:nixos-config=/etc/nixos/configuration.nix";
-    path = [ pkgs.nix pkgs.gnutar pkgs.gzip pkgs.git pkgs.git-crypt ];
-    WorkingDirectory = "/var/cache/gc-links";
-    restartIfChanged = false;
-    unitConfig.X-StopOnRemoval = false;
-    serviceConfig = {
-      Type = "oneshot";
+      path = [ pkgs.nix pkgs.gnutar pkgs.gzip pkgs.git pkgs.git-crypt ];
+      restartIfChanged = false;
+      unitConfig.X-StopOnRemoval = false;
+      serviceConfig = {
+        Type = "oneshot";
+        WorkingDirectory = "/var/cache/gc-links";
+      };
       script = ''
-        ${(import ../lib/test.nix).test-config}/bin/test-config
+        ${(import ../../lib/test.nix).test-config}/bin/test-config
         sudo -u maralorn git -C /home/maralorn/git/nixos/config pull
         ${
-          (import ../lib/update-system.nix
+          (import ../../lib/update-system.nix
           config.system.build.nixos-rebuild).update-system
         }/bin/update-system
+        sudo -u maralorn update-home
       '';
     };
-  };
-  nix = {
-    gc.automatic = true;
-    optimise.automatic = true;
-  };
+    nix = {
+      gc.automatic = true;
+      optimise.automatic = true;
+    };
 
-}
+  }
