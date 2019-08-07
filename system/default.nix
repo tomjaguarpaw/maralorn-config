@@ -7,8 +7,6 @@ in {
     ../cachix.nix
     ../common
     ./modules/laptop.nix
-    ./modules/mathechor.de.nix
-    ./modules/riot.nix
     ./modules/loginctl-linger.nix
   ];
 
@@ -52,7 +50,6 @@ in {
     prometheus.exporters = {
       node = {
         enable = true;
-        openFirewall = true;
         enabledCollectors = [ "systemd" "logind" ];
         disabledCollectors = [ "timex" ];
       };

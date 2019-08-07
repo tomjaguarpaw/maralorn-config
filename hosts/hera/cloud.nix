@@ -3,7 +3,14 @@ with lib;
 let
   inherit (config.m-0.private) me cloud;
   inherit (config.m-0) hosts;
+  certPath = "/var/lib/acme";
   nextcloud-container = { v6, v4, hostname, news-updater ? false }: {
+    bindMounts = {
+      "${certPath}" = {
+        hostPath = certPath;
+        isReadOnly = false;
+      };
+    };
     autoStart = true;
     privateNetwork = true;
     hostBridge = "bridge";
@@ -35,14 +42,7 @@ let
       };
 
       services = {
-
-        nginx = {
-          virtualHosts."${hostname}" = {
-            forceSSL = true;
-            enableACME = true;
-            default = true;
-          };
-        };
+        prometheus.exporters.node.openFirewall = true;
 
         nextcloud = {
           enable = true;
@@ -55,6 +55,7 @@ let
             memcached = false;
           };
           config = {
+            #extraTrustedDomains = [ "2a02:c207:3002:7584::3:1" ];
             dbtype = "pgsql";
             dbname = "nextcloud";
             dbuser = "nextcloud";
@@ -97,7 +98,7 @@ let
                     mode = "singlerun";
                   };
                 });
-                in "${pkgs.nextcloud-news-updater}/bin/nextcloud-news-updater -c ${config}";
+              in "${pkgs.nextcloud-news-updater}/bin/nextcloud-news-updater -c ${config}";
             };
           };
         };
@@ -106,14 +107,47 @@ let
   };
 
 in {
+  services = {
+    nginx = {
+      enable = true;
+      virtualHosts."cloud.maralorn.de" = {
+        enableACME = true;
+        forceSSL = true;
+        locations."/" = {
+          proxyPass = "http://cloud";
+          extraConfig = ''
+            proxy_set_header Host $host;
+          '';
+          #            proxy_set_header X-Forwarded-Host :$server_port;
+          #            proxy_set_header X-Forwarded-Server $host;
+          #            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        };
+      };
+      virtualHosts."cloud.mathechor.de" = {
+        enableACME = true;
+        forceSSL = true;
+        locations."/" = {
+          proxyPass = "http://chor-cloud";
+          extraConfig = ''
+            proxy_set_header Host $host;
+          '';
+          #         extraConfig = ''
+          #           proxy_set_header X-Forwarded-Host :$server_port;
+          #           proxy_set_header X-Forwarded-Server $host;
+          #           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          #         '';
+        };
+      };
+    };
+  };
   m-0.monitoring = [
     {
-      name = "mathechor-cloud";
-      host = "mathechor-cloud:9100";
+      name = "chor-cloud";
+      host = "chor-cloud:9100";
     }
     {
-      name = "mathechor-cloud-nginx";
-      host = "mathechor-cloud:9113";
+      name = "chor-cloud-nginx";
+      host = "chor-cloud:9113";
     }
     {
       name = "cloud";
@@ -127,8 +161,8 @@ in {
   containers = {
     chor-cloud = nextcloud-container {
       hostname = "cloud.mathechor.de";
-      v6 = hosts.mathechor-cloud;
-      v4 = hosts.mathechor-cloud-intern-v4;
+      v6 = hosts.chor-cloud;
+      v4 = hosts.chor-cloud-intern-v4;
     };
     cloud = nextcloud-container {
       hostname = "cloud.maralorn.de";

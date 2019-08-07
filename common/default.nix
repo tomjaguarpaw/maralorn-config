@@ -50,22 +50,16 @@ with lib;
           hera-intern = "${hera-p}:1";
           git = "${hera-p}:2";
           borg = "${hera-p}:3";
-          dav = "${hera-p}:5";
-          blog = "${hera-p}:6";
-          chor = "${hera-p}:7";
           matrix = "${hera-p}:8";
           cloud = "${hera-p}:9";
-          web = "${hera-p}:a";
-          mathechor-cloud = "${hera-p}:b";
-          monitoring = "${hera-p}:c";
+          chor-cloud = "${hera-p}:b";
 
           apollo = apollo-wg;
 
           hera-intern-v4 = "${v4-p}.1";
           cloud-intern-v4 = "${v4-p}.2";
-          mathechor-cloud-intern-v4 = "${v4-p}.3";
+          chor-cloud-intern-v4 = "${v4-p}.3";
           matrix-intern-v4 = "${v4-p}.4";
-          monitoring-intern-v4 = "${v4-p}.5";
         };
     };
   };

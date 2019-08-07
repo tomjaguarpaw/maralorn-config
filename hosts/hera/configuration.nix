@@ -13,16 +13,23 @@ in {
     ../../system/standalone
     ../../system/server
     ../../system/git.nix
+    ../../system/riot.nix
+    ../../system/mathechor.de.nix
+    ../../system/monitoring
+    ../../system/blog.nix
+    ./web.nix
     ./borg.nix
     ./mail.nix
     ./boot.nix
     ./cloud.nix
-    ./web.nix
-    ./monitoring.nix
     ./network.nix
     ./matrix.nix
     ./secret
   ];
+  m-0.monitoring = [{
+    name = "hera";
+    host = "hera-intern:9100";
+  }];
 
   nix.sshServe = {
     enable = true;

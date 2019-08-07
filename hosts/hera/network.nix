@@ -24,6 +24,7 @@ in {
 
     firewall = {
       extraCommands = ''
+        ip6tables -A INPUT -s ${config.m-0.prefix}::/64 -j ACCEPT
         ip6tables -A FORWARD -p ipv6-icmp -j ACCEPT
         ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
         ip6tables -A FORWARD ! -s ${config.m-0.prefix}::/64 -j DROP

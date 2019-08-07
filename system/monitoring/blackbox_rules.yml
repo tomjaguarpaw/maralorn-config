@@ -1,0 +1,76 @@
+modules:
+   http_2xx:
+      prober: http
+      timeout: 5s
+      http:
+         valid_status_codes: []  # Defaults to 2xx
+         method: GET
+   tls_connect:
+      prober: tcp
+      timeout: 5s
+      tcp:
+         tls: true
+   tcp_connect:
+      prober: tcp
+      timeout: 5s
+   imap_starttls:
+      prober: tcp
+      timeout: 5s
+      tcp:
+         query_response:
+            - expect: "OK.*STARTTLS"
+            - send: ". STARTTLS"
+            - expect: "OK"
+            - starttls: true
+            - send: ". capability"
+            - expect: "CAPABILITY IMAP4rev1"
+   smtp_starttls:
+      prober: tcp
+      timeout: 5s
+      tcp:
+         query_response:
+            - expect: "^220 ([^ ]+) ESMTP (.+)$"
+            - send: "EHLO prober"
+            - expect: "^250-STARTTLS"
+            - send: "STARTTLS"
+            - expect: "^220"
+            - starttls: true
+            - send: "EHLO prober"
+            - expect: "^250-AUTH"
+            - send: "QUIT"
+   icmp_example:
+      prober: icmp
+      timeout: 5s
+      icmp:
+         preferred_ip_protocol: "ip4"
+         source_ip_address: "127.0.0.1"
+   dns_udp_example:
+      prober: dns
+      timeout: 5s
+      dns:
+         query_name: "www.prometheus.io"
+         query_type: "A"
+         valid_rcodes:
+            - NOERROR
+         validate_answer_rrs:
+            fail_if_matches_regexp:
+               - ".*127.0.0.1"
+            fail_if_not_matches_regexp:
+               - "www.prometheus.io.\t300\tIN\tA\t127.0.0.1"
+         validate_authority_rrs:
+            fail_if_matches_regexp:
+               - ".*127.0.0.1"
+         validate_additional_rrs:
+            fail_if_matches_regexp:
+               - ".*127.0.0.1"
+   dns_soa:
+      prober: dns
+      dns:
+         query_name: "prometheus.io"
+         query_type: "SOA"
+   dns_tcp_example:
+      prober: dns
+      dns:
+         transport_protocol: "tcp" # defaults to "udp"
+         preferred_ip_protocol: "ip4" # defaults to "ip6"
+         query_name: "www.prometheus.io"
