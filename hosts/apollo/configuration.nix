@@ -68,18 +68,6 @@ in {
     prometheus.exporters.node.firewallFilter =
       "-i m0wire -p tcp -m tcp --dport 9100";
     autorandr.enable = true;
-    borgbackup.jobs.data = {
-      doInit = false;
-      startAt = [ ];
-      exclude = [
-        "/home/${me.user}/data/aktuell/media"
-        "/home/${me.user}/data/.stversions"
-      ];
-      encryption.mode = "none";
-      paths = "/home/${me.user}/data";
-      repo = "borg@borg:.";
-      compression = "zstd,5";
-    };
   };
 
   cdark_net = {
