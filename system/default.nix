@@ -42,7 +42,10 @@ in {
     binaryCachePublicKeys =
       [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
     nixPath = [ "/etc/nix-path" ];
-    extraOptions = "fallback = true";
+    extraOptions = ''
+      fallback = true
+      keep-outputs = true
+    '';
     gc.options = "--delete-older-than 5d";
   };
 
