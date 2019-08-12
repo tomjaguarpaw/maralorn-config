@@ -8,6 +8,7 @@ let
     };
   };
 in {
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
   m-0.monitoring = [{
     name = "hera-nginx";
     host = "hera-intern:9113";

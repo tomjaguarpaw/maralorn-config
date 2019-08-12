@@ -19,7 +19,7 @@ in {
     useDHCP = false;
     hosts = lib.zipAttrs
       (lib.mapAttrsToList (host: ip: { "${ip}" = "${host} ${host}.m-0.eu"; })
-      config.m-0.hosts);
+        config.m-0.hosts);
   };
 
   users = {

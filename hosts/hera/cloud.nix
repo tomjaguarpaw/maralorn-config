@@ -42,7 +42,10 @@ let
       };
 
       services = {
-        prometheus.exporters.node.openFirewall = true;
+        prometheus.exporters = {
+          node.openFirewall = true;
+          nginx.openFirewall = true;
+        };
 
         nextcloud = {
           enable = true;
