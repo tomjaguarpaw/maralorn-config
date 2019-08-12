@@ -1,14 +1,9 @@
 { config, ... }:
-let
-  certPath = "/var/lib/acme/hera.m-0.eu";
-  inherit (config.services.prometheus.exporters.node) firewallFilter;
+let certPath = "/var/lib/acme/hera.m-0.eu";
 in {
   networking.firewall = {
     allowedTCPPorts = [ 25 143 587 993 ];
     extraCommands = ''
-      ip6tables -A nixos-fw  -s ${config.m-0.prefix}::/64 -p tcp -m tcp --dport 9101 -j nixos-fw-accept
-      ip6tables -A nixos-fw  -s ${config.m-0.prefix}::/64 -p tcp -m tcp --dport 9154 -j nixos-fw-accept
-      ip6tables -A nixos-fw  -s ${config.m-0.prefix}::/64 -p tcp -m tcp --dport 9166 -j nixos-fw-accept
       iptables -A nixos-fw  -s 10.0.0.0/24 -p tcp -m tcp --dport 8842 -j nixos-fw-accept
     '';
   };
@@ -38,15 +33,9 @@ in {
         node.port = 9101;
         postfix = {
           enable = true;
-          openFirewall = true;
-          inherit firewallFilter;
           systemd.enable = true;
         };
-        dovecot = {
-          enable = true;
-          openFirewall = true;
-          inherit firewallFilter;
-        };
+        dovecot = { enable = true; };
       };
       systemd.services = {
         atomail = {
