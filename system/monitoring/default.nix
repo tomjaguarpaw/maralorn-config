@@ -47,7 +47,7 @@ in {
           "receivers" = [{
             "name" = "team-admins";
             "email_configs" = [{
-              "to" = "malte.brandy@maralorn.de";
+              "to" = "monitoring@maralorn.de";
               "send_resolved" = true;
             }];
           }];
@@ -73,6 +73,9 @@ in {
               "https://wiki.vocalensemble-darmstadt.de"
               "https://intern.vocalensemble-darmstadt.de"
               "https://www.vocalensemble-darmstadt.de"
+              "https://matrix.maralorn.de"
+              "http://localhost:9090"
+              "http://localhost:9093"
             ];
           }];
           relabel_configs = [
@@ -89,6 +92,11 @@ in {
               replacement = "localhost:9115";
             } # The blackbox exporter's real hostname:port.
           ];
+        }
+        {
+          job_name = "matrix";
+          metrics_path = "/_synapse/metrics";
+          static_configs = [{ targets = [ "localhost:9148" ]; }];
         }
         {
           job_name = "nodes";

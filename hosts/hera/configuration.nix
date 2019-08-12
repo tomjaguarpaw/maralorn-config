@@ -17,13 +17,15 @@ in {
     ../../system/mathechor.de.nix
     ../../system/monitoring
     ../../system/blog.nix
+    ../../system/email2matrix.nix
+    ../../system/matrix-synapse.nix
+    ../../system/coturn.nix
     ./web.nix
     ./borg.nix
     ./mail.nix
     ./boot.nix
     ./cloud.nix
     ./network.nix
-    ./matrix.nix
     ./secret
   ];
   m-0.monitoring = [{
@@ -33,7 +35,7 @@ in {
 
   nix.sshServe = {
     enable = true;
-    keys = me.keys;
+    keys = me.keys ++ me.backupkeys;
     protocol = "ssh-ng";
   };
 

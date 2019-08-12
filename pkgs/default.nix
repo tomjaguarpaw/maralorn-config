@@ -69,32 +69,32 @@ in rec {
       targetPkgs = pkgs: (with pkgs; [ sambaFull ]);
       multiPkgs = pkgs:
         (with pkgs;
-        with xorg; [
-          file
-          freetype
-          libpng
-          mesa_drivers
-          zlib
-          libXi
-          libXcursor
-          libXrandr
-          libXrender
-          libXxf86vm
-          libXcomposite
-          libXext
-          libX11
-          libudev
-          libGLU_combined
-          mesa_noglu.osmesa
-          libdrm
-          libpulseaudio
-          alsaLib
-          openal
-          mpg123
-          libtxc_dxtn
-          gnutls
-          krb5Full
-        ]);
+          with xorg; [
+            file
+            freetype
+            libpng
+            mesa_drivers
+            zlib
+            libXi
+            libXcursor
+            libXrandr
+            libXrender
+            libXxf86vm
+            libXcomposite
+            libXext
+            libX11
+            libudev
+            libGLU_combined
+            mesa_noglu.osmesa
+            libdrm
+            libpulseaudio
+            alsaLib
+            openal
+            mpg123
+            libtxc_dxtn
+            gnutls
+            krb5Full
+          ]);
       runScript = "${gw2wrapper}/bin/gw2wrapper";
     };
     cachix = import sources.cachix { };
@@ -169,4 +169,5 @@ in rec {
   };
   foreign-home-pkgs = extra-system-pkgs;
   eventd = pkgs.callPackage ./eventd { };
+  email2matrix = pkgs.callPackage ./email2matrix { };
 }

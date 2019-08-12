@@ -2,20 +2,10 @@
 let
   hostName = "matrix.maralorn.de";
   inherit (config.m-0) hosts;
-  inherit (../../lib) unstable;
 in {
-  networking.firewall.allowedTCPPorts = [ 3478 8448 ];
+  networking.firewall.allowedTCPPorts = [ 8448 ];
 
   services = {
-    coturn = {
-      enable = true;
-      pkey = "/var/lib/acme/hera.m-0.eu/key.pem";
-      cert = "/var/lib/acme/hera.m-0.eu/fullchain.pem";
-      no-tcp = true;
-      static-auth-secret = config.m-0.private.turn_secret;
-      realm = "maralorn.de";
-      use-auth-secret = true;
-    };
     nginx = {
       enable = true;
       virtualHosts."${hostName}" = {
@@ -46,6 +36,8 @@ in {
       max_upload_size = "30M";
       create_local_database = false;
       dynamic_thumbnails = true;
+      registration_shared_secret =
+        config.m-0.private.matrix_registration_secret;
       macaroon_secret_key = config.m-0.private.macaroon_secret;
       turn_uris = [ "turn:hera.m-0.eu:3478?transport=udp" ];
       turn_shared_secret = config.m-0.private.turn_secret;
@@ -92,6 +84,12 @@ in {
       tls_certificate_path = "/var/lib/acme/${hostName}/fullchain.pem";
       tls_private_key_path = "/var/lib/acme/${hostName}/key.pem";
       listeners = [
+        {
+          type = "metrics";
+          port = 9148;
+          bind_address = "127.0.0.1";
+          resources = [ ];
+        }
         {
           port = 8448;
           bind_address = "::";

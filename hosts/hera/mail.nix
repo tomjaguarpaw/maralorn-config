@@ -57,10 +57,10 @@ in {
               rev = "f079966cb808f51fcc67be91b609942cdb49898a";
               sha256 = "0a4j4xajn2yysgcb17jmb6ak148kk0kwf7khml7dbnh7807fv9b6";
             };
-            in ''
-              ${pkgs.python}/bin/python ${atomail}/atomail.py --title "Readlater-E-Mails" --uri="http://hera-intern-v4:8842/rss.xml" /var/www/rss.xml --mode=maildir --file "/var/vmail/maralorn.de/malte.brandy/.Move.readlater/" --max-items=100
-              ${pkgs.rsync}/bin/rsync -a /var/vmail/maralorn.de/malte.brandy/.Move.readlater/cur/ /var/vmail/maralorn.de/malte.brandy/.Archiv.unsortiert/cur --remove-source-files
-            '';
+          in ''
+            ${pkgs.python}/bin/python ${atomail}/atomail.py --title "Readlater-E-Mails" --uri="http://hera-intern-v4:8842/rss.xml" /var/www/rss.xml --mode=maildir --file "/var/vmail/maralorn.de/malte.brandy/.Move.readlater/" --max-items=100
+            ${pkgs.rsync}/bin/rsync -a /var/vmail/maralorn.de/malte.brandy/.Move.readlater/cur/ /var/vmail/maralorn.de/malte.brandy/.Archiv.unsortiert/cur --remove-source-files
+          '';
           startAt = "19:58:00";
           serviceConfig.Type = "oneshot";
         };
@@ -73,8 +73,10 @@ in {
           wantedBy = [ "multi-user.target" ];
         };
       };
-      services.postfix.networks =
-        [ "[${config.m-0.prefix}::]/64" "10.0.0.0/24" ];
+      services.postfix = {
+        networks = [ "[${config.m-0.prefix}::]/64" "10.0.0.0/24" ];
+        transport = "email2matrix.maralorn.de smtp:[::1]:2525";
+      };
       mailserver = {
         enable = true;
         enableImapSsl = true;
@@ -85,7 +87,14 @@ in {
         certificateScheme = 1;
         certificateFile = "${certPath}/fullchain.pem";
         keyFile = "${certPath}/key.pem";
-        extraVirtualAliases = config.m-0.private.lists;
+        extraVirtualAliases = config.m-0.private.lists // {
+          "weather-channel@maralorn.de" =
+            [ "weather@email2matrix.maralorn.de" ];
+          "subjects-channel@maralorn.de" =
+            [ "subjects@email2matrix.maralorn.de" ];
+          "monitoring-channel@maralorn.de" =
+            [ "monitoring@email2matrix.maralorn.de" ];
+        };
         policydSPFExtraConfig = ''
           Mail_From_reject = False
           HELO_Whitelist = hosteurope.de
