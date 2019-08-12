@@ -20,6 +20,7 @@ in {
     ../../system/email2matrix.nix
     ../../system/matrix-synapse.nix
     ../../system/coturn.nix
+    ../../system/serve-store.nix
     ./web.nix
     ./borg.nix
     ./mail.nix
@@ -32,12 +33,6 @@ in {
     name = "hera";
     host = "hera-intern:9100";
   }];
-
-  nix.sshServe = {
-    enable = true;
-    keys = me.keys ++ me.backupkeys;
-    protocol = "ssh-ng";
-  };
 
   services = {
     borgbackup.jobs.data = {
