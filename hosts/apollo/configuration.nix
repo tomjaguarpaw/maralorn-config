@@ -17,6 +17,7 @@ in {
     ../../system/fonts.nix
     ../../system/boot-key.nix
     ../../system/standalone
+    ../../system/use-cache.nix
   ];
 
   networking = {
@@ -37,11 +38,11 @@ in {
         }];
         postSetup =
           [ "${pkgs.iproute}/bin/ip route add ${prefix}::/64 dev m0wire" ];
-        };
       };
     };
+  };
 
-    m-0 = { laptop.enable = true; };
+  m-0 = { laptop.enable = true; };
 
   # Use the systemd-boot EFI boot loader.
   boot = {
@@ -66,30 +67,30 @@ in {
   services = {
     prometheus.exporters.node.firewallFilter =
       "-i m0wire -p tcp -m tcp --dport 9100";
-      autorandr.enable = true;
-      borgbackup.jobs.data = {
-        doInit = false;
-        startAt = [ ];
-        exclude = [
-          "/home/${me.user}/data/aktuell/media"
-          "/home/${me.user}/data/.stversions"
-        ];
-        encryption.mode = "none";
-        paths = "/home/${me.user}/data";
-        repo = "borg@borg:.";
-        compression = "zstd,5";
-      };
+    autorandr.enable = true;
+    borgbackup.jobs.data = {
+      doInit = false;
+      startAt = [ ];
+      exclude = [
+        "/home/${me.user}/data/aktuell/media"
+        "/home/${me.user}/data/.stversions"
+      ];
+      encryption.mode = "none";
+      paths = "/home/${me.user}/data";
+      repo = "borg@borg:.";
+      compression = "zstd,5";
     };
+  };
 
-    cdark_net = {
-      enable = true;
-      hostName = "${me.user}_${config.networking.hostName}";
-      ed25519PrivateKeyFile = /etc/nixos/hosts + "/${config.networking.hostName}"
+  cdark_net = {
+    enable = true;
+    hostName = "${me.user}_${config.networking.hostName}";
+    ed25519PrivateKeyFile = /etc/nixos/hosts + "/${config.networking.hostName}"
       + /secret/tinc/ed25519_key.priv;
-      hostsDirectory =
-        (builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/hosts");
-        ip6address = "fd23:42:cda:4342::2";
-        ip4address = "172.20.71.2";
-      };
+    hostsDirectory =
+      (builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/hosts");
+    ip6address = "fd23:42:cda:4342::2";
+    ip4address = "172.20.71.2";
+  };
 
-    }
+}
