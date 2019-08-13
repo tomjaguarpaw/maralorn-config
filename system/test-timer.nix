@@ -9,7 +9,6 @@ in {
 
   systemd.services = {
     test-and-update = {
-      startAt = "2:45";
       environment.NIX_PATH =
         "/etc/nix-path:nixos-config=/etc/nixos/configuration.nix";
       path = [ pkgs.nix pkgs.gnutar pkgs.gzip pkgs.git pkgs.git-crypt ];
@@ -28,7 +27,7 @@ in {
     };
 
     test-and-bump-config = {
-      startAt = "20:30";
+      startAt = "03:45";
       path = [ pkgs.nix pkgs.gnutar pkgs.gzip pkgs.git pkgs.git-crypt ];
       serviceConfig = {
         Type = "oneshot";
