@@ -67,8 +67,8 @@ in {
             targets = [
               "https://blog.maralorn.de"
               "https://www.mathechor.de"
-              "https://cloud.mathechor.de/login"
-              "https://cloud.maralorn.de/login"
+              "https://cloud.mathechor.de"
+              "https://cloud.maralorn.de"
               "https://riot.maralorn.de"
               "https://wiki.vocalensemble-darmstadt.de"
               "https://intern.vocalensemble-darmstadt.de"

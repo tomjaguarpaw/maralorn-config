@@ -9,7 +9,7 @@ let
     MatrixAccessToken = config.m-0.private.matrix_marabot_token;
     IgnoreSubject = false;
     IgnoreBody = false;
-    SkipMarkdown = true;
+    SkipMarkdown = false;
   };
   email2matrix-config = pkgs.writeText "email2matrix-config.json"
     (builtins.toJSON {
@@ -28,6 +28,7 @@ let
           (default_mailbox // {
             MailboxName = "monitoring";
             MatrixRoomId = "!negVsngnYOmXYCLKiO:maralorn.de";
+            SkipMarkdown = true;
           })
           (default_mailbox // {
             MailboxName = "weather";
