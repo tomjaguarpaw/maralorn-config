@@ -6,10 +6,10 @@ in {
       bins = [ get-niv-path home-manager ];
     } ''
 
-      getNivPath = get_niv_path "${configPath}/nix/sources.nix"
+      getNivPath name = get_niv_path "${configPath}/nix/sources.nix" name |> captureTrim
 
-      getNivAssign name = (tag <$>) . readTrim . getNivPath $ name
-        where tag str = ["-I", [i|#{name}=#{str :: LBS.ByteString}|]]
+      getNivAssign name = tag <$> getNivPath name
+          where tag str = ["-I", [i|#{name :: String}=#{str :: LBS.ByteString}|]]
 
       main = do
         args <- getArgs

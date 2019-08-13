@@ -8,10 +8,10 @@ in rec {
     name = "update-system";
     bins = [ get-niv-path nixos-rebuild ];
   } ''
-    getNivPath = readTrim . get_niv_path "${configPath}/nix/sources.nix"
+    getNivPath name = get_niv_path "${configPath}/nix/sources.nix" name |> captureTrim
 
     getNivAssign name = tag <$> getNivPath name
-        where tag str = ["-I", [i|#{name}=#{str :: LBS.ByteString}|] ]
+        where tag str = ["-I", [i|#{name :: String}=#{str :: LBS.ByteString}|]]
 
     main = do
         paths <- fmap concat . mapM getNivAssign $ ["nixpkgs", "unstable", "home-manager"]

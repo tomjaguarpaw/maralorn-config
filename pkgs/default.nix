@@ -40,7 +40,7 @@ in rec {
   } ''
     waitForExit = do
       sleep "5s"
-      processes <- readTrim $ ps "aux"
+      processes <- ps "aux" |> captureTrim
       when
         (BSC.isInfixOf (BSC.pack "GW2.exe") (LBSC.toStrict processes))
         waitForExit

@@ -4,9 +4,9 @@ let
     pkgs writeHaskellScript get-niv-path home-manager unstable haskellList;
 in rec {
   haskellBody = name: commandline: ''
-    getNivPath dir = readTrim . get_niv_path ([i|#{dir :: String}/nix/sources.nix|] :: String)
+    getNivPath dir name = get_niv_path ([i|#{dir :: String}/nix/sources.nix|] :: String) name |> captureTrim
 
-    getNivAssign dir name = fmap process . getNivPath dir $ name
+    getNivAssign dir name = process <$> getNivPath dir name
         where process str = ["-I", [i|#{name :: String}=#{str :: LBS.ByteString}|]]
 
     main = do
@@ -51,17 +51,17 @@ in rec {
       >>= ((ap (<$) $ git "clone" "${repoSrc}") . LBSC.unpack)
 
     main = do
-      path <- readTrim pwd
+      path <- pwd |> captureTrim
       bump <- (maybe False (== "bump") . listToMaybe) <$> getArgs
       bracket checkout (rm "-rf") $ \dir -> do
         withCurrentDirectory dir $ do
           mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ${
-      haskellList keys
+            haskellList keys
           }
           when bump $ ignoreFailure $ niv "update"
         mapM_ (test_system_config dir) ${haskellList systems}
         mapM_ (test_home_config dir) ${haskellList homes}
-        changed <- ((mempty /=) <$>) . readTrim $ git "-C" dir "status" "--porcelain"
+        changed <- (mempty /=) <$> (git "-C" dir "status" "--porcelain" |> captureTrim)
         when changed $ do
           git "-C" dir "config" "user.email" "maralorn@maralorn.de"
           git "-C" dir "config" "user.name" "maralorn (nix-auto-updater)"

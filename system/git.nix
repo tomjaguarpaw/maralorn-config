@@ -31,7 +31,7 @@ let
         git "push" "--all" mirror
       deploy <- lookupEnv "GL_OPTION_WEB_DEPLOY"
       for_ deploy $ \deploy -> do
-        path <- readTrim pwd
+        path <- pwd |> captureTrim
         echo ([i|Deploying build to /var/www/#{deploy}|] :: String)
         bracket (checkout $ LBSC.unpack path)(rm "-rf") $ \dir -> withCurrentDirectory dir $ nix "build" "-o" ([i|/var/www/#{deploy}|] :: String)
         echo "Done"
