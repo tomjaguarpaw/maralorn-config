@@ -29,10 +29,10 @@
         "homepage": "",
         "owner": "target",
         "repo": "lorri",
-        "rev": "d3e452ebc2b24ab86aec18af44c8217b2e469b2a",
-        "sha256": "07yf3gl9sixh7acxayq4q8h7z4q8a66412z0r49sr69yxb7b4q89",
+        "rev": "9faaebdaca69f72f57ce6e1c672dd16825a614ad",
+        "sha256": "108xmis5v9yz2dhj8mx75f7zpkky2frj8wf9jj9rgdxqzqw1531w",
         "type": "tarball",
-        "url": "https://github.com/target/lorri/archive/d3e452ebc2b24ab86aec18af44c8217b2e469b2a.tar.gz",
+        "url": "https://github.com/target/lorri/archive/9faaebdaca69f72f57ce6e1c672dd16825a614ad.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {
@@ -89,10 +89,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "bd1358fed9d1ccd67f250063a542ecc71f6ebbb9",
-        "sha256": "1v6x59ldjh7yd3dllchgvdv8lcah3dss085n8hfwqzpqfh0116wq",
+        "rev": "2d05858567ed02bc2299be49cc5d2b60f02e6d73",
+        "sha256": "18cy0nh2x5drhadp9l3aqfp8xyz2zg8khrhi5qmn5bblghs6193a",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/bd1358fed9d1ccd67f250063a542ecc71f6ebbb9.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/2d05858567ed02bc2299be49cc5d2b60f02e6d73.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "unstable": {
@@ -101,10 +101,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "4557b9f1f50aa813ae673fe6fcd30ca872968947",
-        "sha256": "0cam48cn042axcik9vqxsqjc2hwyb2grjbjxacsn4w0y1zk6k6l2",
+        "rev": "8746c77a383f5c76153c7a181f3616d273acfa2a",
+        "sha256": "1dvhx9hcij3j94yv102f7bhqy73k50sr3lazn28zzj8yg5lbahar",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/4557b9f1f50aa813ae673fe6fcd30ca872968947.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/8746c77a383f5c76153c7a181f3616d273acfa2a.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
