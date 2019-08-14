@@ -25,6 +25,7 @@ in {
         blackbox = {
           enable = true;
           configFile = ./blackbox_rules.yml;
+          extraFlags = [ "--log.level=debug" ];
         };
       };
       alertmanager = {

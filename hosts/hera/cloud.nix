@@ -110,6 +110,10 @@ let
   };
 
 in {
+  systemd.services."container@".serviceConfig = {
+    RestartSec = 10;
+    TimeoutSec = 360;
+  };
   services = {
     nginx = {
       enable = true;
@@ -118,12 +122,7 @@ in {
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://cloud";
-          extraConfig = ''
-            proxy_set_header Host $host;
-          '';
-          #            proxy_set_header X-Forwarded-Host :$server_port;
-          #            proxy_set_header X-Forwarded-Server $host;
-          #            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          extraConfig = "proxy_set_header Host $host;";
         };
       };
       virtualHosts."cloud.mathechor.de" = {
@@ -131,14 +130,7 @@ in {
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://chor-cloud";
-          extraConfig = ''
-            proxy_set_header Host $host;
-          '';
-          #         extraConfig = ''
-          #           proxy_set_header X-Forwarded-Host :$server_port;
-          #           proxy_set_header X-Forwarded-Server $host;
-          #           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          #         '';
+          extraConfig = "proxy_set_header Host $host;";
         };
       };
     };
