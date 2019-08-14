@@ -65,8 +65,10 @@ in {
   };
 
   services = {
-    prometheus.exporters.node.firewallFilter =
-      "-i m0wire -p tcp -m tcp --dport 9100";
+    prometheus.exporters.node = {
+      firewallFilter = "-i m0wire -p tcp -m tcp --dport 9100";
+      openFirewall = true;
+    };
     autorandr.enable = true;
   };
 
