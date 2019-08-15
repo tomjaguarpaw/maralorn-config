@@ -2,6 +2,26 @@
 let
   inherit (config.m-0) hosts;
   inherit (config.m-0.private) monitoring-guest-pw monitoring-pw;
+  makeProbe = module: targets: {
+    job_name = "blackbox-${module}";
+    metrics_path = "/probe";
+    params = { module = [ module ]; };
+    static_configs = [{ inherit targets; }];
+    relabel_configs = [
+      {
+        source_labels = [ "__address__" ];
+        target_label = "__param_target";
+      }
+      {
+        source_labels = [ "__param_target" ];
+        target_label = "instance";
+      }
+      {
+        target_label = "__address__";
+        replacement = "localhost:9115";
+      } # The blackbox exporter's real hostname:port.
+    ];
+  };
 in {
   services = {
     nginx = {
@@ -25,7 +45,6 @@ in {
         blackbox = {
           enable = true;
           configFile = ./blackbox_rules.yml;
-          extraFlags = [ "--log.level=debug" ];
         };
       };
       alertmanager = {
@@ -60,40 +79,21 @@ in {
       enable = true;
       ruleFiles = [ ./rules.yml ];
       scrapeConfigs = [
-        {
-          job_name = "blackbox";
-          metrics_path = "/probe";
-          params = { module = [ "http_2xx" ]; };
-          static_configs = [{
-            targets = [
-              "https://blog.maralorn.de"
-              "https://www.mathechor.de"
-              "https://cloud.mathechor.de"
-              "https://cloud.maralorn.de"
-              "https://riot.maralorn.de"
-              "https://wiki.vocalensemble-darmstadt.de"
-              "https://intern.vocalensemble-darmstadt.de"
-              "https://www.vocalensemble-darmstadt.de"
-              "https://matrix.maralorn.de"
-              "http://localhost:9090"
-              "http://localhost:9093"
-            ];
-          }];
-          relabel_configs = [
-            {
-              source_labels = [ "__address__" ];
-              target_label = "__param_target";
-            }
-            {
-              source_labels = [ "__param_target" ];
-              target_label = "instance";
-            }
-            {
-              target_label = "__address__";
-              replacement = "localhost:9115";
-            } # The blackbox exporter's real hostname:port.
-          ];
-        }
+        (makeProbe "tcp_connect" [ "hera.m-0.eu:25" "hera.m-0.eu:80" ])
+        (makeProbe "tls_connect" [ "hera.m-0.eu:993" "hera.m-0.eu:443" ])
+        (makeProbe "smtp_starttls" [ "hera.m-0.eu:587" ])
+        (makeProbe "http" [ "http://localhost:9090" "http://localhost:9093" ])
+        (makeProbe "https" [
+          "https://blog.maralorn.de"
+          "https://www.mathechor.de"
+          "https://cloud.mathechor.de"
+          "https://cloud.maralorn.de"
+          "https://riot.maralorn.de"
+          "https://wiki.vocalensemble-darmstadt.de"
+          "https://intern.vocalensemble-darmstadt.de"
+          "https://www.vocalensemble-darmstadt.de"
+          "https://matrix.maralorn.de"
+        ])
         {
           job_name = "matrix";
           metrics_path = "/_synapse/metrics";

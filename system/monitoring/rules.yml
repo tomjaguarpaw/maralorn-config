@@ -1,8 +1,16 @@
 groups:
    - name: rules
      rules:
+        - alert: VEDPageDown
+          expr: probe_success{instance=~".*vocalensemble.*"} == 0
+          for: 60m
+          labels:
+             severity: page
+          annotations:
+             description: 'A BlackBoxProbe timed out.'
+             summary: 'Instance {{ $labels.instance }} does not respond as wished.'
         - alert: BlackBoxProbeTimeout
-          expr: probe_success == 0
+          expr: probe_success{instance!~".*vocalensemble.*"} == 0
           for: 5m
           labels:
              severity: page

@@ -1,7 +1,14 @@
 modules:
-   http_2xx:
+   https:
       prober: http
-      timeout: 10s
+      timeout: 5s
+      http:
+         valid_status_codes: []  # Defaults to 2xx
+         method: GET
+         fail_if_not_ssl: true
+   http:
+      prober: http
+      timeout: 5s
       http:
          valid_status_codes: []  # Defaults to 2xx
          method: GET
