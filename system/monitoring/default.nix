@@ -90,7 +90,7 @@ in {
           "https://cloud.maralorn.de"
           "https://riot.maralorn.de"
           "https://wiki.vocalensemble-darmstadt.de"
-          "https://intern.vocalensemble-darmstadt.de"
+          "https://cloud.vocalensemble-darmstadt.de"
           "https://www.vocalensemble-darmstadt.de"
           "https://matrix.maralorn.de"
         ])
