@@ -2,6 +2,7 @@
 let
   hostName = "matrix.maralorn.de";
   inherit (config.m-0) hosts;
+  inherit (import ../lib) unstable;
 in {
   networking.firewall.allowedTCPPorts = [ 8448 ];
 
@@ -28,6 +29,7 @@ in {
     # Synapse
     matrix-synapse = {
       enable = true;
+      package = unstable.matrix-synapse;
       enable_metrics = true;
       server_name = "maralorn.de";
       public_baseurl = "https://${hostName}";
@@ -76,6 +78,7 @@ in {
       '';
       database_args = {
         user = "matrix-synapse";
+        host = "/tmp";
         database = "matrix-synapse";
         cp_min = 5;
         cp_max = 10;
