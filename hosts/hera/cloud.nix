@@ -108,12 +108,13 @@ let
       };
     };
   };
-
-in {
-  systemd.services."container@".serviceConfig = {
+  serviceConfig = {
     RestartSec = 10;
     TimeoutSec = 360;
   };
+in {
+  systemd.services."container@cloud" = { inherit serviceConfig; };
+  systemd.services."container@chor-cloud" = { inherit serviceConfig; };
   services = {
     nginx = {
       enable = true;
