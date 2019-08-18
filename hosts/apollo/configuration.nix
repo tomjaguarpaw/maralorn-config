@@ -82,5 +82,4 @@ in {
     ip6address = "fd23:42:cda:4342::2";
     ip4address = "172.20.71.2";
   };
-
 }

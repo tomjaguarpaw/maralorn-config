@@ -59,13 +59,15 @@ in rec {
             haskellList keys
           }
           when bump $ ignoreFailure $ niv "update"
-        mapM_ (test_system_config dir) ${haskellList systems}
-        mapM_ (test_home_config dir) ${haskellList homes}
         changed <- (mempty /=) <$> (git "-C" dir "status" "--porcelain" |> captureTrim)
         when changed $ do
           git "-C" dir "config" "user.email" "maralorn@maralorn.de"
           git "-C" dir "config" "user.name" "maralorn (nix-auto-updater)"
           git "-C" dir "commit" "-am" "Update dependencies with niv"
-          git "-C" dir "push"
+          git "-C" dir "push" "-f" "origin" "master:version-bump"
+        mapM_ (test_system_config dir) ${haskellList systems}
+        mapM_ (test_home_config dir) ${haskellList homes}
+        when changed $ do
+          git "-C" dir "push" "origin" "master:master"
   '';
 }
