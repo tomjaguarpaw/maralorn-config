@@ -97,7 +97,7 @@ in rec {
           ]);
       runScript = "${gw2wrapper}/bin/gw2wrapper";
     };
-    cachix = import sources.cachix { };
+    cachix = import sources.cachix;
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xev xbacklight;
     inherit (pkgs)
