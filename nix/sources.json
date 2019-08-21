@@ -5,10 +5,10 @@
         "homepage": "https://cachix.org",
         "owner": "cachix",
         "repo": "cachix",
-        "rev": "291b063a0fcd02190a65e11a6cbead542b872846",
-        "sha256": "0n5vrhia5yqi2nxm5677vnlv1c3zyv8wybm2rc0yqb5wrnwxjljd",
+        "rev": "f55bc800f941cb8fe78d61ebf9ed99d8f0aa5404",
+        "sha256": "1jixbikikw39ykplb9l7ak1qv00x477cgiswh6c9mb6xwj5pgnkj",
         "type": "tarball",
-        "url": "https://github.com/cachix/cachix/archive/291b063a0fcd02190a65e11a6cbead542b872846.tar.gz",
+        "url": "https://github.com/cachix/cachix/archive/f55bc800f941cb8fe78d61ebf9ed99d8f0aa5404.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager": {
@@ -29,10 +29,10 @@
         "homepage": "",
         "owner": "target",
         "repo": "lorri",
-        "rev": "9faaebdaca69f72f57ce6e1c672dd16825a614ad",
-        "sha256": "108xmis5v9yz2dhj8mx75f7zpkky2frj8wf9jj9rgdxqzqw1531w",
+        "rev": "38eae3d487526ece9d1b8c9bb0d27fb45cf60816",
+        "sha256": "11k9lxg9cv6dlxj4haydvw4dhcfyszwvx7jx9p24jadqsy9jmbj4",
         "type": "tarball",
-        "url": "https://github.com/target/lorri/archive/9faaebdaca69f72f57ce6e1c672dd16825a614ad.tar.gz",
+        "url": "https://github.com/target/lorri/archive/38eae3d487526ece9d1b8c9bb0d27fb45cf60816.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {
