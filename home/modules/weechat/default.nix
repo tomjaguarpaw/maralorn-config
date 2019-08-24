@@ -24,14 +24,6 @@ in {
         target = ".weechat/perl";
         source = ./plugins/perl;
       };
-      #      plugins = {
-      #        target = ".weechat/plugins.conf";
-      #        text = ''
-      #          [var]
-      #          python.buffer_autohide.hide_inactive = off
-      #          python.buffer_autohide.hide_private = off
-      #        '';
-      #      };
       weechat = {
         target = ".weechat/weechat.conf";
         text = ''
@@ -71,7 +63,7 @@ in {
           freenode.sasl_password = "${config.m-0.weechat.freenode_pw}"
           freenode.autoconnect = on
           freenode.username = "${config.m-0.weechat.user}"
-          freenode.autojoin = "#nixos,#matrix,#haskell"
+          freenode.autojoin = "#nixos,#matrix,#haskell,#card10badge,#ghc,#home-manager,#krebs,#nixos-de"
 
           [server]
           hackint.addresses = "irc.hackint.org/6697"
