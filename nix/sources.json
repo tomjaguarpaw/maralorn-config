@@ -5,10 +5,10 @@
         "homepage": "https://cachix.org",
         "owner": "cachix",
         "repo": "cachix",
-        "rev": "f55bc800f941cb8fe78d61ebf9ed99d8f0aa5404",
-        "sha256": "1jixbikikw39ykplb9l7ak1qv00x477cgiswh6c9mb6xwj5pgnkj",
+        "rev": "5182f6eb7813d54a3756e7a26d1d755bfeb66192",
+        "sha256": "05hrf6gdq98qsz9zq8kdij1qchyh7rlxrmwr42b7krdyzixnrl7v",
         "type": "tarball",
-        "url": "https://github.com/cachix/cachix/archive/f55bc800f941cb8fe78d61ebf9ed99d8f0aa5404.tar.gz",
+        "url": "https://github.com/cachix/cachix/archive/5182f6eb7813d54a3756e7a26d1d755bfeb66192.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager": {
@@ -17,10 +17,10 @@
         "homepage": "",
         "owner": "rycee",
         "repo": "home-manager",
-        "rev": "76ba4bedff2a27b74b7208ead2f9e1ca9594ff39",
-        "sha256": "07qck1fcgd2wsp3p5gi2bppnhz7f2kfabrjridh1a8xqr1172zsg",
+        "rev": "aa2f70def7c574d53d6370a2e3ca30016743ad6b",
+        "sha256": "1hk3kwvc5bgj47zlz0j3cvx8w1xkiywwsc7qn2di71v1046c6va9",
         "type": "tarball",
-        "url": "https://github.com/rycee/home-manager/archive/76ba4bedff2a27b74b7208ead2f9e1ca9594ff39.tar.gz",
+        "url": "https://github.com/rycee/home-manager/archive/aa2f70def7c574d53d6370a2e3ca30016743ad6b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "lorri": {
@@ -65,10 +65,10 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "03db9669a6fc712e9537201d55639287eb606765",
-        "sha256": "1g8kap5qzva58pcwn2xj1cs0k9w9mpbrlk5diaaarlgizp4l2x0z",
+        "rev": "4ffa2ed1980a950b6cf705109abedddf42cf3be1",
+        "sha256": "108jhzbqzjmys8dzlyf1ls4xdpqcd7zm7nhzsixjh15rvl0qimas",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/03db9669a6fc712e9537201d55639287eb606765.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/4ffa2ed1980a950b6cf705109abedddf42cf3be1.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
