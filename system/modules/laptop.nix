@@ -31,7 +31,6 @@ in {
     nixpkgs.config.allowUnfree = true;
 
     services = {
-      teamviewer.enable = true;
       unbound = {
         enable = true;
         extraConfig = ''
