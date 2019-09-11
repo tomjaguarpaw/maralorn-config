@@ -81,6 +81,7 @@ in {
             [ "weather@email2matrix.maralorn.de" ];
           "subjects-channel@maralorn.de" =
             [ "subjects@email2matrix.maralorn.de" ];
+          "notify-channel@maralorn.de" = [ "notify@email2matrix.maralorn.de" ];
           "monitoring-channel@maralorn.de" =
             [ "monitoring@email2matrix.maralorn.de" ];
         };

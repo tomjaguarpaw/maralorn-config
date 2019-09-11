@@ -21,6 +21,10 @@ let
       Matrix = {
         Mappings = [
           (default_mailbox // {
+            MailboxName = "notify";
+            MatrixRoomId = "!kTKVQjRwxjaoMQmcve:maralorn.de";
+          })
+          (default_mailbox // {
             MailboxName = "subjects";
             MatrixRoomId = "!kTKVQjRwxjaoMQmcve:maralorn.de";
             IgnoreBody = true;

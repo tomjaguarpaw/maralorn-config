@@ -11,6 +11,7 @@ let
         isReadOnly = false;
       };
     };
+    timeoutStartSec = "360";
     autoStart = true;
     privateNetwork = true;
     hostBridge = "bridge";
@@ -58,7 +59,6 @@ let
             memcached = false;
           };
           config = {
-            #extraTrustedDomains = [ "2a02:c207:3002:7584::3:1" ];
             dbtype = "pgsql";
             dbname = "nextcloud";
             dbuser = "nextcloud";
@@ -108,10 +108,7 @@ let
       };
     };
   };
-  serviceConfig = {
-    RestartSec = 10;
-    TimeoutSec = 360;
-  };
+  serviceConfig = { RestartSec = 10; };
 in {
   systemd.services."container@cloud" = { inherit serviceConfig; };
   systemd.services."container@chor-cloud" = { inherit serviceConfig; };
