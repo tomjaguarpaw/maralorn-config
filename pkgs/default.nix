@@ -2,8 +2,21 @@ let
   my-lib = import ../lib;
   inherit (my-lib) pkgs unstable sources writeHaskellScript gcRetentionDays;
 in rec {
+  gitstatus = pkgs.callPackage ./powerlevel10k/gitstatus.nix {
+    libgit2 = pkgs.libgit2.overrideAttrs (attrs: {
+      src = pkgs.fetchFromGitHub {
+        owner = "romkatv";
+        repo = "libgit2";
+        rev = "a546b232b23814de9c561fc750791363a5ed347e";
+        sha256 = "1xx782qa36f5gfjflw64r383g5gh7wgkvxk5q4w0rg8c0xwa3hk6";
+      };
+    });
+  };
+  zsh-powerlevel10k =
+    pkgs.callPackage ./powerlevel10k/zsh-powerlevel10k.nix { };
+  ghcide = (import sources.ghcide { }).ghcide-ghc865;
   tasktree = pkgs.callPackage ./tasktree { };
-  neovim = pkgs.neovim.override {
+  neovim = unstable.neovim.override {
     vimAlias = true;
     withPython3 = true;
   };
@@ -11,7 +24,7 @@ in rec {
     src = sources.lorri;
     pkgs = unstable;
   };
-  home-neovim = (import ./nvim) neovim;
+  home-neovim = (import ./nvim) unstable.neovim;
   niv = (import sources.niv { }).niv;
 
   # pkgs assumed to be present on a non nixos host
@@ -153,9 +166,9 @@ in rec {
   home-pkgs = {
     nixfmt = import sources.nixfmt { };
     inherit (pkgs.pythonPackages) yapf jsbeautifier;
-    inherit (pkgs) ncmpcpp shfmt htmlTidy astyle;
+    inherit (pkgs) ncmpcpp shfmt htmlTidy astyle nodejs;
     inherit (my-lib) ghc;
-    inherit home-neovim;
+    inherit home-neovim ghcide;
   };
   accounting-pkgs = {
     jali = pkgs.callPackage ./jali { };

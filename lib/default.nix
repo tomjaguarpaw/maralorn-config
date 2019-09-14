@@ -9,7 +9,7 @@ rec {
     });
   shh = unBreak unstable.haskellPackages.shh;
   ghc = unstable.ghc.withPackages
-    (p: [ (unBreak p.shh) p.brittany p.hlint p.ghcid ]);
+    (p: [ (unBreak p.shh) p.brittany p.hlint p.ghcid p.cabal-install ]);
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
   writeHaskellScript = { name ? "haskell-script", bins ? [ pkgs.coreutils ]
     , libraries ? [ ], imports ? [ ] }:

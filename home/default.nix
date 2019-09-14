@@ -147,39 +147,56 @@ in {
   home = {
     packages = builtins.attrValues my-pkgs.home-pkgs;
     sessionVariables = {
+      GITSTATUS_DAEMON = "${my-pkgs.gitstatus}/bin/gitstatusd";
       PATH =
         "$HOME/.cargo/bin:/etc/profiles/per-user/${config.home.username}/bin:$HOME/.nix-profile/bin:$PATH";
-        BROWSER = "${pkgs.firefox}/bin/firefox";
-        EDITOR = "${pkgs.neovim}/bin/nvim";
-        TERMINAL = config.m-0.terminal;
-        EMAIL = me.mail;
-        SUDO_ASKPASS = let
-          print-pw = pkgs.writeShellScriptBin "print-pw"
+      BROWSER = "${pkgs.firefox}/bin/firefox";
+      EDITOR = "${pkgs.neovim}/bin/nvim";
+      TERMINAL = config.m-0.terminal;
+      EMAIL = me.mail;
+      SUDO_ASKPASS = let
+        print-pw = pkgs.writeShellScriptBin "print-pw"
           "pass show eu/m-0/${config.m-0.hostName}/user/${config.home.username}";
-        in "${print-pw}/bin/print-pw";
+      in "${print-pw}/bin/print-pw";
+    };
+    file.".config/nvim/coc-settings.json".text = builtins.toJSON {
+      languageserver = {
+        haskell = {
+          command = "ghcide";
+          args = [ "--lsp" ];
+          rootPatterns = [
+            ".stack.yaml"
+            ".hie-bios"
+            "BUILD.bazel"
+            "cabal.config"
+            "package.yaml"
+          ];
+          filetypes = [ "hs" "lhs" "haskell" ];
+        };
       };
     };
-    fonts.fontconfig.enableProfileFonts = true;
+  };
+  fonts.fontconfig.enableProfileFonts = true;
 
-    systemd.user = {
-      startServices = true;
-      services.lorri-daemon = {
-        Unit = { Description = "Run lorri daemon"; };
-        Service = {
-          Environment =
-            "RUST_BACKTRACE=1 PATH=${pkgs.nix}/bin:${pkgs.coreutils}/bin";
-            ExecStart = "${lorri}/bin/lorri daemon";
-          };
-        };
+  systemd.user = {
+    startServices = true;
+    services.lorri-daemon = {
+      Unit = { Description = "Run lorri daemon"; };
+      Service = {
+        Environment =
+          "RUST_BACKTRACE=1 PATH=${pkgs.nix}/bin:${pkgs.coreutils}/bin";
+        ExecStart = "${lorri}/bin/lorri daemon";
       };
+    };
+  };
 
-      services = {
-        gpg-agent = {
-          enable = true;
-          defaultCacheTtl = 31536000; # 1year
-          maxCacheTtl = 31536000; # 1year
-        };
-      };
+  services = {
+    gpg-agent = {
+      enable = true;
+      defaultCacheTtl = 31536000; # 1year
+      maxCacheTtl = 31536000; # 1year
+    };
+  };
 
-      xdg.enable = true;
-    }
+  xdg.enable = true;
+}

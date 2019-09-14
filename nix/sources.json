@@ -11,6 +11,18 @@
         "url": "https://github.com/cachix/cachix/archive/5c7272351c4e87adabfb8a31e5b9c1db2980abf3.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "ghcide": {
+        "branch": "master",
+        "description": "Nix installation for ghcide",
+        "homepage": "https://github.com/digital-asset/ghcide",
+        "owner": "hercules-ci",
+        "repo": "ghcide-nix",
+        "rev": "6780371c68756cb103ae5b513b2d9f244581b03b",
+        "sha256": "05jamp6hajkymvqs1s6ydy0x6dy84qykv27j5y6pyzyrfry2ih9s",
+        "type": "tarball",
+        "url": "https://github.com/hercules-ci/ghcide-nix/archive/6780371c68756cb103ae5b513b2d9f244581b03b.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "home-manager": {
         "branch": "release-19.03",
         "description": "Manage a user environment using Nix",
