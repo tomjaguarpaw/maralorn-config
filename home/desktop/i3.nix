@@ -66,10 +66,10 @@ let
   '';
   addMods = oldbindings:
     builtins.foldl' (newbindings: key:
-    newbindings // {
-      "Mod4+${key}" = oldbindings.${key};
-      "Mod3+Mod4+${key}" = oldbindings.${key};
-    }) { } (builtins.attrNames oldbindings);
+      newbindings // {
+        "Mod4+${key}" = oldbindings.${key};
+        "Mod3+Mod4+${key}" = oldbindings.${key};
+      }) { } (builtins.attrNames oldbindings);
 in {
 
   xsession = {
@@ -78,17 +78,7 @@ in {
       extraConfig = ''
         gaps right 320
       '';
-      package = pkgs.i3-gaps.overrideAttrs (oldattrs: rec {
-        name = "i3-gaps-next";
-        version = "41264e54b7a3039ce46919851ac73e22ae29d207";
-        src = pkgs.fetchurl {
-          url = "https://github.com/Airblader/i3/archive/${version}.tar.gz";
-          sha256 = "10d80p8bsldx4pld76y8my1zyww03shkcg3fndsxkrkwhfpk0lbh";
-        };
-        postUnpack = ''
-          echo -n "4.16.1" > ./i3-${version}/I3_VERSION
-        '';
-      });
+      package = (import <unstable> { }).i3-gaps;
       config = {
         startup = [
           {
