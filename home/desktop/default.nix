@@ -47,15 +47,33 @@ in {
       options = [ "altwin:swap_lalt_lwin" ];
     };
   };
-  programs.urxvt = {
+  programs.urxvt = let mkFont = size: name: "xft:${name}:pixelsize=${size}";
+  in {
     enable = true;
     package = desktop-pkgs.urxvt;
-    fonts = [ "6x13" ];
-    keybindings = {
-      "C-1" = "command:\\033]710;6x13\\007";
-      "C-2" = "command:\\033]710;10x20\\007";
-      "C-3" = "command:\\033]710;xft:Roboto Mono Nerd Font:size=16\\007";
-      "C-4" = "command:\\033]710;xft:Roboto Mono Nerd Font:size=24\\007";
+    fonts = map (mkFont "18") [
+      "Inconsolata"
+      "Droid Sans Mono"
+      "DejaVu Sans Mono"
+      "Droid Sans Fallback"
+      "FreeSans"
+    ];
+    keybindings = let
+      switchFont = size:
+        "command:\\033]710;${
+          lib.concatStringsSep "," (map (mkFont size) [
+            "Inconsolata"
+            "Droid Sans Mono"
+            "DejaVu Sans Mono"
+            "Droid Sans Fallback"
+            "FreeSans"
+          ])
+        }\\007";
+    in {
+      "C-1" = switchFont "12";
+      "C-2" = switchFont "16";
+      "C-3" = switchFont "18";
+      "C-4" = switchFont "24";
       "C-f" = "matcher:select";
       "C-g" = "matcher:last";
     };

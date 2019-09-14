@@ -1,4 +1,6 @@
 set spell spelllang=de,en
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
 set background=dark
 set autoindent
 set nosmartindent

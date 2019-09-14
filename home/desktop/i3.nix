@@ -104,7 +104,7 @@ in {
           followMouse = false;
           forceWrapping = true;
         };
-        fonts = [ "Monofur Nerd Font 10.5" ];
+        fonts = [ "Inconsolata Nerd Font pixelsize=16" ];
         colors = {
           focused = {
             background = colors.blue;
