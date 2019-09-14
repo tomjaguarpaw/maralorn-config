@@ -47,11 +47,11 @@ in {
       options = [ "altwin:swap_lalt_lwin" ];
     };
   };
-  programs.urxvt = let mkFont = size: name: "xft:${name}:pixelsize=${size}";
+  programs.urxvt = let mkFont = size: name: "xft:${name}:size=${size}";
   in {
     enable = true;
     package = desktop-pkgs.urxvt;
-    fonts = map (mkFont "18") [
+    fonts = map (mkFont "16") [
       "Inconsolata"
       "Droid Sans Mono"
       "DejaVu Sans Mono"
@@ -71,9 +71,9 @@ in {
         }\\007";
     in {
       "C-1" = switchFont "12";
-      "C-2" = switchFont "16";
-      "C-3" = switchFont "18";
-      "C-4" = switchFont "24";
+      "C-2" = switchFont "13";
+      "C-3" = switchFont "14";
+      "C-4" = switchFont "15";
       "C-f" = "matcher:select";
       "C-g" = "matcher:last";
     };
