@@ -51,7 +51,7 @@ in {
   in {
     enable = true;
     package = desktop-pkgs.urxvt;
-    fonts = map (mkFont "16") [
+    fonts = map (mkFont "13") [
       "Inconsolata"
       "Droid Sans Mono"
       "DejaVu Sans Mono"
@@ -70,10 +70,10 @@ in {
           ])
         }\\007";
     in {
-      "C-1" = switchFont "12";
+      "C-1" = switchFont "10";
       "C-2" = switchFont "13";
-      "C-3" = switchFont "14";
-      "C-4" = switchFont "15";
+      "C-3" = switchFont "16";
+      "C-4" = switchFont "24";
       "C-f" = "matcher:select";
       "C-g" = "matcher:last";
     };

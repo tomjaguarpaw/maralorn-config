@@ -79,7 +79,8 @@ in {
         gaps right 320
       '';
       package = (import <unstable> { }).i3-gaps;
-      config = {
+      config = let fonts = [ "Inconsolata Nerd Font 13" ];
+      in {
         startup = [
           {
             command = "${pkgs.conky}/bin/conky -c ${conkyOrgaConfig}";
@@ -94,7 +95,7 @@ in {
           followMouse = false;
           forceWrapping = true;
         };
-        fonts = [ "Inconsolata Nerd Font 14" ];
+        inherit fonts;
         colors = {
           focused = {
             background = colors.blue;
@@ -127,6 +128,7 @@ in {
         };
         bars = [{
           mode = "hide";
+          inherit fonts;
           colors = {
             separator = colors.white;
             background = colors.background;
@@ -160,6 +162,7 @@ in {
             criteria = { class = "Firefox"; };
           }];
         };
+
         keybindings = {
           "XF86AudioMute" = "exec pactl set-sink-mute '@DEFAULT_SINK@' toggle";
           "XF86AudioLowerVolume" =
