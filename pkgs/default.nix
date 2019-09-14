@@ -24,7 +24,7 @@ in rec {
     src = sources.lorri;
     pkgs = unstable;
   };
-  home-neovim = (import ./nvim) unstable.neovim;
+  home-neovim = (import ./nvim) neovim;
   niv = (import sources.niv { }).niv;
 
   # pkgs assumed to be present on a non nixos host
