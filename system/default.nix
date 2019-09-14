@@ -28,12 +28,11 @@ in {
   };
 
   environment = {
-    etc = {
-      "nix-path/nixpkgs".source = sources.nixpkgs;
-      "nix-path/nixos".source = sources.nixpkgs;
-      "nix-path/unstable".source = sources.unstable;
-      "nix-path/home-manager".source = sources.home-manager;
-    };
+    etc = lib.mapAttrs'
+      (name: value: lib.nameValuePair "nix-path/${name}" { source = value; })
+      sources // {
+        "nix-path/nixos".source = sources.nixpkgs;
+      };
   };
 
   nix = {
