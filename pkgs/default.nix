@@ -16,15 +16,43 @@ in rec {
     pkgs.callPackage ./powerlevel10k/zsh-powerlevel10k.nix { };
   ghcide = (import sources.ghcide { }).ghcide-ghc865;
   tasktree = pkgs.callPackage ./tasktree { };
-  neovim = unstable.neovim.override {
+
+  libluv = unstable.callPackage ./libluv { };
+
+  libvterm-neovim = unstable.libvterm-neovim.overrideAttrs (attrs: {
+    version = "2019-08-28";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "neovim";
+      repo = "libvterm";
+      rev = "1aa95e24d8f07a396aa80b7cd52f93e2b5bcca79";
+      sha256 = "0vjd397lqrfv4kc79i5izva4bynbymx3gllkg281fnk0b15vxfif";
+    };
+  });
+
+  neovim-unwrapped = unstable.neovim-unwrapped.overrideAttrs (attrs: {
+    version = "nightly-2019-0914";
+    src = pkgs.fetchFromGitHub {
+      owner = "neovim";
+      repo = "neovim";
+      rev = "8c88d98";
+      sha256 = "11n0yzk55x9w3hldq7mp07q2fa94ksc20qmh3llq8mj976675i48";
+    };
+    buildInputs = [ libvterm-neovim ] ++ attrs.buildInputs ++ [ libluv ];
+  });
+
+  neovim = (unstable.wrapNeovim neovim-unwrapped { }).override {
     vimAlias = true;
     withPython3 = true;
   };
+
   lorri = import sources.lorri {
     src = sources.lorri;
     pkgs = unstable;
   };
+
   home-neovim = (import ./nvim) neovim;
+
   niv = (import sources.niv { }).niv;
 
   # pkgs assumed to be present on a non nixos host

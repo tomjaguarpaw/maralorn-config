@@ -53,6 +53,7 @@ let g:formatters_nix = ['my_nix']
 au BufWrite * :Autoformat
 let g:autoformat_autoindent = 0
 let g:autoformat_retab = 0
+colorscheme PaperColor
 
 " if hidden is not set, TextEdit might fail.
 set hidden
