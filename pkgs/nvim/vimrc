@@ -47,6 +47,8 @@ let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
 let g:formatdef_my_haskell = '"brittany"'
 let g:formatters_haskell = ['my_haskell']
+let g:formatdef_my_cabal = '"cabal-fmt"'
+let g:formatters_cabal = ['my_cabal']
 let g:formatdef_my_nix = '"nixfmt"'
 let g:formatters_nix = ['my_nix']
 

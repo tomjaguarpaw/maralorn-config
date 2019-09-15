@@ -1,6 +1,7 @@
 let
   my-lib = import ../lib;
-  inherit (my-lib) pkgs unstable sources writeHaskellScript gcRetentionDays;
+  inherit (my-lib)
+    pkgs unstable sources writeHaskellScript gcRetentionDays unBreak;
 in rec {
   gitstatus = pkgs.callPackage ./powerlevel10k/gitstatus.nix {
     libgit2 = pkgs.libgit2.overrideAttrs (attrs: {
@@ -197,6 +198,7 @@ in rec {
     inherit (pkgs) ncmpcpp shfmt htmlTidy astyle nodejs;
     inherit (my-lib) ghc;
     inherit home-neovim ghcide;
+    cabal-fmt = (unBreak unstable.haskell.packages.ghc881.cabal-fmt);
   };
   accounting-pkgs = {
     jali = pkgs.callPackage ./jali { };
