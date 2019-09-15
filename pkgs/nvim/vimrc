@@ -1,6 +1,7 @@
 set spell spelllang=de,en
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
+set foldcolumn=1
 set background=dark
 set autoindent
 set nosmartindent
@@ -34,11 +35,13 @@ set noai
 set cursorline
 set cursorcolumn
 set si
+set expandtab
 set sw=3
 set pt=<F4>
 set ignorecase
 set wildmenu
 set hlsearch
+
 noremap  <buffer> <silent> <Up>   gk
 noremap  <buffer> <silent> <Down> gj
 noremap  <buffer> <silent> <Home> g<Home>
