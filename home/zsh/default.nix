@@ -1,6 +1,7 @@
 { pkgs, ... }: {
 
-  programs = {
+  programs = let my-pkgs = import ../../pkgs;
+  in {
     zsh = {
       enable = true;
       enableAutosuggestions = true;
@@ -9,9 +10,12 @@
         save = 100000;
         size = 100000;
       };
-      initExtra = builtins.readFile ./zshrc;
-      oh-my-zsh = let my-pkgs = import ../../pkgs;
-      in {
+      initExtra = builtins.readFile ./zshrc + ''
+        GITSTATUS_DAEMON=${my-pkgs.gitstatus}/bin/gitstatusd source ${
+          ./p10k.zsh
+        }
+      '';
+      oh-my-zsh = {
         enable = true;
         plugins = [ "colored-man-pages" ];
         theme = "powerlevel10k";

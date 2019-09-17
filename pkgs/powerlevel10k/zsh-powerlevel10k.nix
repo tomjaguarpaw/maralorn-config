@@ -5,8 +5,8 @@ stdenv.mkDerivation {
   src = fetchFromGitHub {
     owner = "romkatv";
     repo = "powerlevel10k";
-    rev = "b451b7a75821afedba6e9fa3c422e8eca9f8dedc";
-    sha256 = "0gb27ml1ypi3j5xilvv38b73agqcf2y6ll532zkcv4lwha3ldhmy";
+    rev = "2218060b2d8b4ca7edf1299c65871cdf700898e3";
+    sha256 = "0m08x0fbj7x800i79nib0km3yx80rrg9f1rh7i24x5kla8k98sgj";
   };
 
   installPhase = ''

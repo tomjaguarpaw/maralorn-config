@@ -3,6 +3,8 @@ let
   inherit (my-lib)
     pkgs unstable sources writeHaskellScript gcRetentionDays unBreak;
 in rec {
+  ate = pkgs.callPackage (import sources.ate) { };
+
   gitstatus = pkgs.callPackage ./powerlevel10k/gitstatus.nix {
     libgit2 = pkgs.libgit2.overrideAttrs (attrs: {
       src = pkgs.fetchFromGitHub {
@@ -71,7 +73,7 @@ in rec {
     inherit (pkgs.pythonPackages) qrcode;
     inherit (pkgs)
       git-crypt htop tree pwgen borgbackup inotifyTools direnv socat nmap
-      tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle;
+      tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle vnstat;
   };
   gw2wrapper = writeHaskellScript {
     name = "gw2wrapper";
@@ -181,14 +183,15 @@ in rec {
   };
   urxvt = pkgs.rxvt_unicode-with-plugins;
   terminal = pkgs.writeShellScriptBin "terminal" ''
-     ${urxvt}/bin/urxvtc "$@"
-     if [ $? -eq 2 ]; then
-    ${urxvt}/bin/urxvtd -q -o -f
-    ${urxvt}/bin/urxvtc "$@"
-     fi
+    if [ -z "$@" ]; then
+      ${ate}/bin/ate
+    else
+      shift
+      ${ate}/bin/ate /usr/bin/env $@
+    fi
   '';
   desktop-pkgs = {
-    inherit urxvt tasktree terminal;
+    inherit urxvt tasktree terminal ate;
     inherit (pkgs) xautolock;
     inherit (pkgs.gnome3) dconf;
   };

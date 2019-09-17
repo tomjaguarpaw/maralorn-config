@@ -147,7 +147,6 @@ in {
   home = {
     packages = builtins.attrValues my-pkgs.home-pkgs;
     sessionVariables = {
-      GITSTATUS_DAEMON = "${my-pkgs.gitstatus}/bin/gitstatusd";
       PATH =
         "$HOME/.cargo/bin:/etc/profiles/per-user/${config.home.username}/bin:$HOME/.nix-profile/bin:$PATH";
       BROWSER = "${pkgs.firefox}/bin/firefox";
@@ -189,6 +188,7 @@ in {
           "RUST_BACKTRACE=1 PATH=${pkgs.nix}/bin:${pkgs.coreutils}/bin";
         ExecStart = "${lorri}/bin/lorri daemon";
       };
+      Install = { WantedBy = [ "graphical-session.target" ]; };
     };
   };
 

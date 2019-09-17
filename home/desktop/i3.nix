@@ -13,7 +13,7 @@ let
     draw_shades = false,
     double_buffer = true,
     use_xft = true,
-    font = 'Roboto Mono Nerd Font:size=8',
+    font = 'Source Code Pro For Powerline:size=8',
     gap_x = 0,
     gap_y = 0,
     minimum_width = 316,
@@ -38,8 +38,8 @@ let
     }
 
     conky.text = [[
-    ''${font Roboto Mono Nerd Font:bold:size=14}''${color #8888ff}$alignc''${exec date '+%a %_d. %B, %H:%M:%S'}
-    ''${font Roboto Mono Nerd Font:size=12}
+    ''${font Source Code Pro For Powerline:bold:size=14}''${color #8888ff}$alignc''${exec date '+%a %_d. %B, %H:%M:%S'}
+    ''${font Source Code Pro For Powerline:size=12}
     ''${color #d0d0d0}''${execpi 60 ${pkgs.gcal}/bin/gcal -K -s1 --iso-week-number=yes | sed -e 's|5\d/1|01|' | sed -ne '3,10p' | sed -e 's/</ ''${color 8888ff}/'| sed -e 's/>/ ''${color}/' | sed 's/^/$alignc/'}
     $font
     $hr
@@ -79,7 +79,7 @@ in {
         gaps right 320
       '';
       package = (import <unstable> { }).i3-gaps;
-      config = let fonts = [ "Inconsolata Nerd Font 13" ];
+      config = let fonts = [ "Source Code Pro For Powerline 9" ];
       in {
         startup = [
           {

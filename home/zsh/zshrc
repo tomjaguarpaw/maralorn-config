@@ -7,24 +7,10 @@ if [[ -z "$TMUX" ]] {
 	}
 }
 
-# Prompt
-function default_host () {
-	H="${HOST}%{%}:"
-	REPLY=${H/apollo%{%}:/}
-	REPLY=${REPLY/fb04217/hephaistos}
-	echo $REPLY
-}
-function default_user () {
-	U=${USER}@
-	REPLY=${U/maralorn@/}
-	echo $REPLY
-}
-
 mkdir -p /var/run/user/$UID/tmp/downloads
 
 setopt prompt_subst
 autoload -U colors && colors # Enable colors in prompt
-PROMPT='%{%F{red}%}$(default_user)$(default_host)%{%F{blue}%}%~%{%}> %{%f%}'
 
 precmd() {
 	if hash eventc 2> /dev/null;

@@ -1,4 +1,16 @@
 {
+    "ate": {
+        "branch": "master",
+        "description": "awesome terminal emulator",
+        "homepage": null,
+        "owner": "andir",
+        "repo": "ate",
+        "rev": "4536fc5972d90e9719418d9752e1f7a720be123f",
+        "sha256": "0iapbb8fxkks55lqn2s3nab0j4q3hn8pb7sx29sy3pkq068yx5a4",
+        "type": "tarball",
+        "url": "https://github.com/andir/ate/archive/744efd87524497a335f4b041a9c646f3cb166dee.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "cachix": {
         "branch": "master",
         "description": "Command line client for Nix binary cache hosting:",
