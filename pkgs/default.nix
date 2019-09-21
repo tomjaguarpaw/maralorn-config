@@ -183,11 +183,11 @@ in rec {
   };
   urxvt = pkgs.rxvt_unicode-with-plugins;
   terminal = pkgs.writeShellScriptBin "terminal" ''
-    if [ -z "$@" ]; then
+    if [[ -z "$@" ]]; then
       ${ate}/bin/ate
     else
       shift
-      ${ate}/bin/ate /usr/bin/env $@
+      ${ate}/bin/ate /usr/bin/env "$@"
     fi
   '';
   desktop-pkgs = {
