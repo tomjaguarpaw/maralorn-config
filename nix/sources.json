@@ -29,10 +29,10 @@
         "homepage": "https://github.com/digital-asset/ghcide",
         "owner": "hercules-ci",
         "repo": "ghcide-nix",
-        "rev": "3156336ec3caf2f5f4bf1549a058800821f98c96",
-        "sha256": "1x06fvb987i8y9g3x96p20knr69hivkk80fdbn1rrnc22jki8wh0",
+        "rev": "fd42f62613d491565c1676821148c008b2011584",
+        "sha256": "1cd60hlr58ih5j21a64rdrmyrh28dhwz0wgmkb3p3j8jmrya8fv7",
         "type": "tarball",
-        "url": "https://github.com/hercules-ci/ghcide-nix/archive/3156336ec3caf2f5f4bf1549a058800821f98c96.tar.gz",
+        "url": "https://github.com/hercules-ci/ghcide-nix/archive/fd42f62613d491565c1676821148c008b2011584.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager": {
@@ -125,10 +125,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "a7f002ac41dd4127e811df8bc4edfbb034aa2861",
-        "sha256": "054sa6fc7i8biaz8yg51bi9yq1f2safayy1gqv3377am7aviq3wb",
+        "rev": "d484f2b7fc0834a068e8ace851faa449a03963f5",
+        "sha256": "0jk93ikryi2hqc30l2n5i4vlgmklrlzb8cf7b3sg1q3k70q344jn",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/a7f002ac41dd4127e811df8bc4edfbb034aa2861.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/d484f2b7fc0834a068e8ace851faa449a03963f5.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
