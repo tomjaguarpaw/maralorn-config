@@ -17,10 +17,10 @@
         "homepage": "https://cachix.org",
         "owner": "cachix",
         "repo": "cachix",
-        "rev": "d5f3461a9fc7ef4648f600c7174154761da1f46d",
-        "sha256": "1ai10d0kwkf7jg1mnikbsc13wnna6727n6hc16k4n68sif04736h",
+        "rev": "275f732676c06aa23ae6c93049c5e54cb12ce30c",
+        "sha256": "112nx1k32ai7swfy9f9fglr46a4a384cdmsh8ciivpzlp66xz483",
         "type": "tarball",
-        "url": "https://github.com/cachix/cachix/archive/d5f3461a9fc7ef4648f600c7174154761da1f46d.tar.gz",
+        "url": "https://github.com/cachix/cachix/archive/275f732676c06aa23ae6c93049c5e54cb12ce30c.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "ghcide": {
