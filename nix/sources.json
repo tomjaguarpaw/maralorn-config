@@ -5,10 +5,10 @@
         "homepage": null,
         "owner": "andir",
         "repo": "ate",
-        "rev": "4536fc5972d90e9719418d9752e1f7a720be123f",
-        "sha256": "0iapbb8fxkks55lqn2s3nab0j4q3hn8pb7sx29sy3pkq068yx5a4",
+        "rev": "880f628638355bfaafa8948e03e93fd64bce9a40",
+        "sha256": "02di5sfqri093rk9gjnbv2jq6jj84r5l62ggypxv1n1ip4aaa2dj",
         "type": "tarball",
-        "url": "https://github.com/andir/ate/archive/744efd87524497a335f4b041a9c646f3cb166dee.tar.gz",
+        "url": "https://github.com/andir/ate/archive/880f628638355bfaafa8948e03e93fd64bce9a40.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "cachix": {
@@ -45,6 +45,18 @@
         "sha256": "0nq0fzwkh4h9ckpmkxy2wmgfdfgmq79spq44liqk3pb1bhw04qyi",
         "type": "tarball",
         "url": "https://github.com/rycee/home-manager/archive/ef64bc598f28818d56c86629dad98b468af9c071.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "local-nix-cache": {
+        "branch": "master",
+        "description": "A poor and hacky attempt at re-serving local nix packages that came from trusted sources",
+        "homepage": null,
+        "owner": "andir",
+        "repo": "local-nix-cache",
+        "rev": "45e0ba0e93b8fc7f7bfbf4bdc7daf205f24221f3",
+        "sha256": "12xqzl797nv24a1sp1wwc0dflbgcplj4aa322yds6kpln4hh30dd",
+        "type": "tarball",
+        "url": "https://github.com/andir/local-nix-cache/archive/45e0ba0e93b8fc7f7bfbf4bdc7daf205f24221f3.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "lorri": {

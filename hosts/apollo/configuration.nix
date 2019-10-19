@@ -18,6 +18,7 @@ in {
     ../../system/boot-key.nix
     ../../system/standalone
     ../../system/use-cache.nix
+    ../../system/local-nix-cache.nix
   ];
 
   networking = {

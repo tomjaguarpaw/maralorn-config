@@ -1,9 +1,36 @@
 let
   my-lib = import ../lib;
   inherit (my-lib)
-    pkgs unstable sources writeHaskellScript gcRetentionDays unBreak;
+    pkgs unstable sources writeHaskellScript gcRetentionDays unBreak colors;
 in rec {
-  ate = pkgs.callPackage (import sources.ate) { };
+  ate = pkgs.callPackage (import sources.ate) {
+    config.ate = {
+      options = {
+        BLACK = colors.black;
+        RED = colors.red;
+        GREEN = colors.green;
+        YELLOW = colors.yellow;
+        BLUE = colors.blue;
+        MAGENTA = colors.magenta;
+        CYAN = colors.cyan;
+        WHITE = colors.white;
+        BRIGHT_BLACK = colors.brightBlack;
+        BRIGHT_RED = colors.brightRed;
+        BRIGHT_GREEN = colors.brightGreen;
+        BRIGHT_YELLOW = colors.brightYellow;
+        BRIGHT_BLUE = colors.brightBlue;
+        BRIGHT_MAGENTA = colors.brightMagenta;
+        BRIGHT_CYAN = colors.brightCyan;
+        BRIGHT_WHITE = colors.brightWhite;
+        FOREGROUND_COLOR = colors.foreground;
+        BACKGROUND_COLOR = colors.background;
+      };
+      keybindings = {
+        DECREMENT_FONT =
+          "control+shift+minus"; # Das ist neo für control+minus, k.A. warum.
+      };
+    };
+  };
 
   gitstatus = pkgs.callPackage ./powerlevel10k/gitstatus.nix {
     libgit2 = pkgs.libgit2.overrideAttrs (attrs: {
@@ -63,7 +90,7 @@ in rec {
     inherit neovim;
     inherit (pkgs)
       gitFull gnumake python3 mkpasswd file wget curl wireguard gnupg mutt bind
-      liboping psmisc unzip rename whois lsof;
+      liboping psmisc unzip rename whois lsof parted;
   };
 
   extra-system-pkgs = {
@@ -168,7 +195,9 @@ in rec {
       ncpamixer pavucontrol deluge mpd gmpc calibre mpv youtubeDL
 
       # games
-      minetest;
+      minetest
+
+      gparted;
   };
 
   my-home-pkgs = {
