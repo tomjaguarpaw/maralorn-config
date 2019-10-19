@@ -12,10 +12,6 @@
         sansSerif = [ "Roboto Regular" "DejaVu Sans" ];
         serif = [ "Roboto Slab Regular" "DejaVu Serif" ];
       };
-      ultimate = {
-        enable = true;
-        substitutions = "combi";
-      };
     };
     enableDefaultFonts = true;
     enableFontDir = true;

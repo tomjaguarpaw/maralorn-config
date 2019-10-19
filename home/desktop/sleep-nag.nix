@@ -1,23 +1,31 @@
 { lib, pkgs, config, ... }:
 let
+  inherit (import ../../lib) writeHaskellScript;
   inherit (import ../../pkgs) eventd;
-  sleep-nag = pkgs.writeScript "sleep-nag" ''
-    #!${pkgs.stdenv.shell}
-
-    while true
-    do
-        if [[ `date +%H` -ge 23 ]] || [[ `date +%H` -lt 6 ]]; then
-          ${eventd}/bin/eventc notification kassandra -d "title='Es ist $(date +%H:%M) Uhr: Zeit ins Bett zu gehen!'" -d "message='Du kannst das hier auch morgen tun!'"
-        fi
-        sleep 10m
-    done
+  sleep-nag = writeHaskellScript {
+    name = "sleep-nag";
+    imports = [
+      "Data.Time.LocalTime"
+      "Control.Monad"
+      "Data.Function"
+      "Control.Concurrent"
+    ];
+    bins = [ eventd ];
+  } ''
+    main = go
+      where
+        go = do
+          tod <- getZonedTime & fmap (localTimeOfDay . zonedTimeToLocalTime)
+          when (todHour tod < 6 || todHour tod >= 23) $ eventc "notification" "kassandra" "-d" ([i|title='Es ist #{todHour tod}:#{todMin tod} Uhr: Zeit ins Bett zu gehen!'|]::String) "-d" "message='Du kannst das hier auch morgen tun!'"
+          threadDelay 600000000
+          go
   '';
 in {
 
   systemd.user = {
     services.sleep-nag = {
       Unit = { Description = "Sleep nag"; };
-      Service = { ExecStart = toString sleep-nag; };
+      Service = { ExecStart = "${sleep-nag}/bin/sleep-nag"; };
       Install = { WantedBy = [ "graphical-session.target" ]; };
     };
   };

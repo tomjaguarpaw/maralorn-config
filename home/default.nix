@@ -159,7 +159,6 @@ in {
       in "${print-pw}/bin/print-pw";
     };
     file.".config/nvim/coc-settings.json".text = builtins.toJSON {
-      "diagnostic.checkCurrentLine" = true;
       "diagnostic.maxWindowHeight" = 60;
       languageserver = {
         haskell = {
@@ -177,7 +176,6 @@ in {
       };
     };
   };
-  fonts.fontconfig.enableProfileFonts = true;
 
   systemd.user = {
     startServices = true;

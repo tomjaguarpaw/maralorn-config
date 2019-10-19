@@ -6,6 +6,8 @@ let
 
     critical_level=20    #percent
 
+    export PATH=$PATH:${pkgs.coreutils}/bin:${pkgs.gnugrep}/bin
+
     while true
     do
         if [ "$(${pkgs.acpi}/bin/acpi -a | grep -o off)" == "off" ]; then

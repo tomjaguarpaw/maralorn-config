@@ -172,7 +172,7 @@ in rec {
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xev xbacklight;
     inherit (pkgs)
-    # web
+      # web
       chromium
 
       # communication
@@ -197,7 +197,7 @@ in rec {
       # games
       minetest
 
-      gparted;
+      nix-review gparted;
   };
 
   my-home-pkgs = {
@@ -220,7 +220,7 @@ in rec {
     fi
   '';
   desktop-pkgs = {
-    inherit urxvt tasktree terminal ate;
+    inherit urxvt terminal ate;
     inherit (pkgs) xautolock;
     inherit (pkgs.gnome3) dconf;
   };
