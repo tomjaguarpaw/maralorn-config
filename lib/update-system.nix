@@ -16,6 +16,6 @@ in rec {
     main = do
         paths <- fmap concat . mapM getNivAssign $ ["nixpkgs", "unstable", "home-manager"]
         args <- getArgs
-        nixos_rebuild (paths ++ ["switch"] ++ args)
+        nixos_rebuild (paths ++ ["switch"] ++ fmap unpack args)
   '';
 }

@@ -11,7 +11,7 @@ in rec {
 
     main = do
       (configDir:hostname:args) <- getArgs
-      paths <- concat <$> mapM (getNivAssign configDir) ["nixpkgs", "unstable", "home-manager"]
+      paths <- concat <$> mapM (getNivAssign $ unpack configDir) ["nixpkgs", "unstable", "home-manager"]
       putStrLn [i|Trying to build ${name} config for #{hostname}|]
       ${commandline}
   '';
@@ -21,14 +21,14 @@ in rec {
     name = "test-system-config";
     inherit bins;
   } (haskellBody "system" ''
-    nix $ ["build", "-f", "<nixpkgs/nixos>", "system"] ++ paths ++ ["-I", [i|nixos-config=#{configDir}/hosts/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ args
+    nix $ ["build", "-f", "<nixpkgs/nixos>", "system"] ++ paths ++ ["-I", [i|nixos-config=#{configDir}/hosts/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ fmap unpack args
   '');
 
   test-home-config = writeHaskellScript {
     name = "test-home-config";
     inherit bins;
   } (haskellBody "home" ''
-    nix $ ["build", "-f", "<home-manager/home-manager/home-manager.nix>"] ++ paths ++ ["--argstr", "confPath", [i|#{configDir}/hosts/#{hostname}/home.nix|], "--argstr", "confAttr", "", "--out-link", [i|result-home-manager-#{hostname}|], "activationPackage"] ++ args
+    nix $ ["build", "-f", "<home-manager/home-manager/home-manager.nix>"] ++ paths ++ ["--argstr", "confPath", [i|#{configDir}/hosts/#{hostname}/home.nix|], "--argstr", "confAttr", "", "--out-link", [i|result-home-manager-#{hostname}|], "activationPackage"] ++ fmap unpack args
   '');
 
   repoSrc = "git@hera.m-0.eu:nixos-config";
@@ -40,7 +40,6 @@ in rec {
     name = "test-config";
     bins = [ test-system-config test-home-config pkgs.git niv pkgs.git-crypt ];
     imports = [
-      "Control.Exception (bracket)"
       "System.Directory (withCurrentDirectory)"
       "Control.Monad (when, ap)"
       "Data.Maybe (listToMaybe)"
@@ -52,7 +51,7 @@ in rec {
 
     main = do
       path <- pwd |> captureTrim
-      bump <- (maybe False (== "bump") . listToMaybe) <$> getArgs
+      bump <- (maybe False (== pack "bump") . listToMaybe) <$> getArgs
       bracket checkout (rm "-rf") $ \dir -> do
         withCurrentDirectory dir $ do
           mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ${

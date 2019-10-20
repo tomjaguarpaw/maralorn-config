@@ -19,31 +19,35 @@ rec {
     "white" = "#dddbff";
     "brightWhite" = "#ffffff";
   };
-  pkgs = import <nixpkgs> {
-  };
+  pkgs = import <nixpkgs> { };
   unstable = import <unstable> { };
   sources = import ../nix/sources.nix;
   unBreak = pkg:
-    unstable.haskell.lib.overrideCabal pkg (drv: {
+    pkgs.haskell.lib.overrideCabal pkg (drv: {
       broken = false;
       doCheck = false;
     });
-  shh = unBreak unstable.haskellPackages.shh;
-  ghc = unstable.ghc.withPackages
+  shh = unBreak pkgs.haskellPackages.shh;
+  ghc = pkgs.ghc.withPackages
     (p: [ (unBreak p.shh) p.brittany p.hlint p.ghcid p.cabal-install ]);
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
   writeHaskellScript = { name ? "haskell-script", bins ? [ pkgs.coreutils ]
     , libraries ? [ ], imports ? [ ] }:
     code:
-    unstable.writers.writeHaskellBin name {
-      libraries = libraries
-        ++ [ shh unstable.haskellPackages.string-interpolate ];
+    pkgs.writers.writeHaskellBin name {
+      libraries = libraries ++ [
+        shh
+        pkgs.haskellPackages.string-interpolate
+        pkgs.haskellPackages.classy-prelude
+      ];
     } ''
       {-# LANGUAGE DeriveDataTypeable #-}
       {-# LANGUAGE TemplateHaskell #-}
       {-# LANGUAGE QuasiQuotes #-}
 
       import Shh
+      import qualified Prelude
+      import ClassyPrelude
       import Data.String.Interpolate (i)
       import qualified Data.ByteString as BS
       import qualified Data.ByteString.Char8 as BSC
@@ -53,14 +57,13 @@ rec {
       import qualified Data.Text.Lazy as LT
       import qualified Data.Text.Encoding as TE
       import qualified Data.Text.Lazy.Encoding as LTE
-      import System.Environment (getArgs)
       ${builtins.concatStringsSep "\n" (map (x: "import ${x}") imports)}
 
       -- Load binaries from Nix packages. The dependencies will be captured
       -- in the closure.
-      loadFromBins ${
+      loadFromBins (${
         haskellList (builtins.map toString (bins ++ [ pkgs.coreutils ]))
-      }
+      } :: [String])
 
       ${code}
     '';
@@ -68,17 +71,16 @@ rec {
     name = "get-niv-path";
     bins = [ pkgs.nix ];
     imports = [ "System.Console.CmdArgs.Implicit" ];
-    libraries =
-      [ unstable.haskellPackages.cmdargs unstable.haskellPackages.text ];
+    libraries = [ pkgs.haskellPackages.cmdargs pkgs.haskellPackages.text ];
   } ''
 
     trimQuotation = pureProc $ LTE.encodeUtf8 . LT.dropAround ('"' ==) . LTE.decodeUtf8 . trim
 
     main = do
           [sources, channel] <- getArgs
-          let expr = [i|(import #{sources}).#{channel}|]
+          let expr = [i|(import #{sources}).#{channel}|] :: String
           nix_build ["-Q", "-E", expr, "--no-out-link"] &> devNull
-          nix_instantiate ["--eval", "-E", [i|toString #{expr}|]] |> trimQuotation
+          nix_instantiate ["--eval" :: String, "-E", [i|toString #{expr}|]] |> trimQuotation
   '';
   home-manager = pkgs.callPackage <home-manager/home-manager> { };
   gcRetentionDays = 5;

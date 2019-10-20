@@ -14,6 +14,6 @@ in {
       main = do
         args <- getArgs
         paths <- concat <$> mapM getNivAssign ["home-manager", "nixpkgs", "unstable"]
-        home_manager $ paths ++ ["switch"] ++ args
+        home_manager $ paths ++ ["switch"] ++ fmap unpack args
     '';
 }
