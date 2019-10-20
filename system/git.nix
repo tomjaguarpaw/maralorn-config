@@ -13,9 +13,7 @@ let
     bins = [ pkgs.git pkgs.nix ];
     imports = [
       "System.Environment (lookupEnv)"
-      "Data.Foldable (for_)"
       "Control.Monad (ap)"
-      "Control.Exception (bracket)"
       "System.Directory (withCurrentDirectory)"
     ];
 
