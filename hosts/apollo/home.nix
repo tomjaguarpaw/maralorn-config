@@ -17,7 +17,6 @@
       enable = true;
       config = builtins.readFile secret/jaliconfig.py;
     };
-    rustdev.enable = true;
     taskwarrior = {
       enable = true;
       git_active = true;
