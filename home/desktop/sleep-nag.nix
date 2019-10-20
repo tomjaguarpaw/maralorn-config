@@ -6,18 +6,25 @@ let
     name = "sleep-nag";
     imports = [
       "Data.Time.LocalTime"
+      "Data.Time.Format"
+      "Data.Time.Clock"
       "Control.Concurrent"
       "Data.Functor"
     ];
     bins = [ eventd ];
   } ''
-    main = go
-      where
-        go = do
-          tod <- getZonedTime <&> localTimeOfDay . zonedTimeToLocalTime
-          when (todHour tod < 6 || todHour tod >= 23) $ eventc "notification" "kassandra" "-d" ([i|title='Es ist #{todHour tod}:#{todMin tod} Uhr: Zeit ins Bett zu gehen!'|]::String) "-d" "message='Du kannst das hier auch morgen tun!'"
-          threadDelay 600000000
-          go
+    main = forever $ do
+       time <- getZonedTime
+       let tod = localTimeOfDay . zonedTimeToLocalTime$ time
+           hour = todHour tod
+           night = (hour < 6 || hour >= 23)
+           diff = diffUTCTime (zonedTimeToUTC time{zonedTimeToLocalTime = (zonedTimeToLocalTime time){localTimeOfDay = TimeOfDay 23 0 0}}) (zonedTimeToUTC time)
+           delay = toRational diff
+       if night then (do
+         eventc "notification" "kassandra" "-d" ([i|title='Es ist #{formatTime defaultTimeLocale "%H:%M" time} Uhr: Zeit ins Bett zu gehen!'|]::String) "-d" "message='Du kannst das hier auch morgen tun!'"
+         threadDelay 600000000)
+       else
+         threadDelay (floor $ delay * 1000000)
   '';
 in {
 
