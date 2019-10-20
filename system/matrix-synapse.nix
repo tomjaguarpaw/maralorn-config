@@ -78,7 +78,7 @@ in {
       '';
       database_args = {
         user = "matrix-synapse";
-        host = "/tmp";
+        #host = "/tmp";
         database = "matrix-synapse";
         cp_min = 5;
         cp_max = 10;

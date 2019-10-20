@@ -16,8 +16,10 @@ let
     privateNetwork = true;
     hostBridge = "bridge";
     config = { pkgs, ... }: {
-      disabledModules = [ "services/web-apps/nextcloud.nix" ];
-      imports = [ ../../system ./nextcloud.nix ];
+      #disabledModules = [ "services/web-apps/nextcloud.nix" ];
+      imports = [
+        ../../system # ./nextcloud.nix
+      ];
 
       networking = {
         interfaces.eth0 = {
@@ -130,6 +132,9 @@ in {
           proxyPass = "http://chor-cloud";
           extraConfig = "proxy_set_header Host $host;";
         };
+        extraConfig = ''
+          more_set_headers "Content-Security-Policy: frame-ancestors 'self' https://*.mathechor.de";
+        '';
       };
     };
   };

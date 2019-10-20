@@ -73,9 +73,6 @@ in {
           }];
         };
       };
-    };
-
-    prometheus2 = {
       enable = true;
       ruleFiles = [ ./rules.yml ];
       scrapeConfigs = [
@@ -107,7 +104,8 @@ in {
           }) config.m-0.monitoring;
         }
       ];
-      alertmanagerURL = [ "localhost:9093" ];
+      alertmanagers =
+        [{ static_configs = [{ targets = [ "localhost:9093" ]; }]; }];
     };
   };
 }
