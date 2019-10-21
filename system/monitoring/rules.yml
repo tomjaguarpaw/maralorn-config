@@ -11,7 +11,7 @@ groups:
              description: '{{ $labels.name }} has been down for more than 5 minutes.'
              summary: '{{$labels.name}}: Node is down.'
         - alert: systemd_service_failed
-          expr: node_systemd_unit_state{state="failed", exported_name!="disable-transparent-huge-pages.service"} == 1
+          expr: node_systemd_unit_state{state="failed"} == 1
           for: 4m
           annotations:
              description: '{{$labels.name}} failed to (re)start service {{$labels.exported_name}}.'
