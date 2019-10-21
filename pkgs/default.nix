@@ -146,6 +146,7 @@ in rec {
     cachix = import sources.cachix;
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xev xbacklight;
+    inherit (pkgs.gitAndTools) hub;
     inherit (pkgs)
     # web
       chromium
