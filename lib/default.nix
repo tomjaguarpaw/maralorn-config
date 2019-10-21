@@ -44,6 +44,8 @@ rec {
       {-# LANGUAGE DeriveDataTypeable #-}
       {-# LANGUAGE TemplateHaskell #-}
       {-# LANGUAGE QuasiQuotes #-}
+      {-# LANGUAGE OverloadedStrings #-}
+      {-# LANGUAGE ExtendedDefaultRules #-}
 
       import Shh
       import qualified Prelude

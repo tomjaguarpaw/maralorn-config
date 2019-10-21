@@ -9,7 +9,7 @@ in {
       getNivPath name = get_niv_path "${configPath}/nix/sources.nix" name |> captureTrim
 
       getNivAssign name = tag <$> getNivPath name
-          where tag str = ["-I", [i|#{name :: String}=#{str :: LBS.ByteString}|]]
+          where tag str = ["-I", [i|#{name :: String}=#{str :: LBS.ByteString}|]] :: [String]
 
       main = do
         args <- getArgs
