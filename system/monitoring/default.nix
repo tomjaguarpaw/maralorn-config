@@ -23,8 +23,6 @@ let
     ];
   };
 in {
-  systemd.tmpfiles.rules = let cfg = config.services.gitolite;
-  in [ "Z ${cfg.dataDir}/.ssh 0600 ${cfg.user} ${cfg.group} - -" ];
   services = {
     nginx = {
       enable = true;
