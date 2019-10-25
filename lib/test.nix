@@ -7,7 +7,7 @@ in rec {
     getNivPath dir name = get_niv_path ([i|#{dir :: String}/nix/sources.nix|] :: String) name |> captureTrim
 
     getNivAssign dir name = process <$> getNivPath dir name
-        where process str = ["-I", [i|#{name :: String}=#{str :: LBS.ByteString}|]]
+        where process str = ["-I" :: String, [i|#{name :: String}=#{str :: LBS.ByteString}|]]
 
     main = do
       (configDir:hostname:args) <- getArgs
