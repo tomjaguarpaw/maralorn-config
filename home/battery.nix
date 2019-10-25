@@ -6,7 +6,7 @@ let
 
     critical_level=20    #percent
 
-    export PATH=$PATH:${pkgs.coreutils}/bin:${pkgs.gnugrep}/bin
+    export PATH=$PATH:${pkgs.coreutils}/bin:${pkgs.gnugrep}/bin:${pkgs.gnused}/bin
 
     while true
     do
