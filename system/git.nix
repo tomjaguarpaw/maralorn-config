@@ -40,7 +40,8 @@ let
   '';
 in {
   systemd.tmpfiles.rules = let cfg = config.services.gitolite;
-  in lib.mkAfter [ "Z ${cfg.dataDir}/.ssh 0600 ${cfg.user} ${cfg.group} - -" ];
+  in lib.mkAfter
+  [ "z ${cfg.dataDir}/.ssh/id_ed25519 0600 ${cfg.user} ${cfg.group} - -" ];
   users.users.git.linger =
     true; # Frequent restarting of the systemd-user-unit leads to errors
   security.sudo.extraRules = [{
