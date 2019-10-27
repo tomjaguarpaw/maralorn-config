@@ -85,7 +85,7 @@ let
       };
       systemd = {
         services = {
-          "prometheus-ngnix-exporter" = {
+          "prometheus-nginx-exporter" = {
             serviceConfig = { RestartSec = 10; };
           };
           "nextcloud-setup" = {
