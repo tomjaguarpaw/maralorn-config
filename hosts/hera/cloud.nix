@@ -85,6 +85,9 @@ let
       };
       systemd = {
         services = {
+          "prometheus-ngnix-exporter" = {
+            serviceConfig = { RestartSec = 10; };
+          };
           "nextcloud-setup" = {
             requires = [ "postgresql.service" ];
             after = [ "postgresql.service" ];
