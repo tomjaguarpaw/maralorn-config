@@ -100,7 +100,7 @@ in rec {
       git -C ~/git/nixos/config pull
       update-home
       sudo -A update-system
-      sudo -A nix-collect-garbage --delete-older-than ${
+      #sudo -A nix-collect-garbage --delete-older-than ${
         toString gcRetentionDays
       }d
       sudo -A nix optimise-store

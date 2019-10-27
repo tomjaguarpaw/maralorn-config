@@ -11,7 +11,7 @@ let
     main = do
       git "-C" "${configPath}" "pull"
       update_home
-      nix_collect_garbage "--delete-older-than" "${toString gcRetentionDays}d"
+      --nix_collect_garbage "--delete-older-than" "${toString gcRetentionDays}d"
       nix "optimise-store"
   '';
 in {

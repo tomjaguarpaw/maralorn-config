@@ -3,7 +3,7 @@
   imports = [ ./init_ssh.nix ];
 
   nix = {
-    gc.automatic = true;
+    #gc.automatic = true;
     optimise.automatic = true;
   };
 
