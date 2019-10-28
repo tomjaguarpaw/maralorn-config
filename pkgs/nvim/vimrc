@@ -14,9 +14,13 @@ set sidescrolloff=5
 set laststatus=2
 set incsearch
 set mouse=
-set dir=~/.vimhist/
-set backupdir=~/.vimhist/bak
 set showcmd
+
+set backupdir=~/.vimbackupfiles/
+set undodir=~/.vimhist/
+set undofile
+set undolevels=100
+set undoreload=1000
 
 augroup focus
     au!
