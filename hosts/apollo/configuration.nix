@@ -66,6 +66,17 @@ in {
   };
 
   services = {
+    snapper = {
+      cleanupInterval = "hourly";
+      configs.home = {
+        subvolume = "/home";
+        extraConfig = ''
+          TIMELINE_MIN_AGE=3600
+          TIMELINE_LIMIT_YEARLY=0
+            '';
+      };
+      snapshotInterval = "*:00/5:00";
+    };
     printing = {
       enable = true;
       drivers = [ pkgs.gutenprint pkgs.hplip ];
