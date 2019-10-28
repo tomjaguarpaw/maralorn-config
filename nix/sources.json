@@ -101,10 +101,10 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "1ea7efa2628623f87ca945a56274d096faac3dc8",
-        "sha256": "11dclf6bxpng06d4pk4xfbv4v71y1kai7z9mr5n4v7075rfz1gv5",
+        "rev": "c0182a06982f82a47356c91d78d80d2af29bd7f1",
+        "sha256": "0mghcsq37kqvr9nq698ng7zda7z458nj46andi9y7r9qfmba3dgy",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/1ea7efa2628623f87ca945a56274d096faac3dc8.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/c0182a06982f82a47356c91d78d80d2af29bd7f1.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
