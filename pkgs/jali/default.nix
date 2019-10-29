@@ -9,7 +9,7 @@ buildPythonApplication rec {
   name = "${pname}-${version}";
   pname = "jali";
   doCheck = false;
-  version = "3a884c7eb3b294c5aaf2191408e1ac2befbceaaf";
+  version = "b47d3b9";
   src = fetchgit {
     url = "https://git.darmstadt.ccc.de/jali/jali.git";
     rev = version;
