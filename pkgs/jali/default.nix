@@ -13,7 +13,7 @@ buildPythonApplication rec {
   src = fetchgit {
     url = "https://git.darmstadt.ccc.de/jali/jali.git";
     rev = version;
-    sha256 = "0fkb4vyf570d7zcwi3mix9g44wqpy128gd3li0grkbml7aflzxfr";
+    sha256 = "0l5h9hjri77zifx3x4khw7ncmmc9l9ppisdjilsfllzkabz4xjf4";
   };
   propagatedBuildInputs = [ jinja2 pendulum GitPython andir.aqbanking ];
 }
