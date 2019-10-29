@@ -67,15 +67,17 @@ in {
 
   services = {
     snapper = {
-      cleanupInterval = "hourly";
       configs.home = {
         subvolume = "/home";
         extraConfig = ''
-          TIMELINE_MIN_AGE=3600
-          TIMELINE_LIMIT_YEARLY=0
+          TIMELINE_MIN_AGE="3600"
+          TIMELINE_LIMIT_YEARLY="0"
+          TIMELINE_CREATE="yes"
+          TIMELINE_CLEANUP="yes"
             '';
       };
-      snapshotInterval = "*:00/5:00";
+      cleanupInterval = "15m";
+      snapshotInterval = "*:00/3:00";
     };
     printing = {
       enable = true;
