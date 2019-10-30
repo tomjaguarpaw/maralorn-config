@@ -183,7 +183,7 @@ in {
       Unit = { Description = "Run lorri daemon"; };
       Service = {
         Environment =
-          "RUST_BACKTRACE=1 PATH=${pkgs.nix}/bin:${pkgs.coreutils}/bin";
+          "RUST_BACKTRACE=1 PATH=${pkgs.nix}/bin:${pkgs.coreutils}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin";
         ExecStart = "${lorri}/bin/lorri daemon";
       };
       Install = { WantedBy = [ "graphical-session.target" ]; };
