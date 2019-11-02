@@ -28,8 +28,15 @@ rec {
       doCheck = false;
     });
   shh = unBreak pkgs.haskellPackages.shh;
-  ghc = pkgs.ghc.withPackages
-    (p: [ (unBreak p.shh) p.brittany p.hlint p.ghcid p.cabal-install ]);
+  ghc = pkgs.ghc.withPackages (p: [
+    (unBreak p.shh)
+    p.brittany
+    p.hlint
+    p.ghcid
+    p.cabal-install
+    p.haskell-ci
+    p.shake
+  ]);
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
   writeHaskellScript = { name ? "haskell-script", bins ? [ pkgs.coreutils ]
     , libraries ? [ ], imports ? [ ] }:
