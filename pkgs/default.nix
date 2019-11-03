@@ -162,7 +162,7 @@ in rec {
 
       # tools & office
       feh gimp imagemagick ghostscript libreoffice-fresh pandoc xournal
-      musescore handbrake evince
+      musescore handbrake evince abcde beets
 
       networkmanagerapplet
       #    teamviewer
