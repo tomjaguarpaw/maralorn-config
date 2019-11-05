@@ -74,7 +74,7 @@ in rec {
     inherit (pkgs.rxvt_unicode) terminfo;
     inherit (pkgs.pythonPackages) qrcode;
     inherit (pkgs)
-      git-crypt htop tree pwgen borgbackup inotifyTools direnv socat nmap
+      git-crypt htop tree pwgen borgbackup inotifyTools direnv socat nmap ncdu
       tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle vnstat;
   };
   gw2wrapper = writeHaskellScript {
