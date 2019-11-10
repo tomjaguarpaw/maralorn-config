@@ -26,7 +26,7 @@ let
       mirror <- lookupEnv "GL_OPTION_MIRROR"
       for_ mirror $ \mirror -> do
         echo ([i|Forwarding push to #{mirror}|] :: String)
-        git "push" "--all" mirror
+        git "push" "--all" "-f" mirror
       deploy <- lookupEnv "GL_OPTION_WEB_DEPLOY"
       for_ deploy $ \deploy -> do
         path <- pwd |> captureTrim
