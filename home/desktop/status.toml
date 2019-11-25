@@ -1,0 +1,35 @@
+theme = "slick"
+icons = "awesome"
+
+[[block]]
+block = "music"
+buttons = ["play", "next"]
+max_width = 64
+
+[[block]]
+block = "net"
+device = "wlp61s0"
+ssid = true
+ip = false
+speed_up = false
+speed_down = false
+graph_up = false
+graph_down = false
+interval = 5
+
+[[block]]
+block = "sound"
+
+[[block]]
+block = "backlight"
+device = "intel_backlight"
+
+[[block]]
+block = "battery"
+driver = "upower"
+format = "{percentage}% ({power}W) {time}"
+
+[[block]]
+block = "time"
+interval = 5
+format = "%F %a %T"

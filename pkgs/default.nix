@@ -26,11 +26,24 @@ in rec {
         BACKGROUND_COLOR = colors.background;
       };
       keybindings = {
-        DECREMENT_FONT =
-          "control+shift+minus"; # Das ist neo für control+minus, k.A. warum.
+        INCREMENT_FONT = "control+minus";
+        DECREMENT_FONT = "control+plus";
       };
     };
   };
+
+  start-agent = pkgs.writeShellScriptBin "start-ssh-agent" ''
+    ${pkgs.psmisc}/bin/killall -q ssh-agent
+    eval `${pkgs.openssh}/bin/ssh-agent -s`
+    systemctl --user set-environment SSH_AUTH_SOCK="$SSH_AUTH_SOCK"
+    systemctl --user set-environment SSH_AGENT_PID="$SSH_AGENT_PID"
+  '';
+  cat-pw = pkgs.writeShellScriptBin "cat-ssh-pw" ''
+    pass eu/m-0/$(hostname).m-0.eu/ssh-key
+  '';
+  my-ssh-add = pkgs.writeShellScriptBin "my-ssh-add" ''
+    SSH_ASKPASS=${cat-pw}/bin/cat-ssh-pw ${pkgs.openssh}/bin/ssh-add < /dev/null
+  '';
 
   gitstatus = pkgs.callPackage ./powerlevel10k/gitstatus.nix {
     libgit2 = pkgs.libgit2.overrideAttrs (attrs: {
@@ -151,6 +164,8 @@ in rec {
     # web
       chromium
 
+      upower speedtest-cli
+
       # communication
       signal-desktop tdesktop acpi dino mumble
 
@@ -196,9 +211,12 @@ in rec {
     fi
   '';
   desktop-pkgs = {
-    inherit urxvt terminal ate;
-    inherit (pkgs) xautolock;
+    inherit urxvt terminal ate start-agent my-ssh-add;
     inherit (pkgs.gnome3) dconf;
+    inherit (pkgs)
+      lm_sensors sway swaylock swayidle xwayland rofi i3status-rust waybar
+      dmenu;
+
   };
   home-pkgs = {
     nixfmt = import sources.nixfmt { };

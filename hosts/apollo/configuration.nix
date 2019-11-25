@@ -23,8 +23,6 @@ in {
 
   networking = {
     hostName = "apollo";
-    firewall.allowedTCPPorts = [ 8888 ];
-    firewall.allowedUDPPorts = [ 30000 ];
     wireguard.interfaces = {
       m0wire = {
         allowedIPsAsRoutes = false;
@@ -79,15 +77,10 @@ in {
       cleanupInterval = "15m";
       snapshotInterval = "*:00/3:00";
     };
-    printing = {
-      enable = true;
-      drivers = [ pkgs.gutenprint pkgs.hplip ];
-    };
     prometheus.exporters.node = {
       firewallFilter = "-i m0wire -p tcp -m tcp --dport 9100";
       openFirewall = true;
     };
-    autorandr.enable = true;
   };
 
   cdark_net = {

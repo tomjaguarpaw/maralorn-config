@@ -2,7 +2,7 @@
 
   xsession.initExtra = let
     cat-pw = pkgs.writeShellScriptBin "cat-ssh-pw" ''
-      pass eu/m-0/${config.m-0.hostName}/ssh
+      pass eu/m-0/${config.m-0.hostName}.m-0.eu/ssh-key
     '';
     start-agent = pkgs.writeShellScriptBin "start-ssh-agent" ''
       ${pkgs.psmisc}/bin/killall -q ssh-agent

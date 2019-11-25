@@ -1,3 +1,10 @@
+# If running from tty1 start sway
+if [ "$(tty)" = "/dev/tty1" ]; then
+   . start-ssh-agent
+   exec sway
+fi
+
+# If not in a tmux, start tmux
 if [[ -z "$TMUX" ]] {
 	session=$(tmux ls | grep -v attached | head -1 | cut -f1 -d:)
 	if [[ -n $session ]] {

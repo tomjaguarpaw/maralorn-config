@@ -8,7 +8,8 @@ in {
       description = me.name;
       isNormalUser = true;
       uid = 1000;
-      extraGroups = [ "wheel" "systemd-journal" "networkmanager" "docker" ];
+      extraGroups =
+        [ "wheel" "systemd-journal" "networkmanager" "docker" "video" ];
       openssh.authorizedKeys.keys = me.keys;
       passwordFile = me.pw-file;
     };

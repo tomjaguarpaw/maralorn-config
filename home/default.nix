@@ -155,7 +155,7 @@ in {
       EMAIL = me.mail;
       SUDO_ASKPASS = let
         print-pw = pkgs.writeShellScriptBin "print-pw"
-          "pass show eu/m-0/${config.m-0.hostName}/user/${config.home.username}";
+          "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/${config.home.username}";
       in "${print-pw}/bin/print-pw";
     };
     file.".config/nvim/coc-settings.json".text = builtins.toJSON {

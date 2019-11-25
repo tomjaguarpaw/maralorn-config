@@ -13,13 +13,14 @@ in {
     };
   };
   config = mkIf config.m-0.laptop.enable {
+
     networking = { networkmanager.enable = true; };
     i18n.consoleKeyMap = "neo";
 
     sound.enable = true;
     hardware.opengl = {
-      driSupport = true;
-      driSupport32Bit = true;
+      enable = true;
+      driSupport32Bit = true; # for gw2
     };
     hardware.pulseaudio = {
       enable = true;
@@ -29,8 +30,19 @@ in {
       };
     };
     nixpkgs.config.allowUnfree = true;
+    security.pam.services.swaylock = { };
+    programs.dconf.enable = true;
 
     services = {
+      upower.enable = true;
+      printing = {
+        enable = true;
+        drivers = [ pkgs.gutenprint pkgs.hplip ];
+      };
+      udev.extraRules = ''
+              ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness"
+        ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/backlight/%k/brightness"
+      '';
       unbound = {
         enable = true;
         extraConfig = ''
@@ -41,29 +53,6 @@ in {
             name: "dn42."
             forward-addr: 172.23.0.53
         '';
-      };
-      mpd = {
-        enable = true;
-        user = me.user;
-        group = "users";
-        network.listenAddress = "::1";
-        musicDirectory = "/home/${me.user}/data/aktuell/media/musik";
-        extraConfig = ''
-          audio_output {
-                type "pulse"
-                name "Pulseaudio"
-                server "localhost"
-          }
-        '';
-      };
-      xserver = {
-        enable = true;
-        layout = "de";
-        xkbVariant = "neo";
-        displayManager.auto = {
-          enable = true;
-          user = "maralorn";
-        };
       };
     };
   };

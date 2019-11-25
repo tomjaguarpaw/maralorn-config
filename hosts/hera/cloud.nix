@@ -16,10 +16,7 @@ let
     privateNetwork = true;
     hostBridge = "bridge";
     config = { pkgs, ... }: {
-      #disabledModules = [ "services/web-apps/nextcloud.nix" ];
-      imports = [
-        ../../system # ./nextcloud.nix
-      ];
+      imports = [ ../../system ];
 
       networking = {
         interfaces.eth0 = {

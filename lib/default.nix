@@ -34,6 +34,7 @@ rec {
     p.hlint
     p.ghcid
     p.cabal-install
+    p.classy-prelude
     p.haskell-ci
     p.shake
   ]);
