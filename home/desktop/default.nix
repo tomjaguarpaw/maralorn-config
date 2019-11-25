@@ -189,7 +189,7 @@ in {
               ${
                 lib.concatStringsSep "\n" (lib.mapAttrsToList (category:
                   { background, border, text }: ''
-                    ${category} ${background}c0 ${border} ${text}
+                    ${category} ${background}cc ${border} ${text}
                   '') barColors)
               }
           }
@@ -213,7 +213,7 @@ in {
               ${
                 lib.concatStringsSep "\n" (lib.mapAttrsToList (category:
                   { background, border, text }: ''
-                    ${category} ${background}c0 ${border} ${text}
+                    ${category} ${background}cc ${border} ${text}
                   '') barColors)
               }
           }
