@@ -1,14 +1,17 @@
 n:
 n.override (let
   pkgs = import <nixpkgs> { };
-  tabnine = (import ../../lib).sources.tabnine-vim;
+  inherit (import ../../lib) sources colors;
+  tabnine = sources.tabnine-vim;
 in {
   vimAlias = true;
   withPython3 = true;
   configure = {
     customRC = ''
       set rtp+=${tabnine}
-      ${builtins.readFile ./vimrc}'';
+      ${builtins.readFile ./vimrc}
+      hi Normal ctermbg=NONE
+    '';
     packages.myVimPackage = {
       start = builtins.attrValues {
         inherit (pkgs.vimPlugins)

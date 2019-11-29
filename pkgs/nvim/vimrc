@@ -72,7 +72,6 @@ let g:autoformat_autoindent = 0
 let g:autoformat_retab = 0
 
 colorscheme PaperColor
-hi Normal ctermbg=black
 
 " if hidden is not set, TextEdit might fail.
 set hidden

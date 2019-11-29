@@ -86,7 +86,7 @@ in {
       "prior" = "focus parent";
       "next" = "focus child";
       "shift+q" =
-        "exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'";
+        "exec ${pkgs.sway}/bin/swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'";
       "Return" = "exec ${terminal}";
       "q" = "kill";
       "space" = "exec hotkeys";
@@ -119,6 +119,7 @@ in {
           font monospace 9.5
           height 17
           strip_workspace_numbers yes
+          position top
 
           mode hide
 
@@ -158,6 +159,7 @@ in {
           }
       }
 
+      exec ${pkgs.mako}/bin/mako --background-color ${colors.background}cc --text-color ${colors.foreground} --border-size 0
       exec ${my-pkgs.my-ssh-add}/bin/my-ssh-add
       exec xrdb -load ${builtins.toFile "Xresources" "Xft.dpi: 96"}
     '';

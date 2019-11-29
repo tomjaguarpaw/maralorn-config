@@ -1,7 +1,7 @@
 rec {
   colors = {
     "foreground" = "#dddbff";
-    "background" = "#000000";
+    "background" = "#000018";
     "black" = "#000000";
     "brightBlack" = "#55508f";
     "red" = "#e34b4f";
