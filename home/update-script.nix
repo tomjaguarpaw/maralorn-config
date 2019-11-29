@@ -2,7 +2,7 @@
 let
   inherit (import ../lib) writeHaskellScript get-niv-path gcRetentionDays;
   inherit (import ../lib/update-home.nix) update-home;
-  configPath = "/home/${config.home.username}/git/nixos/config";
+  configPath = "/home/${config.home.username}/git/config";
   home-maintenance = writeHaskellScript {
     name = "home-maintenance";
     imports = [ ];

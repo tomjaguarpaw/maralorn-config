@@ -32,7 +32,7 @@ in rec {
     };
   };
 
-  start-agent = pkgs.writeShellScriptBin "start-ssh-agent" ''
+  start-ssh-agent = pkgs.writeShellScriptBin "start-ssh-agent" ''
     ${pkgs.psmisc}/bin/killall -q ssh-agent
     eval `${pkgs.openssh}/bin/ssh-agent -s`
     systemctl --user set-environment SSH_AUTH_SOCK="$SSH_AUTH_SOCK"
@@ -110,7 +110,7 @@ in rec {
 
   laptop-home-pkgs = {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
-      git -C ~/git/nixos/config pull
+      git -C ~/git/config pull
       update-home
       sudo -A update-system
       #sudo -A nix-collect-garbage --delete-older-than ${
@@ -211,11 +211,12 @@ in rec {
     fi
   '';
   desktop-pkgs = {
-    inherit urxvt terminal ate start-agent my-ssh-add;
+    inherit urxvt terminal ate;
     inherit (pkgs.gnome3) dconf;
     inherit (pkgs)
-      lm_sensors sway swaylock swayidle xwayland rofi i3status-rust waybar
-      dmenu;
+      lm_sensors sway swaylock swayidle xwayland rofi i3status-rust waybar dmenu
+      xdg_utils;
+    inherit (unstable) wofi;
 
   };
   home-pkgs = {
@@ -228,7 +229,7 @@ in rec {
   };
   accounting-pkgs = {
     jali = pkgs.callPackage ./jali { };
-    inherit (pkgs.haskellPackages) hledger hledger-ui;
+    inherit (pkgs.haskellPackages) hledger hledger-ui hledger-web;
     inherit (pkgs) ledger;
   };
   system-pkgs = core-system-pkgs // extra-system-pkgs // {

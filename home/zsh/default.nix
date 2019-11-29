@@ -10,7 +10,14 @@
         save = 100000;
         size = 100000;
       };
-      initExtra = builtins.readFile ./zshrc + ''
+      initExtra = ''
+        # If running from tty1 start sway
+        if [ "$(tty)" = "/dev/tty1" ]; then
+           . ${my-pkgs.start-ssh-agent}/bin/start-ssh-agent
+           exec ${pkgs.sway}/bin/sway
+        fi
+
+        ${builtins.readFile ./zshrc}
         GITSTATUS_DAEMON=${my-pkgs.gitstatus}/bin/gitstatusd source ${
           ./p10k.zsh
         }

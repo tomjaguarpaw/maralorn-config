@@ -1,6 +1,7 @@
 { pkgs, config, ... }:
 let
   inherit (config.m-0.private) me meWork;
+  inherit (import ../lib) writeHaskellScript;
   my-pkgs = import ../pkgs;
   inherit (my-pkgs) lorri;
 in {
