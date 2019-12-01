@@ -118,7 +118,6 @@ in {
           status_edge_padding 0
           font monospace 9.5
           height 17
-          strip_workspace_numbers yes
           position top
 
           mode hide

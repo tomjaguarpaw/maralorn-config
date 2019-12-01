@@ -26,8 +26,8 @@ in rec {
         BACKGROUND_COLOR = colors.background;
       };
       keybindings = {
-        INCREMENT_FONT = "control+minus";
-        DECREMENT_FONT = "control+plus";
+        INCREMENT_FONT = "control+plus";
+        DECREMENT_FONT = "control+minus";
       };
     };
   };

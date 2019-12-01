@@ -22,7 +22,8 @@
         liberationsansnarrow liberation_ttf libertine mononoki montserrat
         nerdfonts norwester-font opensans-ttf powerline-fonts roboto sampradaya
         source-code-pro source-sans-pro source-serif-pro tai-ahom tempora_lgc
-        terminus_font theano ubuntu_font_family hasklig;
+        terminus_font theano ubuntu_font_family hasklig font-awesome
+        material-icons b612;
     };
   };
 
