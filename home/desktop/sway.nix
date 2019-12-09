@@ -160,7 +160,7 @@ in {
 
       exec ${pkgs.mako}/bin/mako --background-color ${colors.background}cc --text-color ${colors.foreground} --border-size 0
       exec ${my-pkgs.my-ssh-add}/bin/my-ssh-add
-      exec xrdb -load ${builtins.toFile "Xresources" "Xft.dpi: 96"}
+      exec ${pkgs.xorg.xrdb}/bin/xrdb ${builtins.toFile "Xresources" "Xft.dpi: 96"}
     '';
   in bindingsConfig + modlessBindingsConfig + colorConfig + barsConfig);
 }
