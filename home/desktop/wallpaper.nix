@@ -18,7 +18,11 @@ in {
   systemd.user = {
     services.random-wallpaper = {
       Unit = { Description = "Random Wallpaper"; };
-      Service = { ExecStart = "${randomWallpaper}/bin/random-wallpaper"; };
+      Service = {
+        ExecStart = "${randomWallpaper}/bin/random-wallpaper";
+        Restart = "alyways";
+        RestartSec = "10";
+      };
       Install = { WantedBy = [ "graphical-session.target" ]; };
     };
   };
