@@ -1,5 +1,6 @@
 let
   my-lib = import ../lib;
+  unfreePkgs = import <nixpkgs> { config = { allowUnfree = true; }; };
   inherit (my-lib)
     pkgs unstable sources writeHaskellScript gcRetentionDays unBreak colors;
 in rec {
@@ -156,6 +157,7 @@ in rec {
           ]);
       runScript = "${gw2wrapper}/bin/gw2wrapper";
     };
+    discord = unfreePkgs.discord;
     cachix = import sources.cachix;
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xev xbacklight;
