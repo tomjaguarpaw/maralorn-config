@@ -137,10 +137,10 @@
         "homepage": "https://tabnine.com/",
         "owner": "zxqfl",
         "repo": "tabnine-vim",
-        "rev": "d6a66c8c88da43d08079c4cc384a064cc2304cf3",
-        "sha256": "0g636wwjvygbvlxs7jan7fy7pas2sa2cgbzyn3l0hjxpln3rzww4",
+        "rev": "240d437e6a29e8bf29720dae3993da9f42dd211e",
+        "sha256": "0m1zq811n2jskiq6dkkxnjr31cy6nc0d2yjdjj54rmndh129kw59",
         "type": "tarball",
-        "url": "https://github.com/zxqfl/tabnine-vim/archive/d6a66c8c88da43d08079c4cc384a064cc2304cf3.tar.gz",
+        "url": "https://github.com/zxqfl/tabnine-vim/archive/240d437e6a29e8bf29720dae3993da9f42dd211e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "unstable": {
