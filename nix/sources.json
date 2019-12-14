@@ -29,10 +29,10 @@
         "homepage": "https://github.com/digital-asset/ghcide",
         "owner": "hercules-ci",
         "repo": "ghcide-nix",
-        "rev": "b3acee47507c2dc2a59640fbb8e5b7f91556f370",
-        "sha256": "14q39srl7jdrnisjjqfxlwjfmpmc0jpn0j0f8d0f27qh0i0gd7i8",
+        "rev": "bde3f34356b5154750acbba3d06205f03662a72d",
+        "sha256": "07zhnnzxcxhzfxmhqcaccc5h76x9jq5pca6nlx9rn5y9x1gfpdva",
         "type": "tarball",
-        "url": "https://github.com/hercules-ci/ghcide-nix/archive/b3acee47507c2dc2a59640fbb8e5b7f91556f370.tar.gz",
+        "url": "https://github.com/hercules-ci/ghcide-nix/archive/bde3f34356b5154750acbba3d06205f03662a72d.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager": {
