@@ -33,7 +33,6 @@ in {
     name = "hera";
     host = "hera-intern:9100";
   }];
-
   services = {
     borgbackup.jobs.data = {
       doInit = false;
@@ -41,6 +40,12 @@ in {
       paths = "/home/${me.user}/data";
       repo = "borg@borg:.";
       compression = "zstd,5";
+    };
+    taskserver = {
+      enable = true;
+      fqdn = "hera.m-0.eu";
+      listenHost = "::";
+      organisations."maralorn.de".users = [ "maralorn" ];
     };
   };
 
