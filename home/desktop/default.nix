@@ -44,7 +44,7 @@ in {
     mpd = {
       enable = true;
       network.listenAddress = "::1";
-      musicDirectory = "${config.home.homeDirectory}/data/aktuell/media/musik";
+      musicDirectory = "${config.home.homeDirectory}/media/audio";
       extraConfig = ''
         audio_output {
               type "pulse"

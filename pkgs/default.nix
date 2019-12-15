@@ -180,7 +180,7 @@ in rec {
       #    teamviewer
 
       # media
-      ncpamixer pavucontrol deluge mpd gmpc calibre mpv youtubeDL
+      ncpamixer pavucontrol deluge gmpc calibre mpv youtubeDL
 
       # games
       minetest
