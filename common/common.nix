@@ -2,7 +2,10 @@
   syncthing = {
     declarativeWith = hosts: path:
       let
-        folderContent = { devices = hosts; };
+        mkFolder = name: {
+          path = "${path}/${name}";
+          devices = hosts;
+        };
         rootFolder = path;
         devices = {
           apollo = {
@@ -18,12 +21,12 @@
       in {
         devices = pkgs.lib.getAttrs hosts devices;
         folders = {
-          "${rootFolder}/science" = folderContent;
-          "${rootFolder}/documents" = folderContent;
-          "${rootFolder}/audio" = folderContent;
-          "${rootFolder}/video" = folderContent;
-          "${rootFolder}/images" = folderContent;
-          "${rootFolder}/books" = folderContent;
+          science = mkFolder "science";
+          documents = mkFolder "documents";
+          audio = mkFolder "audio";
+          video = mkFolder "video";
+          images = mkFolder "images";
+          books = mkFolder "books";
         };
       };
   };
