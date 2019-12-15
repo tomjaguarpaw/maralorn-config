@@ -3,7 +3,18 @@
 # You need pw-files for every configured user in ./secret/pw-useralias for login to work.
 # dropbearkey -t rsa -f /etc/nixos/hosts/<hostname>/secret/boot_rsa
 
-let inherit (config.m-0.private) me;
+let
+  inherit (config.m-0.private) me;
+  inherit (import ../../common/common.nix { inherit pkgs; }) syncthing;
+  devices = [ "apollo" ];
+  folderContent = { inherit devices; };
+  folders = {
+    science = folderContent;
+    documents = folderContent;
+    audio = folderContent;
+    video = folderContent;
+    images = folderContent;
+  };
 in {
 
   imports = [
@@ -35,18 +46,25 @@ in {
   }];
 
   services = {
-    borgbackup.jobs.data = {
-      doInit = false;
-      encryption.mode = "none";
-      paths = "/home/${me.user}/data";
-      repo = "borg@borg:.";
-      compression = "zstd,5";
-    };
+    #borgbackup.jobs.data = {
+    #doInit = false;
+    #encryption.mode = "none";
+    #paths = "/home/${me.user}/data";
+    #repo = "borg@borg:.";
+    #compression = "zstd,5";
+    #};
     taskserver = {
       enable = true;
       fqdn = "hera.m-0.eu";
       listenHost = "::";
       organisations."maralorn.de".users = [ "maralorn" ];
+    };
+    syncthing = {
+      enable = true;
+      group = "nginx";
+      user = "maralorn";
+      openDefaultPorts = true;
+      declarative = syncthing.declarativeWith [ "apollo" ];
     };
   };
   systemd.tmpfiles.rules = [ "Z /media 0750 maralorn nginx - -" ];
