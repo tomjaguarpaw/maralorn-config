@@ -49,6 +49,7 @@ in {
       internalInterfaces = [ "bridge" ];
     };
     nameservers = [ "213.136.95.10" "2a02:c207::1:53" "2a02:c207::2:53" ];
+    firewall.allowedTCPPorts = [ 8666 ];
     firewall.allowedUDPPorts = [ wireguard.port ];
     wireguard.interfaces = {
       m0wire = {
