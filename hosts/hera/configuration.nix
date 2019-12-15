@@ -58,7 +58,7 @@ in {
       declarative = syncthing.declarativeWith [ "apollo" ] "/media";
     };
   };
-  systemd.tmpfiles.rules = [ "Z /media 0650 maralorn nginx - -" ];
+  systemd.tmpfiles.rules = [ "Z /media - maralorn nginx - -" ];
 
   users.users.choreutes = {
     linger = true;
