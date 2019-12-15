@@ -33,6 +33,7 @@ in {
     name = "hera";
     host = "hera-intern:9100";
   }];
+
   services = {
     borgbackup.jobs.data = {
       doInit = false;
@@ -48,6 +49,7 @@ in {
       organisations."maralorn.de".users = [ "maralorn" ];
     };
   };
+  systemd.tmpfiles.rules = [ "z /media 0750 maralorn nginx - -" ];
 
   users.users.choreutes = {
     linger = true;

@@ -3,13 +3,13 @@ let
   inherit (config.m-0.private) me meWork;
   inherit (import ../lib) writeHaskellScript;
   my-pkgs = import ../pkgs;
-  inherit (my-pkgs) lorri;
 in {
 
   imports = [
     ./zsh
     ./update-script.nix
-    ./modules/taskwarrior.nix
+    ./taskwarrior.nix
+    ./taskwarrior.nix
     ./modules/force-copies.nix
     ./modules/accounting
     ./modules/rustdev.nix
@@ -178,20 +178,10 @@ in {
     };
   };
 
-  systemd.user = {
-    startServices = true;
-    services.lorri-daemon = {
-      Unit = { Description = "Run lorri daemon"; };
-      Service = {
-        Environment =
-          "RUST_BACKTRACE=1 PATH=${pkgs.nix}/bin:${pkgs.coreutils}/bin:${pkgs.gnutar}/bin:${pkgs.gzip}/bin";
-        ExecStart = "${lorri}/bin/lorri daemon";
-      };
-      Install = { WantedBy = [ "graphical-session.target" ]; };
-    };
-  };
+  systemd.user = { startServices = true; };
 
   services = {
+    lorri.enable = true;
     gpg-agent = {
       enable = true;
       defaultCacheTtl = 31536000; # 1year

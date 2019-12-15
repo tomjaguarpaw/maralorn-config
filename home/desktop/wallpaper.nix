@@ -20,7 +20,7 @@ in {
       Unit = { Description = "Random Wallpaper"; };
       Service = {
         ExecStart = "${randomWallpaper}/bin/random-wallpaper";
-        Restart = "alyways";
+        Restart = "always";
         RestartSec = "10";
       };
       Install = { WantedBy = [ "graphical-session.target" ]; };

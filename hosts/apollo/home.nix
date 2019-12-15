@@ -17,10 +17,6 @@
       enable = true;
       config = builtins.readFile secret/jaliconfig.py;
     };
-    taskwarrior = {
-      enable = true;
-      git_active = true;
-    };
     pythia.enable = true;
     unlocker = [{
       name = "hera";

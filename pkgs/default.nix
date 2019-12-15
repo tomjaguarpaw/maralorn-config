@@ -65,11 +65,6 @@ in rec {
     withPython3 = true;
   };
 
-  lorri = import sources.lorri {
-    src = sources.lorri;
-    pkgs = unstable;
-  };
-
   home-neovim = (import ./nvim) neovim;
 
   niv = (import sources.niv { }).niv;
@@ -83,7 +78,7 @@ in rec {
   };
 
   extra-system-pkgs = {
-    inherit niv lorri;
+    inherit niv;
     inherit (pkgs.gitAndTools) git-annex;
     inherit (pkgs.rxvt_unicode) terminfo;
     inherit (pkgs.pythonPackages) qrcode;
