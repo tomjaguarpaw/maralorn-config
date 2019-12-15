@@ -219,7 +219,7 @@ in rec {
   home-pkgs = {
     nixfmt = import sources.nixfmt { };
     inherit (pkgs.pythonPackages) yapf jsbeautifier;
-    inherit (pkgs) ncmpcpp shfmt htmlTidy astyle nodejs;
+    inherit (pkgs) mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs;
     inherit (my-lib) ghc;
     inherit home-neovim ghcide;
     cabal-fmt = (unBreak unstable.haskell.packages.ghc881.cabal-fmt);
