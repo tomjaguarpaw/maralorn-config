@@ -6,15 +6,6 @@
 let
   inherit (config.m-0.private) me;
   inherit (import ../../common/common.nix { inherit pkgs; }) syncthing;
-  devices = [ "apollo" ];
-  folderContent = { inherit devices; };
-  folders = {
-    science = folderContent;
-    documents = folderContent;
-    audio = folderContent;
-    video = folderContent;
-    images = folderContent;
-  };
 in {
 
   imports = [
@@ -64,7 +55,7 @@ in {
       group = "nginx";
       user = "maralorn";
       openDefaultPorts = true;
-      declarative = syncthing.declarativeWith [ "apollo" ];
+      declarative = syncthing.declarativeWith [ "apollo" ] "/media";
     };
   };
   systemd.tmpfiles.rules = [ "Z /media 0750 maralorn nginx - -" ];

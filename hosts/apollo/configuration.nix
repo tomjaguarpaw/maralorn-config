@@ -6,6 +6,7 @@ let
   inherit (config.m-0) hosts prefix private;
   inherit (private) me wireguard;
   nixos-hardware = (import ../../nix/sources.nix).nixos-hardware;
+  inherit (import ../../common/common.nix { inherit pkgs; }) syncthing;
 in {
 
   imports = [
@@ -82,6 +83,13 @@ in {
     prometheus.exporters.node = {
       firewallFilter = "-i m0wire -p tcp -m tcp --dport 9100";
       openFirewall = true;
+    };
+    syncthing = {
+      enable = true;
+      group = "users";
+      user = "maralorn";
+      openDefaultPorts = true;
+      declarative = syncthing.declarativeWith [ "hera" ] "/home/maralorn/media";
     };
   };
 
