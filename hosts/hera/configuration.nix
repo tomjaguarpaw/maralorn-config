@@ -49,7 +49,7 @@ in {
       organisations."maralorn.de".users = [ "maralorn" ];
     };
   };
-  systemd.tmpfiles.rules = [ "z /media 0750 maralorn nginx - -" ];
+  systemd.tmpfiles.rules = [ "Z /media 0750 maralorn nginx - -" ];
 
   users.users.choreutes = {
     linger = true;
