@@ -89,7 +89,11 @@ in {
       group = "users";
       user = "maralorn";
       openDefaultPorts = true;
-      declarative = syncthing.declarativeWith [ "hera" ] "/home/maralorn/media";
+      declarative = syncthing.declarativeWith [ "hera" ] "/home/maralorn/media"
+        // {
+          cert = "/etc/nixos/hosts/apollo/secret/syncthing/cert.pem";
+          key = "/etc/nixos/hosts/apollo/secret/syncthing/key.pem";
+        };
     };
   };
   boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };

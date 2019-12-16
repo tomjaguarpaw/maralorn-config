@@ -90,7 +90,10 @@ in {
       group = "nginx";
       user = "maralorn";
       openDefaultPorts = true;
-      declarative = syncthing.declarativeWith [ "apollo" ] "/media";
+      declarative = syncthing.declarativeWith [ "apollo" ] "/media" // {
+        cert = "/etc/nixos/hosts/hera/secret/syncthing/cert.pem";
+        key = "/etc/nixos/hosts/hera/secret/syncthing/key.pem";
+      };
     };
   };
   boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };
