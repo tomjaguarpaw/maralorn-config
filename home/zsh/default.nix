@@ -14,7 +14,7 @@
         # If running from tty1 start sway
         if [ "$(tty)" = "/dev/tty1" ]; then
            . ${my-pkgs.start-ssh-agent}/bin/start-ssh-agent
-           exec ${pkgs.sway}/bin/sway
+           exec ${pkgs.sway}/bin/sway >> ~/tmp/sway.log
         fi
 
         ${builtins.readFile ./zshrc}

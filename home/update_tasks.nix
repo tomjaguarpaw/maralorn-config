@@ -1,12 +1,10 @@
-{ config, lib, pkgs, ... }:
-let inherit (import ../pkgs) eventd;
-in {
+{ config, lib, pkgs, ... }: {
   systemd.user = {
     services.update_tasks = {
       Unit = { Description = "Update taskwarrior tasks"; };
       Service = {
         Type = "oneshot";
-        Environment = "PATH=${pkgs.taskwarrior}/bin:${eventd}/bin";
+        Environment = "PATH=${pkgs.taskwarrior}/bin";
         ExecStart = "${config.home.homeDirectory}/.cargo/bin/update_tasks";
       };
     };

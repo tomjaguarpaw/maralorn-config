@@ -235,6 +235,5 @@ in rec {
     inherit (my-lib) home-manager;
   };
   foreign-home-pkgs = extra-system-pkgs;
-  eventd = pkgs.callPackage ./eventd { };
   email2matrix = pkgs.callPackage ./email2matrix { };
 }

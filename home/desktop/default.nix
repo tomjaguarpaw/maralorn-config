@@ -3,14 +3,8 @@ let
   inherit (import ../../pkgs) desktop-pkgs;
   inherit (import ../../lib) colors;
 in {
-  imports = [
-    ./sway.nix
-    ./wallpaper.nix
-    ./rofi.nix
-    ./ssh-agent.nix
-    ./eventd.nix
-    ./sleep-nag.nix
-  ];
+  imports =
+    [ ./sway.nix ./wallpaper.nix ./rofi.nix ./ssh-agent.nix ./sleep-nag.nix ];
   m-0 = {
     workspaces = [
       "tasks"

@@ -1,6 +1,5 @@
 { lib, pkgs, config, ... }:
 let
-  inherit (import ../pkgs) eventd;
   battery-watch = pkgs.writeScript "battery-watch" ''
     #!${pkgs.stdenv.shell}
 
@@ -13,9 +12,9 @@ let
         if [ "$(${pkgs.acpi}/bin/acpi -a | grep -o off)" == "off" ]; then
             battery_level=`${pkgs.acpi}/bin/acpi -b | sed 's/.*[dg], //g;s/\%,.*//g'`
             if [ $battery_level -le $critical_level ]; then
-              ${eventd}/bin/eventc critical battery -d "title='Battery level is low!'" -d "message='Only $battery_level% of the charge remains.'"
+              ${pkgs.libnotify}/bin/notify-send 'Battery level is low!' "Only $battery_level% of the charge remains."
             else
-              ${eventd}/bin/eventc notification battery -d "title='Battery is discharging!'" -d "message='Only $battery_level% of the charge remains.'"
+              ${pkgs.libnotify}/bin/notify-send 'Battery level is discharging!' "Only $battery_level% of the charge remains."
               sleep 18m
             fi
         fi
