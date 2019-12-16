@@ -41,5 +41,4 @@ zstyle ':chpwd:*' recent-dirs-max 25
 if [[ $PWD == "$HOME" ]] {
 	cd "$(head -n1 ~/.chpwd-recent-dirs | sed s/\\$// | sed s/\'//g)"
 }
-
 bindkey '^R' history-incremental-pattern-search-backward

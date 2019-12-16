@@ -32,7 +32,9 @@ in {
     tmux = {
       enable = true;
       extraConfig = ''
-        set default-terminal "screen-256color"
+        set default-terminal "xterm-256color"
+        bind-key -n Home send Escape "OH"
+        bind-key -n End send Escape "OF"
         set -g set-titles on
         set -g status off
         set -g escape-time 1
