@@ -6,7 +6,7 @@
   programs.taskwarrior = let cfg = config.m-0.private.taskwarrior;
   in {
     enable = true;
-    dataLocation = "~/.task";
+    dataLocation = "${config.home.homeDirectory}/.task";
     config = {
       taskd = {
         certificate = builtins.toFile "public.cert" cfg.publicCert;
