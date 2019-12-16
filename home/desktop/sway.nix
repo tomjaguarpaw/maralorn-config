@@ -113,7 +113,7 @@ in {
       '') swayColors);
     barsConfig = ''
       bar {
-          status_command i3status-rs ${./status.toml};
+          status_command ${pkgs.i3status-rust}/bin/i3status-rs ${./status.toml};
           status_padding 0
           status_edge_padding 0
           font monospace 9.5

@@ -211,8 +211,8 @@ in rec {
     inherit urxvt terminal ate;
     inherit (pkgs.gnome3) dconf;
     inherit (pkgs)
-      lm_sensors sway swaylock swayidle xwayland rofi i3status-rust waybar dmenu
-      xdg_utils;
+      lm_sensors sway swaylock swayidle xwayland rofi dmenu
+      xdg_utils libnotify mako;
     inherit (unstable) wofi;
 
   };
