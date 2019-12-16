@@ -58,7 +58,8 @@ in {
       declarative = syncthing.declarativeWith [ "apollo" ] "/media";
     };
   };
-  systemd.tmpfiles.rules = [ "Z /media - maralorn nginx - -" ];
+  boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };
+  systemd.tmpfiles.rules = [ "Z /media 0750 maralorn nginx - -" ];
 
   users.users.choreutes = {
     linger = true;

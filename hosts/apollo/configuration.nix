@@ -92,6 +92,7 @@ in {
       declarative = syncthing.declarativeWith [ "hera" ] "/home/maralorn/media";
     };
   };
+  boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };
 
   cdark_net = {
     enable = true;
