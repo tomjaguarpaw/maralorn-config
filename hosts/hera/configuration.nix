@@ -24,7 +24,6 @@ in {
     ../../system/coturn.nix
     ../../system/serve-store.nix
     ./web.nix
-    ./borg.nix
     ./mail.nix
     ./boot.nix
     ./cloud.nix
