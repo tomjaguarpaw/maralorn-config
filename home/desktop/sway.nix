@@ -160,7 +160,11 @@ in {
 
       exec ${pkgs.mako}/bin/mako --background-color ${colors.background}cc --text-color ${colors.foreground} --border-size 0
       exec ${my-pkgs.my-ssh-add}/bin/my-ssh-add
-      exec ${pkgs.xorg.xrdb}/bin/xrdb ${builtins.toFile "Xresources" "Xft.dpi: 96"}
+      exec ${pkgs.xorg.xrdb}/bin/xrdb ${
+        builtins.toFile "Xresources" "Xft.dpi: 96"
+      }
+      exec ${pkgs.systemd}/bin/systemctl --user set-environment SWAYSOCK="$SWAYSOCK"
+      exec ${pkgs.sway}/bin/swayidle -w before-sleep '$lock'
     '';
   in bindingsConfig + modlessBindingsConfig + colorConfig + barsConfig);
 }
