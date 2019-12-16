@@ -36,14 +36,49 @@ in {
     host = "hera-intern:9100";
   }];
 
+  programs = {
+    ssh.extraConfig = ''
+      Host fb04*.mathematik.tu-darmstadt.de
+        ProxyJump brandy@gwres1.mathematik.tu-darmstadt.de
+    '';
+  };
   services = {
-    #borgbackup.jobs.data = {
-    #doInit = false;
-    #encryption.mode = "none";
-    #paths = "/home/${me.user}/data";
-    #repo = "borg@borg:.";
-    #compression = "zstd,5";
-    #};
+    borgbackup.jobs = let
+      passphrases = (import secret/secrets.nix).borgbackup;
+      defaultBackup = {
+        doInit = false;
+        compression = "zstd,5";
+        paths = [
+          "/media"
+          "/var/lib/containers/mail/var/vmail"
+          "/var/lib/containers/chor-cloud/var/lib/nextcloud/data"
+          "/var/lib/containers/chor-cloud/var/lib/postgresql"
+          "/var/lib/containers/cloud/var/lib/nextcloud/data"
+          "/var/lib/containers/cloud/var/lib/postgresql"
+          "/var/lib/matrix-synapse"
+          "/var/lib/postgresql"
+          "/var/lib/gitolite"
+          "/var/lib/taskserver"
+        ];
+      };
+    in {
+      fb04217 = defaultBackup // {
+        encryption = {
+          mode = "keyfile-blake2";
+          passphrase = passphrases.fb04217;
+        };
+        extraArgs = "--remote-path=bin/borg";
+        repo =
+          "brandy@fb04217.mathematik.tu-darmstadt.de:/media/maralorn-backup/hera-borg-repo";
+      };
+      cysec = defaultBackup // {
+        encryption = {
+          mode = "keyfile-blake2";
+          passphrase = passphrases.cysec;
+        };
+        repo = "maralorn@borg.cysec.de:/srv/cube/maralorn/hera-borg-repo";
+      };
+    };
     taskserver = {
       enable = true;
       fqdn = "hera.m-0.eu";
