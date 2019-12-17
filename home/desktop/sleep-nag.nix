@@ -20,7 +20,7 @@ let
            diff = diffUTCTime (zonedTimeToUTC time{zonedTimeToLocalTime = (zonedTimeToLocalTime time){localTimeOfDay = TimeOfDay 23 0 0}}) (zonedTimeToUTC time)
            delay = toRational diff
        if night then (do
-         notify_send ([i|title='Es ist #{formatTime defaultTimeLocale "%H:%M" time} Uhr: Zeit ins Bett zu gehen!'|]::String) "Du kannst das hier auch morgen tun!"
+         notify_send ([i|Es ist #{formatTime defaultTimeLocale "%H:%M" time} Uhr: Zeit ins Bett zu gehen!|]::String) "Du kannst das hier auch morgen tun!"
          threadDelay 600000000)
        else
          threadDelay (floor $ delay * 1000000)
