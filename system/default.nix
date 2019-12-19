@@ -30,7 +30,7 @@ in {
   environment = {
     etc = lib.mapAttrs'
       (name: value: lib.nameValuePair "nix-path/${name}" { source = value; })
-      sources // {
+      (lib.filterAttrs (name: value: name != "__functor") sources) // {
         "nix-path/nixos".source = sources.nixpkgs;
       };
   };
