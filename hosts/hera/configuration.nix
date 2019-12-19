@@ -41,21 +41,32 @@ in {
         ProxyJump brandy@gwres1.mathematik.tu-darmstadt.de
     '';
   };
+  systemd.services."pg_backup" = {
+    script = let name = "matrix-synapse";
+    in ''
+      ${pkgs.postgresql}/bin/pg_dump matrix-synapse > /var/lib/db-backup-dumps/tmp/${name}
+      ${pkgs.coreutils}/bin/mv /var/lib/db-backup-dumps/tmp/${name} /var/lib/db-backup-dumps/cur/${name}
+    '';
+    serviceConfig = {
+      User = "matrix-synapse";
+      Type = "oneshot";
+    };
+    startAt = "23:00";
+  };
   services = {
     borgbackup.jobs = let
       passphrases = (import secret/secrets.nix).borgbackup;
       defaultBackup = {
         doInit = false;
         compression = "zstd,5";
+        exclude = [ "/var/lib/containers/*/var/lib/nextcloud/data/appdata_*" ];
         paths = [
           "/media"
           "/var/lib/containers/mail/var/vmail"
           "/var/lib/containers/chor-cloud/var/lib/nextcloud/data"
-          "/var/lib/containers/chor-cloud/var/lib/postgresql"
           "/var/lib/containers/cloud/var/lib/nextcloud/data"
-          "/var/lib/containers/cloud/var/lib/postgresql"
           "/var/lib/matrix-synapse"
-          "/var/lib/postgresql"
+          "/var/lib/db-backup-dumps/cur"
           "/var/lib/gitolite"
           "/var/lib/taskserver"
         ];

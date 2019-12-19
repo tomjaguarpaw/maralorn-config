@@ -11,6 +11,10 @@ let
           hostPath = certPath;
           isReadOnly = false;
         };
+        "/var/lib/db-backup-dumps" = {
+          hostPath = "/var/lib/db-backup-dumps";
+          isReadOnly = false;
+        };
       } // extraMounts;
       timeoutStartSec = "360";
       autoStart = true;
@@ -83,6 +87,18 @@ let
         };
         systemd = {
           services = {
+            pg_backup = {
+              script = let name = "nextcloud-psql-${hostname}";
+              in ''
+                ${pkgs.postgresql}/bin/pg_dump nextcloud > /var/lib/db-backup-dumps/tmp/${name}
+                ${pkgs.coreutils}/bin/mv /var/lib/db-backup-dumps/tmp/${name} /var/lib/db-backup-dumps/cur/${name}
+              '';
+              serviceConfig = {
+                User = "nextcloud";
+                Type = "oneshot";
+              };
+              startAt = "23:00";
+            };
             "prometheus-nginx-exporter" = {
               serviceConfig = { RestartSec = 10; };
             };
