@@ -27,6 +27,7 @@
           video = mkFolder "video";
           images = mkFolder "images";
           books = mkFolder "books";
+          tmp = mkFolder "tmp";
         };
       };
   };
