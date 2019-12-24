@@ -56,16 +56,6 @@ in {
           color_nicks_in_nicklist = on
 
           [server]
-          freenode.addresses = "chat.freenode.net/6697"
-          freenode.ssl = on
-          freenode.sasl_mechanism = plain
-          freenode.sasl_username = "${config.m-0.weechat.user}"
-          freenode.sasl_password = "${config.m-0.weechat.freenode_pw}"
-          freenode.autoconnect = on
-          freenode.username = "${config.m-0.weechat.user}"
-          freenode.autojoin = "#nixos,#haskell,#reflex-frp,#ghc,#home-manager,#hledger"
-
-          [server]
           hackint.addresses = "irc.hackint.org/6697"
           hackint.ssl = on
           hackint.sasl_mechanism = plain
