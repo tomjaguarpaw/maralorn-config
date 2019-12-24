@@ -63,7 +63,7 @@ in {
           freenode.sasl_password = "${config.m-0.weechat.freenode_pw}"
           freenode.autoconnect = on
           freenode.username = "${config.m-0.weechat.user}"
-          freenode.autojoin = "#nixos,#matrix,#haskell,#reflex-frp,#ghc,#home-manager,#haskell-taskwarrior,#hledger"
+          freenode.autojoin = "#nixos,#haskell,#reflex-frp,#ghc,#home-manager,#hledger"
 
           [server]
           hackint.addresses = "irc.hackint.org/6697"
