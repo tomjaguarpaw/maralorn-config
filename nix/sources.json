@@ -5,10 +5,10 @@
         "homepage": null,
         "owner": "andir",
         "repo": "ate",
-        "rev": "8ab3b3572d78e54dceeb273225d01f3d23f1fef7",
-        "sha256": "19l2f1fi3rjp34chvnyxymfzhsxbj3ry0nnxbmfgpqnhg7cksk1f",
+        "rev": "db0be1d223d21fe91ac3620234e75300e5c0a53b",
+        "sha256": "04iafff5fms76shabga0zmbj6z2ay1mlflhvqa46jr5zayg3p88a",
         "type": "tarball",
-        "url": "https://github.com/andir/ate/archive/8ab3b3572d78e54dceeb273225d01f3d23f1fef7.tar.gz",
+        "url": "https://github.com/andir/ate/archive/db0be1d223d21fe91ac3620234e75300e5c0a53b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "cachix": {
