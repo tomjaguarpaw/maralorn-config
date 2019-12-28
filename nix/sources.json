@@ -5,10 +5,10 @@
         "homepage": null,
         "owner": "andir",
         "repo": "ate",
-        "rev": "db0be1d223d21fe91ac3620234e75300e5c0a53b",
-        "sha256": "04iafff5fms76shabga0zmbj6z2ay1mlflhvqa46jr5zayg3p88a",
+        "rev": "7318c82595d4d6a149c427f106cec7dbd02baa17",
+        "sha256": "13g80i9j3jw6cf5v8whcyw37sxf004rkzw3waa9ki61zfxl86ddv",
         "type": "tarball",
-        "url": "https://github.com/andir/ate/archive/db0be1d223d21fe91ac3620234e75300e5c0a53b.tar.gz",
+        "url": "https://github.com/andir/ate/archive/7318c82595d4d6a149c427f106cec7dbd02baa17.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "cachix": {
@@ -149,10 +149,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "a06925d8c608d7ba1d4297dc996c187c37c6b7e9",
-        "sha256": "0xy6rimd300j5bdqmzizs6l71x1n06pfimbim1952fyjk8a3q4pr",
+        "rev": "b0bbacb52134a7e731e549f4c0a7a2a39ca6b481",
+        "sha256": "15ix4spjpdm6wni28camzjsmhz0gzk3cxhpsk035952plwdxhb67",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/a06925d8c608d7ba1d4297dc996c187c37c6b7e9.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/b0bbacb52134a7e731e549f4c0a7a2a39ca6b481.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
