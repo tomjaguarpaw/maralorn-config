@@ -37,6 +37,7 @@ rec {
     p.classy-prelude
     p.haskell-ci
     p.shake
+    p.hledger-lib
   ]);
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
   writeHaskellScript = { name ? "haskell-script", bins ? [ pkgs.coreutils ]
