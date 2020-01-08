@@ -55,6 +55,7 @@ rec {
       {-# LANGUAGE QuasiQuotes #-}
       {-# LANGUAGE OverloadedStrings #-}
       {-# LANGUAGE ExtendedDefaultRules #-}
+      {-# LANGUAGE MultiWayIf #-}
 
       import Shh
       import qualified Prelude
