@@ -163,6 +163,8 @@ in rec {
 
       upower speedtest-cli
 
+      anki
+
       # communication
       signal-desktop tdesktop acpi dino mumble
 
@@ -211,8 +213,8 @@ in rec {
     inherit urxvt terminal ate;
     inherit (pkgs.gnome3) dconf;
     inherit (pkgs)
-      lm_sensors sway swaylock swayidle xwayland rofi dmenu
-      xdg_utils libnotify mako;
+      lm_sensors sway swaylock swayidle xwayland rofi dmenu xdg_utils libnotify
+      mako;
     inherit (unstable) wofi;
 
   };
