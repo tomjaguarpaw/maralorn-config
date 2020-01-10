@@ -56,6 +56,7 @@ rec {
       {-# LANGUAGE OverloadedStrings #-}
       {-# LANGUAGE ExtendedDefaultRules #-}
       {-# LANGUAGE MultiWayIf #-}
+      {-# LANGUAGE LambdaCase #-}
 
       import Shh
       import qualified Prelude
