@@ -175,8 +175,8 @@ in rec {
       meld icedtea8_web octave filezilla
 
       # tools & office
-      feh gimp imagemagick ghostscript libreoffice-fresh pandoc xournal
-      musescore handbrake evince abcde beets
+      feh gimp imagemagick libreoffice-fresh pandoc xournal musescore handbrake
+      evince abcde beets
 
       networkmanagerapplet
       #    teamviewer

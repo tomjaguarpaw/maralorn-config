@@ -9,9 +9,9 @@ with lib; {
         enable = true;
         extraPackages = tpkgs: {
           inherit (tpkgs)
-            scheme-small pdfjam latexmk collection-latexextra
+            scheme-medium pdfjam latexmk collection-latexextra
             collection-bibtexextra collection-luatex collection-mathscience
-            collection-fontsextra;
+            collection-fontsextra dvipng;
         };
       };
     };
