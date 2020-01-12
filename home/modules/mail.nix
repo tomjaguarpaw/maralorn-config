@@ -133,6 +133,9 @@ in {
           set pgp_default_key="${me.gpg}"
           set timeout = 5
 
+          set abort_noattach = ask-yes
+          set abort_noattach_regex = "(hängt an|anhäng|anhang|anbei|angehängt|attach|attached|attachments?)"
+          set abort_unmodified = ask-yes
 
           alternates ${mutt_alternates}
           set folder="${maildir}"
@@ -148,7 +151,7 @@ in {
           set include=yes
           set edit_headers=yes
           set mbox_type=Maildir
-          set spoolfile="${maildir}/hera/Inbox"
+          set spoolfile="${maildir}/hera/Archiv"
           set record="${maildir}/hera/Archiv/unsortiert"
           set postponed="${maildir}/hera/Drafts"
           set mail_check_stats=yes
