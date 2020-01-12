@@ -57,6 +57,8 @@ rec {
       {-# LANGUAGE ExtendedDefaultRules #-}
       {-# LANGUAGE MultiWayIf #-}
       {-# LANGUAGE LambdaCase #-}
+      {-# LANGUAGE ViewPatterns #-}
+      {-# LANGUAGE ScopedTypeVariables #-}
 
       import Shh
       import qualified Prelude

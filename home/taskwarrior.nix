@@ -6,16 +6,26 @@
   home.file = let
     functions = ''
       printMap :: HashMap Text (These Value Value) -> String
-      printMap = \m -> intercalate "\n" . fmap (\(k,v) -> case v of
-        This old -> [i|-#{k}: #{printValue old}|]
-        That new -> [i|+#{k}: #{printValue new}|]
-        These old new -> [i|-#{k}: #{printValue old}\n+#{k}: #{printValue new}|]) $ ClassyPrelude.filter (\(k,_) -> k `notElem` ["uuid","entry","modified"]) $ HM.toList m
+      printMap = intercalate "\n" . fmap printPair . ClassyPrelude.filter filterPairs . HM.toList
+      filterPairs = \(k,_) -> k `notElem` ["uuid","entry","modified"]
+      printPair = \(k,v) -> case v of
+        This old -> [i|#{k}: -#{printValue old}|]
+        That new -> [i|#{k}: +#{printValue new}|]
+        These old new -> printDiff k old new
+      printDiff :: Text -> Value -> Value -> String
+      printDiff k (Array before) (Array after) = let
+        old = (V.toList before) List.\\ (V.toList after)
+        new = (V.toList after) List.\\ (V.toList before)
+       in
+        [i|#{k}: #{intercalate ", " ((('-':) . printValue <$> old) ++ (('+':) . printValue <$> new))}|]
+      printDiff k old new = [i|#{k}: +#{printValue new} -#{printValue old}|]
       printValue = \case
-        String a -> a
-        Number a -> pack $ show a
-        Array a -> pack $ show a
-        Object a -> pack $ show $ HM.toList a
-        Bool a -> pack $ show a
+        String (unpack -> a) -> if | Just (d :: UTCTime) <- parseTimeM False defaultTimeLocale "%Y%m%dT%H%M%SZ" a -> show d
+                                   | otherwise -> a
+        Number a -> show a
+        Array (fmap printValue -> a) -> intercalate "\n" a
+        Object a -> show $ HM.toList a
+        Bool a -> show a
         Null -> "null"
     '';
     inherit (import ../lib) writeHaskellScript unstable;
@@ -31,6 +41,9 @@
       "Control.Monad"
       "Data.These"
       "Data.HashMap.Strict as HM"
+      "Data.Time"
+      "qualified Data.Vector as V"
+      "qualified Data.List as List"
     ];
     on-modify = writeHaskellScript {
       inherit imports libraries;
