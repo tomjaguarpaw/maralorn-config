@@ -65,7 +65,7 @@
             pure (description, printMap diff)
        Control.Monad.forM_ description $ \(d,b) -> do
          client <- connectSession
-         notify client blankNote { summary = [i|Modified task #{d}|], body = Just $ Text b }
+         notify client blankNote { summary = [i|Modified task #{d}|], body = Just $ Text b, expiry = Milliseconds 15000 }
        hPut stdout input2
     '';
     on-add = writeHaskellScript {
