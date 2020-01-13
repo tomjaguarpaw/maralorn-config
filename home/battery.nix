@@ -19,25 +19,30 @@ let
       "Data.Maybe"
     ];
   } ''
-    criticalLevel = 20 -- percent
-    minutes = 60 * 1000 * 1000 -- threadDelay takes microseconds
+    moderateLevel = 50 -- percent
+    lowLevel = 20 -- percent
+    criticalLevel = 8 -- percent
+    minute = 60 * 1000 * 1000 -- threadDelay takes microseconds
 
     main = do
      client <- connectSession
-     let loop = \handleMay -> do
-          batteryStateText <- decodeUtf8 <$> (acpi "-a" |> captureTrim)
-          batteryLevelText <- decodeUtf8 <$> (acpi "-b" |> captureTrim)
-          chargerOnline <- maybe (fail "Couldn‘t get charging state") pure $ parseMaybe onlineParser batteryStateText
-          batteryLevel <- maybe (fail "Couldn‘t get battery level") pure $ parseMaybe levelParser batteryLevelText
-          let NextAction { note = noteMay , delay = delay } = chooseAction chargerOnline batteryLevel
+     let loop = \lastState handleMay -> do
+          newState <- getState
+          let noteMay = chooseAction lastState newState
           handle <- if | Just note <- noteMay -> Just <$> maybe (notify client note) (flip (replace client) note) handleMay
                        | otherwise -> pure handleMay
-          echo ([i|Waiting for #{delay} minutes until next message.|] :: String)
-          threadDelay $ delay * minutes
-          loop handle
-     loop Nothing
+          threadDelay $ minute `div` 4
+          loop newState handle
+     loop (BatState True 100) Nothing
 
-    data NextAction = NextAction { note :: Maybe Note, delay :: Int }
+    data BatState = BatState { charging :: Bool, level :: Int }
+
+    getState = do
+      batteryStateText <- decodeUtf8 <$> (acpi "-a" |> captureTrim)
+      batteryLevelText <- decodeUtf8 <$> (acpi "-b" |> captureTrim)
+      chargerOnline <- maybe (fail "Couldn‘t get charging state") pure $ parseMaybe onlineParser batteryStateText
+      batteryLevel <- maybe (fail "Couldn‘t get battery level") pure $ parseMaybe levelParser batteryLevelText
+      pure $ BatState chargerOnline batteryLevel
 
     type Parser = Parsec Text LT.Text
 
@@ -47,14 +52,17 @@ let
     levelParser :: Parser Int
     levelParser = (maybe (fail "No Number found") pure . listToMaybe . rights) =<< sepCap (decimal <* "%")
 
-    chooseAction :: Bool -> Int -> NextAction
-    chooseAction chargerOnline batteryLevel
-      | chargerOnline = NextAction Nothing 1
-      | batteryLevel <= criticalLevel = mkMsg $ myNote {summary = "Battery is low!"}
-      | otherwise = mkMsg $ myNote {summary = "Battery is discharging!"}
+    chooseAction :: BatState -> BatState -> Maybe Note
+    chooseAction (BatState wasCharging lastLevel) (BatState isCharging currentLevel)
+      | wasCharging && isCharging = Nothing
+      | wasCharging && not isCharging = Just $ myNote{summary = "Charger disconnected." }
+      | not wasCharging && isCharging = Just $ myNote{summary = "Charger connected.", expiry = Milliseconds 5000 }
+      | currentLevel <= criticalLevel = Just $ myNote{summary = "Battery is very low!" }
+      | currentLevel <= lowLevel && currentLevel < lastLevel = Just $ myNote{summary = "Battery is low!"}
+      | ((currentLevel `mod` 5 == 0 && currentLevel <= moderateLevel) || (currentLevel `mod` 10 == 0)) && currentLevel < lastLevel = Just $ myNote{summary = "Battery is discharging."}
+      | otherwise = Nothing
      where
-      mkMsg = flip NextAction (max 1 (batteryLevel `div` 5)) . Just
-      myNote = blankNote { body = Just $ Text [i|Only #{batteryLevel}% remaining.|]}
+      myNote = blankNote { body = Just $ Text [i|#{currentLevel}% remaining.|]}
   '';
 in {
 
