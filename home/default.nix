@@ -9,7 +9,6 @@ in {
     ./zsh
     ./update-script.nix
     ./taskwarrior.nix
-    ./taskwarrior.nix
     ./modules/force-copies.nix
     ./modules/accounting
     ./modules/rustdev.nix
@@ -17,7 +16,6 @@ in {
     ./modules/mail.nix
     ./modules/home-options.nix
     ./modules/unlock.nix
-    ./modules/weechat
     ./modules/bugwarrior.nix
     ./modules/pythia.nix
     ../common
