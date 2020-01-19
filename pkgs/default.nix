@@ -177,7 +177,6 @@ in rec {
       feh gimp imagemagick libreoffice-fresh pandoc xournal musescore handbrake
       evince abcde beets
 
-      networkmanagerapplet
       #    teamviewer
 
       # media
