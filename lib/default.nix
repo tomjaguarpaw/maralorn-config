@@ -67,7 +67,7 @@ rec {
       import qualified Data.ByteString as BS
       import qualified Data.Text as Text
       import System.Environment (getArgs)
-      import Control.Exception (bracket)
+      import Control.Exception (bracket, try)
       import Data.String.Interpolate (i)
       ${builtins.concatStringsSep "\n" (map (x: "import ${x}") imports)}
 

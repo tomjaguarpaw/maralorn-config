@@ -36,6 +36,7 @@
     ];
     imports = [
       "DBus.Notify"
+      "DBus.Client (clientErrorMessage)"
       "System.IO"
       "Data.Aeson"
       "Control.Monad"
@@ -64,8 +65,11 @@
             String description <- HM.lookup "description" task2
             pure (description, printMap diff)
        Control.Monad.forM_ description $ \(d,b) -> do
-         client <- connectSession
-         notify client blankNote { summary = [i|Modified task #{d}|], body = Just $ Text b, expiry = Milliseconds 15000 }
+         client <- try connectSession
+         either
+           (BS.hPut stderr . encodeUtf8 . clientErrorMessage)
+           (\c -> void $ notify c blankNote { summary = [i|Modified task #{d}|], body = Just $ Text b, expiry = Milliseconds 15000 })
+           client
        BS.hPut stdout input2
     '';
     on-add = writeHaskellScript {
@@ -78,9 +82,12 @@
        let description = do
             Object task <- decode $ toLazy input :: Maybe Value
             pure . printMap . fmap That $ task
-       Control.Monad.forM_ description $ \d -> do
-         client <- connectSession
-         notify client blankNote { summary = "New Task", body = Just $ Text d, expiry = Milliseconds 15000 }
+       whenJust description $ \d -> do
+         client <- try connectSession
+         either
+           (BS.hPut stderr . encodeUtf8 . clientErrorMessage)
+           (\c -> void $ notify c blankNote { summary = "New Task", body = Just $ Text d, expiry = Milliseconds 15000 })
+           client
        BS.hPut stdout input
     '';
   in {
@@ -91,6 +98,22 @@
     "modify-notification" = {
       target = ".task/hooks/on-modify.notification";
       source = "${on-modify}/bin/on-modify";
+    };
+    "add-kassandra-notification" = {
+      target = ".task/hooks/on-add.kassandra-notification";
+      executable = true;
+      text = ''
+        #!${pkgs.bash}/bin/bash
+        tee >(nc 127.0.0.1 6545)
+      '';
+    };
+    "modify-kassandra-notification" = {
+      target = ".task/hooks/on-modify.kassandra-notification";
+      executable = true;
+      text = ''
+        #!${pkgs.bash}/bin/bash
+        tail -n 1 | tee >(nc 127.0.0.1 6545)
+      '';
     };
   };
   programs.taskwarrior = let cfg = config.m-0.private.taskwarrior;
