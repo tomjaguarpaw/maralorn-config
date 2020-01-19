@@ -67,7 +67,7 @@
        Control.Monad.forM_ description $ \(d,b) -> do
          client <- try connectSession
          either
-           (BS.hPut stderr . encodeUtf8 . clientErrorMessage)
+           (BS.hPut stderr . encodeUtf8 . (++ "\n") . clientErrorMessage)
            (\c -> void $ notify c blankNote { summary = [i|Modified task #{d}|], body = Just $ Text b, expiry = Milliseconds 15000 })
            client
        BS.hPut stdout input2
