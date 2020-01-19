@@ -104,7 +104,7 @@
       executable = true;
       text = ''
         #!${pkgs.bash}/bin/bash
-        tee >(nc 127.0.0.1 6545)
+        ${pkgs.coreutils}/bin/tee >(${pkgs.netcat}/bin/nc 127.0.0.1 6545)
       '';
     };
     "modify-kassandra-notification" = {
@@ -112,7 +112,7 @@
       executable = true;
       text = ''
         #!${pkgs.bash}/bin/bash
-        tail -n 1 | tee >(nc 127.0.0.1 6545)
+        ${pkgs.coreutils}/bin/tail -n 1 | ${pkgs.coreutils}/bin/tee >(${pkgs.netcat}/bin/nc 127.0.0.1 6545)
       '';
     };
   };
