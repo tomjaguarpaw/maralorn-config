@@ -11,11 +11,11 @@ in rec {
     getNivPath name = get_niv_path "${configPath}/nix/sources.nix" name |> captureTrim
 
     getNivAssign name = tag <$> getNivPath name
-        where tag str = ["-I" :: String, [i|#{name :: String}=#{str :: LBS.ByteString}|]]
+        where tag str = ["-I" :: String, [i|#{name :: String}=#{str :: LByteString}|]]
 
     main = do
         paths <- fmap concat . mapM getNivAssign $ ["nixpkgs", "unstable", "home-manager"]
         args <- getArgs
-        nixos_rebuild (paths ++ ["switch"] ++ fmap unpack args)
+        nixos_rebuild (paths ++ ["switch"] ++ fmap toString args)
   '';
 }

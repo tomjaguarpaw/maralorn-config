@@ -9,11 +9,11 @@ in {
       getNivPath name = get_niv_path "${configPath}/nix/sources.nix" name |> captureTrim
 
       getNivAssign name = tag <$> getNivPath name
-          where tag str = ["-I", [i|#{name :: String}=#{str :: LBS.ByteString}|]] :: [String]
+          where tag str = ["-I", [i|#{name :: String}=#{str :: LByteString}|]] :: [String]
 
       main = do
         args <- getArgs
         paths <- concat <$> mapM getNivAssign ["home-manager", "nixpkgs", "unstable"]
-        home_manager $ paths ++ ["switch"] ++ fmap unpack args
+        home_manager $ paths ++ ["switch"] ++ fmap toString args
     '';
 }

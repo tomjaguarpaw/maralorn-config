@@ -47,7 +47,7 @@ rec {
       libraries = libraries ++ [
         shh
         pkgs.haskellPackages.string-interpolate
-        pkgs.haskellPackages.classy-prelude
+        pkgs.haskellPackages.relude
       ];
     } ''
       {-# LANGUAGE DeriveDataTypeable #-}
@@ -59,19 +59,16 @@ rec {
       {-# LANGUAGE LambdaCase #-}
       {-# LANGUAGE ViewPatterns #-}
       {-# LANGUAGE ScopedTypeVariables #-}
+      {-# LANGUAGE NoImplicitPrelude #-}
 
       import Shh
-      import qualified Prelude
-      import ClassyPrelude
-      import Data.String.Interpolate (i)
+      import Relude
+      import qualified Relude.Unsafe as Unsafe
       import qualified Data.ByteString as BS
-      import qualified Data.ByteString.Char8 as BSC
-      import qualified Data.ByteString.Lazy as LBS
-      import qualified Data.ByteString.Lazy.Char8 as LBSC
-      import qualified Data.Text as T
-      import qualified Data.Text.Lazy as LT
-      import qualified Data.Text.Encoding as TE
-      import qualified Data.Text.Lazy.Encoding as LTE
+      import qualified Data.Text as Text
+      import System.Environment (getArgs)
+      import Control.Exception (bracket)
+      import Data.String.Interpolate (i)
       ${builtins.concatStringsSep "\n" (map (x: "import ${x}") imports)}
 
       -- Load binaries from Nix packages. The dependencies will be captured
@@ -89,7 +86,7 @@ rec {
     libraries = [ pkgs.haskellPackages.cmdargs pkgs.haskellPackages.text ];
   } ''
 
-    trimQuotation = pureProc $ LTE.encodeUtf8 . LT.dropAround ('"' ==) . LTE.decodeUtf8 . trim
+    trimQuotation = pureProc $ encodeUtf8 . Text.dropAround ('"' ==) . decodeUtf8 . trim
 
     main = do
           [sources, channel] <- getArgs

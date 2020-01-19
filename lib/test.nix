@@ -7,11 +7,11 @@ in rec {
     getNivPath dir name = get_niv_path ([i|#{dir :: String}/nix/sources.nix|] :: String) name |> captureTrim
 
     getNivAssign dir name = process <$> getNivPath dir name
-        where process str = ["-I" :: String, [i|#{name :: String}=#{str :: LBS.ByteString}|]]
+        where process str = ["-I" :: String, [i|#{name :: String}=#{str :: LByteString}|]]
 
     main = do
       (configDir:hostname:args) <- getArgs
-      paths <- concat <$> mapM (getNivAssign $ unpack configDir) ["nixpkgs", "unstable", "home-manager"]
+      paths <- concat <$> mapM (getNivAssign $ toString configDir) ["nixpkgs", "unstable", "home-manager"]
       putStrLn [i|Trying to build ${name} config for #{hostname}|]
       ${commandline}
   '';
@@ -21,14 +21,14 @@ in rec {
     name = "test-system-config";
     inherit bins;
   } (haskellBody "system" ''
-    nix $ ["build", "-f", "<nixpkgs/nixos>", "system"] ++ paths ++ ["-I", [i|nixos-config=#{configDir}/hosts/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ fmap unpack args
+    nix $ ["build", "-f", "<nixpkgs/nixos>", "system"] ++ paths ++ ["-I", [i|nixos-config=#{configDir}/hosts/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ fmap toString args
   '');
 
   test-home-config = writeHaskellScript {
     name = "test-home-config";
     inherit bins;
   } (haskellBody "home" ''
-    nix $ ["build", "-f", "<home-manager/home-manager/home-manager.nix>"] ++ paths ++ ["--argstr", "confPath", [i|#{configDir}/hosts/#{hostname}/home.nix|], "--argstr", "confAttr", "", "--out-link", [i|result-home-manager-#{hostname}|], "activationPackage"] ++ fmap unpack args
+    nix $ ["build", "-f", "<home-manager/home-manager/home-manager.nix>"] ++ paths ++ ["--argstr", "confPath", [i|#{configDir}/hosts/#{hostname}/home.nix|], "--argstr", "confAttr", "", "--out-link", [i|result-home-manager-#{hostname}|], "activationPackage"] ++ fmap toString args
   '');
 
   repoSrc = "git@hera.m-0.eu:nixos-config";
@@ -39,19 +39,17 @@ in rec {
   test-config = writeHaskellScript {
     name = "test-config";
     bins = [ test-system-config test-home-config pkgs.git niv pkgs.git-crypt ];
-    imports = [
-      "System.Directory (withCurrentDirectory)"
-      "Control.Monad (when, ap)"
-      "Data.Maybe (listToMaybe)"
-    ];
+    imports = [ "System.Directory (withCurrentDirectory)" ];
   } ''
     checkout :: IO FilePath
-    checkout = (mktemp "-d" |> captureTrim)
-      >>= ((ap (<$) $ git "clone" "${repoSrc}") . LBSC.unpack)
+    checkout = do
+      (decodeUtf8 -> dir) <-  mktemp "-d" |> captureTrim
+      git "clone" "${repoSrc}" dir
+      pure dir
 
     main = do
       path <- pwd |> captureTrim
-      bump <- (maybe False (== pack "bump") . listToMaybe) <$> getArgs
+      bump <- (maybe False (== "bump") . listToMaybe) <$> getArgs
       bracket checkout (rm "-rf") $ \dir -> do
         withCurrentDirectory dir $ do
           mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ${

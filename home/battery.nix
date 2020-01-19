@@ -44,7 +44,7 @@ let
       batteryLevel <- maybe (fail "Couldn‘t get battery level") pure $ parseMaybe levelParser batteryLevelText
       pure $ BatState chargerOnline batteryLevel
 
-    type Parser = Parsec Text LT.Text
+    type Parser = Parsec Text LText
 
     onlineParser :: Parser Bool
     onlineParser = not . null . rights <$> sepCap (string "on-line")

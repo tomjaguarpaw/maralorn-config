@@ -89,15 +89,14 @@ in rec {
   gw2wrapper = writeHaskellScript {
     name = "gw2wrapper";
     bins = [ pkgs.procps ];
-    imports =
-      [ "System.Directory (withCurrentDirectory)" "Control.Monad (when)" ];
+    imports = [ "System.Directory (withCurrentDirectory)" ];
 
   } ''
     waitForExit = do
       sleep "5s"
       processes <- ps "aux" |> captureTrim
       when
-        (BSC.isInfixOf (BSC.pack "GW2.exe") (LBSC.toStrict processes))
+        (BS.isInfixOf (encodeUtf8 "GW2.exe") (toStrict processes))
         waitForExit
     main = do
       withCurrentDirectory "/home/maralorn/GW2" $ exe "./play.sh"
