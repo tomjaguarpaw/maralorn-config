@@ -80,7 +80,7 @@
             pure . printMap . fmap That $ task
        Control.Monad.forM_ description $ \d -> do
          client <- connectSession
-         notify client blankNote { summary = "New Task", body = Just $ Text d }
+         notify client blankNote { summary = "New Task", body = Just $ Text d, expiry = Milliseconds 15000 }
        LBS.hPut stdout input
     '';
   in {

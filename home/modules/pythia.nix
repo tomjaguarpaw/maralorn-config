@@ -3,7 +3,7 @@ with lib; {
 
   options.m-0.pythia.enable = mkEnableOption "Pythia";
   config = mkIf config.m-0.pythia.enable (let
-    pythia-path = "${config.home.homeDirectory}/data/aktuell/pythia";
+    pythia-path = "${config.home.homeDirectory}/documents/pythia";
     pythia = pkgs.writeShellScriptBin "pythia" ''
       datei=${pythia-path}/$(date +%Y-%m-%d)
       touch $datei
@@ -105,9 +105,9 @@ with lib; {
       ${hold}
       exit
           '';
-    in {
+  in {
 
-      home.packages = with pkgs; [ pythia meditate ];
-    });
+    home.packages = with pkgs; [ pythia meditate ];
+  });
 
 }
