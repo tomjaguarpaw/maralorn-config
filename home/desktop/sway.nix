@@ -57,6 +57,7 @@ in {
     };
     modlessBindings = {
       "ctrl+escape" = "exec $lock";
+      "ctrl+space" = "exec ${pkgs.mako}/bin/makoctl dismiss";
       "XF86AudioMute" = "exec pactl set-sink-mute '@DEFAULT_SINK@' toggle";
       "XF86AudioLowerVolume" =
         "exec pactl set-sink-volume '@DEFAULT_SINK@' -5%";
