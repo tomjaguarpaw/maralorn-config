@@ -19,8 +19,10 @@ let
 
   } ''
     checkout :: String -> IO FilePath
-    checkout pwd = (mktemp "-d" |> captureTrim)
-      >>= ((ap (<$) $ git "clone" pwd) . LBSC.unpack)
+    checkout path = do
+      (decodeUtf8 -> dir) <-  mktemp "-d" |> captureTrim
+      git "clone" path dir
+      pure dir
 
     main = do
       mirror <- lookupEnv "GL_OPTION_MIRROR"
@@ -29,9 +31,9 @@ let
         git "push" "--all" "-f" mirror
       deploy <- lookupEnv "GL_OPTION_WEB_DEPLOY"
       for_ deploy $ \deploy -> do
-        path <- pwd |> captureTrim
+        (decodeUtf8 -> path) <- pwd |> captureTrim
         echo ([i|Deploying build to /var/www/#{deploy}|] :: String)
-        bracket (checkout $ LBSC.unpack path)(rm "-rf") $ \dir -> withCurrentDirectory dir $ nix "build" "-o" ([i|/var/www/#{deploy}|] :: String)
+        bracket (checkout path) (rm "-rf") $ \dir -> withCurrentDirectory dir $ nix "build" "-o" ([i|/var/www/#{deploy}|] :: String)
         echo "Done"
       test <- lookupEnv "GL_OPTION_TEST"
       for_ test $ \_ -> do
