@@ -45,7 +45,7 @@ in {
         chat_nick_colors = "cyan,magenta,green,brown,lightblue,default,lightcyan,lightmagenta,lightgreen,blue,31,35,38,40,49,63,70,80,92,99,112,126,130,138,142,148,160,162,167,169,174,176,178,184,186,210,212,215,228"
 
         [filter]
-        irc_smart = on;*;irc_smart_filter;*
+        smart = on;*;irc_smart_filter,matrix_smart_filter;*
       '';
     };
     logger = {
@@ -100,16 +100,30 @@ in {
     };
   };
 
-  systemd.user.services = {
-    weechat = {
-      Unit = { Description = "Weechat Tmux Session"; };
-      Service = {
-        Type = "forking";
-        ExecStart =
-          "${pkgs.tmux}/bin/tmux -L weechat -2 new-session -d -s irc -n weechat '${weechat}/bin/weechat'";
-        Restart = "always";
+  systemd.user = {
+    timers.logfeed = {
+      Timer = { OnCalendar = "19:55"; };
+      Install = { WantedBy = [ "timers.target" ]; };
+    };
+    services = {
+      logfeed = {
+        Unit = { Description = "Logfeed"; };
+        Service = {
+          ExecStart =
+            "${config.home.homeDirectory}/.cabal/bin/logfeed /var/www/rss/chats.xml";
+          Type = "oneshot";
+        };
       };
-      Install = { WantedBy = [ "default.target" ]; };
+      weechat = {
+        Unit = { Description = "Weechat Tmux Session"; };
+        Service = {
+          Type = "forking";
+          ExecStart =
+            "${pkgs.tmux}/bin/tmux -L weechat -2 new-session -d -s irc -n weechat '${weechat}/bin/weechat'";
+          Restart = "always";
+        };
+        Install = { WantedBy = [ "default.target" ]; };
+      };
     };
   };
 

@@ -1,12 +1,7 @@
 { config, ... }:
 let certPath = "/var/lib/acme/hera.m-0.eu";
 in {
-  networking.firewall = {
-    allowedTCPPorts = [ 25 143 587 993 ];
-    extraCommands = ''
-      iptables -A nixos-fw  -s 10.0.0.0/24 -p tcp -m tcp --dport 8842 -j nixos-fw-accept
-    '';
-  };
+  networking.firewall = { allowedTCPPorts = [ 25 143 587 993 ]; };
 
   m-0.monitoring = [
     {
@@ -24,7 +19,10 @@ in {
   ];
 
   containers.mail = {
-    bindMounts = { "${certPath}" = { hostPath = certPath; }; };
+    bindMounts = {
+      "${certPath}" = { hostPath = certPath; };
+      "/var/www/rss" = { hostPath = "/var/www/rss"; };
+    };
     autoStart = true;
     config = { pkgs, lib, ... }: {
       imports =
@@ -47,19 +45,11 @@ in {
               sha256 = "0a4j4xajn2yysgcb17jmb6ak148kk0kwf7khml7dbnh7807fv9b6";
             };
           in ''
-            ${pkgs.python}/bin/python ${atomail}/atomail.py --title "Readlater-E-Mails" --uri="http://hera-intern-v4:8842/rss.xml" /var/www/rss.xml --mode=maildir --file "/var/vmail/maralorn.de/malte.brandy/.Move.readlater/" --max-items=100
+            ${pkgs.python}/bin/python ${atomail}/atomail.py --title "Readlater-E-Mails" --uri="http://hera-intern-v4:8842/rss.xml" /var/www/rss/mails.xml --mode=maildir --file "/var/vmail/maralorn.de/malte.brandy/.Move.readlater/" --max-items=100
             ${pkgs.rsync}/bin/rsync -a /var/vmail/maralorn.de/malte.brandy/.Move.readlater/cur/ /var/vmail/maralorn.de/malte.brandy/.Archiv.unsortiert/cur --remove-source-files
           '';
           startAt = "19:58:00";
           serviceConfig.Type = "oneshot";
-        };
-        rss-server = {
-          preStart = "mkdir -p /var/www";
-          serviceConfig = {
-            WorkingDirectory = "/var/www";
-            ExecStart = "${pkgs.python3}/bin/python -m http.server 8842";
-          };
-          wantedBy = [ "multi-user.target" ];
         };
       };
       services.postfix = {
@@ -93,5 +83,4 @@ in {
       };
     };
   };
-
 }
