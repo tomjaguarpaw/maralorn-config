@@ -65,10 +65,10 @@
         "homepage": "",
         "owner": "target",
         "repo": "lorri",
-        "rev": "03f10395943449b1fc5026d3386ab8c94c520ee3",
-        "sha256": "0fcl79ndaziwd8d74mk1lsijz34p2inn64b4b4am3wsyk184brzq",
+        "rev": "73665b9644ea96427ae6f881a52cf8b10d129f5d",
+        "sha256": "13h8h2f5r9ly9ihnyxgnh1jd77p2w9qiikw7xdl6dkzc71v1dnl8",
         "type": "tarball",
-        "url": "https://github.com/target/lorri/archive/03f10395943449b1fc5026d3386ab8c94c520ee3.tar.gz",
+        "url": "https://github.com/target/lorri/archive/73665b9644ea96427ae6f881a52cf8b10d129f5d.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {
@@ -125,10 +125,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "d14cea0dec2dd59e19457180feef315054ba8c57",
-        "sha256": "1jmfj8az48ifli39ww1yxhi489pfkcnb5zmiv6x117v37zbv3mr5",
+        "rev": "5d6da42cf793cd194cf31bca7193926e7752e51e",
+        "sha256": "1hxghqs31f75rc2p059zfvzkcg41jmhqhpsad42cm2rqf5vj4khz",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/d14cea0dec2dd59e19457180feef315054ba8c57.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/5d6da42cf793cd194cf31bca7193926e7752e51e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "tabnine-vim": {
@@ -149,10 +149,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "bea1a232c615aba177e0ef56600d5f847ad3bbd9",
-        "sha256": "1zakg4qrby56j28p9jifsplj3xbda2pmg1cw2zfr1y8wcab61p25",
+        "rev": "f37db11fa7b760a650ea00cfb63ec6584c379c6e",
+        "sha256": "148ryybc4m593kh9sah4gxq8jp41459xczlcx4k1lbdjykiqggb6",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/bea1a232c615aba177e0ef56600d5f847ad3bbd9.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/f37db11fa7b760a650ea00cfb63ec6584c379c6e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
