@@ -28,20 +28,20 @@ rec {
       doCheck = false;
     });
   shh = unBreak pkgs.haskellPackages.shh;
-  ghc = pkgs.ghc.withPackages (p: [
+  ghc = unstable.ghc.withPackages (p: [
     (unBreak p.shh)
     p.brittany
     p.hlint
     p.ghcid
     p.cabal-install
-    p.classy-prelude
-    p.haskell-ci
+    p.relude
     p.shake
     p.hledger-lib
+    p.releaser
   ]);
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
-  writeHaskellScript = { name ? "haskell-script", bins ? [ pkgs.coreutils ]
-    , libraries ? [ ], imports ? [ ] }:
+  writeHaskellScript =
+    { name ? "haskell-script", bins ? [ ], libraries ? [ ], imports ? [ ] }:
     code:
     pkgs.writers.writeHaskellBin name {
       libraries = libraries ++ [
