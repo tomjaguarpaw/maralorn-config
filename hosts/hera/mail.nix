@@ -21,7 +21,10 @@ in {
   containers.mail = {
     bindMounts = {
       "${certPath}" = { hostPath = certPath; };
-      "/var/www/rss" = { hostPath = "/var/www/rss"; };
+      "/var/www/rss" = {
+        hostPath = "/var/www/rss";
+        isReadOnly = false;
+      };
     };
     autoStart = true;
     config = { pkgs, lib, ... }: {
@@ -45,7 +48,7 @@ in {
               sha256 = "0a4j4xajn2yysgcb17jmb6ak148kk0kwf7khml7dbnh7807fv9b6";
             };
           in ''
-            ${pkgs.python}/bin/python ${atomail}/atomail.py --title "Readlater-E-Mails" --uri="http://hera-intern-v4:8842/rss.xml" /var/www/rss/mails.xml --mode=maildir --file "/var/vmail/maralorn.de/malte.brandy/.Move.readlater/" --max-items=100
+            ${pkgs.python}/bin/python ${atomail}/atomail.py --title "Readlater-E-Mails" --uri="http://localhost:8842/mails.xml" /var/www/rss/mails.xml --mode=maildir --file "/var/vmail/maralorn.de/malte.brandy/.Move.readlater/" --max-items=500 --max-time=2880
             ${pkgs.rsync}/bin/rsync -a /var/vmail/maralorn.de/malte.brandy/.Move.readlater/cur/ /var/vmail/maralorn.de/malte.brandy/.Archiv.unsortiert/cur --remove-source-files
           '';
           startAt = "19:58:00";
