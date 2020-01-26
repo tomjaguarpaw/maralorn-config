@@ -115,7 +115,6 @@ main = do
   matrixFiles <- getFiles "%Y/matrix:*/*.!*/%Y-%m-%d-*.weechatlog" matrixParser
   ircFiles    <- getFiles "%Y/irc:*/#*/%Y-%m-%d.weechatlog" ircParser
   logs        <- mapM readLogFiles $ mapMaybe nonEmpty $ matrixFiles <> ircFiles
-  --(flip mapM_) logs $ \(Log { logchannel, logserver, messages }) -> do
   let entries = logs & mapMaybe (logToFeedEntry now)
       feed    = nullFeed [i|weechat-logs-#{timestamp now}|]
                          (TextString "Weechat Logs")
@@ -166,7 +165,6 @@ readLogFile = \LogFile { channel, server } contents -> Log
                  <$> contents
   }
 
-
 parseWeechatLine :: Parser WeechatLine
 parseWeechatLine = do
   date <- parseDate
@@ -200,9 +198,9 @@ printHTML log =
     "<i style='color: grey'>"
       <> time
       <> " "
-      <> nick
+      <> printNick
       <> "</i> "
-      <> (escape $ wlMsg curRow)
+      <> message
       <> "<br>"
    where
     prevTime = Text.take 5 $ wlTime prevRow
@@ -214,5 +212,12 @@ printHTML log =
     nick | specialNick curNick = curNick
          | prevNick == curNick = ""
          | otherwise           = curNick
+    printNick = Text.dropWhile (`elem` "&@") nick
+    msg       = wlMsg curRow
+    message
+      | not (Text.null msg) && Text.head msg == '>'
+      = "|<i style='color: grey'>" <> escape (Text.tail msg) <> "</i>"
+      | otherwise
+      = escape msg
   specialNick = (`elem` ["-->", "<--", "--", "*"])
   escape      = replace "<" "&lt;" . replace ">" "&gt;"
