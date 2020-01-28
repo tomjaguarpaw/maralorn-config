@@ -125,10 +125,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "57c35c63004748624516421c71cee66b9270debc",
-        "sha256": "0h8iqwfphmbfw4qb28223vy84gkscqrqxcl2ga5gwzr3zjdvcvpq",
+        "rev": "274e095f761b2da76a376d105c41591739350b14",
+        "sha256": "0iw0k1a28ff7qwh3pi7kzlgrgjr61q46qnaryv25m78iig2lkp1y",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/57c35c63004748624516421c71cee66b9270debc.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/274e095f761b2da76a376d105c41591739350b14.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "tabnine-vim": {
@@ -149,10 +149,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "73a59af35bb72e74c928515aeb6ed6d3f03c9034",
-        "sha256": "13slnf7j7l3y9wydsq2ayq8zwcj8m5m133xvlvlcil22b0iyg6rf",
+        "rev": "e59dcf8ccec439f54dc52ffd5832610fc3f6c9c2",
+        "sha256": "1ky79vczvf2sv6gk234i2m4vsxz1wpkh69gm8c7s1qwyawar9vjq",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/73a59af35bb72e74c928515aeb6ed6d3f03c9034.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/e59dcf8ccec439f54dc52ffd5832610fc3f6c9c2.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
