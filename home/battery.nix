@@ -73,7 +73,7 @@ in {
         ExecStart = "${battery-watch}/bin/battery-watch";
         Restart = "always";
       };
-      Install = { WantedBy = [ "graphical-session.target" ]; };
+      Install = { WantedBy = [ "default.target" ]; };
     };
   };
 
