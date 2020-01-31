@@ -89,10 +89,10 @@
         "homepage": "https://nixfmt.serokell.io",
         "owner": "serokell",
         "repo": "nixfmt",
-        "rev": "921bbd3bb9c95cf2d677a8558b1a27fca6cee597",
-        "sha256": "0x08xsjal6db95y1sxxinwv9ks2k6fayvg8435s6zqy7zq42jxm4",
+        "rev": "5534972e630c3c077e3c87762fc6a30a4b1379bc",
+        "sha256": "0lmaj1582qp8qc0mg6px5a9v724vfv7lyl1qkdm0dfm9ml5m5f7n",
         "type": "tarball",
-        "url": "https://github.com/serokell/nixfmt/archive/921bbd3bb9c95cf2d677a8558b1a27fca6cee597.tar.gz",
+        "url": "https://github.com/serokell/nixfmt/archive/5534972e630c3c077e3c87762fc6a30a4b1379bc.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
@@ -125,10 +125,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "6d9a4a615ee2706047c2cec3acc61d2cfbffdb0b",
-        "sha256": "1zgwp31nqh7glh7l2i0n5vic5jv1683l6lvc7r7wdmkbsbkmig1p",
+        "rev": "1dadefec574531f021bddc85ca3c9bc81fd52899",
+        "sha256": "0csm7nycb8p990jl1mj20mg79lxpfg2xcplndcg1dbqclgw1wmqd",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/6d9a4a615ee2706047c2cec3acc61d2cfbffdb0b.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/1dadefec574531f021bddc85ca3c9bc81fd52899.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "tabnine-vim": {
