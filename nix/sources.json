@@ -125,10 +125,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "8b76b1252052ed36eb0cd6e002d299fdff4859e3",
-        "sha256": "11m5gwldg20ai1hpf4k7bclncm6z22468ydiig07scxz2kaiwvcg",
+        "rev": "ea553d8c67c6a718448da50826ff5b6916dc9c59",
+        "sha256": "0g9smv36sk42rfyzi8wyq2wl11c5l0qaldij1zjdj60s57cl3wgj",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/8b76b1252052ed36eb0cd6e002d299fdff4859e3.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/ea553d8c67c6a718448da50826ff5b6916dc9c59.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "tabnine-vim": {
