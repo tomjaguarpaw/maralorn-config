@@ -29,10 +29,10 @@
         "homepage": "https://github.com/digital-asset/ghcide",
         "owner": "hercules-ci",
         "repo": "ghcide-nix",
-        "rev": "55d5a88187bff73e4cb15f366bda3c8e6119954e",
-        "sha256": "18gjqk6vgzpja3v14drpn8fl84hmda5gkr6wxggxk320qdajdxw1",
+        "rev": "c940edd61eedba6750671fc142c9422cced73528",
+        "sha256": "01f2x5sgncd468h99w3mpkkb1203akachm12czmiwbvgishf7dwp",
         "type": "tarball",
-        "url": "https://github.com/hercules-ci/ghcide-nix/archive/55d5a88187bff73e4cb15f366bda3c8e6119954e.tar.gz",
+        "url": "https://github.com/hercules-ci/ghcide-nix/archive/c940edd61eedba6750671fc142c9422cced73528.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager": {
@@ -89,10 +89,10 @@
         "homepage": "https://nixfmt.serokell.io",
         "owner": "serokell",
         "repo": "nixfmt",
-        "rev": "48bd5459cc0a23721a8725efb992d34ae15f6681",
-        "sha256": "0mdw7i5xjjm0r0r15v354vmpylz7v73dmriyhi1gny12rznfgwjs",
+        "rev": "23b4d2e58910fbaa65107698b0c0eece1fa83915",
+        "sha256": "039z7lw578qszchfhy318jr2wl1sk3mm41hf6jqbz7qa49vhihmm",
         "type": "tarball",
-        "url": "https://github.com/serokell/nixfmt/archive/48bd5459cc0a23721a8725efb992d34ae15f6681.tar.gz",
+        "url": "https://github.com/serokell/nixfmt/archive/23b4d2e58910fbaa65107698b0c0eece1fa83915.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
@@ -125,10 +125,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "ea553d8c67c6a718448da50826ff5b6916dc9c59",
-        "sha256": "0g9smv36sk42rfyzi8wyq2wl11c5l0qaldij1zjdj60s57cl3wgj",
+        "rev": "46347794a94c7fec4564b10d291be78fae5cd62f",
+        "sha256": "0w9hkm8146y0i9x894l5afp0gail47rvpsdaj3dzsrwa0lgd37wh",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/ea553d8c67c6a718448da50826ff5b6916dc9c59.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/46347794a94c7fec4564b10d291be78fae5cd62f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "tabnine-vim": {
