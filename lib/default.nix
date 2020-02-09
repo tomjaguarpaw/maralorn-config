@@ -38,6 +38,7 @@ rec {
     p.shake
     p.hledger-lib
     p.releaser
+    p.megaparsec
   ]);
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
   writeHaskellScript =
