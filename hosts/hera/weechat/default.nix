@@ -23,6 +23,17 @@ in {
       target = ".weechat/perl";
       source = ./plugins/perl;
     };
+    buffer_autoset = {
+      target = ".weechat/buffer_autoset.conf";
+      text = ''
+        [look]
+        timer = 1000
+
+        [buffer]
+        python.maralorn.de.*.highlight_words = ""
+        python.maralorn.de.*.highlight_regex = ".*maralorn([^\.].*|\.|\.[^d].*|)$"
+      '';
+    };
     buflist = {
       target = ".weechat/buflist.conf";
       text = ''
