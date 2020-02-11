@@ -89,10 +89,10 @@
         "homepage": "https://nixfmt.serokell.io",
         "owner": "serokell",
         "repo": "nixfmt",
-        "rev": "23b4d2e58910fbaa65107698b0c0eece1fa83915",
-        "sha256": "039z7lw578qszchfhy318jr2wl1sk3mm41hf6jqbz7qa49vhihmm",
+        "rev": "eeab5dff80190b57f90da5682a47e3e977724003",
+        "sha256": "1sjkmi301lw6wpns30xz5gmm2mf24srxz86nkmi16y7bryybkq4y",
         "type": "tarball",
-        "url": "https://github.com/serokell/nixfmt/archive/23b4d2e58910fbaa65107698b0c0eece1fa83915.tar.gz",
+        "url": "https://github.com/serokell/nixfmt/archive/eeab5dff80190b57f90da5682a47e3e977724003.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
