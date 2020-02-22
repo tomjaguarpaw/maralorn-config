@@ -17,10 +17,10 @@
         "homepage": "https://cachix.org",
         "owner": "cachix",
         "repo": "cachix",
-        "rev": "4a4d5da86f1f8f066664669f8b982102f96118ec",
-        "sha256": "12223icr9jal1nkmdqxpfnp8dx39y72dddq3l5aps64jpassvdvg",
+        "rev": "c98237880872ea69dffdb965c48bda82cafe9605",
+        "sha256": "1q6ryb4w5yjzh1fwv338n5421sffcz891j99rc11qb326y40286i",
         "type": "tarball",
-        "url": "https://github.com/cachix/cachix/archive/4a4d5da86f1f8f066664669f8b982102f96118ec.tar.gz",
+        "url": "https://github.com/cachix/cachix/archive/c98237880872ea69dffdb965c48bda82cafe9605.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "ghcide": {
@@ -77,10 +77,10 @@
         "homepage": "https://github.com/nmattia/niv",
         "owner": "nmattia",
         "repo": "niv",
-        "rev": "6cf4ff85b903b0528562ebdd704fd4953e653060",
-        "sha256": "0n7kvkgcqczbcbznjf9l382d3y2gm13si2i49ywrzyqwgda70r2v",
+        "rev": "50600603b51432839c4b6267fd6a0d00ae6b0451",
+        "sha256": "1rrhlscbqdn9a77ws49acl536n3mz6bai68z08mpg8qqa4ahr2sn",
         "type": "tarball",
-        "url": "https://github.com/nmattia/niv/archive/6cf4ff85b903b0528562ebdd704fd4953e653060.tar.gz",
+        "url": "https://github.com/nmattia/niv/archive/50600603b51432839c4b6267fd6a0d00ae6b0451.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixfmt": {
