@@ -18,18 +18,17 @@
         fi
 
         ${builtins.readFile ./zshrc}
-        GITSTATUS_DAEMON=${my-pkgs.gitstatus}/bin/gitstatusd source ${
-          ./p10k.zsh
-        }
+        source ${my-pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+        source ${./p10k.zsh}
       '';
       oh-my-zsh = {
         enable = true;
         plugins = [ "colored-man-pages" ];
-        theme = "powerlevel10k";
-        custom = "${pkgs.runCommand "oh-my-zsh-custom" { } ''
-          mkdir -p $out/themes
-          ln -s ${my-pkgs.zsh-powerlevel10k}/powerlevel10k/powerlevel10k.zsh-theme $out/themes/.
-        ''}";
+        #        theme = "powerlevel10k";
+        #        custom = "${pkgs.runCommand "oh-my-zsh-custom" { } ''
+        #          mkdir -p $out/themes
+        #          ln -s ${my-pkgs.zsh-powerlevel10k}/share/powerlevel10k/powerlevel10k.zsh-theme $out/themes/.
+        #        ''}";
       };
     };
   };

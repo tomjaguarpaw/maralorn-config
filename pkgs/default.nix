@@ -45,19 +45,13 @@ in rec {
   my-ssh-add = pkgs.writeShellScriptBin "my-ssh-add" ''
     SSH_ASKPASS=${cat-pw}/bin/cat-ssh-pw ${pkgs.openssh}/bin/ssh-add < /dev/null
   '';
-
-  gitstatus = pkgs.callPackage ./powerlevel10k/gitstatus.nix {
-    libgit2 = pkgs.libgit2.overrideAttrs (attrs: {
-      src = pkgs.fetchFromGitHub {
-        owner = "romkatv";
-        repo = "libgit2";
-        rev = "a546b232b23814de9c561fc750791363a5ed347e";
-        sha256 = "1xx782qa36f5gfjflw64r383g5gh7wgkvxk5q4w0rg8c0xwa3hk6";
-      };
-    });
-  };
-  zsh-powerlevel10k =
-    pkgs.callPackage ./powerlevel10k/zsh-powerlevel10k.nix { };
+  powerlevel10kpkgs = import (pkgs.fetchFromGitHub {
+    owner = "mweinelt";
+    repo = "nixpkgs";
+    rev = "pr/zsh-powerlevel10k/v1.2";
+    sha256 = "1ni0gasyms32jirxqizp8yrsxv5j93vssvbp9gbi0i9bhwasb2da";
+  }) { };
+  zsh-powerlevel10k = powerlevel10kpkgs.zsh-powerlevel10k;
   ghcide = (import sources.ghcide { }).ghcide-ghc865;
 
   neovim = unstable.neovim.override {
