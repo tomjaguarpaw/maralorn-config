@@ -53,6 +53,7 @@ in rec {
   }) { };
   zsh-powerlevel10k = powerlevel10kpkgs.zsh-powerlevel10k;
   ghcide = (import sources.ghcide { }).ghcide-ghc865;
+  obelisk = (import sources.obelisk { }).command;
 
   neovim = unstable.neovim.override {
     vimAlias = true;
@@ -216,7 +217,7 @@ in rec {
     inherit (pkgs)
       mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole nixfmt;
     inherit (my-lib) ghc;
-    inherit home-neovim ghcide;
+    inherit home-neovim ghcide obelisk;
     cabal-fmt = (unBreak unstable.haskell.packages.ghc881.cabal-fmt);
   };
   accounting-pkgs = {
