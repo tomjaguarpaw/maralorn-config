@@ -11,18 +11,6 @@
         "url": "https://github.com/andir/ate/archive/49846b79606a3b69f3ca5c98d4776ef34a76dcf8.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "cachix": {
-        "branch": "master",
-        "description": "Command line client for Nix binary cache hosting:",
-        "homepage": "https://cachix.org",
-        "owner": "cachix",
-        "repo": "cachix",
-        "rev": "66f4e37314b39356964ae160bfc5a9dc7880a6b2",
-        "sha256": "090h7jkk06j97jaw5yiwn88izn972784nr1qmhxfkzrqw3912n7f",
-        "type": "tarball",
-        "url": "https://github.com/cachix/cachix/archive/66f4e37314b39356964ae160bfc5a9dc7880a6b2.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "ghcide": {
         "branch": "master",
         "description": "Nix installation for ghcide",
@@ -71,30 +59,6 @@
         "url": "https://github.com/target/lorri/archive/73665b9644ea96427ae6f881a52cf8b10d129f5d.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "niv": {
-        "branch": "master",
-        "description": "Easy dependency management for Nix projects",
-        "homepage": "https://github.com/nmattia/niv",
-        "owner": "nmattia",
-        "repo": "niv",
-        "rev": "98c74a80934123cb4c3bf3314567f67311eb711a",
-        "sha256": "1w8n54hapd4x9f1am33icvngkqns7m3hl9yair38yqq08ffwg0kn",
-        "type": "tarball",
-        "url": "https://github.com/nmattia/niv/archive/98c74a80934123cb4c3bf3314567f67311eb711a.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "nixfmt": {
-        "branch": "master",
-        "description": "A formatter for Nix code",
-        "homepage": "https://nixfmt.serokell.io",
-        "owner": "serokell",
-        "repo": "nixfmt",
-        "rev": "eeab5dff80190b57f90da5682a47e3e977724003",
-        "sha256": "1sjkmi301lw6wpns30xz5gmm2mf24srxz86nkmi16y7bryybkq4y",
-        "type": "tarball",
-        "url": "https://github.com/serokell/nixfmt/archive/eeab5dff80190b57f90da5682a47e3e977724003.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "nixos-hardware": {
         "branch": "master",
         "description": "A collection of NixOS modules covering hardware quirks.",
@@ -129,6 +93,18 @@
         "sha256": "1s2b9rvpyamiagvpl5cggdb2nmx4f7lpylipd397wz8f0wngygpi",
         "type": "tarball",
         "url": "https://github.com/NixOS/nixpkgs-channels/archive/ce9f1aaa39ee2a5b76a9c9580c859a74de65ead5.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "obelisk": {
+        "branch": "master",
+        "description": "Obelisk provides an easy way to develop and deploy your Reflex project for web and mobile",
+        "homepage": "",
+        "owner": "obsidiansystems",
+        "repo": "obelisk",
+        "rev": "0133449c597afdb3d4aaeb7a6475610b7bca6c99",
+        "sha256": "0p8m58b461529rmhmn95ndddgh5b256p6i5b4iyhzsr9kmyjlsmv",
+        "type": "tarball",
+        "url": "https://github.com/obsidiansystems/obelisk/archive/0133449c597afdb3d4aaeb7a6475610b7bca6c99.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "tabnine-vim": {

@@ -67,7 +67,7 @@ in rec {
 
   home-neovim = (import ./nvim) neovim;
 
-  niv = (import sources.niv { }).niv;
+  niv = unstable.niv;
 
   # pkgs assumed to be present on a non nixos host
   core-system-pkgs = {
@@ -152,7 +152,6 @@ in rec {
       runScript = "${gw2wrapper}/bin/gw2wrapper";
     };
     discord = unfreePkgs.discord;
-    cachix = import sources.cachix;
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xev xbacklight;
     inherit (pkgs.gitAndTools) hub;
@@ -163,6 +162,8 @@ in rec {
       upower speedtest-cli
 
       anki
+
+      cachix
 
       # communication
       signal-desktop tdesktop acpi dino mumble
@@ -217,10 +218,9 @@ in rec {
 
   };
   home-pkgs = {
-    nixfmt = import sources.nixfmt { };
     inherit (pkgs.pythonPackages) yapf jsbeautifier;
     inherit (pkgs)
-      mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole;
+      mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole nixfmt;
     inherit (my-lib) ghc;
     inherit home-neovim ghcide;
     cabal-fmt = (unBreak unstable.haskell.packages.ghc881.cabal-fmt);
