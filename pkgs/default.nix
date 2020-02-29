@@ -32,7 +32,6 @@ in rec {
       };
     };
   };
-
   start-ssh-agent = pkgs.writeShellScriptBin "start-ssh-agent" ''
     ${pkgs.psmisc}/bin/killall -q ssh-agent
     eval `${pkgs.openssh}/bin/ssh-agent -s`
@@ -45,16 +44,9 @@ in rec {
   my-ssh-add = pkgs.writeShellScriptBin "my-ssh-add" ''
     SSH_ASKPASS=${cat-pw}/bin/cat-ssh-pw ${pkgs.openssh}/bin/ssh-add < /dev/null
   '';
-  powerlevel10kpkgs = import (pkgs.fetchFromGitHub {
-    owner = "mweinelt";
-    repo = "nixpkgs";
-    rev = "pr/zsh-powerlevel10k/v1.2";
-    sha256 = "1ni0gasyms32jirxqizp8yrsxv5j93vssvbp9gbi0i9bhwasb2da";
-  }) { };
-  zsh-powerlevel10k = powerlevel10kpkgs.zsh-powerlevel10k;
+  zsh-powerlevel10k = unstable.zsh-powerlevel10k;
   ghcide = (import sources.ghcide { }).ghcide-ghc865;
   obelisk = (import sources.obelisk { }).command;
-
   neovim = unstable.neovim.override {
     vimAlias = true;
     withPython3 = true;
