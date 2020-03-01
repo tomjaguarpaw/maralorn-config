@@ -47,18 +47,6 @@
         "url": "https://github.com/andir/local-nix-cache/archive/127786a7f5586b37e0f2f4f84f50719e3837dce2.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "lorri": {
-        "branch": "rolling-release",
-        "description": "Your project's nix-env",
-        "homepage": "",
-        "owner": "target",
-        "repo": "lorri",
-        "rev": "73665b9644ea96427ae6f881a52cf8b10d129f5d",
-        "sha256": "13h8h2f5r9ly9ihnyxgnh1jd77p2w9qiikw7xdl6dkzc71v1dnl8",
-        "type": "tarball",
-        "url": "https://github.com/target/lorri/archive/73665b9644ea96427ae6f881a52cf8b10d129f5d.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "nixos-hardware": {
         "branch": "master",
         "description": "A collection of NixOS modules covering hardware quirks.",
