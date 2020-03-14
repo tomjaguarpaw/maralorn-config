@@ -73,7 +73,8 @@ in rec {
     inherit (pkgs.python3Packages) qrcode;
     inherit (pkgs)
       git-crypt htop tree pwgen borgbackup inotifyTools direnv socat nmap ncdu
-      tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle vnstat;
+      tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle vnstat
+      entr;
   };
   gw2wrapper = writeHaskellScript {
     name = "gw2wrapper";
