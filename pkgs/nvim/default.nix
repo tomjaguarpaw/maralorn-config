@@ -4,8 +4,6 @@ n.override (let
   inherit (import ../../lib) sources colors;
   tabnine = sources.tabnine-vim;
 in {
-  vimAlias = true;
-  withPython3 = true;
   configure = {
     customRC = ''
       set rtp+=${tabnine}
