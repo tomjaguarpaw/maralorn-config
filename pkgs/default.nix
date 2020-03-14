@@ -47,6 +47,7 @@ in rec {
   zsh-powerlevel10k = unstable.zsh-powerlevel10k;
   ghcide = (import sources.ghcide { }).ghcide-ghc865;
   obelisk = (import sources.obelisk { }).command;
+  nix-direnv = sources.nix-direnv + "/direnvrc";
   neovim = unstable.neovim.override {
     vimAlias = true;
     withPython3 = true;

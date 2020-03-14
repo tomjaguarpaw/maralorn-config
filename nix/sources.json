@@ -47,6 +47,18 @@
         "url": "https://github.com/andir/local-nix-cache/archive/127786a7f5586b37e0f2f4f84f50719e3837dce2.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "nix-direnv": {
+        "branch": "master",
+        "description": "A fast, persistent use_nix implementation for direnv [maintainer=@Mic92] ",
+        "homepage": "",
+        "owner": "nix-community",
+        "repo": "nix-direnv",
+        "rev": "f9889758694bdfe11251ac475d78a93804dbd93c",
+        "sha256": "16mpc6lidmn6annyl4skdixzx7syvwdj9c5la0sidg57l8kh1rqd",
+        "type": "tarball",
+        "url": "https://github.com/nix-community/nix-direnv/archive/f9889758694bdfe11251ac475d78a93804dbd93c.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "nixos-hardware": {
         "branch": "master",
         "description": "A collection of NixOS modules covering hardware quirks.",

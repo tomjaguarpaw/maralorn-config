@@ -159,6 +159,9 @@ in {
           "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/${config.home.username}";
       in "${print-pw}/bin/print-pw";
     };
+    file.".direnvrc".text = ''
+      source ${my-pkgs.nix-direnv}
+    '';
     file.".config/nvim/coc-settings.json".text = builtins.toJSON {
       "diagnostic.maxWindowHeight" = 60;
       languageserver = {
@@ -181,7 +184,6 @@ in {
   systemd.user = { startServices = true; };
 
   services = {
-    lorri.enable = true;
     gpg-agent = {
       enable = true;
       defaultCacheTtl = 31536000; # 1year
