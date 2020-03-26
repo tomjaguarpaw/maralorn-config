@@ -141,10 +141,11 @@ in rec {
           ]);
       runScript = "${gw2wrapper}/bin/gw2wrapper";
     };
-    discord = unfreePkgs.discord;
+    inherit (unfreePkgs) discord;
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xev xbacklight;
     inherit (pkgs.gitAndTools) hub;
+    inherit (unstable) mumble;
     inherit (pkgs)
     # web
       chromium
@@ -156,7 +157,7 @@ in rec {
       cachix
 
       # communication
-      signal-desktop tdesktop acpi dino mumble
+      signal-desktop tdesktop acpi dino
 
       # config
       arandr
