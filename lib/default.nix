@@ -39,6 +39,7 @@ rec {
     p.hledger-lib
     p.releaser
     p.megaparsec
+    p.pandoc
   ]);
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
   writeHaskellScript =

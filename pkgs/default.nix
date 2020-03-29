@@ -62,8 +62,8 @@ in rec {
   core-system-pkgs = {
     inherit neovim;
     inherit (pkgs)
-      gitFull gnumake python3 mkpasswd file wget curl wireguard gnupg mutt bind
-      liboping psmisc unzip rename whois lsof parted;
+      gitFull gnumake mkpasswd file wget curl wireguard gnupg mutt bind liboping
+      psmisc unzip rename whois lsof parted python3;
   };
 
   extra-system-pkgs = {
@@ -166,8 +166,8 @@ in rec {
       meld icedtea8_web octave filezilla
 
       # tools & office
-      feh gimp imagemagick libreoffice-fresh pandoc xournal musescore handbrake
-      evince abcde beets
+      feh gimp imagemagick libreoffice-fresh xournal musescore handbrake evince
+      abcde beets
 
       #    teamviewer
 
