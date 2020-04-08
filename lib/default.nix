@@ -28,7 +28,7 @@ rec {
       doCheck = false;
     });
   shh = unBreak pkgs.haskellPackages.shh;
-  ghc = unstable.ghc.withPackages (p: [
+  ghc = pkgs.ghc.withPackages (p: [
     (unBreak p.shh)
     p.brittany
     p.hlint
@@ -37,7 +37,7 @@ rec {
     p.relude
     p.shake
     p.hledger-lib
-    p.releaser
+    #p.releaser
     p.megaparsec
     p.pandoc
   ]);
