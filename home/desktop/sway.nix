@@ -36,7 +36,7 @@ in {
     barColors = {
       active_workspace = {
         background = colors.blue;
-        border = colors.blue;
+        border = colors.background;
         text = colors.white;
       };
       binding_mode = {
@@ -83,9 +83,10 @@ in {
       "t" = "layout tabbed";
       "s" = "layout toggle split";
       "f" = "fullscreen";
-      "Shift+space" = "floating toggle";
+      "shift+space" = "floating toggle";
       "prior" = "focus parent";
       "next" = "focus child";
+      "shift+r" = "exec ${pkgs.sway}/bin/swaymsg reload";
       "shift+q" =
         "exec ${pkgs.sway}/bin/swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'";
       "Return" = "exec ${terminal}";
@@ -93,13 +94,41 @@ in {
       "space" = "exec hotkeys";
       "m" = "bar mode toggle monitoring";
     };
-    workspaceBindings = builtins.foldl' (bindings: name:
+    workspaceBindings = pkgs.lib.fold (a: b: a // b) { } (builtins.map (num:
       let
-        number = toString ((builtins.length (builtins.attrNames bindings)) / 2);
-      in bindings // {
+        name = builtins.elemAt workspaces num;
+        number = toString num;
+      in {
         "${number}" = "workspace ${number}:${name}";
         "Shift+${number}" = "move container to workspace ${number}:${name}";
-      }) { } workspaces;
+        "Ctrl+${number}" = "workspace x${number}:${name}";
+        "Ctrl+Shift+${number}" =
+          "move container to workspace x${number}:${name}";
+      }) (lib.range 0 9));
+    workspaceScreens = builtins.map (num:
+      let
+        name = builtins.elemAt workspaces num;
+        number = toString num;
+      in {
+        name = "${number}:${name}";
+        screen = "$intern";
+      }) (lib.range 0 9);
+    workspacehighScreens = builtins.map (num:
+      let
+        name = builtins.elemAt workspaces num;
+        number = toString num;
+      in {
+        name = "x${number}:${name}";
+        screen = "$high";
+      }) (lib.range 2 7);
+    workspacesmallScreens = builtins.map (num:
+      let
+        name = builtins.elemAt workspaces num;
+        number = toString num;
+      in {
+        name = "x${number}:${name}";
+        screen = "$small";
+      }) (lib.range 0 1 ++ [ 8 ]);
     modlessBindingsConfig = lib.concatStringsSep "\n" (lib.mapAttrsToList
       (binding: command: ''
         bindsym ${binding} ${command}
@@ -113,6 +142,14 @@ in {
         client.${category} ${border}a0 ${background}c0 ${text} ${indicator} ${childBorder}
       '') swayColors);
     barsConfig = ''
+      set $intern 'Unknown 0x2336 0x00000000'
+      set $high 'Ancor Communications Inc ASUS VW248 B6LMTF011850'
+      set $small 'Unknown X1910WDS 001367'
+
+      ${pkgs.lib.concatMapStringsSep "\n"
+      (p: "workspace ${p.name} output ${p.screen}")
+      (workspaceScreens ++ workspacesmallScreens ++ workspacehighScreens)}
+
       bar {
           status_command ${pkgs.i3status-rust}/bin/i3status-rs ${./status.toml};
           status_padding 0
