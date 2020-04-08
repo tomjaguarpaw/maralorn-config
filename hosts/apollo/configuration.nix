@@ -81,13 +81,11 @@ in {
       snapshotInterval = "*:00/3:00";
     };
     prometheus.exporters.node = {
-      enable = lib.mkForce false; # TMP
       firewallFilter = "-i m0wire -p tcp -m tcp --dport 9100";
       openFirewall = true;
     };
     syncthing = {
       enable = true;
-      #enable = true; TMP
       group = "users";
       user = "maralorn";
       openDefaultPorts = true;
@@ -102,7 +100,6 @@ in {
 
   cdark_net = {
     enable = true;
-    #enable = true; TMP
     hostName = "${me.user}_${config.networking.hostName}";
     ed25519PrivateKeyFile = /etc/nixos/hosts + "/${config.networking.hostName}"
       + /secret/tinc/ed25519_key.priv;
