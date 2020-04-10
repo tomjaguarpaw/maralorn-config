@@ -49,10 +49,10 @@ let
 
     executeFilterMail :: (LByteString, Text, Text) -> IO ()
     executeFilterMail (files, filter, target) = do
-         putTextLn [i|Sorting "#{filter}" into #{target}|]
-         writeOutput files |> mscan
-         mmkdir ([i|${archive}/#{target}|] :: String)
-         writeOutput files |> mrefile ([i|${archive}/#{target}|] :: String)
+       putTextLn [i|Sorting "#{filter}" into #{target}|]
+       writeOutput files |> mscan
+       mmkdir ([i|${archive}/#{target}|] :: String)
+       writeOutput files |> mrefile ([i|${archive}/#{target}|] :: String)
 
     myFilters :: [(Text,Text)]
     myFilters = [${
@@ -273,6 +273,7 @@ in {
           macro index <left> "<enter-command>source ${show-sidebar}<enter>"
           set sidebar_folder_indent=no
           set sidebar_short_path=no
+          set sidebar_component_depth=2
           set sidebar_width=60
           set sidebar_sort_method="alpha"
           set sidebar_indent_string=" "
