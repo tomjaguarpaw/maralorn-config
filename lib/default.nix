@@ -45,13 +45,22 @@ rec {
   writeHaskellScript =
     { name ? "haskell-script", bins ? [ ], libraries ? [ ], imports ? [ ] }:
     code:
-    pkgs.writers.writeHaskellBin name {
-      libraries = libraries ++ [
-        shh
-        pkgs.haskellPackages.string-interpolate
-        pkgs.haskellPackages.relude
-      ];
-    } ''
+    pkgs.writers.makeBinWriter {
+      compileScript = ''
+        cp $contentPath ${name}.hs
+        ${
+          pkgs.ghc.withPackages (_:
+            libraries ++ [
+              shh
+              pkgs.haskellPackages.string-interpolate
+              pkgs.haskellPackages.relude
+              pkgs.haskellPackages.async
+            ])
+        }/bin/ghc ${name}.hs -threaded
+        mv ${name} $out
+        ${pkgs.binutils-unwrapped}/bin/strip --strip-unneeded "$out"
+      '';
+    } "/bin/${name}" ''
       {-# LANGUAGE DeriveDataTypeable #-}
       {-# LANGUAGE TemplateHaskell #-}
       {-# LANGUAGE QuasiQuotes #-}
@@ -62,15 +71,18 @@ rec {
       {-# LANGUAGE ViewPatterns #-}
       {-# LANGUAGE ScopedTypeVariables #-}
       {-# LANGUAGE NoImplicitPrelude #-}
+      {-# LANGUAGE TupleSections #-}
 
       import Shh
       import Relude
       import qualified Relude.Unsafe as Unsafe
+      import qualified Data.ByteString.Lazy as LBS
       import qualified Data.ByteString as BS
       import qualified Data.Text as Text
       import System.Environment (getArgs)
       import Control.Exception (bracket, try)
       import Data.String.Interpolate (i)
+      import Control.Concurrent.Async
       ${builtins.concatStringsSep "\n" (map (x: "import ${x}") imports)}
 
       -- Load binaries from Nix packages. The dependencies will be captured

@@ -1,9 +1,114 @@
 { lib, config, pkgs, ... }:
 with lib;
 let
+  inherit (import ../../lib) writeHaskellScript;
   mail = config.m-0.mail;
   inherit (config.m-0.private) sendmail me;
+  inherit (config.m-0.private.mail_filters) sortLists stupidLists notifications;
   maildir = config.accounts.email.maildirBasePath;
+  # mhdr -h List-ID -d Maildir/hera/Archiv/unsortiert | sort | sed 's/^.*<\(.*\)>$/\1/' | uniq | xargs -I '{}' sh -c "notmuch count List:{} | sed 's/$/: {}/'" | sort
+  # To find candidates
+  archiveSuffix = "hera/Archiv";
+  unsortedSuffix = "${archiveSuffix}/unsortiert";
+  unsorted = "${maildir}/${unsortedSuffix}";
+  archive = "${maildir}/${archiveSuffix}";
+  filter = rec {
+    mailToFolder = name:
+      toFolder (lib.concatStringsSep "." (splitString "@" name));
+    toFolder = name:
+      lib.concatStringsSep "/" (lib.reverseList (lib.splitString "." name));
+    simple = filter: target: { inherit filter target; };
+    notifications = notify:
+      simple "from:${notify}" "notifications/${mailToFolder notify}";
+    stupidList = list: simple "to:${list}" "list/${mailToFolder list}";
+    simpleSortList = listName:
+      simple "List:${listName}" "list/${toFolder listName}";
+  };
+  myFilters = builtins.map filter.simpleSortList sortLists
+    ++ builtins.map filter.stupidList stupidLists
+    ++ builtins.map filter.notifications notifications;
+  sortMail = writeHaskellScript {
+    name = "sort-mail-archive";
+    bins = [ pkgs.notmuch pkgs.coreutils pkgs.mblaze pkgs.findutils ];
+    libraries = [ pkgs.haskellPackages.megaparsec ];
+    imports = [
+      "Text.Megaparsec"
+      "Text.Megaparsec.Char"
+      "Text.Megaparsec.Char.Lexer"
+      "qualified Data.List.NonEmpty as NE"
+      "qualified Data.Text as T"
+      "System.Environment (setEnv)"
+    ];
+  } ''
+    reScan = notmuch "new"
+
+    findFilterMail :: (Text,Text) -> IO (Maybe (LByteString, Text, Text))
+    findFilterMail (filter, target) = do
+       files <- notmuch "search" "--output" "files" (toString filter) "folder:${unsortedSuffix}" |> capture
+       pure $ if (LBS.length files > 0) then Just (files, filter, target) else Nothing
+
+    executeFilterMail :: (LByteString, Text, Text) -> IO ()
+    executeFilterMail (files, filter, target) = do
+         putTextLn [i|Sorting "#{filter}" into #{target}|]
+         writeOutput files |> mscan
+         mmkdir ([i|${archive}/#{target}|] :: String)
+         writeOutput files |> mrefile ([i|${archive}/#{target}|] :: String)
+
+    myFilters :: [(Text,Text)]
+    myFilters = [${
+      lib.concatStringsSep ","
+      (builtins.map ({ filter, target }: ''("${filter}","${target}")'')
+        myFilters)
+    }]
+
+    filtersFromTo :: Text -> Maybe (Text,Text)
+    filtersFromTo = filtersFromField "to" [toToName]
+    toToName :: Text -> Maybe Text
+    toToName (T.splitOn "@" -> [name, "maralorn.de"])
+          | not (T.isInfixOf "randy" name) = Just . ("to/" <>) . T.intercalate "_" . T.splitOn "." $ name
+    toToName _ = Nothing
+    filtersFromField :: Text -> [Text-> Maybe Text] -> Text -> Maybe (Text,Text)
+    filtersFromField field filters text = fmap ([i|#{field}:#{text}|],) . viaNonEmpty Relude.head . mapMaybe ($ text) $ filters
+    filtersFromListIDs :: Text -> Maybe (Text,Text)
+    filtersFromListIDs = filtersFromField "List" [githubNameFolderFromId, gitlabNameFolderFromId]
+    githubNameFolderFromId :: Text -> Maybe Text
+    githubNameFolderFromId (reverse . T.splitOn "." -> ("com":"github":org:name)) = Just [i|github/#{org}/#{T.intercalate "_" $ reverse name}|]
+    githubNameFolderFromId _ = Nothing
+    gitlabNameFolderFromId :: Text -> Maybe Text
+    gitlabNameFolderFromId (reverse . T.splitOn "." -> ("de":"ccc":"darmstadt":"git":org:name1:name)) = Just [i|cda-gitlab/#{org}/#{T.intercalate "_" . toList . Relude.tail $ NE.reverse (name1:|name)}|]
+    gitlabNameFolderFromId _ = Nothing
+
+    type Parser = Parsec Text Text
+    listId :: Parser Text
+    listId = manyTill anySingle (char '<') *> (toText <$> manyTill anySingle (char '>'))
+
+    mySearch :: [String] -> IO [Text]
+    mySearch param = lines . decodeUtf8 <$> (Main.find ("${archive}":param) |> captureTrim)
+
+    main :: IO ()
+    main = do
+       setEnv "MBLAZE_PAGER" "cat"
+       setEnv "NOTMUCH_CONFIG" "${config.home.sessionVariables.NOTMUCH_CONFIG}"
+       reScan
+       (listIDs,tos) <- concurrently (mhdr "-h" "List-ID" "-d" "${unsorted}" |> capture) (mhdr "-h" "To" "-d" "${unsorted}" "-A" |> capture)
+       let listFilters = mapMaybe filtersFromListIDs . sortNub . mapMaybe (parseMaybe listId) . lines . decodeUtf8 $ listIDs
+           toFilters = mapMaybe filtersFromTo . sortNub . fmap (\x -> maybe x Relude.id $ parseMaybe listId x) . lines . decodeUtf8 $ tos
+       applicableFilters <- catMaybes <$> forConcurrently (listFilters <> myFilters <> toFilters) findFilterMail
+       for_ applicableFilters executeFilterMail
+       reScan
+       syncStates <- mySearch ["-name", ".mbsyncstate"]
+       dbFiles <- mySearch ["-name", ".isyncuidmap.db"]
+       dirs <- mySearch ["-type", "d"]
+       maildirs <- sortNub <$> (lines . decodeUtf8 =<<) <$> forM dirs (\dir -> mdirs (toString dir) |> captureTrim)
+       emptyMaildirs <- filterM (\dir -> (== 0) . LBS.length <$> (mlist (toString dir) |> captureTrim)) maildirs
+       forM_ emptyMaildirs $ \dir -> rmdir ([[i|#{dir}/cur|],[i|#{dir}/new|],[i|#{dir}/tmp|]] :: [String])
+       let nonMaildirs = filter (`notElem` maildirs) dirs
+           delSyncs = filter (`elem` syncStates) $ (\x -> [i|#{x}/.mbsyncstate|]) <$> nonMaildirs
+           delDbs = filter (`elem` dbFiles) $ (\x -> [i|#{x}/.isyncuidmap.db|]) <$> nonMaildirs
+       whenNotNull (delSyncs ++ delDbs) $ rm . fmap toString . toList
+       emptyDirs <- Main.find "${archive}" "-type" "d" "-empty" "!" "-name" "cur" "!" "-name" "tmp" "!" "-name" "new" "-print0" |> capture
+       when (LBS.length emptyDirs > 0) $ writeOutput emptyDirs |> xargs "-0" "rmdir"
+  '';
 in {
 
   options.m-0.mail.enable = mkEnableOption "private-mail";
@@ -15,8 +120,7 @@ in {
       enable = true;
       frequency = "*:0/30";
       verbose = false;
-      postExec =
-        "${pkgs.notmuch}/bin/notmuch --config=${config.home.sessionVariables.NOTMUCH_CONFIG} new";
+      postExec = "${sortMail}/bin/sort-mail-archive";
     };
 
     accounts.email.accounts = config.m-0.mail.accounts;
@@ -75,8 +179,9 @@ in {
       };
       maildir.synchronizeFlags = true;
     };
+
     home = {
-      packages = with pkgs; [ neomutt ];
+      packages = [ pkgs.neomutt sortMail ];
       file = let
         mutt_alternates = "@maralorn.de "
           + (builtins.concatStringsSep " " me.alternates);
@@ -166,9 +271,9 @@ in {
           source "${hide-sidebar}"
           macro index <right> "<enter-command>source ${hide-sidebar}<enter>"
           macro index <left> "<enter-command>source ${show-sidebar}<enter>"
-          set sidebar_folder_indent=yes
-          set sidebar_short_path=yes
-          set sidebar_width=40
+          set sidebar_folder_indent=no
+          set sidebar_short_path=no
+          set sidebar_width=60
           set sidebar_sort_method="alpha"
           set sidebar_indent_string=" "
           color sidebar_indicator black white
