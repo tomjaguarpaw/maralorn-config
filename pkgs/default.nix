@@ -4,34 +4,6 @@ let
   inherit (my-lib)
     pkgs unstable sources writeHaskellScript gcRetentionDays unBreak colors;
 in rec {
-  #ate = pkgs.callPackage (import sources.ate) {
-  #  config.ate = {
-  #    options = {
-  #      BLACK = colors.black;
-  #      RED = colors.red;
-  #      GREEN = colors.green;
-  #      YELLOW = colors.yellow;
-  #      BLUE = colors.blue;
-  #      MAGENTA = colors.magenta;
-  #      CYAN = colors.cyan;
-  #      WHITE = colors.white;
-  #      BRIGHT_BLACK = colors.brightBlack;
-  #      BRIGHT_RED = colors.brightRed;
-  #      BRIGHT_GREEN = colors.brightGreen;
-  #      BRIGHT_YELLOW = colors.brightYellow;
-  #      BRIGHT_BLUE = colors.brightBlue;
-  #      BRIGHT_MAGENTA = colors.brightMagenta;
-  #      BRIGHT_CYAN = colors.brightCyan;
-  #      BRIGHT_WHITE = colors.brightWhite;
-  #      FOREGROUND_COLOR = colors.foreground;
-  #      BACKGROUND_COLOR = colors.background;
-  #    };
-  #    keybindings = {
-  #      INCREMENT_FONT = "control+plus";
-  #      DECREMENT_FONT = "control+minus";
-  #    };
-  #  };
-  #};
   start-ssh-agent = pkgs.writeShellScriptBin "start-ssh-agent" ''
     ${pkgs.psmisc}/bin/killall -q ssh-agent
     eval `${pkgs.openssh}/bin/ssh-agent -s`
