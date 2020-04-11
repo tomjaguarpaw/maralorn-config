@@ -4,7 +4,7 @@ let
   inherit (import ../../lib) colors;
 in {
   imports =
-    [ ./sway.nix ./wallpaper.nix ./rofi.nix ./ssh-agent.nix ./sleep-nag.nix ];
+    [ ./sway.nix ./wallpaper.nix ./rofi.nix ./ssh-agent.nix ./sleep-nag.nix ./kitty.nix ];
   m-0 = {
     workspaces = [
       "tasks"
