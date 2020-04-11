@@ -161,7 +161,9 @@ in {
       };
       hasImapHost = name: account: account.imap != null;
     in mapAttrs' mkServiceWithName
-    (filterAttrs hasImapHost config.accounts.email.accounts);
+    (filterAttrs hasImapHost config.accounts.email.accounts) // {
+      mbsync.Service.Environment = "PATH=${pkgs.coreutils}/bin";
+    };
 
     programs.msmtp.enable = true;
     programs.mbsync.enable = true;
