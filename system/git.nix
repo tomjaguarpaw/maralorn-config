@@ -13,7 +13,6 @@ let
     bins = [ pkgs.git pkgs.nix ];
     imports = [
       "System.Environment (lookupEnv)"
-      "Control.Monad (ap)"
       "System.Directory (withCurrentDirectory)"
     ];
 
@@ -26,17 +25,18 @@ let
 
     main = do
       mirror <- lookupEnv "GL_OPTION_MIRROR"
-      for_ mirror $ \mirror -> do
+      whenJust mirror $ \mirror -> do
         echo ([i|Forwarding push to #{mirror}|] :: String)
         git "push" "--all" "-f" mirror
       deploy <- lookupEnv "GL_OPTION_WEB_DEPLOY"
-      for_ deploy $ \deploy -> do
+      whenJust deploy $ \deploy -> do
+        (maybe [] ("-A":) -> target) <- lookupEnv "GL_OPTION_WEB_DEPLOY_NIX_TARGET"
         (decodeUtf8 -> path) <- pwd |> captureTrim
         echo ([i|Deploying build to /var/www/#{deploy}|] :: String)
-        bracket (checkout path) (rm "-rf") $ \dir -> withCurrentDirectory dir $ nix "build" "-o" ([i|/var/www/#{deploy}|] :: String)
+        bracket (checkout path) (rm "-rf") $ \dir -> withCurrentDirectory dir $ nix "build" "-o" ([i|/var/www/#{deploy}|] :: String) target
         echo "Done"
       test <- lookupEnv "GL_OPTION_TEST"
-      for_ test $ \_ -> do
+      whenJust test $ \_ -> do
         echo "Triggering (an async) system update."
         exe "sudo" ${haskellList update-command};
   '';
