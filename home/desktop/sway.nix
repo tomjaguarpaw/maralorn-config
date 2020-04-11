@@ -154,7 +154,7 @@ in {
           status_command ${pkgs.i3status-rust}/bin/i3status-rs ${./status.toml};
           status_padding 0
           status_edge_padding 0
-          font monospace 9.5
+          font "Source Code Pro For Powerline, DejaVu Sans Mono" 9.5
           height 17
 
           mode hide
@@ -177,7 +177,7 @@ in {
           };
           status_padding 0
           status_edge_padding 0
-          font monospace 9.5
+          font "Source Code Pro For Powerline, DejaVu Sans Mono" 9.5
           height 17
           workspace_buttons no
           position top

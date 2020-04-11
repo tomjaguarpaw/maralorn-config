@@ -1,16 +1,4 @@
 {
-    "ate": {
-        "branch": "master",
-        "description": "awesome terminal emulator",
-        "homepage": null,
-        "owner": "andir",
-        "repo": "ate",
-        "rev": "49846b79606a3b69f3ca5c98d4776ef34a76dcf8",
-        "sha256": "0zcbqvks25sdhbi3v17s3mljcj523q51vd77bp2q4q3pbbr4frva",
-        "type": "tarball",
-        "url": "https://github.com/andir/ate/archive/49846b79606a3b69f3ca5c98d4776ef34a76dcf8.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "ghcide": {
         "branch": "master",
         "description": "Nix installation for ghcide",

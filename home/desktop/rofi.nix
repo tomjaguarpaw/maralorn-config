@@ -21,7 +21,7 @@ in {
       padding = 10;
       cycle = false;
       lines = 30;
-      font = "Monofur Nerd Font 10.5";
+      font = "monospace 10.5";
       colors = {
         window = {
           background = "argb:c0${builtins.substring 1 6 colors.background}";

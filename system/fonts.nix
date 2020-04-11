@@ -1,15 +1,14 @@
 { config, pkgs, lib, ... }:
-
-{
+let inherit (import ../lib) unstable;
+in {
   fonts = {
     fontconfig = {
       enable = true;
       antialias = true;
       cache32Bit = true;
       defaultFonts = {
-        monospace =
-          [ "Source Code Pro For Powerline" "Roboto Mono" "DejaVu Sans Mono" ];
-        sansSerif = [ "Roboto Regular" "DejaVu Sans" ];
+        monospace = [ "Jetbrains Mono" "DejaVu Sans Mono" ];
+        sansSerif = [ "B612" "DejaVu Sans" ];
         serif = [ "Roboto Slab Regular" "DejaVu Serif" ];
       };
     };
@@ -17,13 +16,16 @@
     enableFontDir = true;
     fonts = builtins.attrValues {
       inherit (pkgs)
-        anonymousPro arkpandora_ttf caladea carlito comfortaa comic-relief
-        crimson dejavu_fonts google-fonts inconsolata iosevka
-        liberationsansnarrow liberation_ttf libertine mononoki montserrat
-        nerdfonts norwester-font opensans-ttf powerline-fonts roboto sampradaya
-        source-code-pro source-sans-pro source-serif-pro tai-ahom tempora_lgc
-        terminus_font theano ubuntu_font_family hasklig font-awesome
-        material-icons b612;
+        nerdfonts # emojis
+        libertine # because I like them
+        roboto # serif font
+        font-awesome # icons I guess?
+        material-icons # icons in my app
+        b612 # sans font
+        powerline-fonts # fonts e.g. for swaybar
+      ;
+      inherit (unstable) jetbrains-mono # code font
+      ;
     };
   };
 
