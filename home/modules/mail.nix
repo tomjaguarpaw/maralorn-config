@@ -102,12 +102,12 @@ let
        maildirs <- sortNub <$> (lines . decodeUtf8 =<<) <$> forM dirs (\dir -> mdirs (toString dir) |> captureTrim)
        emptyMaildirs <- filterM (\dir -> (== 0) . LBS.length <$> (mlist (toString dir) |> captureTrim)) maildirs
        forM_ emptyMaildirs $ \dir -> rmdir ([[i|#{dir}/cur|],[i|#{dir}/new|],[i|#{dir}/tmp|]] :: [String])
-       let nonMaildirs = filter (`notElem` maildirs) dirs
-           delSyncs = filter (`elem` syncStates) $ (\x -> [i|#{x}/.mbsyncstate|]) <$> nonMaildirs
-           delDbs = filter (`elem` dbFiles) $ (\x -> [i|#{x}/.isyncuidmap.db|]) <$> nonMaildirs
-       whenNotNull (delSyncs ++ delDbs) $ rm . fmap toString . toList
-       emptyDirs <- Main.find "${archive}" "-type" "d" "-empty" "!" "-name" "cur" "!" "-name" "tmp" "!" "-name" "new" "-print0" |> capture
-       when (LBS.length emptyDirs > 0) $ writeOutput emptyDirs |> xargs "-0" "rmdir"
+       -- let nonMaildirs = filter (`notElem` maildirs) dirs
+       --    delSyncs = filter (`elem` syncStates) $ (\x -> [i|#{x}/.mbsyncstate|]) <$> nonMaildirs
+       --    delDbs = filter (`elem` dbFiles) $ (\x -> [i|#{x}/.isyncuidmap.db|]) <$> nonMaildirs
+       -- whenNotNull (delSyncs ++ delDbs) $ rm . fmap toString . toList
+       -- emptyDirs <- Main.find "${archive}" "-type" "d" "-empty" "!" "-name" "cur" "!" "-name" "tmp" "!" "-name" "new" "-print0" |> capture
+       -- when (LBS.length emptyDirs > 0) $ writeOutput emptyDirs |> xargs "-0" "rmdir"
   '';
 in {
 
