@@ -34,8 +34,7 @@
         Unit = { Description = "Kassandra Server"; };
         Service = {
           WorkingDirectory = "/var/www/kassandra";
-          Type = "forking";
-          ExecStart = "/var/www/kassandra/backend";
+          ExecStart = "/var/www/kassandra/backend -b '::1' ";
           Restart = "always";
           Environment = "PATH=${pkgs.coreutils}/bin/:${pkgs.taskwarrior}/bin";
         };

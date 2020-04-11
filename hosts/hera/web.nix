@@ -16,6 +16,15 @@ in {
   services = {
     nginx = {
       enable = true;
+      virtualHosts."tasks.maralorn.de" = {
+        basicAuth.kassandra = (import secret/kassandra.nix).password;
+        forceSSL = true;
+        enableACME = true;
+        locations = {
+          "/" = {
+            proxyPass = "http://[::1]:8000";
+          };
+        };
       virtualHosts."hera.m-0.eu" = {
         enableACME = true;
         forceSSL = true;
