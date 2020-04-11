@@ -20,7 +20,12 @@ in {
         basicAuth.kassandra = (import secret/kassandra.nix).password;
         forceSSL = true;
         enableACME = true;
-        locations = { "/" = { proxyPass = "http://[::1]:8000"; }; };
+        locations = {
+          "/" = {
+            proxyPass = "http://[::1]:8000";
+            proxyWebsockets = true;
+          };
+        };
       };
       virtualHosts."hera.m-0.eu" = {
         enableACME = true;
