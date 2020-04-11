@@ -28,5 +28,20 @@
       '';
     };
   };
+  systemd.user = {
+    services = {
+      kassandra = {
+        Unit = { Description = "Kassandra Server"; };
+        Service = {
+          WorkingDirectory = "/var/www/kassandra";
+          Type = "forking";
+          ExecStart = "/var/www/kassandra/backend";
+          Restart = "always";
+          Environment = "PATH=${pkgs.coreutils}/bin/:${pkgs.taskwarrior}/bin";
+        };
+        Install = { WantedBy = [ "default.target" ]; };
+      };
+    };
+  };
 
 }

@@ -33,7 +33,7 @@ let
         (maybe [] ("-A":) -> target) <- lookupEnv "GL_OPTION_WEB_DEPLOY_NIX_TARGET"
         (decodeUtf8 -> path) <- pwd |> captureTrim
         echo ([i|Deploying build to /var/www/#{deploy}|] :: String)
-        bracket (checkout path) (rm "-rf") $ \dir -> withCurrentDirectory dir $ nix "build" "-o" ([i|/var/www/#{deploy}|] :: String) target
+        bracket (checkout path) (rm "-rf") $ \dir -> withCurrentDirectory dir $ nix-build "-o" ([i|/var/www/#{deploy}|] :: String) target
         echo "Done"
       test <- lookupEnv "GL_OPTION_TEST"
       whenJust test $ \_ -> do
