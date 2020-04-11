@@ -54,6 +54,8 @@ in {
 
         [color]
         chat_nick_colors = "cyan,magenta,green,brown,lightblue,default,lightcyan,lightmagenta,lightgreen,blue,31,35,38,40,49,63,70,80,92,99,112,126,130,138,142,148,160,162,167,169,174,176,178,184,186,210,212,215,228"
+        chat_highlight = "black"
+        chat_highlight_bg = "lightblue"
 
         [filter]
         smart = on;*;irc_smart_filter,matrix_smart_filter;*
