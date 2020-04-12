@@ -4,7 +4,6 @@ in {
   fonts = {
     fontconfig = {
       enable = true;
-      antialias = true;
       cache32Bit = true;
       defaultFonts = {
         monospace = [ "Jetbrains Mono" "DejaVu Sans Mono" ];
