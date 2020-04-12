@@ -96,8 +96,8 @@ let
        applicableFilters <- catMaybes <$> forConcurrently (listFilters <> myFilters <> toFilters) findFilterMail
        for_ applicableFilters executeFilterMail
        reScan
-       syncStates <- mySearch ["-name", ".mbsyncstate"]
-       dbFiles <- mySearch ["-name", ".isyncuidmap.db"]
+       --syncStates <- mySearch ["-name", ".mbsyncstate"]
+       --dbFiles <- mySearch ["-name", ".isyncuidmap.db"]
        dirs <- mySearch ["-type", "d"]
        maildirs <- sortNub <$> (lines . decodeUtf8 =<<) <$> forM dirs (\dir -> mdirs (toString dir) |> captureTrim)
        emptyMaildirs <- filterM (\dir -> (== 0) . LBS.length <$> (mlist (toString dir) |> captureTrim)) maildirs
