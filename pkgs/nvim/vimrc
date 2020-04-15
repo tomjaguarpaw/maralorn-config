@@ -166,6 +166,33 @@ xmap af <Plug>(coc-funcobj-a)
 omap if <Plug>(coc-funcobj-i)
 omap af <Plug>(coc-funcobj-a)
 
+" FZF ctrl-p style search
+nmap <space>p :Files<CR>
+nmap <space>g :Rg<CR>
+nmap <space>h :History<CR>
+nmap <space>b :Buffers<CR>
+
+nmap <S-Right> :bn<CR>
+nmap <S-Left> :bn<CR>
+
+let $FZF_DEFAULT_OPTS .= '--color=bg:#20242C --border --layout=reverse'
+function! FloatingFZF()
+  let width = float2nr(&columns * 0.9)
+  let height = float2nr(&lines * 0.6)
+  let opts = { 'relative': 'editor',
+         \ 'row': (&lines - height) / 2,
+         \ 'col': (&columns - width) / 2,
+         \ 'width': width,
+         \ 'height': height,
+         \ 'style': 'minimal'
+         \}
+
+  let win = nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
+  call setwinvar(win, '&winhighlight', 'NormalFloat:TabLine')
+endfunction
+
+let g:fzf_layout = { 'window': 'call FloatingFZF()' }
+
 " Use <tab> for select selections ranges, needs server support, like: coc-tsserver, coc-python
 nmap <silent> <TAB> <Plug>(coc-range-select)
 xmap <silent> <TAB> <Plug>(coc-range-select)
@@ -201,6 +228,6 @@ nnoremap <silent> <space>j  :<C-u>CocNext<CR>
 " Do default action for previous item.
 nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
-nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+"nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
 imap <Enter> <CR>

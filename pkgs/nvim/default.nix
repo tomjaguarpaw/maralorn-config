@@ -18,7 +18,7 @@ in {
           vim-pandoc vim-nix vimtex airline fugitive vim-trailing-whitespace
           haskell-vim vim-airline-themes vim-autoformat vim-ledger
           papercolor-theme nerdcommenter coc-nvim coc-python coc-rls coc-yaml
-          coc-vimtex coc-css coc-json coc-html coc-git;
+          coc-vimtex coc-css coc-json coc-html coc-git gitgutter fzf-vim;
       };
     };
   };
