@@ -40,7 +40,7 @@ let
       "System.Environment (setEnv)"
     ];
   } ''
-    reScan = notmuch "new"
+    reScan = notmuch "new" "--quiet"
 
     findFilterMail :: (Text,Text) -> IO (Maybe (LByteString, Text, Text))
     findFilterMail (filter, target) = do
@@ -98,10 +98,10 @@ let
        reScan
        --syncStates <- mySearch ["-name", ".mbsyncstate"]
        --dbFiles <- mySearch ["-name", ".isyncuidmap.db"]
-       dirs <- mySearch ["-type", "d"]
-       maildirs <- sortNub <$> (lines . decodeUtf8 =<<) <$> forM dirs (\dir -> mdirs (toString dir) |> captureTrim)
-       emptyMaildirs <- filterM (\dir -> (== 0) . LBS.length <$> (mlist (toString dir) |> captureTrim)) maildirs
-       forM_ emptyMaildirs $ \dir -> rmdir ([[i|#{dir}/cur|],[i|#{dir}/new|],[i|#{dir}/tmp|]] :: [String])
+       --dirs <- mySearch ["-type", "d"]
+       --maildirs <- sortNub <$> (lines . decodeUtf8 =<<) <$> forM dirs (\dir -> mdirs (toString dir) |> captureTrim)
+       --emptyMaildirs <- filterM (\dir -> (== 0) . LBS.length <$> (mlist (toString dir) |> captureTrim)) maildirs
+       --forM_ emptyMaildirs $ \dir -> rmdir ([[i|#{dir}/cur|],[i|#{dir}/new|],[i|#{dir}/tmp|]] :: [String])
        -- let nonMaildirs = filter (`notElem` maildirs) dirs
        --    delSyncs = filter (`elem` syncStates) $ (\x -> [i|#{x}/.mbsyncstate|]) <$> nonMaildirs
        --    delDbs = filter (`elem` dbFiles) $ (\x -> [i|#{x}/.isyncuidmap.db|]) <$> nonMaildirs
