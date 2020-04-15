@@ -46,7 +46,9 @@ in {
 
     term xterm-256color
 
-    map ctrl+shift+y paste_from_clipboard
+    map ctrl+shift+v paste_from_clipboard
     map ctrl+y paste_from_selection
+    map ctrl+plus change_font_size all +1.0
+    map ctrl+minus change_font_size all -1.0
   '';
 }
