@@ -44,7 +44,7 @@ in rec {
     inherit (pkgs)
       git-crypt htop tree pwgen borgbackup inotifyTools direnv socat nmap ncdu
       tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle vnstat
-      entr;
+      entr libargon2 mblaze;
   };
   gw2wrapper = writeHaskellScript {
     name = "gw2wrapper";
@@ -111,7 +111,7 @@ in rec {
           ]);
       runScript = "${gw2wrapper}/bin/gw2wrapper";
     };
-    inherit (unfreePkgs) discord;
+    inherit (unfreePkgs) discord zoom-us skypeforlinux;
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xev xbacklight;
     inherit (pkgs.gitAndTools) hub;
