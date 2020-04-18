@@ -1,4 +1,4 @@
-theme = "slick"
+theme = "plain"
 icons = "awesome"
 
 [[block]]
@@ -16,6 +16,22 @@ speed_down = false
 graph_up = false
 graph_down = false
 interval = 5
+
+[[block]]
+block = "disk_space"
+path = "/"
+alias = "/"
+info_type = "available"
+unit = "GB"
+interval = 60
+warning = 20.0
+alert = 10.0
+
+[[block]]
+block = "memory"
+display_type = "memory"
+format_mem = "{Mup}%"
+format_swap = "{SUp}%"
 
 [[block]]
 block = "sound"
