@@ -44,26 +44,6 @@ in {
 
   m-0 = { laptop.enable = true; };
 
-  # Use the systemd-boot EFI boot loader.
-  boot = {
-    loader = {
-      efi = {
-        canTouchEfiVariables = true;
-        efiSysMountPoint = "/boot/EFI";
-      };
-      grub = {
-        enable = true;
-        version = 2;
-        device = "nodev";
-        efiSupport = true;
-        enableCryptodisk = true;
-        gfxmodeEfi = "1024x768";
-      };
-
-    };
-    supportedFilesystems = [ "exfat" ];
-  };
-
   services = {
     snapper = {
       configs.home = {

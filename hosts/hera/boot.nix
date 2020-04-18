@@ -2,7 +2,6 @@
 
   m-0.server.initSSHKey = ./secret/boot_rsa;
 
-  # Use the systemd-boot EFI boot loader.
   boot = {
     loader = {
       grub = {
