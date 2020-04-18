@@ -92,7 +92,6 @@ in {
       "Return" = "exec ${terminal}";
       "q" = "kill";
       "space" = "exec hotkeys";
-      "m" = "bar mode toggle monitoring";
     };
     workspaceBindings = pkgs.lib.fold (a: b: a // b) { } (builtins.map (num:
       let
