@@ -33,6 +33,8 @@ in {
       (lib.filterAttrs (name: value: name != "__functor") sources) // {
         "nix-path/nixos".source = sources.nixpkgs;
       };
+    variables = genAttrs [ "CURL_CA_BUNDLE" "GIT_SSL_CAINFO" "SSL_CERT_FILE" ]
+      (const "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt");
   };
 
   nix = {
