@@ -64,7 +64,7 @@ in {
       "XF86AudioRaiseVolume" =
         "exec pactl set-sink-volume '@DEFAULT_SINK@' +5%";
       "XF86AudioMicMute" =
-        "exec pactl set-source-mute '@DEFAULT_SOURCE@' toggle";
+        "exec pactl set-source-mute 'alsa_input.pci-0000_00_1f.3.analog-stereo' toggle";
       "XF86MonBrightnessUp" =
         "exec ${pkgs.brightnessctl}/bin/brightnessctl s 5%+";
       "XF86MonBrightnessDown" =
@@ -149,6 +149,8 @@ in {
       ${pkgs.lib.concatMapStringsSep "\n"
       (p: "workspace ${p.name} output ${p.screen}")
       (workspaceScreens ++ workspacesmallScreens ++ workspacehighScreens)}
+      bindsym Print exec pactl set-source-mute 'alsa_input.pci-0000_00_1f.3.analog-stereo' false
+      bindsym --release Print exec pactl set-source-mute 'alsa_input.pci-0000_00_1f.3.analog-stereo' true
 
       bar {
           id standard
