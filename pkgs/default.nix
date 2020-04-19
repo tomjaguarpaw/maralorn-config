@@ -33,7 +33,7 @@ in rec {
     inherit neovim;
     inherit (pkgs)
       gitFull gnumake mkpasswd file wget curl wireguard gnupg mutt bind liboping
-      psmisc unzip rename whois lsof parted python3;
+      psmisc unzip rename whois lsof parted python3 binutils;
   };
 
   extra-system-pkgs = {
@@ -177,7 +177,8 @@ in rec {
   home-pkgs = {
     inherit (pkgs.pythonPackages) yapf jsbeautifier;
     inherit (pkgs)
-      mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole nixfmt;
+      mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole nixfmt
+      stack ghcid;
     inherit (my-lib) ghc;
     inherit home-neovim ghcide obelisk;
     cabal-fmt = (unBreak unstable.haskell.packages.ghc881.cabal-fmt);
