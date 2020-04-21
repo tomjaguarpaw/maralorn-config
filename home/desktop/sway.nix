@@ -162,12 +162,12 @@ in {
           mode hide
 
           colors {
-              statusline #ffffff
-              background #00000000
+              statusline ${colors.foreground}
+              background ${colors.background}
               ${
                 lib.concatStringsSep "\n" (lib.mapAttrsToList (category:
                   { background, border, text }: ''
-                    ${category} ${background}cc ${border} ${text}
+                    ${category} ${background} ${border} ${text}
                   '') barColors)
               }
           }
@@ -188,12 +188,12 @@ in {
           mode invisible
 
           colors {
-              statusline #ffffff
-              background #00000000
+              statusline ${colors.foreground}
+              background ${colors.background}
               ${
                 lib.concatStringsSep "\n" (lib.mapAttrsToList (category:
                   { background, border, text }: ''
-                    ${category} ${background}cc ${border} ${text}
+                    ${category} ${background} ${border} ${text}
                   '') barColors)
               }
           }
