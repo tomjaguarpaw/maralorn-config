@@ -33,7 +33,7 @@ in rec {
     inherit neovim;
     inherit (pkgs)
       gitFull gnumake mkpasswd file wget curl wireguard gnupg mutt bind liboping
-      psmisc unzip rename whois lsof parted python3 binutils;
+      psmisc unzip rename whois lsof parted python3 binutils ntfsprogs;
   };
 
   extra-system-pkgs = {
@@ -108,10 +108,14 @@ in rec {
             libtxc_dxtn
             gnutls
             krb5Full
+            ncurses5
+            vulkan-headers
+            vulkan-loader
+            vulkan-tools
           ]);
       runScript = "${gw2wrapper}/bin/gw2wrapper";
     };
-    inherit (unfreePkgs) discord zoom-us skypeforlinux;
+    inherit (unfreePkgs) discord zoom-us skypeforlinux steam;
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xev xbacklight;
     inherit (pkgs.gitAndTools) hub;

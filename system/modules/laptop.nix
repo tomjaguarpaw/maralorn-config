@@ -24,12 +24,12 @@ in {
     };
     hardware.pulseaudio = {
       enable = true;
+      support32Bit = true;
       tcp = {
         enable = true;
         anonymousClients.allowedIpRanges = [ "127.0.0.1" "::1" ];
       };
     };
-    nixpkgs.config.allowUnfree = true;
     security.pam.services.swaylock = { };
     programs.dconf.enable = true;
 
