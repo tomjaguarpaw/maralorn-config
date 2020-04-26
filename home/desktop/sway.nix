@@ -145,6 +145,8 @@ in {
       set $high 'Ancor Communications Inc ASUS VW248 B6LMTF011850'
       set $small 'Unknown X1910WDS 001367'
 
+      output $intern scale 1.0
+
       ${pkgs.lib.concatMapStringsSep "\n"
       (p: "workspace ${p.name} output ${p.screen}")
       (workspaceScreens ++ workspacesmallScreens ++ workspacehighScreens)}
