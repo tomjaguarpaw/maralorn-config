@@ -1,4 +1,4 @@
-{ config, ... }:
+{ pkgs, config, ... }:
 let
   hostName = "matrix.maralorn.de";
   inherit (config.m-0) hosts;
@@ -35,7 +35,6 @@ in {
       url_preview_enabled = true;
       database_type = "psycopg2";
       max_upload_size = "30M";
-      create_local_database = false;
       dynamic_thumbnails = true;
       registration_shared_secret =
         config.m-0.private.matrix_registration_secret;

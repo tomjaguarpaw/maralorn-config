@@ -26,7 +26,7 @@ in {
     virtualHosts."riot.maralorn.de" = {
       enableACME = true;
       forceSSL = true;
-      root = pkgs.riot-web.overrideAttrs (old: { conf = riot_config; });
+      root = pkgs.riot-web.override (old: { conf = riot_config; });
     };
   };
 
