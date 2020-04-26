@@ -36,8 +36,6 @@ nnoremap <c-down> <c-w><c-j>
 nnoremap <c-up> <c-w><c-k>
 nnoremap <c-right> <c-w><c-l>
 nnoremap <c-left> <c-w><c-h>
-nnoremap <a-left> gT
-nnoremap <a-right> gt
 let mapleader=","
 
 
@@ -172,8 +170,8 @@ nmap <space>g :Rg<CR>
 nmap <space>h :History<CR>
 nmap <space>b :Buffers<CR>
 
-nmap <S-Right> :bn<CR>
-nmap <S-Left> :bn<CR>
+nnoremap <a-left> :bp<CR>
+nnoremap <a-right> :bn<CR>
 
 let $FZF_DEFAULT_OPTS .= '--color=bg:#20242C --border --layout=reverse'
 function! FloatingFZF()
