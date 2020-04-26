@@ -2,14 +2,13 @@
 with lib;
 let
   weechatConfig = import ../secret/weechat.nix;
-  inherit (import ../../../lib) unstable;
-  weechat = unstable.wrapWeechat unstable.weechat-unwrapped {
+  weechat = pkgs.wrapWeechat pkgs.weechat-unwrapped {
     configure = { availablePlugins, ... }: {
       plugins = builtins.attrValues (availablePlugins // {
         python = (availablePlugins.python.withPackages
-          (ps: [ unstable.weechatScripts.weechat-matrix ]));
+          (ps: [ pkgs.weechatScripts.weechat-matrix ]));
       });
-      scripts = [ unstable.weechatScripts.weechat-matrix ];
+      scripts = [ pkgs.weechatScripts.weechat-matrix ];
     };
   };
 in {

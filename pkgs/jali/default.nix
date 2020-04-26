@@ -1,10 +1,10 @@
-{ aqbanking, python36Packages, fetchgit }:
+{ aqbanking, python3Packages, fetchgit }:
 let
   andir = import (builtins.fetchTarball {
     url = "https://github.com/andir/nixpkgs/archive/aqbanking.tar.gz";
     sha256 = "06m7risi68jfqgv001ip77lzz6bylvvdn5j8sn845c54zpm6qp36";
   }) { };
-in with python36Packages;
+in with python3Packages;
 buildPythonApplication rec {
   name = "${pname}-${version}";
   pname = "jali";

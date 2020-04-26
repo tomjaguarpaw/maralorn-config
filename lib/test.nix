@@ -1,5 +1,4 @@
 let
-  inherit (import ../pkgs) niv;
   inherit (import ../lib)
     pkgs writeHaskellScript get-niv-path home-manager unstable haskellList;
 in rec {
@@ -38,7 +37,8 @@ in rec {
   keys = [ "default" "apollo" "hera" ];
   test-config = writeHaskellScript {
     name = "test-config";
-    bins = [ test-system-config test-home-config pkgs.git niv pkgs.git-crypt ];
+    bins =
+      [ test-system-config test-home-config pkgs.git pkgs.niv pkgs.git-crypt ];
     imports = [ "System.Directory (withCurrentDirectory)" ];
   } ''
     checkout :: IO FilePath

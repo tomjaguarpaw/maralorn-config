@@ -16,17 +16,15 @@ in rec {
   my-ssh-add = pkgs.writeShellScriptBin "my-ssh-add" ''
     SSH_ASKPASS=${cat-pw}/bin/cat-ssh-pw ${pkgs.openssh}/bin/ssh-add < /dev/null
   '';
-  zsh-powerlevel10k = unstable.zsh-powerlevel10k;
   ghcide = (import sources.ghcide { }).ghcide-ghc865;
   obelisk = (import sources.obelisk { }).command;
   nix-direnv = sources.nix-direnv + "/direnvrc";
-  neovim = unstable.neovim.override {
+  neovim = pkgs.neovim.override {
     vimAlias = true;
     withPython3 = true;
     withPython = false;
   };
   home-neovim = (import ./nvim) neovim;
-  niv = unstable.niv;
 
   # pkgs assumed to be present on a non nixos host
   core-system-pkgs = {
@@ -37,14 +35,13 @@ in rec {
   };
 
   extra-system-pkgs = {
-    inherit niv;
     inherit (pkgs.gitAndTools) git-annex;
     inherit (pkgs.rxvt_unicode) terminfo;
     inherit (pkgs.python3Packages) qrcode;
     inherit (pkgs)
       git-crypt htop tree pwgen borgbackup inotifyTools direnv socat nmap ncdu
       tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle vnstat
-      entr libargon2 mblaze;
+      entr libargon2 mblaze niv;
   };
   gw2wrapper = writeHaskellScript {
     name = "gw2wrapper";
@@ -98,7 +95,7 @@ in rec {
             libXext
             libX11
             libudev
-            libGLU_combined
+            libGLU
             mesa_noglu.osmesa
             libdrm
             libpulseaudio
@@ -119,10 +116,11 @@ in rec {
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xev xbacklight;
     inherit (pkgs.gitAndTools) hub;
-    inherit (unstable) mumble;
     inherit (pkgs)
     # web
       chromium
+
+      mumble
 
       upower speedtest-cli
 
@@ -174,8 +172,7 @@ in rec {
     inherit (pkgs.gnome3) dconf;
     inherit (pkgs)
       kitty lm_sensors sway swaylock swayidle xwayland rofi dmenu xdg_utils
-      libnotify mako;
-    inherit (unstable) wofi;
+      libnotify mako wofi;
 
   };
   home-pkgs = {
@@ -185,7 +182,7 @@ in rec {
       stack ghcid;
     inherit (my-lib) ghc;
     inherit home-neovim ghcide obelisk;
-    cabal-fmt = (unBreak unstable.haskell.packages.ghc881.cabal-fmt);
+    cabal-fmt = (unBreak pkgs.haskell.packages.ghc881.cabal-fmt);
   };
   accounting-pkgs = {
     jali = pkgs.callPackage ./jali { };

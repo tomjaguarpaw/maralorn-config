@@ -1,6 +1,4 @@
-{ config, pkgs, lib, ... }:
-let inherit (import ../lib) unstable;
-in {
+{ config, pkgs, lib, ... }: {
   fonts = {
     fontconfig = {
       enable = true;
@@ -21,10 +19,7 @@ in {
         font-awesome # icons I guess?
         material-icons # icons in my app
         b612 # sans font
-        powerline-fonts # fonts e.g. for swaybar
-      ;
-      inherit (unstable) jetbrains-mono # code font
-      ;
+        jetbrains-mono; # code font
     };
   };
 

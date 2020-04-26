@@ -20,20 +20,13 @@ let
         "https://cloud.maralorn.de/apps/theming/image/background";
     };
   };
-  inherit (import ../lib) unstable;
 in {
   services.nginx = {
     enable = true;
     virtualHosts."riot.maralorn.de" = {
       enableACME = true;
       forceSSL = true;
-      root = unstable.riot-web;
-      locations."/config.json" = {
-        extraConfig = ''
-          default_type application/json;
-          return 200 '${builtins.toJSON riot_config}';
-        '';
-      };
+      root = pkgs.riot-web.overrideAttrs (old: { conf = riot_config; });
     };
   };
 
