@@ -84,64 +84,51 @@ in {
       matchBlocks = let
         matheGwProxy = "ssh -q gw nc -q0 %h %p";
         agHost = "fb04217.mathematik.tu-darmstadt.de";
-      in [
-        {
-          host = "git-auto";
+      in {
+        git-auto = {
           hostname = "hera.m-0.eu";
           user = "git";
           identityFile = "~/.ssh/id_auto_ed25519";
-        }
-        {
-          host = "git";
+        };
+        git = {
           hostname = "hera.m-0.eu";
           user = "git";
-        }
-        {
-          host = "hera";
+        };
+        hera = {
           hostname = "hera.m-0.eu";
           user = me.user;
-        }
-        {
-          host = "ag-forward";
+        };
+        ag-forward = {
           hostname = agHost;
           proxyCommand = matheGwProxy;
           user = meWork.user;
-        }
-        {
-          host = "ag";
+        };
+        ag = {
           hostname = agHost;
           user = meWork.user;
-        }
-        {
-          host = "gw";
+        };
+        gw = {
           hostname = "gwres4.mathematik.tu-darmstadt.de";
           user = meWork.user;
-        }
-        {
-          host = "shells";
+        };
+        shells = {
           hostname = "shells.darmstadt.ccc.de";
           user = me.user;
-        }
-        {
-          host = "vorstand";
+        };
+        vorstand = {
           hostname = "vorstand.darmstadt.ccc.de";
           user = me.user;
-        }
-        {
-          host = "whisky";
+        };
+        whisky = {
           hostname = "whisky.w17.io";
           user = "chaos";
-        }
-        {
-          host = "kitchen";
+        };
+        kitchen = {
           hostname = "kitchen.w17.io";
           user = "chaos";
-        }
-        {
-          host = "door.w17.io";
-          identityFile = "~/.ssh/door_rsa";
-        }
-      ];
+        };
+        "door.w17.io" = { identityFile = "~/.ssh/door_rsa"; };
+      };
     };
   };
 
