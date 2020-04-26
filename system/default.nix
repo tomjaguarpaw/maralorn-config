@@ -22,6 +22,11 @@ in {
         config.m-0.hosts);
   };
 
+  security.acme = {
+    email = "security@maralorn.de";
+    acceptTerms = true;
+  };
+
   users = {
     mutableUsers = false;
     users.root = { openssh.authorizedKeys.keys = me.keys; };
