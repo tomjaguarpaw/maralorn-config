@@ -15,7 +15,7 @@ in {
   config = mkIf config.m-0.laptop.enable {
 
     networking = { networkmanager.enable = true; };
-    i18n.consoleKeyMap = "neo";
+    console.keyMap = "neo";
 
     sound.enable = true;
     hardware.opengl = {
