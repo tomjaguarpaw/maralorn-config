@@ -55,6 +55,7 @@ let
           enable = true;
           hostName = hostname;
           nginx.enable = true;
+          package = pkgs.nextcloud18;
           maxUploadSize = "10g";
           caching = {
             redis = true;
@@ -78,6 +79,7 @@ let
 
         postgresql = {
           enable = true;
+          package = pkgs.postgresql_9_6;
           initialScript = pkgs.writeText "psql-init" ''
             create role nextcloud with login password '${cloud.dbpass}';
             create database nextcloud with owner nextcloud;
