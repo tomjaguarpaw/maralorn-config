@@ -37,6 +37,7 @@ rec {
     p.relude
     p.shake
     p.hledger-lib
+    p.dhall
     #p.releaser
     p.megaparsec
     p.pandoc
