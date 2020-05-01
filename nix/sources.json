@@ -17,10 +17,10 @@
         "homepage": "",
         "owner": "rycee",
         "repo": "home-manager",
-        "rev": "98fa8f63b8d7508e84275eb47cd7f3003e6b9510",
-        "sha256": "1bf9pzcjd67x65vbqjnsjdx58qma0fjlfcbr19rnzvxzysv7h38k",
+        "rev": "a378bccd609c159fa8d421233b9c5eae04f02042",
+        "sha256": "1cfh0aj60qriadvn5xvsp24p1xr06g68m3pfvzwahv2bd2cg261r",
         "type": "tarball",
-        "url": "https://github.com/rycee/home-manager/archive/98fa8f63b8d7508e84275eb47cd7f3003e6b9510.tar.gz",
+        "url": "https://github.com/rycee/home-manager/archive/a378bccd609c159fa8d421233b9c5eae04f02042.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nix-direnv": {
@@ -65,10 +65,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "47fbd1e4134bd1314c3753f1c13368d10063ea85",
-        "sha256": "1bs8dbjn9p13mwl5yfx8vpkvyclqcgh6251n5jjy6nh3f6v59lrf",
+        "rev": "73e73c7d6b5f9aace09a2aa12beb8688b3d7b7c8",
+        "sha256": "05cgchpz64pz2gh89b43wqar9yzvi57h3rmssmqf3r77xgyiswff",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/47fbd1e4134bd1314c3753f1c13368d10063ea85.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/73e73c7d6b5f9aace09a2aa12beb8688b3d7b7c8.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
@@ -77,10 +77,10 @@
         "homepage": "",
         "owner": "obsidiansystems",
         "repo": "obelisk",
-        "rev": "d9df151ed175be4f2dff721676e412a88a0596c1",
-        "sha256": "1wm2q4blqga6appp193idkapnqsan7qnkz29kylqag1y11fk4rrj",
+        "rev": "3db33c4cf101999c7affb9c7b57f5e602cef4850",
+        "sha256": "1shk8yy5pbakcw8aq6b8s3g2xblzf24l78mq0ca0asnvifnp83yb",
         "type": "tarball",
-        "url": "https://github.com/obsidiansystems/obelisk/archive/d9df151ed175be4f2dff721676e412a88a0596c1.tar.gz",
+        "url": "https://github.com/obsidiansystems/obelisk/archive/3db33c4cf101999c7affb9c7b57f5e602cef4850.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "unstable": {
