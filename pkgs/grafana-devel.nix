@@ -12,7 +12,7 @@ let
           providers = [{
             name = "Static dashboards";
             folder = "";
-            options.path = ../system/moonitoring/grafana-dashboards;
+            options.path = ../system/monitoring/grafana-dashboards;
             orgId = 1;
             type = "file";
             updateIntervalSeconds = 60;
