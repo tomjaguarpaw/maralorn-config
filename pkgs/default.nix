@@ -150,6 +150,7 @@ in rec {
       minetest
 
       nix-review gparted;
+    grafana-devel = pkgs.callPackage ./grafana-devel.nix { };
   };
 
   my-home-pkgs = {
