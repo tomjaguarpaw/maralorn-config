@@ -4,6 +4,9 @@ groups:
         - alert: ProbeTimeout
           expr: probe_success == 0
           for: 60m
+        - alert: NixpkgsBuildFail
+          expr: hydra_job_failed == 1
+          for: 60m
         - alert: node_down
           expr: (up{name!="apollo"} == 0)
           for: 5m

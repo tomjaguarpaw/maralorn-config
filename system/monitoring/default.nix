@@ -26,7 +26,8 @@ let
     job_name = "nixpkgs-${name}";
     metrics_path = "/job/${name}/prometheus";
     scheme = "https";
-    scrape_interval = "6h";
+    scrape_interval = "1h";
+    static_configs = [{ targets = [ "hydra.nixos.org" ]; }];
   };
   watchNixpkgsHaskellPackage = name: [
     (watchNixpkgsPackage
@@ -120,7 +121,8 @@ in {
         ++ (watchNixpkgsHaskellPackage "releaser")
         ++ (watchNixpkgsHaskellPackage "hlint")
         ++ (watchNixpkgsHaskellPackage "cabal-fmt")
-        ++ (watchNixpkgsHaskellPackage "relude");
+        ++ (watchNixpkgsHaskellPackage "relude")
+        ++ (watchNixpkgsHaskellPackage "taskwarrior");
       alertmanagers =
         [{ static_configs = [{ targets = [ "localhost:9093" ]; }]; }];
     };
