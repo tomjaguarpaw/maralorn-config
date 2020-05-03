@@ -151,7 +151,6 @@ in {
         ++ (watchNixpkgsHaskellPackage "brittany")
         ++ (watchNixpkgsHaskellPackage "releaser")
         ++ (watchNixpkgsHaskellPackage "hlint")
-        ++ (watchNixpkgsHaskellPackage "cabal-fmt")
         ++ (watchNixpkgsHaskellPackage "relude")
         ++ (watchNixpkgsHaskellPackage "taskwarrior");
       alertmanagers =
