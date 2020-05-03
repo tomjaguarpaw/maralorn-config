@@ -6,9 +6,9 @@ groups:
           for: 60m
         - alert: NixpkgsBuildFail
           expr: hydra_job_failed == 1
-          for: 60m
+          for: 2h
         - alert: node_down
-          expr: (up{name!="apollo"} == 0)
+          expr: (up{name!="apollo",instance!="hydra.nixos.org:443"} == 0)
           for: 5m
           annotations:
              description: '{{ $labels.name }} has been down for more than 5 minutes.'
