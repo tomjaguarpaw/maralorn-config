@@ -13,14 +13,14 @@
    "editable": true,
    "gnetId": null,
    "graphTooltip": 0,
-   "id": null,
+   "id": 1,
    "links": [],
    "panels": [{
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "prometheus",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -102,7 +102,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "prometheus",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -176,7 +176,7 @@
          "min": null,
          "show": true
       }],
-      "yaxis": {
+      "axis": {
          "align": false,
          "alignLevel": null
       }
@@ -185,7 +185,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "prometheus",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -222,7 +222,7 @@
       "targets": [{
          "expr": "hydra_job_failed > 0",
          "interval": "",
-         "legendFormat": "{{exported_job}}",
+         "legendFormat": "{{exported_job}} on {{jobset}}",
          "refId": "A"
       }],
       "thresholds": [],
@@ -289,9 +289,10 @@
    },
    "timezone": "",
    "title": "Health Status",
-   "uid": null,
+   "uid": "Fvgc9T6Wz",
    "variables": {
       "list": []
    },
-   "version": 0
+   "version": 1
 }
+y
