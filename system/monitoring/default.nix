@@ -81,6 +81,8 @@ in {
     };
 
     prometheus = {
+      extraFlags =
+        [ "--query.lookback-delta=2h" "--storage.tsdb.retention.time 720d" ];
       exporters = {
         blackbox = {
           enable = true;
