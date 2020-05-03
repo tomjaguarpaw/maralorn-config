@@ -101,9 +101,9 @@ in {
           };
           "route" = {
             "group_by" = [ "alertname" "alias" ];
-            "group_wait" = "30s";
-            "group_interval" = "2m";
-            "repeat_interval" = "4h";
+            "group_wait" = "5m";
+            "group_interval" = "30m";
+            "repeat_interval" = "7d";
             "receiver" = "team-admins";
           };
           "receivers" = [{
