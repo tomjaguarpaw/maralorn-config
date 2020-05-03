@@ -145,6 +145,8 @@ in {
             labels = { "name" = entry.name; };
           }) config.m-0.monitoring;
         }
+        (watchNixpkgsPackage
+          "nixpkgs/haskell-updates/haskellPackages.cabal-fmt.x86_64-linux")
       ] ++ (watchNixpkgsHaskellPackage "ghcide")
         ++ (watchNixpkgsHaskellPackage "brittany")
         ++ (watchNixpkgsHaskellPackage "releaser")
