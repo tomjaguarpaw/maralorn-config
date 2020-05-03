@@ -112,7 +112,7 @@ in rec {
           ]);
       runScript = "${gw2wrapper}/bin/gw2wrapper";
     };
-    inherit (unfreePkgs) discord zoom-us skypeforlinux steam;
+    inherit (unfreePkgs) discord zoom-us skypeforlinux steam google-chrome;
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xev xbacklight;
     inherit (pkgs.gitAndTools) hub;
