@@ -12,10 +12,6 @@ in {
       name = "postfix";
       host = "hera-intern:9154";
     }
-    {
-      name = "dovecot";
-      host = "hera-intern:9166";
-    }
   ];
 
   containers.mail = {
