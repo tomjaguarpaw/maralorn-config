@@ -36,6 +36,7 @@ in {
           enable = true;
           systemd.enable = true;
           showqPath = "/var/lib/postfix/queue/public/showq";
+          user = "postfix";
         };
         dovecot = { enable = true; };
       };
