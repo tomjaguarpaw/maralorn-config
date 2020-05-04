@@ -16,7 +16,7 @@
             "group_by" = [ "alertname" "alias" ];
             "group_wait" = "5m";
             "group_interval" = "30m";
-            "repeat_interval" = "7d";
+            "repeat_interval" = "168h";
             "receiver" = "team-admins";
           };
           "receivers" = [{
