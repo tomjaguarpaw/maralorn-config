@@ -367,6 +367,7 @@
          "alignLevel": null
       }
    }],
+   "refresh": "1m",
    "schemaVersion": 22,
    "style": "dark",
    "tags": [],
@@ -393,7 +394,7 @@
    },
    "timezone": "",
    "title": "Health Status",
-   "uid": "Fvgc9T6Wz",
+   "uid": "health-status",
    "variables": {
       "list": []
    },
