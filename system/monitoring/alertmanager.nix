@@ -1,4 +1,4 @@
-{ ... }: {
+{ config, ... }: {
   services = {
     nginx = {
       virtualHosts."alerts.maralorn.de" = {
