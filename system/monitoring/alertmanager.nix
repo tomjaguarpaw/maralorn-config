@@ -11,7 +11,7 @@
       alertmanager = {
         enable = true;
         listenAddress = "0.0.0.0";
-        extraFlags = [ "--data.retention 7d" ];
+        extraFlags = [ "--data.retention 170h" ];
         configuration = {
           "global" = {
             "smtp_smarthost" = "hera.m-0.eu:587";
