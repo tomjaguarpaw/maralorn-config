@@ -70,6 +70,7 @@
          "sort": 0,
          "value_type": "individual"
       },
+      "transparent": true,
       "type": "graph",
       "xaxis": {
          "buckets": null,
@@ -158,6 +159,7 @@
          "sort": 0,
          "value_type": "individual"
       },
+      "transparent": true,
       "type": "graph",
       "xaxis": {
          "buckets": null,
@@ -241,6 +243,91 @@
          "sort": 0,
          "value_type": "individual"
       },
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+         "buckets": null,
+         "mode": "time",
+         "name": null,
+         "show": true,
+         "values": []
+      },
+      "yaxes": [{
+         "decimals": 0,
+         "format": "short",
+         "label": null,
+         "logBase": 1,
+         "max": null,
+         "min": "0",
+         "show": true
+      }, {
+         "format": "short",
+         "label": null,
+         "logBase": 1,
+         "max": null,
+         "min": null,
+         "show": true
+      }],
+      "yaxis": {
+         "align": false,
+         "alignLevel": null
+      }
+   }, {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "prometheus",
+      "fill": 10,
+      "fillGradient": 0,
+      "gridPos": {
+         "h": 8,
+         "w": 12,
+         "x": 12,
+         "y": 8
+      },
+      "hiddenSeries": false,
+      "id": 8,
+      "legend": {
+         "avg": false,
+         "current": false,
+         "max": false,
+         "min": false,
+         "show": true,
+         "total": false,
+         "values": false
+      },
+      "lines": true,
+      "linewidth": 0,
+      "nullPointMode": "null",
+      "options": {
+         "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [{
+         "expr": "1 - probe_success == 1",
+         "interval": "",
+         "legendFormat": "{{job}} against {{instance}}",
+         "refId": "A"
+      }],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Probe Timeouts",
+      "tooltip": {
+         "shared": true,
+         "sort": 0,
+         "value_type": "individual"
+      },
+      "transparent": true,
       "type": "graph",
       "xaxis": {
          "buckets": null,
