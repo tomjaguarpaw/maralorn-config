@@ -21,10 +21,11 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "prometheus",
+      "decimals": 0,
       "fill": 10,
       "fillGradient": 0,
       "gridPos": {
-         "h": 8,
+         "h": 15,
          "w": 12,
          "x": 0,
          "y": 0
@@ -32,17 +33,20 @@
       "hiddenSeries": false,
       "id": 6,
       "legend": {
+         "alignAsTable": true,
          "avg": false,
-         "current": false,
+         "current": true,
+         "hideEmpty": false,
          "max": false,
          "min": false,
+         "rightSide": false,
          "show": true,
          "total": false,
-         "values": false
+         "values": true
       },
       "lines": true,
       "linewidth": 0,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
          "dataLinks": []
       },
@@ -67,7 +71,7 @@
       "title": "Unreachable nodes",
       "tooltip": {
          "shared": true,
-         "sort": 0,
+         "sort": 2,
          "value_type": "individual"
       },
       "transparent": true,
@@ -109,10 +113,11 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "prometheus",
+      "decimals": 0,
       "fill": 10,
       "fillGradient": 0,
       "gridPos": {
-         "h": 8,
+         "h": 15,
          "w": 12,
          "x": 12,
          "y": 0
@@ -120,17 +125,18 @@
       "hiddenSeries": false,
       "id": 4,
       "legend": {
+         "alignAsTable": true,
          "avg": false,
-         "current": false,
+         "current": true,
          "max": false,
          "min": false,
          "show": true,
          "total": false,
-         "values": false
+         "values": true
       },
       "lines": true,
       "linewidth": 0,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
          "dataLinks": []
       },
@@ -156,7 +162,7 @@
       "title": "Failed Systemd Units",
       "tooltip": {
          "shared": true,
-         "sort": 0,
+         "sort": 2,
          "value_type": "individual"
       },
       "transparent": true,
@@ -194,28 +200,30 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "prometheus",
+      "decimals": 0,
       "fill": 10,
       "fillGradient": 0,
       "gridPos": {
-         "h": 9,
+         "h": 18,
          "w": 12,
          "x": 0,
-         "y": 8
+         "y": 15
       },
       "hiddenSeries": false,
       "id": 2,
       "legend": {
+         "alignAsTable": true,
          "avg": false,
-         "current": false,
+         "current": true,
          "max": false,
          "min": false,
          "show": true,
          "total": false,
-         "values": false
+         "values": true
       },
       "lines": true,
       "linewidth": 0,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
          "dataLinks": []
       },
@@ -240,7 +248,7 @@
       "title": "Nixpkgs Build Failures",
       "tooltip": {
          "shared": true,
-         "sort": 0,
+         "sort": 2,
          "value_type": "individual"
       },
       "transparent": true,
@@ -278,28 +286,30 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "prometheus",
+      "decimals": 0,
       "fill": 10,
       "fillGradient": 0,
       "gridPos": {
-         "h": 8,
+         "h": 19,
          "w": 12,
          "x": 12,
-         "y": 8
+         "y": 15
       },
       "hiddenSeries": false,
       "id": 8,
       "legend": {
+         "alignAsTable": true,
          "avg": false,
-         "current": false,
+         "current": true,
          "max": false,
          "min": false,
          "show": true,
          "total": false,
-         "values": false
+         "values": true
       },
       "lines": true,
       "linewidth": 0,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
          "dataLinks": []
       },
@@ -324,7 +334,7 @@
       "title": "Probe Timeouts",
       "tooltip": {
          "shared": true,
-         "sort": 0,
+         "sort": 2,
          "value_type": "individual"
       },
       "transparent": true,
