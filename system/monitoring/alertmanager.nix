@@ -1,12 +1,5 @@
 { config, ... }: {
   services = {
-    nginx = {
-      virtualHosts."alerts.maralorn.de" = {
-        enableACME = true;
-        forceSSL = true;
-        locations."/" = { proxyPass = "http://localhost:9093"; };
-      };
-    };
     prometheus = {
       alertmanager = {
         enable = true;

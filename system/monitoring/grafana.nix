@@ -1,19 +1,9 @@
 { ... }: {
   services = {
-    nginx = {
-      virtualHosts."stats.maralorn.de" = {
-        enableACME = true;
-        forceSSL = true;
-        locations."/".proxyPass = "http://localhost:3000/";
-      };
-    };
     grafana = {
       enable = true;
       auth.anonymous.enable = true;
-      users = {
-        allowOrgCreate = false;
-        allowSignUp = false;
-      };
+      extraOptions = { AUTH_BASIC_ENABLED = "false"; };
       provision = {
         enable = true;
         datasources = [{

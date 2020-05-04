@@ -35,14 +35,6 @@ let
   ];
 in {
   services = {
-    nginx = {
-      virtualHosts."monitoring.maralorn.de" = {
-        enableACME = true;
-        forceSSL = true;
-        locations."/" = { proxyPass = "http://localhost:9090"; };
-      };
-    };
-
     prometheus = {
       enable = true;
       extraFlags =
