@@ -21,7 +21,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "prometheus",
-      "fill": 1,
+      "fill": 10,
       "fillGradient": 0,
       "gridPos": {
          "h": 8,
@@ -41,7 +41,7 @@
          "values": false
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 0,
       "nullPointMode": "null",
       "options": {
          "dataLinks": []
@@ -52,10 +52,10 @@
       "renderer": "flot",
       "seriesOverrides": [],
       "spaceLength": 10,
-      "stack": false,
+      "stack": true,
       "steppedLine": false,
       "targets": [{
-         "expr": "up +1 == 1",
+         "expr": "up{instance!=\"apollo:9100\"} +1 == 1",
          "interval": "",
          "legendFormat": "{{job}} - {{ instance }}",
          "refId": "A"
@@ -79,11 +79,12 @@
          "values": []
       },
       "yaxes": [{
+         "decimals": 0,
          "format": "short",
          "label": null,
          "logBase": 1,
          "max": null,
-         "min": null,
+         "min": "0",
          "show": true
       }, {
          "format": "short",
@@ -99,11 +100,15 @@
       }
    }, {
       "aliasColors": {},
+      "axis": {
+         "align": false,
+         "alignLevel": null
+      },
       "bars": false,
       "dashLength": 10,
       "dashes": false,
       "datasource": "prometheus",
-      "fill": 1,
+      "fill": 10,
       "fillGradient": 0,
       "gridPos": {
          "h": 8,
@@ -123,7 +128,7 @@
          "values": false
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 0,
       "nullPointMode": "null",
       "options": {
          "dataLinks": []
@@ -162,11 +167,12 @@
          "values": []
       },
       "yaxes": [{
+         "decimals": 0,
          "format": "short",
          "label": null,
          "logBase": 1,
          "max": null,
-         "min": null,
+         "min": "0",
          "show": true
       }, {
          "format": "short",
@@ -176,7 +182,7 @@
          "min": null,
          "show": true
       }],
-      "axis": {
+      "yaxis": {
          "align": false,
          "alignLevel": null
       }
@@ -186,7 +192,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "prometheus",
-      "fill": 1,
+      "fill": 10,
       "fillGradient": 0,
       "gridPos": {
          "h": 9,
@@ -206,7 +212,7 @@
          "values": false
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 0,
       "nullPointMode": "null",
       "options": {
          "dataLinks": []
@@ -217,7 +223,7 @@
       "renderer": "flot",
       "seriesOverrides": [],
       "spaceLength": 10,
-      "stack": false,
+      "stack": true,
       "steppedLine": false,
       "targets": [{
          "expr": "hydra_job_failed > 0",
@@ -244,11 +250,12 @@
          "values": []
       },
       "yaxes": [{
+         "decimals": 0,
          "format": "short",
          "label": null,
          "logBase": 1,
          "max": null,
-         "min": null,
+         "min": "0",
          "show": true
       }, {
          "format": "short",
@@ -295,4 +302,3 @@
    },
    "version": 1
 }
-y
