@@ -25,6 +25,7 @@ let
     metrics_path = "/job/${name}/prometheus";
     scheme = "https";
     scrape_interval = "1h";
+    scrape_timeout = "60s";
     static_configs = [{ targets = [ "hydra.nixos.org" ]; }];
   };
   watchNixpkgsHaskellPackage = name: [
