@@ -1,28 +1,28 @@
 modules:
    https:
       prober: http
-      timeout: 5s
+      timeout: 20s
       http:
          valid_status_codes: []  # Defaults to 2xx
          method: GET
          fail_if_not_ssl: true
    http:
       prober: http
-      timeout: 5s
+      timeout: 20s
       http:
          valid_status_codes: []  # Defaults to 2xx
          method: GET
    tls_connect:
       prober: tcp
-      timeout: 5s
+      timeout: 20s
       tcp:
          tls: true
    tcp_connect:
       prober: tcp
-      timeout: 5s
+      timeout: 20s
    imap_starttls:
       prober: tcp
-      timeout: 5s
+      timeout: 20s
       tcp:
          query_response:
             - expect: "OK.*STARTTLS"
@@ -33,7 +33,7 @@ modules:
             - expect: "CAPABILITY IMAP4rev1"
    smtp_starttls:
       prober: tcp
-      timeout: 5s
+      timeout: 20s
       tcp:
          query_response:
             - expect: "^220 ([^ ]+) ESMTP (.+)$"
@@ -47,13 +47,13 @@ modules:
             - send: "QUIT"
    icmp_example:
       prober: icmp
-      timeout: 5s
+      timeout: 20s
       icmp:
          preferred_ip_protocol: "ip4"
          source_ip_address: "127.0.0.1"
    dns_udp_example:
       prober: dns
-      timeout: 5s
+      timeout: 20s
       dns:
          query_name: "www.prometheus.io"
          query_type: "A"
