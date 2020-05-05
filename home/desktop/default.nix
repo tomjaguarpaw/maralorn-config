@@ -3,8 +3,14 @@ let
   inherit (import ../../pkgs) desktop-pkgs;
   inherit (import ../../lib) colors;
 in {
-  imports =
-    [ ./sway.nix ./wallpaper.nix ./rofi.nix ./ssh-agent.nix ./sleep-nag.nix ./kitty.nix ];
+  imports = [
+    ./sway.nix
+    ./wallpaper.nix
+    ./rofi.nix
+    ./ssh-agent.nix
+    ./sleep-nag.nix
+    ./kitty.nix
+  ];
   m-0 = {
     workspaces = [
       "tasks"
@@ -22,7 +28,6 @@ in {
     colors = colors;
   };
   home = { packages = builtins.attrValues desktop-pkgs; };
-  programs.browserpass.enable = true;
   gtk = {
     enable = true;
     iconTheme = {
@@ -35,22 +40,9 @@ in {
     };
   };
   services = {
-    mpd = {
+    udiskie = {
       enable = true;
-      network.listenAddress = "::1";
-      musicDirectory = "${config.home.homeDirectory}/media/audio";
-      extraConfig = ''
-        audio_output {
-              type "pulse"
-              name "Pulseaudio"
-              server "localhost"
-        }
-      '';
+      notify = true;
     };
-    mpdris2.enable = true;
-  };
-  systemd.user.services.mpdris2 = {
-    Unit.Requires = [ "dbus.service" ];
-    Install.WantedBy = [ "default.target" ];
   };
 }

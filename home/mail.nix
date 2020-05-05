@@ -12,7 +12,7 @@ let
   archive = "${maildir}/${archiveSuffix}";
   filter = rec {
     mailToFolder = name:
-      lib.toFolder (lib.concatStringsSep "." (lib.splitString "@" name));
+      toFolder (lib.concatStringsSep "." (lib.splitString "@" name));
     toFolder = name:
       lib.concatStringsSep "/" (lib.reverseList (lib.splitString "." name));
     simple = filter: target: { inherit filter target; };
@@ -152,8 +152,8 @@ in {
       value = mkService name account;
     };
     hasImapHost = name: account: account.imap != null;
-  in mapAttrs' mkServiceWithName
-  (filterAttrs hasImapHost config.accounts.email.accounts) // {
+  in lib.mapAttrs' mkServiceWithName
+  (lib.filterAttrs hasImapHost config.accounts.email.accounts) // {
     mbsync.Service.Environment = "PATH=${pkgs.coreutils}/bin";
   };
 

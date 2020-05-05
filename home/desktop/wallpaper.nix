@@ -7,13 +7,14 @@ let
     bins = [ pkgs.coreutils pkgs.sway ];
   } ''
     main = do
-       (lines . decodeUtf8 -> files) <- ls "/home/maralorn/.wallpapers" |> captureTrim
+       mode <- cat "/home/maralorn/tmp/mode" |> captureTrim
+       (lines . decodeUtf8 -> files) <- ls ([i|/home/maralorn/.wallpapers/#{mode}|] :: String) |> captureTrim
        ((files Unsafe.!!) -> file) <- getStdRandom $ randomR (0, length files - 1)
-       cp ([i|/home/maralorn/.wallpapers/#{file}|] :: String) "/home/maralorn/volatile/wallpaper.jpg"
+       cp ([i|/home/maralorn/.wallpapers/#{mode}/#{file}|] :: String) "/home/maralorn/volatile/wallpaper.jpg"
        swaymsg "output * bg /home/maralorn/volatile/wallpaper.jpg fill"
   '';
 in {
-
+  home.packages = [ randomWallpaper ];
   systemd.user = {
     services.random-wallpaper = {
       Unit = { Description = "Random Wallpaper"; };

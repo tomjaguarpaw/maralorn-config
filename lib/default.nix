@@ -21,6 +21,7 @@ rec {
   };
   pkgs = import <nixpkgs> { };
   unstable = import <unstable> { };
+  unfreePkgs = import <nixpkgs> { config = { allowUnfree = true; }; };
   sources = import ../nix/sources.nix;
   unBreak = pkg:
     pkgs.haskell.lib.overrideCabal pkg (drv: {

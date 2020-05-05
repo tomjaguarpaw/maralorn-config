@@ -1,8 +1,5 @@
-{ lib, pkgs, config, ... }:
-with lib; {
-
-  options.m-0.pythia.enable = mkEnableOption "Pythia";
-  config = mkIf config.m-0.pythia.enable (let
+{ pkgs, ... }: {
+  config = (let
     pythia-path = "${config.home.homeDirectory}/documents/pythia";
     pythia = pkgs.writeShellScriptBin "pythia" ''
       datei=${pythia-path}/$(date +%Y-%m-%d)
@@ -107,7 +104,7 @@ with lib; {
           '';
   in {
 
-    home.packages = with pkgs; [ pythia meditate ];
+    home.packages = [ pythia meditate ];
   });
 
 }

@@ -9,16 +9,10 @@ in {
     ./zsh
     ./update-script.nix
     ./taskwarrior.nix
-    ./modules/force-copies.nix
-    ./modules/accounting
-    ./modules/rustdev.nix
-    ./modules/latex.nix
-    ./modules/mail.nix
     ./modules/home-options.nix
-    ./modules/unlock.nix
-    ./modules/bugwarrior.nix
-    ./modules/pythia.nix
     ../common
+    ./unlock.nix
+    ./mpclient.nix
   ];
 
   programs = {

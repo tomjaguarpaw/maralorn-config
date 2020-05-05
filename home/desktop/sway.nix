@@ -87,10 +87,10 @@ in {
       "prior" = "focus parent";
       "next" = "focus child";
       "shift+r" = "exec ${pkgs.sway}/bin/swaymsg reload";
-      "shift+q" =
-        "exec ${pkgs.sway}/bin/swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'";
+      "shift+q" = "exec ${pkgs.sway}/bin/swaymsg exit";
       "Return" = "exec ${terminal}";
       "q" = "kill";
+      "m" = "output $high transform 270";
       "space" = "exec hotkeys";
     };
     workspaceBindings = pkgs.lib.fold (a: b: a // b) { } (builtins.map (num:
@@ -201,6 +201,7 @@ in {
           }
       }
 
+      exec random-wallpaper
       exec ${pkgs.mako}/bin/mako --background-color "${colors.background}cc" --text-color "${colors.foreground}" --border-size 0
       exec ${my-pkgs.my-ssh-add}/bin/my-ssh-add
       exec ${pkgs.xorg.xrdb}/bin/xrdb ${
@@ -209,5 +210,5 @@ in {
       exec ${pkgs.systemd}/bin/systemctl --user set-environment SWAYSOCK="$SWAYSOCK"
       exec ${pkgs.swayidle}/bin/swayidle -w before-sleep '$lock'
     '';
-  in bindingsConfig + modlessBindingsConfig + colorConfig + barsConfig);
+  in barsConfig + bindingsConfig + modlessBindingsConfig + colorConfig);
 }
