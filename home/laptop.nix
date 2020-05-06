@@ -11,6 +11,10 @@ in {
     updateHome = pkgs.writeShellScriptBin "update-home-mode" ''
       update-home -A apollo-`cat ~/tmp/mode`
     '';
+    selectMode = pkgs.writeShellScriptBin "select-mode" ''
+      ${pkgs.dialog}/bin/dialog --menu "Select Mode" 20 80 5 research "" orga "" tinkering "" leisure "" 2> ~/tmp/mode
+    '';
+
     inherit (unfreePkgs) zoom-us skypeforlinux google-chrome;
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xbacklight;

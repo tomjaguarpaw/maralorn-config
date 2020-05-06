@@ -174,32 +174,6 @@ in {
               }
           }
       }
-      bar {
-          id monitoring
-          status_command ${pkgs.i3status-rust}/bin/i3status-rs ${
-            ./status-monitoring.toml
-          };
-          status_padding 0
-          status_edge_padding 0
-          font monospace 9.5
-          height 17
-          workspace_buttons no
-          position top
-          modifier none
-
-          mode invisible
-
-          colors {
-              statusline ${colors.foreground}
-              background ${colors.background}
-              ${
-                lib.concatStringsSep "\n" (lib.mapAttrsToList (category:
-                  { background, border, text }: ''
-                    ${category} ${background} ${border} ${text}
-                  '') barColors)
-              }
-          }
-      }
 
       exec random-wallpaper
       exec ${pkgs.mako}/bin/mako --background-color "${colors.background}cc" --text-color "${colors.foreground}" --border-size 0
