@@ -33,14 +33,7 @@ in rec {
   repoSrc = "git@hera.m-0.eu:nixos-config";
   configPath = "/etc/nixos";
   systems = [ "apollo" "hera" ];
-  homes = [
-    "apollo-tinkering"
-    "apollo-leisure"
-    "apollo-orga"
-    "apollo-research"
-    "hera"
-    "hephaistos"
-  ];
+  homes = pkgs.lib.attrNames (import ../home.nix);
   keys = [ "default" "apollo" "hera" ];
   test-config = writeHaskellScript {
     name = "test-config";
