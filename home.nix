@@ -93,5 +93,13 @@ in {
     (setStartpage "https://stats.maralorn.de/d/health-status")
   ];
 
-  hera = { };
+  hera = makeConfig "hera" [
+    ./home
+    home/on-my-machine.nix
+    hosts/hera/weechat
+    hosts/hera/secret
+    home/kassandra.nix
+    home/headless-mpd.nix
+    home/mail.nix
+  ];
 }

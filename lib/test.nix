@@ -27,13 +27,20 @@ in rec {
     name = "test-home-config";
     inherit bins;
   } (haskellBody "home" ''
-    nix $ ["build", "-f", "<home-manager/home-manager/home-manager.nix>"] ++ paths ++ ["--argstr", "confPath", [i|#{configDir}/hosts/#{hostname}/home.nix|], "--argstr", "confAttr", "", "--out-link", [i|result-home-manager-#{hostname}|], "activationPackage"] ++ fmap toString args
+    nix $ ["build", "-f", "<home-manager/home-manager/home-manager.nix>"] ++ paths ++ ["--argstr", "confPath", [i|#{configDir}/home.nix|], "--argstr", "confAttr", hostname, "--out-link", [i|result-home-manager-#{hostname}|], "activationPackage"] ++ fmap toString args
   '');
 
   repoSrc = "git@hera.m-0.eu:nixos-config";
   configPath = "/etc/nixos";
   systems = [ "apollo" "hera" ];
-  homes = [ "apollo" "hera" "hephaistos" ];
+  homes = [
+    "apollo-tinkering"
+    "apollo-leisure"
+    "apollo-orga"
+    "apollo-research"
+    "hera"
+    "hephaistos"
+  ];
   keys = [ "default" "apollo" "hera" ];
   test-config = writeHaskellScript {
     name = "test-config";
