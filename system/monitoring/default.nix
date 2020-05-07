@@ -12,7 +12,7 @@ let
     basicAuth.maralorn = monitoring-pw;
   };
 in {
-  imports = [ ./alertmanager.nix ./grafana.nix ./prometheus.nix ];
+  imports = [ ./alertmanager.nix ./grafana.nix ./prometheus.nix ./probes.nix ./nixpkgs.nix ];
 
   services = {
     nginx = {
