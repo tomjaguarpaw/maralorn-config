@@ -33,6 +33,8 @@ let
     "*.haskell.org"
     "*.nixos.org"
     "nixos.org"
+    "matrix.org"
+    "riot.im"
   ];
   leisurePages = [
     "zeit.de"
@@ -47,8 +49,6 @@ let
     "ndr.de"
     "ard.de"
     "zdf.de"
-    "matrix.org"
-    "riot.im"
     "twitter.com"
     "chaos.social"
   ];
