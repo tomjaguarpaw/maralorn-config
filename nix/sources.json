@@ -1,16 +1,4 @@
 {
-    "ghcide": {
-        "branch": "master",
-        "description": "Nix installation for ghcide",
-        "homepage": "https://github.com/digital-asset/ghcide",
-        "owner": "hercules-ci",
-        "repo": "ghcide-nix",
-        "rev": "c940edd61eedba6750671fc142c9422cced73528",
-        "sha256": "01f2x5sgncd468h99w3mpkkb1203akachm12czmiwbvgishf7dwp",
-        "type": "tarball",
-        "url": "https://github.com/hercules-ci/ghcide-nix/archive/c940edd61eedba6750671fc142c9422cced73528.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "home-manager": {
         "branch": "release-20.03",
         "description": "Manage a user environment using Nix",
@@ -65,10 +53,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "b0e3df2f8437767667bd041bb336e9d62a97ee81",
-        "sha256": "0d34k96l0gzsdpv14vnxdfslgk66gb0nsjz7qcqz1ykb0i7n3n07",
+        "rev": "210d8624ac4a69cbe23c8da692c5735ac4aa46d3",
+        "sha256": "04vbl6kvbzgrlsbk5vk0i5zcsribbkqw59d9m1dki8mswij09qlq",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/b0e3df2f8437767667bd041bb336e9d62a97ee81.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/210d8624ac4a69cbe23c8da692c5735ac4aa46d3.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
