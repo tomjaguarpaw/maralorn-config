@@ -14,7 +14,7 @@ let
        (decodeUtf8 -> current) <- readlink linkPath |> captureTrim
        let new = [i|/home/maralorn/.wallpapers/#{mode}/#{file}|] :: String
        when (new /= current) $ do
-         ln "-s" new linkPath
+         ln "-sf" new linkPath
          swaymsg "output * bg /home/maralorn/volatile/wallpaper.jpg fill"
   '';
 in {
@@ -28,7 +28,7 @@ in {
       };
     };
     timers.random-wallpaper = {
-      Timer = { OnCalendar = "*:00/5:00"; };
+      Timer = { OnCalendar = "*:00/30:00"; };
       Install = { WantedBy = [ "timers.target" ]; };
     };
   };
