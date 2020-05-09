@@ -8,21 +8,25 @@ let
     scrape_timeout = "60s";
     static_configs = [{ targets = [ "hydra.nixos.org" ]; }];
   };
-  watchNixpkgsHaskellPackage = name: [
-    (watchNixpkgsPackage
-      "nixpkgs/haskell-updates/haskellPackages.${name}.x86_64-linux")
-    (watchNixpkgsPackage
-      "nixos/release-20.03/nixpkgs.haskellPackages.${name}.x86_64-linux")
+  watchHaskellUnstable = name:
+    watchNixpkgsPackage
+    "nixpkgs/haskell-updates/haskellPackages.${name}.x86_64-linux";
+  watchHaskellStable = name:
+    watchNixpkgsPackage
+    "nixos/release-20.03/nixpkgs.haskellPackages.${name}.x86_64-linux";
+  watchedUnstablePkgs = [ "cabal-fmt" "neuron" ];
+  watchedPkgs = [
+    "ghcide"
+    "brittany"
+    "releaser"
+    "hlint"
+    "relude"
+    "taskwarrior"
+    "neuron"
+    "pandoc"
   ];
 in {
-  services.prometheus.scrapeConfigs = [
-    (watchNixpkgsPackage
-      "nixpkgs/haskell-updates/haskellPackages.cabal-fmt.x86_64-linux")
-  ] ++ (watchNixpkgsHaskellPackage "ghcide")
-    ++ (watchNixpkgsHaskellPackage "brittany")
-    ++ (watchNixpkgsHaskellPackage "releaser")
-    ++ (watchNixpkgsHaskellPackage "hlint")
-    ++ (watchNixpkgsHaskellPackage "relude")
-    ++ (watchNixpkgsHaskellPackage "taskwarrior")
-    ++ (watchNixpkgsHaskellPackage "pandoc");
+  services.prometheus.scrapeConfigs =
+    map watchHaskellUnstable (watchedUnstablePkgs ++ watchedPkgs)
+    ++ map watchHaskellStable watchedPkgs;
 }
