@@ -1,18 +1,32 @@
-{ pkgs, ... }:
-let inherit (import ../lib) unfreePkgs;
+{ pkgs, lib, ... }:
+let
+  inherit (import ../lib) unfreePkgs;
+  modes = builtins.filter (lib.hasPrefix "apollo-")
+    (pkgs.lib.attrNames (import ../home.nix));
 in {
   home.packages = builtins.attrValues {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       git -C ~/git/config pull
-      update-home-mode
+      update-modes
       sudo -A update-system
       sudo -A nix optimise-store
     '';
-    updateHome = pkgs.writeShellScriptBin "update-home-mode" ''
-      update-home -A apollo-`cat ~/tmp/mode`
+    activateMode = pkgs.writeShellScriptBin "activate-mode" ''
+      ~/.modes/result-home-manager-$(cat ~/tmp/mode)/activate
+    '';
+    updateModes = pkgs.writeShellScriptBin "update-modes" ''
+      set -e
+      mkdir -p ~/.modes
+      cd ~/.modes
+      ${lib.concatStringsSep "\n"
+      (map (mode: "test-home-config ~/git/config ${mode}") modes)}
+      activate-mode
     '';
     selectMode = pkgs.writeShellScriptBin "select-mode" ''
-      ${pkgs.dialog}/bin/dialog --menu "Select Mode" 20 80 5 research "" orga "" tinkering "" leisure "" 2> ~/tmp/mode
+      ${pkgs.dialog}/bin/dialog --menu "Select Mode" 20 80 5 ${
+        lib.concatStrings (map (mode: "${mode} '' ") modes)
+      } 2> ~/tmp/mode
+      activate-mode
     '';
 
     inherit (unfreePkgs) zoom-us skypeforlinux google-chrome;

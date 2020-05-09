@@ -1,23 +1,15 @@
 let
   inherit (import <nixpkgs> { }) lib;
+  home-manager = import <home-manager/home-manager/home-manager.nix>;
+  buildHomeManager = attr:
+    (home-manager {
+      confPath = ~/git/config/home.nix;
+      confAttr = attr;
+    }).activationPackage;
   makeConfig = hostName: imports:
     { ... }: {
       imports = imports ++ [ ./home ];
       m-0.hostName = hostName;
-    };
-  wrapWithOthers = config: all:
-    { lib, ... }: {
-      imports = [ config ];
-      home.file = lib.listToAttrs (builtins.map (name: {
-        inherit name;
-        value = {
-          source = (import <home-manager/home-manager/home-manager.nix> {
-            confPath = ~/git/config/home.nix;
-            confAttr = "apollo-${name}-without-symlinks";
-          }).activationPackage;
-          target = ".gc-roots-home/${name}";
-        };
-      }) (lib.attrNames all));
     };
   apollo = let
     setStartpage = startpage:
@@ -121,13 +113,9 @@ in {
     home/headless-mpd.nix
     home/mail.nix
   ];
-} // lib.listToAttrs (lib.flatten (lib.mapAttrsToList (name: config: [
+} // lib.listToAttrs (lib.mapAttrsToList (name: config:
   {
     name = "apollo-${name}";
-    value = wrapWithOthers config apollo;
-  }
-  {
-    name = "apollo-${name}-without-symlinks";
     value = config;
   }
-]) apollo))
+) apollo)
