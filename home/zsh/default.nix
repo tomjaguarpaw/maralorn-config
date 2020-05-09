@@ -16,7 +16,6 @@
            . ${my-pkgs.start-ssh-agent}/bin/start-ssh-agent
            while true; do
              select-mode
-             update-home-mode
              echo Launching sway at $(date) >> ~/tmp/sway.log
              ${pkgs.sway}/bin/sway >> ~/tmp/sway.log
            done
