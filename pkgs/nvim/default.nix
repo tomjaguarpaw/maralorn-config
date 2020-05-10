@@ -1,7 +1,7 @@
 n:
 n.override (let
   pkgs = import <nixpkgs> { };
-  inherit (import ../../lib) sources colors;
+  inherit (import ../../lib) sources unstable;
 in {
   configure = {
     customRC = ''
@@ -18,7 +18,8 @@ in {
           vim-pandoc vim-nix vimtex airline fugitive vim-trailing-whitespace
           haskell-vim vim-airline-themes vim-autoformat vim-ledger
           papercolor-theme nerdcommenter coc-nvim coc-python coc-rls coc-yaml
-          coc-vimtex coc-css coc-json coc-html coc-git gitgutter fzf-vim;
+          coc-vimtex coc-css coc-json coc-html coc-git gitgutter;
+        inherit (unstable.vimPlugins) fzf-vim;
       };
     };
   };
