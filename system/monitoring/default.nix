@@ -9,10 +9,19 @@ let
       allow ${config.m-0.prefix}::/64;
       deny all;
     '';
-    basicAuth.maralorn = monitoring-pw;
+    basicAuth = {
+      guest = monitoring-guest-pw;
+      maralorn = monitoring-pw;
+    };
   };
 in {
-  imports = [ ./alertmanager.nix ./grafana.nix ./prometheus.nix ./probes.nix ./nixpkgs.nix ];
+  imports = [
+    ./alertmanager.nix
+    ./grafana.nix
+    ./prometheus.nix
+    ./probes.nix
+    ./nixpkgs.nix
+  ];
 
   services = {
     nginx = {
@@ -25,7 +34,6 @@ in {
       } // commonOptions;
       virtualHosts."monitoring.maralorn.de" = {
         locations."/".proxyPass = "http://localhost:9090";
-        basicAuth.guest = monitoring-guest-pw;
       } // commonOptions;
     };
   };
