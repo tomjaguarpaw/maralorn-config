@@ -16,7 +16,7 @@ in rec {
   '';
   obelisk = (import sources.obelisk { }).command;
   nix-direnv = sources.nix-direnv + "/direnvrc";
-  neovim = pkgs.neovim.override {
+  neovim = unstable.neovim.override {
     vimAlias = true;
     withPython3 = true;
     withPython = false;

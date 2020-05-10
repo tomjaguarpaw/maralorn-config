@@ -1,7 +1,5 @@
 n:
-n.override (let
-  pkgs = import <nixpkgs> { };
-  inherit (import ../../lib) sources unstable;
+n.override (let inherit (import ../../lib) sources unstable;
 in {
   configure = {
     customRC = ''
@@ -10,16 +8,15 @@ in {
     '';
     packages.myVimPackage = {
       start = builtins.attrValues {
-        inherit (pkgs.vimPlugins)
+        inherit (unstable.vimPlugins)
         # rust-vim vimtex
         # coc-tabnine (TODO: Why doesn‘t it work?)
         # TODO: tabnine config in home-manager
         # TODO: tabnine lsp: nix, rust, pandoc/latex lsp? was noch?
-          vim-pandoc vim-nix vimtex airline fugitive vim-trailing-whitespace
-          haskell-vim vim-airline-themes vim-autoformat vim-ledger
+          haskell-vim vim-pandoc vim-nix vimtex airline fugitive
+          vim-trailing-whitespace vim-airline-themes vim-autoformat vim-ledger
           papercolor-theme nerdcommenter coc-nvim coc-python coc-rls coc-yaml
-          coc-vimtex coc-css coc-json coc-html coc-git gitgutter;
-        inherit (unstable.vimPlugins) fzf-vim;
+          coc-vimtex coc-css coc-json coc-html coc-git gitgutter fzf-vim;
       };
     };
   };
