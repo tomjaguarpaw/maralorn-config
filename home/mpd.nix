@@ -12,11 +12,6 @@
         }
       '';
     };
-    mpdris2.enable = true;
-  };
-  systemd.user.services.mpdris2 = {
-    Unit.Type = "dbus";
-    Unit.Requires = [ "dbus.service" ];
-    Install.WantedBy = [ "default.target" ];
+    mpdris2 = { enable = true; };
   };
 }
