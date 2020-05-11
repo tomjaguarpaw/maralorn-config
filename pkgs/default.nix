@@ -67,7 +67,7 @@ in rec {
     inherit (pkgs.pythonPackages) yapf jsbeautifier;
     inherit (pkgs)
       mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole nixfmt
-      stack ghcid;
+      stack ghcid rnix-lsp;
     inherit (my-lib) ghc;
     inherit home-neovim obelisk;
     cabal-fmt = (unBreak pkgs.haskell.packages.ghc881.cabal-fmt);

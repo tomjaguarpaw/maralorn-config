@@ -146,19 +146,18 @@ in {
     file.".config/nvim/coc-settings.json".text = builtins.toJSON {
       "diagnostic.maxWindowHeight" = 60;
       languageserver = {
+        nix = {
+          command = "rnix-lsp";
+          filetypes = [ "nix" ];
+        };
         haskell = {
           command = "ghcide";
           args = [ "--lsp" ];
-          rootPatterns = [
-            ".stack.yaml"
-            ".hie-bios"
-            "BUILD.bazel"
-            "cabal.config"
-            "package.yaml"
-          ];
+          rootPatterns = [ ".hie-bios" ];
           filetypes = [ "hs" "lhs" "haskell" ];
         };
       };
+      explorer.icon.enableNerdfont = true;
     };
   };
 

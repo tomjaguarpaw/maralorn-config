@@ -13,10 +13,10 @@ in {
         # coc-tabnine (TODO: Why doesn‘t it work?)
         # TODO: tabnine config in home-manager
         # TODO: tabnine lsp: nix, rust, pandoc/latex lsp? was noch?
-          haskell-vim vim-pandoc vim-nix vimtex airline fugitive
-          vim-trailing-whitespace vim-airline-themes vim-autoformat vim-ledger
-          papercolor-theme nerdcommenter coc-nvim coc-python coc-rls coc-yaml
-          coc-vimtex coc-css coc-json coc-html coc-git gitgutter fzf-vim;
+          haskell-vim vim-nix vimtex airline fugitive vim-trailing-whitespace
+          vim-airline-themes vim-autoformat vim-ledger papercolor-theme
+          nerdcommenter coc-nvim coc-python coc-rls coc-yaml coc-vimtex coc-css
+          coc-json coc-html coc-git gitgutter fzf-vim;
       };
     };
   };

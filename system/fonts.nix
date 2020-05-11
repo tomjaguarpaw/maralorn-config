@@ -4,7 +4,7 @@
       enable = true;
       cache32Bit = true;
       defaultFonts = {
-        monospace = [ "Jetbrains Mono" "DejaVu Sans Mono" ];
+        monospace = [ "JetBrainsMono Nerd Font" "DejaVu Sans Mono" ];
         sansSerif = [ "B612" "DejaVu Sans" ];
         serif = [ "Roboto Slab Regular" "DejaVu Serif" ];
       };
@@ -18,8 +18,7 @@
         roboto # serif font
         font-awesome # icons I guess?
         material-icons # icons in my app
-        b612 # sans font
-        jetbrains-mono; # code font
+        b612; # sans font
     };
   };
 

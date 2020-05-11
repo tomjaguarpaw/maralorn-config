@@ -1,6 +1,10 @@
 set spell spelllang=de,en
 let g:airline_powerline_fonts = 1
+let g:airline_skip_empty_sections = 1
 let g:airline#extensions#tabline#enabled = 1
+
+nmap <space>e :CocCommand explorer <CR>
+
 set foldcolumn=1
 set background=dark
 set autoindent
@@ -220,8 +224,6 @@ imap <ESC>[4~ <End>
 " Using CocList
 " Show all diagnostics
 nnoremap <silent> <space>d  :<C-u>CocList diagnostics<cr>
-" Manage extensions
-nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
 " Show commands
 nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
 " Find symbol of current document
