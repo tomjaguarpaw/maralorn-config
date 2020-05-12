@@ -1,4 +1,6 @@
-{ config, pkgs, lib, ... }: {
+{ config, pkgs, lib, ... }:
+let inherit (import ../lib) unstable;
+in {
   fonts = {
     fontconfig = {
       enable = true;
@@ -6,19 +8,20 @@
       defaultFonts = {
         monospace = [ "JetBrainsMono Nerd Font" "DejaVu Sans Mono" ];
         sansSerif = [ "B612" "DejaVu Sans" ];
-        serif = [ "Roboto Slab Regular" "DejaVu Serif" ];
+        serif = [ "Linux Libertine" "DejaVu Serif" ];
       };
     };
     enableDefaultFonts = true;
     enableFontDir = true;
     fonts = builtins.attrValues {
+      nerdfonts = unstable.nerdfonts.override {
+        fonts = [ "JetBrainsMono" ];
+      }; # For all my terminal needs.
       inherit (pkgs)
-        nerdfonts # emojis
-        libertine # because I like them
-        roboto # serif font
+        libertine # nice text font
         font-awesome # icons I guess?
         material-icons # icons in my app
-        b612; # sans font
+        b612; # sans font, very good for displays
     };
   };
 
