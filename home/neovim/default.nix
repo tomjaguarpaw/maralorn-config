@@ -1,9 +1,10 @@
 { pkgs, config, ... }:
 let
   inherit (import ../../lib) unstable;
-  neovim = unstable.neovim.override {
+  myPkgs = import ../../pkgs;
+  neovim = myPkgs.neovim.override {
     configure = {
-      customRC = builtins.readFile ./config;
+      customRC = builtins.readFile ./vimrc;
       packages.myVimPackage = {
         start = builtins.attrValues {
           inherit (unstable.vimPlugins)

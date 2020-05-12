@@ -125,8 +125,14 @@ nmap <silent> gn <Plug>(coc-diagnostic-next)
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+
+nmap <silent> gs :Gstatus<CR>
+nmap <silent> gu :CocCommand git.chunkUndo<CR>
+nmap <silent> gi :CocCommand git.chunkInfo<CR>
+nmap <silent> ga :CocCommand git.chunkStage<CR>
+nmap <silent> gb :CocCommand git.showCommit<CR>
+nmap <silent> gc :Gcommit<CR>
 
 " Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
