@@ -24,7 +24,7 @@ in rec {
 
   # pkgs assumed to be present on a non nixos host
   core-system-pkgs = {
-    inherit unstable;
+    inherit neovim;
     inherit (pkgs)
       gitFull gnumake mkpasswd file wget curl wireguard gnupg mutt bind liboping
       psmisc unzip rename whois lsof parted python3 binutils ntfsprogs;
