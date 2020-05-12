@@ -29,7 +29,8 @@ let
             vim-snippets # provides standard snippets
 
             # Git
-            fugitive coc-git gitgutter # need to figure out what does what
+            coc-git # statusline, numberline and explorer infos
+            fugitive # various git commands
 
             # Commenting and Uncommenting
             nerdcommenter
