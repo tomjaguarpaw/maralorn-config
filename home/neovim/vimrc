@@ -3,7 +3,7 @@ let g:airline_powerline_fonts = 1
 let g:airline_skip_empty_sections = 1
 let g:airline#extensions#tabline#enabled = 1
 
-nmap <space>e :CocCommand explorer <CR>
+nmap <space>e :CocCommand explorer --no-toggle<CR>
 
 set foldcolumn=1
 set background=dark
@@ -141,11 +141,8 @@ endfunction
 
 nmap <silent> <space>i :call <SID>show_documentation()<CR>
 
-" Highlight symbol under cursor on CursorHold
-"autocmd CursorHold * silent call CocActionAsync('doHover')
-
 " Remap for rename current word
-nmap <leader>rn <Plug>(coc-rename)
+nmap <space>r <Plug>(coc-rename)
 
 " Remap for format selected region
 xmap <leader>f  <Plug>(coc-format-selected)
@@ -183,8 +180,10 @@ nmap <space>b :Buffers<CR>
 
 nnoremap <a-left> :bp<CR>
 nnoremap <a-right> :bn<CR>
+inoremap <a-left> :bp<CR>
+inoremap <a-right> :bn<CR>
 
-let $FZF_DEFAULT_OPTS .= '--color=bg:#20242C --border --layout=reverse'
+let $FZF_DEFAULT_OPTS .= '--border --layout=reverse'
 function! FloatingFZF()
   let width = float2nr(&columns * 0.9)
   let height = float2nr(&lines * 0.6)
@@ -216,20 +215,19 @@ command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 " use `:OR` for organize import of current buffer
 command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
 
-" Add status line support, for integration with other plugin, checkout `:h coc-status`
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+autocmd CursorHold * silent call CocActionAsync('highlight')
 
 imap <ESC>[1~ <HOME>
 imap <ESC>[4~ <End>
 " Using CocList
 " Show all diagnostics
-nnoremap <silent> <space>d  :<C-u>CocList diagnostics<cr>
+nnoremap <silent> <space>d  :<C-u>CocFzfList diagnostics<cr>
 " Show commands
-nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
+nnoremap <silent> <space>c  :<C-u>CocFzfList commands<cr>
 " Find symbol of current document
-nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
+nnoremap <silent> <space>o  :<C-u>CocFzfList outline<cr>
 " Search workspace symbols
-nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+nnoremap <silent> <space>s  :<C-u>CocFzfList symbols<cr>
 " Do default action for next item.
 nnoremap <silent> <space>j  :<C-u>CocNext<CR>
 " Do default action for previous item.
@@ -238,3 +236,6 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 "nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
 imap <Enter> <CR>
+
+" Load this after theme
+hi Normal ctermbg=NONE

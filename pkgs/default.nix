@@ -21,11 +21,10 @@ in rec {
     withPython3 = true;
     withPython = false;
   };
-  home-neovim = (import ./nvim) neovim;
 
   # pkgs assumed to be present on a non nixos host
   core-system-pkgs = {
-    inherit neovim;
+    inherit unstable;
     inherit (pkgs)
       gitFull gnumake mkpasswd file wget curl wireguard gnupg mutt bind liboping
       psmisc unzip rename whois lsof parted python3 binutils ntfsprogs;
@@ -69,7 +68,7 @@ in rec {
       mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole nixfmt
       stack ghcid rnix-lsp;
     inherit (my-lib) ghc;
-    inherit home-neovim obelisk;
+    inherit obelisk;
     cabal-fmt = (unBreak pkgs.haskell.packages.ghc881.cabal-fmt);
   };
   accounting-pkgs = {

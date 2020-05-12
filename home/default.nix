@@ -13,6 +13,7 @@ in {
     ../common
     ./unlock.nix
     ./mpclient.nix
+    ./neovim
   ];
 
   programs = {
@@ -143,24 +144,6 @@ in {
     file.".direnvrc".text = ''
       source ${my-pkgs.nix-direnv}
     '';
-    file.".config/nvim/coc-settings.json".text = builtins.toJSON {
-      "diagnostic.maxWindowHeight" = 60;
-      languageserver = {
-        nix = {
-          command = "rnix-lsp";
-          filetypes = [ "nix" ];
-        };
-        haskell = {
-          command = "ghcide";
-          args = [ "--lsp" ];
-          rootPatterns = [ ".hie-bios" ];
-          filetypes = [ "hs" "lhs" "haskell" ];
-        };
-      };
-      explorer.icon.enableNerdfont = true;
-      explorer.file.child.template =
-        "[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][diagnosticWarning & 1][filename omitCenter 1][modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5][size]";
-    };
   };
 
   systemd.user = { startServices = true; };
