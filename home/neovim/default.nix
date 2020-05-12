@@ -41,7 +41,7 @@ let
             # ===
             # Languages
             # haskell syntax highlighting
-            haskell-vim
+            haskell-vim vim-hoogle
             # nix syntax highlighting
             vim-nix
             # latex
