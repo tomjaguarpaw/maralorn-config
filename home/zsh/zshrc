@@ -25,6 +25,9 @@ precmd() {
 	fi
 }
 
+alias v=vim
+alias cat=bat
+alias ide='vim +":CocCommand explorer"'
 alias accounting='hledger -f ~/git/buchhaltung/buchhaltung.ledger ui -- --watch --theme=terminal -T -E'
 alias o=xdg-open
 alias c=cdr

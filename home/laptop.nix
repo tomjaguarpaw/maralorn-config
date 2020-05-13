@@ -40,7 +40,7 @@ in {
     # web
       chromium
 
-      upower speedtest-cli acpi
+      mumble upower speedtest-cli acpi
 
       anki
 

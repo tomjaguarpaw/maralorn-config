@@ -73,6 +73,13 @@ let
         home/laptop.nix
       ]);
   in {
+    communication = apolloConfig [
+      home/mail.nix
+      home/update_tasks.nix
+      home/chat.nix
+      (setStartpage "https://cloud.maralorn.de/apps/calendar")
+      (makeBlock [ ])
+    ];
     orga = apolloConfig [
       home/accounting.nix
       home/mail.nix
@@ -113,9 +120,7 @@ in {
     home/headless-mpd.nix
     home/mail.nix
   ];
-} // lib.listToAttrs (lib.mapAttrsToList (name: config:
-  {
-    name = "apollo-${name}";
-    value = config;
-  }
-) apollo)
+} // lib.listToAttrs (lib.mapAttrsToList (name: config: {
+  name = "apollo-${name}";
+  value = config;
+}) apollo)
