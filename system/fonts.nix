@@ -19,7 +19,6 @@ in {
       }; # For all my terminal needs.
       inherit (pkgs)
         libertine # nice text font
-        font-awesome # icons I guess?
         material-icons # icons in my app
         b612; # sans font, very good for displays
     };
