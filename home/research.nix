@@ -1,4 +1,5 @@
-{ ... }: {
+{ pkgs, ... }: {
+  home.packages = [ pkgs.zotero ];
   programs.texlive = {
     enable = true;
     extraPackages = tpkgs: {

@@ -89,7 +89,7 @@ let
       (makeBlock (tinkerPages ++ leisurePages))
     ];
     research = apolloConfig [
-      home/latex.nix
+      home/research.nix
       (makeBlock (tinkerPages ++ leisurePages))
       (setStartpage "http://localhost:8042")
     ];
