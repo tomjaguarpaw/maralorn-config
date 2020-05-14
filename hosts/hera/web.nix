@@ -13,6 +13,7 @@ in {
     name = "hera-nginx";
     host = "hera-intern:9113";
   }];
+  security.acme.certs."hera.m-0.eu".keyType = "rsa4096";
   services = {
     nginx = {
       enable = true;
