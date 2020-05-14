@@ -44,13 +44,13 @@ let
       "nixos.org"
       "matrix.org"
       "riot.im"
+      "youtube.de"
+      "youtube.com"
     ];
     leisurePages = [
       "zeit.de"
       "heise.de"
       "spiegel.de"
-      "youtube.de"
-      "youtube.com"
       "xkcd.com"
       "smbc-comics.com"
       "tagesschau.de"
