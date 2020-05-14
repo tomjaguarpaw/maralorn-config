@@ -45,10 +45,6 @@ in {
   m-0 = { laptop.enable = true; };
 
   services = {
-    gnome3 = {
-      chrome-gnome-shell.enable = true;
-      seahorse.enable = false;
-    };
     snapper = {
       configs.home = {
         subvolume = "/home";
