@@ -1,10 +1,23 @@
 { pkgs, lib, ... }:
 let
   inherit (import ../lib) unfreePkgs;
+  inherit (import ../pkgs) my-ssh-add;
   modes = map (lib.removePrefix "apollo-")
     (builtins.filter (lib.hasPrefix "apollo-")
       (pkgs.lib.attrNames (import ../home.nix)));
+  autostart-script = pkgs.writeShellScriptBin "home-manager-autostart" ''
+    ${my-ssh-add}/bin/my-ssh-add
+    ${pkgs.xorg.xrdb}/bin/xrdb ${builtins.toFile "Xresources" "Xft.dpi: 96"}
+  '';
 in {
+
+  xdg.configFile."autostart/home-manager-autostart.desktop".source = "${
+      pkgs.makeDesktopItem {
+        name = "home-manager-autostart";
+        desktopName = "Home Manager Autostart Job";
+        exec = "${autostart-script}/bin/home-manager-autostart";
+      }
+    }/share/applications/home-manager-autostart.desktop";
   home.packages = builtins.attrValues {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       git -C ~/git/config pull
@@ -30,6 +43,7 @@ in {
       } 2> ~/tmp/mode
       clear
       echo "Switching to mode $(cat ~/tmp/mode)..."
+      ln -sfT ~/.wallpapers/$(cat ~/tmp/mode) ~/volatile/wallpapers
       activate-mode > /dev/null
     '';
 

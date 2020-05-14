@@ -2,7 +2,7 @@
 let inherit (import ../lib) unfreePkgs writeHaskellScript;
 in {
   home.packages = builtins.attrValues {
-    inherit (unfreePkgs) discord steam;
+    inherit (unfreePkgs) steam;
     inherit (pkgs) minetest;
 
     gw2 = pkgs.buildFHSUserEnv {

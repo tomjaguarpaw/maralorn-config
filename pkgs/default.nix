@@ -57,10 +57,14 @@ in rec {
   '';
   desktop-pkgs = {
     inherit urxvt terminal;
-    inherit (pkgs.gnome3) dconf;
     inherit (pkgs)
       kitty lm_sensors sway swaylock swayidle xwayland rofi dmenu xdg_utils
-      libnotify mako wofi;
+      gnome-themes-extra gnome-themes-standard libnotify mako wofi;
+    inherit (pkgs.gnomeExtensions)
+      appindicator arc-menu sound-output-device-chooser system-monitor;
+    inherit (pkgs.gnome3)
+      dconf gnome-tweaks gnome-shell-extensions adwaita-icon-theme
+      gnome-session;
   };
   home-pkgs = {
     inherit (pkgs.pythonPackages) yapf jsbeautifier;

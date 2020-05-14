@@ -45,6 +45,10 @@ in {
   m-0 = { laptop.enable = true; };
 
   services = {
+    gnome3 = {
+      chrome-gnome-shell.enable = true;
+      seahorse.enable = false;
+    };
     snapper = {
       configs.home = {
         subvolume = "/home";
@@ -74,6 +78,17 @@ in {
           cert = "/etc/nixos/hosts/apollo/secret/syncthing/cert.pem";
           key = "/etc/nixos/hosts/apollo/secret/syncthing/key.pem";
         };
+    };
+    xserver = {
+      enable = true;
+      displayManager.gdm = {
+        autoLogin = {
+          enable = true;
+          user = "maralorn";
+        };
+        enable = true;
+      };
+      desktopManager.gnome3.enable = true;
     };
   };
   boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };
