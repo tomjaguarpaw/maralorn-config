@@ -3,7 +3,8 @@ let
   inherit (import ../../pkgs) desktop-pkgs my-ssh-add;
   inherit (import ../../lib) colors;
 in {
-  imports = [ ./rofi.nix ./ssh-agent.nix ./sleep-nag.nix ./kitty.nix ];
+  imports =
+    [ ./rofi.nix ./ssh-agent.nix ./sleep-nag.nix ./kitty.nix ./wallpaper.nix ];
   m-0 = {
     terminal = "${desktop-pkgs.terminal}/bin/terminal";
     colors = colors;

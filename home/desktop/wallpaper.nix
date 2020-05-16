@@ -4,18 +4,16 @@ let
   randomWallpaper = writeHaskellScript {
     name = "random-wallpaper";
     imports = [ "System.Random" ];
-    bins = [ pkgs.coreutils pkgs.sway ];
+    bins = [ pkgs.coreutils pkgs.glib ];
   } ''
-    linkPath = "/home/maralorn/volatile/wallpaper.jpg"
     main = do
        mode <- cat "/home/maralorn/tmp/mode" |> captureTrim
        (lines . decodeUtf8 -> files) <- ls ([i|/home/maralorn/.wallpapers/#{mode}|] :: String) |> captureTrim
        ((files Unsafe.!!) -> file) <- getStdRandom $ randomR (0, length files - 1)
-       (decodeUtf8 -> current) <- readlink linkPath |> captureTrim
-       let new = [i|/home/maralorn/.wallpapers/#{mode}/#{file}|] :: String
-       when (new /= current) $ do
-         ln "-sf" new linkPath
-         swaymsg "output * bg /home/maralorn/volatile/wallpaper.jpg fill"
+       (decodeUtf8 -> current) <- gsettings "get" "org.gnome.desktop.background" "picture-uri" |> captureTrim
+       let new = [i|file:///home/maralorn/.wallpapers/#{mode}/#{file}|] :: String
+       when (new /= current) $
+         gsettings "set" "org.gnome.desktop.background" "picture-uri" new
   '';
 in {
   home.packages = [ randomWallpaper ];
