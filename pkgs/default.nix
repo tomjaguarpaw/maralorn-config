@@ -63,7 +63,7 @@ in rec {
     inherit (pkgs.gnomeExtensions)
       appindicator arc-menu sound-output-device-chooser system-monitor;
     inherit (pkgs.gnome3)
-      dconf gnome-tweaks gnome-shell-extensions adwaita-icon-theme
+      dconf dconf-editor gnome-tweaks gnome-shell-extensions adwaita-icon-theme
       gnome-session;
   };
   home-pkgs = {
