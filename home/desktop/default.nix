@@ -4,7 +4,7 @@ let
   inherit (import ../../lib) colors;
 in {
   imports =
-    [ ./rofi.nix ./ssh-agent.nix ./sleep-nag.nix ./kitty.nix ./wallpaper.nix ];
+    [ ./rofi.nix ./ssh-agent.nix ./sleep-nag.nix ./kitty.nix ./wallpaper.nix ./gnome.nix ];
   m-0 = {
     terminal = "${desktop-pkgs.terminal}/bin/terminal";
     colors = colors;

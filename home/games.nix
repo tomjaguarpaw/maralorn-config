@@ -1,6 +1,16 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let inherit (import ../lib) unfreePkgs writeHaskellScript;
 in {
+
+  dconf.settings."org/gnome/settings-daemon/plugins/media-keys" = {
+    mic-mute = lib.mkForce [ ];
+    next = lib.mkForce [ ];
+    play = lib.mkForce [ ];
+    previous = lib.mkForce [ ];
+    screensaver = lib.mkForce [ ];
+    volume-down = lib.mkForce [ ];
+    volume-up = lib.mkForce [ ];
+  };
   home.packages = builtins.attrValues {
     inherit (unfreePkgs) steam;
     inherit (pkgs) minetest;
