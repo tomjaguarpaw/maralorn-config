@@ -38,28 +38,28 @@ in rec {
   } ''
     checkout :: IO FilePath
     checkout = do
-      (decodeUtf8 -> dir) <-  mktemp "-d" |> captureTrim
-      git "clone" "${repoSrc}" dir
-      pure dir
+      (decodeUtf8 -> repoDir) <-  mktemp "-d" |> captureTrim
+      git "clone" "${repoSrc}" repoDir
+      pure repoDir
 
     main = do
-      path <- pwd |> captureTrim
       bump <- (maybe False (== "bump") . listToMaybe) <$> getArgs
-      bracket checkout (rm "-rf") $ \dir -> do
-        withCurrentDirectory dir $ do
+      bracket checkout (rm "-rf") $ \repoDir -> do
+        let repoGit = git "-C" repoDir
+        withCurrentDirectory repoDir $ do
           mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ${
             haskellList keys
           }
           when bump $ ignoreFailure $ niv "update"
-        changed <- (mempty /=) <$> (git "-C" dir "status" "--porcelain" |> captureTrim)
+        changed <- (mempty /=) <$> (git "-C" repoDir "status" "--porcelain" |> captureTrim)
         when changed $ do
-          git "-C" dir "config" "user.email" "maralorn@maralorn.de"
-          git "-C" dir "config" "user.name" "maralorn (nix-auto-updater)"
-          git "-C" dir "commit" "-am" "Update dependencies with niv"
-          git "-C" dir "push" "-f" "origin" "master:version-bump"
-        mapM_ (test_system_config dir) ${haskellList systems}
-        mapM_ (test_home_config dir) ${haskellList homes}
+          repoGit "config" "user.email" "maralorn@maralorn.de"
+          repoGit "config" "user.name" "maralorn (nix-auto-updater)"
+          repoGit "commit" "-am" "Update dependencies with niv"
+          repoGit "push" "-f" "origin" "master:version-bump"
+        mapM_ (test_system_config repoDir) ${haskellList systems}
+        mapM_ (test_home_config repoDir) ${haskellList homes}
         when changed $ do
-          git "-C" dir "push" "origin" "master:master"
+          repoGit "push" "origin" "master:master"
   '';
 }
