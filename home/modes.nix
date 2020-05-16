@@ -97,7 +97,7 @@ in {
       (makeBlock leisurePages)
       (setStartpage "https://stats.maralorn.de/d/health-status")
     ];
-    leisure = apolloConfig [
+    gaming = apolloConfig [
       ./games.nix
       ./chat.nix
       (makeBlock [ ])
