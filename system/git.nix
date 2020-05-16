@@ -21,7 +21,7 @@ let
     checkout path = do
       (decodeUtf8 -> repoDir) <-  mktemp "-d" |> captureTrim
       git "clone" path repoDir
-      pure dir
+      pure repoDir
 
     main = do
       mirrorMay <- lookupEnv "GL_OPTION_MIRROR"
