@@ -100,7 +100,7 @@ rec {
 
       getNivPath :: Text -> Text -> IO Text
       getNivPath sources channel = do
-        let expr = [i|(import #{sources}).#{channel}|] :: String
+        let expr = [i|(import #{sources}/nix/sources.nix).#{channel}|] :: String
         nix_build ["-Q", "-E", expr, "--no-out-link"] &> devNull
         escaped <- nix_instantiate ["--eval" :: String, "-E", [i|toString #{expr}|]] |> captureTrim
         pure . Text.dropAround ('"' ==) . decodeUtf8 . trim $ escaped

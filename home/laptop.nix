@@ -42,7 +42,7 @@ in {
     } ''
       main = do
         say "Building ~/.modes for apollo"
-        nixPath <- myNixPath "${configPath}/nix/sources.nix"
+        nixPath <- myNixPath "${configPath}"
         nix_build nixPath "${configPath}/home/target.nix" "-A" "apollo" "-o" "/home/maralorn/.modes"
         activate_mode
     '';

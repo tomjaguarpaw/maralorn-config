@@ -7,7 +7,7 @@ in rec {
     bins = [ nixos-rebuild ];
   } ''
     main = do
-        paths <- myNixPath "${configPath}/nix/sources.nix"
+        paths <- myNixPath "${configPath}"
         args <- getArgs
         nixos_rebuild (paths ++ ["switch"] ++ fmap toString args)
   '';

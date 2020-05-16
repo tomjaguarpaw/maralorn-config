@@ -7,7 +7,7 @@ in {
     } ''
       main = do
         args <- getArgs
-        paths <- myNixPath "${configPath}/nix/sources.nix"
+        paths <- myNixPath "${configPath}"
         home_manager $ paths ++ ["switch"] ++ fmap toString args
     '';
 }
