@@ -182,8 +182,8 @@ nmap <space>b :Buffers<CR>
 
 nnoremap <a-left> :bp<CR>
 nnoremap <a-right> :bn<CR>
-inoremap <a-left> :bp<CR>
-inoremap <a-right> :bn<CR>
+inoremap <a-left> <ESC>:bp<CR>
+inoremap <a-right> <ESC>:bn<CR>
 
 let $FZF_DEFAULT_OPTS .= '--border --layout=reverse'
 function! FloatingFZF()
