@@ -10,7 +10,7 @@ let
   ];
   post-update = writeHaskellScript {
     name = "post-update";
-    bins = [ pkgs.git pkgs.nix ];
+    bins = [ pkgs.git ];
     imports = [
       "System.Environment (lookupEnv)"
       "System.Directory (withCurrentDirectory)"
@@ -19,17 +19,17 @@ let
   } ''
     checkout :: String -> IO FilePath
     checkout path = do
-      (decodeUtf8 -> dir) <-  mktemp "-d" |> captureTrim
-      git "clone" path dir
+      (decodeUtf8 -> repoDir) <-  mktemp "-d" |> captureTrim
+      git "clone" path repoDir
       pure dir
 
     main = do
-      mirror <- lookupEnv "GL_OPTION_MIRROR"
-      whenJust mirror $ \mirror -> do
+      mirrorMay <- lookupEnv "GL_OPTION_MIRROR"
+      whenJust mirrorMay $ \mirror -> do
         say [i|Forwarding push to #{mirror}|]
         git "push" "--all" "-f" mirror
-      deploy <- lookupEnv "GL_OPTION_WEB_DEPLOY"
-      whenJust deploy $ \deploy -> do
+      deployMay <- lookupEnv "GL_OPTION_WEB_DEPLOY"
+      whenJust deployMay $ \deploy -> do
         (maybe [] (\x -> ["-f","default.nix",x]) -> target) <- lookupEnv "GL_OPTION_WEB_DEPLOY_NIX_TARGET"
         (decodeUtf8 -> path) <- pwd |> captureTrim
         say [i|Deploying build to /var/www/#{deploy}|]
