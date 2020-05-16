@@ -1,19 +1,13 @@
-let inherit (import ./.) home-manager writeHaskellScript get-niv-path;
+let inherit (import ./.) home-manager writeHaskellScript;
 in {
   update-home = configPath:
     writeHaskellScript {
       name = "update-home";
-      bins = [ get-niv-path home-manager ];
+      bins = [ home-manager ];
     } ''
-
-      getNivPath name = get_niv_path "${configPath}/nix/sources.nix" name |> captureTrim
-
-      getNivAssign name = tag <$> getNivPath name
-          where tag str = ["-I", [i|#{name :: String}=#{str :: LByteString}|]] :: [String]
-
       main = do
         args <- getArgs
-        paths <- concat <$> mapM getNivAssign ["home-manager", "nixpkgs", "unstable"]
+        paths <- myNixPath "${configPath}/nix/sources.nix"
         home_manager $ paths ++ ["switch"] ++ fmap toString args
     '';
 }

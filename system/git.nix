@@ -26,18 +26,18 @@ let
     main = do
       mirror <- lookupEnv "GL_OPTION_MIRROR"
       whenJust mirror $ \mirror -> do
-        echo ([i|Forwarding push to #{mirror}|] :: String)
+        say [i|Forwarding push to #{mirror}|]
         git "push" "--all" "-f" mirror
       deploy <- lookupEnv "GL_OPTION_WEB_DEPLOY"
       whenJust deploy $ \deploy -> do
         (maybe [] (\x -> ["-f","default.nix",x]) -> target) <- lookupEnv "GL_OPTION_WEB_DEPLOY_NIX_TARGET"
         (decodeUtf8 -> path) <- pwd |> captureTrim
-        echo ([i|Deploying build to /var/www/#{deploy}|] :: String)
-        bracket (checkout path) (rm "-rf") $ \dir -> withCurrentDirectory dir $ nix "build" "-o" ([i|/var/www/#{deploy}|] :: String) target
-        echo "Done"
+        say [i|Deploying build to /var/www/#{deploy}|]
+        bracket (checkout path) (rm "-rf") $ \dir -> withCurrentDirectory dir $ nix_build "-o" ([i|/var/www/#{deploy}|] :: String) target
+        say "Done"
       test <- lookupEnv "GL_OPTION_TEST"
       whenJust test $ \_ -> do
-        echo "Triggering (an async) system update."
+        say "Triggering (an async) system update."
         exe "sudo" ${haskellList update-command};
   '';
 in {

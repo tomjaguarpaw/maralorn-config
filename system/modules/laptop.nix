@@ -30,7 +30,6 @@ in {
         anonymousClients.allowedIpRanges = [ "127.0.0.1" "::1" ];
       };
     };
-    security.pam.services.swaylock = { };
     programs.dconf.enable = true;
 
     services = {

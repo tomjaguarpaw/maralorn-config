@@ -57,6 +57,9 @@ rec {
               pkgs.haskellPackages.string-interpolate
               pkgs.haskellPackages.relude
               pkgs.haskellPackages.async
+              pkgs.haskellPackages.say
+              pkgs.haskellPackages.cmdargs
+              pkgs.haskellPackages.text
             ])
         }/bin/ghc ${name}.hs -threaded
         mv ${name} $out
@@ -77,6 +80,7 @@ rec {
 
       import Shh
       import Relude
+      import Say
       import qualified Relude.Unsafe as Unsafe
       import qualified Data.ByteString.Lazy as LBS
       import qualified Data.ByteString as BS
@@ -90,25 +94,29 @@ rec {
       -- Load binaries from Nix packages. The dependencies will be captured
       -- in the closure.
       loadFromBins (${
-        haskellList (builtins.map toString (bins ++ [ pkgs.coreutils ]))
+        haskellList
+        (builtins.map toString (bins ++ [ pkgs.coreutils pkgs.nix ]))
       } :: [String])
+
+      getNivPath :: Text -> Text -> IO Text
+      getNivPath sources channel = do
+        let expr = [i|(import #{sources}).#{channel}|] :: String
+        nix_build ["-Q", "-E", expr, "--no-out-link"] &> devNull
+        escaped <- nix_instantiate ["--eval" :: String, "-E", [i|toString #{expr}|]] |> captureTrim
+        pure . Text.dropAround ('"' ==) . decodeUtf8 . trim $ escaped
+
+      myNixPath path = concat <$> mapM getNivAssign ["home-manager", "nixpkgs", "unstable"]
+        where
+         tag name str = ["-I", [i|#{name :: Text}=#{str :: Text}|]] :: [String]
+         getNivAssign name = tag name <$> getNivPath path name
 
       ${code}
     '';
-  get-niv-path = writeHaskellScript {
-    name = "get-niv-path";
-    bins = [ pkgs.nix ];
-    imports = [ "System.Console.CmdArgs.Implicit" ];
-    libraries = [ pkgs.haskellPackages.cmdargs pkgs.haskellPackages.text ];
-  } ''
-
-    trimQuotation = pureProc $ encodeUtf8 . Text.dropAround ('"' ==) . decodeUtf8 . trim
-
+  get-niv-path = writeHaskellScript { name = "get-niv-path"; } ''
     main = do
-          [sources, channel] <- getArgs
-          let expr = [i|(import #{sources}).#{channel}|] :: String
-          nix_build ["-Q", "-E", expr, "--no-out-link"] &> devNull
-          nix_instantiate ["--eval" :: String, "-E", [i|toString #{expr}|]] |> trimQuotation
+        [sources, channel] <- fmap toText <$> getArgs
+        path <- getNivPath sources channel
+        say path
   '';
   home-manager = pkgs.callPackage <home-manager/home-manager> { };
   gcRetentionDays = 5;

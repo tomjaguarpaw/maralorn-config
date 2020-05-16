@@ -47,7 +47,7 @@ let
 
     executeFilterMail :: (LByteString, Text, Text) -> IO ()
     executeFilterMail (files, filter, target) = do
-       putTextLn [i|Sorting "#{filter}" into #{target}|]
+       say [i|Sorting "#{filter}" into #{target}|]
        writeOutput files |> mscan
        mmkdir ([i|${archive}/#{target}|] :: String)
        writeOutput files |> mrefile ([i|${archive}/#{target}|] :: String)

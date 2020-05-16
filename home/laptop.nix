@@ -1,12 +1,13 @@
 { pkgs, lib, ... }:
 let
-  inherit (import ../lib) unfreePkgs;
+  inherit (import ../lib) unfreePkgs writeHaskellScript;
   inherit (import ../pkgs) my-ssh-add;
   modes = pkgs.lib.attrNames (import ./modes.nix).apollo;
   autostart-script = pkgs.writeShellScriptBin "home-manager-autostart" ''
     ${my-ssh-add}/bin/my-ssh-add
     ${pkgs.xorg.xrdb}/bin/xrdb ${builtins.toFile "Xresources" "Xft.dpi: 96"}
   '';
+  configPath = "/home/maralorn/git/config";
 in {
 
   xdg.configFile."autostart/home-manager-autostart.desktop".source = "${
@@ -16,29 +17,40 @@ in {
         exec = "${autostart-script}/bin/home-manager-autostart";
       }
     }/share/applications/home-manager-autostart.desktop";
-  home.packages = builtins.attrValues {
+  home.packages = builtins.attrValues rec {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
+      set -e
       git -C ~/git/config pull
       update-modes
       sudo -A update-system
       sudo -A nix-collect-garbage -d
       sudo -A nix optimise-store
     '';
-    activateMode = pkgs.writeShellScriptBin "activate-mode" ''
-      ~/.modes/$(cat ~/tmp/mode)/activate
-      random-wallpaper
+    activateMode = writeHaskellScript { name = "activate-mode"; } ''
+      getMode :: IO Text
+      getMode = decodeUtf8 <$> (cat "/home/maralorn/tmp/mode" |> captureTrim)
+
+      main = do
+        mode <- getMode
+        say [i|Switching to mode #{mode}...|]
+        exe ([i|/home/maralorn/.modes/#{mode}/activate|] :: String)
+        exe "random-wallpaper"
     '';
-    updateModes = pkgs.writeShellScriptBin "update-modes" ''
-      set -e
-      nix build -f ~/git/config/home/target.nix apollo -o ~/.modes
-      activate-mode
+    updateModes = writeHaskellScript {
+      name = "update-modes";
+      bins = [ activateMode ];
+    } ''
+      main = do
+        say "Building ~/.modes for apollo"
+        nixPath <- myNixPath "${configPath}/nix/sources.nix"
+        nix_build nixPath "${configPath}/home/target.nix" "-A" "apollo" "-o" "/home/maralorn/.modes"
+        activate_mode
     '';
     selectMode = pkgs.writeShellScriptBin "select-mode" ''
       ${pkgs.dialog}/bin/dialog --menu "Select Mode" 20 80 5 ${
         lib.concatStrings (map (mode: "${mode} '' ") modes)
       } 2> ~/tmp/mode
       clear
-      echo "Switching to mode $(cat ~/tmp/mode)..."
       activate-mode > /dev/null
     '';
 

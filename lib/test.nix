@@ -1,33 +1,28 @@
 let
   inherit (import ../lib)
-    pkgs writeHaskellScript get-niv-path home-manager unstable haskellList;
+    pkgs writeHaskellScript home-manager unstable haskellList;
 in rec {
   haskellBody = name: commandline: ''
-    getNivPath dir name = get_niv_path ([i|#{dir :: String}/nix/sources.nix|] :: String) name |> captureTrim
-
-    getNivAssign dir name = process <$> getNivPath dir name
-        where process str = ["-I" :: String, [i|#{name :: String}=#{str :: LByteString}|]]
-
     main = do
-      (configDir:hostname:args) <- getArgs
-      paths <- concat <$> mapM (getNivAssign $ toString configDir) ["nixpkgs", "unstable", "home-manager"]
-      putStrLn [i|Trying to build ${name} config for #{hostname}|]
+      (configDir:hostname:args) <-  getArgs
+      paths <- myNixPath $ toText configDir
+      say [i|Trying to build ${name} config for #{hostname}|]
       ${commandline}
   '';
-  bins = [ get-niv-path pkgs.nix ];
+  bins = [ pkgs.nix ];
 
   test-system-config = writeHaskellScript {
     name = "test-system-config";
     inherit bins;
   } (haskellBody "system" ''
-    nix $ ["build", "-f", "<nixpkgs/nixos>", "system"] ++ paths ++ ["-I", [i|nixos-config=#{configDir}/hosts/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ fmap toString args
+    nix_build $ ["<nixpkgs/nixos>", "-A", "system"] ++ paths ++ ["-I", [i|nixos-config=#{configDir}/hosts/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ fmap toString args
   '');
 
   test-home-config = writeHaskellScript {
     name = "test-home-config";
     inherit bins;
   } (haskellBody "home" ''
-    nix $ ["build", "-f", "<home-manager/home-manager/home-manager.nix>"] ++ paths ++ ["--argstr", "confPath", [i|#{configDir}/home.nix|], "--argstr", "confAttr", hostname, "--out-link", [i|result-home-manager-#{hostname}|], "activationPackage"] ++ fmap toString args
+    nix_build $ ["<home-manager/home-manager/home-manager.nix>"] ++ paths ++ ["--argstr", "confPath", [i|#{configDir}/home.nix|], "--argstr", "confAttr", hostname, "--out-link", [i|result-home-manager-#{hostname}|], "-A", "activationPackage"] ++ fmap toString args
   '');
 
   repoSrc = "git@hera.m-0.eu:nixos-config";
