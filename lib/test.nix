@@ -45,7 +45,6 @@ in rec {
     main = do
       bump <- (maybe False (== "bump") . listToMaybe) <$> getArgs
       bracket checkout (rm "-rf") $ \repoDir -> do
-        let repoGit = git "-C" repoDir
         withCurrentDirectory repoDir $ do
           mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ${
             haskellList keys
@@ -53,13 +52,13 @@ in rec {
           when bump $ ignoreFailure $ niv "update"
         changed <- (mempty /=) <$> (git "-C" repoDir "status" "--porcelain" |> captureTrim)
         when changed $ do
-          repoGit "config" "user.email" "maralorn@maralorn.de"
-          repoGit "config" "user.name" "maralorn (nix-auto-updater)"
-          repoGit "commit" "-am" "Update dependencies with niv"
-          repoGit "push" "-f" "origin" "master:version-bump"
+          git "-C" repoDir "config" "user.email" "maralorn@maralorn.de"
+          git "-C" repoDir "config" "user.name" "maralorn (nix-auto-updater)"
+          git "-C" repoDir "commit" "-am" "Update dependencies with niv"
+          git "-C" repoDir "push" "-f" "origin" "master:version-bump"
         mapM_ (test_system_config repoDir) ${haskellList systems}
         mapM_ (test_home_config repoDir) ${haskellList homes}
         when changed $ do
-          repoGit "push" "origin" "master:master"
+          git "-C" repoDir "push" "origin" "master:master"
   '';
 }
