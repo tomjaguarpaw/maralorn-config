@@ -4,7 +4,7 @@ let
   home-manager = import <home-manager/home-manager/home-manager.nix>;
   buildHomeManager = attr:
     (home-manager {
-      confPath = ~/git/config/home.nix;
+      confPath = ../home.nix;
       confAttr = attr;
     }).activationPackage;
 in lib.mapAttrs (host: configs:
