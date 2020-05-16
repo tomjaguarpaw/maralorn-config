@@ -2,9 +2,7 @@
 let
   inherit (import ../lib) unfreePkgs;
   inherit (import ../pkgs) my-ssh-add;
-  modes = map (lib.removePrefix "apollo-")
-    (builtins.filter (lib.hasPrefix "apollo-")
-      (pkgs.lib.attrNames (import ../home.nix)));
+  modes = pkgs.lib.attrNames (import ./modes.nix).apollo;
   autostart-script = pkgs.writeShellScriptBin "home-manager-autostart" ''
     ${my-ssh-add}/bin/my-ssh-add
     ${pkgs.xorg.xrdb}/bin/xrdb ${builtins.toFile "Xresources" "Xft.dpi: 96"}
@@ -27,15 +25,13 @@ in {
       sudo -A nix optimise-store
     '';
     activateMode = pkgs.writeShellScriptBin "activate-mode" ''
-      ~/.modes/result-home-manager-apollo-$(cat ~/tmp/mode)/activate
+      ~/.modes/$(cat ~/tmp/mode)/activate
+      random-wallpaper
     '';
     updateModes = pkgs.writeShellScriptBin "update-modes" ''
       set -e
-      update-home -A apollo-$(cat ~/tmp/mode)
-      mkdir -p ~/.modes
-      cd ~/.modes
-      ${lib.concatStringsSep "\n"
-      (map (mode: "test-home-config ~/git/config apollo-${mode}") modes)}
+      nix build -f ~/git/config/home/target.nix apollo -o ~/.modes
+      activate-mode
     '';
     selectMode = pkgs.writeShellScriptBin "select-mode" ''
       ${pkgs.dialog}/bin/dialog --menu "Select Mode" 20 80 5 ${
@@ -43,7 +39,6 @@ in {
       } 2> ~/tmp/mode
       clear
       echo "Switching to mode $(cat ~/tmp/mode)..."
-      ln -sfT ~/.wallpapers/$(cat ~/tmp/mode) ~/volatile/wallpapers
       activate-mode > /dev/null
     '';
 
