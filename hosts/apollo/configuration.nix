@@ -75,6 +75,7 @@ in {
           key = "/etc/nixos/hosts/apollo/secret/syncthing/key.pem";
         };
     };
+    gnome3.chrome-gnome-shell.enable = true;
     xserver = {
       enable = true;
       displayManager.gdm = {
