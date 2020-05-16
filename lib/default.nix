@@ -61,7 +61,7 @@ rec {
               pkgs.haskellPackages.cmdargs
               pkgs.haskellPackages.text
             ])
-        }/bin/ghc ${name}.hs -threaded
+        }/bin/ghc ${name}.hs -threaded -Wall -Wno-unused-top-binds -Wno-missing-signatures -Wno-type-defaults -Wno-unused-imports -Werror
         mv ${name} $out
         ${pkgs.binutils-unwrapped}/bin/strip --strip-unneeded "$out"
       '';
@@ -100,16 +100,18 @@ rec {
 
       getNivPath :: Text -> Text -> IO Text
       getNivPath sources channel = do
-        let expr = [i|(import #{sources}/nix/sources.nix).#{channel}|] :: String
-        nix_build ["-Q", "-E", expr, "--no-out-link"] &> devNull
-        escaped <- nix_instantiate ["--eval" :: String, "-E", [i|toString #{expr}|]] |> captureTrim
+        let expression = [i|(import #{sources}/nix/sources.nix).#{channel}|] :: String
+        nix_build ["-Q", "-E", expression, "--no-out-link"] &> devNull
+        escaped <- nix_instantiate ["--eval" :: String, "-E", [i|toString #{expression}|]] |> captureTrim
         pure . Text.dropAround ('"' ==) . decodeUtf8 . trim $ escaped
 
+      myNixPath :: Text -> IO [String]
       myNixPath path = concat <$> mapM getNivAssign ["home-manager", "nixpkgs", "unstable"]
         where
          tag name str = ["-I", [i|#{name :: Text}=#{str :: Text}|]] :: [String]
          getNivAssign name = tag name <$> getNivPath path name
 
+      main :: IO ()
       ${code}
     '';
   get-niv-path = writeHaskellScript { name = "get-niv-path"; } ''

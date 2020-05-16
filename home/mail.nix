@@ -41,13 +41,13 @@ let
     reScan = notmuch "new" "--quiet"
 
     findFilterMail :: (Text,Text) -> IO (Maybe (LByteString, Text, Text))
-    findFilterMail (filter, target) = do
-       files <- notmuch "search" "--output" "files" (toString filter) "folder:${unsortedSuffix}" |> capture
-       pure $ if (LBS.length files > 0) then Just (files, filter, target) else Nothing
+    findFilterMail (filter_, target) = do
+       files <- notmuch "search" "--output" "files" (toString filter_) "folder:${unsortedSuffix}" |> capture
+       pure $ if (LBS.length files > 0) then Just (files, filter_, target) else Nothing
 
     executeFilterMail :: (LByteString, Text, Text) -> IO ()
-    executeFilterMail (files, filter, target) = do
-       say [i|Sorting "#{filter}" into #{target}|]
+    executeFilterMail (files, filter_, target) = do
+       say [i|Sorting "#{filter_}" into #{target}|]
        writeOutput files |> mscan
        mmkdir ([i|${archive}/#{target}|] :: String)
        writeOutput files |> mrefile ([i|${archive}/#{target}|] :: String)
@@ -83,7 +83,6 @@ let
     mySearch :: [String] -> IO [Text]
     mySearch param = lines . decodeUtf8 <$> (Main.find ("${archive}":param) |> captureTrim)
 
-    main :: IO ()
     main = do
        setEnv "MBLAZE_PAGER" "cat"
        setEnv "NOTMUCH_CONFIG" "${config.home.sessionVariables.NOTMUCH_CONFIG}"

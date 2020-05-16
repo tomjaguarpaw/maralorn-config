@@ -62,8 +62,8 @@
                   fmap That (HM.difference task2 task1),
                   (HM.mapMaybe (\x->x) $ HM.intersectionWith (\old new -> if old /= new then Just $ These old new else Nothing) task1 task2)
                  ]
-            String description <- HM.lookup "description" task2
-            pure (description, printMap diff)
+            String description2 <- HM.lookup "description" task2
+            pure (description2, printMap diff)
        Control.Monad.forM_ description $ \(d,b) -> do
          client <- try connectSession
          either
