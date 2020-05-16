@@ -33,10 +33,10 @@ let
         (maybe [] (\x -> ["-f","default.nix",x]) -> target) <- lookupEnv "GL_OPTION_WEB_DEPLOY_NIX_TARGET"
         (decodeUtf8 -> path) <- pwd |> captureTrim
         say [i|Deploying build to /var/www/#{deploy}|]
-        bracket (checkout path) (rm "-rf") $ \dir -> withCurrentDirectory dir $ nix_build "-o" ([i|/var/www/#{deploy}|] :: String) target
+        bracket (checkout path) (rm "-rf") $ \repoDir -> withCurrentDirectory repoDir $ nix_build "-o" ([i|/var/www/#{deploy}|] :: String) target
         say "Done"
-      test <- lookupEnv "GL_OPTION_TEST"
-      whenJust test $ \_ -> do
+      testFlag <- lookupEnv "GL_OPTION_TEST"
+      whenJust testFlag $ \_ -> do
         say "Triggering (an async) system update."
         exe "sudo" ${haskellList update-command};
   '';
