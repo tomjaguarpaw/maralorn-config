@@ -6,7 +6,7 @@ in rec {
     main = do
       (configDir:hostname:args) <-  getArgs
       paths <- myNixPath $ toText configDir
-      say [i|Trying to build ${name} config for #{hostname}|]
+      say [i|Trying to build ${name} config for #{hostname} ...|]
       hFlush stdout
       ${commandline}
       say [i|Build of ${name} config for #{hostname} was successful.|]
