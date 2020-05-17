@@ -1,10 +1,6 @@
 { pkgs, config, ... }:
-let
-  hostName = "matrix.maralorn.de";
-  inherit (config.m-0) hosts;
+let hostName = "matrix.maralorn.de";
 in {
-  networking.firewall.allowedTCPPorts = [ 8448 ];
-
   services = {
     nginx = {
       enable = true;
@@ -82,23 +78,12 @@ in {
         cp_max = 10;
       };
       report_stats = true;
-      tls_certificate_path = "/var/lib/acme/${hostName}/fullchain.pem";
-      tls_private_key_path = "/var/lib/acme/${hostName}/key.pem";
       listeners = [
         {
           type = "metrics";
           port = 9148;
-          bind_address = "127.0.0.1";
+          bind_address = "::1";
           resources = [ ];
-        }
-        {
-          port = 8448;
-          bind_address = "::";
-          resources = [{
-            compress = false;
-            names = [ "federation" ];
-          }];
-          x_forwarded = false;
         }
         {
           port = 8008;
@@ -124,7 +109,7 @@ in {
       group = "matrix-synapse";
       allowKeysForGroup = true;
       postRun =
-        "systemctl reload nginx.service; systemctl restart matrix-synapse.service";
+        "systemctl reload nginx.service; systemctl restart matrix-synapse.service;";
     };
   };
 
