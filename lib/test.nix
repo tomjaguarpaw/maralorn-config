@@ -7,13 +7,17 @@ in rec {
       (configDir:hostname:args) <-  getArgs
       paths <- myNixPath $ toText configDir
       say [i|Trying to build ${name} config for #{hostname}|]
+      hFlush stdout
       ${commandline}
+      say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
   bins = [ pkgs.nix ];
+  imports = [ "System.IO (hFlush)" ];
 
   test-system-config = writeHaskellScript {
     name = "test-system-config";
     inherit bins;
+    inherit imports;
   } (haskellBody "system" ''
     nix_build $ ["<nixpkgs/nixos>", "-A", "system"] ++ paths ++ ["-I", [i|nixos-config=#{configDir}/hosts/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ fmap toString args
   '');
@@ -21,6 +25,7 @@ in rec {
   test-home-config = writeHaskellScript {
     name = "test-home-config";
     inherit bins;
+    inherit imports;
   } (haskellBody "home" ''
     nix_build $ paths ++ [ [i|#{configDir}/home/target.nix|],  "-A", hostname, "-o", [i|result-home-manager-#{hostname}|]] ++ fmap toString args
   '');
