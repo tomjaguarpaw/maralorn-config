@@ -73,6 +73,7 @@ in {
       recommendedOptimisation = true;
       recommendedGzipSettings = true;
       recommendedTlsSettings = true;
+      clientMaxBodySize = "500m";
     };
   };
 }
