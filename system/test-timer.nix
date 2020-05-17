@@ -21,8 +21,8 @@ in {
       script = ''
         ${test-config}/bin/test-config
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull
-        ${update-system}/bin/update-system
-        /run/wrappers/bin/sudo -u ${user} ${update-home}/bin/update-home -A hera-default
+        result-system-hera/activate
+        /run/wrappers/bin/sudo -u ${user} result-home-manager-hera-default/activate
       '';
     };
 
