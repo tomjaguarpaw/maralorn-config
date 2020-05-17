@@ -82,7 +82,7 @@ in {
         {
           type = "metrics";
           port = 9148;
-          bind_address = "::1";
+          bind_address = "127.0.0.1";
           resources = [ ];
           tls = false;
         }
