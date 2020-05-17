@@ -84,6 +84,7 @@ in {
           port = 9148;
           bind_address = "::1";
           resources = [ ];
+          tls = false;
         }
         {
           port = 8008;
