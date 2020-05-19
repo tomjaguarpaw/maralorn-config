@@ -179,6 +179,8 @@ nmap <space>p :Files<CR>
 nmap <space>g :Rg<CR>
 nmap <space>h :History<CR>
 nmap <space>b :Buffers<CR>
+nmap <space>q :qa<CR>
+nmap <space>s :w<CR>
 
 nnoremap <a-left> :bp<CR>
 nnoremap <a-right> :bn<CR>
