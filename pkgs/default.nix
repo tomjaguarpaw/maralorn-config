@@ -50,18 +50,9 @@ in rec {
       ssh ag-forward lpr -r "$@"
     '';
   };
-  urxvt = pkgs.rxvt_unicode-with-plugins;
-  terminal = pkgs.writeShellScriptBin "terminal" ''
-    shift
-    ${pkgs.kitty}/bin/kitty "$@"
-  '';
   desktop-pkgs = {
-    inherit urxvt terminal;
-    inherit (pkgs)
-      kitty lm_sensors sway swaylock swayidle xwayland rofi dmenu xdg_utils
-      gnome-themes-extra gnome-themes-standard libnotify mako wofi;
-    inherit (pkgs.gnomeExtensions)
-      appindicator arc-menu sound-output-device-chooser system-monitor;
+    inherit (pkgs) lm_sensors xwayland dmenu xdg_utils libnotify;
+    inherit (pkgs.gnomeExtensions) appindicator system-monitor;
     inherit (pkgs.gnome3)
       dconf dconf-editor gnome-tweaks gnome-shell-extensions adwaita-icon-theme
       gnome-session;

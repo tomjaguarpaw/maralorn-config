@@ -4,11 +4,8 @@ let
   inherit (import ../../lib) colors;
 in {
   imports =
-    [ ./rofi.nix ./ssh-agent.nix ./sleep-nag.nix ./kitty.nix ./wallpaper.nix ./gnome.nix ];
-  m-0 = {
-    terminal = "${desktop-pkgs.terminal}/bin/terminal";
-    colors = colors;
-  };
+    [ ./ssh-agent.nix ./sleep-nag.nix ./kitty.nix ./wallpaper.nix ./gnome.nix ];
+  m-0.colors = colors;
   home = {
     packages = builtins.attrValues desktop-pkgs;
     file.".zprofile".text = ''

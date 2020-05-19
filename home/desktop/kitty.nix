@@ -3,52 +3,54 @@ let
   my-lib = import ../../lib;
   inherit (my-lib) colors;
 in {
-  xdg.configFile."kitty/kitty.conf".text = ''
-    font_size 10.5
+  home.sessionVariables.TERMINAL = "${pkgs.kitty}/bin/kitty";
+  programs.kitty = {
+    enable = true;
+    keybindings = {
+      "ctrl+shift+v" = "paste_from_clipboard";
+      "ctrl+plus" = "change_font_size all +1.0";
+      "ctrl+minus" = "change_font_size all -1.0";
+    };
+    settings = {
+      font_size = "10.5";
 
-    foreground ${colors.foreground}
-    background ${colors.background}
-    background_opacity 0.9
+      foreground = colors.foreground;
+      background = colors.background;
+      background_opacity = "0.9";
 
-    selection_foreground ${colors.background}
-    selection_background ${colors.foreground}
+      selection_foreground = colors.background;
+      selection_background = colors.foreground;
 
-    color0 ${colors.black}
-    color8 ${colors.brightBlack}
-    #: black
+      # black
+      color0 = colors.black;
+      color8 = colors.brightBlack;
 
-    color1 ${colors.red}
-    color9 ${colors.brightRed}
-    #: red
+      # red
+      color1 = colors.red;
+      color9 = colors.brightRed;
 
-    color2  ${colors.green}
-    color10 ${colors.brightGreen}
-    #: green
+      # green
+      color2 = colors.green;
+      color10 = colors.brightGreen;
 
-    color3  ${colors.yellow}
-    color11 ${colors.brightYellow}
-    #: yellow
+      # yellow
+      color3 = colors.yellow;
+      color11 = colors.brightYellow;
 
-    color4  ${colors.blue}
-    color12 ${colors.brightBlue}
-    #: blue
+      # blue
+      color4 = colors.blue;
+      color12 = colors.brightBlue;
 
-    color5  ${colors.magenta}
-    color13 ${colors.brightMagenta}
-    #: magenta
+      # magenta
+      color5 = colors.magenta;
+      color13 = colors.brightMagenta;
 
-    color6  ${colors.cyan}
-    color14 ${colors.brightCyan}
-    #: cyan
+      # cyan
+      color6 = colors.cyan;
+      color14 = colors.brightCyan;
 
-    color7  ${colors.white}
-    color15 ${colors.brightWhite}
-
-    term xterm-256color
-
-    map ctrl+shift+v paste_from_clipboard
-    map ctrl+y paste_from_selection
-    map ctrl+plus change_font_size all +1.0
-    map ctrl+minus change_font_size all -1.0
-  '';
+      color7 = colors.white;
+      color15 = colors.brightWhite;
+    };
+  };
 }

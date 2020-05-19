@@ -136,7 +136,6 @@ in {
       PATH =
         "$HOME/.cargo/bin:/etc/profiles/per-user/${config.home.username}/bin:$HOME/.nix-profile/bin:$PATH";
       BROWSER = "${pkgs.firefox}/bin/firefox";
-      TERMINAL = config.m-0.terminal;
       EMAIL = me.mail;
       SUDO_ASKPASS = let
         print-pw = pkgs.writeShellScriptBin "print-pw"
