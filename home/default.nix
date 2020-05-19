@@ -127,13 +127,15 @@ in {
     };
   };
 
+  systemd.user.sessionVariables = config.home.sessionVariables;
+  programs.zsh.sessionVariables =  config.home.sessionVariables;
+  pam.sessionVariables = config.home.sessionVariables;
   home = {
     packages = builtins.attrValues my-pkgs.home-pkgs;
     sessionVariables = {
       PATH =
         "$HOME/.cargo/bin:/etc/profiles/per-user/${config.home.username}/bin:$HOME/.nix-profile/bin:$PATH";
       BROWSER = "${pkgs.firefox}/bin/firefox";
-      EDITOR = "${pkgs.neovim}/bin/nvim";
       TERMINAL = config.m-0.terminal;
       EMAIL = me.mail;
       SUDO_ASKPASS = let

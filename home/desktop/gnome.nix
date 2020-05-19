@@ -9,7 +9,7 @@
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" =
       {
         binding = "<Super>space";
-        command = "/home/maralorn/.cargo/bin/hotkeys";
+        command = "kitty hotkeys";
         name = "Hotkeys";
       };
     "org/gnome/settings-daemon/plugins/media-keys" = {

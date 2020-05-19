@@ -14,6 +14,9 @@ in {
     file.".zprofile".text = ''
       . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
     '';
+    file.".zlogin".text = ''
+      . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+    '';
   };
   gtk = {
     enable = true;
