@@ -66,20 +66,20 @@ in {
         ./firefox.nix
         ./git-sign.nix
         ./laptop.nix
+        ./mail.nix
+        ./update_tasks.nix
       ]);
   in {
     communication = apolloConfig [
-      ./mail.nix
-      ./update_tasks.nix
+      ./mail-client.nix
       ./chat.nix
       (setStartpage "https://cloud.maralorn.de/apps/calendar")
       (makeBlock [ ])
     ];
     orga = apolloConfig [
+      ./mail-client.nix
       ./accounting.nix
-      ./mail.nix
       ./pythia.nix
-      ./update_tasks.nix
       (setStartpage "https://cloud.maralorn.de/apps/calendar")
       (makeBlock (tinkerPages ++ leisurePages))
     ];
@@ -90,7 +90,7 @@ in {
     ];
 
     tinkering = apolloConfig [
-      ./mail.nix
+      ./mail-client.nix
       ./update-script.nix
       ./tinkering.nix
       ./chat.nix

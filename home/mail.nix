@@ -174,7 +174,7 @@ in {
   };
 
   home = {
-    packages = [ pkgs.neomutt sortMail ];
+    packages = [ sortMail ];
     file = let
       mutt_alternates = "@maralorn.de "
         + (builtins.concatStringsSep " " me.alternates);

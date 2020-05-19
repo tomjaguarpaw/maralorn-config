@@ -86,5 +86,6 @@ in {
   home = {
     file.".config/nvim/coc-settings.json".text = builtins.toJSON cocSettings;
     packages = [ neovim ];
+    sessionVariables.EDITOR = "${neovim}/bin/nvim";
   };
 }
