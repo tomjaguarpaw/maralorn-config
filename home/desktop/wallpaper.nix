@@ -14,6 +14,7 @@ let
        let new = [i|file:///home/maralorn/.wallpapers/#{mode}/#{file}|] :: String
        when (new /= current) $
          gsettings "set" "org.gnome.desktop.background" "picture-uri" new
+         gsettings "set" "org.gnome.desktop.screensaver" "picture-uri" new
   '';
 in {
   home.packages = [ randomWallpaper ];
