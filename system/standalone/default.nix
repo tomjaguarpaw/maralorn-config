@@ -30,7 +30,6 @@
       config.system.build.nixos-rebuild)
         update-system;
     } // (import ../../pkgs).system-pkgs);
-    sessionVariables = { TERMINFO = "/run/current-system/sw/share/terminfo"; };
   };
 
   programs = {

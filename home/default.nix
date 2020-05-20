@@ -24,13 +24,14 @@ in {
     };
     tmux = {
       enable = true;
+      escapeTime = 1;
+      historyLimit = 50000;
+      terminal = "screen-256color";
       extraConfig = ''
-        set default-terminal "xterm-256color"
         bind-key -n Home send Escape "OH"
         bind-key -n End send Escape "OF"
         set -g set-titles on
         set -g status off
-        set -g escape-time 1
       '';
     };
     git = {

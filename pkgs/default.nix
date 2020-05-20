@@ -32,7 +32,6 @@ in rec {
 
   extra-system-pkgs = {
     inherit (pkgs.gitAndTools) git-annex;
-    inherit (pkgs.rxvt_unicode) terminfo;
     inherit (pkgs.python3Packages) qrcode;
     inherit (pkgs)
       git-crypt htop tree pwgen borgbackup inotifyTools direnv socat nmap ncdu
@@ -61,7 +60,7 @@ in rec {
     inherit (pkgs.pythonPackages) yapf jsbeautifier;
     inherit (pkgs)
       go gdb mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole
-      nixfmt stack ghcid rnix-lsp tmate rustup;
+      nixfmt stack ghcid rnix-lsp tmate rustup kitty;
     inherit (my-lib) ghc;
     inherit obelisk;
     cabal-fmt = (unBreak pkgs.haskell.packages.ghc881.cabal-fmt);
