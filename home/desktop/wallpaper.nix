@@ -12,7 +12,7 @@ let
        ((files Unsafe.!!) -> file) <- getStdRandom $ randomR (0, length files - 1)
        (decodeUtf8 -> current) <- gsettings "get" "org.gnome.desktop.background" "picture-uri" |> captureTrim
        let new = [i|file:///home/maralorn/.wallpapers/#{mode}/#{file}|] :: String
-       when (new /= current) $
+       when (new /= current) $ do
          gsettings "set" "org.gnome.desktop.background" "picture-uri" new
          gsettings "set" "org.gnome.desktop.screensaver" "picture-uri" new
   '';
