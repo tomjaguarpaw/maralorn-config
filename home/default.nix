@@ -28,8 +28,8 @@ in {
       historyLimit = 50000;
       terminal = "screen-256color";
       extraConfig = ''
-        bind-key -n Home send Escape "OH"
-        bind-key -n End send Escape "OF"
+        "bind-key -n Home send Escape "OH"
+        "bind-key -n End send Escape "OF"
         set -g set-titles on
         set -g status off
       '';
