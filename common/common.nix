@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> }: {
+{ pkgs }: {
   syncthing = {
     declarativeWith = hosts: path:
       let
