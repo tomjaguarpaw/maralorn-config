@@ -16,7 +16,7 @@ let
     "nixos/release-20.03/nixpkgs.haskellPackages.${name}.x86_64-linux";
   watchedUnstablePkgs = [ "cabal-fmt" "neuron" ];
   watchedPkgs =
-    [ "ghcide" "brittany" "releaser" "hlint" "relude" "taskwarrior" "pandoc" ];
+    [ "ghcide" "brittany" "releaser" "hlint" "relude" "taskwarrior" "pandoc" "shh" ];
 in {
   services.prometheus.scrapeConfigs =
     map watchHaskellUnstable (watchedUnstablePkgs ++ watchedPkgs)
