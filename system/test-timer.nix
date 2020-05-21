@@ -22,7 +22,7 @@ in {
         ${test-config}/bin/test-config
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull
         result-system-hera/activate
-        /run/wrappers/bin/sudo -u ${user} result-home-manager-hera-default/activate
+        /run/wrappers/bin/sudo -u ${user} result-home-manager-hera/default/activate
       '';
     };
 
