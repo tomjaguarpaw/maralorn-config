@@ -78,13 +78,7 @@ in {
     gnome3.chrome-gnome-shell.enable = true;
     xserver = {
       enable = true;
-      displayManager.gdm = {
-        autoLogin = {
-          enable = true;
-          user = "maralorn";
-        };
-        enable = true;
-      };
+      displayManager.gdm.enable = true;
       desktopManager.gnome3.enable = true;
     };
   };

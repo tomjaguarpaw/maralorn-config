@@ -1,10 +1,8 @@
 { pkgs, lib, ... }:
 let
   inherit (import ../lib) unfreePkgs writeHaskellScript;
-  inherit (import ../pkgs) my-ssh-add;
   modes = pkgs.lib.attrNames (import ./modes.nix).apollo;
   autostart-script = pkgs.writeShellScriptBin "home-manager-autostart" ''
-    ${my-ssh-add}/bin/my-ssh-add
     ${pkgs.xorg.xrdb}/bin/xrdb ${builtins.toFile "Xresources" "Xft.dpi: 96"}
   '';
   configPath = "/home/maralorn/git/config";

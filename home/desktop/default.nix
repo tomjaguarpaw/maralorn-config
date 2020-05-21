@@ -1,19 +1,19 @@
 { pkgs, lib, config, ... }:
 let
-  inherit (import ../../pkgs) desktop-pkgs my-ssh-add;
+  inherit (import ../../pkgs) desktop-pkgs;
   inherit (import ../../lib) colors;
 in {
-  imports =
-    [ ./ssh-agent.nix ./sleep-nag.nix ./kitty.nix ./wallpaper.nix ./gnome.nix ];
+  imports = [ ./sleep-nag.nix ./kitty.nix ./wallpaper.nix ./gnome.nix ];
   m-0.colors = colors;
   home = {
     packages = builtins.attrValues desktop-pkgs;
-    file.".zprofile".text = ''
-      . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
-    '';
-    file.".zlogin".text = ''
-      . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
-    '';
+    file = {
+      ".zprofile".text = ''
+        . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+      '';
+      ".gnupg/gpg-agent.conf".text =
+        "pinentry-program ${pkgs.pinentry.gnome3}/bin/pinentry";
+    };
   };
   gtk = {
     enable = true;

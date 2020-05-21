@@ -126,9 +126,6 @@ in {
     };
   };
 
-  systemd.user.sessionVariables = config.home.sessionVariables;
-  programs.zsh.sessionVariables =  config.home.sessionVariables;
-  pam.sessionVariables = config.home.sessionVariables;
   home = {
     packages = builtins.attrValues my-pkgs.home-pkgs;
     sessionVariables = {
@@ -147,14 +144,6 @@ in {
   };
 
   systemd.user = { startServices = true; };
-
-  services = {
-    gpg-agent = {
-      enable = true;
-      defaultCacheTtl = 31536000; # 1year
-      maxCacheTtl = 31536000; # 1year
-    };
-  };
 
   xdg.enable = true;
 }

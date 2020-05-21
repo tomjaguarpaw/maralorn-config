@@ -2,18 +2,6 @@ let
   my-lib = import ../lib;
   inherit (my-lib) pkgs unstable sources writeHaskellScript unBreak colors;
 in rec {
-  start-ssh-agent = pkgs.writeShellScriptBin "start-ssh-agent" ''
-    ${pkgs.psmisc}/bin/killall -q ssh-agent
-    eval `${pkgs.openssh}/bin/ssh-agent -s`
-    systemctl --user set-environment SSH_AUTH_SOCK="$SSH_AUTH_SOCK"
-    systemctl --user set-environment SSH_AGENT_PID="$SSH_AGENT_PID"
-  '';
-  cat-pw = pkgs.writeShellScriptBin "cat-ssh-pw" ''
-    pass eu/m-0/$(hostname).m-0.eu/ssh-key
-  '';
-  my-ssh-add = pkgs.writeShellScriptBin "my-ssh-add" ''
-    SSH_ASKPASS=${cat-pw}/bin/cat-ssh-pw ${pkgs.openssh}/bin/ssh-add < /dev/null
-  '';
   obelisk = (import sources.obelisk { }).command;
   nix-direnv = sources.nix-direnv + "/direnvrc";
   neovim = unstable.neovim.override {
@@ -50,7 +38,7 @@ in rec {
     '';
   };
   desktop-pkgs = {
-    inherit (pkgs) lm_sensors xwayland dmenu xdg_utils libnotify;
+    inherit (pkgs) lm_sensors xwayland dmenu xdg_utils libnotify pinentry;
     inherit (pkgs.gnomeExtensions) appindicator system-monitor;
     inherit (pkgs.gnome3)
       dconf dconf-editor gnome-tweaks gnome-shell-extensions adwaita-icon-theme
