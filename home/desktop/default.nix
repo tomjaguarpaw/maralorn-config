@@ -7,13 +7,8 @@ in {
   m-0.colors = colors;
   home = {
     packages = builtins.attrValues desktop-pkgs;
-    file = {
-      ".zprofile".text = ''
-        . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
-      '';
-      ".gnupg/gpg-agent.conf".text =
-        "pinentry-program ${pkgs.pinentry.gnome3}/bin/pinentry";
-    };
+    file.".zprofile".text =
+      ". $HOME/.nix-profile/etc/profile.d/hm-session-vars.sh";
   };
   gtk = {
     enable = true;

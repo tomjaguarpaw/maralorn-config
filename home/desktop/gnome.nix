@@ -1,4 +1,5 @@
 { ... }: {
+  services.gpg-agent.pinentryFlavor = "gnome3";
   dconf.settings = {
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal" =
       {
