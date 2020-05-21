@@ -27,7 +27,7 @@ in rec {
     inherit bins;
     inherit imports;
   } (haskellBody "home" ''
-    nix_build $ paths ++ [ [i|#{configDir}/home/target.nix|],  "-A", hostname, "-o", [i|result-home-manager-#{hostname}|]] ++ fmap toString args
+    nix_build $ paths ++ [[i|#{configDir}/home/target.nix|], "-A", hostname, "-o", [i|result-home-manager-#{hostname}|]] ++ fmap toString args
   '');
 
   repoSrc = "git@hera.m-0.eu:nixos-config";
