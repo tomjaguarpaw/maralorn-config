@@ -26,7 +26,7 @@ in {
     '';
     activateMode = writeHaskellScript { name = "activate-mode"; } ''
       getMode :: IO Text
-      getMode = decodeUtf8 <$> (cat "/home/maralorn/tmp/mode" |> captureTrim)
+      getMode = decodeUtf8 <$> (cat "/home/maralorn/volatile/mode" |> captureTrim)
 
       main = do
         mode <- getMode
@@ -47,7 +47,7 @@ in {
     selectMode = pkgs.writeShellScriptBin "select-mode" ''
       ${pkgs.dialog}/bin/dialog --menu "Select Mode" 20 80 5 ${
         lib.concatStrings (map (mode: "${mode} '' ") modes)
-      } 2> ~/tmp/mode
+      } 2> ~/volatile/mode
       clear
       activate-mode > /dev/null
     '';
