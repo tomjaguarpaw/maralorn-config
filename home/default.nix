@@ -15,6 +15,9 @@ in {
     ./mpclient.nix
     ./neovim
   ];
+  services.gpg-agent = {
+    enable = true;
+  };
 
   programs = {
     home-manager.enable = true;

@@ -1,13 +1,11 @@
 { pkgs, config, ... }:
 let
-  inherit (import ../../lib) unstable;
-  myPkgs = import ../../pkgs;
-  neovim = myPkgs.neovim.override {
+  neovim = pkgs.neovim.override {
     configure = {
       customRC = builtins.readFile ./vimrc;
       packages.myVimPackage = {
         start = builtins.attrValues {
-          inherit (unstable.vimPlugins)
+          inherit (pkgs.vimPlugins)
           # coc-tabnine (TODO: Why doesn‘t it work?)
           # TODO: tabnine config in home-manager
           # TODO: tabnine lsp: nix, rust, pandoc/latex lsp? was noch?

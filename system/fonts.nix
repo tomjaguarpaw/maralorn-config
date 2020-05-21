@@ -1,6 +1,4 @@
-{ config, pkgs, lib, ... }:
-let inherit (import ../lib) unstable;
-in {
+{ config, pkgs, lib, ... }: {
   fonts = {
     fontconfig = {
       enable = true;
@@ -14,10 +12,8 @@ in {
     enableDefaultFonts = true;
     enableFontDir = true;
     fonts = builtins.attrValues {
-      nerdfonts = unstable.nerdfonts.override {
-        fonts = [ "JetBrainsMono" ];
-      }; # For all my terminal needs.
       inherit (pkgs)
+        nerdfonts # For all my terminal needs.
         libertine # nice text font
         material-icons # icons in my app
         b612; # sans font, very good for displays

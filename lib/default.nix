@@ -20,29 +20,6 @@ rec {
     "brightWhite" = "#ffffff";
   };
   pkgs = import <nixpkgs> { };
-  unstable = import <unstable> { };
-  unfreePkgs = import <nixpkgs> { config = { allowUnfree = true; }; };
-  sources = import ../nix/sources.nix;
-  unBreak = pkg:
-    pkgs.haskell.lib.overrideCabal pkg (drv: {
-      broken = false;
-      doCheck = false;
-    });
-  shh = unBreak pkgs.haskellPackages.shh;
-  ghc = pkgs.ghc.withPackages (p: [
-    (unBreak p.shh)
-    p.brittany
-    p.hlint
-    p.ghcid
-    p.cabal-install
-    p.relude
-    p.shake
-    p.hledger-lib
-    p.dhall
-    #p.releaser
-    p.megaparsec
-    p.pandoc
-  ]);
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
   writeHaskellScript =
     { name ? "haskell-script", bins ? [ ], libraries ? [ ], imports ? [ ] }:
@@ -52,15 +29,10 @@ rec {
         cp $contentPath ${name}.hs
         ${
           pkgs.ghc.withPackages (_:
-            libraries ++ [
-              shh
-              pkgs.haskellPackages.string-interpolate
-              pkgs.haskellPackages.relude
-              pkgs.haskellPackages.async
-              pkgs.haskellPackages.say
-              pkgs.haskellPackages.cmdargs
-              pkgs.haskellPackages.text
-            ])
+            libraries ++ (builtins.attrValues {
+              inherit (pkgs.haskellPackages)
+                shh string-interpolate relude async say cmdargs text;
+            }))
         }/bin/ghc ${name}.hs -threaded -Wall -Wno-unused-top-binds -Wno-missing-signatures -Wno-type-defaults -Wno-unused-imports -Werror
         mv ${name} $out
         ${pkgs.binutils-unwrapped}/bin/strip --strip-unneeded "$out"
@@ -106,10 +78,11 @@ rec {
         pure . Text.dropAround ('"' ==) . decodeUtf8 . trim $ escaped
 
       myNixPath :: Text -> IO [String]
-      myNixPath path = concat <$> mapM getNivAssign ["home-manager", "nixpkgs", "unstable"]
+      myNixPath path = (extraPaths ++) . concat <$> mapM getNivAssign ["home-manager", "nixpkgs", "unstable"]
         where
          tag name str = ["-I", [i|#{name :: Text}=#{str :: Text}|]] :: [String]
          getNivAssign name = tag name <$> getNivPath path name
+         extraPaths = ["-I", [i|nixpkgs-overlays=#{path}/overlays|]]
 
       main :: IO ()
       ${code}
@@ -121,5 +94,4 @@ rec {
         say path
   '';
   home-manager = pkgs.callPackage <home-manager/home-manager> { };
-  gcRetentionDays = 5;
 }

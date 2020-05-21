@@ -1,6 +1,6 @@
 { pkgs, lib, ... }:
 let
-  inherit (import ../lib) unfreePkgs writeHaskellScript;
+  inherit (import ../lib) writeHaskellScript;
   modes = pkgs.lib.attrNames (import ./modes.nix).apollo;
   autostart-script = pkgs.writeShellScriptBin "home-manager-autostart" ''
     ${pkgs.xorg.xrdb}/bin/xrdb ${builtins.toFile "Xresources" "Xft.dpi: 96"}
@@ -52,7 +52,7 @@ in {
       activate-mode > /dev/null
     '';
 
-    inherit (unfreePkgs) zoom-us skypeforlinux google-chrome;
+    inherit (pkgs.unfree) zoom-us skypeforlinux google-chrome;
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xbacklight;
     inherit (pkgs)

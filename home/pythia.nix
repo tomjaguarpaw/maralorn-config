@@ -42,7 +42,6 @@ let
   dong = "${pkgs.mpv}/bin/mpv dong.ogg &> /dev/null &";
   meditate = pkgs.writeShellScriptBin "meditate" ''
     cd ${pythia-path}
-    i3-msg fullscreen &> /dev/null
     start=`${pkgs.taskwarrior}/bin/task calc now`
     mpv background.ogg &> /dev/null &
     ${run-printslow} << EOF

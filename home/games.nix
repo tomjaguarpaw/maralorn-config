@@ -12,7 +12,7 @@ in {
     volume-up = lib.mkForce [ ];
   };
   home.packages = builtins.attrValues {
-    inherit (unfreePkgs) steam;
+    inherit (pkgs.unfree) steam;
     inherit (pkgs) minetest;
 
     gw2 = pkgs.buildFHSUserEnv {
@@ -42,7 +42,6 @@ in {
             alsaLib
             openal
             mpg123
-            libtxc_dxtn
             gnutls
             krb5Full
             ncurses5

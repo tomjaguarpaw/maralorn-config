@@ -1,25 +1,18 @@
 let
   my-lib = import ../lib;
-  inherit (my-lib) pkgs unstable sources writeHaskellScript unBreak colors;
+  inherit (my-lib) pkgs;
 in rec {
-  obelisk = (import sources.obelisk { }).command;
-  nix-direnv = sources.nix-direnv + "/direnvrc";
-  neovim = unstable.neovim.override {
-    vimAlias = true;
-    withPython3 = true;
-    withPython = false;
-  };
+  obelisk = (import pkgs.sources.obelisk { }).command;
+  nix-direnv = pkgs.sources.nix-direnv + "/direnvrc";
 
   # pkgs assumed to be present on a non nixos host
   core-system-pkgs = {
-    inherit neovim;
     inherit (pkgs)
       gitFull gnumake mkpasswd file wget curl wireguard gnupg mutt bind liboping
-      psmisc unzip rename whois lsof parted python3 binutils ntfsprogs;
+      psmisc unzip rename whois lsof parted python3 binutils ntfsprogs neovim;
   };
 
   extra-system-pkgs = {
-    inherit (pkgs.gitAndTools) git-annex;
     inherit (pkgs.python3Packages) qrcode;
     inherit (pkgs)
       git-crypt htop tree pwgen borgbackup inotifyTools direnv socat nmap ncdu
@@ -48,10 +41,8 @@ in rec {
     inherit (pkgs.pythonPackages) yapf jsbeautifier;
     inherit (pkgs)
       go gdb mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole
-      nixfmt stack ghcid rnix-lsp tmate rustup kitty;
-    inherit (my-lib) ghc;
+      nixfmt stack ghcid rnix-lsp tmate rustup kitty ghc;
     inherit obelisk;
-    cabal-fmt = (unBreak pkgs.haskell.packages.ghc881.cabal-fmt);
   };
   accounting-pkgs = {
     jali = pkgs.callPackage ./jali { };

@@ -1,7 +1,5 @@
 { pkgs, config, lib, ... }:
-let
-  inherit (import ../lib) sources;
-  me = config.m-0.private.me;
+let me = config.m-0.private.me;
 in {
   imports = [
     ../cachix.nix
@@ -11,6 +9,13 @@ in {
   ];
 
   i18n = { defaultLocale = "en_US.UTF-8"; };
+
+  # For nixos-rebuild
+  nixpkgs.overlays = let overlayPath = ../overlays;
+  in map (n: import (overlayPath + ("/" + n))) (builtins.filter (n:
+    builtins.match ".*\\.nix" n != null
+    || builtins.pathExists (overlayPath + ("/" + n + "/default.nix")))
+    (lib.attrNames (builtins.readDir overlayPath)));
 
   time.timeZone = "Europe/Berlin";
 
@@ -35,8 +40,8 @@ in {
   environment = {
     etc = lib.mapAttrs'
       (name: value: lib.nameValuePair "nix-path/${name}" { source = value; })
-      (lib.filterAttrs (name: value: name != "__functor") sources) // {
-        "nix-path/nixos".source = sources.nixpkgs;
+      (lib.filterAttrs (name: value: name != "__functor") pkgs.sources) // {
+        "nix-path/nixos".source = pkgs.sources.nixpkgs;
       };
     variables =
       lib.genAttrs [ "CURL_CA_BUNDLE" "GIT_SSL_CAINFO" "SSL_CERT_FILE" ]
@@ -48,7 +53,7 @@ in {
       [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" ];
     binaryCachePublicKeys =
       [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
-    nixPath = [ "/etc/nix-path" ];
+    nixPath = [ "/etc/nix-path" "nixpkgs-overlays=/etc/nixos/overlays" ];
     extraOptions = ''
       fallback = true
       keep-outputs = true
