@@ -14,6 +14,9 @@ in {
     settings = {
       linux_display_server = "wayland"; # Causes ugly decorations
       hide_window_decorations = true;
+      copy_on_select = "clipboard";
+      strip_trailing_spaces = "always";
+
       font_size = "10.5";
 
       foreground = colors.foreground;
