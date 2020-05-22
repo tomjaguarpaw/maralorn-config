@@ -15,7 +15,7 @@ in {
     ./mpclient.nix
     ./neovim
   ];
-  services.gpg-agent = { enable = true; };
+  services.gpg-agent.enable = true;
 
   programs = {
     home-manager.enable = true;
@@ -37,6 +37,7 @@ in {
       package = pkgs.pass-wayland.withExtensions
         (exts: [ exts.pass-update pkgs.pass-clip ]);
       enable = true;
+      settings.PASSWORD_STORE_DIR = "${config.home.homeDirectory}/git/password-store";
     };
     git = {
       aliases = { sync = "!git pull -r && git push"; };
