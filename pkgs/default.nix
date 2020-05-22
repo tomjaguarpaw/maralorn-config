@@ -16,7 +16,7 @@ in rec {
     inherit (pkgs.python3Packages) qrcode;
     inherit (pkgs)
       git-crypt htop tree pwgen borgbackup inotifyTools direnv socat nmap ncdu
-      tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle vnstat
+      tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass  sshuttle vnstat
       entr libargon2 mblaze niv;
   };
 
@@ -31,7 +31,7 @@ in rec {
     '';
   };
   desktop-pkgs = {
-    inherit (pkgs) lm_sensors xwayland dmenu xdg_utils libnotify pinentry;
+    inherit (pkgs) lm_sensors xwayland xdg_utils libnotify;
     inherit (pkgs.gnomeExtensions) appindicator system-monitor;
     inherit (pkgs.gnome3)
       dconf dconf-editor gnome-tweaks gnome-shell-extensions adwaita-icon-theme
@@ -45,9 +45,8 @@ in rec {
     inherit obelisk;
   };
   accounting-pkgs = {
-    jali = pkgs.callPackage ./jali { };
     inherit (pkgs.haskellPackages) hledger hledger-ui hledger-web;
-    inherit (pkgs) ledger;
+    inherit (pkgs) ledger jali;
   };
   system-pkgs = core-system-pkgs // extra-system-pkgs // {
     inherit (import ../lib/test.nix)
@@ -55,5 +54,4 @@ in rec {
     inherit (my-lib) home-manager;
   };
   foreign-home-pkgs = extra-system-pkgs;
-  email2matrix = pkgs.callPackage ./email2matrix { };
 }

@@ -12,7 +12,8 @@ in {
       "ctrl+minus" = "change_font_size all -1.0";
     };
     settings = {
-      # linux_display_server = "wayland"; # Causes ugly decorations
+      linux_display_server = "wayland"; # Causes ugly decorations
+      hide_window_decorations = true;
       font_size = "10.5";
 
       foreground = colors.foreground;

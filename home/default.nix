@@ -15,9 +15,7 @@ in {
     ./mpclient.nix
     ./neovim
   ];
-  services.gpg-agent = {
-    enable = true;
-  };
+  services.gpg-agent = { enable = true; };
 
   programs = {
     home-manager.enable = true;
@@ -34,6 +32,11 @@ in {
         set -g set-titles on
         set -g status off
       '';
+    };
+    password-store = {
+      package = pkgs.pass-wayland.withExtensions
+        (exts: [ exts.pass-update pkgs.pass-clip ]);
+      enable = true;
     };
     git = {
       aliases = { sync = "!git pull -r && git push"; };

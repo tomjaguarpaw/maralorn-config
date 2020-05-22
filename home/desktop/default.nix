@@ -3,7 +3,7 @@ let
   inherit (import ../../pkgs) desktop-pkgs;
   inherit (import ../../lib) colors;
 in {
-  imports = [ ./sleep-nag.nix ./kitty.nix ./wallpaper.nix ./gnome.nix ];
+  imports = [ ./sleep-nag.nix ./kitty.nix ./wallpaper.nix ./gnome.nix ./firefox.nix ];
   m-0.colors = colors;
   home = {
     packages = builtins.attrValues desktop-pkgs;

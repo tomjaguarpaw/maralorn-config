@@ -63,7 +63,6 @@ in {
         ./mpclient.nix
         ./on-my-machine.nix
         ./desktop
-        ./firefox.nix
         ./git-sign.nix
         ./laptop.nix
         ./mail.nix
