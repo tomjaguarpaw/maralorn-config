@@ -1,6 +1,5 @@
 { pkgs, config, ... }:
 let
-  inherit (import ../pkgs) email2matrix;
   default_mailbox = {
     MailboxName = "<missing>";
     MatrixRoomId = "<missing>";
@@ -45,7 +44,7 @@ let
 in {
   systemd.services.email2matrix = {
     script =
-      "${email2matrix}/bin/devture-email2matrix --config ${email2matrix-config}";
+      "${pkgs.email2matrix}/bin/devture-email2matrix --config ${email2matrix-config}";
     wantedBy = [ "multi-user.target" ];
   };
 }
