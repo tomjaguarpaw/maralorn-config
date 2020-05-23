@@ -39,6 +39,7 @@ in rec {
   };
   home-pkgs = {
     inherit (pkgs.pythonPackages) yapf jsbeautifier;
+    inherit (pkgs.haskellPackages) brittany;
     inherit (pkgs)
       go gdb mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole
       nixfmt stack ghcid rnix-lsp tmate rustup kitty ghc;
