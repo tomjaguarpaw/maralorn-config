@@ -39,10 +39,10 @@ in rec {
   };
   home-pkgs = {
     inherit (pkgs.pythonPackages) yapf jsbeautifier;
-    inherit (pkgs.haskellPackages) brittany;
+    inherit (pkgs.haskellPackages) brittany ormolu releaser;
     inherit (pkgs)
       go gdb mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole
-      nixfmt stack ghcid rnix-lsp tmate rustup kitty ghc;
+      nixfmt stack ghcid rnix-lsp tmate rustup kitty ghc cabal-install;
     inherit obelisk;
   };
   accounting-pkgs = {
