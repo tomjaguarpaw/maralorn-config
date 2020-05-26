@@ -17,10 +17,10 @@
         "homepage": "",
         "owner": "nix-community",
         "repo": "nix-direnv",
-        "rev": "6366c7725d37753ea40e7a00398dd27837d85ce8",
-        "sha256": "17258sgh37ycycq5ihznkvcfjfkgx79dbj7c1px07zh3kakqclvh",
+        "rev": "59def08e9c7fd13f49673ec286ca31d0eff070d7",
+        "sha256": "0dqw3ggnk945w94d8j2x1dis2zfq3d9kyq07qxyp3mcxkx2ffziz",
         "type": "tarball",
-        "url": "https://github.com/nix-community/nix-direnv/archive/6366c7725d37753ea40e7a00398dd27837d85ce8.tar.gz",
+        "url": "https://github.com/nix-community/nix-direnv/archive/59def08e9c7fd13f49673ec286ca31d0eff070d7.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
