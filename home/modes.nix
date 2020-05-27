@@ -1,5 +1,5 @@
 let
-  inherit (import <nixpkgs> { }) lib;
+  inherit (import (import ../nix/sources.nix).nixpkgs { }) lib;
   makeConfig = hostName: imports:
     { ... }: {
       imports = imports ++ [ ./default.nix ];
@@ -90,7 +90,6 @@ in {
 
     tinkering = apolloConfig [
       ./mail-client.nix
-      ./update-script.nix
       ./tinkering.nix
       ./chat.nix
       (makeBlock leisurePages)

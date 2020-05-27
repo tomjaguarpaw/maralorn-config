@@ -2,6 +2,6 @@
   home = {
     username = "maralorn";
     homeDirectory = "/home/maralorn";
-    packages = builtins.attrValues (import ../pkgs).my-home-pkgs;
+    packages = builtins.attrValues pkgs.my-home-pkgs;
   };
 }

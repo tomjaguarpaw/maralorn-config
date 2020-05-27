@@ -1,7 +1,12 @@
+self: super:
 let
-  inherit (import ../lib)
-    pkgs writeHaskellScript home-manager unstable haskellList;
-in rec {
+  bins = [ self.nix ];
+  imports = [ "System.IO (hFlush)" ];
+  repoSrc = "git@hera.m-0.eu:nixos-config";
+  configPath = "/etc/nixos";
+  systems = [ "apollo" "hera" ];
+  homes = self.lib.attrNames (import ../home/modes.nix);
+  keys = [ "default" "apollo" "hera" ];
   haskellBody = name: commandline: ''
     main = do
       (configDir:hostname:args) <-  getArgs
@@ -11,10 +16,9 @@ in rec {
       ${commandline}
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
-  bins = [ pkgs.nix ];
-  imports = [ "System.IO (hFlush)" ];
+in {
 
-  test-system-config = writeHaskellScript {
+  test-system-config = self.writeHaskellScript {
     name = "test-system-config";
     inherit bins;
     inherit imports;
@@ -22,7 +26,7 @@ in rec {
     nix_build $ ["<nixpkgs/nixos>", "-A", "system"] ++ paths ++ ["-I", [i|nixos-config=#{configDir}/hosts/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ fmap toString args
   '');
 
-  test-home-config = writeHaskellScript {
+  test-home-config = self.writeHaskellScript {
     name = "test-home-config";
     inherit bins;
     inherit imports;
@@ -30,15 +34,10 @@ in rec {
     nix_build $ paths ++ [[i|#{configDir}/home/target.nix|], "-A", hostname, "-o", [i|result-home-manager-#{hostname}|]] ++ fmap toString args
   '');
 
-  repoSrc = "git@hera.m-0.eu:nixos-config";
-  configPath = "/etc/nixos";
-  systems = [ "apollo" "hera" ];
-  homes = pkgs.lib.attrNames (import ../home/modes.nix);
-  keys = [ "default" "apollo" "hera" ];
-  test-config = writeHaskellScript {
+  test-config = self.writeHaskellScript {
     name = "test-config";
     bins =
-      [ test-system-config test-home-config pkgs.git pkgs.niv pkgs.git-crypt ];
+      [ self.test-system-config self.test-home-config self.git self.niv self.git-crypt ];
     imports = [ "System.Directory (withCurrentDirectory)" ];
   } ''
     checkout :: IO FilePath
@@ -52,7 +51,7 @@ in rec {
       bracket checkout (rm "-rf") $ \repoDir -> do
         withCurrentDirectory repoDir $ do
           mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ${
-            haskellList keys
+            self.haskellList keys
           }
           when bump $ ignoreFailure $ niv "update"
         changed <- (mempty /=) <$> (git "-C" repoDir "status" "--porcelain" |> captureTrim)
@@ -61,8 +60,8 @@ in rec {
           git "-C" repoDir "config" "user.name" "maralorn (nix-auto-updater)"
           git "-C" repoDir "commit" "-am" "Update dependencies with niv"
           git "-C" repoDir "push" "-f" "origin" "master:version-bump"
-        mapM_ (test_system_config repoDir) ${haskellList systems}
-        mapM_ (test_home_config repoDir) ${haskellList homes}
+        mapM_ (test_system_config repoDir) ${self.haskellList systems}
+        mapM_ (test_home_config repoDir) ${self.haskellList homes}
         when changed $ do
           git "-C" repoDir "push" "origin" "master:master"
   '';

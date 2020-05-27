@@ -11,11 +11,7 @@ in {
   i18n = { defaultLocale = "en_US.UTF-8"; };
 
   # For nixos-rebuild
-  nixpkgs.overlays = let overlayPath = ../overlays;
-  in map (n: import (overlayPath + ("/" + n))) (builtins.filter (n:
-    builtins.match ".*\\.nix" n != null
-    || builtins.pathExists (overlayPath + ("/" + n + "/default.nix")))
-    (lib.attrNames (builtins.readDir overlayPath)));
+  nixpkgs.overlays = import ../overlays.nix { inherit lib; };
 
   time.timeZone = "Europe/Berlin";
 
@@ -53,7 +49,7 @@ in {
       [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" ];
     binaryCachePublicKeys =
       [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
-    nixPath = [ "/etc/nix-path" "nixpkgs-overlays=/etc/nixos/overlays" ];
+    nixPath = [ "/etc/nix-path" ];
     extraOptions = ''
       fallback = true
       keep-outputs = true

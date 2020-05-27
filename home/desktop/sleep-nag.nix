@@ -1,7 +1,6 @@
-{ lib, pkgs, config, ... }:
+{ pkgs, ... }:
 let
-  inherit (import ../../lib) writeHaskellScript;
-  sleep-nag = writeHaskellScript {
+  sleep-nag = pkgs.writeHaskellScript {
     name = "sleep-nag";
     imports = [
       "Data.Time.LocalTime"

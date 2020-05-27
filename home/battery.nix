@@ -1,7 +1,6 @@
 { lib, pkgs, config, ... }:
 let
-  inherit (import ../lib/default.nix) writeHaskellScript;
-  battery-watch = writeHaskellScript {
+  battery-watch = pkgs.writeHaskellScript {
     name = "battery-watch";
     libraries = [
       pkgs.haskellPackages.fdo-notify

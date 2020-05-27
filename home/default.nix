@@ -1,21 +1,19 @@
-{ pkgs, config, ... }:
+{ pkgs, config, lib, ... }:
 let
   inherit (config.m-0.private) me meWork;
-  inherit (import ../lib) writeHaskellScript;
-  my-pkgs = import ../pkgs;
 in {
 
   imports = [
     ./zsh
-    ./update-script.nix
     ./taskwarrior.nix
-    ./modules/home-options.nix
+    ./home-options.nix
     ../common
     ./unlock.nix
     ./mpclient.nix
     ./neovim
   ];
   services.gpg-agent.enable = true;
+  nixpkgs.overlays = import ../overlays.nix { inherit lib; };
 
   programs = {
     home-manager.enable = true;
@@ -37,7 +35,8 @@ in {
       package = pkgs.pass-wayland.withExtensions
         (exts: [ exts.pass-update pkgs.pass-clip ]);
       enable = true;
-      settings.PASSWORD_STORE_DIR = "${config.home.homeDirectory}/git/password-store";
+      settings.PASSWORD_STORE_DIR =
+        "${config.home.homeDirectory}/git/password-store";
     };
     git = {
       aliases = { sync = "!git pull -r && git push"; };
@@ -134,7 +133,7 @@ in {
   };
 
   home = {
-    packages = builtins.attrValues my-pkgs.home-pkgs;
+    packages = builtins.attrValues pkgs.home-pkgs;
     sessionVariables = {
       PATH =
         "$HOME/.cargo/bin:/etc/profiles/per-user/${config.home.username}/bin:$HOME/.nix-profile/bin:$PATH";
@@ -145,9 +144,7 @@ in {
           "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/${config.home.username}";
       in "${print-pw}/bin/print-pw";
     };
-    file.".direnvrc".text = ''
-      source ${my-pkgs.nix-direnv}
-    '';
+    file.".direnvrc".text = "source ${pkgs.sources.nix-direnv}/direnvrc";
   };
 
   systemd.user = { startServices = true; };

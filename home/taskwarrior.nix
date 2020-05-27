@@ -28,7 +28,7 @@
         Bool a -> show a
         Null -> "null"
     '';
-    inherit (import ../lib) writeHaskellScript;
+    inherit (pkgs) writeHaskellScript;
     libraries = [
       pkgs.haskellPackages.fdo-notify
       pkgs.haskellPackages.aeson

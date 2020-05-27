@@ -1,7 +1,6 @@
-{ lib, pkgs, config, ... }:
+{ pkgs, ... }:
 let
-  inherit (import ../../lib) writeHaskellScript;
-  randomWallpaper = writeHaskellScript {
+  randomWallpaper = pkgs.writeHaskellScript {
     name = "random-wallpaper";
     imports = [ "System.Random" ];
     bins = [ pkgs.coreutils pkgs.glib ];

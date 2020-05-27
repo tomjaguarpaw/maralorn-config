@@ -2,7 +2,7 @@ self: super:
 let
   preview = version: func:
     if super.lib.versionOlder super.lib.version version then
-      func (import <unstable> { })
+      func (import self.sources.unstable { })
     else
       { };
 in preview "20.09pre-git" (unstable: {

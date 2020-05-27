@@ -26,10 +26,12 @@
   environment = {
     # Put these into an extra file so the essential packages can also be included on non selfadminstrated systems from home-manager
     systemPackages = builtins.attrValues ({
-      inherit (import ../../lib/update-system.nix
-      config.system.build.nixos-rebuild)
+      inherit (import ../../lib/update-system.nix {
+        inherit pkgs;
+        nixos-rebuild = config.system.build.nixos-rebuild;
+      })
         update-system;
-    } // (import ../../pkgs).system-pkgs);
+    } // pkgs.system-pkgs);
   };
 
   programs = {

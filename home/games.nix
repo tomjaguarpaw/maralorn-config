@@ -1,6 +1,5 @@
 { pkgs, lib, ... }:
-let inherit (import ../lib) unfreePkgs writeHaskellScript;
-in {
+{
 
   dconf.settings."org/gnome/settings-daemon/plugins/media-keys" = {
     mic-mute = lib.mkForce [ ];
@@ -50,7 +49,7 @@ in {
             vulkan-tools
           ]);
       runScript = let
-        gw2wrapper = writeHaskellScript {
+        gw2wrapper = pkgs.writeHaskellScript {
           name = "gw2wrapper";
           bins = [ pkgs.procps ];
           imports = [ "System.Directory (withCurrentDirectory)" ];

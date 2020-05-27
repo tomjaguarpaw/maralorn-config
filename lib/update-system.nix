@@ -1,8 +1,7 @@
-nixos-rebuild:
-let inherit (import ../lib) writeHaskellScript;
-in rec {
-  configPath = "/etc/nixos";
-  update-system = writeHaskellScript {
+{ pkgs, nixos-rebuild }:
+let configPath = "/etc/nixos";
+in {
+  update-system = pkgs.writeHaskellScript {
     name = "update-system";
     bins = [ nixos-rebuild ];
   } ''

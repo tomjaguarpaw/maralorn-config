@@ -1,12 +1,11 @@
 { pkgs, lib, config, ... }:
-let
-  inherit (import ../../pkgs) desktop-pkgs;
-  inherit (import ../../lib) colors;
+let inherit (import ../../lib) colors;
 in {
-  imports = [ ./sleep-nag.nix ./kitty.nix ./wallpaper.nix ./gnome.nix ./firefox.nix ];
+  imports =
+    [ ./sleep-nag.nix ./kitty.nix ./wallpaper.nix ./gnome.nix ./firefox.nix ];
   m-0.colors = colors;
   home = {
-    packages = builtins.attrValues desktop-pkgs;
+    packages = builtins.attrValues pkgs.desktop-pkgs;
     file.".zprofile".text =
       ". $HOME/.nix-profile/etc/profile.d/hm-session-vars.sh";
   };

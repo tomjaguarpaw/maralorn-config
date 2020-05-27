@@ -1,5 +1,5 @@
 let
-  inherit (import <nixpkgs> { }) lib pkgs;
+  inherit (import (import ../nix/sources.nix).nixpkgs { }) lib pkgs;
   modes = import ./modes.nix;
   home-manager = import <home-manager/home-manager/home-manager.nix>;
   buildHomeManager = attr:

@@ -1,6 +1,5 @@
 { pkgs, lib, ... }:
 let
-  inherit (import ../lib) writeHaskellScript;
   modes = pkgs.lib.attrNames (import ./modes.nix).apollo;
   autostart-script = pkgs.writeShellScriptBin "home-manager-autostart" ''
     ${pkgs.xorg.xrdb}/bin/xrdb ${builtins.toFile "Xresources" "Xft.dpi: 96"}
@@ -24,7 +23,7 @@ in {
       sudo -A nix-collect-garbage -d
       sudo -A nix optimise-store
     '';
-    activateMode = writeHaskellScript { name = "activate-mode"; } ''
+    activateMode = pkgs.writeHaskellScript { name = "activate-mode"; } ''
       getMode :: IO Text
       getMode = decodeUtf8 <$> (cat "/home/maralorn/volatile/mode" |> captureTrim)
 
@@ -34,7 +33,7 @@ in {
         exe ([i|/home/maralorn/.modes/#{mode}/activate|] :: String)
         exe "random-wallpaper"
     '';
-    updateModes = writeHaskellScript {
+    updateModes = pkgs.writeHaskellScript {
       name = "update-modes";
       bins = [ activateMode ];
     } ''

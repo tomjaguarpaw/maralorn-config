@@ -1,6 +1,5 @@
 { lib, config, pkgs, ... }:
 let
-  inherit (import ../lib) writeHaskellScript;
   inherit (config.m-0.private) sendmail me;
   inherit (config.m-0.private.mail_filters) sortLists stupidLists notifications;
   maildir = config.accounts.email.maildirBasePath;
@@ -25,7 +24,7 @@ let
   myFilters = builtins.map filter.simpleSortList sortLists
     ++ builtins.map filter.stupidList stupidLists
     ++ builtins.map filter.notifications notifications;
-  sortMail = writeHaskellScript {
+  sortMail = pkgs.writeHaskellScript {
     name = "sort-mail-archive";
     bins = [ pkgs.notmuch pkgs.coreutils pkgs.mblaze pkgs.findutils ];
     libraries = [ pkgs.haskellPackages.megaparsec ];
