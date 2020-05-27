@@ -1,6 +1,5 @@
 { config, pkgs, lib, ... }:
 let
-  inherit (import ../lib) writeHaskellScript haskellList;
   me = config.m-0.private.me;
   update-command = [
     "${pkgs.systemd}/bin/systemctl"
@@ -8,7 +7,7 @@ let
     "test-and-update.service"
     "--no-block"
   ];
-  post-update = writeHaskellScript {
+  post-update = pkgs.writeHaskellScript {
     name = "post-update";
     bins = [ pkgs.git ];
     imports = [
@@ -38,7 +37,7 @@ let
       testFlag <- lookupEnv "GL_OPTION_TEST"
       whenJust testFlag $ \_ -> do
         say "Triggering (an async) system update."
-        exe "sudo" ${haskellList update-command};
+        exe "sudo" ${pkgs.haskellList update-command};
   '';
 in {
   systemd.tmpfiles.rules = let cfg = config.services.gitolite;
