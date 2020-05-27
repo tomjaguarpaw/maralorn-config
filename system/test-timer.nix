@@ -1,10 +1,11 @@
 { pkgs, config, lib, ... }:
 let
   user = "maralorn";
-  inherit (import ../lib/test.nix) test-config;
-  inherit (import ../lib/update-system.nix config.system.build.nixos-rebuild)
+  inherit (import ../lib/update-system.nix {
+    nixos-rebuild = config.system.build.nixos-rebuild;
+    inherit pkgs;
+  })
     update-system;
-  update-home = (import ../lib/update-home.nix).update-home "/etc/nixos";
 in {
 
   systemd.services = {
@@ -19,7 +20,7 @@ in {
         WorkingDirectory = "/var/cache/gc-links";
       };
       script = ''
-        ${test-config}/bin/test-config
+        ${pkgs.test-config}/bin/test-config
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull
         result-system-hera/activate
         /run/wrappers/bin/sudo -u ${user} result-home-manager-hera/default/activate
@@ -33,7 +34,7 @@ in {
         Type = "oneshot";
         WorkingDirectory = "/var/cache/gc-links";
         ExecStart =
-          "${(import ../lib/test.nix).test-config}/bin/test-config bump";
+          "${pkgs.test-config}/bin/test-config bump";
       };
     };
   };
