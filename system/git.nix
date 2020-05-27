@@ -29,7 +29,7 @@ let
         git "push" "--all" "-f" mirror
       deployMay <- lookupEnv "GL_OPTION_WEB_DEPLOY"
       whenJust deployMay $ \deploy -> do
-        (maybe [] (\x -> ["-f","default.nix",x]) -> target) <- lookupEnv "GL_OPTION_WEB_DEPLOY_NIX_TARGET"
+        (maybe [] (\x -> ["-A", x]) -> target) <- lookupEnv "GL_OPTION_WEB_DEPLOY_NIX_TARGET"
         (decodeUtf8 -> path) <- pwd |> captureTrim
         say [i|Deploying build to /var/www/#{deploy}|]
         bracket (checkout path) (rm "-rf") $ \repoDir -> withCurrentDirectory repoDir $ nix_build "-o" ([i|/var/www/#{deploy}|] :: String) target
