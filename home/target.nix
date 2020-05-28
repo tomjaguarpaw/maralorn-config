@@ -1,7 +1,8 @@
 let
-  inherit (import (import ../nix/sources.nix).nixpkgs { }) lib pkgs;
+  sources = import ../nix/sources.nix;
+  inherit (import sources.nixpkgs { }) lib pkgs;
   modes = import ./modes.nix;
-  home-manager = import <home-manager/home-manager/home-manager.nix>;
+  home-manager = import "${sources.home-manager}/home-manager/home-manager.nix";
   buildHomeManager = attr:
     (home-manager {
       confPath = ../home.nix;
