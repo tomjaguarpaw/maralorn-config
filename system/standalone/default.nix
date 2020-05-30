@@ -3,11 +3,14 @@
   imports = [ ./admin.nix ];
 
   # So that boot does not fill up with old kernels
-  boot.loader = {
-    timeout = 0;
-    grub = {
-      backgroundColor = "#000000";
-      configurationLimit = 5;
+  boot = {
+    plymouth.enable = true;
+    loader = {
+      timeout = 0;
+      grub = {
+        backgroundColor = "#000000";
+        configurationLimit = 5;
+      };
     };
   };
 
