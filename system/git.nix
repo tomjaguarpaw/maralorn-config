@@ -25,7 +25,7 @@ let
     main = do
       mirrorMay <- lookupEnv "GL_OPTION_MIRROR"
       whenJust mirrorMay $ \mirror -> do
-        say [i|Forwarding push to #{mirror}|]
+        say [i|Force pushing all branches to #{mirror}|]
         git "push" "--all" "-f" mirror
       deployMay <- lookupEnv "GL_OPTION_WEB_DEPLOY"
       whenJust deployMay $ \deploy -> do
