@@ -225,7 +225,11 @@
       "linewidth": 0,
       "nullPointMode": "null as zero",
       "options": {
-         "dataLinks": []
+         "dataLinks": [{
+            "targetBlank": true,
+            "title": "${__field.labels.packageName} status on hydra",
+            "url": "${__field.labels.url}"
+         }]
       },
       "percentage": false,
       "pointradius": 2,
@@ -238,7 +242,7 @@
       "targets": [{
          "expr": "hydra_job_failed > 0",
          "interval": "",
-         "legendFormat": "{{exported_job}} on {{jobset}}",
+         "legendFormat": "{{packageName}} on {{jobset}}",
          "refId": "A"
       }],
       "thresholds": [],
