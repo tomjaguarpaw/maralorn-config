@@ -1,7 +1,7 @@
 { ... }:
 let
   watchNixpkgsPackage = name: path: {
-    job_name = "nixpkgs-${name}";
+    job_name = path;
     metrics_path = "/job/${path}/prometheus";
     scheme = "https";
     scrape_interval = "1h";
