@@ -30,6 +30,7 @@ let
     "taskwarrior"
     "pandoc"
     "shh"
+    "clay"
   ];
 in {
   services.prometheus.scrapeConfigs =
