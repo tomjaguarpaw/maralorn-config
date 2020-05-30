@@ -36,7 +36,7 @@ let
         say "Done"
       testFlag <- lookupEnv "GL_OPTION_TEST"
       whenJust testFlag $ \_ -> do
-        say "Triggering (an async) system update."
+        say "Starting test-and-update.service."
         exe "sudo" ${pkgs.haskellList update-command};
   '';
 in {
