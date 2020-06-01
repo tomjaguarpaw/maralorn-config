@@ -12,7 +12,6 @@ in {
     ./mpclient.nix
     ./neovim
   ];
-  services.gpg-agent.enable = true;
   nixpkgs.overlays = import ../overlays.nix { inherit lib; };
 
   programs = {
@@ -148,6 +147,14 @@ in {
   };
 
   systemd.user = { startServices = true; };
+
+  services = {
+    gpg-agent = {
+      enable = true;
+      defaultCacheTtl = 31536000; # 1year
+      maxCacheTtl = 31536000; # 1year
+    };
+  };
 
   xdg.enable = true;
 }
