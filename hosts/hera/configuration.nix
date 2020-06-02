@@ -23,6 +23,7 @@ in {
     ../../system/matrix-synapse.nix
     ../../system/coturn.nix
     ../../system/serve-store.nix
+    ../../system/go-neb.nix
     ./web.nix
     ./mail.nix
     ./boot.nix

@@ -1,0 +1,48 @@
+{ pkgs, config, ... }: {
+  imports = [ modules/go-neb.nix ];
+
+  services.go-neb = {
+    enable = true;
+    baseUrl = "http://localhost";
+    config = {
+      clients = [{
+        UserId = "@marabot:maralorn.de";
+        AccessToken = config.m-0.private.matrix_marabot_token;
+        HomeServerUrl = "https://matrix.maralorn.de";
+        Sync = true;
+        AutoJoinRooms = true;
+        DisplayName = "marabot";
+      }];
+      realms = [ ];
+      sessions = [ ];
+      services = [
+        {
+          ID = "alertmanager_service";
+          Type = "alertmanager";
+          UserId = "@marabot:maralorn.de";
+          Config = {
+            webhook_url =
+              "http://localhost:4050/services/hooks/YWxlcnRtYW5hZ2VyX3NlcnZpY2UK";
+            rooms = {
+              "!negVsngnYOmXYCLKiO:maralorn.de" = {
+                text_template = ''
+                  {{range .Alerts -}} [{{ .Status }}] {{index .Labels "alertname" }}: {{index .Annotations "description"}} {{ end -}}'';
+                html_template = ''
+                  {{range .Alerts -}}{{ $severity := index .Labels "severity" }}{{ if eq .Status "firing" }}{{ if eq $severity "critical"}}<font color='red'><b>[FIRING - CRITICAL]</b></font>{{ else if eq $severity "warning"}}<font color='orange'><b>[FIRING - WARNING]</b></font>{{ else }}<font color='yellow'><b>[FIRING - {{ $severity }}]</b></font>{{ end }}{{ else }}<font color='green'><b>[RESOLVED]</b></font>{{ end }}{{ index .Annotations "description"}}<a href="{{ .GeneratorURL }}">source</a> ({{ index .Labels "alertname"}})<br/>{{end -}}
+                  '';
+                msg_type = "m.text"; # Must be either `m.text` or `m.notice`
+              };
+            };
+          };
+        }
+        {
+          ID = "wikipedia_service";
+          Type = "wikipedia";
+          UserID = "@marabot:maralorn.de"; # requires a Syncing client
+          Config = { };
+        }
+      ];
+    };
+  };
+
+}

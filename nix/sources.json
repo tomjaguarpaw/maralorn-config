@@ -59,6 +59,18 @@
         "url": "https://github.com/NixOS/nixpkgs/archive/e7752db2fb6c5e05f1de2b275535dbde07d30090.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "nixpkgs-master": {
+        "branch": "master",
+        "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
+        "homepage": null,
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "89fda74df52b02ea0015fbc6da75330a52079192",
+        "sha256": "0pivssg411nzb3f82mgvlmb8wggkpxzj9f743brg61syi0vl596q",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/89fda74df52b02ea0015fbc6da75330a52079192.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "obelisk": {
         "branch": "master",
         "description": "Obelisk provides an easy way to develop and deploy your Reflex project for web and mobile",

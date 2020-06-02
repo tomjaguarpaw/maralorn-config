@@ -12,5 +12,8 @@ in preview "20.09pre-git" (unstable: {
   haskellPackages = super.haskellPackages // {
     inherit (unstable.haskellPackages) ormolu releaser;
   };
-  inherit (unstable) neovim vimPlugins syncthing nerdfonts cabal-install; # riot-desktop;
-})
+  inherit (unstable)
+    neovim vimPlugins syncthing nerdfonts cabal-install; # riot-desktop;
+}) // {
+  inherit (import super.sources.nixpkgs-master { }) go-neb;
+}

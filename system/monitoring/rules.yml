@@ -1,29 +1,38 @@
 groups:
    - name: rules
      rules:
-        - alert: ProbeTimeout
+        - alert: probe_timeout
           expr: probe_success == 0
           for: 60m
-        - alert: NixpkgsBuildFail
+          labels:
+             severity: critical
+          annotations:
+             description: '{{ $labels.instance }} probe {{ $labels.job}} failed for 60m.'
+        - alert: nixpkgs
           expr: hydra_job_failed == 1
           for: 2h
+          labels:
+             severity: warning
+          annotations:
+             description: '{{ $labels.packageName }} on nixpkgs branch {{ $labels.jobset }} failed.'
         - alert: node_down
           expr: (up{name!="apollo",instance!="hydra.nixos.org:443"} == 0)
           for: 5m
+          labels:
+             severity: critical
           annotations:
-             description: '{{ $labels.name }} has been down for more than 5 minutes.'
-             summary: '{{$labels.name}}: Node is down.'
+             description: '{{ $labels.name }} is down for 5m.'
         - alert: systemd_service_failed
           expr: node_systemd_unit_state{state="failed"} == 1
-          for: 4m
+          for: 5m
+          labels:
+             severity: critical
           annotations:
-             description: '{{$labels.name}} failed to (re)start service {{$labels.exported_name}}.'
-             summary: '{{$labels.name}}: Service {{$labels.exported_name}} failed.'
+             description: 'Service {{$labels.exported_name}} on {{$labels.name}} failed.'
         - alert: systemd_service_flapping
           expr: changes(node_systemd_unit_state{state="failed"}[5m]) > 5 or (changes(node_systemd_unit_state{state="failed"}[1h]) > 15 unless changes(node_systemd_unit_state{state="failed"}[30m]) < 7)
           annotations:
              description: '{{$labels.name}}: Service {{$labels.exported_name}} changed its state more than 5x/5min or 15x/1h'
-             summary: '{{$labels.name}}: Service {{$labels.exported_name}} is flapping.'
         - alert: node_filesystem_full_90percent
           expr: sort(node_filesystem_free{device!="ramfs"} < node_filesystem_size{device!="ramfs"} * 0.1) / 1024 ^ 3
           for: 5m
