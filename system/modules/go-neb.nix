@@ -2,8 +2,6 @@
 
 with lib;
 
-# TODO: Replace by upstreamed module
-
 let
   cfg = config.services.go-neb;
 
