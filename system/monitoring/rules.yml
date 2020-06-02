@@ -14,7 +14,7 @@ groups:
           labels:
              severity: warning
           annotations:
-             description: '{{ $labels.packageName }} on nixpkgs branch {{ $labels.jobset }} failed.'
+             description: '{{ $labels.packageName }} on nixpkgs branch {{ $labels.jobset }} failed for 2h.'
         - alert: node_down
           expr: (up{name!="apollo",instance!="hydra.nixos.org:443"} == 0)
           for: 5m
@@ -28,7 +28,7 @@ groups:
           labels:
              severity: critical
           annotations:
-             description: 'Service {{$labels.exported_name}} on {{$labels.name}} failed.'
+             description: 'service {{$labels.exported_name}} on {{$labels.name}} failed.'
         - alert: systemd_service_flapping
           expr: changes(node_systemd_unit_state{state="failed"}[5m]) > 5 or (changes(node_systemd_unit_state{state="failed"}[1h]) > 15 unless changes(node_systemd_unit_state{state="failed"}[30m]) < 7)
           annotations:
