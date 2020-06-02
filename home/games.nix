@@ -1,5 +1,4 @@
-{ pkgs, lib, ... }:
-{
+{ pkgs, lib, ... }: {
 
   dconf.settings."org/gnome/settings-daemon/plugins/media-keys" = {
     mic-mute = lib.mkForce [ ];
@@ -10,10 +9,10 @@
     volume-down = lib.mkForce [ ];
     volume-up = lib.mkForce [ ];
   };
+
   home.packages = builtins.attrValues {
     inherit (pkgs.unfree) steam;
     inherit (pkgs) minetest;
-
     gw2 = pkgs.buildFHSUserEnv {
       name = "gw2";
       targetPkgs = pkgs: (with pkgs; [ sambaFull ]);
@@ -48,24 +47,7 @@
             vulkan-loader
             vulkan-tools
           ]);
-      runScript = let
-        gw2wrapper = pkgs.writeHaskellScript {
-          name = "gw2wrapper";
-          bins = [ pkgs.procps ];
-          imports = [ "System.Directory (withCurrentDirectory)" ];
-
-        } ''
-          waitForExit = do
-            sleep "5s"
-            processes <- ps "aux" |> captureTrim
-            when
-              (BS.isInfixOf (encodeUtf8 "GW2.exe") (toStrict processes))
-              waitForExit
-          main = do
-            withCurrentDirectory "/home/maralorn/GW2" $ exe "./play.sh"
-            waitForExit
-        '';
-      in "${gw2wrapper}/bin/gw2wrapper";
+      runScript = "/home/maralorn/GW2/play.sh";
     };
   };
 }
