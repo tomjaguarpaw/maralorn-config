@@ -6,7 +6,7 @@ in {
       brittany ormolu releaser cabal-fmt stack ghcide cabal-install dhall aeson
       containers unordered-containers shh string-interpolate relude
       replace-megaparsec async say cmdargs text megaparsec fdo-notify these
-      neuron taskwarrior pandoc;
+      neuron taskwarrior pandoc hlint;
   };
   ghc = master.ghc.withPackages (_: builtins.attrValues self.myHaskellPackages);
 }
