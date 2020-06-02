@@ -3,28 +3,28 @@ groups:
      rules:
         - alert: probe_timeout
           expr: probe_success == 0
-          for: 60m
+          for: 10s
           labels:
              severity: critical
           annotations:
              description: '{{ $labels.instance }} probe {{ $labels.job}} failed for 60m.'
         - alert: nixpkgs
           expr: hydra_job_failed == 1
-          for: 2h
+          for: 10s
           labels:
              severity: warning
           annotations:
              description: '{{ $labels.packageName }} on nixpkgs branch {{ $labels.jobset }} failed for 2h.'
         - alert: node_down
           expr: (up{name!="apollo",instance!="hydra.nixos.org:443"} == 0)
-          for: 5m
+          for: 10s
           labels:
              severity: critical
           annotations:
              description: '{{ $labels.name }} is down for 5m.'
         - alert: systemd_service_failed
           expr: node_systemd_unit_state{state="failed"} == 1
-          for: 5m
+          for: 10s
           labels:
              severity: critical
           annotations:

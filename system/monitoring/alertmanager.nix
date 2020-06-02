@@ -16,8 +16,8 @@
           };
           route = {
             group_by = [ "alertname" "alias" ];
-            group_wait = "5m";
-            group_interval = "30m";
+            group_wait = "10s";
+            group_interval = "10s";
             repeat_interval = "168h";
             receiver = "alerts";
           };
