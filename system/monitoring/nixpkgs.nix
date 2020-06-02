@@ -35,6 +35,6 @@ let
   ];
 in {
   services.prometheus.scrapeConfigs =
-    map watchHaskellUnstable watchedHaskellUpadatesPkgs
+    map watchHaskellUnstable watchedHaskellUpdatesPkgs
     ++ map watchHaskellStable watchedPkgs;
 }
