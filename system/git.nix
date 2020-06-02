@@ -14,7 +14,6 @@ let
       "System.Environment (lookupEnv)"
       "System.Directory (withCurrentDirectory)"
     ];
-
   } ''
     checkout :: String -> IO FilePath
     checkout path = do
