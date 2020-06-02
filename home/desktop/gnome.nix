@@ -25,6 +25,8 @@
       screensaver = [ "<Primary>Escape" ];
       volume-down = [ "<Primary><Shift>section" ];
       volume-up = [ "<Primary><Shift>degree" ];
+      area-screenshot = [ "Print" ];
+      screenshot = [ ];
     };
   };
 }
