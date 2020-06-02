@@ -1,7 +1,6 @@
 self: super:
 let
   bins = [ self.nix ];
-  imports = [ "System.IO (hFlush)" ];
   repoSrc = "git@hera.m-0.eu:nixos-config";
   configPath = "/etc/nixos";
   systems = [ "apollo" "hera" ];
@@ -12,7 +11,6 @@ let
       (configDir:hostname:args) <-  getArgs
       paths <- myNixPath $ toText configDir
       say [i|Trying to build ${name} config for #{hostname} ...|]
-      hFlush stdout
       ${commandline}
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
@@ -36,8 +34,13 @@ in {
 
   test-config = self.writeHaskellScript {
     name = "test-config";
-    bins =
-      [ self.test-system-config self.test-home-config self.git self.niv self.git-crypt ];
+    bins = [
+      self.test-system-config
+      self.test-home-config
+      self.git
+      self.niv
+      self.git-crypt
+    ];
     imports = [ "System.Directory (withCurrentDirectory)" ];
   } ''
     checkout :: IO FilePath
