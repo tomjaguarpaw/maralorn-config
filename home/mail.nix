@@ -27,7 +27,6 @@ let
   sortMail = pkgs.writeHaskellScript {
     name = "sort-mail-archive";
     bins = [ pkgs.notmuch pkgs.coreutils pkgs.mblaze pkgs.findutils ];
-    libraries = [ pkgs.haskellPackages.megaparsec ];
     imports = [
       "Text.Megaparsec"
       "Text.Megaparsec.Char"

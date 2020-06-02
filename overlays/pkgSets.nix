@@ -33,10 +33,9 @@ self: super: {
   };
   home-pkgs = {
     inherit (self.pythonPackages) yapf jsbeautifier;
-    inherit (self.haskellPackages) brittany ormolu releaser; # cabal-fmt;
     inherit (self)
       go gdb mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole
-      nixfmt stack ghcid rnix-lsp tmate rustup kitty ghc cabal-install nix-top;
+      nixfmt rnix-lsp tmate rustup kitty nix-top ghc;
     obelisk = (import self.sources.obelisk { }).command;
   };
   accounting-pkgs = {

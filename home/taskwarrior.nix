@@ -29,11 +29,6 @@
         Null -> "null"
     '';
     inherit (pkgs) writeHaskellScript;
-    libraries = [
-      pkgs.haskellPackages.fdo-notify
-      pkgs.haskellPackages.aeson
-      pkgs.haskellPackages.these
-    ];
     imports = [
       "DBus.Notify"
       "DBus.Client (clientErrorMessage)"
@@ -47,8 +42,8 @@
       "qualified Data.List as List"
     ];
     on-modify = writeHaskellScript {
-      inherit imports libraries;
       name = "on-modify";
+      inherit imports;
     } ''
       ${functions}
       main = do
@@ -73,8 +68,8 @@
        BS.hPut stdout input2
     '';
     on-add = writeHaskellScript {
-      inherit imports libraries;
       name = "on-add";
+      inherit imports;
     } ''
       ${functions}
       main = do

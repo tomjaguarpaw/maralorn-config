@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 let
   watchNixpkgsPackage = name: path: {
     job_name = path;
@@ -20,8 +20,9 @@ let
   watchHaskellStable = name:
     watchNixpkgsPackage name
     "nixos/release-20.03/nixpkgs.haskellPackages.${name}.x86_64-linux";
-  watchedUnstablePkgs = [ "cabal-fmt" "neuron" ];
-  watchedPkgs = [
+  watchedHaskellUpdatesPkgs =
+    builtins.attrNames (pkgs.myHaskellPackages);
+  watchedStablePkgs = [
     "ghcide"
     "brittany"
     "releaser"
@@ -34,6 +35,6 @@ let
   ];
 in {
   services.prometheus.scrapeConfigs =
-    map watchHaskellUnstable (watchedUnstablePkgs ++ watchedPkgs)
+    map watchHaskellUnstable watchedHaskellUpadatesPkgs
     ++ map watchHaskellStable watchedPkgs;
 }

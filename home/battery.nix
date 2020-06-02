@@ -2,11 +2,6 @@
 let
   battery-watch = pkgs.writeHaskellScript {
     name = "battery-watch";
-    libraries = [
-      pkgs.haskellPackages.fdo-notify
-      pkgs.haskellPackages.megaparsec
-      pkgs.haskellPackages.replace-megaparsec
-    ];
     bins = [ pkgs.acpi ];
     imports = [
       "DBus.Notify"
