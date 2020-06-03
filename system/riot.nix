@@ -2,8 +2,7 @@
 
 let
   riot_config = {
-    default_hs_url = "https://matrix.maralorn.de";
-    default_is_url = "https://vector.im";
+    "m.homeserver".server_name = "maralorn.de";
     integrations_ui_url = "";
     integrations_rest_url = "";
     integrations_widgets_urls = [ ];
