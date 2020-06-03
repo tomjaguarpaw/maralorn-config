@@ -36,14 +36,7 @@ in {
       virtualHosts."maralorn.de" = {
         enableACME = true;
         forceSSL = true;
-        locations = locations // {
-          "/.well-known/matrix/server" = {
-            extraConfig = ''
-              default_type application/json;
-              return 200 "{\"m.server\": \"matrix.maralorn.de:443\"}";
-            '';
-          };
-        };
+        inherit locations;
       };
     };
   };

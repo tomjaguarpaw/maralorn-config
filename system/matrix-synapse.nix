@@ -1,32 +1,46 @@
 { pkgs, config, ... }:
-let hostName = "matrix.maralorn.de";
+let
+  server_name = "maralorn.de";
+  hostName = "matrix.${server_name}";
 in {
   services = {
     nginx = {
       enable = true;
+      virtualHosts."${server_name}" = {
+        enableACME = true;
+        forceSSL = true;
+        locations = {
+          "/.well-known/matrix/server".extraConfig = ''
+            default_type application/json;
+            return 200 "{\"m.server\": \"matrix.maralorn.de:443\"}";
+          '';
+          "/.well-known/matrix/client".extraConfig = ''
+            default_type application/json;
+            return 200 "{\"m.homeserver\": \"matrix.maralorn.de:443\"}";
+          '';
+        };
+      };
       virtualHosts."${hostName}" = {
         forceSSL = true;
         enableACME = true;
         locations = {
           "/" = {
             proxyPass = "http://[::1]:8008";
-            extraConfig = ''
-              proxy_set_header X-Forwarded-For $remote_addr;
-            '';
+            extraConfig = "proxy_set_header X-Forwarded-For $remote_addr;";
           };
         };
       };
     };
 
     # Postgres
-    postgresql = { enable = true; };
+    postgresql.enable = true;
 
     # Synapse
     matrix-synapse = {
       enable = true;
       package = pkgs.matrix-synapse;
       enable_metrics = true;
-      server_name = "maralorn.de";
+      inherit server_name;
       public_baseurl = "https://${hostName}";
       url_preview_enabled = true;
       database_type = "psycopg2";
@@ -72,7 +86,6 @@ in {
       '';
       database_args = {
         user = "matrix-synapse";
-        #host = "/tmp";
         database = "matrix-synapse";
         cp_min = 5;
         cp_max = 10;
@@ -105,13 +118,4 @@ in {
       ];
     };
   };
-  security.acme.certs = {
-    "${hostName}" = {
-      group = "matrix-synapse";
-      allowKeysForGroup = true;
-      postRun =
-        "systemctl reload nginx.service; systemctl restart matrix-synapse.service;";
-    };
-  };
-
 }
