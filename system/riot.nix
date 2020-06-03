@@ -2,22 +2,13 @@
 
 let
   riot_config = {
-    default_server_config."m.homeserver".server_name = "maralorn.de";
-    integrations_ui_url = "";
-    integrations_rest_url = "";
-    integrations_widgets_urls = [ ];
-    bug_report_endpoint_url = "https://riot.im/bugreports/submit";
-    welcomeUserId = "@riot-bot:matrix.org";
-    piwik = false;
-    features = {
-      feature_lazyloading = "enable";
-      feature_room_breadcrumbs = "enable";
+    default_server_config."m.homeserver" = {
+      server_name = "maralorn.de";
+      base_url = null;
     };
-    roomDirectory = { servers = [ "matrix.org" "maralorn.de" ]; };
-    branding = {
-      welcomeBackgroundUrl =
-        "https://cloud.maralorn.de/apps/theming/image/background";
-    };
+    roomDirectory.servers = [ "matrix.org" "maralorn.de" ];
+    branding.welcomeBackgroundUrl =
+      "https://cloud.maralorn.de/apps/theming/image/background";
   };
 in {
   services.nginx = {
