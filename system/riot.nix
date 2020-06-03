@@ -2,7 +2,7 @@
 
 let
   riot_config = {
-    "m.homeserver".server_name = "maralorn.de";
+    default_server_config."m.homeserver".server_name = "maralorn.de";
     integrations_ui_url = "";
     integrations_rest_url = "";
     integrations_widgets_urls = [ ];
