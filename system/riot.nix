@@ -2,10 +2,10 @@
 
 let
   riot_config = {
-    default_server_config."m.homeserver" = {
-      server_name = "maralorn.de";
-      base_url = null;
-    };
+#    default_server_config."m.homeserver" = {
+#      server_name = "maralorn.de";
+#      base_url = "https://matrix.maralorn.de";
+#    };
     roomDirectory.servers = [ "matrix.org" "maralorn.de" ];
     branding.welcomeBackgroundUrl =
       "https://cloud.maralorn.de/apps/theming/image/background";
