@@ -2,10 +2,10 @@
 
 let
   riot_config = {
-    #    default_server_config."m.homeserver" = {
-    #      server_name = "maralorn.de";
-    #      base_url = "https://matrix.maralorn.de";
-    #    };
+    default_server_config."m.homeserver" = {
+      server_name = "maralorn.de";
+      base_url = "https://matrix.maralorn.de";
+    };
     integrations_ui_url = "";
     integgrations_rest_url = "";
     integrations_widgets_urls = [ ];
