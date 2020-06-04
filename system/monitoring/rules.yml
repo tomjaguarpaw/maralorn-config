@@ -7,14 +7,14 @@ groups:
           labels:
              severity: critical
           annotations:
-             description: '{{ $labels.instance }} probe {{ $labels.job}} failed for 60m.'
+             description: '{{ $labels.instance }} probe {{ $labels.job}} failed.'
         - alert: nixpkgs
           expr: hydra_job_failed == 1
           for: 2h
           labels:
              severity: warning
           annotations:
-             description: '{{ $labels.packageName }} on nixpkgs branch {{ $labels.jobset }} failed for 2h.'
+             description: '{{ $labels.packageName }} on nixpkgs branch {{ $labels.jobset }} failed.'
         - alert: node_down
           expr: (up{name!="apollo",instance!="hydra.nixos.org:443"} == 0)
           for: 5m
