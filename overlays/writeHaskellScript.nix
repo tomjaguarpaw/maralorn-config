@@ -1,12 +1,11 @@
 self: super: {
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
-  writeHaskellScript =
-    { name ? "haskell-script", bins ? [ ], imports ? [ ] }:
+  writeHaskellScript = { name ? "haskell-script", bins ? [ ], imports ? [ ] }:
     code:
     self.writers.makeBinWriter {
       compileScript = ''
         cp $contentPath ${name}.hs
-        ${self.ghc}/bin/ghc ${name}.hs -threaded -Wall -Wno-unused-top-binds -Wno-missing-signatures -Wno-type-defaults -Wno-unused-imports -Werror
+        ${self.scriptGhc}/bin/ghc ${name}.hs -threaded -Wall -Wno-unused-top-binds -Wno-missing-signatures -Wno-type-defaults -Wno-unused-imports -Werror
         mv ${name} $out
         ${self.binutils-unwrapped}/bin/strip --strip-unneeded "$out"
       '';
