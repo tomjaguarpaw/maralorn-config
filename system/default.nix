@@ -30,7 +30,7 @@ in {
 
   users = {
     mutableUsers = false;
-    users.root = { openssh.authorizedKeys.keys = me.keys; };
+    users.root.openssh.authorizedKeys = { inherit (me) keys; };
   };
 
   environment = {
