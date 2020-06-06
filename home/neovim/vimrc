@@ -75,7 +75,6 @@ let g:formatters_cabal = ['my_cabal']
 let g:formatdef_my_nix = '"nixfmt"'
 let g:formatters_nix = ['my_nix']
 
-
 let g:autoformat_autoindent = 0
 let g:autoformat_retab = 0
 
@@ -117,7 +116,6 @@ inoremap <silent><expr> <c-space> coc#refresh()
 " Coc only does snippet and additional edit on confirm.
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
-" Use `[g` and `]g` to navigate diagnostics
 nmap <silent> gp <Plug>(coc-diagnostic-prev)
 nmap <silent> gn <Plug>(coc-diagnostic-next)
 
@@ -132,9 +130,6 @@ nmap <silent> gi :CocCommand git.chunkInfo<CR>
 nmap <silent> ga :CocCommand git.chunkStage<CR>
 nmap <silent> gb :CocCommand git.showCommit<CR>
 nmap <silent> gc :Gcommit<CR>
-
-" Use K to show documentation in preview window
-nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -235,8 +230,6 @@ nnoremap <silent> <space>o  :<C-u>CocFzfList outline<cr>
 nnoremap <silent> <space>j  :<C-u>CocNext<CR>
 " Do default action for previous item.
 nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
-" Resume latest coc list
-"nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
 imap <Enter> <CR>
 
