@@ -14,14 +14,14 @@ groups:
           labels:
              severity: warning
           annotations:
-             description: '{{ $labels.packageName }} on nixpkgs branch {{ $labels.jobset }} failed.'
+             description: 'hydra build {{ $labels.packageName }} on nixpkgs branch {{ $labels.jobset }} failed.'
         - alert: node_down
           expr: (up{name!="apollo",instance!="hydra.nixos.org:443"} == 0)
           for: 5m
           labels:
              severity: critical
           annotations:
-             description: '{{ $labels.name }} is down for 5m.'
+             description: 'exporter {{ $labels.name }} is down.'
         - alert: systemd_service_failed
           expr: node_systemd_unit_state{state="failed"} == 1
           for: 5m
