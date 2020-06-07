@@ -57,7 +57,9 @@ let
             # json
             coc-json
             # html
-            coc-html;
+            coc-html
+            # dhall
+            dhall-vim;
         };
       };
     };

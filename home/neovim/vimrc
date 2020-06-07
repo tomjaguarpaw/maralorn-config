@@ -74,6 +74,8 @@ let g:formatdef_my_cabal = '"cabal-fmt"'
 let g:formatters_cabal = ['my_cabal']
 let g:formatdef_my_nix = '"nixfmt"'
 let g:formatters_nix = ['my_nix']
+let g:formatdef_my_dhall = '"dhall format"'
+let g:formatters_dhall = ['my_dhall']
 
 let g:autoformat_autoindent = 0
 let g:autoformat_retab = 0
