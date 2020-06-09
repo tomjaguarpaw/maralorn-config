@@ -1,6 +1,5 @@
 { pkgs, config, lib, ... }:
-let
-  inherit (config.m-0.private) me meWork;
+let inherit (config.m-0.private) me meWork;
 in {
 
   imports = [
