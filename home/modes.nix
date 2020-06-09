@@ -72,7 +72,7 @@ in {
     communication = apolloConfig [
       ./mail-client.nix
       ./chat.nix
-      (setStartpage "https://cloud.maralorn.de/apps/calendar")
+      (setStartpage "https://habitica.com")
       (makeBlock [ ])
     ];
     orga = apolloConfig [
@@ -80,7 +80,7 @@ in {
       ./mail-client.nix
       ./accounting.nix
       ./pythia.nix
-      (setStartpage "https://cloud.maralorn.de/apps/calendar")
+      (setStartpage "https://habitica.com")
       (makeBlock (tinkerPages ++ leisurePages))
     ];
     research = apolloConfig [
