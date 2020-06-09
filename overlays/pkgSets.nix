@@ -15,11 +15,11 @@ self: super: {
   };
 
   my-home-pkgs = {
-    print215 = self.writeShellScriptBin "print215" ''
+    print215 = super.writeShellScriptBin "print215" ''
       scp "$@" ag-forward:
       ssh ag-forward lpr -Zduplex -r "$@"
     '';
-    print215single = self.writeShellScriptBin "print215single" ''
+    print215single = super.writeShellScriptBin "print215single" ''
       scp "$@" ag-forward:
       ssh ag-forward lpr -r "$@"
     '';
