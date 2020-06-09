@@ -76,6 +76,7 @@ in {
       (makeBlock [ ])
     ];
     orga = apolloConfig [
+      ./orga.nix
       ./mail-client.nix
       ./accounting.nix
       ./pythia.nix

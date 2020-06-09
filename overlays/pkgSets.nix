@@ -30,6 +30,8 @@ self: super: {
     inherit (self.gnome3)
       dconf dconf-editor gnome-tweaks gnome-shell-extensions adwaita-icon-theme
       gnome-session;
+    hotkeys = super.writeShellScriptBin "hotkeys"
+      ''exec /home/maralorn/.cargo/bin/hotkeys "$@"'';
   };
   home-pkgs = {
     inherit (self.pythonPackages) yapf jsbeautifier;
