@@ -1,14 +1,14 @@
 { pkgs, ... }:
 let
-  watchNixpkgsPackage = name: path: {
-    job_name = path;
+  watchNixpkgsPackage = name: branch: path: {
+    job_name = "${name} on ${branch}";
     metrics_path = "/job/${path}/prometheus";
     scheme = "https";
     scrape_interval = "1h";
     scrape_timeout = "60s";
     static_configs = [{
       labels = {
-        inherit name;
+        name = "${name} on ${branch}";
         packageName = name;
         url = "https://hydra.nixos.org/job/${path}";
         alert_type = "nixpkgs";
@@ -17,10 +17,10 @@ let
     }];
   };
   watchHaskellUnstable = name:
-    watchNixpkgsPackage name
+    watchNixpkgsPackage name "haskell-updates"
     "nixpkgs/haskell-updates/haskellPackages.${name}.x86_64-linux";
   watchHaskellStable = name:
-    watchNixpkgsPackage name
+    watchNixpkgsPackage name "release-20.03"
     "nixos/release-20.03/nixpkgs.haskellPackages.${name}.x86_64-linux";
   watchedHaskellUpdatesPkgs = builtins.attrNames (pkgs.myHaskellPackages)
     ++ [ "reflex-dom" ];
