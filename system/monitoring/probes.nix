@@ -10,7 +10,7 @@ let
         inherit targets;
         labels = {
           inherit name;
-          alert-type = "infrastructure";
+          alert_type = "infrastructure";
         };
       }];
       relabel_configs = [
