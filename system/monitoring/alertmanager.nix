@@ -15,7 +15,7 @@
             smtp_auth_password = config.m-0.private.alertmanager-mail-pw;
           };
           route = {
-            group_by = [ "alertname" "alias" ];
+            group_by = [ ];
             group_wait = "10s";
             group_interval = "10s";
             repeat_interval = "168h";
