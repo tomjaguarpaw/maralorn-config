@@ -19,7 +19,7 @@
             targets = [ "localhost:9148" ];
             labels = {
               name = "matrix-synapse";
-              alert-type = "infrastructure";
+              alert_type = "infrastructure";
             };
           }];
         }
@@ -29,7 +29,7 @@
             targets = [ entry.host ];
             labels = {
               inherit (entry) name;
-              alert-type = "infrastructure";
+              alert_type = "infrastructure";
             };
           }) config.m-0.monitoring;
         }

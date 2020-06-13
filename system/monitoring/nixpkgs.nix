@@ -11,7 +11,7 @@ let
         inherit name;
         packageName = name;
         url = "https://hydra.nixos.org/job/${path}";
-        alert-type = "nixpkgs";
+        alert_type = "nixpkgs";
       };
       targets = [ "hydra.nixos.org" ];
     }];
