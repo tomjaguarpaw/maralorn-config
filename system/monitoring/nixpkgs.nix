@@ -8,8 +8,10 @@ let
     scrape_timeout = "60s";
     static_configs = [{
       labels = {
+        inherit name;
         packageName = name;
         url = "https://hydra.nixos.org/job/${path}";
+        alert-type = "nixpkgs";
       };
       targets = [ "hydra.nixos.org" ];
     }];

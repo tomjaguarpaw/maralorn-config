@@ -15,13 +15,22 @@
         {
           job_name = "matrix";
           metrics_path = "/_synapse/metrics";
-          static_configs = [{ targets = [ "localhost:9148" ]; }];
+          static_configs = [{
+            targets = [ "localhost:9148" ];
+            labels = {
+              name = "matrix-synapse";
+              alert-type = "infrastructure";
+            };
+          }];
         }
         {
           job_name = "nodes";
           static_configs = map (entry: {
             targets = [ entry.host ];
-            labels = { "name" = entry.name; };
+            labels = {
+              inherit (entry) name;
+              alert-type = "infrastructure";
+            };
           }) config.m-0.monitoring;
         }
       ];
