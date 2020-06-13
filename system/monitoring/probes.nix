@@ -1,33 +1,33 @@
 { config, ... }:
 let
-  makeProbe = module: targets:
-    let name = "blackbox-${module}";
-    in {
-      job_name = name;
-      metrics_path = "/probe";
-      params = { module = [ module ]; };
-      static_configs = [{
-        inherit targets;
-        labels = {
-          inherit name;
-          alert_type = "infrastructure";
-        };
-      }];
-      relabel_configs = [
-        {
-          source_labels = [ "__address__" ];
-          target_label = "__param_target";
-        }
-        {
-          source_labels = [ "__param_target" ];
-          target_label = "instance";
-        }
-        {
-          target_label = "__address__";
-          replacement = "localhost:9115";
-        } # The blackbox exporter's real hostname:port.
-      ];
-    };
+  makeProbe = module: targets: {
+    job_name = "blackbox-${module}";
+    metrics_path = "/probe";
+    params = { module = [ module ]; };
+    static_configs = [{
+      inherit targets;
+      labels = { alert_type = "infrastructure"; };
+    }];
+    relabel_configs = [
+      {
+        source_labels = [ "job" "__address__" ];
+        target_label = "name";
+        separator = " against ";
+      }
+      {
+        source_labels = [ "__address__" ];
+        target_label = "__param_target";
+      }
+      {
+        source_labels = [ "__param_target" ];
+        target_label = "instance";
+      }
+      {
+        target_label = "__address__";
+        replacement = "localhost:9115";
+      } # The blackbox exporter's real hostname:port.
+    ];
+  };
 in {
   services.prometheus = {
     exporters = {
