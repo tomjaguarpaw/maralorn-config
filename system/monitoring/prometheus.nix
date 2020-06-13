@@ -13,7 +13,7 @@
       ruleFiles = [ ./rules.yml ];
       scrapeConfigs = [
         {
-          job_name = "matrix";
+          job_name = "collected-exporters";
           metrics_path = "/_synapse/metrics";
           static_configs = [{
             targets = [ "localhost:9148" ];
@@ -24,7 +24,7 @@
           }];
         }
         {
-          job_name = "nodes";
+          job_name = "collected-exporters";
           static_configs = map (entry: {
             targets = [ entry.host ];
             labels = {
