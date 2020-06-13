@@ -13,14 +13,19 @@
       ruleFiles = [ ./rules.yml ];
       scrapeConfigs = [
         {
-          job_name = "collected-exporters";
+          job_name = "matrix-synapse";
           metrics_path = "/_synapse/metrics";
           static_configs = [{
             targets = [ "localhost:9148" ];
             labels = {
+              __myjobname = "collected-exporters";
               name = "matrix-synapse";
               alert_type = "infrastructure";
             };
+          }];
+          relabel_configs = [{
+            source_labels = [ "__myjobname" ];
+            target_label = "job";
           }];
         }
         {
