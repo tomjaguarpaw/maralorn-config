@@ -1,14 +1,14 @@
 { pkgs, ... }:
 let
-  watchNixpkgsPackage = name: branch: path: {
-    job_name = "${name} on ${branch}";
+  watchNixpkgsPackage = name: branch: path: let name = "nixpkgs: ${name} on ${branch}";in {
+    job_name = name;
     metrics_path = "/job/${path}/prometheus";
     scheme = "https";
     scrape_interval = "1h";
     scrape_timeout = "60s";
     static_configs = [{
       labels = {
-        name = "${name} on ${branch}";
+        inherit name;
         packageName = name;
         url = "https://hydra.nixos.org/job/${path}";
         alert_type = "nixpkgs";

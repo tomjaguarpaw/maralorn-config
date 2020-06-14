@@ -1,7 +1,7 @@
 { config, ... }:
 let
   makeProbe = module: targets: {
-    job_name = "blackbox-${module}";
+    job_name = "blackbox: ${module}";
     metrics_path = "/probe";
     params = { module = [ module ]; };
     static_configs = [{

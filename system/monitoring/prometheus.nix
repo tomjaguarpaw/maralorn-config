@@ -11,29 +11,32 @@
         };
       };
       ruleFiles = [ ./rules.yml ];
-      scrapeConfigs = [
-        {
-          job_name = "matrix-synapse";
+      scrapeConfigs = let alert_type = "infrastructure";
+      in [
+        (let name = "exporter: matrix-synapse";
+        in {
+          job_name = name;
           metrics_path = "/_synapse/metrics";
           static_configs = [{
             targets = [ "localhost:9148" ];
             labels = {
-              name = "matrix-synapse";
-              alert_type = "infrastructure";
+              inherit name;
+              inherit alert_type;
             };
           }];
-        }
-        {
-          job_name = "collected-exporters";
-          static_configs = map (entry: {
+        })
+      ] ++ map (entry:
+        let name = "exporter: ${entry.name}";
+        in {
+          job_name = name;
+          static_configs = [{
             targets = [ entry.host ];
             labels = {
-              inherit (entry) name;
-              alert_type = "infrastructure";
+              inherit name;
+              inherit alert_type;
             };
-          }) config.m-0.monitoring;
-        }
-      ];
+          }];
+        }) config.m-0.monitoring;
     };
   };
 }
