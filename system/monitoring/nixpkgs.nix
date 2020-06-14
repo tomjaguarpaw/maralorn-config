@@ -31,7 +31,7 @@ let
     "dependent-sum-template"
     "universe-dependent-sum"
     "hnix"
-    "ret-tf"
+    "ref-tf"
     "modern-uri"
     "network-uri"
     "github"
