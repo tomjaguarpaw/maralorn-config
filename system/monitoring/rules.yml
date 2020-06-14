@@ -16,7 +16,7 @@ groups:
           annotations:
              description: 'hydra build {{ $labels.packageName }} on nixpkgs branch {{ $labels.jobset }} failed.'
         - alert: node_down
-          expr: (up{name!="apollo",instance!="hydra.nixos.org:443"} == 0)
+          expr: (up{name!="exporter: apollo",instance!="hydra.nixos.org:443"} == 0)
           for: 5m
           labels:
              severity: critical
