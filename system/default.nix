@@ -57,6 +57,25 @@ in {
     gc.options = "--delete-older-than 5d";
   };
 
+  # This is necessary because of transient timeouts in certificate renewal
+  # Retries certificate renewal every 10 minutes at most 3 times in an 45 minutes
+  systemd.services = let
+    hosts = builtins.attrNames config.services.nginx.virtualHosts;
+    makeConfig = host: {
+      name = "acme-${host}";
+      value = {
+        serviceConfig = {
+          Restart = "on-failure";
+          RestartSec = 600;
+        };
+        unitConfig = {
+          StartLimitIntervalSec = 2400;
+          StartLimitBurst = 3;
+        };
+      };
+    };
+  in builtins.listToAttrs (map makeConfig hosts);
+
   services = {
     prometheus.exporters = {
       node = {

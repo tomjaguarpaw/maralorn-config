@@ -18,6 +18,12 @@ in {
       serviceConfig = {
         Type = "oneshot";
         WorkingDirectory = "/var/cache/gc-links";
+        Restart = "on-failure";
+        RestartSec = 1;
+      };
+      unitConfig = {
+        StartLimitIntervalSec=180;
+        StartLimitBurst=3;
       };
       script = ''
         ${pkgs.test-config}/bin/test-config
