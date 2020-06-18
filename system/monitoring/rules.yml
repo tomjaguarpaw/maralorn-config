@@ -16,69 +16,16 @@ groups:
           annotations:
              description: 'hydra build {{ $labels.packageName }} on nixpkgs branch {{ $labels.jobset }} failed.'
         - alert: node_down
-          expr: '(up{name!="exporter: apollo",instance!="hydra.nixos.org:443"} == 0)'
+          expr: 'up{name="exporter apollo",instance!="hydra.nixos.org:443"} == 0'
           for: 5m
           labels:
              severity: critical
           annotations:
              description: '{{ $labels.name }} is not reachable.'
         - alert: systemd_service_failed
-          expr: node_systemd_unit_state{state="failed"} == 1
+          expr: node_systemd_unit_state{state="failed",exported_name!~"configure-printer.*"} == 1
           for: 5m
           labels:
              severity: critical
           annotations:
              description: 'service {{$labels.exported_name}} on {{$labels.name}} failed.'
-        - alert: systemd_service_flapping
-          expr: changes(node_systemd_unit_state{state="failed"}[5m]) > 5 or (changes(node_systemd_unit_state{state="failed"}[1h]) > 15 unless changes(node_systemd_unit_state{state="failed"}[30m]) < 7)
-          annotations:
-             description: '{{$labels.name}}: Service {{$labels.exported_name}} changed its state more than 5x/5min or 15x/1h'
-        - alert: node_filesystem_full_90percent
-          expr: sort(node_filesystem_free{device!="ramfs"} < node_filesystem_size{device!="ramfs"} * 0.1) / 1024 ^ 3
-          for: 5m
-          annotations:
-             description: '{{$labels.alias}} device {{$labels.device}} on {{$labels.mountpoint}} got less than 10% space left on its filesystem.'
-             summary: '{{$labels.alias}}: Filesystem is running out of space soon.'
-        - alert: node_filesystem_full_in_4h
-          expr: predict_linear(node_filesystem_free{device!="ramfs"}[1h], 4 * 3600) <= 0
-          for: 5m
-          annotations:
-             description: '{{$labels.alias}} device {{$labels.device}} on {{$labels.mountpoint}}
-             is running out of space of in approx. 4 hours'
-             summary: '{{$labels.alias}}: Filesystem is running out of space in 4 hours.'
-        - alert: node_filedescriptors_full_in_3h
-          expr: predict_linear(node_filefd_allocated[1h], 3 * 3600) >= node_filefd_maximum
-          for: 20m
-          annotations:
-             description: '{{$labels.alias}} is running out of available file descriptors
-             in approx. 3 hours'
-             summary: '{{$labels.alias}} is running out of available file descriptors in
-             3 hours.'
-        - alert: node_load1_90percent
-          expr: node_load1 / on(alias) count by(alias) (node_cpu{mode="system"}) >= 0.9
-          for: 1h
-          annotations:
-             description: '{{$labels.alias}} is running with > 90% total load for at least
-             1h.'
-             summary: '{{$labels.alias}}: Running on high load.'
-        - alert: node_cpu_util_90percent
-          expr: 100 - (avg by(alias) (irate(node_cpu{mode="idle"}[5m])) * 100) >= 90
-          for: 1h
-          annotations:
-             description: '{{$labels.alias}} has total CPU utilization over 90% for at least
-             1h.'
-             summary: '{{$labels.alias}}: High CPU utilization.'
-        - alert: node_ram_using_90percent
-          expr: node_memory_MemFree + node_memory_Buffers + node_memory_Cached < node_memory_MemTotal * 0.1
-          for: 30m
-          annotations:
-             description: '{{$labels.alias}} is using at least 90% of its RAM for at least
-             30 minutes now.'
-             summary: '{{$labels.alias}}: Using lots of RAM.'
-        - alert: node_swap_using_80percent
-          expr: node_memory_SwapTotal - (node_memory_SwapFree + node_memory_SwapCached) > node_memory_SwapTotal * 0.8
-          for: 10m
-          annotations:
-             description: '{{$labels.alias}} is using 80% of its swap space for at least
-             10 minutes now.'
-             summary: '{{$labels.alias}}: Running out of swap soon.'

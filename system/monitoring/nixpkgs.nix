@@ -1,7 +1,7 @@
 { pkgs, ... }:
 let
   watchNixpkgsPackage = name: branch: path:
-    let job_name = "nixpkgs: ${name} on ${branch}";
+    let job_name = "nixpkgs ${name} on ${branch}";
     in {
       inherit job_name;
       metrics_path = "/job/${path}/prometheus";
