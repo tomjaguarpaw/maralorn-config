@@ -149,10 +149,10 @@
       "stack": true,
       "steppedLine": false,
       "targets": [{
-         "expr": "node_systemd_unit_state{state=\"failed\"} > 0",
+         "expr": "node_systemd_unit_state{state=\"failed\",exported_name!~\"configure-printer.*\"} > 0",
          "format": "time_series",
          "interval": "",
-         "legendFormat": "{{exported_name}} on {{ name}}",
+         "legendFormat": "{{exported_name}} from {{ name }}",
          "refId": "A"
       }],
       "thresholds": [],
