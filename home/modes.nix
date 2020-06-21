@@ -68,13 +68,19 @@ in {
         ./mail.nix
         ./update_tasks.nix
       ]);
-  in {
-    communication = apolloConfig [
+    unrestricted = [
+      ./orga.nix
+      ./accounting.nix
       ./mail-client.nix
+      ./pythia.nix
+      ./research.nix
+      ./tinkering.nix
       ./chat.nix
-      (setStartpage "https://habitica.com")
+      (setStartpage "https://stats.maralorn.de/d/health-status")
       (makeBlock [ ])
     ];
+  in {
+    unrestricted = apolloConfig unrestricted;
     orga = apolloConfig [
       ./orga.nix
       ./mail-client.nix
@@ -88,20 +94,7 @@ in {
       (makeBlock (tinkerPages ++ leisurePages))
       (setStartpage "http://localhost:8042")
     ];
-
-    tinkering = apolloConfig [
-      ./mail-client.nix
-      ./tinkering.nix
-      ./chat.nix
-      (makeBlock leisurePages)
-      (setStartpage "https://stats.maralorn.de/d/health-status")
-    ];
-    gaming = apolloConfig [
-      ./games.nix
-      ./chat.nix
-      (makeBlock [ ])
-      (setStartpage "https://stats.maralorn.de/d/health-status")
-    ];
+    gaming = apolloConfig (unrestricted ++ [./games.nix]);
   };
   hera = {
     default = makeConfig "hera" [
