@@ -11,12 +11,13 @@ let
     main = do
       (configDir:hostname:args) <-  getArgs
       paths <- myNixPath $ toText configDir
-      say [i|Trying to build ${name} config for #{hostname} ...|]
       let command = ${commandline}
       bracket
-        (decodeUtf8 <$> ((mktemp |> captureTrim) :: IO ByteString))
+        (decodeUtf8 <$> (mktemp |> captureTrim))
         rm
-        (\logFile -> onException (command &> Append logFile &!> Append logFile) (cat logFile))
+        (\logFile -> do
+          say [i|Trying to build ${name} config for #{hostname}. Logging to #{logFile}.|]
+          onException (command &> Append logFile &!> Append logFile) (cat logFile))
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
 in {
