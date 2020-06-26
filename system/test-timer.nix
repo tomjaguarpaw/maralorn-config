@@ -38,7 +38,7 @@ in {
       };
       script = ''
         ${pkgs.test-config}/bin/test-config
-        ${pkgs.systemd}/bin/systemctl start update-config
+        ${pkgs.systemd}/bin/systemctl start --no-block update-config
       '';
     };
 
