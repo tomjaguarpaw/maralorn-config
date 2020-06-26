@@ -62,8 +62,8 @@ in {
           git "-C" repoDir "commit" "-am" "Update dependencies with niv"
           git "-C" repoDir "push" "-f" "origin" "master:version-bump"
         concurrently
-          (mapConcurrentlyM_ (test_system_config repoDir) ${self.haskellList systems})
-          (mapConcurrentlyM_ (test_home_config repoDir) ${self.haskellList homes})
+          (mapConcurrently_ (test_system_config repoDir) ${self.haskellList systems})
+          (mapConcurrently_ (test_home_config repoDir) ${self.haskellList homes})
         when changed $ do
           git "-C" repoDir "push" "origin" "master:master"
   '';
