@@ -7,11 +7,15 @@ let
   homes = self.lib.attrNames (import ../home/modes.nix);
   keys = [ "default" "apollo" "hera" ];
   haskellBody = name: commandline: ''
+    command = ${commandline}
     main = do
       (configDir:hostname:args) <-  getArgs
       paths <- myNixPath $ toText configDir
       say [i|Trying to build ${name} config for #{hostname} ...|]
-      ${commandline}
+      bracket
+        (decodeUtf8 <$> mktemp |> captureTrim)
+        rm
+        \logFile -> onException (command &> Append logFile &!> Append logFile) (cat logFile)
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
 in {
