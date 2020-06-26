@@ -13,7 +13,7 @@ let
       paths <- myNixPath $ toText configDir
       let command = ${commandline}
       bracket
-        (decodeUtf8 <$> (mktemp |> captureTrim))
+        (mktemp |> captureTrim)
         rm
         (\logFile -> do
           say [i|Trying to build ${name} config for #{hostname}. Logging to #{logFile}.|]
