@@ -370,6 +370,57 @@
          "align": false,
          "alignLevel": null
       }
+   }, {
+      "columns": [{
+         "text": "Current",
+         "value": "current"
+      }],
+      "datasource": null,
+      "fontSize": "100%",
+      "gridPos": {
+         "h": 8,
+         "w": 12,
+         "x": 0,
+         "y": 0
+      },
+      "id": 10,
+      "pageSize": null,
+      "pluginVersion": "6.7.4",
+      "showHeader": true,
+      "sort": {
+         "col": 0,
+         "desc": true
+      },
+      "styles": [{
+         "alias": "Time",
+         "align": "right",
+         "colorMode": null,
+         "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+         ],
+         "dateFormat": "YYYY-MM-DD HH:mm:ss",
+         "decimals": 2,
+         "pattern": "Current",
+         "thresholds": [],
+         "type": "date",
+         "unit": "short"
+      }],
+      "targets": [{
+         "expr": "hydra_job_completion_time * hydra_job_failed * 1000 > 0",
+         "format": "time_series",
+         "hide": false,
+         "instant": true,
+         "interval": "",
+         "legendFormat": "{{job}}",
+         "refId": "A"
+      }],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Last failed hydra builds",
+      "transform": "timeseries_aggregations",
+      "type": "table"
    }],
    "refresh": "1m",
    "schemaVersion": 22,
