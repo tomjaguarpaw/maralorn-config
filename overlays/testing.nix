@@ -12,13 +12,12 @@ let
       (configDir:hostname:args) <-  getArgs
       paths <- myNixPath $ toText configDir
       logFile <- mktemp |> captureTrim
-      \logFile -> do
-        let command = (${commandline}) &!> StdOut &> Append logFile
-            failHandler = do
-              say [i|### Build failure for ${name} config for #{hostname} ###|]
-              cat logFile
-        say [i|Trying to build ${name} config for #{hostname}. Logging to #{logFile}.|]
-        onException command failHandler
+      let command = (${commandline}) &!> StdOut &> Append logFile
+          failHandler = do
+            say [i|### Build failure for ${name} config for #{hostname} ###|]
+            cat logFile
+      say [i|Trying to build ${name} config for #{hostname}. Logging to #{logFile}.|]
+      onException command failHandler
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
 in {
