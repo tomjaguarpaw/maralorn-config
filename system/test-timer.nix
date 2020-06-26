@@ -10,7 +10,7 @@ in {
 
   systemd.services = {
     update-config = {
-      path = [ pkgs.git ];
+      path = [ pkgs.git pkgs.nix ];
       restartIfChanged = false;
       unitConfig.X-StopOnRemoval = false;
       serviceConfig = {
