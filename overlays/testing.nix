@@ -15,7 +15,7 @@ let
       bracket
         (decodeUtf8 <$> mktemp |> captureTrim)
         rm
-        \logFile -> onException (command &> Append logFile &!> Append logFile) (cat logFile)
+        (\logFile -> onException (command &> Append logFile &!> Append logFile) (cat logFile))
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
 in {
