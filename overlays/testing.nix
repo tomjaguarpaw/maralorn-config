@@ -17,7 +17,7 @@ let
         rm
         (\logFile -> do
           say [i|Trying to build ${name} config for #{hostname}. Logging to #{logFile}.|]
-          onException (command &> Append logFile &!> Append logFile) (say [i|Buildfailure for ${name} config for #{hostname}|] >> cat logFile))
+          onException (command &!> StdOut &> Append logFile) (say [i|Buildfailure for ${name} config for #{hostname}|] >> cat logFile))
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
 in {
