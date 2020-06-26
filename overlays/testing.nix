@@ -14,7 +14,7 @@ let
       say [i|Trying to build ${name} config for #{hostname} ...|]
       let command = ${commandline}
       bracket
-        (decodeUtf8 <$> mktemp |> captureTrim)
+        (decodeUtf8 <$> ((mktemp |> captureTrim) :: IO ByteString))
         rm
         (\logFile -> onException (command &> Append logFile &!> Append logFile) (cat logFile))
       say [i|Build of ${name} config for #{hostname} was successful.|]
