@@ -61,8 +61,9 @@ in {
           git "-C" repoDir "config" "user.name" "maralorn (nix-auto-updater)"
           git "-C" repoDir "commit" "-am" "Update dependencies with niv"
           git "-C" repoDir "push" "-f" "origin" "master:version-bump"
-        mapM_ (test_system_config repoDir) ${self.haskellList systems}
-        mapM_ (test_home_config repoDir) ${self.haskellList homes}
+        concurrently
+          (mapConcurrentlyM_ (test_system_config repoDir) ${self.haskellList systems})
+          (mapConcurrentlyM_ (test_home_config repoDir) ${self.haskellList homes})
         when changed $ do
           git "-C" repoDir "push" "origin" "master:master"
   '';
