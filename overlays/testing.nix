@@ -7,11 +7,11 @@ let
   homes = self.lib.attrNames (import ../home/modes.nix);
   keys = [ "default" "apollo" "hera" ];
   haskellBody = name: commandline: ''
-    command = ${commandline}
     main = do
       (configDir:hostname:args) <-  getArgs
       paths <- myNixPath $ toText configDir
       say [i|Trying to build ${name} config for #{hostname} ...|]
+      let command = ${commandline}
       bracket
         (decodeUtf8 <$> mktemp |> captureTrim)
         rm
