@@ -4,7 +4,7 @@ let
   update-command = [
     "${pkgs.systemd}/bin/systemctl"
     "restart"
-    "test-and-update.service"
+    "test-config.service"
     "--no-block"
   ];
   post-update = pkgs.writeHaskellScript {
@@ -35,7 +35,7 @@ let
         say "Done"
       testFlag <- lookupEnv "GL_OPTION_TEST"
       whenJust testFlag $ \_ -> do
-        say "Starting test-and-update.service."
+        say "Starting test-config.service."
         exe "sudo" ${pkgs.haskellList update-command};
   '';
 in {

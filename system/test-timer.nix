@@ -9,15 +9,12 @@ let
 in {
 
   systemd.services = {
-    test-and-update = {
-      environment.NIX_PATH =
-        "/etc/nix-path:nixos-config=/etc/nixos/configuration.nix";
-      path = [ pkgs.nix pkgs.gnutar pkgs.gzip pkgs.git pkgs.git-crypt ];
+    update-config = {
+      path = [ pkgs.git ];
       restartIfChanged = false;
       unitConfig.X-StopOnRemoval = false;
       serviceConfig = {
         Type = "oneshot";
-        WorkingDirectory = "/var/cache/gc-links";
         Restart = "on-failure";
         RestartSec = 1;
       };
@@ -26,10 +23,22 @@ in {
         StartLimitBurst=3;
       };
       script = ''
-        ${pkgs.test-config}/bin/test-config
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull
-        result-system-hera/bin/switch-to-configuration switch
-        /run/wrappers/bin/sudo -u ${user} result-home-manager-hera/default/activate
+        /var/cache/gc-links/result-system-hera/bin/switch-to-configuration switch
+        /run/wrappers/bin/sudo -u ${user} /var/cache/gc-links/result-home-manager-hera/default/activate
+      '';
+    };
+    test-config = {
+      environment.NIX_PATH =
+        "/etc/nix-path:nixos-config=/etc/nixos/configuration.nix";
+      path = [ pkgs.nix pkgs.gnutar pkgs.gzip pkgs.git pkgs.git-crypt ];
+      serviceConfig = {
+        Type = "oneshot";
+        WorkingDirectory = "/var/cache/gc-links";
+      };
+      script = ''
+        ${pkgs.test-config}/bin/test-config
+        ${pkgs.systemd}/bin/systemctl start update-config
       '';
     };
 
