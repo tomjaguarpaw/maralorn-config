@@ -6,6 +6,7 @@ let
   systems = [ "apollo" "hera" ];
   homes = self.lib.attrNames (import ../home/modes.nix);
   keys = [ "default" "apollo" "hera" ];
+  imports = [ "Control.Exception (onException)" ];
   haskellBody = name: commandline: ''
     main = do
       (configDir:hostname:args) <-  getArgs
@@ -23,6 +24,7 @@ in {
   test-system-config = self.writeHaskellScript {
     name = "test-system-config";
     inherit bins;
+    inherit imports;
   } (haskellBody "system" ''
     nix_build $ ["<nixpkgs/nixos>", "-A", "system"] ++ paths ++ ["-I", [i|nixos-config=#{configDir}/hosts/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ fmap toString args
   '');
@@ -30,6 +32,7 @@ in {
   test-home-config = self.writeHaskellScript {
     name = "test-home-config";
     inherit bins;
+    inherit imports;
   } (haskellBody "home" ''
     nix_build $ paths ++ [[i|#{configDir}/home/target.nix|], "-A", hostname, "-o", [i|result-home-manager-#{hostname}|]] ++ fmap toString args
   '');
