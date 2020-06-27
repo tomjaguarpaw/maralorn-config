@@ -2,7 +2,6 @@
 let me = config.m-0.private.me;
 in {
   imports = [
-    ../cachix.nix
     ../common
     ./modules/laptop.nix
     ./modules/loginctl-linger.nix
@@ -11,7 +10,7 @@ in {
   i18n = { defaultLocale = "en_US.UTF-8"; };
 
   # For nixos-rebuild
-  nixpkgs.overlays = import ../overlays.nix { inherit lib; };
+  nixpkgs.overlays = import ../overlays { inherit lib; };
 
   time.timeZone = "Europe/Berlin";
 

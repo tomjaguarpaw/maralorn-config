@@ -3,7 +3,7 @@
     inherit (pkgs.xorg) xev;
     inherit (pkgs.gitAndTools) hub;
     inherit (pkgs)
-      meld icedtea8_web octave filezilla cachix nix-review gparted
+      meld icedtea8_web octave filezilla nix-review gparted
       grafana-devel;
   };
 }

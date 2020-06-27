@@ -11,7 +11,7 @@ in {
     ./mpclient.nix
     ./neovim
   ];
-  nixpkgs.overlays = import ../overlays.nix { inherit lib; };
+  nixpkgs.overlays = import ../overlays { inherit lib; };
 
   programs = {
     home-manager.enable = true;
