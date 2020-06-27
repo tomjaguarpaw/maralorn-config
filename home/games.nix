@@ -13,41 +13,28 @@
   home.packages = builtins.attrValues {
     inherit (pkgs.unfree) steam;
     inherit (pkgs) minetest;
-    gw2 = pkgs.buildFHSUserEnv {
-      name = "gw2";
-      targetPkgs = pkgs: (with pkgs; [ sambaFull ]);
-      multiPkgs = pkgs:
-        (with pkgs;
-          with xorg; [
-            file
-            freetype
-            libpng
-            mesa_drivers
-            zlib
-            libXi
-            libXcursor
-            libXrandr
-            libXrender
-            libXxf86vm
-            libXcomposite
-            libXext
-            libX11
-            libudev
-            libGLU
-            mesa_noglu.osmesa
-            libdrm
-            libpulseaudio
-            alsaLib
-            openal
-            mpg123
-            gnutls
-            krb5Full
-            ncurses5
-            vulkan-headers
-            vulkan-loader
-            vulkan-tools
-          ]);
-      runScript = "/home/maralorn/GW2/play.sh";
-    };
+    inherit (pkgs.wineWowPackages) staging;
+    gw2 = pkgs.writeShellScriptBin "gw2" ''
+      cd /home/maralorn/GW2
+
+      # Intel/AMD Mesa Specific Env_vars
+      # export vblank_mode=0
+      export MESA_GLSL_CACHE_DISABLE=0
+      export MESA_GLSL_CACHE_DIR="$PWD/shader_cache"
+      export mesa_glthread=true
+
+      # Wine Settings
+      #export DXVK_HUD=version,devinfo,fps
+      export DXVK_LOG_LEVEL=none
+      export WINEDEBUG=-all
+      export WINEARCH=win64
+      export WINEPREFIX="$PWD/data"
+      export STAGING_SHARED_MEMORY=1
+      export WINEESYNC=1
+
+      # Launch Command
+      cd "$PWD/data/drive_c/GW2"
+      wine64 ./GW2.exe $@ -autologin
+    '';
   };
 }
