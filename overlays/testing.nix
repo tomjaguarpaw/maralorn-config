@@ -4,7 +4,7 @@ let
   repoSrc = "git@hera.m-0.eu:nixos-config";
   configPath = "/etc/nixos";
   systems = [ "apollo" "hera" ];
-  homes = self.lib.attrNames (import ../home/modes.nix);
+  homes = self.lib.attrNames (import ../home-manager/machines.nix);
   keys = [ "default" "apollo" "hera" ];
   imports = [ "Control.Exception (onException)" ];
   haskellBody = name: commandline: ''
@@ -32,7 +32,7 @@ in {
     name = "test-home-config";
     inherit bins;
     inherit imports;
-  } (haskellBody "home" ''nix_build $ paths ++ [[i|#{configDir}/home/target.nix|], "-A", hostname, "-o", [i|result-home-manager-#{hostname}|]] ++ fmap toString args'');
+  } (haskellBody "home" ''nix_build $ paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname, "-o", [i|result-home-manager-#{hostname}|]] ++ fmap toString args'');
 
   test-config = self.writeHaskellScript {
     name = "test-config";

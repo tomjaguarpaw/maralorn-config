@@ -1,7 +1,7 @@
 let
   sources = import ../nix/sources.nix;
   inherit (import sources.nixpkgs { }) lib pkgs;
-  modes = import ./modes.nix;
+  modes = import ./machines.nix;
   home-manager = import "${sources.home-manager}/home-manager/home-manager.nix";
   buildHomeManager = attr:
     (home-manager {

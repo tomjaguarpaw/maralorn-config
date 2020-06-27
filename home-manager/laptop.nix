@@ -1,19 +1,9 @@
 { pkgs, lib, ... }:
 let
-  modes = pkgs.lib.attrNames (import ./modes.nix).apollo;
-  autostart-script = pkgs.writeShellScriptBin "home-manager-autostart" ''
-    ${pkgs.xorg.xrdb}/bin/xrdb ${builtins.toFile "Xresources" "Xft.dpi: 96"}
-  '';
+  modes = pkgs.lib.attrNames (import ./machines.nix).apollo;
   configPath = "/home/maralorn/git/config";
 in {
 
-  xdg.configFile."autostart/home-manager-autostart.desktop".source = "${
-      pkgs.makeDesktopItem {
-        name = "home-manager-autostart";
-        desktopName = "Home Manager Autostart Job";
-        exec = "${autostart-script}/bin/home-manager-autostart";
-      }
-    }/share/applications/home-manager-autostart.desktop";
   home.packages = builtins.attrValues rec {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
@@ -40,7 +30,7 @@ in {
       main = do
         say "Building ~/.modes for apollo"
         nixPath <- myNixPath "${configPath}"
-        nix_build nixPath "${configPath}/home/target.nix" "-A" "apollo" "-o" "/home/maralorn/.modes"
+        nix_build nixPath "${configPath}/home-manager/target.nix" "-A" "apollo" "-o" "/home/maralorn/.modes"
         activate_mode
     '';
     selectMode = pkgs.writeShellScriptBin "select-mode" ''
