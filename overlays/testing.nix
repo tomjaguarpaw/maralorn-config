@@ -64,7 +64,6 @@ in {
           git "-C" repoDir "config" "user.email" "maralorn@maralorn.de"
           git "-C" repoDir "config" "user.name" "maralorn (nix-auto-updater)"
           git "-C" repoDir "commit" "-am" "Update dependencies with niv"
-          git "-C" repoDir "push" "-f" "origin" "master:version-bump"
         concurrently_
           (mapConcurrently_ (test_system_config repoDir) ${self.haskellList systems})
           (mapConcurrently_ (test_home_config repoDir) ${self.haskellList homes})
