@@ -10,9 +10,9 @@ let
   makeHaskellPackages = p:
     {
       inherit (p)
-        brittany ormolu releaser cabal-fmt stack ghcide cabal-install dhall
+        brittany ormolu releaser cabal-fmt stack ghcid ghcide cabal-install dhall
         aeson unordered-containers these neuron taskwarrior pandoc hlint
-        cabal2nix weeder;
+        cabal2nix weeder reflex-dom password optics-th;
     } // makeHaskellScriptPackages p;
 in {
   myHaskellPackages = makeHaskellPackages master.haskellPackages;

@@ -7,5 +7,5 @@ in {
     inherit (unstable.gnome3) gnome-keyring seahorse gdm;
   };
   inherit (unstable)
-    neovim vimPlugins syncthing nerdfonts ormolu go-neb; # riot-desktop;
+    neovim vimPlugins syncthing nerdfonts ormolu ghcid go-neb; # riot-desktop;
 }
