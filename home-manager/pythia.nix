@@ -2,14 +2,13 @@
 let
   pythia-path = "${config.home.homeDirectory}/documents/pythia";
   pythia = pkgs.writeShellScriptBin "pythia" ''
-    datei=${pythia-path}/$(date +%Y-%m-%d)
-    touch $datei
+    datei=${config.home.homeDirectory}/git/zettelkasten/pythia-$(date +%Y-%m-%d).md
+    if [[ ! -a $datei ]]; then
+      neuron new --id pythia-$(date +%Y-%m-%d) Tagebucheintrag
+      sed -i 's/date:/tags:\n - Pythia\ndate:/' $datei
+    fi
     vim $datei
     grep TODO: $datei | sed 's/TODO: //' | while read -r line; do task add "$line"; done && sed -i 's/TODO: /Notiert: /' $datei
-    grep WEAK: $datei | sed 's/WEAK: //' >> ${pythia-path}/schwächen && sed -i 's/WEAK: /Schwäche: /' $datei
-    grep STRONG: $datei | sed 's/STRONG: //' >> ${pythia-path}/stärken && sed -i 's/STRONG: /Stärke: /' $datei
-    grep RULE: $datei | sed 's/RULE: //' >> ${pythia-path}/richtlinien && sed -i 's/RULE: /Richtlinie: /' $datei
-    grep INDICATOR: $datei | sed 's/INDICATOR: //' >> ${pythia-path}/warnzeichen && sed -i 's/INDICATOR: /Warnzeichen: /' $datei
   '';
   printslow = pkgs.writeScriptBin "printslow" ''
     #!${pkgs.python3}/bin/python

@@ -4,7 +4,7 @@
       Unit = { Description = "Update taskwarrior tasks"; };
       Service = {
         Type = "oneshot";
-        Environment = "PATH=${pkgs.taskwarrior}/bin";
+        Environment = "PATH=${pkgs.taskwarrior}/bin:${pkgs.git}/bin";
         ExecStart = "${config.home.homeDirectory}/.cargo/bin/update_tasks";
       };
     };

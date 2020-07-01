@@ -58,6 +58,7 @@ in {
     ];
     apolloConfig = imports:
       makeConfig "apollo" (imports ++ [
+        ./roles/zettelkasten.nix
         ./battery.nix
         ./mpd.nix
         ./mpclient.nix

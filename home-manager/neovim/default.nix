@@ -72,9 +72,9 @@ let
         filetypes = [ "nix" ];
       };
       haskell = {
-        command = "ghcide";
+        command = "haskell-language-server";
         args = [ "--lsp" ];
-        rootPatterns = [ ".hie-bios" ];
+        rootPatterns = [ ".hie-bios" "cabal.project" ];
         filetypes = [ "hs" "lhs" "haskell" ];
       };
     };
