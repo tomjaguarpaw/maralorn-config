@@ -13,7 +13,7 @@
     plugins = "convert web mpdstats mpdupdate fromfilename the";
     convert = {
       auto = true;
-      format = "opus";
+      command = "${pkgs.ffmpeg}/bin/ffmpeg -i $source -y -vn -acodec libopus -ab 128k $dest";
       never_convert_lossy_files = true;
     };
   };
