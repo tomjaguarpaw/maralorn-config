@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 # You need pw-files for every configured user in ./secret/pw-useralias for login to work.
-# dropbearkey -t rsa -f /etc/nixosnixos/machines<hostname>/secret/boot_rsa
+# dropbearkey -t rsa -f /etc/nixos/nixos/machines/<hostname>/secret/boot_rsa
 
 let
   inherit (config.m-0.private) me;
@@ -103,8 +103,8 @@ in {
       user = "maralorn";
       openDefaultPorts = true;
       declarative = syncthing.declarativeWith [ "apollo" ] "/media" // {
-        cert = "/etc/nixosnixos/machineshera/secret/syncthing/cert.pem";
-        key = "/etc/nixosnixos/machineshera/secret/syncthing/key.pem";
+        cert = "/etc/nixos/nixos/machines/hera/secret/syncthing/cert.pem";
+        key = "/etc/nixos/nixos/machines/hera/secret/syncthing/key.pem";
       };
     };
   };
@@ -117,7 +117,7 @@ in {
     isNormalUser = true;
     uid = 1001;
     extraGroups = [ "wheel" "systemd-journal" ];
-    passwordFile = "/etc/nixosnixos/machineshera/secret/pw-choreutes";
+    passwordFile = "/etc/nixos/nixos/machines/hera/secret/pw-choreutes";
   };
 
   # This value determines the NixOS release with which your system is to be

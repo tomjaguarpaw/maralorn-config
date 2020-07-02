@@ -28,7 +28,7 @@ in {
       m0wire = {
         allowedIPsAsRoutes = false;
         ips = [ "${hosts.apollo-wg}/112" ];
-        privateKeyFile = "/etc/nixosnixos/machinesapollo/secret/wireguard-private";
+        privateKeyFile = "/etc/nixos/nixos/machines/apollo/secret/wireguard-private";
         peers = [{
           publicKey = wireguard.pub.hera;
           allowedIPs = [ "::/0" ];
@@ -77,8 +77,8 @@ in {
       openDefaultPorts = true;
       declarative = syncthing.declarativeWith [ "hera" ] "/home/maralorn/media"
         // {
-          cert = "/etc/nixosnixos/machinesapollo/secret/syncthing/cert.pem";
-          key = "/etc/nixosnixos/machinesapollo/secret/syncthing/key.pem";
+          cert = "/etc/nixos/nixos/machines/apollo/secret/syncthing/cert.pem";
+          key = "/etc/nixos/nixos/machines/apollo/secret/syncthing/key.pem";
         };
     };
     gnome3.chrome-gnome-shell.enable = true;
@@ -93,7 +93,7 @@ in {
   cdark_net = {
     enable = true;
     hostName = "${me.user}_${config.networking.hostName}";
-    ed25519PrivateKeyFile = /etc/nixos/hosts + "/${config.networking.hostName}"
+    ed25519PrivateKeyFile = /etc/nixos/nixos/machines + "/${config.networking.hostName}"
       + /secret/tinc/ed25519_key.priv;
     hostsDirectory =
       (builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/hosts");
