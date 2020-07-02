@@ -1,7 +1,7 @@
 { pkgs, config, lib, ... }:
 let
   user = "maralorn";
-  inherit (import ../lib/update-system.nix {
+  inherit (import ../../lib/update-system.nix {
     nixos-rebuild = config.system.build.nixos-rebuild;
     inherit pkgs;
   })

@@ -15,7 +15,7 @@
     inherit (pkgs) minetest;
     inherit (pkgs.wineWowPackages) staging;
     gw2 = pkgs.writeShellScriptBin "gw2" ''
-      cd /home/maralorn/GW2
+      cd /home/maralorn/volatile/GW2
 
       # Intel/AMD Mesa Specific Env_vars
       # export vblank_mode=0

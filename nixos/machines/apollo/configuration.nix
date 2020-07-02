@@ -5,8 +5,8 @@
 let
   inherit (config.m-0) hosts prefix private;
   inherit (private) me wireguard;
-  nixos-hardware = (import ../../nix/sources.nix).nixos-hardware;
-  inherit (import ../../common/common.nix { inherit pkgs; }) syncthing;
+  nixos-hardware = (import ../../../nix/sources.nix).nixos-hardware;
+  inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
 in {
 
   imports = [
@@ -14,11 +14,11 @@ in {
     "${nixos-hardware}/common/pc/ssd"
     "${(builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark")}"
     ./hardware-configuration.nix
-    ../../system
-    ../../system/fonts.nix
-    ../../system/boot-key.nix
-    ../../system/standalone
-    ../../system/use-cache.nix
+    ../../roles
+    ../../roles/fonts.nix
+    ../../roles/boot-key.nix
+    ../../roles/standalone
+    ../../roles/use-cache.nix
   ];
 
   networking = {
@@ -28,7 +28,7 @@ in {
       m0wire = {
         allowedIPsAsRoutes = false;
         ips = [ "${hosts.apollo-wg}/112" ];
-        privateKeyFile = "/etc/nixos/hosts/apollo/secret/wireguard-private";
+        privateKeyFile = "/etc/nixosnixos/machinesapollo/secret/wireguard-private";
         peers = [{
           publicKey = wireguard.pub.hera;
           allowedIPs = [ "::/0" ];
@@ -45,6 +45,12 @@ in {
   m-0 = { laptop.enable = true; };
 
   services = {
+    beesd.filesystems.root = {
+      spec = "LABEL=root";
+      hashTableSizeMB = 2048;
+      verbosity = "crit";
+      extraOptions = [ "--loadavg-target" "4.0" ];
+    };
     snapper = {
       configs.home = {
         subvolume = "/home";
@@ -71,8 +77,8 @@ in {
       openDefaultPorts = true;
       declarative = syncthing.declarativeWith [ "hera" ] "/home/maralorn/media"
         // {
-          cert = "/etc/nixos/hosts/apollo/secret/syncthing/cert.pem";
-          key = "/etc/nixos/hosts/apollo/secret/syncthing/key.pem";
+          cert = "/etc/nixosnixos/machinesapollo/secret/syncthing/cert.pem";
+          key = "/etc/nixosnixos/machinesapollo/secret/syncthing/key.pem";
         };
     };
     gnome3.chrome-gnome-shell.enable = true;

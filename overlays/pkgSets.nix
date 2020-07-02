@@ -11,7 +11,7 @@ self: super: {
     inherit (self)
       git-crypt htop tree pwgen borgbackup inotifyTools direnv socat nmap ncdu
       tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle vnstat
-      entr libargon2 mblaze niv;
+      entr libargon2 mblaze niv compsize;
   };
 
   my-home-pkgs = {

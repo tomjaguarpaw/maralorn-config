@@ -1,29 +1,29 @@
 { config, pkgs, ... }:
 
 # You need pw-files for every configured user in ./secret/pw-useralias for login to work.
-# dropbearkey -t rsa -f /etc/nixos/hosts/<hostname>/secret/boot_rsa
+# dropbearkey -t rsa -f /etc/nixosnixos/machines<hostname>/secret/boot_rsa
 
 let
   inherit (config.m-0.private) me;
-  inherit (import ../../common/common.nix { inherit pkgs; }) syncthing;
+  inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
 in {
 
   imports = [
     ./hardware-configuration.nix
-    ../../system
-    ../../system/test-timer.nix
-    ../../system/standalone
-    ../../system/server
-    ../../system/git.nix
-    ../../system/riot.nix
-    ../../system/mathechor.de.nix
-    ../../system/monitoring
-    ../../system/blog.nix
-    ../../system/email2matrix.nix
-    ../../system/matrix-synapse.nix
-    ../../system/coturn.nix
-    ../../system/serve-store.nix
-    ../../system/go-neb.nix
+    ../../roles
+    ../../roles/test-timer.nix
+    ../../roles/standalone
+    ../../roles/server
+    ../../roles/git.nix
+    ../../roles/riot.nix
+    ../../roles/mathechor.de.nix
+    ../../roles/monitoring
+    ../../roles/blog.nix
+    ../../roles/email2matrix.nix
+    ../../roles/matrix-synapse.nix
+    ../../roles/coturn.nix
+    ../../roles/serve-store.nix
+    ../../roles/go-neb.nix
     ./web.nix
     ./mail.nix
     ./boot.nix
@@ -103,8 +103,8 @@ in {
       user = "maralorn";
       openDefaultPorts = true;
       declarative = syncthing.declarativeWith [ "apollo" ] "/media" // {
-        cert = "/etc/nixos/hosts/hera/secret/syncthing/cert.pem";
-        key = "/etc/nixos/hosts/hera/secret/syncthing/key.pem";
+        cert = "/etc/nixosnixos/machineshera/secret/syncthing/cert.pem";
+        key = "/etc/nixosnixos/machineshera/secret/syncthing/key.pem";
       };
     };
   };
@@ -117,7 +117,7 @@ in {
     isNormalUser = true;
     uid = 1001;
     extraGroups = [ "wheel" "systemd-journal" ];
-    passwordFile = "/etc/nixos/hosts/hera/secret/pw-choreutes";
+    passwordFile = "/etc/nixosnixos/machineshera/secret/pw-choreutes";
   };
 
   # This value determines the NixOS release with which your system is to be

@@ -2,7 +2,7 @@
 let me = config.m-0.private.me;
 in {
   imports = [
-    ../common
+    ../../common
     ./modules/laptop.nix
     ./modules/loginctl-linger.nix
   ];
@@ -10,7 +10,7 @@ in {
   i18n = { defaultLocale = "en_US.UTF-8"; };
 
   # For nixos-rebuild
-  nixpkgs.overlays = import ../overlays { inherit lib; };
+  nixpkgs.overlays = import ../../overlays { inherit lib; };
 
   time.timeZone = "Europe/Berlin";
 

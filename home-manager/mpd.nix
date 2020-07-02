@@ -1,8 +1,26 @@
 { pkgs, config, ... }: {
+  home.file.".config/beets/config.yaml".text = builtins.toJSON {
+    directory = "~/media/audio";
+    library = "~/.config/beets/musiclibrary.db";
+    import = { move = true; };
+    paths = {
+      default = "$genre/%the{$albumartist}/$album%aunique{}/$track $title";
+      singleton = "$genre/%the{$artist}/singles/$title";
+      comp = "$genre/%the{$artist}/$album%aunique{}/$track $title";
+      "genre:soundtrack" = "Soundtrack/$album%aunique{}/$track $title";
+      "genre::classical" = "$genre/%the{$composer}/$album%aunique{}/$track $title";
+    };
+    plugins = "convert web mpdstats mpdupdate fromfilename the";
+    convert = {
+      auto = true;
+      format = "opus";
+      never_convert_lossy_files = true;
+    };
+  };
   services = {
     mpd = {
       enable = true;
-      network.listenAddress = "::1";
+      #network.listenAddress = "::1";
       musicDirectory = "${config.home.homeDirectory}/media/audio";
       extraConfig = ''
         audio_output {

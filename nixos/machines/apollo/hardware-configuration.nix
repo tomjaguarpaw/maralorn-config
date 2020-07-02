@@ -32,6 +32,7 @@
     "/" = {
       device = "/dev/disk/by-uuid/ce5b0ac6-6eaf-45a6-b6c8-bd4958caf335";
       fsType = "btrfs";
+      options = ["compress=zstd" "autodefrag" "noatime"];
     };
     "/boot/EFI" = {
       device = "/dev/disk/by-uuid/C4A6-3DB5";

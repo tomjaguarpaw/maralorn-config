@@ -20,7 +20,7 @@ let
     privateNetwork = true;
     hostBridge = "bridge";
     config = { pkgs, ... }: {
-      imports = [ ../../system ];
+      imports = [ ../../roles ];
 
       networking = {
         interfaces.eth0 = {

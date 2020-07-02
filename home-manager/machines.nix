@@ -101,8 +101,8 @@ in {
     default = makeConfig "hera" [
       ./on-my-machine.nix
       ./headless.nix
-      ../hosts/hera/weechat
-      ../hosts/hera/secret
+      ..nixos/machineshera/weechat
+      ..nixos/machineshera/secret
       ./kassandra-server.nix
       ./headless-mpd.nix
       ./mail.nix

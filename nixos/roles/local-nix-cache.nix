@@ -1,5 +1,5 @@
 { config, pkgs, lib, ... }:
-let inherit (import ../lib) sources;
+let inherit (import ../../lib) sources;
   local-nix-cache = import sources.local-nix-cache { };
 in {
   imports = [ (local-nix-cache.path + "/module.nix") ];

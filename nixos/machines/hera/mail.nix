@@ -25,7 +25,7 @@ in {
     autoStart = true;
     config = { pkgs, lib, ... }: {
       imports =
-        [ ../../system "${(import ../../nix/sources.nix).nixos-mailserver}" ];
+        [ ../../roles "${(import ../../../nix/sources.nix).nixos-mailserver}" ];
       services.prometheus.exporters = {
         node.port = 9101;
         postfix = {

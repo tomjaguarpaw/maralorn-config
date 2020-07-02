@@ -54,7 +54,7 @@ in {
     wireguard.interfaces = {
       m0wire = {
         ips = [ "${hosts.hera-wg}/112" ];
-        privateKeyFile = "/etc/nixos/hosts/hera/secret/wireguard-private";
+        privateKeyFile = "/etc/nixosnixos/machineshera/secret/wireguard-private";
         listenPort = wireguard.port;
         peers = [{
           publicKey = wireguard.pub.apollo;
