@@ -1,7 +1,7 @@
 { lib, pkgs, config, ... }:
 with lib;
 let
-  weechatConfig = import ../../../nixos/machines/hera/weechat.nix;
+  weechatConfig = import ../../../nixos/machines/hera/secret/weechat.nix;
   weechat = pkgs.wrapWeechat pkgs.weechat-unwrapped {
     configure = { availablePlugins, ... }: {
       plugins = builtins.attrValues (availablePlugins // {
