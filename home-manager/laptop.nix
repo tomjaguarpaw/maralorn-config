@@ -11,7 +11,6 @@ in {
       update-modes
       sudo -A update-system
       sudo -A nix-collect-garbage -d
-      sudo -A nix optimise-store
     '';
     activateMode = pkgs.writeHaskellScript { name = "activate-mode"; } ''
       getMode :: IO Text
