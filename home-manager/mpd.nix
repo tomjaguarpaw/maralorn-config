@@ -1,6 +1,8 @@
-{ pkgs, config, ... }: {
+{ pkgs, config, ... }:
+let musicDirectory = "${config.home.homeDirectory}/media/audio";
+in {
   home.file.".config/beets/config.yaml".text = builtins.toJSON {
-    directory = "~/media/audio";
+    directory = musicDirectory;
     library = "~/.config/beets/musiclibrary.db";
     import = { move = true; };
     paths = {
@@ -8,20 +10,23 @@
       singleton = "$genre/%the{$artist}/singles/$title";
       comp = "$genre/%the{$artist}/$album%aunique{}/$track $title";
       "genre:soundtrack" = "Soundtrack/$album%aunique{}/$track $title";
-      "genre::classical" = "$genre/%the{$composer}/$album%aunique{}/$track $title";
+      "genre::classical" =
+        "$genre/%the{$composer}/$album%aunique{}/$track $title";
     };
-    plugins = "convert web mpdstats mpdupdate fromfilename the";
+    plugins =
+      "convert web mpdstats mpdupdate fromfilename the duplicates missing";
     convert = {
       auto = true;
-      command = "${pkgs.ffmpeg}/bin/ffmpeg -i $source -y -vn -acodec libopus -ab 128k $dest";
+      command =
+        "${pkgs.ffmpeg}/bin/ffmpeg -i $source -y -vn -acodec libopus -ab 128k $dest";
+      extension = "opus";
       never_convert_lossy_files = true;
     };
   };
   services = {
     mpd = {
       enable = true;
-      #network.listenAddress = "::1";
-      musicDirectory = "${config.home.homeDirectory}/media/audio";
+      inherit musicDirectory;
       extraConfig = ''
         audio_output {
               type "pulse"
@@ -30,6 +35,6 @@
         }
       '';
     };
-    mpdris2 = { enable = true; };
+    mpdris2.enable = true;
   };
 }
