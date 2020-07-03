@@ -1,0 +1,1 @@
+../../nixos/machines/apollo/configuration.nix

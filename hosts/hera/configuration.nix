@@ -1,0 +1,1 @@
+../../nixos/machines/hera/configuration.nix
