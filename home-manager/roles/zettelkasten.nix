@@ -6,6 +6,9 @@ in {
   systemd.user.services.neuron = {
     Unit.Description = "Neuron zettelkasten service";
     Install.WantedBy = [ "graphical-session.target" ];
-    Service.ExecStart = cmd;
+    Service = {
+      ExecStart = cmd;
+      Restart = "always";
+    };
   };
 }

@@ -60,7 +60,8 @@ in {
       makeConfig "apollo" (imports ++ [
         ./roles/zettelkasten.nix
         ./battery.nix
-        ./mpd.nix
+        ./roles/mpd.nix
+        ./roles/beets.nix
         ./mpclient.nix
         ./on-my-machine.nix
         ./desktop
