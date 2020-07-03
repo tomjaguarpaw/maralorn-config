@@ -26,7 +26,7 @@ in {
     name = "test-system-config";
     inherit bins;
     inherit imports;
-  } (haskellBody "system" ''nix_build $ ["<nixpkgs/nixos>", "-A", "system"] ++ paths ++ ["-I", [i|nixos-config=#{configDir}nixos/machines#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ fmap toString args'');
+  } (haskellBody "system" ''nix_build $ ["<nixpkgs/nixos>", "-A", "system"] ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ fmap toString args'');
 
   test-home-config = self.writeHaskellScript {
     name = "test-home-config";
