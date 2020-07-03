@@ -1,7 +1,7 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 let
-  modes = pkgs.lib.attrNames (import ./machines.nix).apollo;
-  configPath = "/home/maralorn/git/config";
+  modes = pkgs.lib.attrNames (import ../machines.nix).apollo;
+  configPath = "${config.home.homeDirectory}/git/config";
 in {
 
   home.packages = builtins.attrValues rec {

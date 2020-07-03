@@ -1,6 +1,6 @@
 { pkgs, ... }:
 let
-  my-lib = import ../../lib;
+  my-lib = import ../../../lib;
   inherit (my-lib) colors;
 in {
   home.sessionVariables.TERMINAL = "${pkgs.kitty}/bin/kitty";

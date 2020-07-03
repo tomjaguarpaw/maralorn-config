@@ -2,7 +2,7 @@ let
   inherit (import (import ../nix/sources.nix).nixpkgs { }) lib;
   makeConfig = hostName: imports:
     { ... }: {
-      imports = imports ++ [ ./default.nix ];
+      imports = imports ++ [ ./roles/default.nix ];
       m-0.hostName = hostName;
     };
 in {
@@ -59,54 +59,53 @@ in {
     apolloConfig = imports:
       makeConfig "apollo" (imports ++ [
         ./roles/zettelkasten.nix
-        ./battery.nix
+        ./roles/battery.nix
         ./roles/mpd.nix
         ./roles/beets.nix
-        ./mpclient.nix
-        ./on-my-machine.nix
-        ./desktop
-        ./git-sign.nix
-        ./laptop.nix
-        ./mail.nix
-        ./update_tasks.nix
+        ./roles/mpclient.nix
+        ./roles/on-my-machine.nix
+        ./roles/desktop
+        ./roles/git-sign.nix
+        ./roles/laptop.nix
+        ./roles/mail.nix
+        ./roles/update_tasks.nix
       ]);
     unrestricted = [
-      ./orga.nix
-      ./accounting.nix
-      ./mail-client.nix
-      ./pythia.nix
-      ./research.nix
-      ./tinkering.nix
-      ./chat.nix
+      ./roles/orga.nix
+      ./roles/accounting.nix
+      ./roles/mail-client.nix
+      ./roles/pythia.nix
+      ./roles/research.nix
+      ./roles/tinkering.nix
+      ./roles/chat.nix
       (setStartpage "https://stats.maralorn.de/d/health-status")
       (makeBlock [ ])
     ];
   in {
     unrestricted = apolloConfig unrestricted;
     orga = apolloConfig [
-      ./orga.nix
-      ./mail-client.nix
-      ./accounting.nix
-      ./pythia.nix
+      ./roles/orga.nix
+      ./roles/mail-client.nix
+      ./roles/accounting.nix
+      ./roles/pythia.nix
       (setStartpage "https://habitica.com")
       (makeBlock (tinkerPages ++ leisurePages))
     ];
     research = apolloConfig [
-      ./research.nix
+      ./roles/research.nix
       (makeBlock (tinkerPages ++ leisurePages))
       (setStartpage "http://localhost:8042")
     ];
-    gaming = apolloConfig (unrestricted ++ [./games.nix]);
+    gaming = apolloConfig (unrestricted ++ [ ./roles/games.nix ]);
   };
   hera = {
     default = makeConfig "hera" [
-      ./on-my-machine.nix
-      ./headless.nix
-      #..nixos/machineshera/weechat
+      ./roles/on-my-machine.nix
+      ./roles/headless.nix
       ./roles/weechat
-      ./kassandra-server.nix
-      ./headless-mpd.nix
-      ./mail.nix
+      ./roles/kassandra-server.nix
+      ./roles/headless-mpd.nix
+      ./roles/mail.nix
     ];
   };
 }
