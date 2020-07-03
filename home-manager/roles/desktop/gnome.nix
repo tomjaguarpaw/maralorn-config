@@ -4,7 +4,7 @@
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal" =
       {
         binding = "<Super>Return";
-        command = "kitty";
+        command = "kitty mytmux";
         name = "Terminal";
       };
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" =

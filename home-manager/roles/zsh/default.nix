@@ -4,8 +4,8 @@
     enableAutosuggestions = true;
     enableCompletion = true;
     history = {
-      save = 100000;
-      size = 100000;
+      save = 1000000;
+      size = 1000000;
     };
     initExtra = ''
       ${builtins.readFile ./zshrc}

@@ -1,34 +1,11 @@
-# If not in a tmux, start tmux
-if [[ -z "$TMUX" ]] {
-	session=$(tmux ls | grep -v attached | head -1 | cut -f1 -d:)
-	if [[ -n $session ]] {
-		exec tmux attach -t $session;
-	} else {
-		exec tmux;
-	}
-}
-
 mkdir -p /var/run/user/$UID/tmp/downloads
 
 setopt prompt_subst
 autoload -U colors && colors # Enable colors in prompt
 
-precmd() {
-	if hash eventc 2> /dev/null;
-	then
-		local s=$? c=( $(fc -L -D -l -1) )
-		if [[ $launched && "${c[2]}" != "0:00" ]] {
-			eventc command $([[ ${s} == 0 ]] && echo success || echo failure) -d command="\"${c[3,-1]}\"" -d time="\"${c[2]}\"" -d host="\"$HOST\""
-		} else {
-			export launched=true;
-		}
-	fi
-}
-
 alias cat=bat
 alias accounting='hledger -f ~/git/buchhaltung/buchhaltung.ledger ui -- --watch --theme=terminal -T -E'
 alias o=xdg-open
-alias c=cdr
 alias sudo='sudo -A'
 alias s='sudo -A systemctl'
 alias u='systemctl --user'
@@ -37,9 +14,22 @@ alias ls='exa -lh --git'
 
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
-zstyle ':chpwd:*' recent-dirs-max 25
+zstyle ':chpwd:*' recent-dirs-max 100
 
 if [[ $PWD == "$HOME" ]] {
 	cd "$(head -n1 ~/.chpwd-recent-dirs | sed s/\\$// | sed s/\'//g)"
 }
-bindkey '^R' history-incremental-pattern-search-backward
+fzf-history-search() {
+ LBUFFER=$( history | sed -E 's/ *[0-9]*\*? *//' | fzf +s --tac |  sed -E 's/\\/\\\\/g')
+ zle redisplay
+}
+zle -N fzf-history-search
+bindkey '^R' fzf-history-search
+
+fzf-directory-history-search() {
+ LBUFFER=$( sed "s/\\$//;s/\'//g" ~/.chpwd-recent-dirs | fzf +s |  sed -E 's/\\/\\\\/g;s/^/cd /')
+ zle redisplay
+}
+
+zle -N fzf-directory-history-search
+bindkey '^T' fzf-directory-history-search

@@ -23,6 +23,14 @@ self: super: {
       scp "$@" ag-forward:
       ssh ag-forward lpr -r "$@"
     '';
+    mytmux = super.writeShellScriptBin "mytmux" ''
+     session=$(${self.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
+     if [[ -n $session ]]; then
+        exec ${self.tmux}/bin/tmux attach -t $session;
+     else
+        exec ${self.tmux}/bin/tmux;
+     fi
+    '';
   };
   desktop-pkgs = {
     inherit (self) lm_sensors xwayland xdg_utils libnotify;
