@@ -27,7 +27,7 @@ zle -N fzf-history-search
 bindkey '^R' fzf-history-search
 
 fzf-directory-history-search() {
- LBUFFER=$( sed "s/\\$//;s/\'//g" ~/.chpwd-recent-dirs | fzf +s |  sed -E 's/\\/\\\\/g;s/^/cd /')
+ LBUFFER=$( sed "s/\\$//;s/'//g" ~/.chpwd-recent-dirs | fzf +s |  sed -E 's/\\/\\\\/g;s/^/cd /')
  zle redisplay
 }
 
