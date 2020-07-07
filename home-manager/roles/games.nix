@@ -11,6 +11,11 @@
   };
 
   home.packages = builtins.attrValues {
+    factorio = pkgs.unstableUnfree.factorio.override {
+      username = "maralorn";
+      token = import ../../nixos/machines/apollo/secret/factory.nix;
+      experimental = true;
+    };
     inherit (pkgs.unfree) steam;
     inherit (pkgs) minetest;
     inherit (pkgs.wineWowPackages) staging;
