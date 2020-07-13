@@ -45,13 +45,13 @@ self: super: {
     inherit (self.pythonPackages) yapf jsbeautifier;
     inherit (self)
       go gdb mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole
-      nixfmt rnix-lsp tmate rustup kitty nix-top ghc ghcid ormolu;
+      nixfmt rnix-lsp tmate rustup kitty nix-top ghc ghcid;
     obelisk = (import self.sources.obelisk { }).command;
     neuron = import self.sources.neuron { };
   };
   accounting-pkgs = {
-    inherit (self.haskellPackages) hledger hledger-ui hledger-web;
-    inherit (self) ledger jali;
+    inherit (self.haskellPackages) hledger hledger-ui hledger-web hledger-iadd;
+    inherit (self) ledger jali aqbanking;
   };
   system-pkgs = self.core-system-pkgs // self.extra-system-pkgs // {
     inherit (self) test-system-config test-home-config test-config;
