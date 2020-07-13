@@ -11,6 +11,18 @@
         "url": "https://github.com/rycee/home-manager/archive/318bc0754ed6370cfcae13183a7f13f7aa4bc73f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "neuron": {
+        "branch": "master",
+        "description": "Future-proof and simple-to-use notes system based on Zettelkasten.",
+        "homepage": "https://neuron.zettel.page",
+        "owner": "srid",
+        "repo": "neuron",
+        "rev": "d178b3cf58281080e5e0dfe24c1035b5dc3410ed",
+        "sha256": "01f5m1nmzzjx7dwhkwnbxbbddgcn31ql3ffg8bmmk9fhp2jin2yv",
+        "type": "tarball",
+        "url": "https://github.com/srid/neuron/archive/d178b3cf58281080e5e0dfe24c1035b5dc3410ed.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "nix-direnv": {
         "branch": "master",
         "description": "A fast, persistent use_nix implementation for direnv [maintainer=@Mic92] ",
