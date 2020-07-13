@@ -25,6 +25,7 @@ let
     watchNixpkgsPackage name "release-20.03"
     "nixos/release-20.03/nixpkgs.haskellPackages.${name}.x86_64-linux";
   watchedHaskellUpdatesPkgs = builtins.attrNames (pkgs.myHaskellPackages) ++ [
+    "neuron"
     "jsaddle-warp"
     "snap"
     "dependent-sum-template"

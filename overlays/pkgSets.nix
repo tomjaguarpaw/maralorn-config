@@ -47,6 +47,7 @@ self: super: {
       go gdb mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole
       nixfmt rnix-lsp tmate rustup kitty nix-top ghc ghcid ormolu;
     obelisk = (import self.sources.obelisk { }).command;
+    neuron = import self.sources.neuron { };
   };
   accounting-pkgs = {
     inherit (self.haskellPackages) hledger hledger-ui hledger-web;
