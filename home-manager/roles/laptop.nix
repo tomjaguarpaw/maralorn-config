@@ -10,7 +10,6 @@ in {
       git -C ~/git/config pull
       update-modes
       sudo -A update-system
-      sudo -A nix-collect-garbage -d
     '';
     activateMode = pkgs.writeHaskellScript { name = "activate-mode"; } ''
       getMode :: IO Text
