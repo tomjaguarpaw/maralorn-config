@@ -2,9 +2,10 @@
 let
   pythia-path = "${config.home.homeDirectory}/documents/pythia";
   pythia = pkgs.writeShellScriptBin "pythia" ''
-    datei=${config.home.homeDirectory}/git/zettelkasten/pythia-$(date +%Y-%m-%d).md
+    today=$(date +%Y-%m-%d)
+    datei=${config.home.homeDirectory}/git/zettelkasten/pythia-$today.md
     if [[ ! -a $datei ]]; then
-      neuron new --id pythia-$(date +%Y-%m-%d) Tagebucheintrag
+      neuron new --id pythia-$today Tagebucheintrag
       sed -i 's/date:/tags:\n - Pythia\ndate:/' $datei
     fi
     vim $datei
