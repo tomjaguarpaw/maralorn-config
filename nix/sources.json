@@ -17,10 +17,10 @@
         "homepage": "https://neuron.zettel.page",
         "owner": "srid",
         "repo": "neuron",
-        "rev": "d178b3cf58281080e5e0dfe24c1035b5dc3410ed",
-        "sha256": "01f5m1nmzzjx7dwhkwnbxbbddgcn31ql3ffg8bmmk9fhp2jin2yv",
+        "rev": "0b387635fb7d989cb06421f248a4e29e23500642",
+        "sha256": "1fm3syglkkhgax40nv6gq13w5m8qih9920957yh65v0zg0gy6k0d",
         "type": "tarball",
-        "url": "https://github.com/srid/neuron/archive/d178b3cf58281080e5e0dfe24c1035b5dc3410ed.tar.gz",
+        "url": "https://github.com/srid/neuron/archive/0b387635fb7d989cb06421f248a4e29e23500642.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nix-direnv": {
@@ -65,10 +65,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "674ab2dffa58dab8b6a97a26a0156133dbd90378",
-        "sha256": "05psgbg86kvivnch432f1b3xsvn6004hdak92zq8ifrw1hn72f19",
+        "rev": "add5529b3ee2df5035d7fb06120b74363a373be4",
+        "sha256": "0kq17m6y77alj7y8z3kvyydws3rzv3j2jy3836qp875jk3gx06ap",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/674ab2dffa58dab8b6a97a26a0156133dbd90378.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/add5529b3ee2df5035d7fb06120b74363a373be4.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-master": {
@@ -77,10 +77,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "cb9a3a0a32418d26fce1e5a6e894603a3595cff8",
-        "sha256": "0xsn9gx709i6a2yr17pqyjx1dk06la7iljgnwbcnflzq5rm41zam",
+        "rev": "35b97dc7d476464f0b1794e4a842aafd4a4c12f4",
+        "sha256": "1h34lrlwiz9l8937pp1d1xhqzspk85cp6kn05iz4jlfv6lwp25q5",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/cb9a3a0a32418d26fce1e5a6e894603a3595cff8.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/35b97dc7d476464f0b1794e4a842aafd4a4c12f4.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
