@@ -34,11 +34,6 @@ in {
             extraConfig = "proxy_set_header X-Forwarded-For $remote_addr;";
           };
         };
-        extraConfig = "
-          add_header 'Access-Control-Allow-Origin' '*';
-          add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS';
-          add_header 'Access-Control-Allow-Headers' 'Origin, X-Requested-With, Content-Type, Accept, Authorization';
-        ";
       };
     };
 
