@@ -18,6 +18,11 @@ in {
             default_type application/json;
             return 200 "{\"m.homeserver\": \"matrix.maralorn.de:443\"}";
           '';
+        extraConfig = "
+          add_header 'Access-Control-Allow-Origin' '*';
+          add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS';
+          add_header 'Access-Control-Allow-Headers' 'Origin, X-Requested-With, Content-Type, Accept, Authorization';
+        ";
         };
       };
       virtualHosts."${hostName}" = {
@@ -29,6 +34,11 @@ in {
             extraConfig = "proxy_set_header X-Forwarded-For $remote_addr;";
           };
         };
+        extraConfig = "
+          add_header 'Access-Control-Allow-Origin' '*';
+          add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS';
+          add_header 'Access-Control-Allow-Headers' 'Origin, X-Requested-With, Content-Type, Accept, Authorization';
+        ";
       };
     };
 
