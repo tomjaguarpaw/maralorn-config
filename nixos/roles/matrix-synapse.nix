@@ -16,7 +16,7 @@ in {
           '';
           "/.well-known/matrix/client".extraConfig = ''
             default_type application/json;
-            return 200 "{\"m.homeserver\": \"https://matrix.maralorn.de\"}";
+            return 200 "{\"m.homeserver\": { \"base_url\":\"https://matrix.maralorn.de\"} }";
           '';
         };
         extraConfig = "
