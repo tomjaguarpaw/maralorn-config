@@ -37,6 +37,7 @@ in {
         enableACME = true;
         forceSSL = true;
         inherit locations;
+        extraConfig = "add_header 'Access-Control-Allow-Origin' '*';";
       };
     };
   };
