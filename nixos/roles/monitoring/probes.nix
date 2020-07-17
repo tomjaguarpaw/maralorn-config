@@ -46,7 +46,7 @@ in {
         "https://www.mathechor.de"
         "https://cloud.mathechor.de"
         "https://cloud.maralorn.de"
-        "https://riot.maralorn.de"
+        "https://element.maralorn.de"
         "https://wiki.vocalensemble-darmstadt.de"
         "https://cloud.vocalensemble-darmstadt.de"
         "https://www.vocalensemble-darmstadt.de"

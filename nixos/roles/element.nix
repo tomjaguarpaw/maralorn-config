@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 
 let
-  riot_config = {
+  elementConfig = {
     default_server_config."m.homeserver" = {
       server_name = "maralorn.de";
       base_url = "https://matrix.maralorn.de";
@@ -16,10 +16,10 @@ let
 in {
   services.nginx = {
     enable = true;
-    virtualHosts."riot.maralorn.de" = {
+    virtualHosts."element.maralorn.de" = {
       enableACME = true;
       forceSSL = true;
-      root = pkgs.riot-web.override (old: { conf = riot_config; });
+      root = pkgs.element-web.override (old: { conf = element_config; });
     };
   };
 

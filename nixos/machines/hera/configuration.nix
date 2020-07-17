@@ -15,7 +15,7 @@ in {
     ../../roles/standalone
     ../../roles/server
     ../../roles/git.nix
-    ../../roles/riot.nix
+    ../../roles/element.nix
     ../../roles/mathechor.de.nix
     ../../roles/monitoring
     ../../roles/blog.nix

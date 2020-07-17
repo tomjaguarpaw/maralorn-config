@@ -38,7 +38,7 @@ in {
       "*.nixos.org"
       "nixos.org"
       "matrix.org"
-      "riot.im"
+      "element.io"
       "youtube.de"
       "youtube.com"
     ];
