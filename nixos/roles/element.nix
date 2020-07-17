@@ -19,7 +19,7 @@ in {
     virtualHosts."element.maralorn.de" = {
       enableACME = true;
       forceSSL = true;
-      root = pkgs.element-web.override (old: { conf = element_config; });
+      root = pkgs.element-web.override (old: { conf = elementConfig; });
     };
   };
 
