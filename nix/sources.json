@@ -17,10 +17,10 @@
         "homepage": "https://neuron.zettel.page",
         "owner": "srid",
         "repo": "neuron",
-        "rev": "9efd7168f2ececada5c491e94bfd8e10fe6369ff",
-        "sha256": "0jmq1dy5hd39pfabdbn6j80czhrwyhd5fawyzj7iqjj3qw3j1pnj",
+        "rev": "54df13b22d8b3863402b06b59df3c22b42909294",
+        "sha256": "1fknlqrvq2ficz3sjq9y9llv4j2bzjnv0dfi5n826jg3pgasm3rf",
         "type": "tarball",
-        "url": "https://github.com/srid/neuron/archive/9efd7168f2ececada5c491e94bfd8e10fe6369ff.tar.gz",
+        "url": "https://github.com/srid/neuron/archive/54df13b22d8b3863402b06b59df3c22b42909294.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nix-direnv": {
@@ -77,10 +77,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "903a0cac04a10ca50ca461e2fad127d05b7f1419",
-        "sha256": "1kb5h8dkkmz1a2hxncvr9k5ni79fasn6r8ny740vx6iyvpcxfnnq",
+        "rev": "65286e8e20fcb0548ffb32d7cecb5431c15c7078",
+        "sha256": "0s87fsgqk6fgy8rw6idfw59v6acls5pvd0xqm9cj26frlmgc5aj1",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/903a0cac04a10ca50ca461e2fad127d05b7f1419.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/65286e8e20fcb0548ffb32d7cecb5431c15c7078.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
@@ -101,10 +101,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c71518e75bf067fb639d44264fdd8cf80f53d75a",
-        "sha256": "0hwa79prsqgvfwd3ah54nl0wh73q215z7np4k6y0pd6zr3m17vxs",
+        "rev": "a5cc7d3197705f933d88e97c0c61849219ce76c1",
+        "sha256": "0b7y2nv5nj776zh9jwir8fq1qrgcqpaap05qxlxp9qfngw12k6ji",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/c71518e75bf067fb639d44264fdd8cf80f53d75a.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/a5cc7d3197705f933d88e97c0c61849219ce76c1.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
