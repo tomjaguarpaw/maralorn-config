@@ -11,18 +11,6 @@
         "url": "https://github.com/rycee/home-manager/archive/318bc0754ed6370cfcae13183a7f13f7aa4bc73f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "neuron": {
-        "branch": "master",
-        "description": "Future-proof and simple-to-use notes system based on Zettelkasten.",
-        "homepage": "https://neuron.zettel.page",
-        "owner": "srid",
-        "repo": "neuron",
-        "rev": "d73fcd21190d1a999a0b2a4a45527563b4645fd9",
-        "sha256": "1pn2ds2c4zfmhswadqfi9f600f4acxkgarzajzdjw5vvvpfchqmx",
-        "type": "tarball",
-        "url": "https://github.com/srid/neuron/archive/d73fcd21190d1a999a0b2a4a45527563b4645fd9.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "nix-direnv": {
         "branch": "master",
         "description": "A fast, persistent use_nix implementation for direnv [maintainer=@Mic92] ",
@@ -65,10 +53,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "1975b8687474764c157e6a220fdcad2c5dc348a1",
-        "sha256": "10klbwcfn1x7qbbwajg5nji2d3hw65bjawza59w2cw8pb889bg5z",
+        "rev": "69af91469be26a8d28052f3d8de6d48c0b5e05bc",
+        "sha256": "02cxlm12jvbbiky1awfm6pxfp346p3hgvbnhlpfzb3sgwm53r8qd",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/1975b8687474764c157e6a220fdcad2c5dc348a1.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/69af91469be26a8d28052f3d8de6d48c0b5e05bc.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-master": {
@@ -77,10 +65,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c61b6b1b18f9887243f9de4305c412837293738d",
-        "sha256": "1jzjpa59l0649icmcpqwi6zgkjmvwarjfwj3vfkb16ghd8vlv7zb",
+        "rev": "dbacb52ad85216c25567978f7f968c8856b5e686",
+        "sha256": "1cpcdhx5rwzzppdadd4yr1imgzyrhmscaaaqycrdjn5frdcpl1rl",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/c61b6b1b18f9887243f9de4305c412837293738d.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/dbacb52ad85216c25567978f7f968c8856b5e686.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
