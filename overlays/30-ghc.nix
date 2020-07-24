@@ -12,7 +12,7 @@ let
       inherit (p)
         brittany ormolu releaser cabal-fmt stack ghcid ghcide haskell-language-server cabal-install dhall
         aeson unordered-containers these taskwarrior pandoc hlint
-        cabal2nix weeder reflex-dom password optics-th shh-extras neuron;
+        cabal2nix weeder reflex-dom password optics-th shh-extras neuron hspec-discover;
     } // makeHaskellScriptPackages p;
 in {
   myHaskellPackages = makeHaskellPackages master.haskellPackages;
