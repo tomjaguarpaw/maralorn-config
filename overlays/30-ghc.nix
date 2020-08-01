@@ -18,5 +18,5 @@ in {
   myHaskellPackages = makeHaskellPackages master.haskellPackages;
   scriptGhc = master.ghc.withPackages
     (p: builtins.attrValues (makeHaskellScriptPackages p));
-  ghc = master.ghc.withPackages (p: builtins.attrValues (makeHaskellPackages p));
+  ghc = master.ghc.withHoogle (p: builtins.attrValues (makeHaskellPackages p));
 }
