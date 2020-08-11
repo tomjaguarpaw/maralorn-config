@@ -47,7 +47,7 @@ in {
   services = {
     beesd.filesystems.root = {
       spec = "LABEL=root";
-      hashTableSizeMB = 2048;
+      hashTableSizeMB = 128;
       verbosity = "crit";
       extraOptions = [ "--loadavg-target" "4.0" ];
     };
