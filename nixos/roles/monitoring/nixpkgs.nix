@@ -37,7 +37,6 @@ let
     "github"
     "cookie"
     "shelly"
-    "stan"
   ];
   watchedStablePkgs = [
     "ghcide"
