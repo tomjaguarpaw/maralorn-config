@@ -41,6 +41,7 @@ in {
       "element.io"
       "youtube.de"
       "youtube.com"
+      "*.element.io"
     ];
     leisurePages = [
       "zeit.de"
