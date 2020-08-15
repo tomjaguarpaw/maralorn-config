@@ -60,6 +60,7 @@ in {
     apolloConfig = imports:
       makeConfig "apollo" (imports ++ [
         ./roles/zettelkasten.nix
+        ./roles/hoogle.nix
         ./roles/battery.nix
         ./roles/mpd.nix
         ./roles/beets.nix
