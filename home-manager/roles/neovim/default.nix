@@ -22,10 +22,6 @@ let
             # general whitespace
             vim-trailing-whitespace vim-autoformat
 
-            # snippets
-            coc-snippets # integrates completion
-            vim-snippets # provides standard snippets
-
             # Git
             coc-git # statusline, numberline and explorer infos
             fugitive # various git commands
@@ -66,7 +62,14 @@ let
   };
   cocSettings = {
     "diagnostic.maxWindowHeight" = 60;
+    "diagnostic.virtualText" = true;
+    "diagnostic.virtualTextCurrentLineOnly" = false;
+    "codeLens.enable" = true;
     languageserver = {
+      markdown = {
+        command = "neuron-language-server";
+        filetypes = [ "md" "markdown" ];
+      };
       nix = {
         command = "rnix-lsp";
         filetypes = [ "nix" ];
@@ -85,7 +88,7 @@ let
 in {
   home = {
     file.".config/nvim/coc-settings.json".text = builtins.toJSON cocSettings;
-    packages = [ neovim ];
+    packages = [ neovim pkgs.neuron-language-server];
     sessionVariables.EDITOR = "${neovim}/bin/nvim";
   };
 }
