@@ -1,10 +1,11 @@
 self: super:
 let
+  inherit (super) fetchFromGitHub;
   master = import super.sources.nixpkgs-master { };
   inherit (master.haskell.lib) overrideCabal unmarkBroken;
   myOverrides = self: super: {
     optics = super.optics_0_3;
-    optics-th = super.optics-th_0_3_0_1;
+    optics-th = super.optics-th_0_3_0_2;
     optics-core = super.optics-core_0_3_0_1;
     optics-extra = super.optics-extra_0_3;
   };
@@ -24,5 +25,5 @@ in {
   myHaskellPackages = makeHaskellPackages master.haskellPackages;
   scriptGhc = master.ghc.withPackages
     (p: builtins.attrValues (makeHaskellScriptPackages p));
-  ghc = master.ghc.withHoogle (p: builtins.attrValues (makeHaskellPackages p));
+  ghc = (master.haskellPackages.override { overrides = myOverrides; }).ghc.withHoogle (p: builtins.attrValues (makeHaskellPackages p));
 }

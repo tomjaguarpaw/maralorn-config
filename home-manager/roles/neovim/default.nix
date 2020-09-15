@@ -88,7 +88,7 @@ let
 in {
   home = {
     file.".config/nvim/coc-settings.json".text = builtins.toJSON cocSettings;
-    packages = [ neovim pkgs.neuron-language-server];
+    packages = [ neovim pkgs.neuron-language-server ];
     sessionVariables.EDITOR = "${neovim}/bin/nvim";
   };
 }

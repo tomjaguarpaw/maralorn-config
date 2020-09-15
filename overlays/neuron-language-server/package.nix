@@ -7,7 +7,7 @@ buildGoModule {
     owner = "aca";
     repo = "neuron-language-server";
     rev = "master";
-    sha256 = "02vj5szqric7zbm8fbw9ngg4dwrgi3nss6a4kv28bqjr1zm3zn4v";
+    sha256 = "1kbh0bzzfmk7aj3c6k3ifwx4p42lw2pnr68srk3qpy6hjna8nczb";
   };
 
   vendorSha256 = "02dajl4l3c8522ik2hmiq8cx4kj4h2ykx8l7qsal5xznx9pqbs7i";

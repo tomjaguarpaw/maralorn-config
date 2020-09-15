@@ -8,6 +8,6 @@ in {
     inherit (unstable.gnome3) gnome-keyring seahorse gdm;
   };
   inherit (unstable)
-    aqbanking neovim vimPlugins syncthing nerdfonts ormolu ghcid go-neb;
+    aqbanking neovim vimPlugins syncthing nerdfonts ormolu ghcid go-neb fzf nixpkgs-fmt;
   inherit (nixpkgs-master) element-web element-desktop;
 }
