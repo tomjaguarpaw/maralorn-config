@@ -3,7 +3,7 @@
         "branch": "master",
         "description": "Manage a user environment using Nix",
         "homepage": "",
-        "owner": "rycee",
+        "owner": "nix-community",
         "repo": "home-manager",
         "rev": "472ca211cac604efdf621337067a237be9df389e",
         "sha256": "1gbfsnd7zsxwqryxd4r6jz9sgdz6ghlkapws1cdxshrbxlwhqad1",
