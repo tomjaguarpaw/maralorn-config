@@ -11,6 +11,12 @@
         "url": "https://github.com/rycee/home-manager/archive/472ca211cac604efdf621337067a237be9df389e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "kassandra": {
+        "ref": "master",
+        "repo": "https://git.darmstadt.ccc.de/maralorn/kassandra",
+        "rev": "8abb3558ac2253733cdc53d973ce283846f38984",
+        "type": "git"
+    },
     "nix-direnv": {
         "branch": "master",
         "description": "A fast, persistent use_nix implementation for direnv [maintainer=@Mic92] ",
@@ -95,11 +101,17 @@
         "url": "https://github.com/obsidiansystems/obelisk/archive/4f2d3f1c1312d833ae814b7a86cf7b65ea0614ec.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "kassandra": {
-        "ref": "master",
-        "repo": "https://git.darmstadt.ccc.de/maralorn/kassandra",
-        "rev": "8abb3558ac2253733cdc53d973ce283846f38984",
-        "type": "git"
+    "taskwarrior-git-backend": {
+        "branch": "master",
+        "description": "An experimental task-sync alternative via git written in Haskell",
+        "homepage": null,
+        "owner": "maralorn",
+        "repo": "taskwarrior-git-backend",
+        "rev": "e29c4335e2cb10d6c73832dcbdf931fdc6872e94",
+        "sha256": "0pq2s75mj9dpk5lk7igx88641zs0bihp6yx8l5gipaqy2daydrz6",
+        "type": "tarball",
+        "url": "https://github.com/maralorn/taskwarrior-git-backend/archive/e29c4335e2cb10d6c73832dcbdf931fdc6872e94.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "unstable": {
         "branch": "nixos-unstable",

@@ -1,4 +1,5 @@
 { lib, pkgs, config, ... }: {
+  home.packages = [ pkgs.taskwarrior-git ];
   services.taskwarrior-sync = {
     enable = true;
     frequency = "*:0/1";
