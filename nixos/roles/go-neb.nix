@@ -1,5 +1,5 @@
 { pkgs, config, ... }: {
-  imports = [ modules/go-neb.nix ];
+  #imports = [ modules/go-neb.nix ];
 
   services.go-neb = {
     enable = true;
