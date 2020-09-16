@@ -70,7 +70,7 @@ in {
         ./roles/git-sign.nix
         ./roles/laptop.nix
         ./roles/mail.nix
-        ./roles/update_tasks.nix
+        # ./roles/update_tasks.nix
       ]);
     unrestricted = [
       ./roles/accounting.nix
