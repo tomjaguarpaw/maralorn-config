@@ -1,6 +1,6 @@
 { ... }: {
 
-  m-0.server.initSSHKey = "${./secret/ssh_boot_rsa}";
+  m-0.server.initSSHKey = "/etc/nixos/machines/hera/secret/ssh_boot_rsa";
 
   boot = {
     loader.grub = {
