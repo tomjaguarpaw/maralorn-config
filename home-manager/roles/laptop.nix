@@ -39,12 +39,13 @@ in {
       activate-mode > /dev/null
     '';
 
-    inherit (pkgs.unfree) zoom-us skypeforlinux google-chrome;
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xbacklight;
     inherit (pkgs)
     # web
       chromium
+
+      zoom-us skypeforlinux google-chrome
 
       mumble upower speedtest-cli acpi
 

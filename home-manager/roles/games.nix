@@ -46,13 +46,12 @@ in
   };
 
   home.packages = builtins.attrValues {
-    factorio = pkgs.unstableUnfree.factorio.override {
+    factorio = pkgs.factorio.override {
       username = "maralorn";
       token = import ../../nixos/machines/apollo/secret/factory.nix;
       experimental = true;
     };
-    inherit (pkgs.unfree) steam;
-    inherit (pkgs) minetest;
+    inherit (pkgs) steam minetest;
     inherit gw2run gw2setup wine;
   };
 }
