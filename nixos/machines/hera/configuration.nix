@@ -36,7 +36,6 @@ in {
     host = "hera-intern:9100";
   }];
 
-  systemd.package = pkgs.systemd-next;
   programs = {
     ssh.extraConfig = ''
       Host fb04*.mathematik.tu-darmstadt.de
