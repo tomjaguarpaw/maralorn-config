@@ -73,7 +73,6 @@ in {
         ./roles/update_tasks.nix
       ]);
     unrestricted = [
-      ./roles/orga.nix
       ./roles/accounting.nix
       ./roles/mail-client.nix
       ./roles/pythia.nix
@@ -86,7 +85,6 @@ in {
   in {
     unrestricted = apolloConfig unrestricted;
     orga = apolloConfig [
-      ./roles/orga.nix
       ./roles/mail-client.nix
       ./roles/accounting.nix
       ./roles/pythia.nix

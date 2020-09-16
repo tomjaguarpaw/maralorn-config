@@ -5,7 +5,7 @@
       Service = {
         Type = "oneshot";
         Environment = "PATH=${pkgs.taskwarrior}/bin:${pkgs.git}/bin";
-        ExecStart = "${config.home.homeDirectory}/.cargo/bin/update_tasks";
+        ExecStart = "${pkgs.kassandra}/bin/update_tasks";
       };
     };
     timers.update_tasks = {
