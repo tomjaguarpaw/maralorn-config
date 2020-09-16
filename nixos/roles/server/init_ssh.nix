@@ -9,11 +9,7 @@ with lib; {
         ssh = {
           enable = true;
           authorizedKeys = config.users.users.root.openssh.authorizedKeys.keys;
-
-          # generate file with
-          # nix-shell -p dropbear
-          # dropbearkey -t rsa -f boot_rsa
-          hostRSAKey = config.m-0.server.initSSHKey;
+          hostKeys = [ config.m-0.server.initSSHKey ];
         };
       };
       postMountCommands = "ip link set eth0 down";

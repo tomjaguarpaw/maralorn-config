@@ -54,7 +54,6 @@ let
         nextcloud = {
           enable = true;
           hostName = hostname;
-          nginx.enable = true;
           package = pkgs.nextcloud18;
           maxUploadSize = "10g";
           caching = {

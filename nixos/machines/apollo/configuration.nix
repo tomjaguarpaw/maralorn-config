@@ -28,7 +28,8 @@ in {
       m0wire = {
         allowedIPsAsRoutes = false;
         ips = [ "${hosts.apollo-wg}/112" ];
-        privateKeyFile = "/etc/nixos/nixos/machines/apollo/secret/wireguard-private";
+        privateKeyFile =
+          "/etc/nixos/nixos/machines/apollo/secret/wireguard-private";
         peers = [{
           publicKey = wireguard.pub.hera;
           allowedIPs = [ "::/0" ];
@@ -90,15 +91,15 @@ in {
   };
   boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };
 
-  cdark_net = {
-    enable = true;
-    hostName = "${me.user}_${config.networking.hostName}";
-    ed25519PrivateKeyFile = /etc/nixos/nixos/machines + "/${config.networking.hostName}"
-      + /secret/tinc/ed25519_key.priv;
-    hostsDirectory =
-      (builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/hosts");
-    ip6address = "fd23:42:cda:4342::2";
-    ip4address = "172.20.71.2";
-  };
+  #cdark_net = {
+    #enable = true;
+    #hostName = "${me.user}_${config.networking.hostName}";
+    #ed25519PrivateKeyFile = /etc/nixos/nixos/machines
+      #+ "/${config.networking.hostName}" + /secret/tinc/ed25519_key.priv;
+    #hostsDirectory =
+      #pkgs.fetchgit { url = "ssh://git@git.darmstadt.ccc.de/cdark.net/hosts"; };
+    #ip6address = "fd23:42:cda:4342::2";
+    #ip4address = "172.20.71.2";
+  #};
   system.stateVersion = "19.09";
 }
