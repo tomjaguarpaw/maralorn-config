@@ -7,14 +7,12 @@ in {
   programs.kitty = {
     enable = true;
     keybindings = {
-      "ctrl+shift+v" = "paste_from_clipboard";
       "ctrl+plus" = "change_font_size all +1.0";
       "ctrl+minus" = "change_font_size all -1.0";
     };
     settings = {
       linux_display_server = "wayland"; # Causes ugly decorations
       hide_window_decorations = true;
-      copy_on_select = "clipboard";
       strip_trailing_spaces = "always";
 
       font_size = "10.5";
