@@ -95,6 +95,12 @@
         "url": "https://github.com/obsidiansystems/obelisk/archive/4f2d3f1c1312d833ae814b7a86cf7b65ea0614ec.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "kassandra": {
+        "ref": "master",
+        "repo": "https://git.darmstadt.ccc.de/maralorn/kassandra",
+        "rev": "8abb3558ac2253733cdc53d973ce283846f38984",
+        "type": "git"
+    },
     "unstable": {
         "branch": "nixos-unstable",
         "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",

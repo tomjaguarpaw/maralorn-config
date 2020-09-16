@@ -4,14 +4,9 @@ self: super: {
       rustPlatform.buildRustPackage {
         pname = "kassandra";
         version = "no-version";
-        src = fetchgit {
-          url = "git@hera.m-0.eu:kassandra";
-          fetchSubmodules = true;
-          sha256 = "0000000000000000000000000000000000000000000000000000000000000000";
-        };
+        src = super.sources.kassandra;
         nativeBuildInputs = [ pkgconfig ];
         buildInputs = [ openssl ];
-        cargoSha256 = "1ilpw4pzm8fqim29jzwlfgz1jyblragalm50vqyj1n11piapxzlk";
-        CARGO_NET_GIT_FETCH_WITH_CLI = true;
+        cargoSha256 = "0aqyaz4kzp93l8mzqjgcnamh0xyhv4g3rv3dfvlkd2w55bz9fmj5";
       }) { };
 }
