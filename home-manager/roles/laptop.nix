@@ -7,7 +7,7 @@ in {
   home.packages = builtins.attrValues rec {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
-      git -C ~/git/config pull
+      git -C ~/git/config pull --ff-only
       update-modes
       sudo -A update-system
     '';

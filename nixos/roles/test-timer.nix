@@ -23,7 +23,7 @@ in {
         StartLimitBurst=3;
       };
       script = ''
-        /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull
+        /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull --ff-only
         /var/cache/gc-links/result-system-hera/bin/switch-to-configuration switch
         /run/wrappers/bin/sudo -u ${user} /var/cache/gc-links/result-home-manager-hera/default/activate
       '';
