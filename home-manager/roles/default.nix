@@ -18,6 +18,7 @@ in {
     direnv = {
       enable = true;
       enableZshIntegration = true;
+      enableNixDirenvIntegration = true;
     };
     tmux = {
       enable = true;
@@ -144,10 +145,9 @@ in {
           "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/${config.home.username}";
       in "${print-pw}/bin/print-pw";
     };
-    file.".direnvrc".text = "source ${pkgs.sources.nix-direnv}/direnvrc";
   };
 
-  systemd.user = { startServices = true; };
+  systemd.user.startServices = true;
 
   services = {
     gpg-agent = {

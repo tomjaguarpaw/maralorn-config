@@ -17,18 +17,6 @@
         "rev": "8abb3558ac2253733cdc53d973ce283846f38984",
         "type": "git"
     },
-    "nix-direnv": {
-        "branch": "master",
-        "description": "A fast, persistent use_nix implementation for direnv [maintainer=@Mic92] ",
-        "homepage": "",
-        "owner": "nix-community",
-        "repo": "nix-direnv",
-        "rev": "300258e2bded28c284451f4fac8475b2240b46f6",
-        "sha256": "1wx3hwyjaysr4wm2hbgr64r2a3bvqxfjvayijvg1sy4b8dxzmk64",
-        "type": "tarball",
-        "url": "https://github.com/nix-community/nix-direnv/archive/300258e2bded28c284451f4fac8475b2240b46f6.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "nixos-hardware": {
         "branch": "master",
         "description": "A collection of NixOS modules covering hardware quirks.",
