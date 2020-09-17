@@ -112,6 +112,7 @@ in {
     verbose = false;
     postExec = "${sortMail}/bin/sort-mail-archive";
   };
+  systemd.user.timers.mbsync.Timer.RandomizedDelaySec = "10m";
 
   accounts.email.accounts = config.m-0.private.mail_accounts;
   systemd.user.services = let
