@@ -53,7 +53,11 @@ in {
       fallback = true
       keep-outputs = true
     '';
-    gc.options = "--delete-older-than 5d";
+    gc = {
+      automatic = true;
+      dates = "Mon 4:00";
+      options = "--delete-older-than 7d";
+    };
   };
 
   systemd.services = let
