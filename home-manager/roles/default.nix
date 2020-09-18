@@ -38,7 +38,8 @@ in {
         "${config.home.homeDirectory}/git/password-store";
     };
     git = {
-      aliases = { sync = "!git pull -r && git push"; };
+      aliases.sync = "!git pull -r && git push";
+      extraConfig.pull.ff = "only";
       enable = true;
       ignores = [
         ".syncthing*.tmp"
@@ -84,9 +85,7 @@ in {
         matheGwProxy = "ssh -q gw nc -q0 %h %p";
         agHost = "fb04217.mathematik.tu-darmstadt.de";
       in {
-        athene = {
-          hostname = "192.168.178.22";
-        };
+        athene.hostname = "192.168.178.22";
         git-auto = {
           hostname = "hera.m-0.eu";
           user = "git";
@@ -129,7 +128,7 @@ in {
           hostname = "kitchen.w17.io";
           user = "chaos";
         };
-        "door.w17.io" = { identityFile = "~/.ssh/door_rsa"; };
+        "door.w17.io".identityFile = "~/.ssh/door_rsa";
       };
     };
   };
