@@ -59,10 +59,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "2a35f664394b379e0c0785cc769ff6ccc791be39",
-        "sha256": "1ac01hyvniiwrwgqlvmx76dxc7aqg71nx3d05d0dc35lbyjq7acf",
+        "rev": "3ebcc76c866ec1c17eedba817efbbbe3e1bc56ad",
+        "sha256": "0qa6pip7x86xyyfblb3cd4rs2rg9ig2zxq4iwc2vsaidjp22ggw2",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/2a35f664394b379e0c0785cc769ff6ccc791be39.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/3ebcc76c866ec1c17eedba817efbbbe3e1bc56ad.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
@@ -71,10 +71,10 @@
         "homepage": "",
         "owner": "obsidiansystems",
         "repo": "obelisk",
-        "rev": "4f2d3f1c1312d833ae814b7a86cf7b65ea0614ec",
-        "sha256": "1shk8yy5pbakcw8aq6b8s3g2xblzf24l78mq0ca0asnvifnp83yb",
+        "rev": "44d62e89ecafd3dd66623d0d0e9339efef8cb77f",
+        "sha256": "1471avmaxckr1n4d05grjk964k8cc82lv6zilr0hkgp6pxbwg3cz",
         "type": "tarball",
-        "url": "https://github.com/obsidiansystems/obelisk/archive/4f2d3f1c1312d833ae814b7a86cf7b65ea0614ec.tar.gz",
+        "url": "https://github.com/obsidiansystems/obelisk/archive/44d62e89ecafd3dd66623d0d0e9339efef8cb77f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "taskwarrior-git-backend": {
