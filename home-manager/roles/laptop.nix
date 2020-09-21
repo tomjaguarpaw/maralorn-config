@@ -31,12 +31,17 @@ in {
         nix_build nixPath "${configPath}/home-manager/target.nix" "-A" "apollo" "-o" "/home/maralorn/.modes"
         activate_mode
     '';
-    selectMode = pkgs.writeShellScriptBin "select-mode" ''
-      ${pkgs.dialog}/bin/dialog --menu "Select Mode" 20 80 5 ${
-        lib.concatStrings (map (mode: "${mode} '' ") modes)
-      } 2> ~/volatile/mode
-      clear
-      activate-mode > /dev/null
+    selectMode = pkgs.writeHaskellScript {
+      name = "select-mode";
+      bins = [ pkgs.dialog activateMode pkgs.ncurses ];
+    } ''
+      main = do
+        mode <- decodeUtf8 <$> (dialog "--menu" "Select Mode" "20" "80" "5" ${
+        lib.concatStrings (map (mode: "\"${mode}\" \"\" ") modes)
+      } |!> captureTrim)
+        clear
+        writeFile "/home/maralorn/volatile/mode" mode
+        activate_mode
     '';
 
     inherit (pkgs.gnome3) nautilus;
