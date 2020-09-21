@@ -36,16 +36,10 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
-        "branch": "master",
-        "description": "Fork of https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git",
-        "homepage": "",
-        "owner": "maralorn",
-        "repo": "nixos-mailserver",
-        "rev": "36f0b7ed587be92bfa9032d45bcc3c9b3520ed6b",
-        "sha256": "1bydmapzvw71qd5lkxkb706jfd8cc5zmnv7dcdxiqd73hyfydpas",
-        "type": "tarball",
-        "url": "https://github.com/maralorn/nixos-mailserver/archive/36f0b7ed587be92bfa9032d45bcc3c9b3520ed6b.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+        "ref": "master",
+        "repo": "git@gitlab.com:maralorn/nixos-mailserver",
+        "rev": "12bf268f6583a7a07bc0787f87465628a9194b51",
+        "type": "git"
     },
     "nixpkgs": {
         "branch": "nixos-20.09",
