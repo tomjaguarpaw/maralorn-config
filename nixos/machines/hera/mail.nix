@@ -26,15 +26,6 @@ in {
     config = { pkgs, lib, ... }: {
       imports =
         [ ../../roles "${(import ../../../nix/sources.nix).nixos-mailserver}" ];
-      services.prometheus.exporters = {
-        node.port = 9101;
-        postfix = {
-          enable = true;
-          systemd.enable = true;
-          showqPath = "/var/lib/postfix/queue/public/showq";
-          user = "postfix";
-        };
-      };
       systemd.services = {
         atomail = {
           script = let
@@ -51,12 +42,33 @@ in {
           startAt = "19:58:00";
           serviceConfig.Type = "oneshot";
         };
+        rspamd = {
+          serviceConfig = {
+            Restart = "always";
+            RestartSec = 3;
+          };
+          unitConfig = {
+            StartLimitIntervalSec = 60;
+            StartLimitBurst = 15;
+          };
+        };
       };
-      services.postfix = {
-        networks = [ "[${config.m-0.prefix}::]/64" "10.0.0.0/24" ];
-        transport = "email2matrix.maralorn.de smtp:[::1]:2525";
+      services = {
+        prometheus.exporters = {
+          node.port = 9101;
+          postfix = {
+            enable = true;
+            systemd.enable = true;
+            showqPath = "/var/lib/postfix/queue/public/showq";
+            user = "postfix";
+          };
+        };
+        postfix = {
+          networks = [ "[${config.m-0.prefix}::]/64" "10.0.0.0/24" ];
+          transport = "email2matrix.maralorn.de smtp:[::1]:2525";
+        };
+        opendkim.keyPath = "/var/dkim";
       };
-      services.opendkim.keyPath = "/var/dkim";
       mailserver = {
         enable = true;
         enableImapSsl = true;
