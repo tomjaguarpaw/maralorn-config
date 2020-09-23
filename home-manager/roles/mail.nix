@@ -152,7 +152,11 @@ in {
     hasImapHost = name: account: account.imap != null;
   in lib.mapAttrs' mkServiceWithName
   (lib.filterAttrs hasImapHost config.accounts.email.accounts) // {
-    mbsync.Service.Environment = "PATH=${pkgs.coreutils}/bin";
+    mbsync.Service = {
+      Environment = "PATH=${pkgs.coreutils}/bin";
+      Restart = "on-failure";
+      RestartSec = "30s";
+    };
   };
 
   programs.msmtp.enable = true;
