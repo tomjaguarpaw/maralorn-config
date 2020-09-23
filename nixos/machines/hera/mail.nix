@@ -99,12 +99,12 @@ in {
         certificateScheme = 1;
         certificateFile = "${certPath}/fullchain.pem";
         keyFile = "${certPath}/key.pem";
+        policydSPFExtraConfig = ''
+          Mail_From_reject = False
+          HELO_Whitelist = hosteurope.de
+          skip_addresses = 127.0.0.0/8,::ffff:127.0.0.0/104,::1,130.83.0.0/16
+        '';
       };
-      policydSPFExtraConfig = ''
-        Mail_From_reject = False
-        HELO_Whitelist = hosteurope.de
-        skip_addresses = 127.0.0.0/8,::ffff:127.0.0.0/104,::1,130.83.0.0/16
-      '';
     };
   };
 }
