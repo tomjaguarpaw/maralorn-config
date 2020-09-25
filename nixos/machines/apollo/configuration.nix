@@ -33,12 +33,12 @@ in {
         peers = [{
           publicKey = wireguard.pub.hera;
           allowedIPs = [ "::/0" ];
-          endpoint = "${hosts.hera-v4}:${builtins.toString wireguard.port}";
+          endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
           presharedKeyFile = "/etc/nixos/common/secret/wireguard-psk";
           persistentKeepalive = 25;
         }];
         postSetup =
-          [ "${pkgs.iproute}/bin/ip route add ${prefix}::/64 dev m0wire" ];
+          [ "${pkgs.iproute}/bin/ip route add ${prefix}::/96 dev m0wire" ];
       };
     };
   };

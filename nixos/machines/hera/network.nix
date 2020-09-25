@@ -14,6 +14,9 @@ in {
       ipv6.addresses = [{
         address = hosts.hera;
         prefixLength = 128;
+      } {
+        address = hosts.hera-wg-host;
+        prefixLength = 128;
       }];
     };
     defaultGateway = "213.136.94.1";

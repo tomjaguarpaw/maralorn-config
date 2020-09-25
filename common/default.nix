@@ -41,6 +41,7 @@ with lib;
         v4-p = "10.0.0";
         in rec {
           hera = "${p}::1";
+          hera-wg-host = "${p}::100:0:1";
 
           hera-v4 = "213.136.94.190";
 
