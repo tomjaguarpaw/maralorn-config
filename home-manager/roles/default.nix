@@ -38,7 +38,7 @@ in {
         "${config.home.homeDirectory}/git/password-store";
     };
     git = {
-      aliases.sync = "!git pull -r && git push";
+      aliases.sync = "!git pull -r --recurse-submodules && git push";
       extraConfig.pull.ff = "only";
       enable = true;
       ignores = [
