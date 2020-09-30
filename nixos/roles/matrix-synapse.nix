@@ -19,11 +19,8 @@ in {
             return 200 "{\"m.homeserver\": { \"base_url\":\"https://matrix.maralorn.de\"} }";
           '';
         };
-        extraConfig = "
-          add_header 'Access-Control-Allow-Origin' '*';
-          add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS';
-          add_header 'Access-Control-Allow-Headers' 'Origin, X-Requested-With, Content-Type, Accept, Authorization';
-        ";
+        extraConfig =
+          "\n          add_header 'Access-Control-Allow-Origin' '*';\n          add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS';\n          add_header 'Access-Control-Allow-Headers' 'Origin, X-Requested-With, Content-Type, Accept, Authorization';\n        ";
       };
       virtualHosts."${hostName}" = {
         forceSSL = true;
@@ -41,7 +38,13 @@ in {
     postgresql.enable = true;
 
     # Synapse
-    matrix-synapse = {
+    matrix-synapse = let
+      server-secrets = pkgs.privateValue {
+        registration_shared_secret = "";
+        macaroon_secret_key = "";
+        turn_shared_secret = "";
+      } "matrix/server-secrets";
+    in server-secrets // {
       enable = true;
       package = pkgs.matrix-synapse;
       enable_metrics = true;
@@ -51,11 +54,7 @@ in {
       database_type = "psycopg2";
       max_upload_size = "30M";
       dynamic_thumbnails = true;
-      registration_shared_secret =
-        config.m-0.private.matrix_registration_secret;
-      macaroon_secret_key = config.m-0.private.macaroon_secret;
       turn_uris = [ "turn:hera.m-0.eu:3478?transport=udp" ];
-      turn_shared_secret = config.m-0.private.turn_secret;
       turn_user_lifetime = "5h";
       allow_guest_access = true;
       logConfig = ''

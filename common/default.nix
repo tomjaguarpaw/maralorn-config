@@ -4,8 +4,6 @@ with lib;
 
 {
 
-  imports = [ ./secret ];
-
   config = {
     m-0.monitoring = [{
       host = "apollo:9100";

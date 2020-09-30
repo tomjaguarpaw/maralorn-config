@@ -1,7 +1,7 @@
 { pkgs, config, ... }:
 let
+  wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts;
-  inherit (config.m-0.private) wireguard;
 in {
   networking = {
     hostName = "hera";
@@ -54,15 +54,16 @@ in {
     nameservers = [ "213.136.95.10" "2a02:c207::1:53" "2a02:c207::2:53" ];
     firewall.allowedTCPPorts = [ 8666 ];
     firewall.allowedUDPPorts = [ wireguard.port ];
-    wireguard.interfaces = {
+    wireguard.interfaces = let
+      {
       m0wire = {
         ips = [ "${hosts.hera-wg}/112" ];
-        privateKeyFile = "/etc/nixos/nixos/machines/hera/secret/wireguard-private";
+        privateKeyFile = pkgs.privatePath "wireguard/hera-private";
         listenPort = wireguard.port;
         peers = [{
           publicKey = wireguard.pub.apollo;
           allowedIPs = [ "${hosts.apollo-wg}/128" ];
-          presharedKeyFile = "/etc/nixos/common/secret/wireguard-psk";
+          presharedKeyFile = pkgs.privatePath "wireguard-psk";
         }];
       };
     };

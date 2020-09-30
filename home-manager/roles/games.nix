@@ -48,7 +48,7 @@ in
   home.packages = builtins.attrValues {
     factorio = pkgs.factorio.override {
       username = "maralorn";
-      token = import ../../nixos/machines/apollo/secret/factory.nix;
+      token = pkgs.privateValue "" "factorio";
       experimental = true;
     };
     inherit (pkgs) steam minetest;

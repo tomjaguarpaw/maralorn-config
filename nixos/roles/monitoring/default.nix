@@ -1,6 +1,5 @@
 { config, ... }:
 let
-  inherit (config.m-0.private) monitoring-guest-pw monitoring-pw;
   commonOptions = {
     enableACME = true;
     forceSSL = true;
@@ -9,10 +8,7 @@ let
       allow ${config.m-0.prefix}::/64;
       deny all;
     '';
-    basicAuth = {
-      guest = monitoring-guest-pw;
-      maralorn = monitoring-pw;
-    };
+    basicAuthFile = pkgs.privatePath "basic-auth/monitoring";
   };
 in {
   imports = [

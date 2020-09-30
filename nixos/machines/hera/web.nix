@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 let
   locations = {
     "/" = {
@@ -18,7 +18,7 @@ in {
     nginx = {
       enable = true;
       virtualHosts."tasks.maralorn.de" = {
-        basicAuth.kassandra = (import secret/kassandra.nix).password;
+        basicAuthFile = pkgs.privatePath "basic-auth/kassandra";
         forceSSL = true;
         enableACME = true;
         locations = {

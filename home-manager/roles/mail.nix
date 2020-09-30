@@ -1,7 +1,10 @@
 { lib, config, pkgs, ... }:
 let
-  inherit (config.m-0.private) sendmail me;
-  inherit (config.m-0.private.mail_filters) sortLists stupidLists notifications;
+  gpg = "6C3D12CD88CDF46C5EAF4D12226A2D41EF5378C9";
+  name = "Malte Brandy";
+  mail = "malte.brandy@maralorn.de";
+  alternates = pkgs.privateValue [] "mail/alternates";
+  lists = pkgs.privateValue { sortList = []; stupidLists = []; notifications = []; } "mail/filters";
   maildir = config.accounts.email.maildirBasePath;
   # mhdr -h List-ID -d Maildir/hera/Archiv/unsortiert | sort | sed 's/^.*<\(.*\)>$/\1/' | uniq | xargs -I '{}' sh -c "notmuch count List:{} | sed 's/$/: {}/'" | sort
   # To find candidates
@@ -114,7 +117,7 @@ in {
   };
   systemd.user.timers.mbsync.Timer.RandomizedDelaySec = "10m";
 
-  accounts.email.accounts = config.m-0.private.mail_accounts;
+  accounts.email.accounts = pkgs.privateValue {} "mail/accounts";
   systemd.user.services = let
     mkService = name: account:
       let
@@ -180,7 +183,7 @@ in {
     packages = [ sortMail ];
     file = let
       mutt_alternates = "@maralorn.de "
-        + (builtins.concatStringsSep " " me.alternates);
+        + (builtins.concatStringsSep " " alternates);
       show-sidebar = pkgs.writeText "show-sidebar" ''
         set sidebar_visible=yes
         bind index <up> sidebar-prev
@@ -229,9 +232,9 @@ in {
         set pgp_replyencrypt = yes
         set crypt_replysignencrypted = yes
         set crypt_verify_sig = yes
-        set pgp_sign_as="${me.gpg}"
+        set pgp_sign_as="${gpg}"
         set pgp_use_gpg_agent = yes
-        set pgp_default_key="${me.gpg}"
+        set pgp_default_key="${gpg}"
         set timeout = 5
 
         set abort_noattach = ask-yes
@@ -244,7 +247,7 @@ in {
         set sendmail="${pkgs.msmtp}/bin/msmtp --read-envelope-from"
         set sort=threads
         set sort_aux=date-sent
-        set realname="${me.name}"
+        set realname="${name}"
         set from=fill-later
         set use_from=yes
         set fast_reply=yes
@@ -277,11 +280,11 @@ in {
         color sidebar_highlight white blue
         set sidebar_format = "%B%* %?N?%N/?%S"
 
-        alias f__0 ${me.name} <${me.mail}>
+        alias f__0 ${name} <${mail}>
         ${builtins.concatStringsSep "\n"
-        (lib.imap1 (n: x: "alias f__${toString n} ${me.name} <${x}>")
-          me.alternates)}
-        send2-hook '~f fill-later' "push <edit-from><kill-line>f__<complete><search>${me.mail}<enter>"
+        (lib.imap1 (n: x: "alias f__${toString n} ${name} <${x}>")
+          alternates)}
+        send2-hook '~f fill-later' "push <edit-from><kill-line>f__<complete><search>${mail}<enter>"
       '';
     };
   };

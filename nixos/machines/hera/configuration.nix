@@ -55,41 +55,7 @@ in {
     startAt = "23:00";
   };
   services = {
-    borgbackup.jobs = let
-      passphrases = (import secret/secrets.nix).borgbackup;
-      defaultBackup = {
-        doInit = false;
-        compression = "zstd,5";
-        exclude = [ "/var/lib/containers/*/var/lib/nextcloud/data/appdata_*" ];
-        paths = [
-          "/media"
-          "/var/lib/containers/mail/var/vmail"
-          "/var/lib/containers/chor-cloud/var/lib/nextcloud/data"
-          "/var/lib/containers/cloud/var/lib/nextcloud/data"
-          "/var/lib/matrix-synapse"
-          "/var/lib/db-backup-dumps/cur"
-          "/var/lib/gitolite"
-          "/var/lib/taskserver"
-        ];
-      };
-    in {
-      fb04217 = defaultBackup // {
-        encryption = {
-          mode = "keyfile-blake2";
-          passphrase = passphrases.fb04217;
-        };
-        extraArgs = "--remote-path=bin/borg";
-        repo =
-          "brandy@fb04217.mathematik.tu-darmstadt.de:/media/maralorn-backup/hera-borg-repo";
-      };
-      cysec = defaultBackup // {
-        encryption = {
-          mode = "keyfile-blake2";
-          passphrase = passphrases.cysec;
-        };
-        repo = "maralorn@borg.cysec.de:/srv/cube/maralorn/hera-borg-repo";
-      };
-    };
+    borgbackup.jobs = pkgs.privateValue {} "borgbackup";
     taskserver = {
       enable = true;
       fqdn = "hera.m-0.eu";
@@ -102,8 +68,8 @@ in {
       user = "maralorn";
       openDefaultPorts = true;
       declarative = syncthing.declarativeWith [ "apollo" ] "/media" // {
-        cert = "/etc/nixos/nixos/machines/hera/secret/syncthing/cert.pem";
-        key = "/etc/nixos/nixos/machines/hera/secret/syncthing/key.pem";
+        cert = pkgs.privatePath "syncthing/hera/cert.pem";
+        key = pkgs.privatePath "syncthing/hera/key.pem";
       };
     };
   };
@@ -116,7 +82,7 @@ in {
     isNormalUser = true;
     uid = 1001;
     extraGroups = [ "wheel" "systemd-journal" ];
-    passwordFile = "/etc/nixos/nixos/machines/hera/secret/pw-choreutes";
+    passwordFile = pkgs.privatePath "pam-login-password-choreutes";
   };
 
   # This value determines the NixOS release with which your system is to be

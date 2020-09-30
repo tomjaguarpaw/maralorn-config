@@ -118,10 +118,10 @@
     dataLocation = "${config.home.homeDirectory}/.task";
     config = {
       taskd = {
-        certificate = builtins.toFile "public.cert" cfg.publicCert;
-        credentials = cfg.credentials;
-        ca = builtins.toFile "ca.cert" cfg.caCert;
-        key = builtins.toFile "private.key" cfg.privateKey;
+        certificate = pkgs.privatePath "taskwarrior/public.cert";
+        credentials = pkgs.privateValue "" "taskwarrior/credentials";
+        ca = pkgs.privatePath "taskwarrior/ca.cert";
+        key = pkgs.privatePath "taskwarrior/private.key";
         server = "hera.m-0.eu:53589";
       };
     };

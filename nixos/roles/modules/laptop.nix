@@ -32,6 +32,7 @@ in {
     };
     programs.dconf.enable = true;
 
+    virtualisation.docker.enable = true;
     services = {
       upower.enable = true;
       printing = {

@@ -1,11 +1,5 @@
-{ pkgs, config, lib, ... }:
-let me = config.m-0.private.me;
-in {
-  imports = [
-    ../../common
-    ./modules/laptop.nix
-    ./modules/loginctl-linger.nix
-  ];
+{ pkgs, config, lib, ... }: {
+  imports = [ ../../common ./modules/laptop.nix ./modules/loginctl-linger.nix ];
 
   i18n = { defaultLocale = "en_US.UTF-8"; };
 
@@ -27,10 +21,7 @@ in {
     acceptTerms = true;
   };
 
-  users = {
-    mutableUsers = false;
-    users.root.openssh.authorizedKeys = { inherit (me) keys; };
-  };
+  users.mutableUsers = false;
 
   environment = {
     etc = lib.mapAttrs'
@@ -43,15 +34,22 @@ in {
       (_: "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt");
   };
 
+  system.activationScripts =
+    lib.mkIf (!pkgs.withSecrets) { text = "echo No secrets loaded!; exit 1;"; };
+
   nix = {
     binaryCaches =
       [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" ];
     binaryCachePublicKeys =
       [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
     nixPath = [ "/etc/nix-path" ];
+    trustedUsers = [ "maralorn" ];
+    buildMachines = pkgs.privateValue [ ] "remote-builders";
     extraOptions = ''
       fallback = true
       keep-outputs = true
+      auto-optimise-store = true
+      builders-use-substitutes = true
     '';
   };
 

@@ -66,8 +66,11 @@ let
             dbname = "nextcloud";
             dbuser = "nextcloud";
             dbhost = "localhost";
-            inherit (cloud) adminpass dbpass adminuser;
-          };
+          } // pkgs.privateValue {
+            adminpass = "";
+            dbpass = "";
+            adminuser = "";
+          } "nextcloud-admin";
           autoUpdateApps = {
             enable = true;
             startAt = "20:30";

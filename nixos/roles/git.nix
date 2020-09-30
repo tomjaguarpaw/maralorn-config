@@ -54,7 +54,7 @@ in {
   services.gitolite = {
     enable = true;
     user = "git";
-    adminPubkey = builtins.elemAt me.keys 0;
+    adminPubkey = builtins.elemAt (pkgs.privateValue [""] "ssh-keys" )0;
     commonHooks = [ "${post-update}/bin/post-update" ];
   };
 }

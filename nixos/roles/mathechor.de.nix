@@ -1,6 +1,5 @@
 { config, pkgs, lib, ... }:
-let inherit (config.m-0.private) mathechor-pw me;
-in {
+{
   services = {
     nginx = {
       enable = true;
@@ -20,15 +19,14 @@ in {
       virtualHosts."intern.mathechor.de" = {
         forceSSL = true;
         enableACME = true;
-        basicAuth.mathechor = mathechor-pw;
+        basicAuthFile = pkgs.privatePath "basic-auth/mathechor.de";
         locations = {
           "/" = {
             root = "/var/www/mathechor/intern";
             index = "index.html";
           };
           "/mathechor.ics" = {
-            proxyPass =
-              "https://cloud.mathechor.de/remote.php/dav/public-calendars/nebsfFTzQKGSSsDc?export";
+            proxyPass = pkgs.privateValue "" "mathechor-ics";
             extraConfig = ''
               proxy_ssl_name cloud.mathechor.de;
               proxy_ssl_server_name on;

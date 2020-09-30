@@ -3,8 +3,8 @@
 # You need pw-files for every configured user in ./secret/pw-useralias for login to work.
 
 let
-  inherit (config.m-0) hosts prefix private;
-  inherit (private) me wireguard;
+  wireguard = import ../../../common/wireguard.nix;
+  inherit (config.m-0) hosts prefix;
   nixos-hardware = (import ../../../nix/sources.nix).nixos-hardware;
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
 in {
@@ -12,7 +12,6 @@ in {
   imports = [
     "${nixos-hardware}/lenovo/thinkpad"
     "${nixos-hardware}/common/pc/ssd"
-    "${(builtins.fetchGit "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark")}"
     ./hardware-configuration.nix
     ../../roles
     ../../roles/fonts.nix
@@ -28,15 +27,15 @@ in {
       m0wire = {
         allowedIPsAsRoutes = false;
         ips = [ "${hosts.apollo-wg}/112" ];
-        privateKeyFile =
-          "/etc/nixos/nixos/machines/apollo/secret/wireguard-private";
+        privateKeyFile = pkgs.privatePath "wireguard/apollo-private";
         peers = [{
           publicKey = wireguard.pub.hera;
           allowedIPs = [ "::/0" ];
-          endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
+          endpoint =
+            "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
           # If v6 is not available:
           # endpoint = "[${hosts.hera-v4}]:${builtins.toString wireguard.port}";
-          presharedKeyFile = "/etc/nixos/common/secret/wireguard-psk";
+          presharedKeyFile = pkgs.privatePath "wireguard/psk";
           persistentKeepalive = 25;
         }];
         postSetup =
@@ -80,9 +79,8 @@ in {
       openDefaultPorts = true;
       declarative = syncthing.declarativeWith [ "hera" ] "/home/maralorn/media"
         // {
-          cert = "/etc/nixos/nixos/machines/apollo/secret/syncthing/cert.pem";
-          key = "/etc/nixos/nixos/machines/apollo/secret/syncthing/key.pem";
-        };
+        cert = pkgs.privatePath "syncthing/apollo/cert.pem";
+        key = pkgs.privatePath "syncthing/apollo/key.pem";
     };
     gnome3.chrome-gnome-shell.enable = true;
     xserver = {
@@ -94,14 +92,14 @@ in {
   boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };
 
   #cdark_net = {
-    #enable = true;
-    #hostName = "${me.user}_${config.networking.hostName}";
-    #ed25519PrivateKeyFile = /etc/nixos/nixos/machines
-      #+ "/${config.networking.hostName}" + /secret/tinc/ed25519_key.priv;
-    #hostsDirectory =
-      #pkgs.fetchgit { url = "ssh://git@git.darmstadt.ccc.de/cdark.net/hosts"; };
-    #ip6address = "fd23:42:cda:4342::2";
-    #ip4address = "172.20.71.2";
+  #enable = true;
+  #hostName = "${me.user}_${config.networking.hostName}";
+  #ed25519PrivateKeyFile = /etc/nixos/nixos/machines
+  #+ "/${config.networking.hostName}" + /secret/tinc/ed25519_key.priv;
+  #hostsDirectory =
+  #pkgs.fetchgit { url = "ssh://git@git.darmstadt.ccc.de/cdark.net/hosts"; };
+  #ip6address = "fd23:42:cda:4342::2";
+  #ip4address = "172.20.71.2";
   #};
   system.stateVersion = "19.09";
 }

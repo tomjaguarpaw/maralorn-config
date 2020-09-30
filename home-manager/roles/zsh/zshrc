@@ -3,6 +3,7 @@ mkdir -p /var/run/user/$UID/tmp/downloads
 setopt prompt_subst
 autoload -U colors && colors # Enable colors in prompt
 
+alias nix-build-remote="nix-build --builders '@/etc/nix/machines' --max-jobs 0"
 alias cat=bat
 alias accounting='hledger -f ~/git/buchhaltung/buchhaltung.ledger ui -- --watch --theme=terminal -T -E'
 alias o=xdg-open

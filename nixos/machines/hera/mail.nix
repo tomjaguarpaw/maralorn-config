@@ -80,11 +80,8 @@ in {
         postfix = {
           networks = [ "[${config.m-0.prefix}::]/64" "10.0.0.0/24" ];
           transport = "email2matrix.maralorn.de smtp:[::1]:2525";
-          virtual = attrsToAliasList (config.m-0.private.lists // {
-            "weather-channel@maralorn.de" = "weather@email2matrix.maralorn.de";
-            "subjects-channel@maralorn.de" =
-              "subjects@email2matrix.maralorn.de";
-            "notify-channel@maralorn.de" = "notify@email2matrix.maralorn.de";
+          virtual = attrsToAliasList (pkgs.privateValue {} "mailing-lists"
+          // {
           });
         };
         opendkim.keyPath = "/var/dkim";
@@ -94,7 +91,7 @@ in {
         enableImapSsl = true;
         fqdn = "hera.m-0.eu";
         domains = [ "m-0.eu" "maralorn.de" "choreutes.de" "mathechor.de" ];
-        loginAccounts = config.m-0.private.mailUsers;
+        loginAccounts = pkgs.privateValue {} "mail-users";
         hierarchySeparator = "/";
         certificateScheme = 1;
         certificateFile = "${certPath}/fullchain.pem";

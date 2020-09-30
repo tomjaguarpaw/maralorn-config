@@ -1,18 +1,18 @@
-{ config, lib, ... }:
-with lib;
-let me = config.m-0.private.me;
+{ config, pkgs, lib, ... }:
+let
+  passwordFile = pkgs.privatePath "pam-login-password";
+  openssh.authorizedKeys.keys = pkgs.privateValue [ ] "ssh-keys";
 in {
   users.users = {
-    "${me.user}" = {
+    maralorn = {
       linger = true;
-      description = me.name;
+      description = "maralorn";
       isNormalUser = true;
       uid = 1000;
       extraGroups =
         [ "wheel" "systemd-journal" "networkmanager" "docker" "video" ];
-      openssh.authorizedKeys.keys = me.keys;
-      passwordFile = me.pw-file;
+      inherit openssh passwordFile;
     };
-    root = { passwordFile = me.pw-file; };
+    root = { inherit openssh passwordFile; };
   };
 }

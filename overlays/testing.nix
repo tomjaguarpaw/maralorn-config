@@ -5,7 +5,6 @@ let
   configPath = "/etc/nixos";
   systems = [ "apollo" "hera" ];
   homes = self.lib.attrNames (import ../home-manager/machines.nix);
-  keys = [ "default" "apollo" "hera" ];
   imports = [ "Control.Exception (onException)" ];
   haskellBody = name: commandline: ''
     main = do
@@ -55,9 +54,6 @@ in {
       bump <- (maybe False (== "bump") . listToMaybe) <$> getArgs
       bracket checkout (rm "-rf") $ \repoDir -> do
         withCurrentDirectory repoDir $ do
-          mapM_ (\x -> git_crypt "unlock" ([i|${configPath}/.git/git-crypt/keys/#{x}|] :: String)) ${
-            self.haskellList keys
-          }
           when bump $ ignoreFailure $ niv "update"
         changed <- (mempty /=) <$> (git "-C" repoDir "status" "--porcelain" |> captureTrim)
         when changed $ do

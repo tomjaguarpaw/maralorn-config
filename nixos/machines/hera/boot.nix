@@ -1,6 +1,6 @@
-{ ... }: {
+{ pkgs, ... }: {
 
-  m-0.server.initSSHKey = "/etc/nixos/nixos/machines/hera/secret/ssh_boot_rsa";
+  m-0.server.initSSHKey = pkgs.privatePath "hera-boot-ssh-key";
 
   boot = {
     loader.grub = {

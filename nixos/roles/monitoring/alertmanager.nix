@@ -12,7 +12,7 @@
             smtp_smarthost = "hera.m-0.eu:587";
             smtp_from = "alertmanager@m-0.eu";
             smtp_auth_username = "alertmanager@m-0.eu";
-            smtp_auth_password = config.m-0.private.alertmanager-mail-pw;
+            smtp_auth_password = pkgs.privateValue "" "alertmanager/mail-pw";
           };
           route = {
             group_by = [ "alert_type" ];

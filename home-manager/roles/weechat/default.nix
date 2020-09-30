@@ -87,7 +87,7 @@ in {
             ${server}.autoconnect = on
             ${server}.username = "${serverConfig.user}"
             ${server}.password = "${serverConfig.password}"
-          '') weechatConfig.matrix)}
+          '') pkgs.privateValue { } "weechat/matrix")}
       '';
     };
     irc = {
@@ -107,7 +107,7 @@ in {
             ${server}.autoconnect = on
             ${server}.username = "${serverConfig.user}"
             ${server}.autojoin = "${serverConfig.channels}"
-          '') weechatConfig.irc)}
+          '') pkgs.privateValue { } "weechat/irc")}
       '';
     };
   };
