@@ -61,6 +61,10 @@ in {
           git "-C" repoDir "config" "user.name" "maralorn (nix-auto-updater)"
           git "-C" repoDir "commit" "-am" "Update dependencies with niv"
         concurrently_
+          (mapConcurrently_ (\x -> test_system_config repoDir x "--builders" "@/etc/nix/machines" "--max-jobs" "0") ${self.haskellList systems})
+          (mapConcurrently_ (\x -> test_home_config repoDir x "--builders" "@/etc/nix/machines" "--max-jobs" "0") ${self.haskellList homes})
+        git "-C" repoDir "submodule" "update" "--init"
+        concurrently_
           (mapConcurrently_ (test_system_config repoDir) ${self.haskellList systems})
           (mapConcurrently_ (test_home_config repoDir) ${self.haskellList homes})
         when changed $ do

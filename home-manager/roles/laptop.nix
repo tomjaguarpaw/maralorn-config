@@ -8,6 +8,7 @@ in {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
       git -C ~/git/config pull --ff-only
+      git -C ~/git/config submodule update
       update-modes
       sudo -A update-system
     '';
