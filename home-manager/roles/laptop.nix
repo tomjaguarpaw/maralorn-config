@@ -27,14 +27,14 @@ in {
       bins = [ activateMode pkgs.git ];
     } ''
       params = ["${configPath}/home-manager/target.nix", "-A", "apollo", "-o", "/home/maralorn/.modes"]
+      privatePath = "${configPath}/private"
+      canaryPath = privatePath <> "/submodule-is-checked-out"
 
       main = do
         say "Building ~/.modes for apollo"
         nixPath <- myNixPath "${configPath}"
-        privateDeinit :: Either SomeException () <- try $ git "submodule" "deinit" "${configPath}"
-        when (isRight privateDeinit) $ do
-           nix_build nixPath (params ++ remoteBuildParams)
-           git "submodule" "update" "--init" "${configPath}"
+        bracket (rm canaryPath) (\() -> git "-C" privatePath "restore" canaryPath) $ \() ->
+          nix_build nixPath (params ++ remoteBuildParams)
         nix_build nixPath params
         activate_mode
     '';

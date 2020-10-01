@@ -4,7 +4,7 @@ let
   name = "Malte Brandy";
   mail = "malte.brandy@maralorn.de";
   alternates = pkgs.privateValue [] "mail/alternates";
-  lists = pkgs.privateValue { sortList = []; stupidLists = []; notifications = []; } "mail/filters";
+  lists = pkgs.privateValue { sortLists = []; stupidLists = []; notifications = []; } "mail/filters";
   maildir = config.accounts.email.maildirBasePath;
   # mhdr -h List-ID -d Maildir/hera/Archiv/unsortiert | sort | sed 's/^.*<\(.*\)>$/\1/' | uniq | xargs -I '{}' sh -c "notmuch count List:{} | sed 's/$/: {}/'" | sort
   # To find candidates
@@ -86,7 +86,7 @@ let
 
     main = do
        setEnv "MBLAZE_PAGER" "cat"
-       setEnv "NOTMUCH_CONFIG" "${config.home.sessionVariables.NOTMUCH_CONFIG}"
+       setEnv "NOTMUCH_CONFIG" "${config.home.sessionVariables.NOTMUCH_CONFIG or ""}"
        reScan
        (listIDs,tos) <- concurrently (mhdr "-h" "List-ID" "-d" "${unsorted}" |> capture) (mhdr "-h" "To" "-d" "${unsorted}" "-A" |> capture)
        let listFilters = mapMaybe filtersFromListIDs . sortNub . mapMaybe (parseMaybe listId) . lines . decodeUtf8 $ listIDs
@@ -165,7 +165,7 @@ in {
   programs.msmtp.enable = true;
   programs.mbsync.enable = true;
   programs.notmuch = {
-    enable = true;
+    enable = config.accounts.email.accounts != {};
     hooks.postInsert = ''
       ${pkgs.notmuch}/bin/notmuch tag +deleted -- "folder:/Trash/ (not tag:deleted)"
       ${pkgs.notmuch}/bin/notmuch tag -deleted -- "(not folder:/Trash/) tag:deleted"
