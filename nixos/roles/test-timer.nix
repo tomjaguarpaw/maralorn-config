@@ -32,7 +32,7 @@ in {
     test-config = {
       environment.NIX_PATH =
         "/etc/nix-path:nixos-config=/etc/nixos/configuration.nix";
-      path = [ pkgs.nix pkgs.gnutar pkgs.gzip pkgs.git pkgs.git-crypt ];
+      path = [ pkgs.nix pkgs.gnutar pkgs.gzip pkgs.git pkgs.git-crypt pkgs.openssh ];
       serviceConfig = {
         Type = "oneshot";
         WorkingDirectory = "/var/cache/gc-links";
@@ -45,7 +45,7 @@ in {
 
     test-and-bump-config = {
       startAt = "03:45";
-      path = [ pkgs.nix pkgs.gnutar pkgs.gzip pkgs.git pkgs.git-crypt ];
+      path = [ pkgs.nix pkgs.gnutar pkgs.gzip pkgs.git pkgs.git-crypt pkgs.openssh ];
       serviceConfig = {
         Type = "oneshot";
         WorkingDirectory = "/var/cache/gc-links";
