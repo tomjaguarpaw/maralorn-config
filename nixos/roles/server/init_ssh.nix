@@ -7,7 +7,7 @@ with lib; {
       network = {
         enable = true;
         ssh = {
-          enable = true;
+          enable = pkgs.withSecrets;
           authorizedKeys = config.users.users.root.openssh.authorizedKeys.keys;
           hostKeys = [ config.m-0.server.initSSHKey ];
         };

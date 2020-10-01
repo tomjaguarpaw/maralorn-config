@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   locations = {
     "/" = {
@@ -16,27 +16,29 @@ in {
   security.acme.certs."hera.m-0.eu".keyType = "rsa4096";
   services = {
     nginx = {
-      enable = true;
-      virtualHosts."tasks.maralorn.de" = {
-        basicAuthFile = pkgs.privatePath "basic-auth/kassandra";
-        forceSSL = true;
-        enableACME = true;
-        locations = {
-          "/" = {
-            proxyPass = "http://[::1]:8000";
-            proxyWebsockets = true;
+      enable = lib.mkForce pkgs.withSecrets;
+      virtualHosts = {
+        "tasks.maralorn.de" = {
+          basicAuthFile = pkgs.privatePath "basic-auth/kassandra";
+          forceSSL = true;
+          enableACME = true;
+          locations = {
+            "/" = {
+              proxyPass = "http://[::1]:8000";
+              proxyWebsockets = true;
+            };
           };
         };
-      };
-      virtualHosts."hera.m-0.eu" = {
-        enableACME = true;
-        forceSSL = true;
-        inherit locations;
-      };
-      virtualHosts."maralorn.de" = {
-        enableACME = true;
-        forceSSL = true;
-        inherit locations;
+        "hera.m-0.eu" = {
+          enableACME = true;
+          forceSSL = true;
+          inherit locations;
+        };
+        "maralorn.de" = {
+          enableACME = true;
+          forceSSL = true;
+          inherit locations;
+        };
       };
     };
   };
