@@ -24,7 +24,7 @@ in {
       };
       script = ''
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull --ff-only
-        /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos submodule update
+        /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos submodule update --init
         /var/cache/gc-links/result-system-hera/bin/switch-to-configuration switch
         /run/wrappers/bin/sudo -u ${user} /var/cache/gc-links/result-home-manager-hera/default/activate
       '';
