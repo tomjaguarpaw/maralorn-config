@@ -1,5 +1,5 @@
 { pkgs, config, lib, ... }: {
-  imports = [ ../../common ./modules/laptop.nix ./modules/loginctl-linger.nix ];
+  imports = [ ../../common ./modules/laptop.nix ./modules/loginctl-linger.nix ./admin.nix ];
 
   i18n = { defaultLocale = "en_US.UTF-8"; };
 
@@ -21,7 +21,10 @@
     acceptTerms = true;
   };
 
-  users.mutableUsers = false;
+  users = {
+    defaultUserShell = pkgs.zsh;
+    mutableUsers = false;
+  };
 
   environment = {
     etc = lib.mapAttrs'
@@ -88,6 +91,14 @@
       recommendedGzipSettings = true;
       recommendedTlsSettings = true;
       clientMaxBodySize = "500m";
+    };
+  };
+  programs = {
+    zsh = {
+      enable = true;
+      autosuggestions.enable = true;
+      enableCompletion = true;
+      syntaxHighlighting.enable = true;
     };
   };
 }

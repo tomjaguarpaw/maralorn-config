@@ -11,13 +11,16 @@ in {
         address = "213.136.94.190";
         prefixLength = 24;
       }];
-      ipv6.addresses = [{
-        address = hosts.hera;
-        prefixLength = 128;
-      } {
-        address = hosts.hera-wg-host;
-        prefixLength = 128;
-      }];
+      ipv6.addresses = [
+        {
+          address = hosts.hera;
+          prefixLength = 128;
+        }
+        {
+          address = hosts.hera-wg-host;
+          prefixLength = 128;
+        }
+      ];
     };
     defaultGateway = "213.136.94.1";
     defaultGateway6 = {
@@ -54,8 +57,7 @@ in {
     nameservers = [ "213.136.95.10" "2a02:c207::1:53" "2a02:c207::2:53" ];
     firewall.allowedTCPPorts = [ 8666 ];
     firewall.allowedUDPPorts = [ wireguard.port ];
-    wireguard.interfaces = let
-      {
+    wireguard.interfaces = {
       m0wire = {
         ips = [ "${hosts.hera-wg}/112" ];
         privateKeyFile = pkgs.privatePath "wireguard/hera-private";
@@ -63,7 +65,7 @@ in {
         peers = [{
           publicKey = wireguard.pub.apollo;
           allowedIPs = [ "${hosts.apollo-wg}/128" ];
-          presharedKeyFile = pkgs.privatePath "wireguard-psk";
+          presharedKeyFile = pkgs.privatePath "wireguard/psk";
         }];
       };
     };

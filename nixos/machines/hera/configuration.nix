@@ -29,7 +29,6 @@ in {
     ./boot.nix
     ./cloud.nix
     ./network.nix
-    ./secret
   ];
   m-0.monitoring = [{
     name = "hera";

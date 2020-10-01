@@ -7,7 +7,7 @@
     config = {
       clients = [{
         UserId = "@marabot:maralorn.de";
-        AccessToken = config.m-0.private.matrix_marabot_token;
+        AccessToken = pkgs.privateValue "" "matrix/marabot-token";
         HomeServerUrl = "https://matrix.maralorn.de";
         Sync = true;
         AutoJoinRooms = true;
@@ -34,12 +34,6 @@
               };
             };
           };
-        }
-        {
-          ID = "wikipedia_service";
-          Type = "wikipedia";
-          UserID = "@marabot:maralorn.de"; # requires a Syncing client
-          Config = { };
         }
       ];
     };

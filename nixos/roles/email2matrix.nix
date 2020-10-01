@@ -5,7 +5,7 @@ let
     MatrixRoomId = "<missing>";
     MatrixHomeserverUrl = "https://matrix.maralorn.de";
     MatrixUserId = "@marabot:matrix.maralorn.de";
-    MatrixAccessToken = config.m-0.private.matrix_marabot_token;
+    MatrixAccessToken = pkgs.privateValue "" "matrix/marabot-token";
     IgnoreSubject = false;
     IgnoreBody = false;
     SkipMarkdown = false;

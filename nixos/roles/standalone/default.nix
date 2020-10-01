@@ -1,7 +1,5 @@
 { pkgs, config, lib, ... }: {
 
-  imports = [ ./admin.nix ];
-
   boot = {
     plymouth.enable = true;
     loader = {
@@ -12,11 +10,6 @@
         configurationLimit = 5;
       };
     };
-  };
-
-  users = {
-    defaultUserShell = pkgs.zsh;
-    mutableUsers = false;
   };
 
   security.sudo.extraConfig =
@@ -46,12 +39,6 @@
 
   programs = {
     mtr.enable = true;
-    zsh = {
-      enable = true;
-      autosuggestions.enable = true;
-      enableCompletion = true;
-      syntaxHighlighting.enable = true;
-    };
   };
 
 }

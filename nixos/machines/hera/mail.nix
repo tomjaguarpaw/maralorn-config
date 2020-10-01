@@ -80,7 +80,7 @@ in {
         postfix = {
           networks = [ "[${config.m-0.prefix}::]/64" "10.0.0.0/24" ];
           transport = "email2matrix.maralorn.de smtp:[::1]:2525";
-          virtual = attrsToAliasList (pkgs.privateValue {} "mailing-lists"
+          virtual = attrsToAliasList (pkgs.privateValue {} "mail/forwards"
           // {
           });
         };
@@ -91,7 +91,7 @@ in {
         enableImapSsl = true;
         fqdn = "hera.m-0.eu";
         domains = [ "m-0.eu" "maralorn.de" "choreutes.de" "mathechor.de" ];
-        loginAccounts = pkgs.privateValue {} "mail-users";
+        loginAccounts = pkgs.privateValue {} "mail/users";
         hierarchySeparator = "/";
         certificateScheme = 1;
         certificateFile = "${certPath}/fullchain.pem";

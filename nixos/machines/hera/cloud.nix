@@ -1,7 +1,11 @@
-{ config, lib, ... }:
+{ pkgs, config, lib, ... }:
 with lib;
 let
-  inherit (config.m-0.private) me cloud;
+  adminCreds = pkgs.privateValue {
+            adminpass = "";
+            dbpass = "";
+            adminuser = "";
+          } "nextcloud-admin";
   inherit (config.m-0) hosts;
   certPath = "/var/lib/acme";
   nextcloud-container = { v6, v4, hostname, rss ? false, extraMounts ? { } }: {
@@ -66,26 +70,18 @@ let
             dbname = "nextcloud";
             dbuser = "nextcloud";
             dbhost = "localhost";
-          } // pkgs.privateValue {
-            adminpass = "";
-            dbpass = "";
-            adminuser = "";
-          } "nextcloud-admin";
+          } // adminCreds;
           autoUpdateApps = {
             enable = true;
             startAt = "20:30";
           };
         };
 
-        redis = { enable = true; };
+        redis.enable = true;
 
         postgresql = {
           enable = true;
           package = pkgs.postgresql_9_6;
-          initialScript = pkgs.writeText "psql-init" ''
-            create role nextcloud with login password '${cloud.dbpass}';
-            create database nextcloud with owner nextcloud;
-          '';
         };
       };
       systemd = {
@@ -109,14 +105,14 @@ let
             };
             startAt = "23:00";
           };
-          "prometheus-nginx-exporter" = {
+          prometheus-nginx-exporter = {
             serviceConfig = { RestartSec = 10; };
           };
-          "nextcloud-setup" = {
+          nextcloud-setup = {
             requires = [ "postgresql.service" ];
             after = [ "postgresql.service" ];
           };
-          "nextcloud-news-updater" = mkIf rss {
+          nextcloud-news-updater = mkIf rss {
             startAt = "20:00";
             serviceConfig = {
               Type = "oneshot";
@@ -124,8 +120,8 @@ let
               ExecStart = let
                 config = pkgs.writeText "updater.ini" (generators.toINI { } {
                   updater = {
-                    user = cloud.adminuser;
-                    password = cloud.adminpass;
+                    user = adminCreds.adminuser;
+                    password = adminCreds.adminpass;
                     url = "https://${hostname}/";
                     mode = "singlerun";
                   };

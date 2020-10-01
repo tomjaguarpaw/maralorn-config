@@ -1,7 +1,6 @@
 { lib, pkgs, config, ... }:
 with lib;
 let
-  weechatConfig = import ../../../nixos/machines/hera/secret/weechat.nix;
   weechat = pkgs.wrapWeechat pkgs.weechat-unwrapped {
     configure = { availablePlugins, ... }: {
       plugins = builtins.attrValues (availablePlugins // {
@@ -87,7 +86,7 @@ in {
             ${server}.autoconnect = on
             ${server}.username = "${serverConfig.user}"
             ${server}.password = "${serverConfig.password}"
-          '') pkgs.privateValue { } "weechat/matrix")}
+          '') (pkgs.privateValue { } "weechat/matrix"))}
       '';
     };
     irc = {
@@ -107,7 +106,7 @@ in {
             ${server}.autoconnect = on
             ${server}.username = "${serverConfig.user}"
             ${server}.autojoin = "${serverConfig.channels}"
-          '') pkgs.privateValue { } "weechat/irc")}
+          '') (pkgs.privateValue { } "weechat/irc"))}
       '';
     };
   };
