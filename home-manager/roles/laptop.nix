@@ -24,12 +24,18 @@ in {
     '';
     updateModes = pkgs.writeHaskellScript {
       name = "update-modes";
-      bins = [ activateMode ];
+      bins = [ activateMode pkgs.git ];
     } ''
+      params = ["${configPath}/home-manager/target.nix", "-A", "apollo", "-o", "/home/maralorn/.modes"]
+
       main = do
         say "Building ~/.modes for apollo"
         nixPath <- myNixPath "${configPath}"
-        nix_build nixPath "${configPath}/home-manager/target.nix" "-A" "apollo" "-o" "/home/maralorn/.modes"
+        privateDeinit :: Either SomeException () <- try $ git "submodule" "deinit" "${configPath}"
+        when (isRight privateDeinit) $ do
+           nix_build nixPath (params ++ remoteBuildParams)
+           git "submodule" "update" "--init" "${configPath}"
+        nix_build nixPath params
         activate_mode
     '';
     selectMode = pkgs.writeHaskellScript {

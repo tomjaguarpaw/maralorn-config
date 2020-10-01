@@ -1,6 +1,5 @@
 { pkgs, config, lib, ... }:
-let inherit (config.m-0.private) me meWork;
-in {
+{
 
   imports = [
     ./zsh
@@ -65,8 +64,8 @@ in {
         ".hledger-web_client_session_key.aes"
         ".nix-gc-roots"
       ];
-      userEmail = me.mail;
-      userName = me.name;
+      userEmail = "malte.brandy@maralorn.de";
+      userName = "Malte Brandy";
     };
     htop = {
       enable = true;
@@ -97,28 +96,24 @@ in {
         };
         hera = {
           hostname = "hera.m-0.eu";
-          user = me.user;
+          user = "maralorn";
         };
         ag-forward = {
           hostname = agHost;
           proxyCommand = matheGwProxy;
-          user = meWork.user;
+          user = "brandy";
         };
         ag = {
           hostname = agHost;
-          user = meWork.user;
+          user = "brandy";
         };
         gw = {
           hostname = "gwres4.mathematik.tu-darmstadt.de";
-          user = meWork.user;
+          user = "brandy";
         };
         shells = {
           hostname = "shells.darmstadt.ccc.de";
-          user = me.user;
-        };
-        vorstand = {
-          hostname = "vorstand.darmstadt.ccc.de";
-          user = me.user;
+          user = "maralorn";
         };
         whisky = {
           hostname = "whisky.w17.io";
@@ -138,7 +133,7 @@ in {
     sessionVariables = {
       PATH = "$HOME/.nix-profile/bin:$PATH";
       BROWSER = "${pkgs.firefox}/bin/firefox";
-      EMAIL = me.mail;
+      EMAIL = "malte.brandy@maralorn.de";
       SUDO_ASKPASS = let
         print-pw = pkgs.writeShellScriptBin "print-pw"
           "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/${config.home.username}";

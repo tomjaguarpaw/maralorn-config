@@ -24,9 +24,9 @@ let
     simpleSortList = listName:
       simple "List:${listName}" "list/${toFolder listName}";
   };
-  myFilters = builtins.map filter.simpleSortList sortLists
-    ++ builtins.map filter.stupidList stupidLists
-    ++ builtins.map filter.notifications notifications;
+  myFilters = builtins.map filter.simpleSortList lists.sortLists
+    ++ builtins.map filter.stupidList lists.stupidLists
+    ++ builtins.map filter.notifications lists.notifications;
   sortMail = pkgs.writeHaskellScript {
     name = "sort-mail-archive";
     bins = [ pkgs.notmuch pkgs.coreutils pkgs.mblaze pkgs.findutils ];
@@ -117,7 +117,7 @@ in {
   };
   systemd.user.timers.mbsync.Timer.RandomizedDelaySec = "10m";
 
-  accounts.email.accounts = pkgs.privateValue {} "mail/accounts";
+  accounts.email.accounts = pkgs.privateValue { } "mail/accounts";
   systemd.user.services = let
     mkService = name: account:
       let
