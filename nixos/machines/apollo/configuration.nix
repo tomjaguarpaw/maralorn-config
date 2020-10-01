@@ -17,7 +17,6 @@ in {
     ../../roles/fonts.nix
     ../../roles/boot-key.nix
     ../../roles/standalone
-    ../../roles/use-cache.nix
   ];
 
   networking = {

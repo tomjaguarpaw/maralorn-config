@@ -22,7 +22,6 @@ in {
     ../../roles/email2matrix.nix
     ../../roles/matrix-synapse.nix
     ../../roles/coturn.nix
-    ../../roles/serve-store.nix
     ../../roles/go-neb.nix
     ./web.nix
     ./mail.nix
