@@ -23,6 +23,12 @@
         "rev": "2590f2dfa35b6a5a22993c5a79c50a8596febf5d",
         "type": "git"
     },
+    "nix-output-monitor": {
+        "ref": "master",
+        "repo": "git@hera.m-0.eu:nix-output-monitor",
+        "rev": "acb1030d1377356881c3d6debf9701f31ba03452",
+        "type": "git"
+    },
     "nixos-hardware": {
         "branch": "master",
         "description": "A collection of NixOS modules covering hardware quirks.",
