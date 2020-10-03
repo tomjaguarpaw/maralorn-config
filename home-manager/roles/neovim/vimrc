@@ -163,6 +163,7 @@ augroup end
 xmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <space>f  :Autoformat<CR>
+nmap <space>l  <Plug>(coc-codelens-action)
 
 " Create mappings for function text object, requires document symbols feature of languageserver.
 
