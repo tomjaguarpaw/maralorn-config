@@ -19,7 +19,7 @@
       virtualHosts."intern.mathechor.de" = {
         forceSSL = true;
         enableACME = true;
-        basicAuthFile = pkgs.privatePath "basic-auth/mathechor.de";
+        basicAuthFile = pkgs.privateFile "basic-auth/mathechor.de";
         locations = {
           "/" = {
             root = "/var/www/mathechor/intern";

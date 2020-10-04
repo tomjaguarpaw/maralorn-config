@@ -1,7 +1,12 @@
 { pkgs, config, lib, ... }: {
-  imports = [ ../../common ./modules/laptop.nix ./modules/loginctl-linger.nix ./admin.nix ];
+  imports = [
+    ../../common
+    ./modules/laptop.nix
+    ./modules/loginctl-linger.nix
+    ./admin.nix
+  ];
 
-  i18n = { defaultLocale = "en_US.UTF-8"; };
+  i18n.defaultLocale = "en_US.UTF-8";
 
   # For nixos-rebuild
   nixpkgs.overlays = import ../../overlays { inherit lib; };

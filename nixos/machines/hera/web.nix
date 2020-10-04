@@ -19,7 +19,7 @@ in {
       enable = lib.mkForce pkgs.withSecrets;
       virtualHosts = {
         "tasks.maralorn.de" = {
-          basicAuthFile = pkgs.privatePath "basic-auth/kassandra";
+          basicAuthFile = pkgs.privateFile "basic-auth/kassandra";
           forceSSL = true;
           enableACME = true;
           locations = {
