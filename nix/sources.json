@@ -26,7 +26,7 @@
     "nix-output-monitor": {
         "ref": "master",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "2a361f0e3b8f625d268e99d7f9edae73ec2c9338",
+        "rev": "a0e0b09124ce73ed1ca4f8e9bdd267dc151a823f",
         "type": "git"
     },
     "nixos-hardware": {
