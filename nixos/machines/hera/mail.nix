@@ -1,19 +1,6 @@
 { config, lib, ... }:
 let
   certPath = "/var/lib/acme/hera.m-0.eu";
-  # attrsToAliasList :: attrsOf (either str (listOf str)) -> str
-  attrsToAliasList = aliases:
-    lib.concatStringsSep "\n" (map (from:
-      let
-        to = aliases.${from};
-        aliasList = (l:
-          let aliasStr = builtins.foldl' (x: y: x + y + ", ") "" l;
-          in builtins.substring 0 (builtins.stringLength aliasStr - 2)
-          aliasStr);
-      in if (builtins.isList to) then
-        "${from} " + (aliasList to)
-      else
-        "${from} ${to}") (builtins.attrNames aliases));
 in {
   networking.firewall = { allowedTCPPorts = [ 25 143 587 993 ]; };
 
@@ -80,9 +67,6 @@ in {
         postfix = {
           networks = [ "[${config.m-0.prefix}::]/64" "10.0.0.0/24" ];
           transport = "email2matrix.maralorn.de smtp:[::1]:2525";
-          virtual = attrsToAliasList (pkgs.privateValue {} "mail/forwards"
-          // {
-          });
         };
         opendkim.keyPath = "/var/dkim";
       };
@@ -91,7 +75,8 @@ in {
         enableImapSsl = true;
         fqdn = "hera.m-0.eu";
         domains = [ "m-0.eu" "maralorn.de" "choreutes.de" "mathechor.de" ];
-        loginAccounts = pkgs.privateValue {} "mail/users";
+        forwards = pkgs.privateValue { } "mail/forwards";
+        loginAccounts = pkgs.privateValue { } "mail/users";
         hierarchySeparator = "/";
         certificateScheme = 1;
         certificateFile = "${certPath}/fullchain.pem";

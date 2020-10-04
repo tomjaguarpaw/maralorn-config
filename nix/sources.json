@@ -44,7 +44,7 @@
     "nixos-mailserver": {
         "ref": "master",
         "repo": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver",
-        "rev": "5cd6f8e7b3f5d5bf56e407c5e79a682cb250d911",
+        "rev": "c813f1205f0da413ec532cca868f57a57b7f8448",
         "type": "git"
     },
     "nixpkgs": {
