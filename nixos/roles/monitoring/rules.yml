@@ -29,3 +29,18 @@ groups:
              severity: critical
           annotations:
              description: 'service {{$labels.exported_name}} on {{$labels.name}} failed.'
+        - alert: out_of_disk
+          expr: ((node_filesystem_avail_bytes{fstype!="tmpfs"}  * 100) / node_filesystem_size_bytes{fstype!="tmpfs"} < 10) and (node_filesystem_avail_bytes / 1024 / 1024 / 1024) < 100
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            description: "mountpoint {{ $labels.mountpoint }} on {{ $labels.instance }} has less than 10% free diskspace."
+
+        - alert: out_of_inodes
+          expr: node_filesystem_files_free{fstype!="tmpfs"} / node_filesystem_files{fstype!="tmpfs"} * 100 < 10
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "host {{ $labels.instance }} mountpoint {{ $labels.instance }} out of inodes."
