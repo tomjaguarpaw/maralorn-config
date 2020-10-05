@@ -22,7 +22,7 @@
     gc = {
       automatic = true;
       dates = "Mon 4:00";
-      options = "--delete-older-than 7d";
+      options = "-d";
     };
   };
 

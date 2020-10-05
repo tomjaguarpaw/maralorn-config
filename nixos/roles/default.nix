@@ -59,6 +59,7 @@
       auto-optimise-store = true
       builders-use-substitutes = true
     '';
+    optimise.automatic = true;
   };
 
   systemd.services = let
