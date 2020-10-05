@@ -35,7 +35,7 @@ groups:
           labels:
             severity: warning
           annotations:
-            description: "mountpoint {{ $labels.mountpoint }} on {{ $labels.name }} has less than 10% free diskspace."
+            description: "{{ $labels.device }} on {{ $labels.name }} has less than 10% free diskspace."
         - alert: out_of_inodes
           expr: node_filesystem_files_free{fstype!="tmpfs"} / node_filesystem_files{fstype!="tmpfs"} * 100 < 10
           for: 5m
