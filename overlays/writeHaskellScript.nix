@@ -56,7 +56,7 @@ self: super: {
          getNivAssign name = tag name <$> getNivPath path name
 
       remoteBuildParams :: [String]
-      remoteBuildParams = ["--builders", "@/etc/nix/machines", "--max-jobs", "0"]
+      remoteBuildParams = ["--builders", "@/etc/nix/machines"]
 
       main :: IO ()
       ${code}
