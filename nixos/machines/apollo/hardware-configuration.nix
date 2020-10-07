@@ -44,5 +44,4 @@
     [{ device = "/dev/disk/by-uuid/66a6b988-2648-4b71-8afc-8a92fee2c446"; }];
 
   nix.maxJobs = lib.mkDefault 8;
-  powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";
 }
