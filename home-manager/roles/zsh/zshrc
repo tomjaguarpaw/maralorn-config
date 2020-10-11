@@ -1,3 +1,6 @@
+if [[ -n "$SSH_CONNECTION" && -z "$TMUX" ]] {
+   mytmux
+}
 mkdir -p /var/run/user/$UID/tmp/downloads
 
 setopt prompt_subst
