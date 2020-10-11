@@ -21,9 +21,6 @@ let
   watchHaskellUnstable = name:
     watchNixpkgsPackage name "haskell-updates"
     "nixpkgs/haskell-updates/haskellPackages.${name}.x86_64-linux";
-  watchHaskellStable = name:
-    watchNixpkgsPackage name "release-20.03"
-    "nixos/release-20.03/nixpkgs.haskellPackages.${name}.x86_64-linux";
   watchedHaskellUpdatesPkgs = builtins.attrNames (pkgs.myHaskellPackages) ++ [
     "jsaddle-warp"
     "stan"
@@ -38,19 +35,12 @@ let
     "cookie"
     "shelly"
   ];
-  watchedStablePkgs = [
-    "ghcide"
-    "brittany"
-    "releaser"
-    "hlint"
-    "relude"
-    "taskwarrior"
-    "pandoc"
-    "shh"
-    "clay"
-  ];
 in {
   services.prometheus.scrapeConfigs =
-    map watchHaskellUnstable watchedHaskellUpdatesPkgs
-    ++ map watchHaskellStable watchedStablePkgs;
+    map watchHaskellUnstable watchedHaskellUpdatesPkgs ++ [
+      (watchNixpkgsPackage "haskell-language-server" "haskell-updates"
+        "nixpkgs/haskell-updates/haskell-language-server.x86_64-linux")
+      (watchNixpkgsPackage "haskell-language-server" "haskell-updates"
+        "nixpkgs/haskell-updates/nix-output-monitor.x86_64-linux")
+    ];
 }
