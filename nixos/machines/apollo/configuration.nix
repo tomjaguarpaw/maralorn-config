@@ -43,7 +43,9 @@ in {
     };
   };
 
-  m-0 = { laptop.enable = true; };
+  m-0.laptop.enable = true;
+
+  programs.sway.enable = true;
 
   services = {
     beesd.filesystems.root = {
@@ -78,9 +80,9 @@ in {
       openDefaultPorts = true;
       declarative = syncthing.declarativeWith [ "hera" ] "/home/maralorn/media"
         // {
-        cert = pkgs.privatePath "syncthing/apollo/cert.pem";
-        key = pkgs.privatePath "syncthing/apollo/key.pem";
-      };
+          cert = pkgs.privatePath "syncthing/apollo/cert.pem";
+          key = pkgs.privatePath "syncthing/apollo/key.pem";
+        };
     };
     gnome3.chrome-gnome-shell.enable = true;
     xserver = {
