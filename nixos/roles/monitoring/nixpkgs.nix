@@ -34,13 +34,12 @@ let
     "github"
     "cookie"
     "shelly"
+    "nix-output-monitor"
   ];
 in {
   services.prometheus.scrapeConfigs =
     map watchHaskellUnstable watchedHaskellUpdatesPkgs ++ [
       (watchNixpkgsPackage "haskell-language-server" "haskell-updates"
         "nixpkgs/haskell-updates/haskell-language-server.x86_64-linux")
-      (watchNixpkgsPackage "haskell-language-server" "haskell-updates"
-        "nixpkgs/haskell-updates/nix-output-monitor.x86_64-linux")
     ];
 }
