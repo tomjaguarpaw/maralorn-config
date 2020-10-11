@@ -9,9 +9,9 @@ let
       confAttr = attr;
     }).activationPackage;
 in lib.mapAttrs (host: configs:
-  pkgs.runCommand "${host}-modes" { } ''
+  (pkgs.runCommand "${host}-modes" { } ''
     mkdir $out
     ${lib.concatStringsSep "\n" (lib.mapAttrsToList
       (mode: config: "ln -s ${buildHomeManager "${host}-${mode}"} $out/${mode}")
       configs)}
-  '') modes
+  '').overrideAttrs (_: { preferLocalBuild = true; })) modes

@@ -36,7 +36,7 @@ in {
     '';
     updateModes = pkgs.writeHaskellScript {
       name = "update-modes";
-      bins = [ activateMode pkgs.git ];
+      bins = [ activateMode pkgs.git pkgs.nix-output-monitor ];
     } ''
       params = ["${configPath}/home-manager/target.nix", "-A", "apollo", "-o", "/home/maralorn/.modes"]
       privatePath = "${configPath}/private"
@@ -46,9 +46,23 @@ in {
         say "Building ~/.modes for apollo"
         nixPath <- myNixPath "${configPath}"
         bracket (rm canaryPath) (\() -> git "-C" privatePath "restore" canaryPath) $ \() ->
-          nix_build nixPath (params ++ remoteBuildParams)
+          nix_build nixPath (params ++ remoteBuildParams) &!> StdOut |> nom
         nix_build nixPath params
         activate_mode
+    '';
+    quickUpdateMode = pkgs.writeHaskellScript {
+      name = "quick-update-mode";
+      bins = [ updateModes pkgs.git pkgs.home-manager pkgs.nix-output-monitor];
+    } ''
+      getMode :: IO Text
+      getMode = decodeUtf8 <$> (cat "/home/maralorn/volatile/mode" |> captureTrim)
+
+      main = do
+        nixPath <- myNixPath "${configPath}"
+        mode <- getMode
+        say [i|Quick switching to mode #{mode} ...|]
+        home_manager (nixPath <> ["switch", "-A", [i|apollo-#{mode}|]]) &!> StdOut |> nom
+        update_modes
     '';
     selectMode = pkgs.writeHaskellScript {
       name = "select-mode";
