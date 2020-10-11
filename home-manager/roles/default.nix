@@ -81,7 +81,6 @@
       controlPersist = "120";
       enable = true;
       matchBlocks = let
-        matheGwProxy = "ssh -q gw nc -q0 %h %p";
         agHost = "fb04217.mathematik.tu-darmstadt.de";
       in {
         athene.hostname = "192.168.178.22";
@@ -100,7 +99,7 @@
         };
         ag-forward = {
           hostname = agHost;
-          proxyCommand = matheGwProxy;
+          proxyJump = "gw";
           user = "brandy";
         };
         ag = {
