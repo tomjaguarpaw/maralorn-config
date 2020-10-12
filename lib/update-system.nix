@@ -3,7 +3,7 @@ let configPath = "/etc/nixos";
 in {
   update-system = pkgs.writeHaskellScript {
     name = "update-system";
-    bins = [ nixos-rebuild ];
+    bins = [ nixos-rebuild pkgs.nix-output-monitor ];
   } ''
     privatePath = "${configPath}/private"
     canaryPath = privatePath <> "/submodule-is-checked-out"
@@ -12,8 +12,7 @@ in {
         paths <- myNixPath "${configPath}"
         args <- getArgs
         bracket (rm canaryPath) (\() -> exe "/run/wrappers/bin/sudo" "-u" "maralorn" "git" "-C" privatePath "restore" canaryPath) $ \() -> do
-           nixos_rebuild (paths ++ ["build"] ++ remoteBuildParams ++ fmap toString args)
-           rm "result"
-        nixos_rebuild (paths ++ ["switch"] ++ fmap toString args)
+           nix_build (paths ++ buildSystemParams ++ ["--no-out-link"] ++ remoteBuildParams ++ fmap toString args) &!> StdOut |> nom
+        nixos_rebuild (paths ++ ["switch"] ++ fmap toString args) &!> StdOut |> nom
   '';
 }

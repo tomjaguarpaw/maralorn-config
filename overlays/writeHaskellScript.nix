@@ -55,6 +55,9 @@ self: super: {
          tag name str = ["-I", [i|#{name :: Text}=#{str :: Text}|]] :: [String]
          getNivAssign name = tag name <$> getNivPath path name
 
+      buildSystemParams :: [String]
+      buildSystemParams = ["<nixpkgs/nixos>", "-A", "system"]
+
       remoteBuildParams :: [String]
       remoteBuildParams = ["--builders", "@/etc/nix/machines", "--max-jobs", "1"]
 

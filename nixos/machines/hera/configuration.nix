@@ -1,8 +1,4 @@
 { config, pkgs, ... }:
-
-# You need pw-files for every configured user in ./secret/pw-useralias for login to work.
-# dropbearkey -t rsa -f /etc/nixos/nixos/machines/<hostname>/secret/boot_rsa
-
 let
   inherit (config.m-0.private) me;
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
