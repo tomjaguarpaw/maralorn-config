@@ -15,14 +15,12 @@ let
        time <- getZonedTime
        let tod = localTimeOfDay . zonedTimeToLocalTime$ time
            hour = todHour tod
-           night = (hour < 6 || hour >= 23)
-           diff = diffUTCTime (zonedTimeToUTC time{zonedTimeToLocalTime = (zonedTimeToLocalTime time){localTimeOfDay = TimeOfDay 23 0 0}}) (zonedTimeToUTC time)
-           delay = toRational diff
-       if night then (do
-         notify_send ([i|Es ist #{formatTime defaultTimeLocale "%H:%M" time} Uhr: Zeit ins Bett zu gehen!|]::String) "Du kannst das hier auch morgen tun!"
-         threadDelay 600000000)
+           night = (hour < 6 && hour >= 1)
+       if night then do {
+         notify_send ([i|Es ist #{formatTime defaultTimeLocale "%H:%M" time} Uhr: Zeit ins Bett zu gehen!|]::String) "Du kannst das hier auch morgen tun!";
+         threadDelay 600000000}
        else
-         threadDelay (floor $ delay * 1000000)
+         threadDelay 600000000
   '';
 in {
 
