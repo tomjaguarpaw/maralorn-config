@@ -2,10 +2,10 @@
 with lib;
 let
   adminCreds = pkgs.privateValue {
-            adminpass = "";
-            dbpass = "";
-            adminuser = "";
-          } "nextcloud-admin";
+    adminpass = "";
+    dbpass = "";
+    adminuser = "";
+  } "nextcloud-admin";
   inherit (config.m-0) hosts;
   certPath = "/var/lib/acme";
   nextcloud-container = { v6, v4, hostname, rss ? false, extraMounts ? { } }: {
@@ -105,9 +105,7 @@ let
             };
             startAt = "23:00";
           };
-          prometheus-nginx-exporter = {
-            serviceConfig = { RestartSec = 10; };
-          };
+          prometheus-nginx-exporter.serviceConfig.RestartSec = 10;
           nextcloud-setup = {
             requires = [ "postgresql.service" ];
             after = [ "postgresql.service" ];
@@ -133,10 +131,14 @@ let
       };
     };
   };
-  serviceConfig = { RestartSec = 10; };
+  serviceConfig.RestartSec = 10;
+  unitConfig = {
+    StartLimitIntervalSec = 30;
+    StartLimitBurst = 2;
+  };
 in {
-  systemd.services."container@cloud" = { inherit serviceConfig; };
-  systemd.services."container@chor-cloud" = { inherit serviceConfig; };
+  systemd.services."container@cloud" = { inherit serviceConfig unitConfig; };
+  systemd.services."container@chor-cloud" = { inherit serviceConfig unitConfig; };
   services = {
     nginx = {
       enable = true;
