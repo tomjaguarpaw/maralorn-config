@@ -9,7 +9,7 @@
   i18n.defaultLocale = "en_US.UTF-8";
 
   # For nixos-rebuild
-  nixpkgs.overlays = import ../../overlays { inherit lib; };
+  nixpkgs.overlays = [ (_: _: { withSecrets = false; }) ] ++ import ../../overlays { inherit lib; };
 
   time.timeZone = "Europe/Berlin";
 
