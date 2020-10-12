@@ -45,7 +45,7 @@ in {
       main = do
         say "Building ~/.modes for apollo"
         nixPath <- myNixPath "${configPath}"
-        bracket (rm canaryPath) (\() -> git "-C" privatePath "restore" canaryPath) $ \() ->
+        bracket (rm "-f" canaryPath) (\() -> git "-C" privatePath "restore" canaryPath) $ \() ->
           nix_build nixPath (params ++ remoteBuildParams) &!> StdOut |> nom
         nix_build nixPath params
         activate_mode
