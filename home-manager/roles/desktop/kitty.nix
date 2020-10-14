@@ -4,6 +4,12 @@ let
   inherit (my-lib) colors;
 in {
   home.sessionVariables.TERMINAL = "${pkgs.kitty}/bin/kitty";
+  home.packages = [
+    (pkgs.runCommandLocal "fake-gnome-terminal" {} ''
+      mkdir -p $out/bin
+      ln -s ${pkgs.kitty}/bin/kitty $out/bin/gnome-terminal
+    '')
+  ];
   programs.kitty = {
     enable = true;
     keybindings = {
