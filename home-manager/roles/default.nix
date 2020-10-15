@@ -39,6 +39,7 @@
     git = {
       aliases.sync = "!git pull -r && git push";
       extraConfig.pull.ff = "only";
+      extraConfig.core.editor = "nvim";
       enable = true;
       ignores = [
         ".syncthing*.tmp"

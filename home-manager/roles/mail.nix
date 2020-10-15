@@ -213,6 +213,7 @@ in {
       '';
     in {
       ".neomuttrc".text = ''
+        editor nvim
         alternative_order text/plain text/html
         auto_view text/*
         auto_view message/*
