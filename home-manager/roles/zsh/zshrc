@@ -36,6 +36,26 @@ fzf-directory-history-search() {
  LBUFFER=$( sed "s/\\$//;s/'//g" ~/.chpwd-recent-dirs | fzf +s |  sed -E 's/\\/\\\\/g;s/^/cd /')
  zle redisplay
 }
-
 zle -N fzf-directory-history-search
 bindkey '^T' fzf-directory-history-search
+
+fzf-directory-search() {
+ LBUFFER=$( fd -t d | fzf |  sed -E 's/\\/\\\\/g;s/^/cd /')
+ zle redisplay
+}
+zle -N fzf-directory-search
+bindkey '^S' fzf-directory-search
+
+fzf-vim-search() {
+ LBUFFER=$( fd -t f | fzf |  sed -E 's/\\/\\\\/g;s/^/vim /')
+ zle redisplay
+}
+zle -N fzf-vim-search
+bindkey '^V' fzf-vim-search
+
+fzf-git-checkout() {
+ LBUFFER=$( git branch --list | fzf |  sed -E 's/ \* //;s/^/git checkout /')
+ zle redisplay
+}
+zle -N fzf-git-checkout
+bindkey '^G' fzf-git-checkout
