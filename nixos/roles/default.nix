@@ -9,7 +9,8 @@
   i18n.defaultLocale = "en_US.UTF-8";
 
   # For nixos-rebuild
-  nixpkgs.overlays = [ (_: _: { withSecrets = false; }) ] ++ import ../../overlays { inherit lib; };
+  nixpkgs.overlays = [ (_: _: { withSecrets = false; }) ]
+    ++ import ../../overlays { inherit lib; };
 
   time.timeZone = "Europe/Berlin";
 
@@ -80,6 +81,7 @@
   in builtins.listToAttrs (map makeConfig hosts);
 
   services = {
+    journald.extraConfig = "SystemMaxUse=512M";
     prometheus.exporters = {
       node = {
         enable = true;
