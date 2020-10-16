@@ -87,6 +87,14 @@
        BS.hPut stdout input
     '';
   in {
+    "add-git" = {
+      target = ".task/hooks/on-add.git";
+      source = "${pkgs.taskwarrior-git}/bin/taskwarrior-git on-add";
+    };
+    "modify-git" = {
+      target = ".task/hooks/on-modify.git";
+      source = "${pkgs.taskwarrior-git}/bin/taskwarrior-git on-modify";
+    };
     "add-notification" = {
       target = ".task/hooks/on-add.notification";
       source = "${on-add}/bin/on-add";
