@@ -8,18 +8,17 @@
         listenAddress = "0.0.0.0";
         extraFlags = [ "--data.retention 170h" ];
         configuration = {
-          global = {
-            smtp_smarthost = "hera.m-0.eu:587";
-            smtp_from = "alertmanager@m-0.eu";
-            smtp_auth_username = "alertmanager@m-0.eu";
-            smtp_auth_password = pkgs.privateValue "" "alertmanager/mail-pw";
-          };
           route = {
             group_by = [ "alert_type" ];
             group_wait = "60s";
             group_interval = "5m";
             repeat_interval = "168h";
             receiver = "alerts";
+          };
+          inhibit_rules = {
+            source_match.alertname = "hydra_miss";
+            target_match.alertname = "nixpkgs";
+            equal = [ "name" ];
           };
           receivers = [{
             name = "alerts";

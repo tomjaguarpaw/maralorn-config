@@ -43,3 +43,10 @@ groups:
             severity: warning
           annotations:
             summary: "mountpoint {{ $labels.mountpoint }} on {{ $labels.name }} out of inodes."
+        - alert: hydra_miss
+          expr: up{instance="hydra.nixos.org:443"} == 0
+          for: 1s
+          labels:
+            severity: info
+          annotations:
+            summary: "no hydra response for {{$labels.job}}."
