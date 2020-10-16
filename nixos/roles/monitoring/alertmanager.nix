@@ -9,25 +9,31 @@
         extraFlags = [ "--data.retention 170h" ];
         configuration = {
           route = {
-            group_by = [ "alert_type" ];
-            group_wait = "60s";
-            group_interval = "5m";
-            repeat_interval = "168h";
-            receiver = "alerts";
-            match_re = { severity = "critical|warning"; };
+            receiver = "null";
+            routes = [{
+              group_by = [ "alert_type" ];
+              group_wait = "60s";
+              group_interval = "5m";
+              repeat_interval = "168h";
+              receiver = "alerts";
+              match_re = { severity = "critical|warning"; };
+            }];
           };
           inhibit_rules = [{
             source_match.alertname = "hydra_miss";
             target_match.alertname = "nixpkgs";
             equal = [ "name" ];
           }];
-          receivers = [{
-            name = "alerts";
-            webhook_configs = [{
-              url =
-                "${config.services.go-neb.baseUrl}:4050/services/hooks/YWxlcnRtYW5hZ2VyX3NlcnZpY2U";
-            }];
-          }];
+          receivers = [
+            {
+              name = "alerts";
+              webhook_configs = [{
+                url =
+                  "${config.services.go-neb.baseUrl}:4050/services/hooks/YWxlcnRtYW5hZ2VyX3NlcnZpY2U";
+              }];
+            }
+            { name = "null"; }
+          ];
         };
       };
     };
