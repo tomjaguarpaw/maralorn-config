@@ -15,11 +15,11 @@
             repeat_interval = "168h";
             receiver = "alerts";
           };
-          inhibit_rules = {
+          inhibit_rules = [{
             source_match.alertname = "hydra_miss";
             target_match.alertname = "nixpkgs";
             equal = [ "name" ];
-          };
+          }];
           receivers = [{
             name = "alerts";
             webhook_configs = [{
