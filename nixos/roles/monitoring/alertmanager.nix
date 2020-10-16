@@ -14,6 +14,7 @@
             group_interval = "5m";
             repeat_interval = "168h";
             receiver = "alerts";
+            match_re = { severity = "critical|warning"; };
           };
           inhibit_rules = [{
             source_match.alertname = "hydra_miss";
