@@ -3,7 +3,7 @@
     prometheus = {
       enable = true;
       extraFlags =
-        [ "--query.lookback-delta 2h" "--storage.tsdb.retention.time 720d" ];
+        [ "--query.lookback-delta=180m" "--storage.tsdb.retention.time=720d" ];
       exporters = {
         blackbox = {
           enable = true;

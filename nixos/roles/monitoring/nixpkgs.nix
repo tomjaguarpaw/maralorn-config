@@ -7,7 +7,7 @@ let
       metrics_path = "/job/${path}/prometheus";
       scheme = "https";
       scrape_interval = "1h";
-      scrape_timeout = "60s";
+      scrape_timeout = "120s";
       static_configs = [{
         labels = {
           name = job_name;
