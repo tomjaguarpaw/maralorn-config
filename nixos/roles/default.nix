@@ -99,7 +99,7 @@
       recommendedGzipSettings = true;
       recommendedTlsSettings = true;
       clientMaxBodySize = "500m";
-      appendConfig = "acces_log off;";
+      appendConfig = "access_log off;";
     };
   };
   programs = {
