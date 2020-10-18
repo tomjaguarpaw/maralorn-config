@@ -8,10 +8,9 @@ let
       confPath = ../home.nix;
       confAttr = attr;
     }).activationPackage;
-in lib.mapAttrs (host: configs:
-  (pkgs.runCommand "${host}-modes" { } ''
-    mkdir $out
-    ${lib.concatStringsSep "\n" (lib.mapAttrsToList
-      (mode: config: "ln -s ${buildHomeManager "${host}-${mode}"} $out/${mode}")
-      configs)}
-  '').overrideAttrs (_: { preferLocalBuild = true; })) modes
+  buildModesForHost = host: modes:
+    pkgs.runCommandLocal "${host}-modes" { } ''
+      mkdir $out
+      ${lib.concatStringsSep "\n" (lib.mapAttrsToList (mode: config:
+        "ln -s ${buildHomeManager "${host}-${mode}"} $out/${mode}") modes)}'';
+in lib.mapAttrs buildModesForHost modes

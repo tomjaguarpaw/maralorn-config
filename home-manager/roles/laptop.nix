@@ -66,7 +66,7 @@ in {
     '';
     selectMode = pkgs.writeHaskellScript {
       name = "select-mode";
-      bins = [ pkgs.dialog activateMode pkgs.ncurses ];
+      bins = [ pkgs.dialog activateMode pkgs.ncurses pkgs.sway pkgs.gnome3.gnome-session ];
     } ''
       main = do
         mode <- decodeUtf8 <$> (dialog "--menu" "Select Mode" "20" "80" "5" ${
@@ -75,6 +75,7 @@ in {
         clear
         writeFile "/home/maralorn/volatile/mode" mode
         activate_mode
+        concurrently_ (swaymsg "exit") gnome_session_quit
     '';
 
     inherit (pkgs.gnome3) nautilus;

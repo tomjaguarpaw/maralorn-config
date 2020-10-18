@@ -18,5 +18,5 @@ let
 
 in {
   home.packages = map superSimpleDesktopItem [ "kassandra2" ]
-    ++ map terminalDesktopItem [ "maintenance" "ncmpcpp" "kassandra" "hotkeys" "vim" "gw2" ];
+    ++ map terminalDesktopItem [ "maintenance" "ncmpcpp" "kassandra" "hotkeys" "vim" "gw2" "chat" ];
 }
