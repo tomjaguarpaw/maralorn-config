@@ -7,6 +7,11 @@ let
     };
 in {
   apollo = let
+    makeAutostart = name:
+      { config, ... }: {
+        config.home.file.".config/autostart/${name}.desktop".source =
+          "${config.home.path}/share/applications/${name}.desktop";
+      };
     setStartpage = startpage:
       { ... }: {
         programs.firefox.profiles."fz2sm95u.default".settings = {
@@ -15,18 +20,15 @@ in {
       };
     makeBlock = list:
       { pkgs, lib, ... }: {
-        systemd.user = {
-          services.blockserver = {
-            Unit = { Description = "Serve a blocklist"; };
-            Service = {
-              ExecStart = "${pkgs.python3}/bin/python -m http.server 8842 -d ${
-                  pkgs.writeTextDir "blocklist"
-                  (lib.concatStringsSep "\r\n" list)
-                }";
-              Restart = "always";
-            };
-            Install = { WantedBy = [ "default.target" ]; };
+        systemd.user.services.blockserver = {
+          Unit.Description = "Serve a blocklist";
+          Service = {
+            ExecStart = "${pkgs.python3}/bin/python -m http.server 8842 -d ${
+                pkgs.writeTextDir "blocklist" (lib.concatStringsSep "\r\n" list)
+              }";
+            Restart = "always";
           };
+          Install.WantedBy = [ "default.target" ];
         };
       };
     tinkerPages = [
@@ -81,6 +83,8 @@ in {
       ./roles/chat.nix
       (setStartpage "https://stats.maralorn.de/d/health-status")
       (makeBlock [ ])
+      (makeAutostart "firefox")
+      (makeAutostart "chat")
     ];
   in {
     unrestricted = apolloConfig unrestricted;
@@ -90,6 +94,9 @@ in {
       ./roles/pythia.nix
       (setStartpage "https://habitica.com")
       (makeBlock (tinkerPages ++ leisurePages))
+      (makeAutostart "firefox")
+      (makeAutostart "kassandra")
+      (makeAutostart "kassandra2")
     ];
     research = apolloConfig [
       ./roles/research.nix

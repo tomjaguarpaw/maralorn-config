@@ -52,7 +52,7 @@ in {
     '';
     quickUpdateMode = pkgs.writeHaskellScript {
       name = "quick-update-mode";
-      bins = [ updateModes pkgs.git pkgs.home-manager pkgs.nix-output-monitor];
+      bins = [ updateModes pkgs.git pkgs.home-manager pkgs.nix-output-monitor ];
     } ''
       getMode :: IO Text
       getMode = decodeUtf8 <$> (cat "/home/maralorn/volatile/mode" |> captureTrim)
@@ -66,7 +66,13 @@ in {
     '';
     selectMode = pkgs.writeHaskellScript {
       name = "select-mode";
-      bins = [ pkgs.dialog activateMode pkgs.ncurses pkgs.sway pkgs.gnome3.gnome-session ];
+      bins = [
+        pkgs.dialog
+        activateMode
+        pkgs.ncurses
+        pkgs.sway
+        pkgs.gnome3.gnome-session
+      ];
     } ''
       main = do
         mode <- decodeUtf8 <$> (dialog "--menu" "Select Mode" "20" "80" "5" ${
@@ -75,7 +81,8 @@ in {
         clear
         writeFile "/home/maralorn/volatile/mode" mode
         activate_mode
-        concurrently_ (swaymsg "exit") gnome_session_quit
+        void $ (try $ swaymsg "exit" :: IO (Either SomeException ()))
+        void $ (try $ gnome_session_quit "--no-prompt" :: IO (Either SomeException ()))
     '';
 
     inherit (pkgs.gnome3) nautilus;

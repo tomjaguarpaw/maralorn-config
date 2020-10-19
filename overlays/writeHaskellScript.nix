@@ -21,6 +21,7 @@ self: super: {
       {-# LANGUAGE ScopedTypeVariables #-}
       {-# LANGUAGE NoImplicitPrelude #-}
       {-# LANGUAGE TupleSections #-}
+      {-# LANGUAGE PartialTypeSignatures #-}
 
       import Shh
       import Relude

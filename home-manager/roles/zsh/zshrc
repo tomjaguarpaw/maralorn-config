@@ -1,6 +1,9 @@
 if [[ -n "$SSH_CONNECTION" && -z "$TMUX" ]] {
    exec mytmux
 }
+if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
+  exec sway
+fi
 mkdir -p /var/run/user/$UID/tmp/downloads
 
 setopt prompt_subst
