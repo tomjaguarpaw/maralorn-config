@@ -1,6 +1,5 @@
 { config, lib, ... }:
-let
-  certPath = "/var/lib/acme/hera.m-0.eu";
+let certPath = "/var/lib/acme/hera.m-0.eu";
 in {
   networking.firewall = { allowedTCPPorts = [ 25 143 587 993 ]; };
 
@@ -67,9 +66,11 @@ in {
         postfix = {
           networks = [ "[${config.m-0.prefix}::]/64" "10.0.0.0/24" ];
           transport = "email2matrix.maralorn.de smtp:[::1]:2525";
-          extraConfig = ''
-            smtpd_tls_loglevel = 2
-          '';
+          config = {
+            # Allow TLSv1 because we need to be able to receive mail from legacy servers.
+            smtpd_tls_protocols = lib.mkForce
+              "TLSv1.3, TLSv1.2, TLSv1.1, TLSv1, !SSLv2, !SSLv3";
+          };
         };
         opendkim.keyPath = "/var/dkim";
       };
