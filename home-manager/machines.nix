@@ -7,6 +7,7 @@ let
     };
 in {
   apollo = let
+    install = f: ({ pkgs, ... }: { home.packages = f pkgs; });
     makeAutostart = name:
       { config, ... }: {
         config.home.file.".config/autostart/${name}.desktop".source =
@@ -97,6 +98,7 @@ in {
       (makeAutostart "firefox")
       (makeAutostart "kassandra")
       (makeAutostart "kassandra2")
+      (install (p: [ p.Discord ])) # For teaching
     ];
     research = apolloConfig [
       ./roles/research.nix
