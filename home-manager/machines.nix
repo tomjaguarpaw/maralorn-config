@@ -98,7 +98,7 @@ in {
       (makeAutostart "firefox")
       (makeAutostart "kassandra")
       (makeAutostart "kassandra2")
-      (install (p: [ p.Discord ])) # For teaching
+      (install (p: [ p.discord ])) # For teaching
     ];
     research = apolloConfig [
       ./roles/research.nix
