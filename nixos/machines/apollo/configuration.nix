@@ -10,8 +10,7 @@ let
 in {
 
   imports = [
-    "${nixos-hardware}/lenovo/thinkpad"
-    "${nixos-hardware}/common/pc/ssd"
+    "${nixos-hardware}/lenovo/thinkpad/t480s"
     ./hardware-configuration.nix
     ../../roles
     ../../roles/fonts.nix
@@ -48,6 +47,7 @@ in {
   programs.sway.enable = true;
 
   services = {
+    fstrim.enable = true;
     beesd.filesystems.root = {
       spec = "LABEL=root";
       hashTableSizeMB = 128;
