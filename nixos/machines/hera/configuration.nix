@@ -49,7 +49,7 @@ in {
     startAt = "23:00";
   };
   services = {
-    borgbackup.jobs = pkgs.privateValue {} "borgbackup";
+    borgbackup.jobs = pkgs.privateValue { } "borgbackup";
     taskserver = {
       enable = true;
       fqdn = "hera.m-0.eu";
