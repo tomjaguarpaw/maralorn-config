@@ -74,12 +74,12 @@ in {
         ./roles/laptop.nix
         ./roles/mail.nix
         ./roles/update_tasks.nix
+        ./roles/research.nix
       ]);
     unrestricted = [
       ./roles/accounting.nix
       ./roles/mail-client.nix
       ./roles/pythia.nix
-      ./roles/research.nix
       ./roles/tinkering.nix
       ./roles/chat.nix
       (setStartpage "https://stats.maralorn.de/d/health-status")
@@ -101,7 +101,6 @@ in {
       (install (p: [ p.discord ])) # For teaching
     ];
     research = apolloConfig [
-      ./roles/research.nix
       (makeBlock (tinkerPages ++ leisurePages))
       (setStartpage "http://localhost:8042")
     ];
