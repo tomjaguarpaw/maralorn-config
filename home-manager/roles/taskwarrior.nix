@@ -89,11 +89,13 @@
   in {
     "add-git" = {
       target = ".task/hooks/on-add.git";
-      source = "${pkgs.taskwarrior-git}/bin/taskwarrior-git on-add";
+      text = "${pkgs.taskwarrior-git}/bin/taskwarrior-git on-add";
+      executable = true;
     };
     "modify-git" = {
       target = ".task/hooks/on-modify.git";
-      source = "${pkgs.taskwarrior-git}/bin/taskwarrior-git on-modify";
+      text = "${pkgs.taskwarrior-git}/bin/taskwarrior-git on-modify";
+      executable = true;
     };
     "add-notification" = {
       target = ".task/hooks/on-add.notification";
