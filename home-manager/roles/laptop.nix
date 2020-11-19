@@ -102,6 +102,6 @@ in {
       abcde beets
 
       # media
-      ncpamixer pavucontrol deluge gmpc calibre mpv youtubeDL;
+      ncpamixer pavucontrol deluge gmpc calibre mpv youtubeDL syncplay;
   };
 }
