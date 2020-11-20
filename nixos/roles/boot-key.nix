@@ -10,6 +10,5 @@ in {
       # copy the secret into the additional initramfs. `null` means same path
       secrets."${secretsFile}" = null;
     };
-    loader.supportsInitrdSecrets = lib.mkForce true;
   };
 }
