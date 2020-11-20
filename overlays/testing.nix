@@ -13,7 +13,7 @@ let
       logFile <- mktemp |> captureTrim
       let command = (${commandline}) &!> StdOut &> Append logFile
           failHandler = do
-            say [i|### Build failure for ${name} config for #{hostname} ###|]
+            say [i|--- Build failure for ${name} config for #{hostname} ---|]
             cat logFile
       say [i|Trying to build ${name} config for #{hostname}. Logging to #{logFile}.|]
       onException command failHandler
