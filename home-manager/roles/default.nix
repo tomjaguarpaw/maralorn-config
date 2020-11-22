@@ -37,7 +37,10 @@
         "${config.home.homeDirectory}/git/password-store";
     };
     git = {
-      aliases.sync = "!git pull -r && git push";
+      aliases = {
+        sync = "!git pull -r && git push";
+        cpr = "!f() { git fetch origin refs/pull/$1/head && git checkout FETCH_HEAD; }; f";
+      };
       extraConfig.pull.ff = "only";
       extraConfig.core.editor = "nvim";
       enable = true;
