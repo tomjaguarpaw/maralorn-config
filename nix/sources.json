@@ -20,7 +20,7 @@
     "kassandra2": {
         "ref": "master",
         "repo": "git@hera.m-0.eu:kassandra2",
-        "rev": "69728f26917c7b6ea08a32136af9e74cf29a9b87",
+        "rev": "312a8bc1fd1ed04c6564be4db4d08b7bcdc64764",
         "type": "git"
     },
     "nix-output-monitor": {
