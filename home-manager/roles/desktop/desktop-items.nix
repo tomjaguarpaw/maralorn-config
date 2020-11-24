@@ -17,7 +17,7 @@ let
   terminalDesktopItem = name: namedTerminalDesktopItem name name;
 
 in {
-  home.packages = map superSimpleDesktopItem [ "kassandra2" "gw2" "chat" ]
+  home.packages = map superSimpleDesktopItem [ "kassandra2" "gw2" "chat" "zoom-us" ]
     ++ map terminalDesktopItem [
       "maintenance"
       "ncmpcpp"
