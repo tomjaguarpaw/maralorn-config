@@ -2,21 +2,15 @@
 let
   modes = pkgs.lib.attrNames (import ../machines.nix).apollo;
   configPath = "${config.home.homeDirectory}/git/config";
-  xinitRc = pkgs.writeScript "zoom-xinitrc" ''
-    #!${pkgs.runtimeShell}
-    unset WAYLAND_DISPLAY
-    export QT_QPA_PLATFORM=xcb
-    export DISPLAY=":99"
-    ${pkgs.zoom-us}/bin/zoom-us &
-    exec ${pkgs.icewm}/bin/icewm
-  '';
 in {
 
   home.packages = builtins.attrValues rec {
-    zoom = pkgs.writeScriptBin "zoom-wrapper" ''
+    zoom = pkgs.writeScriptBin "zoom-us" ''
       #!${pkgs.runtimeShell}
-      exec ${pkgs.xorg.xinit}/bin/xinit ${xinitRc} -- ${pkgs.xorg.xorgserver}/bin/Xephyr :99 -screen 1366x768 -resizeable
+      unset XDG_SESSION_TYPE
+      exec ${pkgs.zoom-us}/bin/zoom-us "$@"
     '';
+
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
       git -C ~/git/config pull --ff-only
@@ -91,7 +85,7 @@ in {
     # web
       chromium
 
-      zoom-us skypeforlinux google-chrome
+      skypeforlinux google-chrome
 
       mumble upower speedtest-cli acpi
 
