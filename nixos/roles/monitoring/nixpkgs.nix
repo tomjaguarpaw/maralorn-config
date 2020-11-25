@@ -35,6 +35,8 @@ let
     "cookie"
     "shelly"
     "nix-output-monitor"
+    "servant"
+    "cachix"
   ];
 in {
   services.prometheus.scrapeConfigs =
