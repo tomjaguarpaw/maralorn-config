@@ -37,6 +37,7 @@ let
     "nix-output-monitor"
     "servant"
     "cachix"
+    "taffybar"
   ];
 in {
   services.prometheus.scrapeConfigs =
