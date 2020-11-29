@@ -48,12 +48,6 @@ in {
 
   services = {
     fstrim.enable = true;
-    beesd.filesystems.root = {
-      spec = "LABEL=root";
-      hashTableSizeMB = 128;
-      verbosity = "crit";
-      extraOptions = [ "--loadavg-target" "4.0" ];
-    };
     snapper = {
       configs.home = {
         subvolume = "/home";
