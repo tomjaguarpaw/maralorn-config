@@ -33,7 +33,7 @@ self: super: {
     '';
   };
   desktop-pkgs = {
-    inherit (self) lm_sensors xwayland xdg_utils libnotify kassandra kassandra2 shotcut;
+    inherit (self) lm_sensors xwayland xdg_utils libnotify kassandra kassandra2 shotcut mlt audacity;
     inherit (self.gnomeExtensions) appindicator system-monitor;
     inherit (self.gnome3)
       dconf dconf-editor gnome-tweaks gnome-shell-extensions adwaita-icon-theme
