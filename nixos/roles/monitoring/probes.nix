@@ -37,9 +37,9 @@ in {
       };
     };
     scrapeConfigs = [
-      (makeProbe "tcp_connect" [ "hera.m-0.eu:25" "hera.m-0.eu:80" ])
+      (makeProbe "tcp_connect" [ "hera.m-0.eu:25" "hera.m-0.eu:80" "bach.vocalensemble-darmstadt.de:25" ])
       (makeProbe "tls_connect" [ "hera.m-0.eu:993" "hera.m-0.eu:443" ])
-      (makeProbe "smtp_starttls" [ "hera.m-0.eu:587" ])
+      (makeProbe "smtp_starttls" [ "hera.m-0.eu:587" "bach.vocalensemble-darmstadt.de:25" "hera.m-0.eu:25" ])
       (makeProbe "http" [ "http://localhost:9090" "http://localhost:9093" ])
       (makeProbe "https" [
         "https://blog.maralorn.de"
