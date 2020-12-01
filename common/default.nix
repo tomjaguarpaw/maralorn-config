@@ -8,6 +8,9 @@ with lib;
     m-0.monitoring = [{
       host = "apollo:9100";
       name = "apollo";
+    }{
+      host = "bach.vocalensemble-darmstadt.de:9100";
+      name = "bach.vocalensemble-darmstadt.de";
     }];
   };
 
