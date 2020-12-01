@@ -3,10 +3,10 @@ let
   makeProbe = module: targets: {
     job_name = "blackbox ${module}";
     metrics_path = "/probe";
-    params = { module = [ module ]; };
+    params.module = [ module ];
     static_configs = [{
       inherit targets;
-      labels = { alert_type = "infrastructure"; };
+      labels.alert_type = "infrastructure";
     }];
     relabel_configs = [
       {
@@ -30,11 +30,9 @@ let
   };
 in {
   services.prometheus = {
-    exporters = {
-      blackbox = {
-        enable = true;
-        configFile = ./blackbox_rules.yml;
-      };
+    exporters.blackbox = {
+      enable = true;
+      configFile = ./blackbox_rules.yml;
     };
     scrapeConfigs = [
       (makeProbe "tls_connect" [ "hera.m-0.eu:993" ])
@@ -43,11 +41,7 @@ in {
         "bach.vocalensemble-darmstadt.de:25"
         "hera.m-0.eu:25"
       ])
-      (makeProbe "http" [
-        "http://localhost:9090"
-        "http://localhost:9093"
-        "hera.m-0.eu:80"
-      ])
+      (makeProbe "http" [ "hera.m-0.eu:80" ])
       (makeProbe "https" [
         "hera.m-0.eu:443"
         "https://blog.maralorn.de"
