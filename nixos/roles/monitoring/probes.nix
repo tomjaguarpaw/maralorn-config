@@ -43,7 +43,7 @@ in {
       ])
       (makeProbe "http" [ "hera.m-0.eu:80" ])
       (makeProbe "https" [
-        "hera.m-0.eu:443"
+        "https://hera.m-0.eu"
         "https://blog.maralorn.de"
         "https://www.mathechor.de"
         "https://cloud.mathechor.de"
