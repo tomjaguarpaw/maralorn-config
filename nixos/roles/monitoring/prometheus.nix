@@ -13,7 +13,7 @@
       ruleFiles = [ ./rules.yml ];
       scrapeConfigs = let alert_type = "infrastructure";
       in [
-        (let name = "exporter matrix-synapse";
+        (let name = "matrix-synapse";
         in {
           job_name = name;
           metrics_path = "/_synapse/metrics";
@@ -26,9 +26,8 @@
           }];
         })
       ] ++ map (entry:
-        let name = "exporter ${entry.name}";
-        in {
-          job_name = name;
+        {
+          job_name = entry.name;
           static_configs = [{
             targets = [ entry.host ];
             labels = {

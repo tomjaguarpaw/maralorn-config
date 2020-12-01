@@ -16,7 +16,7 @@ groups:
           annotations:
              description: 'hydra build {{ $labels.packageName }} on nixpkgs branch {{ $labels.jobset }} failed.'
         - alert: node_down
-          expr: 'up{name!="exporter apollo",instance!="hydra.nixos.org:443"} == 0'
+          expr: 'up{name!="apollo",instance!="hydra.nixos.org:443"} == 0'
           for: 5m
           labels:
              severity: critical
@@ -30,7 +30,7 @@ groups:
           annotations:
              description: 'service {{$labels.exported_name}} on {{$labels.name}} failed.'
         - alert: out_of_diskspace
-          expr: ((min by (device, name) (node_filesystem_avail_bytes{device!="tmpfs",name!="exporter cloud",name!="exporter chor-cloud",name!="exporter mail-server"})  * 100) / max by (device,name) (node_filesystem_size_bytes) < 10) and (max by (device,name) (node_filesystem_avail_bytes) / 1024 / 1024 / 1024) < 100
+          expr: ((min by (device, name) (node_filesystem_avail_bytes{device!="tmpfs",name!="cloud",name!="chor-cloud",name!="mail-server"})  * 100) / max by (device,name) (node_filesystem_size_bytes) < 10) and (max by (device,name) (node_filesystem_avail_bytes) / 1024 / 1024 / 1024) < 100
           for: 5m
           labels:
             severity: warning
@@ -48,4 +48,5 @@ groups:
           for: 5m
           labels:
              severity: warning
+          annotations:
              description: "mail queue {{ $labels.queue }} on {{ $labels.name }} has accumulated a waiting time of {{ $value }}s."
