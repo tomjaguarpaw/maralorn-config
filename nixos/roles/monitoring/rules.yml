@@ -49,4 +49,4 @@ groups:
           labels:
              severity: warning
           annotations:
-             description: "mail queue {{ $labels.queue }} on {{ $labels.name }} has accumulated a waiting time of {{ $value | humanizeDuration }}."
+             description: "mail queue {{ $labels.queue }} of {{ $labels.name }} has accumulated a waiting time of {{ $value | humanizeDuration }}."

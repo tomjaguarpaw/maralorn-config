@@ -10,7 +10,7 @@ in {
       container = true;
     }
     {
-      name = "hera postfix";
+      name = "postfix on hera";
       host = "hera-intern:9154";
       container = true;
     }
