@@ -12,6 +12,7 @@ in {
     {
       name = "hera postfix";
       host = "hera-intern:9154";
+      container = true;
     }
   ];
 

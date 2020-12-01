@@ -1,4 +1,4 @@
-{ config, ... }: {
+{ config, lib, ... }: {
   services = {
     prometheus = {
       enable = true;
@@ -34,7 +34,7 @@
             labels = {
               inherit name;
               inherit alert_type;
-              inherit (entry) container;
+              inContainer = lib.boolToString entry.container;
             };
           }];
         }) config.m-0.monitoring;

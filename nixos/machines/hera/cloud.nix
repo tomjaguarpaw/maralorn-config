@@ -172,6 +172,7 @@ in {
     {
       name = "chor-cloud nginx";
       host = "chor-cloud:9113";
+      container = true;
     }
     {
       name = "cloud container";
@@ -181,6 +182,7 @@ in {
     {
       name = "cloud nginx";
       host = "cloud:9113";
+      container = true;
     }
   ];
   containers = {

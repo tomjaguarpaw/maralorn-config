@@ -30,7 +30,7 @@ groups:
           annotations:
              description: 'service {{$labels.exported_name}} on {{$labels.name}} failed.'
         - alert: out_of_diskspace
-          expr: min by (device, name) (node_filesystem_avail_bytes{device!="tmpfs",container!=true}) / max by (device,name) (node_filesystem_size_bytes) < 0.1
+          expr: min by (device, name) (node_filesystem_avail_bytes{device!="tmpfs",inContainer!="true"}) / max by (device,name) (node_filesystem_size_bytes) < 0.1
           for: 5m
           labels:
             severity: warning
