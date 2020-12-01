@@ -5,11 +5,10 @@ let
 in {
 
   home.packages = builtins.attrValues rec {
-    zoom = pkgs.writeScriptBin "zoom-us" ''
-      #!${pkgs.runtimeShell}
-      unset XDG_SESSION_TYPE
-      exec ${pkgs.zoom-us}/bin/zoom-us "$@"
-    '';
+    zoom = pkgs.zoom-us.overrideAttrs (old: {
+      postFixup = old.postFixup + ''
+        wrapProgram $out/bin/zoom-us --unset XDG_SESSION_TYPE
+      '';});
 
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
