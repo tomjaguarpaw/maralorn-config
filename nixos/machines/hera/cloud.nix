@@ -165,19 +165,21 @@ in {
   };
   m-0.monitoring = [
     {
-      name = "chor-cloud";
+      name = "chor-cloud container";
       host = "chor-cloud:9100";
+      container = true;
     }
     {
-      name = "chor-cloud-nginx";
+      name = "chor-cloud nginx";
       host = "chor-cloud:9113";
     }
     {
-      name = "cloud";
+      name = "cloud container";
       host = "cloud:9100";
+      container = true;
     }
     {
-      name = "cloud-nginx";
+      name = "cloud nginx";
       host = "cloud:9113";
     }
   ];

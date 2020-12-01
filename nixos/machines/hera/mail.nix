@@ -5,8 +5,9 @@ in {
 
   m-0.monitoring = [
     {
-      name = "mail-server";
+      name = "mail container";
       host = "hera-intern:9101";
+      container = true;
     }
     {
       name = "hera postfix";

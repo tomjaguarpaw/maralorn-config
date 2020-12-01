@@ -5,18 +5,20 @@ with lib;
 {
 
   config = {
-    m-0.monitoring = [{
-      host = "apollo:9100";
-      name = "apollo";
-    }{
-      name = "ved server";
-      host = "bach.vocalensemble-darmstadt.de:9100";
-    }
-    {
-      name = "ved postfix";
-      host = "bach.vocalensemble-darmstadt.de:9154";
-    }
-  ];
+    m-0.monitoring = [
+      {
+        host = "apollo:9100";
+        name = "apollo";
+      }
+      {
+        name = "ved server";
+        host = "bach.vocalensemble-darmstadt.de:9100";
+      }
+      {
+        name = "ved postfix";
+        host = "bach.vocalensemble-darmstadt.de:9154";
+      }
+    ];
   };
 
   options = {
@@ -33,6 +35,10 @@ with lib;
         options = {
           name = mkOption { type = types.str; };
           host = mkOption { type = types.str; };
+          container = mkOption {
+            type = types.bool;
+            default = false;
+          };
         };
       });
       default = [ ];
@@ -45,29 +51,29 @@ with lib;
         apollo-p = "${p}::1";
         wg-p = "${p}::100";
         v4-p = "10.0.0";
-        in rec {
-          hera = "${p}::1";
-          hera-wg-host = "${p}::100:0:1";
+      in rec {
+        hera = "${p}::1";
+        hera-wg-host = "${p}::100:0:1";
 
-          hera-v4 = "213.136.94.190";
+        hera-v4 = "213.136.94.190";
 
-          hera-wg = "${wg-p}:1";
-          apollo-wg = "${wg-p}:2";
+        hera-wg = "${wg-p}:1";
+        apollo-wg = "${wg-p}:2";
 
-          hera-intern = "${hera-p}:1";
-          git = "${hera-p}:2";
-          borg = "${hera-p}:3";
-          matrix = "${hera-p}:8";
-          cloud = "${hera-p}:9";
-          chor-cloud = "${hera-p}:b";
+        hera-intern = "${hera-p}:1";
+        git = "${hera-p}:2";
+        borg = "${hera-p}:3";
+        matrix = "${hera-p}:8";
+        cloud = "${hera-p}:9";
+        chor-cloud = "${hera-p}:b";
 
-          apollo = apollo-wg;
+        apollo = apollo-wg;
 
-          hera-intern-v4 = "${v4-p}.1";
-          cloud-intern-v4 = "${v4-p}.2";
-          chor-cloud-intern-v4 = "${v4-p}.3";
-          matrix-intern-v4 = "${v4-p}.4";
-        };
+        hera-intern-v4 = "${v4-p}.1";
+        cloud-intern-v4 = "${v4-p}.2";
+        chor-cloud-intern-v4 = "${v4-p}.3";
+        matrix-intern-v4 = "${v4-p}.4";
+      };
     };
   };
 

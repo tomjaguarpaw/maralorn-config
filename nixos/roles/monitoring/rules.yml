@@ -30,12 +30,12 @@ groups:
           annotations:
              description: 'service {{$labels.exported_name}} on {{$labels.name}} failed.'
         - alert: out_of_diskspace
-          expr: ((min by (device, name) (node_filesystem_avail_bytes{device!="tmpfs",name!="cloud",name!="chor-cloud",name!="mail-server"})  * 100) / max by (device,name) (node_filesystem_size_bytes) < 10) and (max by (device,name) (node_filesystem_avail_bytes) / 1024 / 1024 / 1024) < 100
+          expr: min by (device, name) (node_filesystem_avail_bytes{device!="tmpfs",container!=true}) / max by (device,name) (node_filesystem_size_bytes) < 0.1
           for: 5m
           labels:
             severity: warning
           annotations:
-            description: "{{ $labels.device }} on {{ $labels.name }} has less than 10% free diskspace."
+            description: "{{ $labels.device }} on {{ $labels.name }} has only {{ $value | humanizePercentage }} free diskspace."
         - alert: out_of_inodes
           expr: node_filesystem_files_free{fstype!="tmpfs"} / node_filesystem_files{fstype!="tmpfs"} * 100 < 10
           for: 5m
@@ -49,4 +49,4 @@ groups:
           labels:
              severity: warning
           annotations:
-             description: "mail queue {{ $labels.queue }} on {{ $labels.name }} has accumulated a waiting time of {{ $value }}s."
+             description: "mail queue {{ $labels.queue }} on {{ $labels.name }} has accumulated a waiting time of {{ $value | humanizeDuration }}."

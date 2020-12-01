@@ -34,6 +34,7 @@
             labels = {
               inherit name;
               inherit alert_type;
+              inherit container;
             };
           }];
         }) config.m-0.monitoring;
