@@ -9,9 +9,14 @@ with lib;
       host = "apollo:9100";
       name = "apollo";
     }{
+      name = "ved server";
       host = "bach.vocalensemble-darmstadt.de:9100";
-      name = "bach.vocalensemble-darmstadt.de";
-    }];
+    }
+    {
+      name = "ved postfix";
+      host = "bach.vocalensemble-darmstadt.de:9154";
+    }
+  ];
   };
 
   options = {

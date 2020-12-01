@@ -48,4 +48,4 @@ groups:
           for: 5m
           labels:
              severity: warning
-             description: "mail queue {{ $labels.queue }} on {{ $labels.instance }} has accumulated a waiting time of {{ $value }}s.
+             description: "mail queue {{ $labels.queue }} on {{ $labels.name }} has accumulated a waiting time of {{ $value }}s."

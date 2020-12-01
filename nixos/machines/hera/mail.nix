@@ -9,7 +9,7 @@ in {
       host = "hera-intern:9101";
     }
     {
-      name = "postfix";
+      name = "hera postfix";
       host = "hera-intern:9154";
     }
   ];
