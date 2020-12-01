@@ -26,8 +26,9 @@
           }];
         })
       ] ++ map (entry:
-        {
-          job_name = entry.name;
+        let inherit (entry) name;
+        in {
+          job_name = name;
           static_configs = [{
             targets = [ entry.host ];
             labels = {
