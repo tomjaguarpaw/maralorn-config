@@ -3,7 +3,11 @@
     grafana = {
       enable = true;
       auth.anonymous.enable = true;
-      extraOptions = { AUTH_BASIC_ENABLED = "false"; };
+      extraOptions = {
+        AUTH_BASIC_ENABLED = "false";
+        dashboards.default_home_dashboard_path =
+          "${./grafana-dashboards}/health-status.json";
+      };
       provision = {
         enable = true;
         datasources = [{
