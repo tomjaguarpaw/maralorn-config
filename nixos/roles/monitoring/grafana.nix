@@ -5,7 +5,7 @@
       auth.anonymous.enable = true;
       extraOptions = {
         AUTH_BASIC_ENABLED = "false";
-        dashboards.default_home_dashboard_path =
+        DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH =
           "${./grafana-dashboards}/health-status.json";
       };
       provision = {
