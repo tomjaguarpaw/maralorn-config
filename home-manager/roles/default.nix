@@ -1,5 +1,4 @@
-{ pkgs, config, lib, ... }:
-{
+{ pkgs, config, lib, ... }: {
 
   imports = [
     ./zsh
@@ -31,7 +30,7 @@
     };
     password-store = {
       package = pkgs.pass-wayland.withExtensions
-        (exts: [ exts.pass-update pkgs.pass-clip ]);
+        (exts: [ exts.pass-update pkgs.pass-clip pkgs.pass-otp ]);
       enable = true;
       settings.PASSWORD_STORE_DIR =
         "${config.home.homeDirectory}/git/password-store";
@@ -39,7 +38,8 @@
     git = {
       aliases = {
         sync = "!git pull -r && git push";
-        cpr = "!f() { git fetch origin refs/pull/$1/head && git checkout FETCH_HEAD; }; f";
+        cpr =
+          "!f() { git fetch origin refs/pull/$1/head && git checkout FETCH_HEAD; }; f";
       };
       extraConfig.pull.ff = "only";
       extraConfig.core.editor = "nvim";
@@ -84,8 +84,7 @@
       controlMaster = "auto";
       controlPersist = "120";
       enable = true;
-      matchBlocks = let
-        agHost = "fb04217.mathematik.tu-darmstadt.de";
+      matchBlocks = let agHost = "fb04217.mathematik.tu-darmstadt.de";
       in {
         athene.hostname = "192.168.178.22";
         git-auto = {
