@@ -44,7 +44,7 @@ groups:
           annotations:
             description: "mountpoint {{ $labels.mountpoint }} on {{ $labels.name }} out of inodes."
         - alert: mailq
-          expr: postfix_showq_message_age_seconds_sum > 300
+          expr: postfix_showq_message_age_seconds_sum > 1800
           for: 5m
           labels:
              severity: warning
