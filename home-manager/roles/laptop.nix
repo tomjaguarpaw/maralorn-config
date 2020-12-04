@@ -92,7 +92,7 @@ in {
 
       # tools & office
       feh gimp imagemagick libreoffice-fresh xournal musescore handbrake evince
-      abcde beets
+      abcde beets zbar
 
       # media
       ncpamixer pavucontrol deluge gmpc calibre mpv youtubeDL syncplay;
