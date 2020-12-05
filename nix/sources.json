@@ -44,7 +44,7 @@
     "nixos-mailserver": {
         "ref": "master",
         "repo": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver",
-        "rev": "de84ba1aeb2d2aee4671c6e4ab4f7ea9818d392c",
+        "rev": "7c06f610f15642e3664f01a51c08c64cc8835f51",
         "type": "git"
     },
     "nixpkgs": {
@@ -65,10 +65,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "35a5eb9d2ccbc0d35135fffefe46f0b70d5f2356",
-        "sha256": "1w293v2nb4qx2xmfk4arqmpnn703ncdxwkv5frc52hapyld1rigj",
+        "rev": "0cc6e0a4106f3fc1cc0b765ab0f17b697c3d910d",
+        "sha256": "1pk3sigp3v7kycdfpmizq0w6khk4m5a3zylvd3wrvmknwd3s0cb2",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/35a5eb9d2ccbc0d35135fffefe46f0b70d5f2356.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/0cc6e0a4106f3fc1cc0b765ab0f17b697c3d910d.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
