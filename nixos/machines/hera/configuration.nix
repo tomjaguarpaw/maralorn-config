@@ -70,7 +70,6 @@ in {
   systemd.tmpfiles.rules = [ "Z /media 0750 maralorn nginx - -" ];
 
   users.users.choreutes = {
-    linger = true;
     description = "choreutes";
     isNormalUser = true;
     uid = 1001;
