@@ -45,7 +45,7 @@ self: super: {
 
       getNivPath :: Text -> Text -> IO Text
       getNivPath sources channel = do
-        let expression = [i|(import #{sources}/nix/sources.nix).#{channel}|] :: String
+        let expression = [i|(import #{sources}/nix/sources.nix)."#{channel}"|] :: String
         nix_build ["-Q", "-E", expression, "--no-out-link"] &> devNull
         escaped <- nix_instantiate ["--eval" :: String, "-E", [i|toString #{expression}|]] |> captureTrim
         pure . Text.dropAround ('"' ==) . decodeUtf8 . trim $ escaped
