@@ -9,7 +9,9 @@ let
   haskellBody = name: commandline: ''
     main = do
       (configDir:hostname:args) <-  getArgs
-      paths <- myNixPath $ toText configDir
+      (decodeUtf8 -> homeManagerChannel) <- nix_instantiate "--eval" "-E" ([i|(import ./channels.nix).#{hostname}.home-manager-channel)|] :: String) |> captureTrim
+      (decodeUtf8 -> nixpkgsChannel) <- nix_instantiate "--eval" "-E" ([i|(import ./channels.nix).#{hostname}.nixpkgs-channel)|] :: String) |> captureTrim
+      paths <- aNixPath homeManagerChannel nixpkgsChannel (toText configDir)
       logFile <- mktemp |> captureTrim
       let command = (${commandline}) &!> StdOut &> Append logFile
           failHandler = do

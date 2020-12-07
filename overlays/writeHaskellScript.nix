@@ -50,13 +50,17 @@ self: super: {
         escaped <- nix_instantiate ["--eval" :: String, "-E", [i|toString #{expression}|]] |> captureTrim
         pure . Text.dropAround ('"' ==) . decodeUtf8 . trim $ escaped
 
-      myNixPath :: Text -> IO [String]
-      myNixPath path = concat <$> mapM getNivAssign [("home-manager", "${self.home-manager-channel}"),
-                                                     ("nixpkgs", "${self.nixpkgs-channel}"),
-                                                     ("nixos-unstable", "nixos-unstable")]
+      aNixPath :: Text -> Text -> Text -> IO [String]
+      aNixPath homeManagerChannel nixpkgsChannel path = concat <$> mapM getNivAssign
+          [("home-manager", homeManagerChannel),
+           ("nixpkgs", nixpkgsChannel),
+           ("nixos-unstable", "nixos-unstable")]
         where
          tag name str = ["-I", [i|#{name :: Text}=#{str :: Text}|]] :: [String]
          getNivAssign (name, repo) = tag name <$> getNivPath path repo
+
+      myNixPath :: Text -> IO [String]
+      myNixPath = aNixPath "${self.home-manager-channel}" "${self.nixpkgs-channel}"
 
       buildSystemParams :: [String]
       buildSystemParams = ["<nixpkgs/nixos>", "-A", "system"]
