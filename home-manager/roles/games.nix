@@ -61,7 +61,6 @@ in
     factorio = pkgs.factorio.override {
       username = "maralorn";
       token = pkgs.privateValue "" "factorio";
-      experimental = true;
     };
     inherit (pkgs) steam minetest;
     inherit gw2run gw2setup wine gw2installdxvk;
