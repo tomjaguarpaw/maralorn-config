@@ -19,6 +19,7 @@ let
         hspec-discover cabal-edit paths;
     } // makeHaskellScriptPackages p;
 in {
+  nix-output-monitor = master.nix-output-monitor;
   myHaskellPackages = makeHaskellPackages master.haskellPackages;
   scriptGhc = master.ghc.withPackages
     (p: builtins.attrValues (makeHaskellScriptPackages p));
