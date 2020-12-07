@@ -51,10 +51,12 @@ self: super: {
         pure . Text.dropAround ('"' ==) . decodeUtf8 . trim $ escaped
 
       myNixPath :: Text -> IO [String]
-      myNixPath path = concat <$> mapM getNivAssign ["home-manager", "nixpkgs", "unstable"]
+      myNixPath path = concat <$> mapM getNivAssign [("home-manager", "${self.home-manager-channel}"),
+                                                     ("nixpkgs", "${self.nixpkgs-channel}"),
+                                                     ("nixos-unstable", "nixos-unstable")]
         where
          tag name str = ["-I", [i|#{name :: Text}=#{str :: Text}|]] :: [String]
-         getNivAssign name = tag name <$> getNivPath path name
+         getNivAssign (name, repo) = tag name <$> getNivPath path repo
 
       buildSystemParams :: [String]
       buildSystemParams = ["<nixpkgs/nixos>", "-A", "system"]

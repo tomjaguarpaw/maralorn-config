@@ -1,16 +1,15 @@
 { pkgs, config, lib, ... }: {
-  imports = [
-    ../../common
-    ./modules/laptop.nix
-    ./modules/loginctl-linger.nix
-    ./admin.nix
-  ];
+  imports = [ ../../common ./modules/laptop.nix ./admin.nix ];
 
   i18n.defaultLocale = "en_US.UTF-8";
 
   # For nixos-rebuild
-  nixpkgs.overlays = [ (_: _: { withSecrets = false; }) ]
-    ++ import ../../overlays { inherit lib; };
+  nixpkgs.overlays = [
+    (_: _:
+      {
+        withSecrets = false;
+      } // (import ../../channels.nix).${config.networking.hostName})
+  ] ++ import ../../overlays { inherit lib; };
 
   time.timeZone = "Europe/Berlin";
 
@@ -36,7 +35,9 @@
     etc = lib.mapAttrs'
       (name: value: lib.nameValuePair "nix-path/${name}" { source = value; })
       (lib.filterAttrs (name: value: name != "__functor") pkgs.sources) // {
-        "nix-path/nixos".source = pkgs.sources.nixpkgs;
+        "nix-path/nixos".source = pkgs.sources.${pkgs.nixpkgs-channel};
+        "nix-path/nixpkgs".source = pkgs.sources.${pkgs.nixpkgs-channel};
+        "nix-path/home-manager".source = pkgs.sources.${pkgs.home-manager-channel};
       };
     variables =
       lib.genAttrs [ "CURL_CA_BUNDLE" "GIT_SSL_CAINFO" "SSL_CERT_FILE" ]

@@ -1,9 +1,10 @@
 let
-  inherit (import (import ../nix/sources.nix).nixpkgs { }) lib;
+  inherit (import (import ../nix/sources.nix).nixos-unstable { }) lib;
   makeConfig = hostName: imports:
     { ... }: {
       imports = imports ++ [ ./roles/default.nix ];
       m-0.hostName = hostName;
+      nixpkgs.overlays = [ (_: _: (import ../channels.nix).${hostName}) ];
     };
 in {
   apollo = let

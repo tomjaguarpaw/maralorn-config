@@ -53,7 +53,7 @@ self: super: {
   system-pkgs = self.core-system-pkgs // self.extra-system-pkgs // {
     inherit (self) test-system-config test-home-config test-config;
     home-manager =
-      self.callPackage "${self.sources.home-manager}/home-manager" { };
+      self.callPackage "${self.sources.${self.home-manager-channel}}/home-manager" { };
   };
   foreign-home-pkgs = self.extra-system-pkgs;
 }

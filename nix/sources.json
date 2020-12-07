@@ -1,5 +1,5 @@
 {
-    "home-manager": {
+    "home-manager-20.09": {
         "branch": "release-20.09",
         "description": "Manage a user environment using Nix",
         "homepage": "",
@@ -11,23 +11,47 @@
         "url": "https://github.com/nix-community/home-manager/archive/63f299b3347aea183fc5088e4d6c4a193b334a41.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "home-manager-master": {
+        "branch": "master",
+        "description": "Manage a user environment using Nix",
+        "homepage": "",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "275d1b52126674764f0f3d15c73c2add511bd310",
+        "sha256": "0ci6llimysmshs6zi8nq0ynzw07g8w43avh21s1hci78mlvbf6xd",
+        "type": "tarball",
+        "url": "https://github.com/nix-community/home-manager/archive/275d1b52126674764f0f3d15c73c2add511bd310.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "kassandra": {
-        "ref": "master",
+        "branch": "master",
         "repo": "https://git.darmstadt.ccc.de/maralorn/kassandra",
         "rev": "1a0d19ce5d384e15ca64f7f043e5817cbaaf9f6d",
         "type": "git"
     },
     "kassandra2": {
-        "ref": "master",
+        "branch": "master",
         "repo": "git@hera.m-0.eu:kassandra2",
         "rev": "312a8bc1fd1ed04c6564be4db4d08b7bcdc64764",
         "type": "git"
     },
     "nix-output-monitor": {
-        "ref": "master",
+        "branch": "master",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
         "rev": "5bf7534a9992d5b3f08b16b1a389d869f6f4c835",
         "type": "git"
+    },
+    "nixos-20.09": {
+        "branch": "nixos-20.09",
+        "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
+        "homepage": null,
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "99f8282a65821f148df596ba389606e732eaf99d",
+        "sha256": "1mm4j1vjs875yzv03plng43ivny0qm09hxpn0if8g9vc849rwc2g",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/99f8282a65821f148df596ba389606e732eaf99d.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
         "branch": "master",
@@ -35,28 +59,28 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "025c7a2a7efd9edf341879dbd46988d3a65a76dc",
-        "sha256": "0y7ybybsa91ny5zp1p1r1yq8i2ibsmf1p831zqyb5k4kdijw2dra",
+        "rev": "87522b29a276a4cab5718e5309aa7d74bc7de75a",
+        "sha256": "1zdky8vv7aznvmkkf53f5bm73n19a7728m33hhs8dg1psrb9lkx1",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/025c7a2a7efd9edf341879dbd46988d3a65a76dc.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/87522b29a276a4cab5718e5309aa7d74bc7de75a.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
-        "ref": "master",
+        "branch": "master",
         "repo": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver",
         "rev": "7c06f610f15642e3664f01a51c08c64cc8835f51",
         "type": "git"
     },
-    "nixpkgs": {
-        "branch": "nixos-20.09",
+    "nixos-unstable": {
+        "branch": "nixos-unstable-small",
         "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e34208e10033315fddf6909d3ff68e2d3cf48a23",
-        "sha256": "0ngkx5ny7bschmiwc5q9yza8fdwlc3zg47avsywwp8yn96k2cpmg",
+        "rev": "bb2a7b943917aba1c9c86f049e75a4a594040746",
+        "sha256": "10h82dl959klx3fhwvhxi5pk42jfl4ar0w7v7mbl537af916qxnw",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/e34208e10033315fddf6909d3ff68e2d3cf48a23.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/bb2a7b943917aba1c9c86f049e75a4a594040746.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-master": {
@@ -65,10 +89,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "18493dab889d8afbefde6380c7b00fae3d376d3e",
-        "sha256": "1pfw1bqi5psjgxym9lf83hh26sam0d0y26n561ayb0cl1035qvrb",
+        "rev": "4d20dc5e87a79e9367b577b9263515932c87f513",
+        "sha256": "06mrwrxvsl4q5r1f534qlszs9g8lmnw3anviv35mgckpg9dml05s",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/18493dab889d8afbefde6380c7b00fae3d376d3e.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/4d20dc5e87a79e9367b577b9263515932c87f513.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
@@ -93,18 +117,6 @@
         "sha256": "0pq2s75mj9dpk5lk7igx88641zs0bihp6yx8l5gipaqy2daydrz6",
         "type": "tarball",
         "url": "https://github.com/maralorn/taskwarrior-git-backend/archive/e29c4335e2cb10d6c73832dcbdf931fdc6872e94.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "unstable": {
-        "branch": "nixos-unstable",
-        "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
-        "homepage": null,
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "296793637b22bdb4d23b479879eba0a71c132a66",
-        "sha256": "0j09yih9693w5vjx64ikfxyja1ha7pisygrwrpg3wfz3sssglg69",
-        "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/296793637b22bdb4d23b479879eba0a71c132a66.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }

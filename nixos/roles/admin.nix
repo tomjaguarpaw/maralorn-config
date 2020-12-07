@@ -5,7 +5,6 @@ let
 in {
   users.users = {
     maralorn = {
-      linger = true;
       description = "maralorn";
       isNormalUser = true;
       uid = 1000;
