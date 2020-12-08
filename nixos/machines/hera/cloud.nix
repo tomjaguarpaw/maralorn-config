@@ -81,7 +81,7 @@ let
 
         postgresql = {
           enable = true;
-          package = pkgs.postgresql_9_6;
+          package = pkgs.postgresql_12;
         };
       };
       systemd = {
@@ -137,7 +137,9 @@ let
   };
 in {
   systemd.services."container@cloud" = { inherit serviceConfig unitConfig; };
-  systemd.services."container@chor-cloud" = { inherit serviceConfig unitConfig; };
+  systemd.services."container@chor-cloud" = {
+    inherit serviceConfig unitConfig;
+  };
   services = {
     nginx = {
       enable = true;

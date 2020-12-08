@@ -35,7 +35,10 @@ in {
     };
 
     # Postgres
-    postgresql.enable = true;
+    postgresql = {
+      enable = true;
+      package = pkgs.postgresql_12;
+    };
 
     # Synapse
     matrix-synapse = let
