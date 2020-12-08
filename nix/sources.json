@@ -66,15 +66,15 @@
         "type": "git"
     },
     "nixos-unstable": {
-        "branch": "nixos-unstable-small",
+        "branch": "nixos-unstable",
         "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "bb2a7b943917aba1c9c86f049e75a4a594040746",
-        "sha256": "10h82dl959klx3fhwvhxi5pk42jfl4ar0w7v7mbl537af916qxnw",
+        "rev": "83cbad92d73216bb0d9187c56cce0b91f9121d5a",
+        "sha256": "12g7d0rbw6s2zb6aq1scv59p6b5xzgsqic72pf272bhsa1bymbs0",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/bb2a7b943917aba1c9c86f049e75a4a594040746.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/83cbad92d73216bb0d9187c56cce0b91f9121d5a.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-master": {
