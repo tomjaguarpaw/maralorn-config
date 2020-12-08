@@ -16,7 +16,7 @@ let
         brittany ormolu releaser cabal-fmt stack ghcid ghcide
         haskell-language-server cabal-install dhall taskwarrior pandoc hlint
         cabal2nix weeder reflex-dom password optics shh-extras neuron
-        hspec-discover cabal-edit paths;
+        hspec-discover cabal-edit paths hmatrix;
     } // makeHaskellScriptPackages p;
 in {
   nix-output-monitor = master.nix-output-monitor;
