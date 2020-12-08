@@ -146,18 +146,47 @@ in {
       virtualHosts."cloud.maralorn.de" = {
         enableACME = true;
         forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://cloud";
-          extraConfig = "proxy_set_header Host $host;";
+        locations = {
+          "/" = {
+            proxyPass = "http://cloud";
+            extraConfig = "proxy_set_header Host $host;";
+          };
+          "^~ /.well-known" = {
+            priority = 210;
+            extraConfig = ''
+              location = /.well-known/carddav {
+                return 301 https://$host/remote.php/dav;
+              }
+              location = /.well-known/caldav {
+                return 301 https://$host/remote.php/dav;
+              }
+              try_files $uri $uri/ =404;
+            '';
+          };
         };
       };
       virtualHosts."cloud.mathechor.de" = {
         enableACME = true;
         forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://chor-cloud";
-          extraConfig = "proxy_set_header Host $host;";
+        locations = {
+          "/" = {
+            proxyPass = "http://chor-cloud";
+            extraConfig = "proxy_set_header Host $host;";
+          };
+          "^~ /.well-known" = {
+            priority = 210;
+            extraConfig = ''
+              location = /.well-known/carddav {
+                return 301 https://$host/remote.php/dav;
+              }
+              location = /.well-known/caldav {
+                return 301 https://$host/remote.php/dav;
+              }
+              try_files $uri $uri/ =404;
+            '';
+          };
         };
+
         extraConfig = ''
           more_set_headers "Content-Security-Policy: frame-ancestors 'self' https://*.mathechor.de";
         '';
