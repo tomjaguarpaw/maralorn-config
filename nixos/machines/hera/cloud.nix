@@ -96,7 +96,7 @@ let
           pg_backup = {
             script = let name = "nextcloud-psql-${hostname}";
             in ''
-              ${pkgs.postgresql}/bin/pg_dump nextcloud > /var/lib/db-backup-dumps/cur/${name}
+              ${config.services.postgresql.package}/bin/pg_dump nextcloud > /var/lib/db-backup-dumps/cur/${name}
             '';
             serviceConfig = {
               User = "nextcloud";

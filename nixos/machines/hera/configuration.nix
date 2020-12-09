@@ -39,7 +39,7 @@ in {
   systemd.services."pg_backup" = {
     script = let name = "matrix-synapse";
     in ''
-      ${pkgs.postgresql}/bin/pg_dump matrix-synapse > /var/lib/db-backup-dumps/cur/${name}
+      ${config.services.postgresql.package}/bin/pg_dump matrix-synapse > /var/lib/db-backup-dumps/cur/${name}
     '';
     serviceConfig = {
       User = "matrix-synapse";
