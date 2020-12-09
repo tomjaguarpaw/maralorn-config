@@ -95,6 +95,6 @@ in {
       abcde beets zbar
 
       # media
-      ncpamixer pavucontrol deluge gmpc calibre mpv youtubeDL syncplay;
+      ncpamixer pavucontrol deluge gmpc mpv youtubeDL syncplay;
   };
 }
