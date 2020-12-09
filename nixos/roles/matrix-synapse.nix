@@ -10,26 +10,27 @@ in {
         enableACME = true;
         forceSSL = true;
         locations = {
-          "/.well-known/matrix/server".extraConfig = ''
-            default_type application/json;
-            return 200 "{\"m.server\": \"matrix.maralorn.de:443\"}";
-          '';
-          "/.well-known/matrix/client".extraConfig = ''
-            default_type application/json;
-            return 200 "{\"m.homeserver\": { \"base_url\":\"https://matrix.maralorn.de\"} }";
-          '';
+          "/.well-known/matrix/server".extraConfig =
+            let server."m.server" = "${hostName}:443";
+            in ''
+              add_header Content-Type application/json;
+              return 200 '${builtins.toJSON server}';
+            '';
+          "/.well-known/matrix/client".extraConfig =
+            let client."m.homeserver" = { "base_url" = "https://${hostName}"; };
+            in ''
+              add_header Content-Type application/json;
+              add_header Access-Control-Allow-Origin *;
+              return 200 '${builtins.toJSON client}';
+            '';
         };
-        extraConfig =
-          "\n          add_header 'Access-Control-Allow-Origin' '*';\n          add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS';\n          add_header 'Access-Control-Allow-Headers' 'Origin, X-Requested-With, Content-Type, Accept, Authorization';\n        ";
       };
       virtualHosts."${hostName}" = {
         forceSSL = true;
         enableACME = true;
-        locations = {
-          "/" = {
-            proxyPass = "http://[::1]:8008";
-            extraConfig = "proxy_set_header X-Forwarded-For $remote_addr;";
-          };
+        locations."/" = {
+          proxyPass = "http://[::1]:8008";
+          extraConfig = "proxy_set_header X-Forwarded-For $remote_addr;";
         };
       };
     };
