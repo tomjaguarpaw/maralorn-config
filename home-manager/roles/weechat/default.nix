@@ -113,27 +113,27 @@ in {
 
   systemd.user = {
     timers.logfeed = {
-      Timer = { OnCalendar = "19:55"; };
-      Install = { WantedBy = [ "timers.target" ]; };
+      Timer.OnCalendar = "19:55";
+      Install.WantedBy = [ "timers.target" ];
     };
     services = {
       logfeed = {
-        Unit = { Description = "Logfeed"; };
+        Unit.Description = "Logfeed";
         Service = {
           ExecStart =
-            "${config.home.homeDirectory}/.cabal/bin/logfeed /var/www/rss/chats.xml";
+            "${pkgs.logfeed}/bin/logfeed /var/www/rss/chats.xml";
           Type = "oneshot";
         };
       };
       weechat = {
-        Unit = { Description = "Weechat Tmux Session"; };
+        Unit.Description = "Weechat Tmux Session";
         Service = {
           Type = "forking";
           ExecStart =
             "${pkgs.tmux}/bin/tmux -L weechat -2 new-session -d -s irc -n weechat '${weechat}/bin/weechat'";
           Restart = "always";
         };
-        Install = { WantedBy = [ "default.target" ]; };
+        Install.WantedBy = [ "default.target" ];
       };
     };
   };

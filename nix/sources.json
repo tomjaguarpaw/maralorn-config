@@ -35,6 +35,12 @@
         "rev": "312a8bc1fd1ed04c6564be4db4d08b7bcdc64764",
         "type": "git"
     },
+    "logfeed": {
+        "branch": "master",
+        "repo": "git@hera.m-0.eu:logfeed",
+        "rev": "6f0132abbab58da56e109cedf851a9d9f8a2f8c6",
+        "type": "git"
+    },
     "nixos-20.09": {
         "branch": "nixos-20.09",
         "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
