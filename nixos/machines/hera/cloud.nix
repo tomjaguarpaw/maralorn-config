@@ -149,7 +149,7 @@ in {
         locations = {
           "/" = {
             proxyPass = "http://cloud";
-            extraConfig = "proxy_set_header Host $host;";
+            extraConfig = "proxy_set_header Host $host; proxy_buffering off;";
           };
           "^~ /.well-known" = {
             priority = 210;
@@ -171,7 +171,7 @@ in {
         locations = {
           "/" = {
             proxyPass = "http://chor-cloud";
-            extraConfig = "proxy_set_header Host $host;";
+            extraConfig = "proxy_set_header Host $host; proxy_buffering off;";
           };
           "^~ /.well-known" = {
             priority = 210;
