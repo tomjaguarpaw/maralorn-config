@@ -27,10 +27,13 @@ import           System.Environment             ( getArgs )
 -- TODO: use Text instead of linked lists of chars
 
 type WeechatLog = [WeechatLine]
-data WeechatLine = WeechatLine { wlDate :: Text
-                               , wlTime :: Text
-                               , wlNick :: Text
-                               , wlMsg :: Text } deriving (Show, Eq, Ord)
+data WeechatLine = WeechatLine
+  { wlDate :: Text
+  , wlTime :: Text
+  , wlNick :: Text
+  , wlMsg  :: Text
+  }
+  deriving (Show, Eq, Ord)
 -- TODO: specific handling of join/part/network messages
 
 header :: Text
@@ -43,7 +46,12 @@ header = unlines
   , "  </head>"
   ]
 
-data LogFile = LogFile { path :: Text, server :: Text, channel :: Text } deriving (Show, Eq, Ord, Read)
+data LogFile = LogFile
+  { path    :: Text
+  , server  :: Text
+  , channel :: Text
+  }
+  deriving (Show, Eq, Ord, Read)
 
 type Parser = MP.Parsec Text Text
 
@@ -52,9 +60,9 @@ hyphen = MP.char '-'
 parseDate :: Parser Text
 parseDate = do
   year <- MP.count 4 MP.digitChar
-  void $ hyphen
+  void hyphen
   month <- MP.count 2 MP.digitChar
-  void $ hyphen
+  void hyphen
   day <- MP.count 2 MP.digitChar
   pure [i|#{year}-#{month}-#{day}|]
 parseTime :: Parser Text
@@ -73,8 +81,8 @@ folder :: Parser Text
 folder = toText <$> MP.manyTill MP.asciiChar dirSep
 
 matrixParser :: Text -> Parser LogFile
-matrixParser = \p -> do
-  void $ MP.count 4 (MP.digitChar) -- year
+matrixParser p = do
+  void $ MP.count 4 MP.digitChar -- year
   void dirSep
   prefix <- symbol "matrix:"
   server <- folder
@@ -87,8 +95,8 @@ matrixParser = \p -> do
   pure $ LogFile p (prefix <> server) channel
 
 ircParser :: Text -> Parser LogFile
-ircParser = \p -> do
-  void $ MP.count 4 (MP.digitChar)
+ircParser p = do
+  void $ MP.count 4 MP.digitChar
   void dirSep
   prefix  <- symbol "irc:" :: Parser Text
   server  <- folder
@@ -105,8 +113,7 @@ main = do
   now <- T.getCurrentTime
   let getFiles = \t p ->
         L.groupSortOn (\x -> (channel x, server x))
-          .   mapMaybe (\x -> (MP.parseMaybe (p x) x))
-          .   fmap toText
+          .   mapMaybe ((\x -> MP.parseMaybe (p x) x) . toText)
           <$> getDirectoryFiles
                 (toString logFolder)
                 (   T.formatTime T.defaultTimeLocale t
@@ -126,28 +133,33 @@ main = do
 today :: T.UTCTime -> T.Day
 today = T.utctDay
 yesterday :: T.UTCTime -> T.Day
-yesterday = T.addDays (0 - 1) . today
+yesterday = T.addDays (negate 1) . today
 
 timestamp :: T.UTCTime -> Text
 timestamp = toText . T.formatTime T.defaultTimeLocale "%Y-%m-%d %H:%M"
 
 logToFeedEntry :: T.UTCTime -> Log -> Maybe Entry
 logToFeedEntry now =
-  \Log { logchannel, logserver, messages = filter msgFilter -> messages } -> if
-    | length messages > 0 -> Just
-      (nullEntry [i|#{logserver}-#{logchannel}-#{timestamp now}|]
-                 (TextString [i|#{logchannel} - (#{logserver})|])
-                 (timestamp now)
-        )
+  \Log { logchannel, logserver, messages = filter msgFilter -> messages } ->
+    if not (null messages)
+      then Just (nullEntry [i|#{logserver}-#{logchannel}-#{timestamp now}|]
+                           (TextString [i|#{logchannel} - (#{logserver})|])
+                           (timestamp now)
+                )
         { entryContent = Just $ HTMLContent $ printHTML messages
         }
-    | otherwise -> Nothing
+      else Nothing
  where
   cutoff =
     toText $ T.formatTime T.defaultTimeLocale "%Y-%m-%d 19:50" $ yesterday now
   msgFilter msg = [i|#{wlDate msg} #{wlTime msg}|] >= cutoff
 
-data Log = Log { logchannel :: Text, logserver :: Text, messages :: [WeechatLine] } deriving (Show, Eq, Ord)
+data Log = Log
+  { logchannel :: Text
+  , logserver  :: Text
+  , messages   :: [WeechatLine]
+  }
+  deriving (Show, Eq, Ord)
 
 readLogFiles :: NonEmpty LogFile -> IO Log
 readLogFiles files =
@@ -156,7 +168,7 @@ readLogFiles files =
 
 
 readLogFile :: LogFile -> NonEmpty Text -> Log
-readLogFile = \LogFile { channel, server } contents -> Log
+readLogFile LogFile { channel, server } contents = Log
   { logchannel = channel
   , logserver  = server
   , messages   = L.sortOn (\x -> (wlDate x, wlTime x))
@@ -170,10 +182,9 @@ parseWeechatLine = do
   date <- parseDate
   void $ MP.char ' '
   time <- parseTime
-  void $ MP.tab
+  void MP.tab
   nick <- toText <$> MP.manyTill MP.printChar MP.tab
-  msg  <- MP.takeRest
-  pure $ WeechatLine date time nick msg
+  WeechatLine date time nick <$> MP.takeRest
 
 parseWeechatLog :: Text -> [WeechatLine]
 parseWeechatLog = filter actualMessage . mapMaybe parseLine . lines
@@ -190,9 +201,8 @@ printHTML log =
  where
   days = groupBy ((==) `on` wlDate) log
   printDay ls =
-    intercalate "\n"
-      $  ["<h3>" <> wlDate (head ls) <> "</h3>"]
-      <> (toList $ printRow <$> zip (WeechatLine "" "" "" "" :| toList ls) ls)
+    intercalate "\n" $ ["<h3>" <> wlDate (head ls) <> "</h3>"] <> toList
+      (printRow <$> zip (WeechatLine "" "" "" "" :| toList ls) ls)
   printRow :: (WeechatLine, WeechatLine) -> Text
   printRow (prevRow, curRow) =
     "<i style='color: grey'>"
@@ -212,7 +222,7 @@ printHTML log =
     nick | specialNick curNick = curNick
          | prevNick == curNick = ""
          | otherwise           = curNick
-    printNick = Text.dropWhile (`elem` "&@") nick
+    printNick = Text.dropWhile (`elem` ['&', '@']) nick
     msg       = wlMsg curRow
     message
       | not (Text.null msg) && Text.head msg == '>'
