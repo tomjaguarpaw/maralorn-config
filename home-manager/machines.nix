@@ -115,6 +115,7 @@ in {
       ./roles/kassandra-server.nix
       ./roles/headless-mpd.nix
       ./roles/mail.nix
+      ./roles/mail2rss.nix
     ];
   };
 }
