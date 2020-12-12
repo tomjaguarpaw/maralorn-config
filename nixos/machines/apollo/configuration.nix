@@ -29,10 +29,10 @@ in {
         peers = [{
           publicKey = wireguard.pub.hera;
           allowedIPs = [ "::/0" ];
-          endpoint =
-            "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
+          # endpoint =
+          #  "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
           # If v6 is not available:
-          # endpoint = "[${hosts.hera-v4}]:${builtins.toString wireguard.port}";
+          endpoint = "[${hosts.hera-v4}]:${builtins.toString wireguard.port}";
           presharedKeyFile = pkgs.privatePath "wireguard/psk";
           persistentKeepalive = 25;
         }];
