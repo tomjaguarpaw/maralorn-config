@@ -19,7 +19,9 @@ import           Data.String.Interpolate
 import           Data.MIME                     as MIME
 import           Data.MIME.Charset
 import           Control.Lens            hiding ( argument )
-import           Control.Error                  ( withExceptT )
+import           Control.Error                  ( tryIO
+                                                , withExceptT
+                                                )
 import qualified Data.Text                     as T
 import           Control.Exception
 import           Data.Time
@@ -34,21 +36,28 @@ data Options = Options
   , folder :: String
   }
 
-type Thread = Text
+data Thread = Thread
+  { subject    :: Text
+  , threadid   :: ByteString
+  , count      :: Int
+  , totalCount :: Int
+  , content    :: Text
+  }
 type Error = Text
-type MyMessage = (UTCTime, Text)
+type MyMessage = Text
 
 main :: IO ()
 main = do
   Options { dbPath, folder } <- execParser $ info
-    (   Options
-    <$> argument
-          str
-          (metavar "DBPATH" <> help "The full path to the notmuch database")
-    <*> argument
-          str
-          (metavar "FOLDER" <> help "The maildir to scan for messages.")
-    <**> helper)
+    (    Options
+    <$>  argument
+           str
+           (metavar "DBPATH" <> help "The full path to the notmuch database")
+    <*>  argument
+           str
+           (metavar "FOLDER" <> help "The maildir to scan for messages.")
+    <**> helper
+    )
     fullDesc
   res <- runExceptT do
     (thrds, msgs) <- withExceptT
@@ -66,16 +75,16 @@ main = do
         fst
         (msgsByThread <> thrdsByThread)
     now <- lift getCurrentTime
-    let entries = threadToEntry $ fst <$> rights result
+    let entries = threadToEntry now <$> rights result
         feed    = nullFeed [i|mail-threads-#{timestamp now}|]
                            (TextString "Read-Later-Mail")
                            (timestamp now)
-    forM_ (rights result) (say . fst)
-    forM_ (rights result) (mapM_ sayErr . snd)
-    forM_ (lefts result)  sayErr
-
-    feedText <- hoistEither
-        .   maybeToRight [i|Failed to generate feed.|] . textFeed $ feed { feedEntries = entries }
+    let errors = lefts result
+    feedText <-
+      hoistEither . maybeToRight [i|Failed to generate feed.|] . textFeed $ feed
+        { feedEntries =
+          (if null errors then id else (errorsToEntry now errors :)) entries
+        }
     say $ toStrict feedText
   either
     (\(er :: Text) ->
@@ -84,11 +93,31 @@ main = do
     (const pass)
     res
 
-threadToEntry :: [Thread] -> [Entry]
-threadToEntry = error "not implemented"
+threadToEntry :: UTCTime -> Thread -> Entry
+threadToEntry now Thread { subject, content, threadid, count, totalCount } =
+  (nullEntry [i|thread-#{threadid}-#{timestamp now}|]
+             (TextString [i|#{subject} (#{count}/#{totalCount})|])
+             (timestamp now)
+    )
+    { entryContent = Just
+                     . HTMLContent
+                     . T.intercalate "<br>\n"
+                     . T.splitOn "\n"
+                     $ content
+    }
 
-errorsToEntry :: [Error] -> Entry
-errorsToEntry er = undefined
+errorsToEntry :: UTCTime -> [Error] -> Entry
+errorsToEntry now er = (nullEntry [i|mailerrors - #{timestamp now}|]
+                                  (TextString [i|Mail processing Errors|])
+                                  (timestamp now)
+                       )
+  { entryContent = Just
+                   . HTMLContent
+                   . T.intercalate "<br>\n"
+                   . T.splitOn "\n"
+                   . T.intercalate "\n"
+                   $ er
+  }
 
 timestamp :: UTCTime -> Text
 timestamp = toText . formatTime defaultTimeLocale "%Y-%m-%d %H:%M"
@@ -96,67 +125,70 @@ timestamp = toText . formatTime defaultTimeLocale "%Y-%m-%d %H:%M"
 processThread
   :: (MonadIO m)
   => (ThreadId, NonEmpty (Either (Notmuch.Thread a) (Notmuch.Message n a)))
-  -> ExceptT Error m (Thread, [Error])
-processThread (thrdId, toList -> thrdAndMsgs) = do
+  -> ExceptT Error m Thread
+processThread (threadid, toList -> thrdAndMsgs) = do
   thread <-
     hoistEither
-    . maybeToRight [i|No Thread object found for Threadid #{thrdId}|]
+    . maybeToRight [i|No Thread object found for Threadid #{threadid}|]
     . viaNonEmpty head
     . lefts
     $ thrdAndMsgs
-  subject  <- threadSubject thread
-  msgCount <- threadTotalMessages thread
-  let
-    msgs = rights thrdAndMsgs
-    threadHeader =
-      [i|Showing #{length msgs} of #{msgCount} e-mails from thread\nSubject: #{subject}\n\n|] :: Text
-  results <- mapM (runExceptT . processMessage) msgs
-  let goodResults = snd <$> sortOn fst (rights results)
-  pure
-    ([i|#{threadHeader}\n#{T.intercalate "\n\n" goodResults}|], lefts results)
+  subject    <- decodeUtf8 <$> threadSubject thread
+  totalCount <- threadTotalMessages thread
+  let msgs = rights thrdAndMsgs
+  results <- mapM processMessage msgs
+  let allMsgs = either id id . snd <$> sortOn fst results
+      content = T.intercalate [i|\n#{replicate 80 '-'}\n|] allMsgs
+  pure (Thread { subject, threadid, content, totalCount, count = length msgs })
 
 processMessage
-  :: (MonadIO m) => Notmuch.Message n a -> ExceptT Error m MyMessage
+  :: MonadIO m => Notmuch.Message n a -> m (UTCTime, Either Error MyMessage)
 processMessage msg = do
-  fileName <- messageFilename msg
-  withExceptT
-    (\er -> [i|Failed to read msg #{fileName}\nerror: #{er}|])
+  fileName  <- messageFilename msg
+  date      <- messageDate msg
+  subject   <- tryHdr "subject" msg
+  fromField <- tryHdr "from" msg
+  toField   <- tryHdr "to" msg
+  cc        <- tryHdr "cc" msg
+  let hdrs = fold
+        [ "Subject" `hdr` subject
+        , "From" `hdr` fromField
+        , "To" `hdr` toField
+        , "Cc" `hdr` cc
+        , [i|Date: #{date}\n|]
+        ]
+  ((date, ) <$>) . runExceptT $ withExceptT
+    (\er -> [i|Failed to read msg\nFilename:#{fileName}\n#{hdrs}error: #{er}|])
     do
-      date    <- messageDate msg
-      subject <-
-        hoistEither
-        .   maybeToRight [i|Failed to get subject|]
-        =<< messageHeader "subject" msg
-      fromField <-
-        hoistEither
-        .   maybeToRight [i|Failed to get from|]
-        =<< messageHeader "from" msg
-      toField <-
-        hoistEither
-        .   maybeToRight [i|Failed to get to|]
-        =<< messageHeader "to" msg
-      cc <-
-        hoistEither
-        .   maybeToRight [i|Failed to get cc|]
-        =<< messageHeader "cc" msg
-      msgContent <- withExceptT (\(er :: IOException) -> [i|IOError: #{er}|])
+      msgContent <-
+        withExceptT (\(er :: IOException) -> [i|IOError: #{er}|])
+        . tryIO
         $ readFileBS fileName
       parseResult <- hoistEither . first toText $ parse (message mime)
                                                         msgContent
       textPart <-
-        hoistEither . maybeToRight [i|No text part in message|] $ firstOf
-          (entities . filtered isTextPlain)
-          parseResult
+        hoistEither
+        . maybeToRight [i|No text or html part in message|]
+        $ firstOf
+            (entities . filtered isTextPlain <> entities . filtered isHtml)
+            parseResult
       textAsText <-
         hoistEither . maybeToRight [i|Could not decode message|] $ decode
           textPart
-      pure
-        ( date
-        , [i|Subject: #{subject}\nFrom: #{fromField}\nTo: #{toField}#{if cc /= "" then "\nCc: " <> cc else ""}\nDate: #{date}\n\n#{textAsText}|]
-        )
+      pure [i|#{hdrs}\n#{textAsText}|]
+
+tryHdr :: MonadIO f => ByteString -> Notmuch.Message n a -> f ByteString
+tryHdr h = fmap (fromMaybe "") . messageHeader h
+
+hdr :: Text -> ByteString -> Text
+hdr _     ""      = ""
+hdr label content = [i|#{label}: #{content}\n|]
 
 isTextPlain :: WireEntity -> Bool
 isTextPlain = matchContentType "text" (Just "plain") . view contentType
+
+isHtml :: WireEntity -> Bool
+isHtml = matchContentType "text" (Just "html") . view contentType
 
 decode :: WireEntity -> Maybe Text
 decode =
