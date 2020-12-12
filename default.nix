@@ -1,10 +1,8 @@
-{ pkgs ? import <unstable> { } }:
-
+{ pkgs ? import <nixpkgs-master> { } }:
 let
   haskellPackages = pkgs.haskellPackages;
   drv = haskellPackages.callCabal2nix "logfeed" ./. { };
 in {
-  taskwarrior = drv;
   shell = haskellPackages.shellFor {
     withHoogle = true;
     packages = p: [ drv ];
@@ -14,6 +12,8 @@ in {
       brittany
       pkgs.coreutils
       pkgs.zlib
+      notmuch
+      hsemail
     ];
   };
 }
