@@ -60,5 +60,6 @@ executable mail2rss
     , time
     , optparse-applicative
     , exceptions
+    , tagsoup
 
   default-language: Haskell2010
