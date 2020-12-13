@@ -112,16 +112,16 @@ in {
   };
 
   systemd.user = {
-    timers.logfeed = {
+    timers.log2rss = {
       Timer.OnCalendar = "19:55";
       Install.WantedBy = [ "timers.target" ];
     };
     services = {
-      logfeed = {
-        Unit.Description = "Logfeed";
+      log2rss = {
+        Unit.Description = "log2rss";
         Service = {
           ExecStart =
-            "${pkgs.logfeed}/bin/logfeed /var/www/rss/chats.xml";
+            "${pkgs.logfeed}/bin/log2rss /var/www/rss/chats.xml";
           Type = "oneshot";
         };
       };

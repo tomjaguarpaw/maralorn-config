@@ -29,21 +29,6 @@ in {
       imports =
         [ ../../roles "${(import ../../../nix/sources.nix).nixos-mailserver}" ];
       systemd.services = {
-        atomail = {
-          script = let
-            atomail = pkgs.fetchFromGitHub {
-              owner = "remko";
-              repo = "atomail";
-              rev = "f079966cb808f51fcc67be91b609942cdb49898a";
-              sha256 = "0a4j4xajn2yysgcb17jmb6ak148kk0kwf7khml7dbnh7807fv9b6";
-            };
-          in ''
-            ${pkgs.python}/bin/python ${atomail}/atomail.py --title "Readlater-E-Mails" --uri="http://localhost:8842/mails.xml" /var/www/rss/mails.xml --mode=maildir --file "/var/vmail/maralorn.de/malte.brandy/.Move.readlater/" --max-items=500 --max-time=2880
-            ${pkgs.rsync}/bin/rsync -a /var/vmail/maralorn.de/malte.brandy/.Move.readlater/cur/ /var/vmail/maralorn.de/malte.brandy/.Archiv.unsortiert/cur --remove-source-files
-          '';
-          startAt = "19:58:00";
-          serviceConfig.Type = "oneshot";
-        };
         rspamd = {
           serviceConfig = {
             Restart = "always";
