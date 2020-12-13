@@ -1,6 +1,6 @@
 { lib, pkgs, config, ... }: {
   systemd.user = {
-    timers.logfeed = {
+    timers.mail2rss = {
       Timer.OnCalendar = "19:57";
       Install.WantedBy = [ "timers.target" ];
     };
