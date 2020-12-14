@@ -58,7 +58,7 @@ let
         nextcloud = {
           enable = true;
           hostName = hostname;
-          package = pkgs.nextcloud19;
+          package = pkgs.nextcloud20;
           maxUploadSize = "10g";
           caching = {
             redis = true;
