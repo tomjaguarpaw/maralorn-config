@@ -41,7 +41,7 @@ in {
       self.test-system-config
       self.test-home-config
       self.git
-      self.niv
+      self.niv.bin
       self.git-crypt
     ];
     imports = [ "System.Directory (withCurrentDirectory)" ];
