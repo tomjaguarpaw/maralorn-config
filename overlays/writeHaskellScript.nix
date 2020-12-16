@@ -30,7 +30,7 @@ self: super: {
       import qualified Data.ByteString.Lazy as LBS
       import qualified Data.ByteString as BS
       import qualified Data.Text as Text
-      import System.Environment (getArgs)
+      import System.Environment (getArgs, setEnv)
       import Control.Exception (bracket, try)
       import Data.String.Interpolate (i)
       import Control.Concurrent.Async

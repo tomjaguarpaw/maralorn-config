@@ -1,12 +1,11 @@
 { lib, config, pkgs, ... }:
 
-# You need pw-files for every configured user in ./secret/pw-useralias for login to work.
-
 let
   wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts prefix;
   nixos-hardware = (import ../../../nix/sources.nix).nixos-hardware;
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
+  vpn = (import ../../../private.nix).privateValue ({ ... }:{}) "vpn";
 in {
 
   imports = [
@@ -16,6 +15,7 @@ in {
     ../../roles/fonts.nix
     ../../roles/boot-key.nix
     ../../roles/standalone
+    vpn
   ];
 
   networking = {

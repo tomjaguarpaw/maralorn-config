@@ -32,14 +32,13 @@ in {
       bins = [ activateMode pkgs.git pkgs.nix-output-monitor ];
     } ''
       params = ["${configPath}/home-manager/target.nix", "-A", "apollo", "-o", "/home/maralorn/.modes"]
-      privatePath = "${configPath}/private"
-      canaryPath = privatePath <> "/submodule-is-checked-out"
 
       main = do
         say "Building ~/.modes for apollo"
         nixPath <- myNixPath "${configPath}"
-        bracket (rm "-f" canaryPath) (\() -> git "-C" privatePath "restore" canaryPath) $ \() ->
-          nix_build nixPath (params ++ remoteBuildParams) &!> StdOut |> nom
+        setEnv "WITH_SECRETS" "false"
+        nix_build nixPath (params ++ remoteBuildParams) &!> StdOut |> nom
+        setEnv "WITH_SECRETS" "true"
         nix_build nixPath params
         activate_mode
     '';
