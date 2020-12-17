@@ -31,10 +31,13 @@ in {
   }];
 
   programs = {
-    ssh.extraConfig = ''
-      Host fb04*.mathematik.tu-darmstadt.de
-        ProxyJump brandy@gwres1.mathematik.tu-darmstadt.de
-    '';
+    ssh = {
+      extraConfig = ''
+        Host fb04*.mathematik.tu-darmstadt.de
+          ProxyJump brandy@gwres1.mathematik.tu-darmstadt.de
+      '';
+      startAgent = true;
+    };
   };
   systemd.services."pg_backup" = {
     script = let name = "matrix-synapse";
