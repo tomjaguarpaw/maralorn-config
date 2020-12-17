@@ -247,7 +247,7 @@ in {
         mailboxes `find ${maildir} -type d -name Inbox -printf '"%h" '` `find ${maildir} -type d -name cur -printf '"%h" '`
         set sendmail="${pkgs.msmtp}/bin/msmtp --read-envelope-from"
         set sort=threads
-        set sort_aux=date-sent
+        set sort_aux=last-date-received
         set realname="${name}"
         set from=fill-later
         set use_from=yes
