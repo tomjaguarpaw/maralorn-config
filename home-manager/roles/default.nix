@@ -152,14 +152,6 @@
       maxCacheTtl = 31536000; # 1year
     };
   };
-  systemd.user.services.auto-ssh-add = {
-    Service = {
-      ExecStart = toString (pkgs.writeShellScript "auto-ssh-add"
-        "ssh-add < /dev/null"); # to trigger the usage of SSH_ASKPASS
-      Type = "oneshot";
-    };
-    Install.WantedBy = [ "default.target" ];
-  };
 
   xdg.enable = true;
 }
