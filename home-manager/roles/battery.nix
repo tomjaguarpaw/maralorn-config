@@ -62,12 +62,12 @@ in {
 
   systemd.user = {
     services.battery = {
-      Unit = { Description = "Watch battery state and warn user"; };
+      Unit.Description = "Watch battery state and warn user";
       Service = {
         ExecStart = "${battery-watch}/bin/battery-watch";
         Restart = "always";
       };
-      Install = { WantedBy = [ "default.target" ]; };
+      Install.WantedBy = [ "default.target" ];
     };
   };
 

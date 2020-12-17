@@ -5,7 +5,7 @@ let
   inherit (config.m-0) hosts prefix;
   nixos-hardware = (import ../../../nix/sources.nix).nixos-hardware;
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
-  vpn = (import ../../../private.nix).privateValue ({ ... }:{}) "vpn";
+  vpn = (import ../../../private.nix).privateValue ({ ... }: { }) "vpn";
 in {
 
   imports = [
@@ -77,14 +77,20 @@ in {
           key = pkgs.privatePath "syncthing/apollo/key.pem";
         };
     };
-    gnome3.chrome-gnome-shell.enable = true;
     xserver = {
       enable = true;
-      displayManager.gdm.enable = true;
+      displayManager = {
+        gdm.enable = true;
+        autoLogin = {
+          enable = true;
+          user = "maralorn";
+        };
+      };
       desktopManager.gnome3.enable = true;
     };
   };
-  boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };
+
+  boot.kernel.sysctl."fs.inotify.max_user_watches" = 204800;
 
   system.stateVersion = "19.09";
 }

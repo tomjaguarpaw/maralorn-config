@@ -136,10 +136,10 @@
       PATH = "$HOME/.nix-profile/bin:$PATH";
       BROWSER = "${pkgs.firefox}/bin/firefox";
       EMAIL = "malte.brandy@maralorn.de";
-      SUDO_ASKPASS = let
-        print-pw = pkgs.writeShellScriptBin "print-pw"
-          "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/${config.home.username}";
-      in "${print-pw}/bin/print-pw";
+      SUDO_ASKPASS = toString (pkgs.writeShellScript "print-sudo-pw"
+        "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/${config.home.username}");
+      SSH_ASKPASS = toString (pkgs.writeShellScript "print-ssh-pw"
+        "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/ssh-key");
     };
   };
 
@@ -151,6 +151,14 @@
       defaultCacheTtl = 31536000; # 1year
       maxCacheTtl = 31536000; # 1year
     };
+  };
+  systemd.user.services.auto-ssh-add = {
+    Service = {
+      ExecStart = toString (pkgs.writeShellScript "auto-ssh-add"
+        "ssh-add < /dev/null"); # to trigger the usage of SSH_ASKPASS
+      Type = "oneshot";
+    };
+    Install.WantedBy = [ "default.target" ];
   };
 
   xdg.enable = true;

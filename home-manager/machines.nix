@@ -116,6 +116,7 @@ in {
       ./roles/headless-mpd.nix
       ./roles/mail.nix
       ./roles/mail2rss.nix
+      ./roles/ssh-via-gpg-agent.nix
     ];
   };
 }
