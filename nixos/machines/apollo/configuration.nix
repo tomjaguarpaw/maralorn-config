@@ -20,7 +20,7 @@ in {
 
   networking = {
     hostName = "apollo";
-    firewall.allowedUDPPorts = [ 30000 ];
+    domain = "m-0.eu";
     wireguard.interfaces = {
       m0wire = {
         allowedIPsAsRoutes = false;

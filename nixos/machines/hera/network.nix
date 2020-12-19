@@ -5,6 +5,7 @@ let
 in {
   networking = {
     hostName = "hera";
+    domain = "m-0.eu";
     interfaces.ens18 = {
       proxyARP = true;
       ipv4.addresses = [{
