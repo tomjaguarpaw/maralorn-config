@@ -17,7 +17,7 @@ in {
               return 200 '${builtins.toJSON server}';
             '';
           "/.well-known/matrix/client".extraConfig =
-            let client."m.homeserver" = { "base_url" = "https://${hostName}"; };
+            let client."m.homeserver".base_url = "https://${hostName}";
             in ''
               add_header Content-Type application/json;
               add_header Access-Control-Allow-Origin *;
@@ -46,7 +46,6 @@ in {
       server-secrets = pkgs.privateValue {
         registration_shared_secret = "";
         macaroon_secret_key = "";
-        turn_shared_secret = "";
       } "matrix/server-secrets";
     in server-secrets // {
       enable = true;
@@ -58,8 +57,12 @@ in {
       database_type = "psycopg2";
       max_upload_size = "30M";
       dynamic_thumbnails = true;
-      turn_uris = [ "turn:hera.m-0.eu:3478?transport=udp" ];
-      turn_user_lifetime = "5h";
+      turn_shared_secret = config.services.coturn.static-auth-secret;
+      turn_uris = let
+        turn_server =
+          "turns:${config.networking.hostName}.${config.networking.domain}:5340";
+      in [ "${turn_server}?transport=udp" "${turn_server}?transport=tcp" ];
+      turn_user_lifetime = "24h";
       allow_guest_access = true;
       logConfig = ''
         version: 1

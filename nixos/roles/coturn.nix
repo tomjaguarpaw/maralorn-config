@@ -1,17 +1,45 @@
-{ config, pkgs, ... }: {
-  networking.firewall.allowedTCPPorts = [ 3478 ];
+{ config, pkgs, ... }:
+let
+  fqdn = "${config.networking.hostName}.${config.networking.domain}";
+  key_dir = config.security.acme.certs."${fqdn}".directory;
+in {
+  networking.firewall = let
+    range = [{
+      from = config.services.coturn.min-port;
+      to = config.services.coturn.max-port;
+    }];
+    port = [ config.services.coturn.tls-listening-port ];
+  in {
+    allowedUDPPortRanges = range;
+    allowedTCPPortRanges = range;
+    allowedTCPPorts = port;
+    allowedUDPPorts = port;
+  };
+  security.acme.certs.${fqdn} = {
+    postRun = "systemctl restart coturn.service";
+  };
 
   services = {
     coturn = {
       enable = true;
-      pkey = "/var/lib/acme/hera.m-0.eu/key.pem";
-      cert = "/var/lib/acme/hera.m-0.eu/fullchain.pem";
+      use-auth-secret = true;
       no-tcp = true;
+      lt-cred-mech = true;
+      no-tcp-relay = true;
+      min-port = 52000;
+      max-port = 52100;
+      pkey = "${key_dir}/key.pem";
+      cert = "${key_dir}/fullchain.pem";
       static-auth-secret = (pkgs.privateValue { turn_shared_secret = ""; }
         "matrix/server-secrets").turn_shared_secret;
-      realm = "maralorn.de";
-      use-auth-secret = true;
+      realm = fqdn;
+      extraConfig = ''
+        fingerprint
+
+        denied-peer-ip=10.0.0.0-10.255.255.255
+        denied-peer-ip=192.168.0.0-192.168.255.255
+        denied-peer-ip=172.16.0.0-172.31.255.255
+      '';
     };
   };
-
 }
