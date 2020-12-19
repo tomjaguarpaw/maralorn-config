@@ -60,7 +60,7 @@ in {
       turn_shared_secret = config.services.coturn.static-auth-secret;
       turn_uris = let
         turn_server =
-          "turns:${config.networking.hostName}.${config.networking.domain}:5340";
+          "turns:${config.services.coturn.realm}:${config.services.coturn.tls-listening-port}";
       in [ "${turn_server}?transport=udp" "${turn_server}?transport=tcp" ];
       turn_user_lifetime = "24h";
       allow_guest_access = true;
