@@ -59,9 +59,11 @@ in {
       dynamic_thumbnails = true;
       turn_shared_secret = config.services.coturn.static-auth-secret;
       turn_uris = let
-        turn_server =
+        turns =
           "turns:${config.services.coturn.realm}:${toString config.services.coturn.tls-listening-port}";
-      in [ "${turn_server}?transport=udp" "${turn_server}?transport=tcp" ];
+        turn =
+          "turn:${config.services.coturn.realm}:${toString config.services.coturn.listening-port}";
+      in [ "${turns}?transport=udp" "${turns}?transport=tcp" "${turn}?transport=udp" "${turn}?transport=tcp" ];
       turn_user_lifetime = "24h";
       allow_guest_access = true;
       logConfig = ''

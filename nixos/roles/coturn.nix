@@ -3,28 +3,32 @@ let
   fqdn = "${config.networking.hostName}.${config.networking.domain}";
   key_dir = config.security.acme.certs."${fqdn}".directory;
 in {
+  users.users.turnserver.extraGroups = [ "nginx" ]; # For read access to certs;
   networking.firewall = let
     range = [{
       from = config.services.coturn.min-port;
       to = config.services.coturn.max-port;
     }];
-    port = [ config.services.coturn.tls-listening-port ];
+    ports = [
+      config.services.coturn.listening-port
+      config.services.coturn.alt-listening-port
+      config.services.coturn.tls-listening-port
+      config.services.coturn.alt-tls-listening-port
+    ];
   in {
     allowedUDPPortRanges = range;
     allowedTCPPortRanges = range;
-    allowedTCPPorts = port;
-    allowedUDPPorts = port;
+    allowedTCPPorts = ports;
+    allowedUDPPorts = ports;
   };
   security.acme.certs.${fqdn} = {
     postRun = "systemctl restart coturn.service";
   };
-
   services = {
     coturn = {
       enable = true;
       use-auth-secret = true;
-      no-tcp = true;
-      lt-cred-mech = true;
+      no-cli = true;
       no-tcp-relay = true;
       min-port = 52000;
       max-port = 52100;
@@ -33,6 +37,7 @@ in {
       static-auth-secret = (pkgs.privateValue { turn_shared_secret = ""; }
         "matrix/server-secrets").turn_shared_secret;
       realm = fqdn;
+      listening-ips = [ config.m-0.hosts.hera config.m-0.hosts.hera-v4 ];
       extraConfig = ''
         fingerprint
 
