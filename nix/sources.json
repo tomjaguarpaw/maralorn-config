@@ -25,8 +25,8 @@
     },
     "kassandra": {
         "branch": "master",
-        "repo": "https://git.darmstadt.ccc.de/maralorn/kassandra",
-        "rev": "1a0d19ce5d384e15ca64f7f043e5817cbaaf9f6d",
+        "repo": "git@hera.m-0.eu:kassandra",
+        "rev": "b4d34dd306434efc4bfd098388e41ee8b22e3cba",
         "type": "git"
     },
     "kassandra2": {
