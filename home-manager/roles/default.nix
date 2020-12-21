@@ -134,8 +134,12 @@
   home = {
     packages = builtins.attrValues pkgs.home-pkgs ++ [
       (pkgs.writeShellScriptBin "unlock-ssh" ''
-        SSH_ASKPASS="${config.home.sessionVariables.SSH_ASKPASS}" DISPLAY="a" ssh-add < /dev/null
+        SSH_ASKPASS="print-ssh-pw" DISPLAY="a" ssh-add < /dev/null
       '')
+      (pkgs.writeShellScriptBin "print-radicle-pw"
+        "pass show etc/radicle/${config.m-0.hostName}")
+      (pkgs.writeShellScriptBin "print-ssh-pw"
+        "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/ssh-key")
     ];
     sessionVariables = {
       PATH = "$HOME/.nix-profile/bin:$PATH";
@@ -143,8 +147,6 @@
       EMAIL = "malte.brandy@maralorn.de";
       SUDO_ASKPASS = toString (pkgs.writeShellScript "print-sudo-pw"
         "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/${config.home.username}");
-      SSH_ASKPASS = toString (pkgs.writeShellScript "print-ssh-pw"
-        "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/ssh-key");
     };
   };
 
