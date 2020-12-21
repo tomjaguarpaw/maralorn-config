@@ -3,7 +3,7 @@
     packages = [ pkgs.khard ];
     file.".config/khard/khard.conf".text = ''
       [addressbooks]
-      [[notmuch]]
+      [[contacts]]
       path = ~/.contacts/nextcloud/contacts
 
       [general]
