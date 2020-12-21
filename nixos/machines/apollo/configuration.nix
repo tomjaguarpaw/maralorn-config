@@ -43,7 +43,17 @@ in {
 
   m-0.laptop.enable = true;
 
-  programs.sway.enable = true;
+  programs = {
+    sway.enable = true;
+    ssh = {
+      extraConfig = ''
+        Host fb04*.mathematik.tu-darmstadt.de
+          ProxyJump brandy@gwres1.mathematik.tu-darmstadt.de
+      '';
+      startAgent = true;
+    };
+    seahorse.enable = lib.mkForce false;
+  };
 
   services = {
     fstrim.enable = true;
@@ -80,13 +90,21 @@ in {
     xserver = {
       enable = true;
       displayManager = {
-        gdm.enable = true;
         autoLogin = {
           enable = true;
           user = "maralorn";
         };
+        gdm.enable = true;
       };
       desktopManager.gnome3.enable = true;
+    };
+    gnome3 = {
+      evolution-data-server.enable = lib.mkForce false;
+      gnome-keyring.enable = lib.mkForce false;
+      at-spi2-core.enable = lib.mkForce false;
+      tracker.enable = false;
+      tracker-miners.enable = false;
+      gnome-online-miners.enable = lib.mkForce false;
     };
   };
 

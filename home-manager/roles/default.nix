@@ -79,6 +79,7 @@
       shadowOtherUsers = true;
       showProgramPath = false;
       treeView = true;
+      sortKey = "USER";
     };
     ssh = {
       controlMaster = "auto";
@@ -131,7 +132,11 @@
   };
 
   home = {
-    packages = builtins.attrValues pkgs.home-pkgs;
+    packages = builtins.attrValues pkgs.home-pkgs ++ [
+      (pkgs.writeShellScriptBin "unlock-ssh" ''
+        SSH_ASKPASS="${config.home.sessionVariables.SSH_ASKPASS}" DISPLAY="a" ssh-add < /dev/null
+      '')
+    ];
     sessionVariables = {
       PATH = "$HOME/.nix-profile/bin:$PATH";
       BROWSER = "${pkgs.firefox}/bin/firefox";

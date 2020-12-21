@@ -238,7 +238,7 @@ in {
         set pgp_default_key="${gpg}"
         set timeout = 5
 
-        set abort_noattach = ask-yes
+        set abort_noattach = ask-no
         set abort_noattach_regex = "(hängt an|anhäng|anhang|anbei|angehängt|attach|attached|attachments?)"
         set abort_unmodified = ask-yes
 
@@ -286,6 +286,8 @@ in {
         (lib.imap1 (n: x: "alias f__${toString n} ${name} <${x}>")
           alternates)}
         send2-hook '~f fill-later' "push <edit-from><kill-line>f__<complete><search>${mail}<enter>"
+        macro index,pager a "<pipe-message>${pkgs.khard}/bin/khard add-email<return>" "add sender to to khard"
+        set query_command = "${pkgs.khard}/bin/khard email --parsable %s"
       '';
     };
   };

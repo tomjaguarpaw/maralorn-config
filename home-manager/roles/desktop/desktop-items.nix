@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 let
   simpleDesktopItem = name: command:
     pkgs.makeDesktopItem {
@@ -25,5 +25,6 @@ in {
       "hotkeys"
       "vim"
       "select-mode"
+      "unlock-ssh"
     ];
 }

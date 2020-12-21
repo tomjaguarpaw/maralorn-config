@@ -76,6 +76,10 @@ in {
         ./roles/mail.nix
         ./roles/update_tasks.nix
         ./roles/research.nix
+        ./roles/vdirsyncer.nix
+        ./roles/khard.nix
+        ./roles/khal.nix
+      (makeAutostart "unlock-ssh")
       ]);
     unrestricted = [
       ./roles/accounting.nix
@@ -85,8 +89,6 @@ in {
       ./roles/chat.nix
       (setStartpage "https://stats.maralorn.de/d/health-status")
       (makeBlock [ ])
-      (makeAutostart "firefox")
-      (makeAutostart "chat")
     ];
   in {
     unrestricted = apolloConfig unrestricted;

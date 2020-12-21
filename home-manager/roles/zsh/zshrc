@@ -1,6 +1,3 @@
-if [[ -z $(ssh-add -L) ]] {
-  DISPLAY="a" ssh-add < /dev/null
-}
 if [[ -n "$SSH_CONNECTION" && -z "$TMUX" ]] {
    exec mytmux
 }
