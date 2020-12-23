@@ -21,6 +21,9 @@ in {
   networking = {
     hostName = "apollo";
     domain = "m-0.eu";
+    firewall.allowedTCPPorts = [
+      8123 # Weiterleitung von stream.maralorn.de
+    ];
     wireguard.interfaces = {
       m0wire = {
         allowedIPsAsRoutes = false;
