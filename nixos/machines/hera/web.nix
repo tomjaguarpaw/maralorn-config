@@ -18,6 +18,15 @@ in {
     nginx = {
       enable = lib.mkForce pkgs.withSecrets;
       virtualHosts = {
+        "stream.maralorn.de" = {
+          forceSSL = true;
+          enableACME = true;
+          locations = {
+            "/" = {
+              proxyPass = "http://[${config.m-0.hosts.apollo-wg}]:8123";
+            };
+          };
+        };
         "tasks.maralorn.de" = {
           basicAuthFile = pkgs.privateFile "basic-auth/kassandra";
           forceSSL = true;
