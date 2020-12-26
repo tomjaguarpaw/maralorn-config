@@ -89,12 +89,16 @@
   in {
     "add-git" = {
       target = ".task/hooks/on-add.git";
-      text = "${pkgs.taskwarrior-git}/bin/taskwarrior-git on-add";
+      text = ''
+        export PATH=${pkgs.git}/bin:$PATH
+        exec ${pkgs.taskwarrior-git}/bin/taskwarrior-git on-add'';
       executable = true;
     };
     "modify-git" = {
       target = ".task/hooks/on-modify.git";
-      text = "${pkgs.taskwarrior-git}/bin/taskwarrior-git on-modify";
+      text = ''
+        export PATH=${pkgs.git}/bin:$PATH
+        exec ${pkgs.taskwarrior-git}/bin/taskwarrior-git on-modify'';
       executable = true;
     };
     "add-notification" = {
