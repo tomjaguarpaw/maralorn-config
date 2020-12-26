@@ -79,6 +79,9 @@ in {
         ./roles/vdirsyncer.nix
         ./roles/khard.nix
         ./roles/khal.nix
+        ./roles/taskwarrior.nix
+        ./roles/taskwarrior-git.nix
+        ./roles/taskwarrior-notify.nix
       (makeAutostart "unlock-ssh")
       ]);
     unrestricted = [
@@ -118,6 +121,7 @@ in {
       ./roles/headless-mpd.nix
       ./roles/mail.nix
       ./roles/mail2rss.nix
+      ./roles/taskwarrior.nix
     ];
   };
 }

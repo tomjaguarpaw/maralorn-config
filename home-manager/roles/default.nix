@@ -2,7 +2,6 @@
 
   imports = [
     ./zsh
-    ./taskwarrior.nix
     ./home-options.nix
     ../../common
     ./unlock.nix
