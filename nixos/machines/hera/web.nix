@@ -31,6 +31,11 @@ in {
           basicAuthFile = pkgs.privateFile "basic-auth/kassandra";
           forceSSL = true;
           enableACME = true;
+          extraConfig = ''
+            satisfy any;
+            allow ${config.m-0.prefix}::/64;
+            deny all;
+          '';
           locations = {
             "/" = {
               proxyPass = "http://[::1]:8000";
