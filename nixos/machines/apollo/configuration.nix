@@ -47,6 +47,7 @@ in {
   m-0.laptop.enable = true;
 
   programs = {
+    adb.enable = true;
     sway.enable = true;
     ssh = {
       extraConfig = ''
