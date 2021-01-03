@@ -19,7 +19,7 @@ in {
     ../../roles/matrix-synapse.nix
     ../../roles/coturn.nix
     ../../roles/go-neb.nix
-    ../../roles/laminar.nix
+    ../../roles/laminar
     ./web.nix
     ./mail.nix
     ./boot.nix

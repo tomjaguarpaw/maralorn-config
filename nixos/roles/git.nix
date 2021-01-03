@@ -9,7 +9,7 @@ let
   ];
   post-update = pkgs.writeHaskellScript {
     name = "post-update";
-    bins = [ pkgs.git ];
+    bins = [ pkgs.git pkgs.laminar ];
     imports = [
       "System.Environment (lookupEnv)"
       "System.Directory (withCurrentDirectory)"
@@ -26,6 +26,10 @@ let
       whenJust mirrorMay $ \mirror -> do
         say [i|Force pushing all branches to #{mirror}|]
         git "push" "--all" "-f" mirror
+      jobMay <- lookupEnv "GL_OPTION_CI_JOB"
+      whenJust jobMay $ \job -> do
+        say "Queuing job:"
+        laminarc "queue" job
       deployMay <- lookupEnv "GL_OPTION_WEB_DEPLOY"
       whenJust deployMay $ \deploy -> do
         (maybe [] (\x -> ["-A", x]) -> target) <- lookupEnv "GL_OPTION_WEB_DEPLOY_NIX_TARGET"
