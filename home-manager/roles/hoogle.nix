@@ -4,7 +4,7 @@
     Unit.Description = "Hoogle server";
     Install.WantedBy = [ "graphical-session.target" ];
     Service = {
-      ExecStart = "${pkgs.ghc}/bin/hoogle server --local --links";
+      ExecStart = "${pkgs.ghcWithPackages}/bin/hoogle server --local --links";
       Restart = "always";
     };
   };

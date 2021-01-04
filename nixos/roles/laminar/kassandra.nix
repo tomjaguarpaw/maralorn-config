@@ -5,14 +5,15 @@ let
     export PATH=${lib.makeBinPath path}:$PATH
   '';
   target = name: ''
-    set -ex
+    set -e
     ${setup}
     export HOME=$PWD
     git clone git@localhost:kassandra2 kassandra
-    nix-build --no-out-link kassandra/release.nix -A ${name}
+    DRV=$(nix-instantiate kassandra/release.nix -A ${name} --add-root ./drv --indirect)
+    nix-jobs realise "DERIVATION=$DRV"
   '';
 in {
-  services.laminar.jobs = {
+  services.laminar.cfgFiles.jobs = {
     "kassandra.run" = pkgs.writeShellScript "kassandra" ''
       ${setup}
       echo Launching and waiting for jobs lib, app, android and server
