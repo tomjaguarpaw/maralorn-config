@@ -29,7 +29,7 @@ let
       jobMay <- lookupEnv "GL_OPTION_CI_JOB"
       whenJust jobMay $ \job -> do
         jobName <- decodeUtf8 <$> (laminarc "queue" job |> captureTrim)
-        say [i|Queued job #{jobName}.\nSee https://ci.maralorn.de/jobs/#{T.replace ":" "/" jobName}|]
+        say [i|Queued job #{jobName}.\nSee https://ci.maralorn.de/jobs/#{Text.replace ":" "/" jobName}|]
       deployMay <- lookupEnv "GL_OPTION_WEB_DEPLOY"
       whenJust deployMay $ \deploy -> do
         (maybe [] (\x -> ["-A", x]) -> target) <- lookupEnv "GL_OPTION_WEB_DEPLOY_NIX_TARGET"
