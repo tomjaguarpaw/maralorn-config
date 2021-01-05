@@ -11,13 +11,15 @@
 {-# OPTIONS_GHC -Wall -Werror -Wno-missing-signatures -Wno-type-defaults -Wno-orphans #-}
 
 import           Control.Concurrent             ( threadDelay )
-import           Control.Concurrent.Async       ( forConcurrently_ )
+import           Control.Concurrent.Async       ( forConcurrently_
+                                                , race_
+                                                , withAsync
+                                                )
 import           Control.Concurrent.STM         ( check )
 import           Control.Exception              ( bracket
                                                 , catch
                                                 , handle
                                                 , handleJust
-                                                , mapException
                                                 , throwIO
                                                 )
 import           Data.Bits                      ( Bits((.|.)) )
@@ -28,6 +30,9 @@ import           Data.Text                      ( isInfixOf
                                                 , strip
                                                 )
 import qualified Data.Text                     as T
+import           Data.Time                      ( diffUTCTime
+                                                , getCurrentTime
+                                                )
 import           Relude
 import           Say                            ( say
                                                 , sayErr
@@ -42,6 +47,7 @@ import           Shh                            ( (&!>)
                                                 )
 import           System.Directory               ( createDirectoryIfMissing
                                                 , doesFileExist
+                                                , getModificationTime
                                                 , removeFile
                                                 )
 import           System.Environment             ( getArgs )
@@ -93,6 +99,18 @@ whenSelf level = when (level >= Self)
 whenChildren level = when (level >= Children)
 levelPrec Children = Self
 levelPrec _        = None
+
+drvBasename derivationName =
+  fromMaybe derivationName . viaNonEmpty last $ splitOn "/" derivationName
+
+workspace, resultDir, runningDir :: String
+workspace = "/var/lib/laminar/run/nix-build/workspace"
+resultDir = [i|#{workspace}/completed-jobs|]
+runningDir = [i|#{workspace}/running-jobs|]
+runningPath, resultPath :: Text -> String
+runningPath p = [i|#{runningDir}/#{drvBasename p}|]
+resultPath p = [i|#{resultDir}/#{drvBasename p}|]
+
 getDependenciesFromNix :: Text -> IO (Seq Text)
 getDependenciesFromNix derivationName = do
   everythingToDo <- nixStoreRealiseDryRun derivationName
@@ -136,7 +154,7 @@ ensureDeps :: ReportLevel -> Text -> IO ()
 ensureDeps level derivationName = do
   dependencies <- getDependenciesFromNix derivationName
   whenChildren level $ forM_ dependencies $ \dep ->
-    say [i|Requiring build of #{dep}.|]
+    say [i|Requiring #{dep}.|]
   forConcurrently_ dependencies (realise $ levelPrec level)
     `catch` \(JobException e) ->
               throw [i|#{e}\nFailed dependency for #{derivationName}|]
@@ -172,90 +190,88 @@ tryQueue derivationName = getRunningJob derivationName >>= \case
   defaultMode =
     ownerReadMode .|. ownerWriteMode .|. groupReadMode .|. otherReadMode
 
--- Nothing means a dependency failed.
 queueJobWithLaminarc :: ReportLevel -> Text -> IO Text
-queueJobWithLaminarc level derivationName = tryQueue derivationName >>= maybe
-  (ensureRunningJob level derivationName)
-  (\jobName -> jobName
-    <$ say [i|Job #{jobName} started for #{derivationName}. Waiting ...|]
-  )
+queueJobWithLaminarc level derivationName =
+  whenNothingM (tryQueue derivationName) (ensureRunningJob level derivationName)
 
 ensureRunningJob :: ReportLevel -> Text -> IO Text
-ensureRunningJob level derivationName = getRunningJob derivationName >>= maybe
+ensureRunningJob level derivationName = whenNothingM
+  (getRunningJob derivationName)
   (queueJobWithLaminarc level derivationName)
-  (\jobName -> jobName <$ whenSelf
-    level
-    (say [i|Job #{jobName} running for #{derivationName}. Waiting ...|])
-  )
-
-drvBasename derivationName =
-  fromMaybe derivationName . viaNonEmpty last $ splitOn "/" derivationName
-
-workspace, resultDir, runningDir :: String
-workspace = "/var/lib/laminar/run/nix-build/workspace"
-resultDir = [i|#{workspace}/completed-jobs|]
-runningDir = [i|#{workspace}/running-jobs|]
-runningPath :: Text -> String
-runningPath p = [i|#{runningDir}/#{drvBasename p}|]
-resultPath :: Text -> String
-resultPath p = [i|#{resultDir}/#{drvBasename p}|]
 
 -- Nothing means there is no running Job.
 getRunningJob :: Text -> IO (Maybe Text)
-getRunningJob p = do
-  let path = runningPath p
-  pathExists <- doesFileExist path
-  if pathExists
-    then
-      handleJust (guard . isDoesNotExistError) (const $ pure Nothing)
-      $   Just
-      <$> readFileText path
-    else pure Nothing
+getRunningJob derivationName = poll
+ where
+  path    = runningPath derivationName
+  request = do
+    pathExists <- doesFileExist path
+    if pathExists
+      then
+        handleJust (guard . isDoesNotExistError) (const $ pure Nothing)
+        $   Just
+        <$> readFileText path
+      else pure Nothing
+  poll = go 0
+   where
+    go count = do
+      mayJob <- request
+      if count < 50 && mayJob == Just ""
+        then threadDelay 10000 >> go (count + 1)
+        else pure mayJob
 
 realise :: ReportLevel -> Text -> IO ()
 realise level derivationName = do
   ensureDeps level derivationName
   jobName <- ensureRunningJob level derivationName
+  whenSelf level
+    $ say [i|Job #{jobName} running for #{derivationName}. Waiting ...|]
   handle
       (\(WaitException e) -> do
-        sayErr
-          [i|Retrying to find or create a job for #{derivationName} after waiting for job failed with error "#{e}" |]
+        whenSelf level
+          $ sayErr
+              [i|Retrying to find or create a job for #{derivationName} after waiting for job failed with error "#{e}" |]
         realise level derivationName
       )
     $ do
         waitForJob derivationName >>= \case
           Success -> whenSelf level
-            $ say [i|Job #{jobName} completed build for #{derivationName}.|]
-          Failure -> throw [i|Job #{jobName} failed build #{derivationName}.|]
+            $ say [i|Job #{jobName} completed #{derivationName}.|]
+          Failure -> throw [i|Job #{jobName} failed #{derivationName}.|]
+
+checkStaleness :: Text -> IO ()
+checkStaleness derivationName = forever $ do
+  whenJustM (getRunningJob derivationName) $ \jobName ->
+    handleJust (guard . isDoesNotExistError) (const pass) $ do
+      nothingQueued <-
+        T.null . decodeUtf8 <$> (laminarc "show-queued" |> captureTrim)
+      knownJobs <-
+        fmap strip
+        .   lines
+        .   decodeUtf8
+        <$> (laminarc "show-running" |> captureTrim)
+      now      <- getCurrentTime
+      fileTime <- getModificationTime (runningPath derivationName)
+      let notRunning = not $ any (`isInfixOf` jobName) knownJobs
+          oldEnough  = diffUTCTime now fileTime > 60
+          stale      = notRunning && nothingQueued && oldEnough
+      when stale $ do
+        removeFile (runningPath derivationName)
+        throwWait
+          [i|File #{runningPath derivationName} claiming job name "#{jobName}" seems to be stale. Deleting File.|]
+  threadDelay 10000000
 
 waitForJob :: Text -> IO JobResult
 waitForJob derivationName = do
   done <- newTVarIO False
   let finished = atomically (writeTVar done True)
-      getJob = go 0
-       where
-        go count = do
-          mayJob <- mapException (\(e :: JobException) -> (coerce e :: WaitException))
-             <$> getRunningJob derivationName
-          if count < 50 && mayJob == Just ""
-            then threadDelay 100 >> go (count + 1)
-            else pure mayJob
   withManager $ \manager -> do
-    _        <- watchDir manager runningDir fileDeleted (const finished)
-    mayJob <- getJob
-    whenNothing_ mayJob finished
-    whenJust mayJob $ \jobName -> do
-      runningJobs <-
-        fmap strip
-        .   lines
-        .   decodeUtf8
-        <$> (laminarc "show-running" |> captureTrim)
-      unless (any (`isInfixOf` jobName) runningJobs) $ do
-        handleJust (guard . isDoesNotExistError) (const pass)
-          $ removeFile (runningPath derivationName)
-        throwWait
-          [i|File #{runningPath derivationName} is stale. It contains the job name "#{jobName}", but running jobs are only #{runningJobs}. Deleting File.|]
-    atomically $ readTVar done >>= check
+    _ <- watchDir manager runningDir fileDeleted (const finished)
+    withAsync
+      (whenNothingM_ (getRunningJob derivationName) finished)
+      (const $ race_ (atomically $ readTVar done >>= check)
+                     (checkStaleness derivationName)
+      )
   resultText <-
     handleJust
         (guard . isDoesNotExistError)

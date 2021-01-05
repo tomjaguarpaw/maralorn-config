@@ -9,8 +9,10 @@ let
     ${setup}
     export HOME=$PWD
     git clone git@localhost:kassandra2 kassandra
+    cd kassandra
+    git show -q
     echo "Evaluating nix-expression."
-    drv=$(readlink -f $(nix-instantiate kassandra/release.nix -A ${name} --add-root ./drv --indirect))
+    drv=$(readlink -f $(nix-instantiate release.nix -A ${name} --add-root ./drv --indirect))
     echo "Evaluation done."
     nix-jobs realise $drv
   '';

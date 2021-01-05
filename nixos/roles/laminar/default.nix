@@ -36,6 +36,9 @@ in {
           PATH=${lib.makeBinPath [ pkgs.laminar pkgs.nix ]}:$PATH nix-jobs realise-here "$DERIVATION"
         '';
       };
+      contexts = {
+        "default.conf" = builtins.toFile "default.conf" "EXECUTORS=16";
+      };
     };
     users = {
       groups.laminar = { };
