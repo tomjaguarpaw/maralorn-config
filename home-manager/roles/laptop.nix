@@ -37,7 +37,7 @@ in {
         say "Building ~/.modes for apollo"
         nixPath <- myNixPath "${configPath}"
         setEnv "WITH_SECRETS" "false"
-        nix_build nixPath (params ++ remoteBuildParams) &!> StdOut |> nom
+        nix_build nixPath (params ++ remoteBuildParams)
         setEnv "WITH_SECRETS" "true"
         nix_build nixPath params
         activate_mode
@@ -53,7 +53,7 @@ in {
         nixPath <- myNixPath "${configPath}"
         mode <- getMode
         say [i|Quick switching to mode #{mode} ...|]
-        home_manager (nixPath <> ["switch", "-A", [i|apollo-#{mode}|]]) &!> StdOut |> nom
+        home_manager (nixPath <> ["switch", "-A", [i|apollo-#{mode}|]])
         update_modes
     '';
     selectMode = pkgs.writeHaskellScript {

@@ -9,8 +9,8 @@ in {
         paths <- myNixPath "${configPath}"
         args <- getArgs
         setEnv "WITH_SECRETS" "false"
-        nix_build (paths ++ buildSystemParams ++ ["--no-out-link"] ++ remoteBuildParams ++ fmap toString args) &!> StdOut |> nom
+        nix_build (paths ++ buildSystemParams ++ ["--no-out-link"] ++ remoteBuildParams ++ fmap toString args)
         setEnv "WITH_SECRETS" "true"
-        nixos_rebuild (paths ++ ["switch"] ++ fmap toString args) &!> StdOut |> nom
+        nixos_rebuild (paths ++ ["switch"] ++ fmap toString args)
   '';
 }
