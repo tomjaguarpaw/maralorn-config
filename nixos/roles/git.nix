@@ -28,8 +28,8 @@ let
         git "push" "--all" "-f" mirror
       jobMay <- lookupEnv "GL_OPTION_CI_JOB"
       whenJust jobMay $ \job -> do
-        say "Queuing job:"
-        laminarc "queue" job
+        jobName <- decodeUtf8 <$> (laminarc "queue" job |> captureTrim)
+        say [i|Queued job #{jobName}.\nSee https://ci.maralorn.de/jobs/#{T.replace ":" "/" jobName}|]
       deployMay <- lookupEnv "GL_OPTION_WEB_DEPLOY"
       whenJust deployMay $ \deploy -> do
         (maybe [] (\x -> ["-A", x]) -> target) <- lookupEnv "GL_OPTION_WEB_DEPLOY_NIX_TARGET"

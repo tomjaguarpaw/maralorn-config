@@ -9,8 +9,10 @@ let
     ${setup}
     export HOME=$PWD
     git clone git@localhost:kassandra2 kassandra
-    DRV=$(nix-instantiate kassandra/release.nix -A ${name} --add-root ./drv --indirect)
-    nix-jobs realise "DERIVATION=$DRV"
+    echo "Evaluating nix-expression."
+    drv=$(readlink -f $(nix-instantiate kassandra/release.nix -A ${name} --add-root ./drv --indirect))
+    echo "Evaluation done."
+    nix-jobs realise $drv
   '';
 in {
   services.laminar.cfgFiles.jobs = {

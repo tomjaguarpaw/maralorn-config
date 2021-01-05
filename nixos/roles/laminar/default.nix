@@ -33,7 +33,7 @@ in {
       jobs = {
         "nix-build.run" = pkgs.writeShellScript "nix-build" ''
           set -e
-          nix-jobs realize-here "$DERIVATION"
+          PATH=${lib.makeBinPath [ pkgs.laminar pkgs.nix ]}:$PATH nix-jobs realise-here "$DERIVATION"
         '';
       };
     };

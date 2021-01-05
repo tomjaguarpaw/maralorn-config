@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE QuasiQuotes #-}
@@ -6,40 +7,52 @@
 {-# LANGUAGE ExtendedDefaultRules #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -Wall -Werror -Wno-missing-signatures -Wno-type-defaults -Wno-orphans #-}
 
 import           Control.Concurrent             ( threadDelay )
-import           Control.Concurrent.Async       ( forConcurrently )
-import           Control.Exception              ( IOException
-                                                , bracket
+import           Control.Concurrent.Async       ( forConcurrently_ )
+import           Control.Concurrent.STM         ( check )
+import           Control.Exception              ( bracket
                                                 , catch
                                                 , handle
+                                                , handleJust
+                                                , mapException
+                                                , throwIO
                                                 )
 import           Data.Bits                      ( Bits((.|.)) )
 import qualified Data.Sequence                 as Seq
 import           Data.String.Interpolate        ( i )
+import           Data.Text                      ( isInfixOf
+                                                , splitOn
+                                                , strip
+                                                )
 import qualified Data.Text                     as T
 import           Relude
 import           Say                            ( say
                                                 , sayErr
                                                 )
-import           Shh                            ( ExecArg
+import           Shh                            ( (&!>)
+                                                , ExecArg(..)
                                                 , ExecReference(Absolute)
+                                                , Stream(StdOut)
                                                 , captureTrim
                                                 , load
                                                 , (|>)
                                                 )
-import           System.Directory               ( doesFileExist
+import           System.Directory               ( createDirectoryIfMissing
+                                                , doesFileExist
                                                 , removeFile
                                                 )
-import           System.Environment             ( getArgs
-                                                , getEnv
-                                                )
+import           System.Environment             ( getArgs )
 import           System.FSNotify                ( Event(Removed)
-                                                , stopManager
                                                 , watchDir
                                                 , withManager
                                                 )
+import           System.IO                      ( BufferMode(LineBuffering)
+                                                , hSetBuffering
+                                                )
+import           System.IO.Error
 import           System.Posix.Files             ( groupReadMode
                                                 , otherReadMode
                                                 , ownerReadMode
@@ -58,191 +71,218 @@ load Absolute ["laminarc", "nix-store"]
 
 data JobResult = Success | Failure deriving (Show, Read, Eq, Ord, Enum)
 
+data ReportLevel = None | Self | Children deriving (Show, Eq, Ord, Enum)
+
+newtype JobException = JobException Text deriving (Show, Exception)
+throw = throwIO . JobException
+newtype WaitException = WaitException Text deriving (Show, Exception)
+throwWait = throwIO . WaitException
+
 instance Semigroup JobResult where
   Success <> Success = Success
   _       <> _       = Failure
 
 instance Monoid JobResult where
   mempty = Success
--- 2 Entry points
--- 1. Realise i.e. "wait-for-and-trigger-build-if-necessary"
--- 2. Job i.e. "the actual realisation"
 
 instance ExecArg Text where
+  asArg         = asArg . toString
+  asArgFromList = asArgFromList . fmap toString
 
+whenSelf level = when (level >= Self)
+whenChildren level = when (level >= Children)
+levelPrec Children = Self
+levelPrec _        = None
 getDependenciesFromNix :: Text -> IO (Seq Text)
 getDependenciesFromNix derivationName = do
   everythingToDo <- nixStoreRealiseDryRun derivationName
   pure (Seq.filter (/= derivationName) everythingToDo)
 
 nixStoreRealiseDryRun :: Text -> IO (Seq Text)
-nixStoreRealiseDryRun derivationName =
-  process <$> (nix_store "-r" derivationName "--dry-run" |> captureTrim)
+nixStoreRealiseDryRun derivationName = do
+  process
+    <$> (nix_store "-r" derivationName "--dry-run" &!> StdOut |> captureTrim)
  where
   process =
     fromList
+      . drop 1
       . dropWhile (/= "these derivations will be built:")
-      . fmap T.strip
+      . fmap strip
       . lines
       . decodeUtf8
 
 job :: Text -> IO ()
 job derivationName = do
-  say [i|Initiating realisation for #{derivationName}.|]
-  pathInfo <- getPathInfo derivationName
+  say [i|Building #{derivationName}.|]
   let setResult result = do
-        writeFileText (resultPath pathInfo) (show result)
-        removeFile (runningPath pathInfo)
-  ensureDeps True derivationName >>= \case
-    Success -> do
-      say [i|All dependencies provided, starting build for #{derivationName}.|]
-      catch
-        (nixStoreRealise derivationName)
-        (\(err :: SomeException) -> do
-          setResult Failure
-          sayErr [i|nix-build failed with error #{err}.|]
-          exitFailure
-        )
-      setResult Success
-      say [i|Build for #{derivationName} successful. Finishing.|]
-    Failure -> do
-      sayErr
-        [i|Couldn‘t build #{derivationName} because of failing dependency.|]
+        createDirectoryIfMissing True resultDir
+        writeFileText (resultPath derivationName) (show result)
+        removeFile (runningPath derivationName)
+  ensureDeps Children derivationName
+  catch
+    (nixStoreRealise derivationName)
+    (\(err :: SomeException) -> do
+      setResult Failure
+      sayErr [i|nix-build failed with error #{err}.|]
+      exitFailure
+    )
+  setResult Success
+  say [i|Build for #{derivationName} successful.|]
 
 nixStoreRealise :: Text -> IO ()
 nixStoreRealise = nix_store "-r"
 
-ensureDeps :: Bool -> Text -> IO JobResult
-ensureDeps topLevel derivationName = do
+ensureDeps :: ReportLevel -> Text -> IO ()
+ensureDeps level derivationName = do
   dependencies <- getDependenciesFromNix derivationName
-  when topLevel $ forM_ dependencies $ \dep ->
+  whenChildren level $ forM_ dependencies $ \dep ->
     say [i|Requiring build of #{dep}.|]
-  fold <$> forConcurrently dependencies (realise topLevel)
+  forConcurrently_ dependencies (realise $ levelPrec level)
+    `catch` \(JobException e) ->
+              throw [i|#{e}\nFailed dependency for #{derivationName}|]
 
 -- Nothing means failing to acquire lock on the derivation name for starting the job.
-tryQueue :: PathInfo -> IO (Maybe Text)
-tryQueue pathInfo@(_, _, derivationName) = getRunningJob pathInfo >>= \case
-  Nothing -> handle handleIOException $ bracket openNewFile closeFd $ \fd -> do
-    jobName <-
-      decodeUtf8
-        <$> (  laminarc "queue" "nix-build" ([i|DERIVATION=#{derivationName}|] :: Text)
-            |> captureTrim
-            )
-    writeCount <- fdWrite fd (toString jobName)
-    when (writeCount == 0) $ sayErr
-      [i|Wrote 0 bytes of jobName "#{jobName}" to #{runningPath pathInfo}|]
-    pure (Just jobName)
+tryQueue :: Text -> IO (Maybe Text)
+tryQueue derivationName = getRunningJob derivationName >>= \case
+  Nothing -> do
+    createDirectoryIfMissing True runningDir
+    handleJust (\x -> if isAlreadyExistsError x then Just x else Nothing)
+               (const (pure Nothing))
+      $ bracket openNewFile closeFd
+      $ \fd -> do
+          jobName <-
+            decodeUtf8
+              <$> (  laminarc "queue"
+                              "nix-build"
+                              ([i|DERIVATION=#{derivationName}|] :: Text)
+                  |> captureTrim
+                  )
+          when (T.null jobName) $ throw [i|Laminarc returned an empty jobName.|]
+          writeCount <- fdWrite fd (toString jobName)
+          when (writeCount == 0)
+            $ throw
+                [i|Wrote 0 bytes of jobName "#{jobName}" to #{runningPath derivationName}|]
+          pure . Just $ jobName
   Just _ -> pure Nothing
  where
-  openNewFile = openFd (runningPath pathInfo)
+  openNewFile = openFd (runningPath derivationName)
                        WriteOnly
                        (Just defaultMode)
                        defaultFileFlags { exclusive = True }
   defaultMode =
     ownerReadMode .|. ownerWriteMode .|. groupReadMode .|. otherReadMode
-  handleIOException :: IOException -> IO (Maybe Text)
-  handleIOException _ = pure Nothing
 
 -- Nothing means a dependency failed.
-queueJobWithLaminarc :: Bool -> PathInfo -> IO (Maybe Text)
-queueJobWithLaminarc topLevel pathInfo@(_, _, derivationName) =
-  tryQueue pathInfo >>= \case
-    Nothing -> ensureRunningJob topLevel pathInfo
-    a       -> do
-      say [i|Queued build job ${jobName} for #{derivationName}.|]
-      pure a
+queueJobWithLaminarc :: ReportLevel -> Text -> IO Text
+queueJobWithLaminarc level derivationName = tryQueue derivationName >>= maybe
+  (ensureRunningJob level derivationName)
+  (\jobName -> jobName
+    <$ say [i|Job #{jobName} started for #{derivationName}. Waiting ...|]
+  )
 
-ensureRunningJob :: Bool -> PathInfo -> IO (Maybe Text)
-ensureRunningJob topLevel pathInfo@(_, _, derivationName) =
-  getRunningJob pathInfo >>= \case
-    Nothing -> do
-      ensureDeps False derivationName >>= \case
-        Success -> queueJobWithLaminarc topLevel pathInfo
-        Failure -> do
-          sayErr
-            [i|Could not realise #{derivationName} because of failed dependency.|]
-          pure Nothing
-    Just jobName -> do
-      when topLevel
-        $ say [i|Waiting for job #{jobName} running for #{derivationName}|]
-      pure (Just jobName)
+ensureRunningJob :: ReportLevel -> Text -> IO Text
+ensureRunningJob level derivationName = getRunningJob derivationName >>= maybe
+  (queueJobWithLaminarc level derivationName)
+  (\jobName -> jobName <$ whenSelf
+    level
+    (say [i|Job #{jobName} running for #{derivationName}. Waiting ...|])
+  )
 
+drvBasename derivationName =
+  fromMaybe derivationName . viaNonEmpty last $ splitOn "/" derivationName
 
-type PathInfo = (Text, Text, Text)
-
-getPathInfo :: Text -> IO PathInfo
-getPathInfo derivationName = do
-  workSpace <- toText <$> getEnv "WORKSPACE"
-  (workSpace, , derivationName)
-    .   decodeUtf8
-    <$> (nix_store "-q" "--hash" derivationName |> captureTrim)
-
-runningDir :: PathInfo -> String
-runningDir (workSpace, _, _) = [i|#{workSpace}/running-jobs|]
-runningPath :: PathInfo -> String
-runningPath (workSpace, drvHash, _) = [i|#{workSpace}/running-jobs/#{drvHash}|]
-resultPath :: PathInfo -> String
-resultPath (workSpace, drvHash, _) =
-  [i|#{workSpace}/completed-jobs/#{drvHash}|]
+workspace, resultDir, runningDir :: String
+workspace = "/var/lib/laminar/run/nix-build/workspace"
+resultDir = [i|#{workspace}/completed-jobs|]
+runningDir = [i|#{workspace}/running-jobs|]
+runningPath :: Text -> String
+runningPath p = [i|#{runningDir}/#{drvBasename p}|]
+resultPath :: Text -> String
+resultPath p = [i|#{resultDir}/#{drvBasename p}|]
 
 -- Nothing means there is no running Job.
-getRunningJob :: PathInfo -> IO (Maybe Text)
+getRunningJob :: Text -> IO (Maybe Text)
 getRunningJob p = do
   let path = runningPath p
   pathExists <- doesFileExist path
   if pathExists
-    then catch (Just <$> readFileText path)
-               (\(_ :: IOException) -> getRunningJob p)
+    then
+      handleJust (guard . isDoesNotExistError) (const $ pure Nothing)
+      $   Just
+      <$> readFileText path
     else pure Nothing
 
-realise :: Bool -> Text -> IO JobResult
-realise topLevel derivationName = do
-  pathInfo   <- getPathInfo derivationName
-  jobNameMay <- ensureRunningJob topLevel pathInfo
-  case jobNameMay of
-    Just jobName -> do
-      result <- waitForJob pathInfo
-      case result of
-        Success -> when topLevel
-          $ say [i|#{derivationName} succesfully realised by job #{jobName}|]
-        Failure -> sayErr [i|#{derivationName} failed in job #{jobName}|]
-      pure result
-    Nothing -> pure Failure
+realise :: ReportLevel -> Text -> IO ()
+realise level derivationName = do
+  ensureDeps level derivationName
+  jobName <- ensureRunningJob level derivationName
+  handle
+      (\(WaitException e) -> do
+        sayErr
+          [i|Retrying to find or create a job for #{derivationName} after waiting for job failed with error "#{e}" |]
+        realise level derivationName
+      )
+    $ do
+        waitForJob derivationName >>= \case
+          Success -> whenSelf level
+            $ say [i|Job #{jobName} completed build for #{derivationName}.|]
+          Failure -> throw [i|Job #{jobName} failed build #{derivationName}.|]
 
-waitForJob :: PathInfo -> IO JobResult
-waitForJob pathInfo = do
-  _ <- withManager $ \manager -> do
-    _ <- watchDir manager
-                  (runningDir pathInfo)
-                  fileDeleted
-                  (const $ stopManager manager)
-    maybeJob <- getRunningJob pathInfo
-    whenNothing_ maybeJob $ stopManager manager
-    forever $ threadDelay 1000000
-  readFileText (resultPath pathInfo)
-    >>= (\case
-          Nothing -> do
-            sayErr [i|Failed to parse result from #{resultPath pathInfo}|]
-            pure Failure
-          Just a -> pure a
+waitForJob :: Text -> IO JobResult
+waitForJob derivationName = do
+  done <- newTVarIO False
+  let finished = atomically (writeTVar done True)
+      getJob = go 0
+       where
+        go count = do
+          mayJob <- mapException (\(e :: JobException) -> (coerce e :: WaitException))
+             <$> getRunningJob derivationName
+          if count < 50 && mayJob == Just ""
+            then threadDelay 100 >> go (count + 1)
+            else pure mayJob
+  withManager $ \manager -> do
+    _        <- watchDir manager runningDir fileDeleted (const finished)
+    mayJob <- getJob
+    whenNothing_ mayJob finished
+    whenJust mayJob $ \jobName -> do
+      runningJobs <-
+        fmap strip
+        .   lines
+        .   decodeUtf8
+        <$> (laminarc "show-running" |> captureTrim)
+      unless (any (`isInfixOf` jobName) runningJobs) $ do
+        handleJust (guard . isDoesNotExistError) (const pass)
+          $ removeFile (runningPath derivationName)
+        throwWait
+          [i|File #{runningPath derivationName} is stale. It contains the job name "#{jobName}", but running jobs are only #{runningJobs}. Deleting File.|]
+    atomically $ readTVar done >>= check
+  resultText <-
+    handleJust
+        (guard . isDoesNotExistError)
+        (const $ throwWait
+          [i|Job result file #{resultPath derivationName} does not exist.|]
         )
-    .   readMaybe
-    .   toString
+      $ readFile (resultPath derivationName)
+  maybe
+      (throwWait [i|Failed to parse result from #{resultPath derivationName}.|])
+      pure
+    . readMaybe
+    . toString
+    $ resultText
  where
-  fileDeleted (Removed a _ _) | a == runningPath pathInfo = True
+  fileDeleted (Removed a _ _) | a == runningPath derivationName = True
   fileDeleted _ = False
 
 
 main :: IO ()
 main = do
+  hSetBuffering stdout LineBuffering
   whenNotNullM missingExecutables $ \x -> do
     sayErr [i|Missing executables #{show x}|]
     exitFailure
   args <- fmap toText <$> getArgs
   case args of
     ["realise-here", derivationName] -> job derivationName
-    ["realise"     , derivationName] -> realise True derivationName >>= \case
-      Success -> exitSuccess
-      Failure -> exitFailure
+    ["realise"     , derivationName] -> realise Children derivationName
     _ ->
       sayErr "Usage: realise-here <derivationName> | realise <derivationName>"
