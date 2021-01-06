@@ -10,7 +10,7 @@
       };
     };
     enableDefaultFonts = true;
-    #fontDir.enable = true;
+    fontDir.enable = true;
     fonts = builtins.attrValues {
       inherit (pkgs)
         nerdfonts # For all my terminal needs.
