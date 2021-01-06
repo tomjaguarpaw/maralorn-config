@@ -34,7 +34,7 @@
       },
       "id": 14,
       "options": {
-        "content": "<h2><a href=\"https://ci.maralorn.de\">ci.maralorn.de</a></h2>\n<a href=\"https://ci.maralorn.de/jobs/kassandra\">\n  <img src=\"https://ci.maralorn.de/badge/kassandra.svg\">\n</a>\n<a href=\"https://ci.maralorn.de/jobs/test-config\">\n  <img src=\"https://ci.maralorn.de/badge/test-config.svg\">\n</a>",
+        "content": "@BADGES@",
         "mode": "html"
       },
       "pluginVersion": "7.3.5",
