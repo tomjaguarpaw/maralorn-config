@@ -19,7 +19,7 @@ in {
       };
     };
   };
-  imports = [ ./kassandra.nix ];
+  imports = [ ./kassandra.nix ./test-config.nix ];
   config = {
     services.laminar.cfgFiles = {
       scripts = {
@@ -33,7 +33,9 @@ in {
       jobs = {
         "nix-build.run" = pkgs.writeShellScript "nix-build" ''
           set -e
-          PATH=${lib.makeBinPath [ pkgs.laminar pkgs.nix ]}:$PATH nix-jobs realise-here "$DERIVATION"
+          PATH=${
+            lib.makeBinPath [ pkgs.laminar pkgs.nix ]
+          }:$PATH nix-jobs realise-here "$DERIVATION"
         '';
       };
       contexts = {
