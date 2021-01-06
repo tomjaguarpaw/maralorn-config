@@ -153,36 +153,35 @@ nixStoreRealise = nix_store "-r"
 ensureDeps :: ReportLevel -> Text -> IO ()
 ensureDeps level derivationName = do
   dependencies <- getDependenciesFromNix derivationName
-  whenChildren level $ forM_ dependencies $ \dep ->
-    say [i|Requiring #{dep}.|]
+  whenChildren level $ forM_ dependencies $ \dep -> say [i|Requiring #{dep}.|]
   forConcurrently_ dependencies (realise $ levelPrec level)
     `catch` \(JobException e) ->
               throw [i|#{e}\nFailed dependency for #{derivationName}|]
 
 -- Nothing means failing to acquire lock on the derivation name for starting the job.
 tryQueue :: Text -> IO (Maybe Text)
-tryQueue derivationName = getRunningJob derivationName >>= \case
-  Nothing -> do
-    createDirectoryIfMissing True runningDir
-    handleJust (\x -> if isAlreadyExistsError x then Just x else Nothing)
-               (const (pure Nothing))
-      $ bracket openNewFile closeFd
-      $ \fd -> do
-          jobName <-
-            decodeUtf8
-              <$> (  laminarc "queue"
-                              "nix-build"
-                              ([i|DERIVATION=#{derivationName}|] :: Text)
-                  |> captureTrim
-                  )
-          when (T.null jobName) $ throw [i|Laminarc returned an empty jobName.|]
-          writeCount <- fdWrite fd (toString jobName)
-          when (writeCount == 0)
-            $ throw
-                [i|Wrote 0 bytes of jobName "#{jobName}" to #{runningPath derivationName}|]
-          pure . Just $ jobName
-  Just _ -> pure Nothing
+tryQueue derivationName = handleExisting $ do
+  createDirectoryIfMissing True runningDir
+  bracket openNewFile closeFd getJobAndWrite
  where
+  getJobAndWrite fd = do
+    jobName <- startJob
+    when (T.null jobName) $ throw [i|Laminarc returned an empty jobName.|]
+    writeCount <- fdWrite fd (toString jobName)
+    when (writeCount == 0)
+      $ throw
+          [i|Wrote 0 bytes of jobName "#{jobName}" to #{runningPath derivationName}|]
+    pure . Just $ jobName
+  startJob =
+    decodeUtf8
+      <$> (  laminarc "queue"
+                      "nix-build"
+                      ([i|DERIVATION=#{derivationName}|] :: Text)
+          |> captureTrim
+          )
+  handleExisting = handleJust
+    (\x -> if isAlreadyExistsError x then Just x else Nothing)
+    (const (pure Nothing))
   openNewFile = openFd (runningPath derivationName)
                        WriteOnly
                        (Just defaultMode)
@@ -201,24 +200,17 @@ ensureRunningJob level derivationName = whenNothingM
 
 -- Nothing means there is no running Job.
 getRunningJob :: Text -> IO (Maybe Text)
-getRunningJob derivationName = poll
+getRunningJob derivationName = poll 0
  where
   path    = runningPath derivationName
-  request = do
-    pathExists <- doesFileExist path
-    if pathExists
-      then
-        handleJust (guard . isDoesNotExistError) (const $ pure Nothing)
-        $   Just
-        <$> readFileText path
-      else pure Nothing
-  poll = go 0
-   where
-    go count = do
-      mayJob <- request
-      if count < 50 && mayJob == Just ""
-        then threadDelay 10000 >> go (count + 1)
-        else pure mayJob
+  request = handleNoExist (Just <$> readFileText path)
+  handleNoExist =
+    handleJust (guard . isDoesNotExistError) (const $ pure Nothing)
+  poll count = do
+    mayJob <- request
+    if count < 50 && mayJob == Just ""
+      then threadDelay 10000 >> poll (count + 1)
+      else pure mayJob
 
 realise :: ReportLevel -> Text -> IO ()
 realise level derivationName = do
@@ -226,18 +218,17 @@ realise level derivationName = do
   jobName <- ensureRunningJob level derivationName
   whenSelf level
     $ say [i|Job #{jobName} running for #{derivationName}. Waiting ...|]
-  handle
-      (\(WaitException e) -> do
-        whenSelf level
-          $ sayErr
-              [i|Retrying to find or create a job for #{derivationName} after waiting for job failed with error "#{e}" |]
-        realise level derivationName
-      )
-    $ do
-        waitForJob derivationName >>= \case
-          Success -> whenSelf level
-            $ say [i|Job #{jobName} completed #{derivationName}.|]
-          Failure -> throw [i|Job #{jobName} failed #{derivationName}.|]
+  handleWaitFail $ waitForJob derivationName >>= \case
+    Success ->
+      whenSelf level $ say [i|Job #{jobName} completed #{derivationName}.|]
+    Failure -> throw [i|Job #{jobName} failed #{derivationName}.|]
+ where
+  processWaitFail (WaitException e) = do
+    whenSelf level
+      $ sayErr
+          [i|Retrying to find or create a job for #{derivationName} after waiting for job failed with error "#{e}" |]
+    realise level derivationName
+  handleWaitFail = handle processWaitFail
 
 checkStaleness :: Text -> IO ()
 checkStaleness derivationName = forever $ do
