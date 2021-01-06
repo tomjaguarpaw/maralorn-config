@@ -46,7 +46,6 @@ import           Shh                            ( (&!>)
                                                 , (|>)
                                                 )
 import           System.Directory               ( createDirectoryIfMissing
-                                                , doesFileExist
                                                 , getModificationTime
                                                 , removeFile
                                                 )
