@@ -72,8 +72,5 @@ in writeScriptBin "grafana-devel" ''
   export GF_DATABASE_NAME="grafana"
   ln -sf ${grafana}/share/grafana/conf conf
   ln -sf ${grafana}/share/grafana/tools tools
-  ${lib.concatStringsSep "\n" (lib.mapAttrsToList
-    (pluginName: plugin: "ln -s ${toString plugin} plugins/${pluginName}")
-    grafanaPlugins)}
   exec ${grafana}/bin/grafana-server "$@"
 ''
