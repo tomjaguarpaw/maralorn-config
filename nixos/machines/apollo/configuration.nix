@@ -85,6 +85,7 @@ in {
       group = "users";
       user = "maralorn";
       openDefaultPorts = true;
+      package = pkgs.syncthingNext;
       declarative = syncthing.declarativeWith [ "hera" ] "/home/maralorn/media"
         // {
           cert = pkgs.privatePath "syncthing/apollo/cert.pem";
