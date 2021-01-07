@@ -5,6 +5,7 @@ let
     set -ex
     export PATH=${lib.makeBinPath path}:$PATH
     export NIX_PATH="/etc/nix-path:nixos-config=/etc/nixos/configuration.nix"
+    export GIT_SSH_COMMAND="ssh -vv"
     cd /var/cache/gc-links
   '';
 in {

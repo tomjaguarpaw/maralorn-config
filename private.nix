@@ -11,7 +11,7 @@ in {
   inherit withSecrets;
   privatePath = name:
     let path = "/etc/nixos/private/${name}";
-    in if withSecrets then assert builtins.pathExists path; path else path;
+    in if withSecrets then assert builtins.pathExists (./private + "/${name}"); path else path;
   privateValue = default: name:
     if withSecrets then import (./private + "/${name}.nix") else default;
   privateFile = name:
