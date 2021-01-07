@@ -21,20 +21,15 @@ in {
         "stream.maralorn.de" = {
           forceSSL = true;
           enableACME = true;
-          locations = {
-            "/" = {
-              proxyPass = "http://[${config.m-0.hosts.apollo-wg}]:8123";
-            };
-          };
+          locations."/".proxyPass =
+            "http://[${config.m-0.hosts.apollo-wg}]:8123";
         };
         "tasks.maralorn.de" = {
           forceSSL = true;
           enableACME = true;
-          locations = {
-            "/" = {
-              proxyPass = "http://[::1]:8000";
-              proxyWebsockets = true;
-            };
+          locations."/" = {
+            proxyPass = "http://[::1]:8000";
+            proxyWebsockets = true;
           };
         };
         "hera.m-0.eu" = {

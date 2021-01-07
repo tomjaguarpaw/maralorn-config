@@ -12,13 +12,8 @@ let
       (Text.dropAround ('"' ==) . decodeUtf8 . trim -> homeManagerChannel) <- nix_instantiate "--eval" "-E" ([i|(import #{configDir}/channels.nix).#{hostname}.home-manager-channel|] :: String) |> captureTrim
       (Text.dropAround ('"' ==) . decodeUtf8 . trim -> nixpkgsChannel) <- nix_instantiate "--eval" "-E" ([i|(import #{configDir}/channels.nix).#{hostname}.nixpkgs-channel|] :: String) |> captureTrim
       paths <- aNixPath homeManagerChannel nixpkgsChannel (toText configDir)
-      logFile <- mktemp |> captureTrim
-      let command = (${commandline}) &!> StdOut &> Append logFile
-          failHandler = do
-            say [i|--- Build failure for ${name} config for #{hostname} ---|]
-            cat logFile
-      say [i|Trying to build ${name} config for #{hostname}. Logging to #{logFile}.|]
-      onException command failHandler
+      say [i|Trying to build ${name} config for #{hostname}.|]
+      ${commandline}
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
 in {
@@ -27,13 +22,15 @@ in {
     name = "test-system-config";
     inherit bins;
     inherit imports;
-  } (haskellBody "system" ''nix_build $ buildSystemParams ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ fmap toString args'');
+  } (haskellBody "system" ''
+    nix_build $ buildSystemParams ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ fmap toString args'');
 
   test-home-config = self.writeHaskellScript {
     name = "test-home-config";
     inherit bins;
     inherit imports;
-  } (haskellBody "home" ''nix_build $ paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname, "-o", [i|result-home-manager-#{hostname}|]] ++ fmap toString args'');
+  } (haskellBody "home" ''
+    nix_build $ paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname, "-o", [i|result-home-manager-#{hostname}|]] ++ fmap toString args'');
 
   test-config = self.writeHaskellScript {
     name = "test-config";
@@ -43,33 +40,29 @@ in {
       self.git
       self.niv.bin
       self.git-crypt
+      self.laminar
     ];
     imports = [ "System.Directory (withCurrentDirectory)" ];
   } ''
-    checkout :: IO FilePath
-    checkout = do
-      (decodeUtf8 -> repoDir) <-  mktemp "-d" |> captureTrim
-      git "clone" "${repoSrc}" repoDir
-      pure repoDir
-
     main = do
-      bump <- (maybe False (== "bump") . listToMaybe) <$> getArgs
-      bracket checkout (rm "-rf") $ \repoDir -> do
-        withCurrentDirectory repoDir $ do
-          when bump $ ignoreFailure $ niv "update"
-        changed <- (mempty /=) <$> (git "-C" repoDir "status" "--porcelain" |> captureTrim)
+      bump <- maybe False (== "bump") . listToMaybe <$> getArgs
+      git "clone" "${repoSrc}" "config"
+      withCurrentDirectory "config" $ do
+        when bump $ ignoreFailure $ niv "update"
+        changed <- (mempty /=) <$> (git "status" "--porcelain" |> captureTrim)
         when changed $ do
-          git "-C" repoDir "config" "user.email" "maralorn@maralorn.de"
-          git "-C" repoDir "config" "user.name" "maralorn (nix-auto-updater)"
-          git "-C" repoDir "commit" "-am" "Update dependencies with niv"
+          git "config" "user.email" "maralorn@maralorn.de"
+          git "config" "user.name" "maralorn (nix-auto-updater)"
+          git "commit" "-am" "Update dependencies with niv"
+          git "push" "-f" "HEAD:niv-bump"
+        let branch = if bump then "niv-bump" else "master"
         concurrently_
-          (mapConcurrently_ (\x -> test_system_config repoDir x remoteBuildParams) ${self.haskellList systems})
-          (mapConcurrently_ (\x -> test_home_config repoDir x remoteBuildParams) ${self.haskellList homes})
-        git "-C" repoDir "submodule" "update" "--init"
-        concurrently_
-          (mapConcurrently_ (test_system_config repoDir) ${self.haskellList systems})
-          (mapConcurrently_ (test_home_config repoDir) ${self.haskellList homes})
-        when changed $ do
-          git "-C" repoDir "push" "origin" "master:master"
+          (mapConcurrently_ (\x -> laminarc ["run", [i|system-config-#{x}|], [i|BRANCH=#{branch}|]]) ${
+            self.haskellList systems
+          })
+          (mapConcurrently_ (\x -> laminarc ["run", [i|home-config-#{x}|], [i|BRANCH=#{branch}|]]) ${
+            self.haskellList homes
+          })
+        when changed $ git "-C" "config" "push" "origin" "master:master"
   '';
 }
