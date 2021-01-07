@@ -1,5 +1,5 @@
 { pkgs, config, lib, ... }: {
-  imports = [ ../../common ./modules/laptop.nix ./admin.nix ];
+  imports = [ ../../common ./admin.nix ];
 
   i18n.defaultLocale = "en_US.UTF-8";
 
