@@ -63,6 +63,6 @@ in {
           (mapConcurrently_ (\x -> laminarc ["run", [i|home-config-#{x}|], [i|BRANCH=#{branch}|]]) ${
             self.haskellList homes
           })
-        when changed $ git "-C" "config" "push" "origin" "master:master"
+        when changed $ git "push" "origin" "master:master"
   '';
 }
