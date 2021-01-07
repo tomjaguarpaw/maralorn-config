@@ -43,12 +43,7 @@ in {
       ${common}
       if [[ "$BRANCH" == "refs/head/master" ]]; then
         ${pkgs.test-config}/bin/test-config
-      fi
-    '';
-    "test-config.after" = pkgs.writeShellScript "test-config.after" ''
-      ${common}
-      if [[ "$RESULT" == "success" ]]; then
-      /run/wrappers/bin/sudo ${update-config}
+        /run/wrappers/bin/sudo ${update-config}
       fi
     '';
     "bump-and-test-config.run" =
