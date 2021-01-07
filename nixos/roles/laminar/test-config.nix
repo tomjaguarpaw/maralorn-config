@@ -49,7 +49,9 @@ in {
     '';
     "test-config.after" = pkgs.writeShellScript "test-config.after" ''
       ${common}
+      if [[ $RESULT == "SUCCESS" ]]; then
       /run/wrappers/bin/sudo ${update-config}
+      fi
     '';
     "bump-and-test-config.run" =
       pkgs.writeShellScript "bump-and-test-config.run" ''
