@@ -41,7 +41,7 @@ in {
   services.laminar.cfgFiles.jobs = {
     "test-config.run" = pkgs.writeShellScript "test-config.run" ''
       ${common}
-      if [[ "$BRANCH" == "refs/head/master" ]]; then
+      if [[ "$BRANCH" == "refs/heads/master" ]]; then
         ${pkgs.test-config}/bin/test-config
         /run/wrappers/bin/sudo ${update-config}
       fi
