@@ -7,7 +7,7 @@ let
     export NIX_PATH="/etc/nix-path:nixos-config=/etc/nixos/configuration.nix"
   '';
   checkout = ''
-    git clone git@hera.m-0.eu:nixos-config config --config advice.detachedHead false
+    git clone git@hera.m-0.eu:nixos-config config --config advice.detachedHead=false
     cd config
     REPODIR=`pwd`
     git checkout origin/$BRANCH
@@ -22,10 +22,8 @@ let
     value = pkgs.writeShellScript "test-${host}-home-config.run" ''
       ${common}
       ${checkout}
-      WITH_SECRETS=false
       ${pkgs.test-home-config}/bin/test-home-config $REPODIR ${host} --builders "@/etc/nix/machines" --max-jobs 1
-      git -C $REPODIR submodule init
-      WITH_SECRETS=true
+      git -C $REPODIR submodule update --init
       ${pkgs.test-home-config}/bin/test-home-config $REPODIR ${host}
     '';
   });
@@ -34,10 +32,8 @@ let
     value = pkgs.writeShellScript "test-${host}-system-config.run" ''
       ${common}
       ${checkout}
-      WITH_SECRETS=false
       ${pkgs.test-system-config}/bin/test-system-config $REPODIR ${host} --builders "@/etc/nix/machines" --max-jobs 1
-      git -C $REPODIR submodule init
-      WITH_SECRETS=true
+      git -C $REPODIR submodule update --init
       ${pkgs.test-system-config}/bin/test-system-config $REPODIR ${host}
     '';
   });
@@ -49,7 +45,7 @@ in {
     '';
     "test-config.after" = pkgs.writeShellScript "test-config.after" ''
       ${common}
-      if [[ $RESULT == "SUCCESS" ]]; then
+      if [[ "$RESULT" == "success" ]]; then
       /run/wrappers/bin/sudo ${update-config}
       fi
     '';
