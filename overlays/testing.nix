@@ -54,7 +54,7 @@ in {
           git "config" "user.email" "maralorn@maralorn.de"
           git "config" "user.name" "maralorn (nix-auto-updater)"
           git "commit" "-am" "Update dependencies with niv"
-          git "push" "-f" "HEAD:niv-bump"
+          git "push" "-f" "origin" "HEAD:niv-bump"
         let branch = if bump then "niv-bump" else "master"
         concurrently_
           (mapConcurrently_ (\x -> laminarc ["run", [i|system-config-#{x}|], [i|BRANCH=#{branch}|]]) ${
