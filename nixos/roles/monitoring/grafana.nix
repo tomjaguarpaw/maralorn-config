@@ -7,10 +7,7 @@ let
     "https://ci.maralorn.de/jobs/${name}";
   badges = lib.concatStringsSep "\\n" [
     (heading "ci.maralorn.de" "https://ci.maralorn.de")
-    (job "kassandra-lib")
-    (job "kassandra-app")
-    (job "kassandra-server")
-    (job "kassandra-android")
+    (job "kassandra")
     (job "test-config")
     (job "bump-and-test-config")
     (heading "haskell-taskwarrior"

@@ -41,6 +41,7 @@ in {
   services.laminar.cfgFiles.jobs = {
     "test-config.run" = pkgs.writeShellScript "test-config.run" ''
       ${common}
+      echo $BRANCH
       ${pkgs.test-config}/bin/test-config
     '';
     "test-config.after" = pkgs.writeShellScript "test-config.after" ''
