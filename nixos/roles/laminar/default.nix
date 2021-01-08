@@ -37,6 +37,21 @@ in {
             lib.makeBinPath [ pkgs.laminar pkgs.nix ]
           }:$PATH nix-jobs realise-here "$DERIVATION"
         '';
+        "after" = pkgs.writeShellScript "after-all-jobs-script" ''
+          TO_EMAIL="ci-jobs-channel@email2matrix.maralorn.de"
+          FROM_EMAIL="laminar@hera.m-0.eu"
+
+          LAMINAR_URL="ci.maralorn.de"
+
+          sendmail -t <<EOF
+          From: $FROM_EMAIL
+          To: $TO_EMAIL
+          Subject: $JOB #$RUN: $RESULT
+          Mime-Version: 1.0
+          Content-Type: text/plain; charset=utf-8
+          $(curl -s $LAMINAR_URL/log/$JOB/$RUN)
+          EOF
+        '';
       };
       contexts = {
         "default.conf" = builtins.toFile "default.conf" "EXECUTORS=16";

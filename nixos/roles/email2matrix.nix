@@ -31,11 +31,14 @@ let
           (default_mailbox // {
             MailboxName = "monitoring";
             MatrixRoomId = "!negVsngnYOmXYCLKiO:maralorn.de";
-            SkipMarkdown = true;
           })
           (default_mailbox // {
             MailboxName = "weather";
             MatrixRoomId = "!ELeFcSrHXgMqOmwnxg:maralorn.de";
+          })
+          (default_mailbox // {
+            MailboxName = "ci-jobs";
+            MatrixRoomId = "!SNZCOObhEvTgSVwvbq:maralorn.de";
           })
         ];
       };
