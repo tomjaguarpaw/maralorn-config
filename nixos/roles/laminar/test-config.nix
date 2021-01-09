@@ -22,8 +22,10 @@ let
     value = pkgs.writeShellScript "test-${host}-home-config.run" ''
       ${common}
       ${checkout}
-      ${pkgs.test-home-config}/bin/test-home-config $REPODIR ${host} --builders "@/etc/nix/machines" --max-jobs 1
+      export FLAGS='--builders @/etc/nix/machines --max-jobs 1'
+      ${pkgs.test-home-config}/bin/test-home-config $REPODIR ${host}
       git -C $REPODIR submodule update --init
+      export FLAGS=""
       ${pkgs.test-home-config}/bin/test-home-config $REPODIR ${host}
     '';
   });
@@ -32,8 +34,10 @@ let
     value = pkgs.writeShellScript "test-${host}-system-config.run" ''
       ${common}
       ${checkout}
-      ${pkgs.test-system-config}/bin/test-system-config $REPODIR ${host} --builders "@/etc/nix/machines" --max-jobs 1
+      export FLAGS='--builders @/etc/nix/machines --max-jobs 1'
+      ${pkgs.test-system-config}/bin/test-system-config $REPODIR ${host} 
       git -C $REPODIR submodule update --init
+      export FLAGS=""
       ${pkgs.test-system-config}/bin/test-system-config $REPODIR ${host}
     '';
   });

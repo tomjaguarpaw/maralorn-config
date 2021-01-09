@@ -40,7 +40,7 @@ in {
       };
       after = pkgs.writeShellScript "after-all-jobs-script" ''
         LAMINAR_URL="https://ci.maralorn.de"
-        ${pkgs.matrix-commander}/bin/matrix-commander -c ${stateDir}/matrix-credentials.json -s ${stateDir}/matrix-secrets-store <<EOF
+        ${pkgs.matrix-commander}/bin/matrix-commander -c ${stateDir}/matrix-credentials.json -s ./store <<EOF
         $JOB #$RUN: $RESULT
         $(if [[ $RESULT == "failed" ]]; then echo -e 'maralorn'; ${pkgs.curl}/bin/curl -m1 -s $LAMINAR_URL/log/$JOB/$RUN | tail; fi)
         EOF

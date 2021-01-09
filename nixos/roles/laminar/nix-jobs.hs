@@ -46,10 +46,13 @@ import           Shh                            ( (&!>)
                                                 , (|>)
                                                 )
 import           System.Directory               ( createDirectoryIfMissing
+                                                , doesFileExist
                                                 , getModificationTime
                                                 , removeFile
                                                 )
-import           System.Environment             ( getArgs )
+import           System.Environment             ( getArgs
+                                                , getEnv
+                                                )
 import           System.FSNotify                ( Event(Removed)
                                                 , watchDir
                                                 , withManager
@@ -130,14 +133,22 @@ nixStoreRealiseDryRun derivationName = do
 
 job :: Text -> IO ()
 job derivationName = do
+  when (T.null derivationName) $ do
+    sayErr [i|Empty derivationName. Can’t realise that.|]
+    exitFailure
   say [i|Building #{derivationName}.|]
+  whenM (not <$> doesFileExist (runningPath derivationName)) $ do
+    sayErr
+      [i|No file found at #{runningPath derivationName}. Did you start realise-here outside of the nix-build job?|]
+    exitFailure
   let setResult result = do
         createDirectoryIfMissing True resultDir
         writeFileText (resultPath derivationName) (show result)
         removeFile (runningPath derivationName)
   ensureDeps Children derivationName
+  flags <- filter (/= mempty) . splitOn " " . toText <$> getEnv "FLAGS"
   catch
-    (nixStoreRealise derivationName)
+    (nixStoreRealise derivationName flags)
     (\(err :: SomeException) -> do
       setResult Failure
       sayErr [i|nix-build failed with error #{err}.|]
@@ -146,8 +157,8 @@ job derivationName = do
   setResult Success
   say [i|Build for #{derivationName} successful.|]
 
-nixStoreRealise :: Text -> IO ()
-nixStoreRealise = nix_store "-r"
+nixStoreRealise :: Text -> [Text] -> IO ()
+nixStoreRealise name flags = nix_store (["-r", name] <> flags)
 
 ensureDeps :: ReportLevel -> Text -> IO ()
 ensureDeps level derivationName = do
@@ -171,11 +182,13 @@ tryQueue derivationName = handleExisting $ do
       $ throw
           [i|Wrote 0 bytes of jobName "#{jobName}" to #{runningPath derivationName}|]
     pure . Just $ jobName
-  startJob =
+  startJob = do
+    flags <- getEnv "FLAGS"
     decodeUtf8
       <$> (  laminarc "queue"
                       "nix-build"
                       ([i|DERIVATION=#{derivationName}|] :: Text)
+                      ([i|FLAGS=#{flags}|] :: Text)
           |> captureTrim
           )
   handleExisting = handleJust

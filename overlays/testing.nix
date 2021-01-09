@@ -6,14 +6,16 @@ let
   systems = [ "apollo" "hera" ];
   homes = self.lib.attrNames (import ../home-manager/machines.nix);
   imports = [ "Control.Exception (onException)" ];
-  haskellBody = name: commandline: ''
+  haskellBody = name: drv: target: ''
     main = do
-      (configDir:hostname:args) <-  getArgs
+      (configDir:hostname:_) <-  getArgs
       (Text.dropAround ('"' ==) . decodeUtf8 . trim -> homeManagerChannel) <- nix_instantiate "--eval" "-E" ([i|(import #{configDir}/channels.nix).#{hostname}.home-manager-channel|] :: String) |> captureTrim
       (Text.dropAround ('"' ==) . decodeUtf8 . trim -> nixpkgsChannel) <- nix_instantiate "--eval" "-E" ([i|(import #{configDir}/channels.nix).#{hostname}.nixpkgs-channel|] :: String) |> captureTrim
       paths <- aNixPath homeManagerChannel nixpkgsChannel (toText configDir)
       say [i|Trying to build ${name} config for #{hostname}.|]
-      ${commandline}
+      (Text.dropAround ('"' ==) . decodeUtf8 . trim -> derivationName) <- (nix_instantiate $ ${drv}) |> captureTrim
+      exe "nix-jobs" ["realise", toString derivationName]
+      nix_store ["-r", toString derivationName, "--indirect", "--add-root", ${target}]
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
 in {
@@ -22,15 +24,13 @@ in {
     name = "test-system-config";
     inherit bins;
     inherit imports;
-  } (haskellBody "system" ''
-    nix_build $ buildSystemParams ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|], "-o", [i|result-system-#{hostname}|]] ++ fmap toString args'');
+  } (haskellBody "system" ''buildSystemParams ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|]]'' "[i|result-system-#{hostname}|]");
 
   test-home-config = self.writeHaskellScript {
     name = "test-home-config";
     inherit bins;
     inherit imports;
-  } (haskellBody "home" ''
-    nix_build $ paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname, "-o", [i|result-home-manager-#{hostname}|]] ++ fmap toString args'');
+  } (haskellBody "home" ''paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname]'' "[i|result-home-manager-#{hostname}|]");
 
   test-config = self.writeHaskellScript {
     name = "test-config";
