@@ -25,9 +25,8 @@ in {
       scripts = {
         "nix-jobs" = pkgs.writeHaskell "nix-jobs" {
           libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
-          ghcEnv = {
-            PATH = "${lib.makeBinPath [ pkgs.laminar pkgs.nix ]}:$PATH";
-          };
+          ghcEnv.PATH = "${lib.makeBinPath [ pkgs.laminar pkgs.nix ]}:$PATH";
+          ghcArgs = [ "-threaded" ];
         } (builtins.readFile ./nix-jobs.hs);
       };
       jobs = {
@@ -72,7 +71,7 @@ in {
         DynamicUser = false;
         User = "laminar";
         StateDirectory = "laminar";
-        LimitNOFILE="10240";
+        LimitNOFILE = "10240";
       };
       after = [ "network.target" ];
       preStart = let
@@ -93,7 +92,7 @@ in {
           "ci.m-0.eu" = {
             forceSSL = true;
             enableACME = true;
-            extraConfig = ''return 301 https://ci.maralorn.de$request_uri;'';
+            extraConfig = "return 301 https://ci.maralorn.de$request_uri;";
           };
           "ci.maralorn.de" = {
             forceSSL = true;
