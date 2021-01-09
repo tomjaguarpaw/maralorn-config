@@ -42,6 +42,15 @@ in {
           forceSSL = true;
           inherit locations;
         };
+      "fdroid.maralorn.de" = {
+        forceSSL = true;
+        enableACME = true;
+        locations = {
+          "/" = {
+            root = "/var/www/fdroid";
+          };
+        };
+      };
       };
     };
   };
