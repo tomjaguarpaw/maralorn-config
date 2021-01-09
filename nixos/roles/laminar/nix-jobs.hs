@@ -127,6 +127,7 @@ nixStoreRealiseDryRun derivationName = do
     fromList
       . drop 1
       . dropWhile (/= "these derivations will be built:")
+      . takeWhile (not . T.isPrefixOf "these paths will be fetched")
       . fmap strip
       . lines
       . decodeUtf8

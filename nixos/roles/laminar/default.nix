@@ -44,7 +44,7 @@ in {
         ${pkgs.utillinux}/bin/flock -w 10 100
         trap 'rm -f ${stateDir}/matrix-lock' EXIT
         ${pkgs.matrix-commander}/bin/matrix-commander -c ${stateDir}/matrix-credentials.json -s ${stateDir}/matrix-secrets-store <<EOF
-        $JOB #$RUN: $RESULT
+        $JOB #$RUN: $RESULT https://ci.m-0.eu/jobs/$JOB/$RUN
         $(if [[ $RESULT == "failed" ]]; then echo -e 'maralorn'; ${pkgs.curl}/bin/curl -m5 -s $LAMINAR_URL/log/$JOB/$RUN | tail; fi)
         EOF
         true
@@ -87,6 +87,11 @@ in {
     services = {
       nginx = {
         virtualHosts = {
+          "ci.m-0.eu" = {
+            forceSSL = true;
+            enableACME = true;
+            extraConfig = ''return 301 https://ci.maralorn.de$request_uri;'';
+          };
           "ci.maralorn.de" = {
             forceSSL = true;
             enableACME = true;
