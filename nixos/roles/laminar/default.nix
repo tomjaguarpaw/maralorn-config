@@ -32,7 +32,7 @@ in {
       };
       jobs = {
         "nix-build.run" = pkgs.writeShellScript "nix-build" ''
-          set -ex
+          set -e
           PATH=${
             lib.makeBinPath [ pkgs.laminar pkgs.nix ]
           }:$PATH nix-jobs realise-here "$DERIVATION"
@@ -44,7 +44,7 @@ in {
         ${pkgs.utillinux}/bin/flock -w 10 100
         trap 'rm -f ${stateDir}/matrix-lock' EXIT
         ${pkgs.matrix-commander}/bin/matrix-commander -c ${stateDir}/matrix-credentials.json -s ${stateDir}/matrix-secrets-store <<EOF
-        https://ci.maralorn.de/jobs/$JOB/$RUN: $RESULT
+        $JOB #$RUN: $RESULT
         $(if [[ $RESULT == "failed" ]]; then echo -e 'maralorn'; ${pkgs.curl}/bin/curl -m5 -s $LAMINAR_URL/log/$JOB/$RUN | tail; fi)
         EOF
         true

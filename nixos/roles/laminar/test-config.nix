@@ -2,7 +2,7 @@
 let
   path = [ pkgs.git pkgs.nix pkgs.gnutar pkgs.gzip pkgs.openssh pkgs.laminar ];
   common = ''
-    set -ex
+    set -e
     export PATH=${lib.makeBinPath path}:$PATH
     export NIX_PATH="/etc/nix-path:nixos-config=/etc/nixos/configuration.nix"
   '';
