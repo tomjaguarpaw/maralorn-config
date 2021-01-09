@@ -29,16 +29,8 @@ let
             IgnoreBody = true;
           })
           (default_mailbox // {
-            MailboxName = "monitoring";
-            MatrixRoomId = "!negVsngnYOmXYCLKiO:maralorn.de";
-          })
-          (default_mailbox // {
             MailboxName = "weather";
             MatrixRoomId = "!ELeFcSrHXgMqOmwnxg:maralorn.de";
-          })
-          (default_mailbox // {
-            MailboxName = "ci-jobs";
-            MatrixRoomId = "!SNZCOObhEvTgSVwvbq:maralorn.de";
           })
         ];
       };
