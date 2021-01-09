@@ -22,6 +22,9 @@ in {
   imports = [ ./kassandra.nix ./test-config.nix ];
   config = {
     services.laminar.cfgFiles = {
+      env = builtins.toFile "laminar-env" ''
+        TIMEOUT=14400
+      '';
       scripts = {
         "nix-jobs" = pkgs.writeHaskell "nix-jobs" {
           libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
