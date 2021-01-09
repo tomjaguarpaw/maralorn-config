@@ -51,7 +51,7 @@
     binaryCachePublicKeys =
       [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
     nixPath = [ "/etc/nix-path" ];
-    trustedUsers = [ "maralorn" ];
+    trustedUsers = [ "maralorn" "laminar" ];
     buildMachines = pkgs.privateValue [ ] "remote-builders";
     extraOptions = ''
       fallback = true
