@@ -113,10 +113,12 @@ runningPath, resultPath :: Text -> String
 runningPath p = [i|#{runningDir}/#{drvBasename p}|]
 resultPath p = [i|#{resultDir}/#{drvBasename p}|]
 
-getDependenciesFromNix :: Text -> IO (Seq Text)
+-- Bool means derivation itself needs to be build
+getDependenciesFromNix :: Text -> IO (Seq Text, Bool)
 getDependenciesFromNix derivationName = do
   everythingToDo <- nixStoreRealiseDryRun derivationName
-  pure (Seq.filter (/= derivationName) everythingToDo)
+  let depsToDo = Seq.filter (/= derivationName) everythingToDo
+  pure (depsToDo, everythingToDo /= depsToDo)
 
 nixStoreRealiseDryRun :: Text -> IO (Seq Text)
 nixStoreRealiseDryRun derivationName = do
@@ -146,7 +148,11 @@ job derivationName = do
         createDirectoryIfMissing True resultDir
         writeFileText (resultPath derivationName) (show result)
         removeFile (runningPath derivationName)
-  ensureDeps Children derivationName
+  needBuild <- ensureDeps Children derivationName
+  unless needBuild $ do
+    setResult Success
+    say [i|Build for #{derivationName} had already happened.|]
+    exitSuccess
   flags <- filter (/= mempty) . splitOn " " . toText <$> getEnv "FLAGS"
   catch
     (nixStoreRealise derivationName flags)
@@ -161,13 +167,14 @@ job derivationName = do
 nixStoreRealise :: Text -> [Text] -> IO ()
 nixStoreRealise name flags = nix_store (["-r", name] <> flags)
 
-ensureDeps :: ReportLevel -> Text -> IO ()
+ensureDeps :: ReportLevel -> Text -> IO Bool
 ensureDeps level derivationName = do
-  dependencies <- getDependenciesFromNix derivationName
+  (dependencies, needBuild) <- getDependenciesFromNix derivationName
   whenChildren level $ forM_ dependencies $ \dep -> say [i|Requiring #{dep}.|]
   forConcurrently_ dependencies (realise $ levelPrec level)
     `catch` \(JobException e) ->
               throw [i|#{e}\nFailed dependency for #{derivationName}|]
+  pure needBuild
 
 -- Nothing means failing to acquire lock on the derivation name for starting the job.
 tryQueue :: Text -> IO (Maybe Text)
@@ -227,15 +234,19 @@ getRunningJob derivationName = poll 0
 
 realise :: ReportLevel -> Text -> IO ()
 realise level derivationName = do
-  ensureDeps level derivationName
-  jobName <- ensureRunningJob level derivationName
-  whenSelf level
-    $ say [i|Job #{jobName} running for #{derivationName}. Waiting ...|]
-  handleWaitFail $ waitForJob derivationName >>= \case
-    Success ->
-      whenSelf level $ say [i|Job #{jobName} completed #{derivationName}.|]
-    Failure -> throw [i|Job #{jobName} failed #{derivationName}.|]
+  needBuild <- ensureDeps level derivationName
+  if needBuild
+    then runBuild
+    else whenSelf level $ say [i|#{derivationName} was already built.|]
  where
+  runBuild = do
+    jobName <- ensureRunningJob level derivationName
+    whenSelf level
+      $ say [i|Job #{jobName} running for #{derivationName}. Waiting ...|]
+    handleWaitFail $ waitForJob derivationName >>= \case
+      Success ->
+        whenSelf level $ say [i|Job #{jobName} completed #{derivationName}.|]
+      Failure -> throw [i|Job #{jobName} failed #{derivationName}.|]
   processWaitFail (WaitException e) = do
     whenSelf level
       $ sayErr
