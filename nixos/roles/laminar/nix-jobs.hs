@@ -8,7 +8,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE FlexibleContexts #-}
-{-# OPTIONS_GHC -Wall -Werror -Wno-missing-signatures -Wno-type-defaults -Wno-orphans #-}
+{-# OPTIONS_GHC -threaded -Wall -Werror -Wno-missing-signatures -Wno-type-defaults -Wno-orphans #-}
 
 import           Control.Concurrent             ( threadDelay )
 import           Control.Concurrent.Async       ( forConcurrently_
