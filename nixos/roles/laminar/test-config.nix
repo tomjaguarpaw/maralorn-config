@@ -11,7 +11,7 @@ let
       say [i|Trying to build ${name} config for #{hostname}.|]
       (Text.dropAround ('"' ==) . decodeUtf8 . trim -> derivationName) <- (nix_instantiate $ ${drv}) |> captureTrim
       exe "nix-jobs" ["realise", toString derivationName]
-      exe "/run/wrappers/bin/sudo" ["-E", "${cacheResult}", toString derivationName, ${target}]
+      exe "/run/wrappers/bin/sudo" ["${cacheResult}", toString derivationName, ${target}]
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
   test-system-config = pkgs.writeHaskellScript {
