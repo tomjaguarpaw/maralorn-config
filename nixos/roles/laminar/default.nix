@@ -5,7 +5,7 @@ let
   cfgDir = "${stateDir}/cfg";
   cfg = config.services.laminar;
   cacheResult = "${pkgs.writeShellScript "cache-result-as-root"
-    "${pkgs.nix}/bin/nix-store -r --indirect --add-root /var/cache/gc-links/$2 $1"}";
+    ''echo "Cached build-result $1 to $(${pkgs.nix}/bin/nix-store -r --indirect --add-root "/var/cache/gc-links/$2" "$1")."''}";
 in {
   options = {
     services.laminar = {
@@ -42,7 +42,7 @@ in {
           ghcArgs = [ "-threaded" ];
         } (builtins.readFile ./nix-jobs.hs);
         "cache-result" = pkgs.writeShellScript "cache-result" ''
-          /run/wrappers/bin/sudo ${cacheResult} $1 $2
+          /run/wrappers/bin/sudo ${cacheResult} "$1" "$2"
         '';
       };
       jobs = {
