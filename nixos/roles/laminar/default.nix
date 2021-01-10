@@ -87,7 +87,7 @@ in {
         DynamicUser = false;
         User = "laminar";
         StateDirectory = "laminar";
-        LimitNOFILE = "10240";
+        LimitNOFILE = "1024000";
       };
       after = [ "network.target" ];
       preStart = let

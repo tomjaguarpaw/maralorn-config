@@ -47,7 +47,7 @@ in {
         enableACME = true;
         locations = {
           "/" = {
-            root = "/var/www/fdroid";
+            root = "/var/www/fdroid/repo";
           };
         };
       };
