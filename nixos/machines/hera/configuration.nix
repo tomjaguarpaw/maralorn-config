@@ -7,7 +7,6 @@ in {
   imports = [
     ./hardware-configuration.nix
     ../../roles
-    ../../roles/test-timer.nix
     ../../roles/standalone
     ../../roles/server
     ../../roles/git.nix

@@ -47,14 +47,14 @@ in {
         ${pkgs.utillinux}/bin/flock -w 10 100
         trap 'rm -f ${stateDir}/matrix-lock' EXIT
         ${pkgs.matrix-commander}/bin/matrix-commander -c ${stateDir}/matrix-credentials.json -s ${stateDir}/matrix-secrets-store <<EOF
-        $JOB #$RUN: $RESULT https://ci.m-0.eu/jobs/$JOB/$RUN
+        $JOB #$RUN: $BRANCH$DERIVATION $RESULT https://ci.m-0.eu/jobs/$JOB/$RUN
         $(if [[ $RESULT == "failed" ]]; then echo -e 'maralorn'; ${pkgs.curl}/bin/curl -m5 -s $LAMINAR_URL/log/$JOB/$RUN | tail; fi)
         EOF
         fi
-        true
+        echo "Result was: $RESULT"
       '';
       contexts = {
-        "default.conf" = builtins.toFile "default.conf" "EXECUTORS=16";
+        "default.conf" = builtins.toFile "default.conf" "EXECUTORS=32";
       };
     };
     users = {

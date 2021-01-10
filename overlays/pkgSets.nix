@@ -52,7 +52,7 @@ self: super: {
     inherit (self) ledger jali aqbanking;
   };
   system-pkgs = self.core-system-pkgs // self.extra-system-pkgs // {
-    inherit (self) test-system-config test-home-config test-config;
+    inherit (self) test-system-config test-home-config;
     home-manager =
       self.callPackage "${self.sources.${self.home-manager-channel}}/home-manager" { };
   };

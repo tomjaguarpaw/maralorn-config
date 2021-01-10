@@ -19,7 +19,7 @@ in {
         cp $contentPath ${filename}.hs
         ${
           lib.concatStringsSep " "
-          (lib.mapAttrsToList (key: val: "${key}=${val}") ghcEnv)
+          (lib.mapAttrsToList (key: val: ''${key}="${val}"'') ghcEnv)
         } ${ghc.withPackages (_: libraries)}/bin/ghc ${
           lib.escapeShellArgs ghcArgs
         } ${filename}.hs

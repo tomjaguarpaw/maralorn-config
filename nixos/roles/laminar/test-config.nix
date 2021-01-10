@@ -7,8 +7,7 @@ let
     export NIX_PATH="/etc/nix-path:nixos-config=/etc/nixos/configuration.nix"
   '';
   checkout = ''
-    git clone git@hera.m-0.eu:nixos-config config --config advice.detachedHead=false
-    cd config
+    git clone git@hera.m-0.eu:nixos-config . --config advice.detachedHead=false
     REPODIR=`pwd`
     git checkout origin/$BRANCH
     cd /var/cache/gc-links
@@ -41,27 +40,44 @@ let
       ${pkgs.test-system-config}/bin/test-system-config $REPODIR ${host}
     '';
   });
+  deployCommand = "${let user = "maralorn";
+  in pkgs.writeShellScript "deploy-system-config" ''
+    /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull --ff-only
+    /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos submodule update --init
+    /var/cache/gc-links/result-system-hera/bin/switch-to-configuration switch
+    /run/wrappers/bin/sudo -u ${user} /var/cache/gc-links/result-home-manager-hera/default/activate
+  ''}";
 in {
   services.laminar.cfgFiles.jobs = {
-    "test-config.run" = pkgs.writeShellScript "test-config.run" ''
-      ${common}
-      if [[ "$BRANCH" == "refs/heads/master" ]]; then
-        ${pkgs.test-config}/bin/test-config
-        /run/wrappers/bin/sudo ${update-config}
-      fi
-    '';
-    "bump-and-test-config.run" =
-      pkgs.writeShellScript "bump-and-test-config.run" ''
-        ${common}
-        ${pkgs.test-config}/bin/test-config bump
-      '';
+    "test-config.run" = pkgs.writeHaskell "test-config" {
+      libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
+      ghcEnv = {
+        HOMES = lib.concatStringsSep " " homes;
+        SYSTEMS = lib.concatStringsSep " " systems;
+        DEPLOY = deployCommand;
+        PATH = "${lib.makeBinPath [ pkgs.laminar pkgs.git ]}:$PATH";
+      };
+      ghcArgs = [ "-threaded" ];
+    } (builtins.readFile ./test-config.hs);
+    "bump-config.run" = pkgs.writeHaskell "bump-config" {
+      libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
+      ghcEnv.PATH = "${lib.makeBinPath [ pkgs.git pkgs.niv pkgs.nix ]}:$PATH";
+      ghcArgs = [ "-threaded" ];
+    } (builtins.readFile ./bump-config.hs);
   } // lib.listToAttrs (map mkHomeJob homes)
     // lib.listToAttrs (map mkSystemJob homes);
   security.sudo.extraRules = [{
     commands = [{
-      command = "${update-config}";
+      command = deployCommand;
       options = [ "NOPASSWD" ];
     }];
     users = [ "laminar" ];
   }];
+  systemd.services.bump-config = {
+    startAt = "03:45";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.laminar}/bin/laminarc queue bump-config";
+    };
+  };
 }
