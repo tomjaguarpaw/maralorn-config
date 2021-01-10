@@ -40,13 +40,8 @@ let
       ${pkgs.test-system-config}/bin/test-system-config $REPODIR ${host}
     '';
   });
-  deployCommand = "${let user = "maralorn";
-  in pkgs.writeShellScript "deploy-system-config" ''
-    /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull --ff-only
-    /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos submodule update --init
-    /var/cache/gc-links/result-system-hera/bin/switch-to-configuration switch
-    /run/wrappers/bin/sudo -u ${user} /var/cache/gc-links/result-home-manager-hera/default/activate
-  ''}";
+  deployCommand = "${pkgs.writeShellScript "deploy-system-config"
+    "${pkgs.systemd}/bin/systemctl start update-config"}";
 in {
   services.laminar.cfgFiles.jobs = {
     "test-config.run" = pkgs.writeHaskell "test-config" {
@@ -73,11 +68,34 @@ in {
     }];
     users = [ "laminar" ];
   }];
-  systemd.services.bump-config = {
-    startAt = "03:45";
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.laminar}/bin/laminarc queue bump-config";
+  systemd.services = {
+    update-config = {
+      path = [ pkgs.git pkgs.nix ];
+      restartIfChanged = false;
+      unitConfig.X-StopOnRemoval = false;
+      serviceConfig = {
+        Type = "oneshot";
+        Restart = "on-failure";
+        RestartSec = 1;
+      };
+      unitConfig = {
+        StartLimitIntervalSec = 180;
+        StartLimitBurst = 3;
+      };
+      script = let user = "maralorn";
+      in ''
+        /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull --ff-only
+        /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos submodule update --init
+        /var/cache/gc-links/result-system-hera/bin/switch-to-configuration switch
+        /run/wrappers/bin/sudo -u ${user} /var/cache/gc-links/result-home-manager-hera/default/activate
+      '';
+    };
+    bump-config = {
+      startAt = "03:45";
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.laminar}/bin/laminarc queue bump-config";
+      };
     };
   };
 }
