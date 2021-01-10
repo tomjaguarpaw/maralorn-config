@@ -4,6 +4,8 @@ let
   stateDir = "/var/lib/laminar";
   cfgDir = "${stateDir}/cfg";
   cfg = config.services.laminar;
+  cacheResult = "${pkgs.writeShellScript "cache-result-as-root"
+    "${pkgs.nix}/bin/nix-store -r --indirect --add-root /var/cache/gc-links/$2 $1"}";
 in {
   options = {
     services.laminar = {
@@ -21,6 +23,14 @@ in {
   };
   imports = [ ./kassandra.nix ./test-config.nix ];
   config = {
+    security.sudo.extraRules = let allowedCommands = [ cacheResult ];
+    in [{
+      commands = map (command: {
+        inherit command;
+        options = [ "NOPASSWD" ];
+      }) allowedCommands;
+      users = [ "laminar" ];
+    }];
     services.laminar.cfgFiles = {
       env = builtins.toFile "laminar-env" ''
         TIMEOUT=14400
@@ -31,6 +41,9 @@ in {
           ghcEnv.PATH = "${lib.makeBinPath [ pkgs.laminar pkgs.nix ]}:$PATH";
           ghcArgs = [ "-threaded" ];
         } (builtins.readFile ./nix-jobs.hs);
+        "cache-result" = pkgs.writeShellScript "cache-result" ''
+          /run/wrappers/bin/sudo ${cacheResult} $1 $2
+        '';
       };
       jobs = {
         "nix-build.run" = pkgs.writeShellScript "nix-build" ''

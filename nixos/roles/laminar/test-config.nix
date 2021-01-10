@@ -11,20 +11,24 @@ let
       say [i|Trying to build ${name} config for #{hostname}.|]
       (Text.dropAround ('"' ==) . decodeUtf8 . trim -> derivationName) <- (nix_instantiate $ ${drv}) |> captureTrim
       exe "nix-jobs" ["realise", toString derivationName]
-      exe "/run/wrappers/bin/sudo" ["${cacheResult}", toString derivationName, ${target}]
+      exe "cache-result" [toString derivationName, ${target}]
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
   test-system-config = pkgs.writeHaskellScript {
     name = "test-system-config";
     inherit bins;
     inherit imports;
-  } (haskellBody "system" ''buildSystemParams ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|]]'' "[i|result-system-#{hostname}|]");
+  } (haskellBody "system" ''
+    buildSystemParams ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|]]''
+    "[i|result-system-#{hostname}|]");
 
   test-home-config = pkgs.writeHaskellScript {
     name = "test-home-config";
     inherit bins;
     inherit imports;
-  } (haskellBody "home" ''paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname]'' "[i|result-home-manager-#{hostname}|]");
+  } (haskellBody "home"
+    ''paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname]''
+    "[i|result-home-manager-#{hostname}|]");
   path = [ pkgs.git pkgs.nix pkgs.gnutar pkgs.gzip pkgs.openssh pkgs.laminar ];
   common = ''
     set -e
@@ -66,8 +70,6 @@ let
   });
   deployCommand = "${pkgs.writeShellScript "deploy-system-config"
     "${pkgs.systemd}/bin/systemctl start update-config"}";
-  cacheResult = "${pkgs.writeShellScript "cache-result"
-    "${pkgs.nix}/bin/nix-store -r --indirect --add-root /var/cache/gc-links/$2 $1"}";
 in {
   services.laminar.cfgFiles.jobs = {
     "test-config.run" = pkgs.writeHaskell "test-config" {
@@ -87,7 +89,7 @@ in {
     } (builtins.readFile ./bump-config.hs);
   } // lib.listToAttrs (map mkHomeJob homes)
     // lib.listToAttrs (map mkSystemJob homes);
-  security.sudo.extraRules = let allowedCommands = [ deployCommand cacheResult ];
+  security.sudo.extraRules = let allowedCommands = [ deployCommand ];
   in [{
     commands = map (command: {
       inherit command;

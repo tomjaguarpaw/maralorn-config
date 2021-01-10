@@ -16,6 +16,7 @@ let
     drv=$(readlink -f $(nix-instantiate release.nix -A ${name} --add-root ./drv --indirect $FLAGS))
     echo "Evaluation done."
     nix-jobs realise $drv
+    cache-result $drv kassandra-${name}-result
   '';
 in {
   services.laminar.cfgFiles.jobs = {
