@@ -41,9 +41,6 @@ in {
           ghcEnv.PATH = "${lib.makeBinPath [ pkgs.laminar pkgs.nix ]}:$PATH";
           ghcArgs = [ "-threaded" ];
         } (builtins.readFile ./nix-jobs.hs);
-        "cache-result" = pkgs.writeShellScript "cache-result" ''
-          /run/wrappers/bin/sudo ${cacheResult} "$1" "$2"
-        '';
       };
       jobs = {
         "nix-build.run" = pkgs.writeShellScript "nix-build" ''
@@ -54,6 +51,9 @@ in {
         '';
       };
       after = pkgs.writeShellScript "after-all-jobs-script" ''
+        if [[ "$RESULTDRV" != "" ]]; then
+          /run/wrappers/bin/sudo ${cacheResult} "$RESULTDRV" "$JOB"
+        fi
         if [[ "$JOB$RESULT" != "nix-buildsuccess" ]]; then
         LAMINAR_URL="https://ci.maralorn.de"
         exec 100>${stateDir}/matrix-lock

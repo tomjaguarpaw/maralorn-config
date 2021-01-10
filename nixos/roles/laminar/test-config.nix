@@ -1,8 +1,8 @@
 { pkgs, lib, config, ... }:
 let
-  bins = [ pkgs.nix ];
+  bins = [ pkgs.nix pkgs.laminar ];
   imports = [ "Control.Exception (onException)" ];
-  haskellBody = name: drv: target: ''
+  haskellBody = name: drv: ''
     main = do
       (configDir:hostname:_) <-  getArgs
       (Text.dropAround ('"' ==) . decodeUtf8 . trim -> homeManagerChannel) <- nix_instantiate "--eval" "-E" ([i|(import #{configDir}/channels.nix).#{hostname}.home-manager-channel|] :: String) |> captureTrim
@@ -11,7 +11,7 @@ let
       say [i|Trying to build ${name} config for #{hostname}.|]
       (Text.dropAround ('"' ==) . decodeUtf8 . trim -> derivationName) <- (nix_instantiate $ ${drv}) |> captureTrim
       exe "nix-jobs" ["realise", toString derivationName]
-      exe "cache-result" [toString derivationName, ${target}]
+      laminarc ["set", [i|RESULTDRV=#{derivationName}|]]
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
   test-system-config = pkgs.writeHaskellScript {
@@ -19,16 +19,14 @@ let
     inherit bins;
     inherit imports;
   } (haskellBody "system" ''
-    buildSystemParams ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|]]''
-    "[i|result-system-#{hostname}|]");
+    buildSystemParams ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|]]'');
 
   test-home-config = pkgs.writeHaskellScript {
     name = "test-home-config";
     inherit bins;
     inherit imports;
   } (haskellBody "home"
-    ''paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname]''
-    "[i|result-home-manager-#{hostname}|]");
+    ''paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname]'');
   path = [ pkgs.git pkgs.nix pkgs.gnutar pkgs.gzip pkgs.openssh pkgs.laminar ];
   common = ''
     set -e
