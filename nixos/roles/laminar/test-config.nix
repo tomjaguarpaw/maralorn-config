@@ -1,5 +1,30 @@
 { pkgs, lib, config, ... }:
 let
+  bins = [ pkgs.nix ];
+  imports = [ "Control.Exception (onException)" ];
+  haskellBody = name: drv: target: ''
+    main = do
+      (configDir:hostname:_) <-  getArgs
+      (Text.dropAround ('"' ==) . decodeUtf8 . trim -> homeManagerChannel) <- nix_instantiate "--eval" "-E" ([i|(import #{configDir}/channels.nix).#{hostname}.home-manager-channel|] :: String) |> captureTrim
+      (Text.dropAround ('"' ==) . decodeUtf8 . trim -> nixpkgsChannel) <- nix_instantiate "--eval" "-E" ([i|(import #{configDir}/channels.nix).#{hostname}.nixpkgs-channel|] :: String) |> captureTrim
+      paths <- aNixPath homeManagerChannel nixpkgsChannel (toText configDir)
+      say [i|Trying to build ${name} config for #{hostname}.|]
+      (Text.dropAround ('"' ==) . decodeUtf8 . trim -> derivationName) <- (nix_instantiate $ ${drv}) |> captureTrim
+      exe "nix-jobs" ["realise", toString derivationName]
+      exe "/run/wrappers/bin/sudo" ["-E", "${cacheResult}", toString derivationName, ${target}]
+      say [i|Build of ${name} config for #{hostname} was successful.|]
+  '';
+  test-system-config = pkgs.writeHaskellScript {
+    name = "test-system-config";
+    inherit bins;
+    inherit imports;
+  } (haskellBody "system" ''buildSystemParams ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|]]'' "[i|result-system-#{hostname}|]");
+
+  test-home-config = pkgs.writeHaskellScript {
+    name = "test-home-config";
+    inherit bins;
+    inherit imports;
+  } (haskellBody "home" ''paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname]'' "[i|result-home-manager-#{hostname}|]");
   path = [ pkgs.git pkgs.nix pkgs.gnutar pkgs.gzip pkgs.openssh pkgs.laminar ];
   common = ''
     set -e
@@ -8,9 +33,8 @@ let
   '';
   checkout = ''
     git clone git@hera.m-0.eu:nixos-config . --config advice.detachedHead=false
-    REPODIR=`pwd`
     git checkout origin/$BRANCH
-    cd /var/cache/gc-links
+    REPODIR=.
   '';
   update-config =
     "${pkgs.systemd}/bin/systemctl start --no-block update-config";
@@ -22,10 +46,10 @@ let
       ${common}
       ${checkout}
       export FLAGS='--builders @/etc/nix/machines --max-jobs 1'
-      ${pkgs.test-home-config}/bin/test-home-config $REPODIR ${host}
+      ${test-home-config}/bin/test-home-config $REPODIR ${host}
       git -C $REPODIR submodule update --init
       export FLAGS=""
-      ${pkgs.test-home-config}/bin/test-home-config $REPODIR ${host}
+      ${test-home-config}/bin/test-home-config $REPODIR ${host}
     '';
   });
   mkSystemJob = (host: {
@@ -34,14 +58,16 @@ let
       ${common}
       ${checkout}
       export FLAGS='--builders @/etc/nix/machines --max-jobs 1'
-      ${pkgs.test-system-config}/bin/test-system-config $REPODIR ${host}
+      ${test-system-config}/bin/test-system-config $REPODIR ${host}
       git -C $REPODIR submodule update --init
       export FLAGS=""
-      ${pkgs.test-system-config}/bin/test-system-config $REPODIR ${host}
+      ${test-system-config}/bin/test-system-config $REPODIR ${host}
     '';
   });
   deployCommand = "${pkgs.writeShellScript "deploy-system-config"
     "${pkgs.systemd}/bin/systemctl start update-config"}";
+  cacheResult = "${pkgs.writeShellScript "cache-result"
+    "${pkgs.nix}/bin/nix-store -r --indirect --add-root /var/cache/gc-links/$2 $1"}";
 in {
   services.laminar.cfgFiles.jobs = {
     "test-config.run" = pkgs.writeHaskell "test-config" {
@@ -61,11 +87,12 @@ in {
     } (builtins.readFile ./bump-config.hs);
   } // lib.listToAttrs (map mkHomeJob homes)
     // lib.listToAttrs (map mkSystemJob homes);
-  security.sudo.extraRules = [{
-    commands = [{
-      command = deployCommand;
+  security.sudo.extraRules = let allowedCommands = [ deployCommand cacheResult ];
+  in [{
+    commands = map (command: {
+      inherit command;
       options = [ "NOPASSWD" ];
-    }];
+    }) allowedCommands;
     users = [ "laminar" ];
   }];
   systemd.services = {
