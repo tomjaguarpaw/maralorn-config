@@ -55,6 +55,7 @@ import           System.Directory               ( createDirectoryIfMissing
                                                 )
 import           System.Environment             ( getArgs
                                                 , getEnv
+                                                , setEnv
                                                 )
 import           System.FSNotify                ( Event(Removed)
                                                 , watchDir
@@ -361,7 +362,10 @@ main = do
   args <- fmap toText <$> getArgs
   case args of
     ["realise-here", derivationName] -> job derivationName
-    ["realise", derivationName] ->
+    ["realise", derivationName] -> do
+      jobId <- getEnv "JOB"
+      runId <- getEnv "RUN"
+      setEnv "LAMINAR_REASON" [i|Building #{derivationName} in #{jobId}:#{runId}|]
       race_ (realise derivationName) checkStaleness
     _ ->
       sayErr "Usage: realise-here <derivationName> | realise <derivationName>"

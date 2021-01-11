@@ -25,6 +25,7 @@ let
       jobMay <- lookupEnv "GL_OPTION_CI_JOB"
       whenJust jobMay $ \job -> do
         args <- toString . Text.intercalate " " . fmap toText <$> getArgs
+        setEnv "LAMINAR_REASON" [i|Build triggered by push of branch #{args}|]
         jobName <- decodeUtf8 <$> (laminarc ["queue", job, [i|BRANCH=#{args}|]] |> captureTrim)
         say [i|Queued job #{jobName}.\nSee https://ci.maralorn.de/jobs/#{Text.replace ":" "/" jobName}|]
       mirrorMay <- lookupEnv "GL_OPTION_MIRROR"

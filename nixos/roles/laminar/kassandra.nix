@@ -42,6 +42,7 @@ in {
     "kassandra.run" = pkgs.writeShellScript "kassandra" ''
       ${setup}
       echo Launching and waiting for jobs lib, app, android and server
+      export LAMINAR_REASON="Started kassandra build $JOB:#$RUN"
       laminarc run kassandra-lib kassandra-android kassandra-app kassandra-server
       /run/wrappers/bin/sudo ${deploy}
     '';
