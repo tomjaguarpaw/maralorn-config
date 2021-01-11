@@ -41,7 +41,7 @@ main = do
   branch <- process <$> lookupEnv "BRANCH"
   jobId <- getEnv "JOB"
   runId <- getEnv "RUN"
-  setEnv "LAMINAR_REASON" [i|Building #{derivationName} for branch #{branch} in #{jobId}:#{runId}|]
+  setEnv "LAMINAR_REASON" [i|Building config branch #{branch} for all systems in #{jobId}:#{runId}|]
   say [i|Starting builds of branch #{branch} for all systems.|]
   mapConcurrently_ (\x -> laminarc ["run", x, [i|BRANCH=#{branch}|]]) jobs
   say [i|Builds succeeded.|]
