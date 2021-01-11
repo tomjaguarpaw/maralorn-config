@@ -11,7 +11,7 @@ let
       say [i|Trying to build ${name} config for #{hostname}.|]
       (Text.dropAround ('"' ==) . decodeUtf8 . trim -> derivationName) <- (nix_instantiate $ ${drv}) |> captureTrim
       exe "nix-jobs" ["realise", toString derivationName]
-      laminarc ["set", [i|RESULTDRV=#{derivationName}|]]
+      writeFileText "derivation" derivationName
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
   test-system-config = pkgs.writeHaskellScript {
@@ -52,6 +52,7 @@ let
       git -C $REPODIR submodule update --init
       export FLAGS=""
       ${test-home-config}/bin/test-home-config $REPODIR ${host}
+      laminarc set "RESULTDRV=$(cat ./derivation)"
     '';
   });
   mkSystemJob = (host: {
@@ -64,6 +65,7 @@ let
       git -C $REPODIR submodule update --init
       export FLAGS=""
       ${test-system-config}/bin/test-system-config $REPODIR ${host}
+      laminarc set "RESULTDRV=$(cat ./derivation)"
     '';
   });
   deployCommand = "${pkgs.writeShellScript "deploy-system-config"
@@ -113,8 +115,8 @@ in {
       in ''
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull --ff-only
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos submodule update --init
-        /var/cache/gc-links/result-system-hera/bin/switch-to-configuration switch
-        /run/wrappers/bin/sudo -u ${user} /var/cache/gc-links/result-home-manager-hera/default/activate
+        /var/cache/gc-links/system-config-hera/bin/switch-to-configuration switch
+        /run/wrappers/bin/sudo -u ${user} /var/cache/gc-links/home-config-hera/default/activate
       '';
     };
     bump-config = {

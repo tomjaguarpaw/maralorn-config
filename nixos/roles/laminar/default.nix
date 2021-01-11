@@ -4,8 +4,10 @@ let
   stateDir = "/var/lib/laminar";
   cfgDir = "${stateDir}/cfg";
   cfg = config.services.laminar;
-  cacheResult = "${pkgs.writeShellScript "cache-result-as-root"
-    ''echo "Cached build-result $1 to $(${pkgs.nix}/bin/nix-store -r --indirect --add-root "/var/cache/gc-links/$2" "$1")."''}";
+  cacheResult = "${pkgs.writeShellScript "cache-result-as-root" ''
+    echo "Cached build-result $1 to"
+    ${pkgs.nix}/bin/nix-store -r --indirect --add-root "/var/cache/gc-links/$2" "$1"
+  ''}";
 in {
   options = {
     services.laminar = {

@@ -33,6 +33,7 @@ import qualified Data.Text                     as T
 import           Data.Time                      ( diffUTCTime
                                                 , getCurrentTime
                                                 )
+import qualified Data.Map as Map
 import           Relude
 import           Say                            ( say
                                                 , sayErr
@@ -73,6 +74,7 @@ import           System.Posix.IO                ( OpenFileFlags(exclusive)
                                                 , fdWrite
                                                 , openFd
                                                 )
+import System.IO.Unsafe
 
 
 load Absolute ["laminarc", "nix-store"]
@@ -113,6 +115,10 @@ runningPath, resultPath :: Text -> String
 runningPath p = [i|#{runningDir}/#{drvBasename p}|]
 resultPath p = [i|#{resultDir}/#{drvBasename p}|]
 
+{-# NOINLINE depMap #-}
+depMap :: TVar (Map Text (Seq Text))
+depMap = unsafePerformIO $ newTVarIO mempty
+
 -- Bool means derivation itself needs to be build
 getDependenciesFromNix :: Text -> IO (Seq Text)
 getDependenciesFromNix derivationName = do
@@ -128,8 +134,11 @@ needsBuild derivationName = do
 
 nixStoreRealiseDryRun :: Text -> IO (Seq Text)
 nixStoreRealiseDryRun derivationName = do
-  process
-    <$> (nix_store "-r" derivationName "--dry-run" &!> StdOut |> captureTrim)
+  maybeDeps <- Map.lookup derivationName <$> readTVarIO depMap
+  deps <- maybe (process
+    <$> (nix_store "-r" derivationName "--dry-run" &!> StdOut |> captureTrim)) pure maybeDeps
+  whenNothing_ maybeDeps $ atomically $ modifyTVar' depMap (Map.insert derivationName deps)
+  pure deps
  where
   process =
     fromList
