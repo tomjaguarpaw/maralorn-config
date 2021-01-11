@@ -2,14 +2,26 @@
 let
   path = [ pkgs.git pkgs.nix pkgs.gnutar pkgs.gzip pkgs.openssh pkgs.laminar ];
   setup = ''
+    set -e
     export PATH=${lib.makeBinPath path}:$PATH
   '';
+  repo = "/var/www/fdroid";
+  appName = "de.maralorn.kassandra";
+  deploy = "${pkgs.writeShellScript "deploy" ''
+    systemctl restart kassandra
+    VERSIONCODE="1"
+    rm ${repo}/repo/${appName}_$VERSIONCODE.apk
+    cp /var/cache/gc-links/kassandra-android/android-app-release-unsigned.apk ${repo}/unsigned/${appName}_$VERSIONCODE.apk
+    cd ${repo}
+    export PATH=/run/current-system/sw/bin:$PATH
+    export ANDROID_HOME=${pkgs.androidsdk_9_0}/libexec/android-sdk
+    fdroid publish
+    fdroid update
+  ''}";
   target = name: ''
-    set -e
     ${setup}
     export HOME=$PWD
-    git clone git@localhost:kassandra2 kassandra
-    cd kassandra
+    git clone git@localhost:kassandra2 .
     git show -q
     echo "Evaluating nix-expression."
     export FLAGS='--builders @/etc/nix/machines --max-jobs 1'
@@ -19,11 +31,19 @@ let
     laminarc set "RESULTDRV=$drv"
   '';
 in {
+  security.sudo.extraRules = [{
+    commands = [{
+      command = deploy;
+      options = [ "NOPASSWD" ];
+    }];
+    users = [ "laminar" ];
+  }];
   services.laminar.cfgFiles.jobs = {
     "kassandra.run" = pkgs.writeShellScript "kassandra" ''
       ${setup}
       echo Launching and waiting for jobs lib, app, android and server
       laminarc run kassandra-lib kassandra-android kassandra-app kassandra-server
+      /run/wrappers/bin/sudo ${deploy}
     '';
     "kassandra-lib.run" = pkgs.writeShellScript "kassandra-lib" (target "lib");
     "kassandra-app.run" = pkgs.writeShellScript "kassandra-app" (target "app");

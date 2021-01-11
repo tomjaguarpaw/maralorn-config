@@ -15,7 +15,9 @@ import           Control.Concurrent.Async       ( forConcurrently_
                                                 , race_
                                                 , withAsync
                                                 )
-import           Control.Concurrent.STM         ( check )
+import           Control.Concurrent.STM         ( check
+                                                , retry
+                                                )
 import           Control.Exception              ( bracket
                                                 , catch
                                                 , handle
@@ -23,6 +25,7 @@ import           Control.Exception              ( bracket
                                                 , throwIO
                                                 )
 import           Data.Bits                      ( Bits((.|.)) )
+import qualified Data.Map                      as Map
 import qualified Data.Sequence                 as Seq
 import           Data.String.Interpolate        ( i )
 import           Data.Text                      ( isInfixOf
@@ -33,7 +36,6 @@ import qualified Data.Text                     as T
 import           Data.Time                      ( diffUTCTime
                                                 , getCurrentTime
                                                 )
-import qualified Data.Map as Map
 import           Relude
 import           Say                            ( say
                                                 , sayErr
@@ -62,6 +64,7 @@ import           System.IO                      ( BufferMode(LineBuffering)
                                                 , hSetBuffering
                                                 )
 import           System.IO.Error
+import           System.IO.Unsafe
 import           System.Posix.Files             ( groupReadMode
                                                 , otherReadMode
                                                 , ownerReadMode
@@ -74,14 +77,11 @@ import           System.Posix.IO                ( OpenFileFlags(exclusive)
                                                 , fdWrite
                                                 , openFd
                                                 )
-import System.IO.Unsafe
 
 
 load Absolute ["laminarc", "nix-store"]
 
 data JobResult = Success | Failure deriving (Show, Read, Eq, Ord, Enum)
-
-data ReportLevel = None | Self | Children deriving (Show, Eq, Ord, Enum)
 
 newtype JobException = JobException Text deriving (Show, Exception)
 throw = throwIO . JobException
@@ -99,11 +99,6 @@ instance ExecArg Text where
   asArg         = asArg . toString
   asArgFromList = asArgFromList . fmap toString
 
-whenSelf level = when (level >= Self)
-whenChildren level = when (level >= Children)
-levelPrec Children = Self
-levelPrec _        = None
-
 drvBasename derivationName =
   fromMaybe derivationName . viaNonEmpty last $ splitOn "/" derivationName
 
@@ -115,9 +110,12 @@ runningPath, resultPath :: Text -> String
 runningPath p = [i|#{runningDir}/#{drvBasename p}|]
 resultPath p = [i|#{resultDir}/#{drvBasename p}|]
 
-{-# NOINLINE depMap #-}
-depMap :: TVar (Map Text (Seq Text))
-depMap = unsafePerformIO $ newTVarIO mempty
+{-# NOINLINE jobMap #-}
+
+data BuildState = Pending | Running | Complete deriving (Show, Eq)
+-- True means job is finished
+jobMap :: TVar (Map Text (TVar BuildState))
+jobMap = unsafePerformIO $ newTVarIO mempty
 
 -- Bool means derivation itself needs to be build
 getDependenciesFromNix :: Text -> IO (Seq Text)
@@ -134,11 +132,8 @@ needsBuild derivationName = do
 
 nixStoreRealiseDryRun :: Text -> IO (Seq Text)
 nixStoreRealiseDryRun derivationName = do
-  maybeDeps <- Map.lookup derivationName <$> readTVarIO depMap
-  deps <- maybe (process
-    <$> (nix_store "-r" derivationName "--dry-run" &!> StdOut |> captureTrim)) pure maybeDeps
-  whenNothing_ maybeDeps $ atomically $ modifyTVar' depMap (Map.insert derivationName deps)
-  pure deps
+  process
+    <$> (nix_store "-r" derivationName "--dry-run" &!> StdOut |> captureTrim)
  where
   process =
     fromList
@@ -163,7 +158,6 @@ job derivationName = do
         createDirectoryIfMissing True resultDir
         writeFileText (resultPath derivationName) (show result)
         removeFile (runningPath derivationName)
-  ensureDeps Children derivationName
   unlessM (needsBuild derivationName) $ do
     setResult Success
     say [i|Build for #{derivationName} had already happened.|]
@@ -182,13 +176,11 @@ job derivationName = do
 nixStoreRealise :: Text -> [Text] -> IO ()
 nixStoreRealise name flags = nix_store (["-r", name] <> flags)
 
-ensureDeps :: ReportLevel -> Text -> IO ()
-ensureDeps level derivationName = do
+ensureDeps :: Text -> IO ()
+ensureDeps derivationName = do
   dependencies <- getDependenciesFromNix derivationName
-  whenChildren level $ forM_ dependencies $ \dep -> say [i|Requiring #{dep}.|]
-  forConcurrently_ dependencies (realise $ levelPrec level)
-    `catch` \(JobException e) ->
-              throw [i|#{e}\nFailed dependency for #{derivationName}|]
+  forConcurrently_ dependencies realise `catch` \(JobException e) ->
+    throw [i|#{e}\nFailed dependency for #{derivationName}|]
 
 -- Nothing means failing to acquire lock on the derivation name for starting the job.
 tryQueue :: Text -> IO (Maybe Text)
@@ -223,14 +215,25 @@ tryQueue derivationName = handleExisting $ do
   defaultMode =
     ownerReadMode .|. ownerWriteMode .|. groupReadMode .|. otherReadMode
 
-queueJobWithLaminarc :: ReportLevel -> Text -> IO Text
-queueJobWithLaminarc level derivationName =
-  whenNothingM (tryQueue derivationName) (ensureRunningJob level derivationName)
+queueJobWithLaminarc :: Text -> IO Text
+queueJobWithLaminarc derivationName = whenNothingM
+  (do
+    jobMay <- tryQueue derivationName
+    whenJust jobMay $ \jobName ->
+      say [i|Job #{jobName} started for #{derivationName}. Waiting ...|]
+    pure jobMay
+  )
+  (ensureRunningJob derivationName)
 
-ensureRunningJob :: ReportLevel -> Text -> IO Text
-ensureRunningJob level derivationName = whenNothingM
-  (getRunningJob derivationName)
-  (queueJobWithLaminarc level derivationName)
+ensureRunningJob :: Text -> IO Text
+ensureRunningJob derivationName = whenNothingM
+  (do
+    jobMay <- getRunningJob derivationName
+    whenJust jobMay $ \jobName ->
+      say [i|Job #{jobName} running for #{derivationName}. Waiting ...|]
+    pure jobMay
+  )
+  (queueJobWithLaminarc derivationName)
 
 -- Nothing means there is no running Job.
 getRunningJob :: Text -> IO (Maybe Text)
@@ -244,52 +247,84 @@ getRunningJob derivationName = poll 0
     mayJob <- request
     if count < 50 && mayJob == Just ""
       then threadDelay 10000 >> poll (count + 1)
-      else pure mayJob
+      else do
 
-realise :: ReportLevel -> Text -> IO ()
-realise level derivationName = do
-  ensureDeps level derivationName
-  needBuild <- needsBuild derivationName
-  if needBuild
-    then runBuild
-    else whenSelf level $ say [i|#{derivationName} was already built.|]
+        pure mayJob
+
+getJobVar :: Text -> IO (TVar BuildState)
+getJobVar derivationName =
+  atomically
+    $   readTVar jobMap
+    >>= maybe makeVar pure
+    .   Map.lookup derivationName
+ where
+  makeVar = do
+    newVar <- newTVar Pending
+    modifyTVar' jobMap (Map.insert derivationName newVar)
+    pure newVar
+
+realise :: Text -> IO ()
+realise derivationName = do
+  jobVar  <- getJobVar derivationName
+  runHere <- atomically $ do
+    jobState <- readTVar jobVar
+    case jobState of
+      Complete -> pure False
+      Running  -> retry
+      Pending  -> do
+        writeTVar jobVar Running
+        pure True
+  when runHere $ do
+    say [i|Requiring #{derivationName}...|]
+    ensureDeps derivationName
+    needBuild <- needsBuild derivationName
+    if needBuild
+      then runBuild
+      else say [i|#{derivationName} was already built.|]
+    atomically $ writeTVar jobVar Complete
  where
   runBuild = do
-    jobName <- ensureRunningJob level derivationName
-    whenSelf level
-      $ say [i|Job #{jobName} running for #{derivationName}. Waiting ...|]
+    jobName <- ensureRunningJob derivationName
     handleWaitFail $ waitForJob derivationName >>= \case
-      Success ->
-        whenSelf level $ say [i|Job #{jobName} completed #{derivationName}.|]
+      Success -> say [i|Job #{jobName} completed #{derivationName}.|]
       Failure -> throw [i|Job #{jobName} failed #{derivationName}.|]
   processWaitFail (WaitException e) = do
-    whenSelf level
-      $ sayErr
-          [i|Retrying to find or create a job for #{derivationName} after waiting for job failed with error "#{e}" |]
-    realise level derivationName
+    sayErr
+      [i|Retrying to find or create a job for #{derivationName} after waiting for job failed with error "#{e}" |]
+    realise derivationName
   handleWaitFail = handle processWaitFail
 
-checkStaleness :: Text -> IO ()
-checkStaleness derivationName = forever $ do
-  whenJustM (getRunningJob derivationName) $ \jobName ->
-    handleJust (guard . isDoesNotExistError) (const pass) $ do
-      nothingQueued <-
-        T.null . decodeUtf8 <$> (laminarc "show-queued" |> captureTrim)
+checkStaleness :: IO ()
+checkStaleness = forever $ do
+  handleJust (guard . isDoesNotExistError) (const pass) $ do
+    nothingQueued <-
+      T.null . decodeUtf8 <$> (laminarc "show-queued" |> captureTrim)
+    when nothingQueued $ do
       knownJobs <-
         fmap strip
         .   lines
         .   decodeUtf8
         <$> (laminarc "show-running" |> captureTrim)
-      now      <- getCurrentTime
-      fileTime <- getModificationTime (runningPath derivationName)
-      let notRunning = not $ any (`isInfixOf` jobName) knownJobs
-          oldEnough  = diffUTCTime now fileTime > 60
-          stale      = notRunning && nothingQueued && oldEnough
-      when stale $ do
-        removeFile (runningPath derivationName)
-        throwWait
-          [i|File #{runningPath derivationName} claiming job name "#{jobName}" seems to be stale. Deleting File.|]
-  threadDelay 10000000
+      jobs <- Map.toList <$> readTVarIO jobMap
+      forConcurrently_ jobs $ \(derivationName, jobVar) ->
+        checkStalenessFor knownJobs jobVar derivationName
+  threadDelay 60000000
+
+checkStalenessFor :: [Text] -> TVar BuildState -> Text -> IO ()
+checkStalenessFor jobs jobVar derivationName =
+  whenM ((== Running) <$> readTVarIO jobVar)
+    $ whenJustM (getRunningJob derivationName)
+    $ \jobName -> do
+        say [i|Still waiting for job #{jobName} for #{derivationName}|]
+        now      <- getCurrentTime
+        fileTime <- getModificationTime (runningPath derivationName)
+        let notRunning = not $ any (`isInfixOf` jobName) jobs
+            oldEnough  = diffUTCTime now fileTime > 60
+            stale      = notRunning && oldEnough
+        when stale $ do
+          removeFile (runningPath derivationName)
+          sayErr
+            [i|File #{runningPath derivationName} claiming job name "#{jobName}" seems to be stale. Deleting File.|]
 
 waitForJob :: Text -> IO JobResult
 waitForJob derivationName = do
@@ -297,11 +332,8 @@ waitForJob derivationName = do
   let finished = atomically (writeTVar done True)
   withManager $ \manager -> do
     _ <- watchDir manager runningDir fileDeleted (const finished)
-    withAsync
-      (whenNothingM_ (getRunningJob derivationName) finished)
-      (const $ race_ (atomically $ readTVar done >>= check)
-                     (checkStaleness derivationName)
-      )
+    withAsync (whenNothingM_ (getRunningJob derivationName) finished)
+              (const $ atomically $ readTVar done >>= check)
   resultText <-
     handleJust
         (guard . isDoesNotExistError)
@@ -329,6 +361,7 @@ main = do
   args <- fmap toText <$> getArgs
   case args of
     ["realise-here", derivationName] -> job derivationName
-    ["realise"     , derivationName] -> realise Children derivationName
+    ["realise", derivationName] ->
+      race_ (realise derivationName) checkStaleness
     _ ->
       sayErr "Usage: realise-here <derivationName> | realise <derivationName>"

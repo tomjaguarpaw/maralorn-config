@@ -36,10 +36,9 @@ let
   checkout = ''
     git clone git@hera.m-0.eu:nixos-config . --config advice.detachedHead=false
     git checkout origin/$BRANCH
+    git show -q
     REPODIR=.
   '';
-  update-config =
-    "${pkgs.systemd}/bin/systemctl start --no-block update-config";
   systems = [ "apollo" "hera" ];
   homes = lib.attrNames (import ../../../home-manager/machines.nix);
   mkHomeJob = (host: {
@@ -69,7 +68,7 @@ let
     '';
   });
   deployCommand = "${pkgs.writeShellScript "deploy-system-config"
-    "${pkgs.systemd}/bin/systemctl start update-config"}";
+    "${pkgs.systemd}/bin/systemctl start --no-block update-config"}";
 in {
   services.laminar.cfgFiles.jobs = {
     "test-config.run" = pkgs.writeHaskell "test-config" {

@@ -9,9 +9,9 @@ self: super: {
   extra-system-pkgs = {
     inherit (self.python3Packages) qrcode;
     inherit (self)
-      git-crypt htop tree pwgen borgbackup inotifyTools direnv socat nmap ncdu
+      htop tree pwgen borgbackup inotifyTools direnv socat nmap ncdu
       tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle vnstat
-      entr libargon2 mblaze niv compsize mediainfo asciinema gomuks nix-output-monitor fdroidserver adoptopenjdk-jre-bin;
+      entr libargon2 mblaze niv compsize mediainfo asciinema gomuks nix-output-monitor fdroidserver;
   };
 
   my-home-pkgs = {

@@ -117,7 +117,6 @@ in {
       ./roles/on-my-machine.nix
       ./roles/headless.nix
       ./roles/weechat
-      ./roles/kassandra-server.nix
       ./roles/headless-mpd.nix
       ./roles/mail.nix
       ./roles/mail2rss.nix

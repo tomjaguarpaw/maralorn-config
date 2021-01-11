@@ -19,6 +19,7 @@ in {
     ../../roles/coturn.nix
     ../../roles/go-neb.nix
     ../../roles/laminar
+    ../../roles/kassandra-server.nix
     ./web.nix
     ./mail.nix
     ./boot.nix
@@ -38,7 +39,9 @@ in {
       '';
       startAgent = true;
     };
+    java.enable = true;
   };
+  nixpkgs.config.android_sdk.accept_license = true;
   systemd.services."pg_backup" = {
     script = let name = "matrix-synapse";
     in ''
