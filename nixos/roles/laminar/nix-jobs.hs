@@ -17,6 +17,7 @@ import           Control.Concurrent.Async       ( forConcurrently_
                                                 )
 import           Control.Concurrent.STM         ( check
                                                 , retry
+                                                , swapTVar
                                                 )
 import           Control.Exception              ( bracket
                                                 , catch
@@ -33,7 +34,10 @@ import           Data.Text                      ( isInfixOf
                                                 , strip
                                                 )
 import qualified Data.Text                     as T
-import           Data.Time                      ( diffUTCTime
+import           Data.Time                      ( UTCTime
+                                                , defaultTimeLocale
+                                                , diffUTCTime
+                                                , formatTime
                                                 , getCurrentTime
                                                 )
 import           Relude
@@ -271,9 +275,9 @@ realise derivationName = do
   runHere <- atomically $ do
     jobState <- readTVar jobVar
     case jobState of
-      Complete -> pure False
-      Running  -> retry
-      Pending  -> do
+      Complete  -> pure False
+      Running _ -> retry
+      Pending   -> do
         writeTVar jobVar (Running now)
         pure True
   when runHere $ do
@@ -281,25 +285,17 @@ realise derivationName = do
     ensureDeps derivationName
     needBuild <- needsBuild derivationName
     if needBuild
-      then runBuild
+      then runBuild now
       else say [i|#{derivationName} was already built.|]
-    oldState <- atomically $ swapTVar jobVar Complete
-    case oldState of
-      Complete ->
-        sayErr
-          [i|Finished büild for #{derivationName} but it was already marked completed.|]
-      Pending ->
-        sayErr
-          [i|Finished büild for #{derivationName} but it was not yet marked running.|]
-      Running start -> do
-        now <- getCurrentTime
-        say
-          [i|Job #{jobName} completed #{derivationName} after #{formatTime defaultTimeLocale "%T" (now - start)}.|]
+  atomically (writeTVar jobVar Complete)
  where
-  runBuild = do
+  runBuild start = do
     jobName <- ensureRunningJob derivationName
     handleWaitFail $ waitForJob derivationName >>= \case
-      Success -> pass
+      Success -> do
+        now <- getCurrentTime
+        say
+          [i|Job #{jobName} completed for #{derivationName} after #{formatTime defaultTimeLocale "%T" (diffUTCTime now start)}.|]
       Failure -> throw [i|Job #{jobName} failed #{derivationName}.|]
   processWaitFail (WaitException e) = do
     sayErr
@@ -327,8 +323,9 @@ checkStalenessFor :: [Text] -> TVar BuildState -> Text -> IO ()
 checkStalenessFor jobs jobVar derivationName =
   whenJustM (running <$> readTVarIO jobVar) $ \start ->
     whenJustM (getRunningJob derivationName) $ \jobName -> do
-      now      <- getCurrentTime
-      say [i|Still waiting for job #{jobName} for #{derivationName} after #{formatTime defaultTimeLocale "%T" (now - start)}.|]
+      now <- getCurrentTime
+      say
+        [i|Still waiting for job #{jobName} for #{derivationName} after #{formatTime defaultTimeLocale "%T" (diffUTCTime now start)} ...|]
       fileTime <- getModificationTime (runningPath derivationName)
       let notRunning = not $ any (`isInfixOf` jobName) jobs
           oldEnough  = diffUTCTime now fileTime > 60
