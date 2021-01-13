@@ -17,7 +17,6 @@ import           Control.Concurrent.Async       ( forConcurrently_
                                                 )
 import           Control.Concurrent.STM         ( check
                                                 , retry
-                                                , swapTVar
                                                 )
 import           Control.Exception              ( bracket
                                                 , catch
@@ -104,6 +103,7 @@ instance ExecArg Text where
   asArg         = asArg . toString
   asArgFromList = asArgFromList . fmap toString
 
+drvBasename :: Text -> Text
 drvBasename derivationName =
   fromMaybe derivationName . viaNonEmpty last $ splitOn "/" derivationName
 
@@ -371,7 +371,7 @@ main = do
     sayErr [i|Missing executables #{show x}|]
     exitFailure
   args <- fmap toText <$> getArgs
-  case args of
+  handle (\(JobException e) -> sayErr e >> exitFailure) $ case args of
     ["realise-here", derivationName] -> job derivationName
     ["realise"     , derivationName] -> do
       jobId <- getEnv "JOB"
