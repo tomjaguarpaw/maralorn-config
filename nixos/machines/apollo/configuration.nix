@@ -59,6 +59,7 @@ in {
   };
 
   services = {
+    fwupd.enable = true;
     upower.enable = true;
     printing = {
       enable = true;
