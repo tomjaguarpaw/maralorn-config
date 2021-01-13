@@ -295,7 +295,7 @@ realise derivationName = do
       Success -> do
         now <- getCurrentTime
         say
-          [i|Job #{jobName} completed for #{derivationName} after #{formatTime defaultTimeLocale "%T" (diffUTCTime now start)}.|]
+          [i|Job #{jobName} completed for #{derivationName} after #{formatTime defaultTimeLocale "%h:%M:%S" (diffUTCTime now start)}.|]
       Failure -> throw [i|Job #{jobName} failed #{derivationName}.|]
   processWaitFail (WaitException e) = do
     sayErr
@@ -325,7 +325,7 @@ checkStalenessFor jobs jobVar derivationName =
     whenJustM (getRunningJob derivationName) $ \jobName -> do
       now <- getCurrentTime
       say
-        [i|Still waiting for job #{jobName} for #{derivationName} after #{formatTime defaultTimeLocale "%T" (diffUTCTime now start)} ...|]
+        [i|Still waiting for job #{jobName} for #{derivationName} after #{formatTime defaultTimeLocale "%h:%M:%S" (diffUTCTime now start)} ...|]
       fileTime <- getModificationTime (runningPath derivationName)
       let notRunning = not $ any (`isInfixOf` jobName) jobs
           oldEnough  = diffUTCTime now fileTime > 60
