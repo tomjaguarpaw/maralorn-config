@@ -113,7 +113,7 @@ resultPath p = [i|#{resultDir}/#{drvBasename p}|]
 
 {-# NOINLINE jobMap #-}
 
-data BuildState = Pending | Running | Complete deriving (Show, Eq)
+data BuildState = Pending | Running UTCTime | Complete deriving (Show, Eq)
 -- True means job is finished
 jobMap :: TVar (Map Text (TVar BuildState))
 jobMap = unsafePerformIO $ newTVarIO mempty
@@ -267,13 +267,14 @@ getJobVar derivationName =
 realise :: Text -> IO ()
 realise derivationName = do
   jobVar  <- getJobVar derivationName
+  now     <- getCurrentTime
   runHere <- atomically $ do
     jobState <- readTVar jobVar
     case jobState of
       Complete -> pure False
       Running  -> retry
       Pending  -> do
-        writeTVar jobVar Running
+        writeTVar jobVar (Running now)
         pure True
   when runHere $ do
     say [i|Requiring #{derivationName}...|]
@@ -282,12 +283,23 @@ realise derivationName = do
     if needBuild
       then runBuild
       else say [i|#{derivationName} was already built.|]
-    atomically $ writeTVar jobVar Complete
+    oldState <- atomically $ swapTVar jobVar Complete
+    case oldState of
+      Complete ->
+        sayErr
+          [i|Finished büild for #{derivationName} but it was already marked completed.|]
+      Pending ->
+        sayErr
+          [i|Finished büild for #{derivationName} but it was not yet marked running.|]
+      Running start -> do
+        now <- getCurrentTime
+        say
+          [i|Job #{jobName} completed #{derivationName} after #{formatTime defaultTimeLocale "%T" (now - start)}.|]
  where
   runBuild = do
     jobName <- ensureRunningJob derivationName
     handleWaitFail $ waitForJob derivationName >>= \case
-      Success -> say [i|Job #{jobName} completed #{derivationName}.|]
+      Success -> pass
       Failure -> throw [i|Job #{jobName} failed #{derivationName}.|]
   processWaitFail (WaitException e) = do
     sayErr
@@ -313,19 +325,21 @@ checkStaleness = forever $ do
 
 checkStalenessFor :: [Text] -> TVar BuildState -> Text -> IO ()
 checkStalenessFor jobs jobVar derivationName =
-  whenM ((== Running) <$> readTVarIO jobVar)
-    $ whenJustM (getRunningJob derivationName)
-    $ \jobName -> do
-        say [i|Still waiting for job #{jobName} for #{derivationName}|]
-        now      <- getCurrentTime
-        fileTime <- getModificationTime (runningPath derivationName)
-        let notRunning = not $ any (`isInfixOf` jobName) jobs
-            oldEnough  = diffUTCTime now fileTime > 60
-            stale      = notRunning && oldEnough
-        when stale $ do
-          removeFile (runningPath derivationName)
-          sayErr
-            [i|File #{runningPath derivationName} claiming job name "#{jobName}" seems to be stale. Deleting File.|]
+  whenJustM (running <$> readTVarIO jobVar) $ \start ->
+    whenJustM (getRunningJob derivationName) $ \jobName -> do
+      now      <- getCurrentTime
+      say [i|Still waiting for job #{jobName} for #{derivationName} after #{formatTime defaultTimeLocale "%T" (now - start)}.|]
+      fileTime <- getModificationTime (runningPath derivationName)
+      let notRunning = not $ any (`isInfixOf` jobName) jobs
+          oldEnough  = diffUTCTime now fileTime > 60
+          stale      = notRunning && oldEnough
+      when stale $ do
+        removeFile (runningPath derivationName)
+        sayErr
+          [i|File #{runningPath derivationName} claiming job name "#{jobName}" seems to be stale. Deleting File.|]
+ where
+  running (Running a) = Just a
+  running _           = Nothing
 
 waitForJob :: Text -> IO JobResult
 waitForJob derivationName = do
@@ -362,10 +376,11 @@ main = do
   args <- fmap toText <$> getArgs
   case args of
     ["realise-here", derivationName] -> job derivationName
-    ["realise", derivationName] -> do
+    ["realise"     , derivationName] -> do
       jobId <- getEnv "JOB"
       runId <- getEnv "RUN"
-      setEnv "LAMINAR_REASON" [i|Building #{derivationName} in #{jobId}:#{runId}|]
+      setEnv "LAMINAR_REASON"
+             [i|Building #{derivationName} in #{jobId}:#{runId}|]
       race_ (realise derivationName) checkStaleness
     _ ->
       sayErr "Usage: realise-here <derivationName> | realise <derivationName>"
