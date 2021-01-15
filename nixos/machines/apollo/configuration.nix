@@ -23,6 +23,10 @@ in {
     domain = "m-0.eu";
     firewall.allowedTCPPorts = [
       8123 # Weiterleitung von stream.maralorn.de
+      64738
+    ];
+    firewall.allowedUDPPorts = [
+      64738
     ];
     wireguard.interfaces = {
       m0wire = {
@@ -61,6 +65,12 @@ in {
   services = {
     fwupd.enable = true;
     upower.enable = true;
+    murmur = {
+      enable = true;
+      extraConfig = ''
+        bandwidth=130000
+      '';
+    };
     printing = {
       enable = true;
       drivers = [ pkgs.gutenprint pkgs.hplip ];
