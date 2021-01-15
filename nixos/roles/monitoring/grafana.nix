@@ -9,6 +9,7 @@ let
     (heading "ci.maralorn.de" "https://ci.maralorn.de")
     (job "kassandra")
     (job "test-config")
+    (job "logfeed")
     (heading "haskell-taskwarrior"
       "https://hackage.haskell.org/package/taskwarrior")
     (badge "https://img.shields.io/hackage/v/taskwarrior.svg"
