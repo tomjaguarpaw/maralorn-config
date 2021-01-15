@@ -23,7 +23,7 @@ in {
       };
     };
   };
-  imports = [ ./kassandra.nix ./test-config.nix ];
+  imports = [ ./kassandra.nix ./test-config.nix ./projects.nix ];
   config = {
     security.sudo.extraRules = let allowedCommands = [ cacheResult ];
     in [{
