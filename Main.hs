@@ -205,11 +205,11 @@ printHTML log =
       (printRow <$> zip (WeechatLine "" "" "" "" :| toList ls) ls)
   printRow :: (WeechatLine, WeechatLine) -> Text
   printRow (prevRow, curRow) =
-    "<i style='color: grey'>"
+    "<i>"
       <> time
-      <> " "
+      <> " <b>"
       <> printNick
-      <> "</i> "
+      <> "</b></i> "
       <> message
       <> "<br>"
    where
