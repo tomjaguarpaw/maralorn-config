@@ -16,4 +16,5 @@ in {
       hsemail
     ];
   };
+  pkg = drv;
 }

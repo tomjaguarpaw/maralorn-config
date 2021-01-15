@@ -207,9 +207,9 @@ printHTML log =
   printRow (prevRow, curRow) =
     "<i>"
       <> time
-      <> " <b>"
+      <> "</i> <b>"
       <> printNick
-      <> "</b></i> "
+      <> "</b> "
       <> message
       <> "<br>"
    where
