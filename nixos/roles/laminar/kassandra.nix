@@ -9,9 +9,10 @@ let
   appName = "de.maralorn.kassandra";
   deploy = "${pkgs.writeShellScript "deploy" ''
     systemctl restart kassandra
-    VERSIONCODE="1"
-    rm ${repo}/repo/${appName}_$VERSIONCODE.apk
-    cp /var/cache/gc-links/kassandra-android/android-app-release-unsigned.apk ${repo}/unsigned/${appName}_$VERSIONCODE.apk
+    cd /var/cache/gc-links/kassandra-android
+    FILENAME=$(${pkgs.fd}/bin/fd .apk)
+    rm -f ${repo}/repo/$FILENAME
+    cp $FILENAME ${repo}/unsigned
     cd ${repo}
     export PATH=/run/current-system/sw/bin:$PATH
     export ANDROID_HOME=${pkgs.androidsdk_9_0}/libexec/android-sdk
