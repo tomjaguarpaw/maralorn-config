@@ -1,29 +1,29 @@
 {-# LANGUAGE ViewPatterns, ScopedTypeVariables, NamedFieldPuns, OverloadedStrings, NoImplicitPrelude, ExtendedDefaultRules, QuasiQuotes, MultiWayIf #-}
 module Main where
 
-import           Data.String.Interpolate        ( i )
-import           Relude                  hiding ( intercalate
-                                                , zip
-                                                )
-import           Data.Text                      ( intercalate
-                                                , replace
-                                                )
-import           Text.Atom.Feed.Export          ( textFeed )
-import qualified Data.Text                     as Text
+import qualified Data.List.Extra               as L
 import           Data.List.NonEmpty             ( groupBy
                                                 , zip
                                                 )
-import           Text.Atom.Feed
+import           Data.String.Interpolate        ( i )
+import           Data.Text                      ( intercalate
+                                                , replace
+                                                )
+import qualified Data.Text                     as Text
 import qualified Data.Time.Calendar            as T
 import qualified Data.Time.Clock               as T
 import qualified Data.Time.Format              as T
+import           Relude                  hiding ( intercalate
+                                                , zip
+                                                )
+import           System.Environment             ( getArgs )
+import           System.FilePattern.Directory   ( getDirectoryFiles )
+import           Text.Atom.Feed
+import           Text.Atom.Feed.Export          ( textFeed )
 import qualified Text.Megaparsec               as MP
 import qualified Text.Megaparsec.Char          as MP
 import qualified Text.Megaparsec.Char          as MPC
 import qualified Text.Megaparsec.Char.Lexer    as MP
-import           System.FilePattern.Directory   ( getDirectoryFiles )
-import qualified Data.List.Extra               as L
-import           System.Environment             ( getArgs )
 -- TODO: use Text instead of linked lists of chars
 
 type WeechatLog = [WeechatLine]
@@ -35,16 +35,6 @@ data WeechatLine = WeechatLine
   }
   deriving (Show, Eq, Ord)
 -- TODO: specific handling of join/part/network messages
-
-header :: Text
-header = unlines
-  [ "<!DOCTYPE html>"
-  , "<html>"
-  , "  <head>"
-  , "    <meta charset=\"UTF-8\" />"
-  , "    <title>IRC log</title>"
-  , "  </head>"
-  ]
 
 data LogFile = LogFile
   { path    :: Text
@@ -193,11 +183,7 @@ parseWeechatLog = filter actualMessage . mapMaybe parseLine . lines
   parseLine     = MP.parseMaybe parseWeechatLine
 
 printHTML :: [WeechatLine] -> Text
-printHTML log =
-  intercalate "\n"
-    $  [header, "<body>"]
-    ++ map printDay days
-    ++ ["</body>", "</html>"]
+printHTML log = intercalate "\n" $ map printDay days
  where
   days = groupBy ((==) `on` wlDate) log
   printDay ls =
@@ -205,13 +191,7 @@ printHTML log =
       (printRow <$> zip (WeechatLine "" "" "" "" :| toList ls) ls)
   printRow :: (WeechatLine, WeechatLine) -> Text
   printRow (prevRow, curRow) =
-    "<i>"
-      <> time
-      <> "</i> <b>"
-      <> printNick
-      <> "</b> "
-      <> message
-      <> "<br>"
+    "<i>" <> time <> "</i> <b>" <> printNick <> "</b> " <> message <> "<br>"
    where
     prevTime = Text.take 5 $ wlTime prevRow
     curTime  = Text.take 5 $ wlTime curRow
