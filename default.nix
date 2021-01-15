@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs-master> { } }:
+{ pkgs ? import (import nix/sources.nix).nixpkgs { } }:
 let
   haskellPackages = pkgs.haskellPackages;
   drv = haskellPackages.callCabal2nix "logfeed" ./. { };
