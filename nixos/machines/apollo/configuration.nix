@@ -65,12 +65,6 @@ in {
   services = {
     fwupd.enable = true;
     upower.enable = true;
-    murmur = {
-      enable = true;
-      extraConfig = ''
-        bandwidth=130000
-      '';
-    };
     printing = {
       enable = true;
       drivers = [ pkgs.gutenprint pkgs.hplip ];
