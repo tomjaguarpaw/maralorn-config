@@ -9,13 +9,13 @@ let
           # coc-tabnine (TODO: Why doesn‘t it work?)
           # TODO: tabnine config in home-manager
           # TODO: tabnine lsp: nix, rust, pandoc/latex lsp? was noch?
-          # TODO: coc-explorer, coc-markdownlints are installed statefully right now
 
           # ===
           # Basic IDE plugins
             coc-nvim airline
             # same word highlighting when not supported by language
             coc-highlight
+            coc-explorer
             # searches
             coc-fzf fzf-vim
 
@@ -38,6 +38,7 @@ let
             haskell-vim vim-hoogle
             # nix syntax highlighting
             vim-nix
+            vim-markdown
             # latex
             vimtex coc-vimtex # not sure if I need two
             # ledger
@@ -64,6 +65,7 @@ let
     "diagnostic.maxWindowHeight" = 60;
     "diagnostic.virtualText" = true;
     "diagnostic.virtualTextCurrentLineOnly" = false;
+    "coc.preferences.hoverTarget" = "preview";
     "codeLens.enable" = true;
     languageserver = {
       markdown = {

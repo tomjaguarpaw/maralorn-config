@@ -34,7 +34,7 @@ augroup focus
     au BufLeave * silent! wall
 augroup END
 
-nnoremap <silent><cr> :nohlsearch<CR>
+nnoremap <silent><cr> :pc<CR>:nohlsearch<CR>
 vnoremap < <gv
 vnoremap > >gv
 nnoremap <c-down> <c-w><c-j>
@@ -136,13 +136,32 @@ nmap <silent> gc :Gcommit<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
   else
-    call CocAction('doHover')
+    execute '!' . &keywordprg . " " . expand('<cword>')
   endif
 endfunction
 
-nmap <silent> <space>i :call <SID>show_documentation()<CR>
+"nmap <silent> <space>i :call <SID>show_documentation()<CR>
+autocmd CursorHold * silent call s:show_documentation()
+
+function! Preview_func()
+  if &pvw
+    setlocal foldcolumn=0
+    setlocal signcolumn=no
+    setlocal nonumber
+    let idealheight=line('$')+2
+    let width=min([&columns-40])
+    let left=&columns-width
+    let height=min([idealheight,&lines-3,60])
+    let top=&lines-2-height
+    call nvim_win_set_config(0,{'relative': 'editor','width':width,'height':height,'row':top,'col':left})
+  endif
+endfunction
+
+autocmd BufWinEnter * call Preview_func()
+
 
 " Remap for rename current word
 nmap <space>r <Plug>(coc-rename)
