@@ -65,7 +65,6 @@ let
     "diagnostic.maxWindowHeight" = 60;
     "diagnostic.virtualText" = true;
     "diagnostic.virtualTextCurrentLineOnly" = false;
-    "coc.preferences.hoverTarget" = "preview";
     "codeLens.enable" = true;
     languageserver = {
       markdown = {
