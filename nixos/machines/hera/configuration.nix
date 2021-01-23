@@ -20,6 +20,7 @@ in {
     ../../roles/go-neb.nix
     ../../roles/laminar
     ../../roles/kassandra-server.nix
+    ../../roles/foundryvtt.nix
     ./web.nix
     ./mail.nix
     ./boot.nix
