@@ -15,7 +15,7 @@ in {
     ../../roles/monitoring
     ../../roles/blog.nix
     ../../roles/email2matrix.nix
-    ../../roles/matrix-synapse.nix
+    ../../roles/matrix-synapse
     ../../roles/coturn.nix
     ../../roles/go-neb.nix
     ../../roles/laminar

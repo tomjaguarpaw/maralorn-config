@@ -3,6 +3,20 @@ let
   server_name = "maralorn.de";
   hostName = "matrix.${server_name}";
 in {
+  systemd.services."matrix-cleanup" = {
+    serviceConfig = {
+      ExecStart = pkgs.writeHaskell "matrix-cleanup" {
+        libraries = builtins.attrValues pkgs.myHaskellScriptPackages ++ [
+          pkgs.haskellPackages.postgresql-simple
+          pkgs.haskellPackages.HTTP
+        ];
+        ghcArgs = [ "-threaded" ];
+      } (builtins.readFile ./synapse-cleanup.hs);
+      User = "matrix-synapse";
+      Type = "oneshot";
+    };
+    startAt = "06:00";
+  };
   services = {
     nginx = {
       enable = true;
@@ -59,11 +73,18 @@ in {
       dynamic_thumbnails = true;
       turn_shared_secret = config.services.coturn.static-auth-secret;
       turn_uris = let
-        turns =
-          "turns:${config.services.coturn.realm}:${toString config.services.coturn.tls-listening-port}";
-        turn =
-          "turn:${config.services.coturn.realm}:${toString config.services.coturn.listening-port}";
-      in [ "${turns}?transport=udp" "${turns}?transport=tcp" "${turn}?transport=udp" "${turn}?transport=tcp" ];
+        turns = "turns:${config.services.coturn.realm}:${
+            toString config.services.coturn.tls-listening-port
+          }";
+        turn = "turn:${config.services.coturn.realm}:${
+            toString config.services.coturn.listening-port
+          }";
+      in [
+        "${turns}?transport=udp"
+        "${turns}?transport=tcp"
+        "${turn}?transport=udp"
+        "${turn}?transport=tcp"
+      ];
       turn_user_lifetime = "24h";
       allow_guest_access = true;
       logConfig = ''

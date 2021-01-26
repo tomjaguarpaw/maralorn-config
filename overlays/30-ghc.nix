@@ -14,7 +14,7 @@ let
         brittany ormolu releaser cabal-fmt stack ghcid ghcide
         haskell-language-server cabal-install dhall taskwarrior pandoc hlint
         cabal2nix weeder reflex-dom password optics shh-extras neuron
-        hspec-discover cabal-edit paths hmatrix;
+        hspec-discover cabal-edit paths hmatrix postgresql-simple;
     } // makeHaskellScriptPackages p;
     inherit (master) ghc haskellPackages;
 in {
