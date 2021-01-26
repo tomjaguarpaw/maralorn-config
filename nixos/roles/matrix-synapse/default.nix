@@ -1,8 +1,9 @@
-{ pkgs, config, ... }:
+{ pkgs, config, lib, ... }:
 let
   server_name = "maralorn.de";
   hostName = "matrix.${server_name}";
 in {
+  environment.systemPackages = [ pkgs.matrix-synapse-tools.rust-synapse-compress-state ];
   systemd.services."synapse-cleanup" = {
     serviceConfig = {
       ExecStart = pkgs.writeHaskell "synapse-cleanup" {
@@ -10,6 +11,7 @@ in {
           pkgs.haskellPackages.postgresql-simple
           pkgs.haskellPackages.HTTP
         ];
+        ghcEnv.PATH = "${lib.makeBinPath [ pkgs.matrix-synapse-tools.rust-synapse-compress-state pkgs.postgresql_12 ]}:$PATH";
         ghcArgs = [ "-threaded" ];
       } (builtins.readFile ./synapse-cleanup.hs);
       User = "matrix-synapse";

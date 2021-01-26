@@ -11,4 +11,5 @@ in {
   syncthingNext = unstable.syncthing;
   vimPlugins = unstable.vimPlugins;
   fzf = unstable.fzf;
+  matrix-synapse-tools.rust-synapse-compress-state = unstable.matrix-synapse-tools.rust-synapse-compress-state;
 }

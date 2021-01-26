@@ -24,6 +24,9 @@ import           Prelude                        ( )
 import           Relude
 import           Say
 import           System.IO
+import Shh
+
+load Absolute ["synapse-compress-state", "cat", "psql", "rm", "grep"]
 
 newtype PurgeResult = PurgeResult
   { purge_id :: Text
@@ -39,6 +42,7 @@ apiUrl = [i|http://localhost:8008/_synapse/admin/v1|]
 daysOld = 30
 lastMessages = 500
 minUsersToPurgeRoom = 5
+filename = "/var/lib/matrix-synapse/tmp-storage-compression.sql"
 
 main :: IO ()
 main = do
@@ -86,6 +90,9 @@ main = do
     "SELECT q.room_id FROM (select count(*) as numberofusers, room_id FROM current_state_events WHERE type ='m.room.member' GROUP BY room_id) AS q LEFT JOIN room_aliases a ON q.room_id=a.room_id WHERE q.numberofusers > ? ORDER BY numberofusers desc"
     (Only minUsersToPurgeRoom)
   forM_ roomIds $ \roomId -> do
+    synapse_compress_state "-o" filename "-p" "host=/run/postgresql user=matrix-synapse dbname=matrix-synapse" "-r" (toString roomId) |> grep "-v" "DELETE\\|INSERT"
+    cat filename |> psql "matrix-synapse"
+    rm filename
     eventId <-
       fmap (second (posixSecondsToUTCTime . (/ 1000) . realToFrac))
       .   viaNonEmpty head
