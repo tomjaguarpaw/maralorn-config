@@ -3,9 +3,9 @@ let
   server_name = "maralorn.de";
   hostName = "matrix.${server_name}";
 in {
-  systemd.services."matrix-cleanup" = {
+  systemd.services."synapse-cleanup" = {
     serviceConfig = {
-      ExecStart = pkgs.writeHaskell "matrix-cleanup" {
+      ExecStart = pkgs.writeHaskell "synapse-cleanup" {
         libraries = builtins.attrValues pkgs.myHaskellScriptPackages ++ [
           pkgs.haskellPackages.postgresql-simple
           pkgs.haskellPackages.HTTP

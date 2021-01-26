@@ -71,16 +71,16 @@ main = do
           . getRequest
           $ [i|#{apiUrl}/purge_history_status/#{purgeId}|]
         case response of
-          Left  _    -> pure "failed"
+          Left  e    -> pure [i|purge failed with error: #{e}|]
           Right resp -> do
             let res =
-                  maybe "failed" status (decode . encodeUtf8 . rspBody $ resp)
-            if res == "active" then go (timeout * 2) else pure res
-  e <- simpleHTTP
+                  maybe [i|couldn‘t parse purge response #{rspBody resp}|] status (decode . encodeUtf8 . rspBody $ resp)
+            if res == "active" then go (min (timeout * 2) 60) else pure res
+  say "Pruning remote media ..."
+  _ <- simpleHTTP
           . setAuth
           . postRequest
           $ [i|#{apiUrl}/purge_media_cache/?before_ts=#{upToTimeStamp}|]
-  sayShow e
   roomIds <- fromOnly @Text <<$>> query
     conn
     "SELECT q.room_id FROM (select count(*) as numberofusers, room_id FROM current_state_events WHERE type ='m.room.member' GROUP BY room_id) AS q LEFT JOIN room_aliases a ON q.room_id=a.room_id WHERE q.numberofusers > ? ORDER BY numberofusers desc"
@@ -123,3 +123,4 @@ main = do
               say [i|Purge result: #{result}|]
             )
             (decode . encodeUtf8 . rspBody $ resp)
+    -- TODO: run matrix-state-optimizer
