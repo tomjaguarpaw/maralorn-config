@@ -69,8 +69,6 @@ let g:haskell_enable_typeroles = 1        " to enable highlighting of type roles
 let g:haskell_enable_static_pointers = 1  " to enable highlighting of `static`
 let g:haskell_backpack = 1                " to enable highlighting of backpack keywords
 
-let g:formatdef_my_haskell = '"fourmolu"'
-let g:formatters_haskell = ['my_haskell']
 let g:formatdef_my_cabal = '"cabal-fmt"'
 let g:formatters_cabal = ['my_cabal']
 let g:formatdef_my_nix = '"nixfmt"'
@@ -163,7 +161,7 @@ augroup end
 " Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
 xmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <space>f  :Autoformat<CR>
+nmap <silent> <space>f  :Format<CR>
 nmap <space>l  <Plug>(coc-codelens-action)
 
 " Create mappings for function text object, requires document symbols feature of languageserver.
