@@ -17,10 +17,10 @@
         "homepage": "",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "c137866bd7d2a9c2010b618252694f395453cf59",
-        "sha256": "1k21fwls9p22xf5qbdhd4jlkq487vlr1g3j90vv7mz4hkddsaz79",
+        "rev": "db88b625f9230154878db56e934e940d84f153bc",
+        "sha256": "099h3sqfmngf08n8sfdzh4jhcidqkrcy7nvq8hr4vpz5asfahhhz",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/c137866bd7d2a9c2010b618252694f395453cf59.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/db88b625f9230154878db56e934e940d84f153bc.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "kassandra": {
@@ -50,10 +50,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e4adbfbab8aadf9d80a93d40fb612cb910073af9",
-        "sha256": "0fs32adk4x5xg9m00nykhxhka927wrnwkjx59as673swh46hdvck",
+        "rev": "85abeab48b5feda4b163e5bb32f50aad1164e415",
+        "sha256": "1nslb5p6cf5z691pf52j8bf880sdgav1fcf7bxjk3rad92bniq5g",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/e4adbfbab8aadf9d80a93d40fb612cb910073af9.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/85abeab48b5feda4b163e5bb32f50aad1164e415.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
@@ -93,10 +93,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "652b2d6dba246abd696bc6f2cb8b30032ed4fb56",
-        "sha256": "1l5wk1y04gmv3zikyb9g04j8c5525h8q62ymhhm0b8p4ny27c962",
+        "rev": "8d0f701bf8bad624d5ffab9b634007546e946c03",
+        "sha256": "02z38dx1ij9ckqxvg52y7ipvilz4g93jzrxd7bqawiwhf9n5xb2x",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/652b2d6dba246abd696bc6f2cb8b30032ed4fb56.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/8d0f701bf8bad624d5ffab9b634007546e946c03.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
