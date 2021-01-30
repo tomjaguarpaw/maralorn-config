@@ -102,7 +102,6 @@ let
               User = "nextcloud";
               Type = "oneshot";
             };
-            startAt = "23:00";
           };
           prometheus-nginx-exporter.serviceConfig.RestartSec = 10;
           nextcloud-setup = {

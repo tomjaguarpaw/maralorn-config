@@ -20,8 +20,7 @@
   nix = {
     nixPath = [ "nixos-config=/etc/nixos/configuration.nix" ];
     gc = {
-      automatic = true;
-      dates = "Mon 4:00";
+      automatic = false;
       options = "-d";
     };
   };

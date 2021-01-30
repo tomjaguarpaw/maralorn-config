@@ -119,7 +119,6 @@ in {
       '';
     };
     bump-config = {
-      startAt = "03:45";
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${pkgs.laminar}/bin/laminarc queue bump-config";

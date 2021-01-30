@@ -1,8 +1,9 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   inherit (config.m-0.private) me;
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
-in {
+in
+{
 
   imports = [
     ./hardware-configuration.nix
@@ -27,10 +28,12 @@ in {
     ./cloud.nix
     ./network.nix
   ];
-  m-0.monitoring = [{
-    name = "hera";
-    host = "hera-intern:9100";
-  }];
+  m-0.monitoring = [
+    {
+      name = "hera";
+      host = "hera-intern:9100";
+    }
+  ];
 
   programs = {
     ssh = {
@@ -43,19 +46,47 @@ in {
     java.enable = true;
   };
   nixpkgs.config.android_sdk.accept_license = true;
-  systemd.services."pg_backup" = {
-    script = let name = "matrix-synapse";
-    in ''
-      ${config.services.postgresql.package}/bin/pg_dump matrix-synapse > /var/lib/db-backup-dumps/cur/${name}
-    '';
-    serviceConfig = {
-      User = "matrix-synapse";
-      Type = "oneshot";
+  systemd.services = {
+    pg_backup = let
+      name = "matrix-synapse";
+    in
+      {
+        script = ''
+          ${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}
+        '';
+        serviceConfig = {
+          User = name;
+          Type = "oneshot";
+        };
+      };
+    night-routines = {
+      script = let
+        start = "${pkgs.systemd}/bin/systemctl start";
+        container = "${pkgs.nixos-container}/bin/nixos-container run";
+      in
+        ''
+          set -x
+          set +e
+          ${start} pg_backup
+          ${container} cloud -- ${start} pg_backup
+          ${container} chor-cloud -- ${start} pg_backup
+          ${lib.concatMapStringsSep "\n" (name: "${start} borgbackup-job-${name}") (lib.attrNames (pkgs.privateValue {} "borgbackup"))}
+          ${pkgs.coreutils}/bin/rm -rf /var/lib/db-backup-dumps/*
+          ${start} nix-optimise
+          if [[ "$(date '+%A')" == "Monday" ]]; then
+            ${start} nix-gc
+          fi
+          ${start} synapse-cleanup
+          ${start} bump-config
+        '';
+      serviceConfig = {
+        Type = "oneshot";
+      };
+      startAt = "03:00";
     };
-    startAt = "23:00";
   };
   services = {
-    borgbackup.jobs = pkgs.privateValue { } "borgbackup";
+    borgbackup.jobs = pkgs.privateValue {} "borgbackup";
     taskserver = {
       enable = true;
       fqdn = "hera.m-0.eu";

@@ -59,7 +59,10 @@
       auto-optimise-store = true
       builders-use-substitutes = true
     '';
-    optimise.automatic = true;
+    optimise = {
+      dates = [];
+      automatic = true;
+    };
   };
 
   systemd.services = let

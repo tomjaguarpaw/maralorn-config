@@ -17,7 +17,6 @@ in {
       User = "matrix-synapse";
       Type = "oneshot";
     };
-    startAt = "06:00";
   };
   services = {
     nginx = {
