@@ -2,6 +2,8 @@
 let
   inherit (config.m-0.private) me;
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
+  backupJobs = pkgs.privateValue {} "borgbackup";
+  backupJobNames = map (name: "borgbackup-job-${name}") (lib.attrNames backupJobs);
 in
 {
 
@@ -70,7 +72,7 @@ in
           ${start} pg_backup
           ${container} cloud -- ${start} pg_backup
           ${container} chor-cloud -- ${start} pg_backup
-          ${lib.concatMapStringsSep "\n" (name: "${start} borgbackup-job-${name}") (lib.attrNames (pkgs.privateValue {} "borgbackup"))}
+          ${lib.concatMapStringsSep "\n" (name: "${start} ${name}") backupJobNames}
           ${pkgs.coreutils}/bin/rm -rf /var/lib/db-backup-dumps/*
           ${start} nix-optimise
           if [[ "$(date '+%A')" == "Monday" ]]; then
@@ -84,9 +86,9 @@ in
       };
       startAt = "03:00";
     };
-  };
+  } // lib.listToAttrs (map (name: { name = name; value = { serviceConfig.Type = "oneshot"; }; }) backupJobNames);
   services = {
-    borgbackup.jobs = pkgs.privateValue {} "borgbackup";
+    borgbackup.jobs = backupJobs;
     taskserver = {
       enable = true;
       fqdn = "hera.m-0.eu";
