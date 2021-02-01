@@ -63,6 +63,7 @@ in
     postgresql = {
       enable = true;
       package = pkgs.postgresql_12;
+      settings = import ./postgres-tuning.nix;
     };
 
     # Synapse
