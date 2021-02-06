@@ -17,10 +17,10 @@
         "homepage": "",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "63d5d28db6068e58c24afa4089f13941500d5fe8",
-        "sha256": "034ai3n9mg518y7k200q14cizymki93929013kbv36ilrdsnx7rl",
+        "rev": "d4202875831a2d1b9dd3002d89b8c794af9e5a43",
+        "sha256": "06bvp0hn1nsqz37355gb2h3k4k45jiksj87r06d6qd48l3j7wh2h",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/63d5d28db6068e58c24afa4089f13941500d5fe8.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/d4202875831a2d1b9dd3002d89b8c794af9e5a43.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "kassandra": {
@@ -93,10 +93,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "24e5fe6075bc7a137bb701eb8a378f5a8689e10d",
-        "sha256": "1bkjh566r1bpbddz6fjhccn872p1dlvg5fwq9j2qdj4b5q2pmljc",
+        "rev": "39856245006d24fb468959a91c5b017d2fdb3d99",
+        "sha256": "0zpsfgvxpv4x6afc7cd8sba2d9f82w4b8m7nschg5sbiblcaxpmc",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/24e5fe6075bc7a137bb701eb8a378f5a8689e10d.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/39856245006d24fb468959a91c5b017d2fdb3d99.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
