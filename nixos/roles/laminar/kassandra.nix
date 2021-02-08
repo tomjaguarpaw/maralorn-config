@@ -11,7 +11,7 @@ let
     systemctl restart kassandra
     cd /var/cache/gc-links/kassandra-android
     FILENAME=$(${pkgs.fd}/bin/fd .apk)
-    rm -f ${repo}/repo/*
+    rm -f ${repo}/repo/*.apk
     cp $FILENAME ${repo}/unsigned
     cd ${repo}
     export PATH=/run/current-system/sw/bin:$PATH
