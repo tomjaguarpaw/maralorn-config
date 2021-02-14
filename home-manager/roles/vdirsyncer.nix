@@ -1,64 +1,75 @@
 { pkgs, lib, ... }:
 let
-  addressbooks = pkgs.privateValue [ ] "addressbooks";
-  calendars = pkgs.privateValue [ ] "calendars";
+  addressbooks = pkgs.privateValue [] "addressbooks";
+  calendars = pkgs.privateValue [] "calendars";
   mkConfig = config:
-    (pkgs.formats.ini { }).generate "vdirsyncer-config" (lib.mapAttrs
-      (name: section:
-        (lib.mapAttrs (name: option: builtins.toJSON option) section)) config);
-  mkCalendar = { name, url, username, passwordPath }:
+    (pkgs.formats.ini {}).generate "vdirsyncer-config" (
+      lib.mapAttrs
+        (
+          name: section:
+            (lib.mapAttrs (name: option: builtins.toJSON option) section)
+        ) config
+    );
+  mkCalendar = { name, url, username, passwordPath, collections ? [ "from a" "from b" ], readOnly ? false }:
     let
       pairName = "${name}_calendar";
       remoteName = "${pairName}_remote";
       localName = "${pairName}_local";
-    in {
-      "pair ${pairName}" = {
-        a = localName;
-        b = remoteName;
-        collections = [ "from a" "from b" ];
-        conflict_resolution = "b wins";
+    in
+      {
+        "pair ${pairName}" = {
+          a = localName;
+          b = remoteName;
+          inherit collections;
+          conflict_resolution = "b wins";
+          metadata = ["color"];
+        };
+        "storage ${localName}" = {
+          type = "filesystem";
+          path = "~/.calendars/${name}/";
+          fileext = ".ics";
+        };
+        "storage ${remoteName}" = {
+          type = "caldav";
+          inherit url username;
+          "password.fetch" = [ "command" "${pkgs.pass}/bin/pass" passwordPath ];
+        };
       };
-      "storage ${localName}" = {
-        type = "filesystem";
-        path = "~/.calendars/${name}/";
-        fileext = ".ics";
-      };
-      "storage ${remoteName}" = {
-        type = "caldav";
-        inherit url username;
-        "password.fetch" = [ "command" "${pkgs.pass}/bin/pass" passwordPath ];
-      };
-    };
-  mkAddressbook = { name, url, username, passwordPath }:
+  mkAddressbook = { name, url, username, passwordPath, collections ? [ "from a" "from b" ], readOnly ? false }:
     let
       pairName = "${name}_contacts";
       remoteName = "${pairName}_remote";
       localName = "${pairName}_local";
-    in {
-      "pair ${pairName}" = {
-        a = localName;
-        b = remoteName;
-        collections = [ "from a" "from b" ];
-        conflict_resolution = "b wins";
+    in
+      {
+        "pair ${pairName}" = {
+          a = localName;
+          b = remoteName;
+          inherit collections;
+          conflict_resolution = "b wins";
+        };
+        "storage ${localName}" = {
+          type = "filesystem";
+          path = "~/.contacts/${name}/";
+          fileext = ".vcf";
+        };
+        "storage ${remoteName}" = {
+          type = "carddav";
+          inherit url username;
+          "password.fetch" = [ "command" "${pkgs.pass}/bin/pass" passwordPath ];
+          read_only = readOnly;
+        };
       };
-      "storage ${localName}" = {
-        type = "filesystem";
-        path = "~/.contacts/${name}/";
-        fileext = ".vcf";
-      };
-      "storage ${remoteName}" = {
-        type = "carddav";
-        inherit url username;
-        "password.fetch" = [ "command" "${pkgs.pass}/bin/pass" passwordPath ];
-      };
-    };
-in {
+in
+{
   home = {
     packages = [ pkgs.vdirsyncer ];
     file.".config/vdirsyncer/config".source = mkConfig
-      (pkgs.lib.fold (a: b: a // b) {
-        general.status_path = "~/.vdirsyncer/status";
-      } (map mkCalendar calendars ++ map mkAddressbook addressbooks));
+      (
+        pkgs.lib.fold (a: b: a // b) {
+          general.status_path = "~/.vdirsyncer/status";
+        } (map mkCalendar calendars ++ map mkAddressbook addressbooks)
+      );
   };
 
   systemd.user = {
