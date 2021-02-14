@@ -121,6 +121,9 @@ in {
       ./roles/mail.nix
       ./roles/mail2rss.nix
       ./roles/taskwarrior.nix
+      ./roles/vdirsyncer.nix
+      ./roles/khard.nix
+      ./roles/khal.nix
     ];
   };
 }
