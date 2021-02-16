@@ -66,10 +66,6 @@ let
     "diagnostic.virtualTextCurrentLineOnly" = false;
     "codeLens.enable" = true;
     languageserver = {
-      markdown = {
-        command = "neuron-language-server";
-        filetypes = [ "md" "markdown" ];
-      };
       nix = {
         command = "rnix-lsp";
         filetypes = [ "nix" ];
