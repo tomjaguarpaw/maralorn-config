@@ -24,7 +24,6 @@ let
   watchedHaskellUpdatesPkgs = builtins.attrNames (pkgs.myHaskellPackages) ++ [
     "jsaddle-warp"
     "stan"
-    "snap"
     "dependent-sum-template"
     "universe-dependent-sum"
     "hnix"
