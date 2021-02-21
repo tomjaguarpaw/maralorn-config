@@ -39,7 +39,7 @@ in {
         setEnv "WITH_SECRETS" "false"
         nix_build nixPath (params ++ remoteBuildParams) &!> StdOut |> nom
         setEnv "WITH_SECRETS" "true"
-        nix_build nixPath params
+        nix_build nixPath params &!> StdOut |> nom
         activate_mode
     '';
     quickUpdateMode = pkgs.writeHaskellScript {
@@ -73,8 +73,8 @@ in {
         clear
         writeFile "/home/maralorn/volatile/mode" mode
         activate_mode
-        void $ (try $ swaymsg "exit" :: IO (Either SomeException ()))
-        void $ (try $ gnome_session_quit "--no-prompt" :: IO (Either SomeException ()))
+        ignoreFailure $ swaymsg "exit"
+        ignoreFailure $ gnome_session_quit "--no-prompt"
     '';
 
     inherit (pkgs.gnome3) nautilus;
