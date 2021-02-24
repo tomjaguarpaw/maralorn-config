@@ -3,8 +3,8 @@
     packages = [ pkgs.khard ];
     file.".config/khard/khard.conf".text = ''
       [addressbooks]
-      [[contacts]]
-      path = ~/.contacts/nextcloud/contacts
+      [[Kontakte]]
+      path = ~/.contacts/nextcloud/Kontakte
 
       [general]
       debug = no
