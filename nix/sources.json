@@ -129,5 +129,17 @@
         "type": "tarball",
         "url": "https://github.com/maralorn/taskwarrior-git-backend/archive/e29c4335e2cb10d6c73832dcbdf931fdc6872e94.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "unison-nix": {
+        "branch": "trunk",
+        "description": "Nix support for the Unison programming language",
+        "homepage": null,
+        "owner": "ceedubs",
+        "repo": "unison-nix",
+        "rev": "ebe481004a55e6bf60ba9bc291fbe05d7ee0e5b3",
+        "sha256": "0qz6wyw36yvzww9fiwbkj7wp6lazjy6miaa68v22z3zb5l043yn7",
+        "type": "tarball",
+        "url": "https://github.com/ceedubs/unison-nix/archive/ebe481004a55e6bf60ba9bc291fbe05d7ee0e5b3.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
