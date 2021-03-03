@@ -20,7 +20,7 @@
         command = "kitty hotkeys";
         name = "Hotkeys";
       };
-    "/org/gnome/shell/extensions/nothing-to-say" = {
+    "org/gnome/shell/extensions/nothing-to-say" = {
       keybinding-toggle-mute = [ "<Primary><Shift>U+2113" ]; # Mouse key side middle
     };
     "org/gnome/settings-daemon/plugins/media-keys" = {
