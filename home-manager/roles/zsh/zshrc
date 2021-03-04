@@ -10,6 +10,7 @@ setopt prompt_subst
 autoload -U colors && colors # Enable colors in prompt
 
 alias nom-build-remote="nom-build --builders '@/etc/nix/machines' --max-jobs 0"
+alias nix-build-remote="nix-build --builders '@/etc/nix/machines' --max-jobs 0"
 alias nixpkgs-review-pr-remote='nixpkgs-review pr --build-args "--builders @/etc/nix/machines --max-jobs 0"'
 alias nixpkgs-review-rev-remote='nixpkgs-review rev --build-args "--builders @/etc/nix/machines --max-jobs 0"'
 alias cat=bat
