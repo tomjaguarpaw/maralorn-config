@@ -16,5 +16,25 @@
       enable = true;
       plugins = [ "colored-man-pages" ];
     };
+    plugins = [
+      {
+        name = "auto-notify";
+        src = pkgs.fetchFromGitHub {
+          owner = "MichaelAquilina";
+          repo = "zsh-auto-notify";
+          rev = "0.8.0";
+          sha256 = "02x7q0ncbj1bn031ha7k3n2q2vrbv1wbvpx9w2qxv9jagqnjm3bd";
+        };
+      }
+      {
+        name = "you-should-use";
+        src = "${pkgs.zsh-you-should-use}/share/zsh/plugins/you-should-use";
+      }
+      {
+        name = "zsh-nix-shell";
+        file = "nix-shell.plugin.zsh";
+        src = "${pkgs.zsh-nix-shell}/share/zsh-nix-shell";
+      }
+    ];
   };
 }
