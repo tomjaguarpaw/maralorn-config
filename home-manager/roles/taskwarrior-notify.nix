@@ -82,13 +82,13 @@
        BS.hPut stdout input
     '';
   in {
-    "add-notification" = {
-      target = ".task/hooks/on-add.notification";
-      source = "${on-add}/bin/on-add";
-    };
-    "modify-notification" = {
-      target = ".task/hooks/on-modify.notification";
-      source = "${on-modify}/bin/on-modify";
-    };
+    #"add-notification" = {
+    #  target = ".task/hooks/on-add.notification";
+    #  source = "${on-add}/bin/on-add";
+    #};
+    #"modify-notification" = {
+    #  target = ".task/hooks/on-modify.notification";
+    #  source = "${on-modify}/bin/on-modify";
+    #};
   };
 }
