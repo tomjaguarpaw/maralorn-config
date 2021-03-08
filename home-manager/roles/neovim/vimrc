@@ -21,6 +21,7 @@ set laststatus=2
 set incsearch
 set mouse=
 set showcmd
+set title
 
 set backupdir=~/.vimbackupfiles/
 set undodir=~/.vimhist/

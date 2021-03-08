@@ -25,6 +25,8 @@
       extraConfig = ''
         set -g set-titles on
         set -g status off
+        set -g set-titles-string '#T - #W - tmux @ #h'
+        set -g allow-rename on
       '';
     };
     password-store = {
