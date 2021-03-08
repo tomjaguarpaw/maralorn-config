@@ -16,6 +16,7 @@ let
         haskell-language-server cabal-install dhall taskwarrior pandoc hlint
         cabal2nix weeder reflex-dom password optics shh-extras neuron
         hspec-discover cabal-edit paths hmatrix postgresql-simple snap
+        arbtt
         ;
       iCalendar = overrideCabal (doJailbreak (unmarkBroken p.iCalendar)) {
         preConfigure = ''substituteInPlace iCalendar.cabal --replace "network >=2.6 && <2.7" "network -any"'';

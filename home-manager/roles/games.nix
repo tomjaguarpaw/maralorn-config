@@ -58,11 +58,12 @@ in
   };
 
   home.packages = builtins.attrValues {
-    factorio = pkgs.factorio.override {
-      username = "maralorn";
-      token = pkgs.privateValue "" "factorio";
-    };
-    inherit (pkgs) steam minetest;
+    #factorio = pkgs.factorio.override {
+    #  username = "maralorn";
+    #  token = pkgs.privateValue "" "factorio";
+    #};
+    inherit (pkgs) #steam minetest 
+      minecraft;
     inherit gw2run gw2setup wine gw2installdxvk;
   };
 }
