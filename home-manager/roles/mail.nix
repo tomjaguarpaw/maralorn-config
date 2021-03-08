@@ -237,6 +237,7 @@ in {
         set pgp_use_gpg_agent = yes
         set pgp_default_key="${gpg}"
         set timeout = 5
+        set ts_enabled = yes
 
         set abort_noattach = ask-no
         set abort_noattach_regex = "(hängt an|anhäng|anhang|anbei|angehängt|attach|attached|attachments?)"
