@@ -1,3 +1,3 @@
 { pkgs, config, ... }: {
-  home.file.".arbtt/categorize.cfg".source = ./categorize.cfg;
+  home.file.".arbtt/categorize.cfg".source = pkgs.privateFile "arbtt/categorize.cfg";
 }
