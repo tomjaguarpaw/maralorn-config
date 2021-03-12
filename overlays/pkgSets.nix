@@ -49,7 +49,8 @@ self: super: {
     obelisk = (import self.sources.obelisk { }).command;
   };
   accounting-pkgs = {
-    inherit (self.haskellPackages) hledger hledger-ui hledger-web hledger-iadd;
+    hledger-iadd = super.haskell.lib.dontCheck self.haskellPackages.hledger-iadd;
+    inherit (self.haskellPackages) hledger hledger-ui hledger-web;
     inherit (self) ledger jali aqbanking;
   };
   system-pkgs = self.core-system-pkgs // self.extra-system-pkgs // {
