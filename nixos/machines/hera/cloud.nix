@@ -74,6 +74,7 @@ let
             dbname = "nextcloud";
             dbuser = "nextcloud";
             dbhost = "localhost";
+            defaultPhoneRegion = "DE";
           } // adminCreds;
           autoUpdateApps = {
             enable = true;
