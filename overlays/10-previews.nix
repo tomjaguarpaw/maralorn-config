@@ -9,6 +9,7 @@ let
 in {
   laminar = laminarPkgs.laminar;
   syncthingNext = unstable.syncthing;
+  upterm = unstable.upterm;
   syncthing = unstable.syncthing;
   vimPlugins = unstable.vimPlugins;
   fzf = unstable.fzf;
