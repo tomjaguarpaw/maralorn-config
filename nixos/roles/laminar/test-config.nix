@@ -118,11 +118,5 @@ in {
         /run/wrappers/bin/sudo -u ${user} /var/cache/gc-links/home-config-hera/default/activate
       '';
     };
-    bump-config = {
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = "${pkgs.laminar}/bin/laminarc queue bump-config";
-      };
-    };
   };
 }

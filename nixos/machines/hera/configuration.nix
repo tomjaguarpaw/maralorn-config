@@ -79,7 +79,7 @@ in
             ${start} nix-gc
           fi
           ${start} synapse-cleanup
-          ${start} bump-config
+          ${pkgs.laminar}/bin/laminarc queue bump-config
         '';
       serviceConfig = {
         Type = "oneshot";
