@@ -54,7 +54,9 @@ in
         enableACME = true;
         locations."/" = {
           proxyPass = "http://[::1]:8008";
-          extraConfig = "proxy_set_header X-Forwarded-For $remote_addr;";
+          extraConfig = ''
+            proxy_set_header X-Forwarded-For $remote_addr;
+            proxy_set_header X-Forwarded-Proto https;'';
         };
       };
     };
