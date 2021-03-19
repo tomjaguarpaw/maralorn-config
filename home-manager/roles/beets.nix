@@ -15,7 +15,7 @@
     convert = {
       auto = true;
       command =
-        "${pkgs.ffmpeg}/bin/ffmpeg -i $source -y -vn -acodec libopus -ab 128k $dest";
+        "${pkgs.ffmpeg}/bin/ffmpeg -i $source -y -vn -acodec libopus -ab 192k $dest";
       extension = "opus";
       never_convert_lossy_files = true;
     };
