@@ -15,17 +15,19 @@ let
         brittany ormolu releaser cabal-fmt stack ghcid ghcide
         haskell-language-server cabal-install dhall taskwarrior pandoc hlint
         cabal2nix weeder reflex-dom password optics shh-extras neuron
-        hspec-discover cabal-edit paths hmatrix postgresql-simple snap
-        arbtt hedgehog nix-derivation
+        hspec-discover paths hmatrix postgresql-simple snap
+        hedgehog nix-derivation
         ;
       iCalendar = overrideCabal (doJailbreak (unmarkBroken p.iCalendar)) {
         preConfigure = ''substituteInPlace iCalendar.cabal --replace "network >=2.6 && <2.7" "network -any"'';
       };
+      arbtt = doJailbreak p.arbtt;
+      cabal-edit = doJailbreak p.cabal-edit;
     } // makeHaskellScriptPackages p;
   inherit (master) ghc haskellPackages;
 in
 {
-  inherit ghc haskellPackages;
+  inherit ghc; # haskellPackages;
   nix-output-monitor = master.nix-output-monitor;
   myHaskellPackages = makeHaskellPackages haskellPackages;
   myHaskellScriptPackages = makeHaskellScriptPackages haskellPackages;

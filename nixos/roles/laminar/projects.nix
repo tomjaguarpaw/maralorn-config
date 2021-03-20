@@ -9,7 +9,7 @@ in {
       git clone git@localhost:logfeed .
       git show -q
       echo "Evaluating nix-expression."
-      export FLAGS='--builders @/etc/nix/machines --max-jobs 1'
+      export FLAGS='--builders @/etc/nix/machines --max-jobs 0'
       drv=$(readlink -f $(nix-instantiate default.nix -A pkg --add-root ./drv --indirect $FLAGS))
       echo "Evaluation done."
       nix-jobs realise $drv

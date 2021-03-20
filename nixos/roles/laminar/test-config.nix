@@ -39,6 +39,7 @@ let
     git show -q
     REPODIR=.
   '';
+  remoteFlags = "--builders @/etc/nix/machines --max-jobs 0";
   systems = [ "apollo" "hera" ];
   homes = lib.attrNames (import ../../../home-manager/machines.nix);
   mkHomeJob = (host: {
@@ -46,7 +47,7 @@ let
     value = pkgs.writeShellScript "test-${host}-home-config.run" ''
       ${common}
       ${checkout}
-      export FLAGS='--builders @/etc/nix/machines --max-jobs 1'
+      export FLAGS='${remoteFlags}'
       ${test-home-config}/bin/test-home-config $REPODIR ${host}
       git -C $REPODIR submodule update --init
       export FLAGS=""
@@ -59,7 +60,7 @@ let
     value = pkgs.writeShellScript "test-${host}-system-config.run" ''
       ${common}
       ${checkout}
-      export FLAGS='--builders @/etc/nix/machines --max-jobs 1'
+      export FLAGS='${remoteFlags}'
       ${test-system-config}/bin/test-system-config $REPODIR ${host}
       git -C $REPODIR submodule update --init
       export FLAGS=""
