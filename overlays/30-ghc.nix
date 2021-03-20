@@ -12,22 +12,26 @@ let
   makeHaskellPackages = p:
     {
       inherit (p)
-        brittany ormolu releaser cabal-fmt stack ghcid ghcide
+        brittany ormolu releaser cabal-fmt stack ghcid ghcide arbtt cabal-edit iCalendar
         haskell-language-server cabal-install dhall taskwarrior pandoc hlint
         cabal2nix weeder reflex-dom password optics shh-extras neuron
         hspec-discover paths hmatrix postgresql-simple snap
         hedgehog nix-derivation
         ;
-      iCalendar = overrideCabal (doJailbreak (unmarkBroken p.iCalendar)) {
-        preConfigure = ''substituteInPlace iCalendar.cabal --replace "network >=2.6 && <2.7" "network -any"'';
-      };
-      arbtt = doJailbreak p.arbtt;
-      cabal-edit = doJailbreak p.cabal-edit;
     } // makeHaskellScriptPackages p;
-  inherit (master) ghc haskellPackages;
+  overrides = self: super: {
+    iCalendar = overrideCabal (doJailbreak (unmarkBroken super.iCalendar)) {
+      preConfigure = ''substituteInPlace iCalendar.cabal --replace "network >=2.6 && <2.7" "network -any"'';
+      #configureFlags = [ "--allow-newer=network" ]; # try this on ghc 9.0
+    };
+    arbtt = doJailbreak super.arbtt;
+    cabal-edit = doJailbreak super.cabal-edit;
+  };
+  haskellPackages = master.haskellPackages.extend overrides;
+  ghc = haskellPackages.ghc;
 in
 {
-  inherit ghc; # haskellPackages;
+  inherit ghc haskellPackages;
   nix-output-monitor = master.nix-output-monitor;
   myHaskellPackages = makeHaskellPackages haskellPackages;
   myHaskellScriptPackages = makeHaskellScriptPackages haskellPackages;
