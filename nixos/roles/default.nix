@@ -49,9 +49,12 @@
 
   nix = {
     binaryCaches =
-      [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" ];
+      [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" "https://hydra.iohk.io" ];
     binaryCachePublicKeys =
-      [ "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=" ];
+      [
+        "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI="
+        "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
+      ];
     nixPath = [ "/etc/nix-path" ];
     trustedUsers = [ "maralorn" "laminar" ];
     buildMachines = pkgs.privateValue [] "remote-builders";
