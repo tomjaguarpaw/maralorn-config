@@ -92,7 +92,7 @@ in
           ./roles/khal.nix
           ./roles/taskwarrior.nix
           ./roles/taskwarrior-git.nix
-          ./roles/taskwarrior-notify.nix
+          #./roles/taskwarrior-notify.nix
           (makeAutostart "unlock-ssh")
           (setWorkspaceName name)
         ]
