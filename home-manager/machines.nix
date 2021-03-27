@@ -82,7 +82,7 @@ in
           ./roles/mpclient.nix
           ./roles/on-my-machine.nix
           ./roles/desktop
-          #./roles/git-sign.nix
+          ./roles/git-sign.nix
           ./roles/laptop.nix
           ./roles/mail.nix
           ./roles/update_tasks.nix
@@ -91,8 +91,7 @@ in
           ./roles/khard.nix
           ./roles/khal.nix
           ./roles/taskwarrior.nix
-          #./roles/taskwarrior-git.nix
-          #./roles/taskwarrior-notify.nix
+          ./roles/taskwarrior-git.nix
           (makeAutostart "unlock-ssh")
           (setWorkspaceName name)
         ]
