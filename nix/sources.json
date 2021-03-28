@@ -34,7 +34,7 @@
         "branch": "master",
         "ref": "master",
         "repo": "git@hera.m-0.eu:kassandra2",
-        "rev": "4e426cdffba345f5cb28b7610515013ad36dbc3d",
+        "rev": "3d3b8b284f5a06a840820ede4c7faf7681ce2934",
         "type": "git"
     },
     "logfeed": {
@@ -93,10 +93,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "9c76cd2045daf01bd06b3143fd5c57024f85b73b",
-        "sha256": "1yr7wv8wrxbrsciqb0990d0n26dwqam2xvh65ybl7fhnvb6s3lad",
+        "rev": "eab3dcf262cc256d1945e00cc43b6844a7d895b8",
+        "sha256": "0isjzhsa4dcqf00mf48s80qm2kdbyl84nsghf3p83ap8xlf50j3r",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/9c76cd2045daf01bd06b3143fd5c57024f85b73b.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/eab3dcf262cc256d1945e00cc43b6844a7d895b8.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
