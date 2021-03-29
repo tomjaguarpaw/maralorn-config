@@ -8,7 +8,7 @@ let g:tex_flavor = 'latex'
 nmap <space>e :CocCommand explorer --no-toggle<CR>
 
 set foldcolumn=1
-set background=dark
+set background=light
 set autoindent
 set nosmartindent
 set listchars=tab:»\ ,trail:.,extends:#

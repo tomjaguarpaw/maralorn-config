@@ -1,7 +1,7 @@
 { pkgs, ... }:
 let
   my-lib = import ../../../lib;
-  inherit (my-lib) colors;
+  theme = my-lib.themes.default;
 in {
   home.sessionVariables.TERMINAL = "${pkgs.kitty}/bin/kitty";
   home.packages = [
@@ -23,43 +23,42 @@ in {
 
       font_size = "10.5";
 
-      foreground = colors.foreground;
-      background = colors.background;
-      background_opacity = "0.9";
+      foreground = theme.primary.foreground;
+      background = theme.primary.background;
 
-      selection_foreground = colors.background;
-      selection_background = colors.foreground;
+      selection_foreground = theme.primary.background;
+      selection_background = theme.primary.foreground;
 
       # black
-      color0 = colors.black;
-      color8 = colors.brightBlack;
+      color0 = theme.normal.white;
+      color8 = theme.bright.white;
 
       # red
-      color1 = colors.red;
-      color9 = colors.brightRed;
+      color1 = theme.normal.red;
+      color9 = theme.bright.red;
 
       # green
-      color2 = colors.green;
-      color10 = colors.brightGreen;
+      color2 = theme.normal.green;
+      color10 = theme.bright.green;
 
       # yellow
-      color3 = colors.yellow;
-      color11 = colors.brightYellow;
+      color3 = theme.normal.yellow;
+      color11 = theme.bright.yellow;
 
       # blue
-      color4 = colors.blue;
-      color12 = colors.brightBlue;
+      color4 = theme.normal.blue;
+      color12 = theme.bright.blue;
 
       # magenta
-      color5 = colors.magenta;
-      color13 = colors.brightMagenta;
+      color5 = theme.normal.magenta;
+      color13 = theme.bright.magenta;
 
       # cyan
-      color6 = colors.cyan;
-      color14 = colors.brightCyan;
+      color6 = theme.normal.cyan;
+      color14 = theme.bright.cyan;
 
-      color7 = colors.white;
-      color15 = colors.brightWhite;
+      color7 = theme.normal.black;
+      color15 = theme.bright.black;
     };
   };
 }

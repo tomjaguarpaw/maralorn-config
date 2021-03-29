@@ -653,7 +653,7 @@
   ],
   "refresh": "1m",
   "schemaVersion": 26,
-  "style": "dark",
+  "style": "light",
   "tags": [],
   "templating": {
     "list": []

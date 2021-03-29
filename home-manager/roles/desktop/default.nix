@@ -16,7 +16,7 @@ in {
       package = pkgs.arc-icon-theme;
     };
     theme = {
-      name = "Arc-Dark";
+      name = "Arc";
       package = pkgs.arc-theme;
     };
   };
