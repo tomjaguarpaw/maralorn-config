@@ -1,20 +1,20 @@
 rec {
   themes = rec {
-    default = papercolor-light;
-    papercolor-light = rec {
+    default = material-light;
+    material-light = rec { # Matches papercolor
       primary = {
-        foreground = normal.black;
-        background = normal.white;
+        foreground = "#2e2e2d";
+        background = "#eaeaea";
       };
       normal = {
-        white = "#eeeeee";
-        red = "#af0000";
-        green = "#008700";
-        yellow = "#5f8700";
-        blue = "#0087af";
-        magenta = "#878787";
-        cyan = "#005f87";
-        black = "#444444";
+        black = "#212121";
+        red = "#b7141f";
+        green = "#457b24";
+        yellow = "#fc7b08";
+        blue = "#134eb2";
+        magenta = "#560088";
+        cyan = "#0e717c";
+        white = "#efefef";
       };
 
       bright = {
