@@ -49,6 +49,7 @@ self: super: {
     inherit (self)
       go gdb mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole
       nixfmt nixpkgs-fmt rnix-lsp tmate rustup kitty nix-top ghcWithPackages ghcid matrix-commander upterm
+      lazygit
       ;
     obelisk = (import self.sources.obelisk {}).command;
   };
