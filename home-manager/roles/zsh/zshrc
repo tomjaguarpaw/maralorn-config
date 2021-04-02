@@ -49,6 +49,7 @@ alias accounting='hledger -f ~/git/buchhaltung/buchhaltung.ledger ui -- --watch 
 alias o=xdg-open
 alias sudo='sudo -A'
 alias s='sudo -A systemctl'
+alias g='lazygit'
 alias u='systemctl --user'
 alias m=man
 alias ls='exa -lh --git'
