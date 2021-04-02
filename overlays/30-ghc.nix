@@ -12,7 +12,7 @@ let
   makeHaskellPackages = p:
     {
       inherit (p)
-        brittany ormolu releaser cabal-fmt stack ghcid ghcide arbtt cabal-edit iCalendar
+        brittany ormolu releaser cabal-fmt stack ghcid ghcide arbtt iCalendar
         pretty-simple tz
         haskell-language-server cabal-install dhall taskwarrior pandoc hlint
         cabal2nix weeder reflex-dom password optics shh-extras neuron
@@ -26,7 +26,6 @@ let
       #configureFlags = [ "--allow-newer=network" ]; # try this on ghc 9.0
     };
     arbtt = doJailbreak super.arbtt;
-    cabal-edit = doJailbreak super.cabal-edit;
   };
   haskellPackages = master.haskellPackages.extend overrides;
   ghc = haskellPackages.ghc;
