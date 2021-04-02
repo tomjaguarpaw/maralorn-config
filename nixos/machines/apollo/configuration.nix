@@ -13,6 +13,7 @@ in {
     ./hardware-configuration.nix
     ../../roles
     ../../roles/fonts.nix
+    ../../roles/earlyoom.nix
     ../../roles/boot-key.nix
     ../../roles/standalone
     vpn
