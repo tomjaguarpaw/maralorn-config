@@ -1,7 +1,7 @@
 { ... }: {
   services.earlyoom = {
     enableNotifications = true;
-    freeSwapThreshold = 90;
+    freeSwapThreshold = 100;
     enable = true;
   };
 
