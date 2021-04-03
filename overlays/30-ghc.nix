@@ -13,21 +13,14 @@ let
     {
       inherit (p)
         brittany ormolu releaser cabal-fmt stack ghcid ghcide arbtt iCalendar
-        pretty-simple tz
-        # stm-containers
+        pretty-simple tz stm-containers
         haskell-language-server cabal-install dhall taskwarrior pandoc hlint
         cabal2nix weeder reflex-dom password optics shh-extras neuron
         hspec-discover paths hmatrix postgresql-simple snap
         hedgehog nix-derivation
         ;
     } // makeHaskellScriptPackages p;
-  overrides = self: super: {
-    iCalendar = overrideCabal (doJailbreak (unmarkBroken super.iCalendar)) {
-      preConfigure = ''substituteInPlace iCalendar.cabal --replace "network >=2.6 && <2.7" "network -any"'';
-      #configureFlags = [ "--allow-newer=network" ]; # try this on ghc 9.0
-    };
-    arbtt = doJailbreak super.arbtt;
-  };
+  overrides = self: super: {};
   haskellPackages = master.haskellPackages.extend overrides;
   ghc = haskellPackages.ghc;
 in
