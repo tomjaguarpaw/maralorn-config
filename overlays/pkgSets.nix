@@ -37,7 +37,7 @@ self: super: {
   desktop-pkgs = {
     radicle-upstream = import self.sources.radicle-upstream-nix {};
     unison = (import self.sources.unison-nix).unison-ucm;
-    inherit (self) lm_sensors xwayland xdg_utils libnotify kassandra kassandra2 shotcut mlt audacity;
+    inherit (self) lm_sensors xwayland xdg_utils libnotify kassandra kassandra2 shotcut mlt audacity paprefs;
     inherit (self.gnomeExtensions) appindicator system-monitor clipboard-indicator emoji-selector sound-output-device-chooser window-is-ready-remover;
     inherit (self.gnome3)
       dconf dconf-editor gnome-tweaks gnome-shell-extensions adwaita-icon-theme
