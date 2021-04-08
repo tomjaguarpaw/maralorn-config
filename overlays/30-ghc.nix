@@ -13,7 +13,7 @@ let
     {
       inherit (p)
         brittany ormolu releaser cabal-fmt stack ghcid ghcide arbtt iCalendar
-        pretty-simple tz stm-containers
+        pretty-simple tz stm-containers streamly
         haskell-language-server cabal-install dhall taskwarrior pandoc hlint
         cabal2nix weeder reflex-dom password optics shh-extras neuron
         hspec-discover paths hmatrix postgresql-simple snap
