@@ -10,7 +10,7 @@ let
             (lib.mapAttrs (name: option: builtins.toJSON option) section)
         ) config
     );
-  mkCalendar = { name, url, username, passwordPath, collections ? [ "from a" "from b" ], readOnly ? false }:
+  mkCalendar = { name, url, username, passwordPath, collections ? [ "from a" "from b" ], readOnly ? false, type ? "caldav" }:
     let
       pairName = "${name}_calendar";
       remoteName = "${pairName}_remote";
@@ -30,10 +30,13 @@ let
           fileext = ".ics";
         };
         "storage ${remoteName}" = {
-          type = "caldav";
-          inherit url username;
+          inherit type;
+          inherit url;
+        } // (if (type == "caldav") then {
+          inherit username;
           "password.fetch" = [ "command" "${pkgs.pass}/bin/pass" passwordPath ];
-        };
+          read_only = readOnly;
+        } else {});
       };
   mkAddressbook = { name, url, username, passwordPath, collections ? [ "from a" "from b" ], readOnly ? false }:
     let
