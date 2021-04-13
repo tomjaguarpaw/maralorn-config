@@ -34,7 +34,7 @@
         "branch": "master",
         "ref": "master",
         "repo": "git@hera.m-0.eu:kassandra2",
-        "rev": "66bc26025d20deac93a88ca88efbb80d84875624",
+        "rev": "471d68f68ec42cf557174077d21dc7fff37938d7",
         "type": "git"
     },
     "logfeed": {
@@ -50,10 +50,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "a7ff7a57c96588fd89370568b72751dd15d24e72",
-        "sha256": "0hy3czbdn2hcx3329k63f52y1pb8dh82jyg1mgpd7qv4ip6c6gab",
+        "rev": "d170a7bc3971f6bf6499c549b046e9b3d3db3613",
+        "sha256": "0syl1y2ar2bv16a8pzmy9kfvqmyj29nig6kkdx0drpdjzh3kfppa",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/a7ff7a57c96588fd89370568b72751dd15d24e72.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/d170a7bc3971f6bf6499c549b046e9b3d3db3613.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
@@ -72,7 +72,7 @@
         "branch": "master",
         "ref": "master",
         "repo": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver",
-        "rev": "93330c54531e494eed603a389b3c297a2834676b",
+        "rev": "3069998c0f53e04e716bb698e721680b0db4e8ca",
         "type": "git"
     },
     "nixos-unstable": {
@@ -93,10 +93,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "0c27bb45a0e3a1c5f0834cdc6764671f303ea9b0",
-        "sha256": "1c2i0w2m9d52nad8yfb3wd8fx2ljawgzbsravi4qd4vxs9mv13kj",
+        "rev": "6ef8776148dbb66da38ebace3532161084f23833",
+        "sha256": "1zz88aj8a6f0lvx800cn203jm748id9ij0rlaf32lc7gvi5ywq51",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/0c27bb45a0e3a1c5f0834cdc6764671f303ea9b0.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/6ef8776148dbb66da38ebace3532161084f23833.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
