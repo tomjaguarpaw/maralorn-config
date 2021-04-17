@@ -7,6 +7,7 @@
     ./unlock.nix
     ./mpclient.nix
     ./neovim
+    ./nvd.nix
   ];
   nixpkgs.overlays = import ../../overlays { inherit lib; };
 

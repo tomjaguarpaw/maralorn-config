@@ -99,6 +99,12 @@
         "url": "https://github.com/NixOS/nixpkgs/archive/294d1925af6462e55c76b49624b983036f0093b9.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "nvd": {
+        "branch": "master",
+        "repo": "https://gitlab.com/khumba/nvd.git",
+        "rev": "7cdaa6d818119bd7a51930d990fded5d594c6623",
+        "type": "git"
+    },
     "obelisk": {
         "branch": "master",
         "description": "Obelisk provides an easy way to develop and deploy your Reflex project for web and mobile",
