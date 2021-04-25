@@ -2,7 +2,7 @@ self: super:
 let
   inherit (super) fetchFromGitHub;
   master = import super.sources.nixpkgs-master {};
-  inherit (master.haskell.lib) overrideCabal unmarkBroken doJailbreak;
+  inherit (master.haskell.lib) overrideCabal unmarkBroken doJailbreak dontCheck;
   makeHaskellScriptPackages = p: {
     inherit (p)
       aeson shh string-interpolate relude replace-megaparsec async say
@@ -20,7 +20,9 @@ let
         hedgehog nix-derivation
         ;
     } // makeHaskellScriptPackages p;
-  overrides = self: super: {};
+    overrides = self: super: {
+      generic-optics = dontCheck super.generic-optics;
+    };
   haskellPackages = master.haskellPackages.extend overrides;
   ghc = haskellPackages.ghc;
 in
