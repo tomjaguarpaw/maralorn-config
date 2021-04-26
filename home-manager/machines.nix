@@ -82,6 +82,7 @@ in
           ./roles/mpclient.nix
           ./roles/on-my-machine.nix
           ./roles/desktop
+          ./roles/kassandra.nix
           ./roles/git-sign.nix
           ./roles/laptop.nix
           ./roles/mail.nix
@@ -132,6 +133,7 @@ in
       ./roles/weechat
       ./roles/headless-mpd.nix
       ./roles/mail.nix
+      ./roles/kassandra.nix
       ./roles/mail2rss.nix
       ./roles/taskwarrior.nix
       ./roles/vdirsyncer.nix
