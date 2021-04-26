@@ -1,6 +1,10 @@
 let types = ./types.dhall
 
-let Prelude = https://prelude.dhall-lang.org/v20.1.0/package.dhall sha256:26b0ef498663d269e4dc6a82b0ee289ec565d683ef4c00d0ebdd25333a5a3c98
+let Prelude =
+      { List.map
+        =
+          https://prelude.dhall-lang.org/v20.1.0/List/map.dhall sha256:dd845ffb4568d40327f2a817eb42d1c6138b929ca758d50bc33112ef3c885680
+      }
 
 let confWid =
       \(name : Text) ->
