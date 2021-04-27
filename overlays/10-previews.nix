@@ -12,6 +12,7 @@ in {
   upterm = unstable.upterm;
   syncthing = unstable.syncthing;
   vimPlugins = unstable.vimPlugins;
+  dhallPackages = unstable.dhallPackages;
   fzf = unstable.fzf;
   matrix-synapse-tools.rust-synapse-compress-state = unstable.matrix-synapse-tools.rust-synapse-compress-state;
 }
