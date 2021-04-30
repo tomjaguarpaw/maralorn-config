@@ -21,7 +21,7 @@ let
         ;
     } // makeHaskellScriptPackages p;
     overrides = self: super: {
-      generic-optics = dontCheck super.generic-optics;
+      generic-optics = dontCheck (unmarkBroken super.generic-optics);
     };
   haskellPackages = master.haskellPackages.extend overrides;
   ghc = haskellPackages.ghc;
