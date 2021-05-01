@@ -5,7 +5,6 @@ let
       customRC = builtins.readFile ./vimrc;
       packages.myVimPackage = {
         start = builtins.attrValues {
-          unison-vim = (import pkgs.sources.unison-nix).vim-unison;
           inherit (pkgs.vimPlugins)
             # coc-tabnine (TODO: Why doesn‘t it work?)
             # TODO: tabnine config in home-manager

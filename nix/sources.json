@@ -117,13 +117,6 @@
         "url": "https://github.com/obsidiansystems/obelisk/archive/7ad33cbe3e84b209e83c505ce25486445bbd602e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "radicle-upstream-nix": {
-        "branch": "master",
-        "ref": "master",
-        "repo": "https://git.sr.ht/~andir/radicle-upstream-nix",
-        "rev": "003b49f23a935def5379bb6468f1772ab1290e65",
-        "type": "git"
-    },
     "taskwarrior-git-backend": {
         "branch": "master",
         "description": "An experimental task-sync alternative via git written in Haskell",
@@ -134,18 +127,6 @@
         "sha256": "0pq2s75mj9dpk5lk7igx88641zs0bihp6yx8l5gipaqy2daydrz6",
         "type": "tarball",
         "url": "https://github.com/maralorn/taskwarrior-git-backend/archive/e29c4335e2cb10d6c73832dcbdf931fdc6872e94.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "unison-nix": {
-        "branch": "trunk",
-        "description": "Nix support for the Unison programming language",
-        "homepage": null,
-        "owner": "ceedubs",
-        "repo": "unison-nix",
-        "rev": "4d1315c2874fdbf27c4df9f45af88c70b8c27814",
-        "sha256": "1j50ahh5mf2k1py8j26qicdrj0mfn32wlnz15zyrbvji32qzza0h",
-        "type": "tarball",
-        "url": "https://github.com/ceedubs/unison-nix/archive/4d1315c2874fdbf27c4df9f45af88c70b8c27814.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
