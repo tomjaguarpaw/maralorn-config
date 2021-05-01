@@ -108,7 +108,7 @@ in {
         RestartSec = 1;
       };
       unitConfig = {
-        StartLimitIntervalSec = 180;
+        StartLimitIntervalSec = 360;
         StartLimitBurst = 3;
       };
       script = let user = "maralorn";
