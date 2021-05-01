@@ -3,7 +3,7 @@
     mkdir $out
     ${pkgs.kassandra2}/bin/kassandra2 print-types > $out/types.dhall
     ln -s ${./kassandra}/{config,backend}.dhall $out
-    ln -s ${../../private/kassandra-uiConfig.dhall} $out/uiConfig.dhall
+    ln -s ${pkgs.privateFile "kassandra-uiConfig.dhall"} $out/uiConfig.dhall
   '';
   backend = pkgs.dhallPackages.buildDhallPackage {
     name = "kassandra-backend-config";
@@ -25,10 +25,10 @@
   '';
 in
 {
-  home.file = {
+  home.file = if pkgs.withSecrets then {
     "kassandra-config" = {
       target = ".config/kassandra";
       source = dhallResult.out;
     };
-  };
+  } else {};
 }
