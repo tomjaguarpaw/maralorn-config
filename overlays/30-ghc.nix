@@ -17,7 +17,7 @@ let
         haskell-language-server cabal-install dhall taskwarrior pandoc hlint
         cabal2nix weeder reflex-dom password optics shh-extras neuron
         hspec-discover paths hmatrix postgresql-simple snap
-        hedgehog nix-derivation
+        hedgehog nix-derivation req
         ;
     } // makeHaskellScriptPackages p;
     overrides = self: super: {
