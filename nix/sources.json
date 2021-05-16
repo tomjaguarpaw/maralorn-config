@@ -50,10 +50,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "21ff9308b75d448765f7c3704a1459a3d8e1c844",
-        "sha256": "0i32d1q5v9a0q4y1s010afn6vxljbliilq5cs63mk6sdw3kryj2b",
+        "rev": "17d3dab8647a31a00d8a11433a56cc12d84b5ab4",
+        "sha256": "1pcm3a4kbsd5j6ajki06i06cih1biqyzp17i5gb1d79rma9i2zw6",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/21ff9308b75d448765f7c3704a1459a3d8e1c844.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/17d3dab8647a31a00d8a11433a56cc12d84b5ab4.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
@@ -81,10 +81,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "d1601a40c48426ae460eede1675fd1d6ee23e198",
-        "sha256": "00nl5b0ncqrcv6zr000dxk1jdvs7aj4s53njiyrh3sn78w1nghl6",
+        "rev": "65a9923bbb94e4da656eb63f88f3a378be232e02",
+        "sha256": "1hwrdhb6izis0zqqxriqm8gsqylj0awf0fn72xd3l2iqvhkhl8p2",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/d1601a40c48426ae460eede1675fd1d6ee23e198.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/65a9923bbb94e4da656eb63f88f3a378be232e02.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-master": {
@@ -93,10 +93,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "d9868214a36c44c3ed24e0f77e383e0a08ab3ec8",
-        "sha256": "0vgn603j8pc73129ifq9hzvbsgi2b2dyzbycxy8zs02027alkcqi",
+        "rev": "4a9b0f0eb450d7bef5db5c05c2086b24aaecf05c",
+        "sha256": "0c018s6pyyk0p71ql812bxsbx50qjwy1x7h2537d8nnc2830xs2a",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/d9868214a36c44c3ed24e0f77e383e0a08ab3ec8.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/4a9b0f0eb450d7bef5db5c05c2086b24aaecf05c.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nvd": {
