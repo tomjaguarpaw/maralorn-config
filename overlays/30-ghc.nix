@@ -28,6 +28,7 @@ let
 in
 {
   inherit ghc haskellPackages;
+  cachix = master.cachix;
   nix-output-monitor = master.nix-output-monitor;
   myHaskellPackages = makeHaskellPackages haskellPackages;
   myHaskellScriptPackages = makeHaskellScriptPackages haskellPackages;
