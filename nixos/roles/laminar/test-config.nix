@@ -84,7 +84,7 @@ in
           HOMES = lib.concatStringsSep " " homes;
           SYSTEMS = lib.concatStringsSep " " systems;
           DEPLOY = deployCommand;
-          PATH = "${lib.makeBinPath [ pkgs.laminar pkgs.git ]}:$PATH";
+          PATH = "${lib.makeBinPath [ pkgs.laminar pkgs.git pkgs.nix ]}:$PATH";
         };
         ghcArgs = [ "-threaded" ];
       }
