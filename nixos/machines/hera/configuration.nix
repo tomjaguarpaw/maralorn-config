@@ -72,8 +72,8 @@ in
           set -x
           set +e
           ${start} pg_backup
-          ${container} cloud -- ${start} pg_backup
-          ${container} chor-cloud -- ${start} pg_backup
+          ${start} nextcloud-pg-backup
+          ${container} chor-cloud -- ${start} nextcloud-pg-backup
           ${lib.concatMapStringsSep "\n" (name: "${start} ${name}") backupJobNames}
           ${pkgs.coreutils}/bin/rm -rf /var/lib/db-backup-dumps/*
           ${start} nix-optimise

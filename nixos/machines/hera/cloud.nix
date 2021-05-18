@@ -9,7 +9,50 @@ let
     } "nextcloud-admin";
   inherit (config.m-0) hosts;
   certPath = "/var/lib/acme";
-  nextcloud-container = { v6, v4, hostname, rss ? false, extraMounts ? { } }: {
+  nextcloudServices = hostname: {
+    nextcloud-pg-backup = {
+      script =
+        let
+          name = "nextcloud-psql-${hostname}";
+        in
+        ''
+          ${config.services.postgresql.package}/bin/pg_dump nextcloud > /var/lib/db-backup-dumps/${name}
+        '';
+      serviceConfig = {
+        User = "nextcloud";
+        Type = "oneshot";
+      };
+    };
+    prometheus-nginx-exporter.serviceConfig.RestartSec = 10;
+    nextcloud-setup = {
+      requires = [ "postgresql.service" ];
+      after = [ "postgresql.service" ];
+    };
+  };
+  nextcloudConf = hostname:
+    {
+      enable = true;
+      hostName = hostname;
+      package = pkgs.nextcloud21;
+      maxUploadSize = "10g";
+      caching = {
+        redis = true;
+        apcu = false;
+        memcached = false;
+      };
+      config = {
+        dbtype = "pgsql";
+        dbname = "nextcloud";
+        dbuser = "nextcloud";
+        dbhost = "localhost";
+        defaultPhoneRegion = "DE";
+      } // adminCreds;
+      autoUpdateApps = {
+        enable = true;
+        startAt = "20:30";
+      };
+    };
+  nextcloud-container = { v6, v4, hostname }: {
     bindMounts = {
       "${certPath}" = {
         hostPath = certPath;
@@ -19,7 +62,7 @@ let
         hostPath = "/var/lib/db-backup-dumps";
         isReadOnly = false;
       };
-    } // extraMounts;
+    };
     timeoutStartSec = "360";
     autoStart = true;
     privateNetwork = true;
@@ -54,33 +97,12 @@ let
         firewall.allowedTCPPorts = [ 80 443 ];
       };
 
+      systemd.services = nextcloudServices hostname;
       services = {
+        nextcloud = nextcloudConf hostname;
         prometheus.exporters = {
           node.openFirewall = true;
           nginx.openFirewall = true;
-        };
-
-        nextcloud = {
-          enable = true;
-          hostName = hostname;
-          package = pkgs.nextcloud21;
-          maxUploadSize = "10g";
-          caching = {
-            redis = true;
-            apcu = false;
-            memcached = false;
-          };
-          config = {
-            dbtype = "pgsql";
-            dbname = "nextcloud";
-            dbuser = "nextcloud";
-            dbhost = "localhost";
-            defaultPhoneRegion = "DE";
-          } // adminCreds;
-          autoUpdateApps = {
-            enable = true;
-            startAt = "20:30";
-          };
         };
 
         redis.enable = true;
@@ -90,100 +112,36 @@ let
           package = pkgs.postgresql_12;
         };
       };
-      systemd = {
-        services = {
-          rss-server = mkIf rss {
-            serviceConfig = {
-              WorkingDirectory = "/var/www/rss";
-              ExecStart = "${pkgs.python3}/bin/python -m http.server 8842";
-            };
-            wantedBy = [ "multi-user.target" ];
-          };
-          pg_backup = {
-            script =
-              let
-                name = "nextcloud-psql-${hostname}";
-              in
-              ''
-                ${config.services.postgresql.package}/bin/pg_dump nextcloud > /var/lib/db-backup-dumps/${name}
-              '';
-            serviceConfig = {
-              User = "nextcloud";
-              Type = "oneshot";
-            };
-          };
-          prometheus-nginx-exporter.serviceConfig.RestartSec = 10;
-          nextcloud-setup = {
-            requires = [ "postgresql.service" ];
-            after = [ "postgresql.service" ];
-          };
-          nextcloud-news-updater = mkIf rss {
-            startAt = "20:00";
-            serviceConfig = {
-              Type = "oneshot";
-              User = "nextcloud";
-              ExecStart =
-                let
-                  config = pkgs.writeText "updater.ini" (
-                    generators.toINI { } {
-                      updater = {
-                        user = adminCreds.adminuser;
-                        password = adminCreds.adminpass;
-                        url = "https://${hostname}/";
-                        mode = "singlerun";
-                      };
-                    }
-                  );
-                in
-                "${pkgs.nextcloud-news-updater}/bin/nextcloud-news-updater -c ${config}";
-            };
-          };
-        };
-      };
     };
   };
-  serviceConfig.RestartSec = 10;
-  unitConfig = {
-    StartLimitIntervalSec = 30;
-    StartLimitBurst = 2;
-  };
-  nginx = {
-    rootExtra = "proxy_set_header Host $host; proxy_buffering off;";
-    wellKnown = {
-      priority = 210;
-      extraConfig = ''
-        location = /.well-known/carddav {
-          return 301 https://$host/remote.php/dav;
-        }
-        location = /.well-known/caldav {
-          return 301 https://$host/remote.php/dav;
-        }
-        location ^~ /.well-known {
-          return 301 https://$host/index.php$request_uri;
-        }
-        try_files $uri $uri/ =404;
-      '';
-    };
-  };
+  mainHostName = "cloud.maralorn.de";
 in
 {
-  systemd.services."container@cloud" = { inherit serviceConfig unitConfig; };
-  systemd.services."container@chor-cloud" = {
-    inherit serviceConfig unitConfig;
+  systemd = {
+    services = {
+      "container@chor-cloud" = {
+        serviceConfig.RestartSec = 10;
+        unitConfig = {
+          StartLimitIntervalSec = 30;
+          StartLimitBurst = 2;
+        };
+      };
+      rss-server = {
+        serviceConfig = {
+          WorkingDirectory = "/var/www/rss";
+          ExecStart = "${pkgs.python3}/bin/python -m http.server 8842";
+        };
+        wantedBy = [ "multi-user.target" ];
+      };
+    } // nextcloudServices mainHostName;
   };
   services = {
+    nextcloud = nextcloudConf mainHostName;
     nginx = {
       enable = true;
       virtualHosts."cloud.maralorn.de" = {
         enableACME = true;
         forceSSL = true;
-        locations = {
-          "/" = {
-            proxyPass = "http://cloud";
-            extraConfig = nginx.rootExtra;
-          };
-          "^~ /.well-known" = nginx.wellKnown;
-        };
       };
       virtualHosts."cloud.mathechor.de" = {
         enableACME = true;
@@ -191,9 +149,23 @@ in
         locations = {
           "/" = {
             proxyPass = "http://chor-cloud";
-            extraConfig = nginx.rootExtra;
+            extraConfig = "proxy_set_header Host $host; proxy_buffering off;";
           };
-          "^~ /.well-known" = nginx.wellKnown;
+          "^~ /.well-known" = {
+            priority = 210;
+            extraConfig = ''
+              location = /.well-known/carddav {
+                return 301 https://$host/remote.php/dav;
+              }
+              location = /.well-known/caldav {
+                return 301 https://$host/remote.php/dav;
+              }
+              location ^~ /.well-known {
+                return 301 https://$host/index.php$request_uri;
+              }
+              try_files $uri $uri/ =404;
+            '';
+          };
         };
         extraConfig = ''
           more_set_headers "Content-Security-Policy: frame-ancestors 'self' https://*.mathechor.de";
@@ -228,19 +200,6 @@ in
       hostname = "cloud.mathechor.de";
       v6 = hosts.chor-cloud;
       v4 = hosts.chor-cloud-intern-v4;
-    };
-    cloud = nextcloud-container {
-      hostname = "cloud.maralorn.de";
-      v6 = hosts.cloud;
-      v4 = hosts.cloud-intern-v4;
-      rss = true;
-      extraMounts = {
-        "/media" = {
-          hostPath = "/media";
-          isReadOnly = false;
-        };
-        "/var/www/rss" = { hostPath = "/var/www/rss"; };
-      };
     };
   };
 }
