@@ -7,7 +7,8 @@ let
       '';
     };
   };
-in {
+in
+{
   networking.firewall.allowedTCPPorts = [ 80 443 ];
   m-0.monitoring = [{
     name = "hera-nginx";
@@ -42,15 +43,15 @@ in {
           forceSSL = true;
           inherit locations;
         };
-      "fdroid.maralorn.de" = {
-        forceSSL = true;
-        enableACME = true;
-        locations = {
-          "/" = {
-            root = "/var/www/fdroid/repo";
+        "fdroid.maralorn.de" = {
+          forceSSL = true;
+          enableACME = true;
+          locations = {
+            "/" = {
+              root = "/var/www/fdroid/repo";
+            };
           };
         };
-      };
       };
     };
   };

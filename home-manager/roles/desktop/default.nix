@@ -1,6 +1,7 @@
 { pkgs, lib, config, ... }:
 let inherit (import ../../../lib) colors;
-in {
+in
+{
   imports =
     [ ./sleep-nag.nix ./kitty.nix ./wallpaper.nix ./gnome.nix ./firefox.nix ./desktop-items.nix ];
   m-0.colors = colors;

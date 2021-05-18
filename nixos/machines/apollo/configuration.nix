@@ -6,7 +6,8 @@ let
   nixos-hardware = (import ../../../nix/sources.nix).nixos-hardware;
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
   vpn = (import ../../../private.nix).privateValue ({ ... }: { }) "vpn";
-in {
+in
+{
 
   imports = [
     "${nixos-hardware}/lenovo/thinkpad/t480s"
@@ -112,9 +113,9 @@ in {
       openDefaultPorts = true;
       declarative = syncthing.declarativeWith [ "hera" ] "/home/maralorn/media"
         // {
-          cert = pkgs.privatePath "syncthing/apollo/cert.pem";
-          key = pkgs.privatePath "syncthing/apollo/key.pem";
-        };
+        cert = pkgs.privatePath "syncthing/apollo/cert.pem";
+        key = pkgs.privatePath "syncthing/apollo/key.pem";
+      };
     };
     xserver = {
       enable = true;

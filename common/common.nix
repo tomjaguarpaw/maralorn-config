@@ -18,7 +18,8 @@
               "TJHVUM6-RTB6V3D-JF4GIB2-TVDF2ST-5MTN6N2-ZDIWGF7-XZUCCFG-EQG5WA6";
           };
         };
-      in {
+      in
+      {
         devices = pkgs.lib.getAttrs hosts devices;
         folders = {
           science = mkFolder "science";

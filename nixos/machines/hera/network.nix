@@ -2,7 +2,8 @@
 let
   wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts;
-in {
+in
+{
   networking = {
     hostName = "hera";
     domain = "m-0.eu";

@@ -1,16 +1,17 @@
 { pkgs, ... }:
 let
-  sleep-nag = pkgs.writeHaskellScript {
-    name = "sleep-nag";
-    imports = [
-      "Data.Time.LocalTime"
-      "Data.Time.Format"
-      "Data.Time.Clock"
-      "Control.Concurrent"
-      "Data.Functor"
-    ];
-    bins = [ pkgs.libnotify ];
-  } ''
+  sleep-nag = pkgs.writeHaskellScript
+    {
+      name = "sleep-nag";
+      imports = [
+        "Data.Time.LocalTime"
+        "Data.Time.Format"
+        "Data.Time.Clock"
+        "Control.Concurrent"
+        "Data.Functor"
+      ];
+      bins = [ pkgs.libnotify ];
+    } ''
     main = forever $ do
        time <- getZonedTime
        let tod = localTimeOfDay . zonedTimeToLocalTime$ time
@@ -22,7 +23,8 @@ let
        else
          threadDelay 600000000
   '';
-in {
+in
+{
   systemd.user.services.sleep-nag = {
     Unit.Description = "Sleep nag";
     Service.ExecStart = "${sleep-nag}/bin/sleep-nag";

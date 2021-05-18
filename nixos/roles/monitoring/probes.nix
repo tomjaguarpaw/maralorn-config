@@ -28,7 +28,8 @@ let
       } # The blackbox exporter's real hostname:port.
     ];
   };
-in {
+in
+{
   services.prometheus = {
     exporters.blackbox = {
       enable = true;

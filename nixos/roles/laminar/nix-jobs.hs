@@ -1,87 +1,99 @@
 {-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE TupleSections #-}
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TupleSections #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 {-# OPTIONS_GHC -Wall -Werror -Wno-missing-signatures -Wno-type-defaults -Wno-orphans #-}
 
-import           Control.Concurrent             ( threadDelay )
-import           Control.Concurrent.Async       ( forConcurrently_
-                                                , race_
-                                                , withAsync
-                                                )
-import           Control.Concurrent.STM         ( check
-                                                , retry
-                                                )
-import           Control.Exception              ( bracket
-                                                , catch
-                                                , handle
-                                                , handleJust
-                                                , throwIO
-                                                )
-import           Data.Bits                      ( Bits((.|.)) )
-import qualified Data.Map                      as Map
-import qualified Data.Sequence                 as Seq
-import           Data.String.Interpolate        ( i )
-import           Data.Text                      ( isInfixOf
-                                                , splitOn
-                                                , strip
-                                                )
-import qualified Data.Text                     as T
-import           Data.Time                      ( UTCTime
-                                                , defaultTimeLocale
-                                                , diffUTCTime
-                                                , formatTime
-                                                , getCurrentTime
-                                                )
-import           Relude
-import           Say                            ( say
-                                                , sayErr
-                                                )
-import           Shh                            ( (&!>)
-                                                , ExecArg(..)
-                                                , ExecReference(Absolute)
-                                                , Stream(StdOut)
-                                                , captureTrim
-                                                , load
-                                                , (|>)
-                                                )
-import           System.Directory               ( createDirectoryIfMissing
-                                                , doesFileExist
-                                                , getModificationTime
-                                                , removeFile
-                                                )
-import           System.Environment             ( getArgs
-                                                , getEnv
-                                                , setEnv
-                                                )
-import           System.FSNotify                ( Event(Removed)
-                                                , watchDir
-                                                , withManager
-                                                )
-import           System.IO                      ( BufferMode(LineBuffering)
-                                                , hSetBuffering
-                                                )
-import           System.IO.Error
-import           System.IO.Unsafe
-import           System.Posix.Files             ( groupReadMode
-                                                , otherReadMode
-                                                , ownerReadMode
-                                                , ownerWriteMode
-                                                )
-import           System.Posix.IO                ( OpenFileFlags(exclusive)
-                                                , OpenMode(WriteOnly)
-                                                , closeFd
-                                                , defaultFileFlags
-                                                , fdWrite
-                                                , openFd
-                                                )
-
+import Control.Concurrent (threadDelay)
+import Control.Concurrent.Async (
+  forConcurrently_,
+  race_,
+  withAsync,
+ )
+import Control.Concurrent.STM (
+  check,
+  retry,
+ )
+import Control.Exception (
+  bracket,
+  catch,
+  handle,
+  handleJust,
+  throwIO,
+ )
+import Data.Bits (Bits ((.|.)))
+import qualified Data.Map as Map
+import qualified Data.Sequence as Seq
+import Data.String.Interpolate (i)
+import Data.Text (
+  isInfixOf,
+  splitOn,
+  strip,
+ )
+import qualified Data.Text as T
+import Data.Time (
+  UTCTime,
+  defaultTimeLocale,
+  diffUTCTime,
+  formatTime,
+  getCurrentTime,
+ )
+import Relude
+import Say (
+  say,
+  sayErr,
+ )
+import Shh (
+  ExecArg (..),
+  ExecReference (Absolute),
+  Stream (StdOut),
+  captureTrim,
+  load,
+  (&!>),
+  (|>),
+ )
+import System.Directory (
+  createDirectoryIfMissing,
+  doesFileExist,
+  getModificationTime,
+  removeFile,
+ )
+import System.Environment (
+  getArgs,
+  getEnv,
+  setEnv,
+ )
+import System.FSNotify (
+  Event (Removed),
+  watchDir,
+  withManager,
+ )
+import System.IO (
+  BufferMode (LineBuffering),
+  hSetBuffering,
+ )
+import System.IO.Error
+import System.IO.Unsafe
+import System.Posix.Files (
+  groupReadMode,
+  otherReadMode,
+  ownerReadMode,
+  ownerWriteMode,
+ )
+import System.Posix.IO (
+  OpenFileFlags (exclusive),
+  OpenMode (WriteOnly),
+  closeFd,
+  defaultFileFlags,
+  fdWrite,
+  openFd,
+ )
 
 load Absolute ["laminarc", "nix-store"]
 
@@ -94,13 +106,13 @@ throwWait = throwIO . WaitException
 
 instance Semigroup JobResult where
   Success <> Success = Success
-  _       <> _       = Failure
+  _ <> _ = Failure
 
 instance Monoid JobResult where
   mempty = Success
 
 instance ExecArg Text where
-  asArg         = asArg . toString
+  asArg = asArg . toString
   asArgFromList = asArgFromList . fmap toString
 
 drvBasename :: Text -> Text
@@ -118,6 +130,7 @@ resultPath p = [i|#{resultDir}/#{drvBasename p}|]
 {-# NOINLINE jobMap #-}
 
 data BuildState = Pending | Running UTCTime | Complete deriving (Show, Eq)
+
 -- True means job is finished
 jobMap :: TVar (Map Text (TVar BuildState))
 jobMap = unsafePerformIO $ newTVarIO mempty
@@ -170,10 +183,10 @@ job derivationName = do
   flags <- filter (/= mempty) . splitOn " " . toText <$> getEnv "FLAGS"
   catch
     (nixStoreRealise derivationName flags)
-    (\(err :: SomeException) -> do
-      setResult Failure
-      sayErr [i|nix-build failed with error #{err}.|]
-      exitFailure
+    ( \(err :: SomeException) -> do
+        setResult Failure
+        sayErr [i|nix-build failed with error #{err}.|]
+        exitFailure
     )
   setResult Success
   say [i|Build for #{derivationName} successful.|]
@@ -197,54 +210,60 @@ tryQueue derivationName = handleExisting $ do
     jobName <- startJob
     when (T.null jobName) $ throw [i|Laminarc returned an empty jobName.|]
     writeCount <- fdWrite fd (toString jobName)
-    when (writeCount == 0)
-      $ throw
-          [i|Wrote 0 bytes of jobName "#{jobName}" to #{runningPath derivationName}|]
+    when (writeCount == 0) $
+      throw
+        [i|Wrote 0 bytes of jobName "#{jobName}" to #{runningPath derivationName}|]
     pure . Just $ jobName
   startJob = do
     flags <- getEnv "FLAGS"
     decodeUtf8
-      <$> (  laminarc "queue"
-                      "nix-build"
-                      ([i|DERIVATION=#{derivationName}|] :: Text)
-                      ([i|FLAGS=#{flags}|] :: Text)
-          |> captureTrim
+      <$> ( laminarc
+              "queue"
+              "nix-build"
+              ([i|DERIVATION=#{derivationName}|] :: Text)
+              ([i|FLAGS=#{flags}|] :: Text)
+              |> captureTrim
           )
-  handleExisting = handleJust
-    (\x -> if isAlreadyExistsError x then Just x else Nothing)
-    (const (pure Nothing))
-  openNewFile = openFd (runningPath derivationName)
-                       WriteOnly
-                       (Just defaultMode)
-                       defaultFileFlags { exclusive = True }
+  handleExisting =
+    handleJust
+      (\x -> if isAlreadyExistsError x then Just x else Nothing)
+      (const (pure Nothing))
+  openNewFile =
+    openFd
+      (runningPath derivationName)
+      WriteOnly
+      (Just defaultMode)
+      defaultFileFlags{exclusive = True}
   defaultMode =
     ownerReadMode .|. ownerWriteMode .|. groupReadMode .|. otherReadMode
 
 queueJobWithLaminarc :: Text -> IO Text
-queueJobWithLaminarc derivationName = whenNothingM
-  (do
-    jobMay <- tryQueue derivationName
-    whenJust jobMay $ \jobName ->
-      say [i|Job #{jobName} started for #{derivationName}. Waiting ...|]
-    pure jobMay
-  )
-  (ensureRunningJob derivationName)
+queueJobWithLaminarc derivationName =
+  whenNothingM
+    ( do
+        jobMay <- tryQueue derivationName
+        whenJust jobMay $ \jobName ->
+          say [i|Job #{jobName} started for #{derivationName}. Waiting ...|]
+        pure jobMay
+    )
+    (ensureRunningJob derivationName)
 
 ensureRunningJob :: Text -> IO Text
-ensureRunningJob derivationName = whenNothingM
-  (do
-    jobMay <- getRunningJob derivationName
-    whenJust jobMay $ \jobName ->
-      say [i|Job #{jobName} running for #{derivationName}. Waiting ...|]
-    pure jobMay
-  )
-  (queueJobWithLaminarc derivationName)
+ensureRunningJob derivationName =
+  whenNothingM
+    ( do
+        jobMay <- getRunningJob derivationName
+        whenJust jobMay $ \jobName ->
+          say [i|Job #{jobName} running for #{derivationName}. Waiting ...|]
+        pure jobMay
+    )
+    (queueJobWithLaminarc derivationName)
 
 -- Nothing means there is no running Job.
 getRunningJob :: Text -> IO (Maybe Text)
 getRunningJob derivationName = poll 0
  where
-  path    = runningPath derivationName
+  path = runningPath derivationName
   request = handleNoExist (Just <$> readFileText path)
   handleNoExist =
     handleJust (guard . isDoesNotExistError) (const $ pure Nothing)
@@ -253,15 +272,14 @@ getRunningJob derivationName = poll 0
     if count < 50 && mayJob == Just ""
       then threadDelay 10000 >> poll (count + 1)
       else do
-
         pure mayJob
 
 getJobVar :: Text -> IO (TVar BuildState)
 getJobVar derivationName =
-  atomically
-    $   readTVar jobMap
-    >>= maybe makeVar pure
-    .   Map.lookup derivationName
+  atomically $
+    readTVar jobMap
+      >>= maybe makeVar pure
+        . Map.lookup derivationName
  where
   makeVar = do
     newVar <- newTVar Pending
@@ -270,14 +288,14 @@ getJobVar derivationName =
 
 realise :: Text -> IO ()
 realise derivationName = do
-  jobVar  <- getJobVar derivationName
-  now     <- getCurrentTime
+  jobVar <- getJobVar derivationName
+  now <- getCurrentTime
   runHere <- atomically $ do
     jobState <- readTVar jobVar
     case jobState of
-      Complete  -> pure False
+      Complete -> pure False
       Running _ -> retry
-      Pending   -> do
+      Pending -> do
         writeTVar jobVar (Running now)
         pure True
   when runHere $ do
@@ -291,12 +309,13 @@ realise derivationName = do
  where
   runBuild start = do
     jobName <- ensureRunningJob derivationName
-    handleWaitFail $ waitForJob derivationName >>= \case
-      Success -> do
-        now <- getCurrentTime
-        say
-          [i|Job #{jobName} completed for #{derivationName} after #{formatTime defaultTimeLocale "%2h:%2M:%2S" (diffUTCTime now start)}.|]
-      Failure -> throw [i|Job #{jobName} failed #{derivationName}.|]
+    handleWaitFail $
+      waitForJob derivationName >>= \case
+        Success -> do
+          now <- getCurrentTime
+          say
+            [i|Job #{jobName} completed for #{derivationName} after #{formatTime defaultTimeLocale "%2h:%2M:%2S" (diffUTCTime now start)}.|]
+        Failure -> throw [i|Job #{jobName} failed #{derivationName}.|]
   processWaitFail (WaitException e) = do
     sayErr
       [i|Retrying to find or create a job for #{derivationName} after waiting for job failed with error "#{e}" |]
@@ -311,9 +330,9 @@ checkStaleness = forever $ do
     when nothingQueued $ do
       knownJobs <-
         fmap strip
-        .   lines
-        .   decodeUtf8
-        <$> (laminarc "show-running" |> captureTrim)
+          . lines
+          . decodeUtf8
+          <$> (laminarc "show-running" |> captureTrim)
       jobs <- Map.toList <$> readTVarIO jobMap
       forConcurrently_ jobs $ \(derivationName, jobVar) ->
         checkStalenessFor knownJobs jobVar derivationName
@@ -328,15 +347,15 @@ checkStalenessFor jobs jobVar derivationName =
         [i|Still waiting for job #{jobName} for #{derivationName} after #{formatTime defaultTimeLocale "%2h:%2M:%2S" (diffUTCTime now start)} ...|]
       fileTime <- getModificationTime (runningPath derivationName)
       let notRunning = not $ any (`isInfixOf` jobName) jobs
-          oldEnough  = diffUTCTime now fileTime > 60
-          stale      = notRunning && oldEnough
+          oldEnough = diffUTCTime now fileTime > 60
+          stale = notRunning && oldEnough
       when stale $ do
         removeFile (runningPath derivationName)
         sayErr
           [i|File #{runningPath derivationName} claiming job name "#{jobName}" seems to be stale. Deleting File.|]
  where
   running (Running a) = Just a
-  running _           = Nothing
+  running _ = Nothing
 
 waitForJob :: Text -> IO JobResult
 waitForJob derivationName = do
@@ -344,25 +363,26 @@ waitForJob derivationName = do
   let finished = atomically (writeTVar done True)
   withManager $ \manager -> do
     _ <- watchDir manager runningDir fileDeleted (const finished)
-    withAsync (whenNothingM_ (getRunningJob derivationName) finished)
-              (const $ atomically $ readTVar done >>= check)
+    withAsync
+      (whenNothingM_ (getRunningJob derivationName) finished)
+      (const $ atomically $ readTVar done >>= check)
   resultText <-
     handleJust
-        (guard . isDoesNotExistError)
-        (const $ throwWait
-          [i|Job result file #{resultPath derivationName} does not exist.|]
-        )
+      (guard . isDoesNotExistError)
+      ( const $
+          throwWait
+            [i|Job result file #{resultPath derivationName} does not exist.|]
+      )
       $ readFile (resultPath derivationName)
   maybe
-      (throwWait [i|Failed to parse result from #{resultPath derivationName}.|])
-      pure
+    (throwWait [i|Failed to parse result from #{resultPath derivationName}.|])
+    pure
     . readMaybe
     . toString
     $ resultText
  where
   fileDeleted (Removed a _ _) | a == runningPath derivationName = True
   fileDeleted _ = False
-
 
 main :: IO ()
 main = do
@@ -373,11 +393,12 @@ main = do
   args <- fmap toText <$> getArgs
   handle (\(JobException e) -> sayErr e >> exitFailure) $ case args of
     ["realise-here", derivationName] -> job derivationName
-    ["realise"     , derivationName] -> do
+    ["realise", derivationName] -> do
       jobId <- getEnv "JOB"
       runId <- getEnv "RUN"
-      setEnv "LAMINAR_REASON"
-             [i|Building #{derivationName} in #{jobId}:#{runId}|]
+      setEnv
+        "LAMINAR_REASON"
+        [i|Building #{derivationName} in #{jobId}:#{runId}|]
       race_ (realise derivationName) checkStaleness
     _ ->
       sayErr "Usage: realise-here <derivationName> | realise <derivationName>"

@@ -2,7 +2,8 @@
 let
   passwordFile = pkgs.privatePath "pam-login-password";
   openssh.authorizedKeys.keys = pkgs.privateValue [ ] "ssh-keys";
-in {
+in
+{
   users.users = {
     maralorn = {
       description = "maralorn";

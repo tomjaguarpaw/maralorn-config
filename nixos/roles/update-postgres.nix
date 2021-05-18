@@ -6,7 +6,8 @@
   };
   environment.systemPackages =
     let newpg = config.containers.temp-pg.config.services.postgresql;
-    in [
+    in
+    [
       (pkgs.writeScriptBin "upgrade-pg-cluster" ''
         set -x
         export OLDDATA="${config.services.postgresql.dataDir}"

@@ -22,8 +22,8 @@ let
             vim-trailing-whitespace vim-autoformat
 
             # Git
-            coc-git # statusline, numberline and explorer infos
-            fugitive # various git commands
+            coc-git# statusline, numberline and explorer infos
+            fugitive# various git commands
 
             # Commenting and Uncommenting
             nerdcommenter
@@ -38,7 +38,7 @@ let
             # nix syntax highlighting
             vim-nix vim-markdown
             # latex
-            vimtex coc-vimtex # not sure if I need two
+            vimtex coc-vimtex# not sure if I need two
             # ledger
             vim-ledger
             # rust

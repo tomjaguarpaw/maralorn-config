@@ -13,7 +13,8 @@ let
     branding.welcomeBackgroundUrl =
       "https://cloud.maralorn.de/apps/theming/image/background";
   };
-in {
+in
+{
   services.nginx = {
     enable = true;
     virtualHosts."element.maralorn.de" = {

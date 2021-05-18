@@ -1,7 +1,8 @@
 { pkgs, lib, config, ... }:
 let
   path = [ pkgs.git pkgs.nix pkgs.gnutar pkgs.gzip pkgs.openssh pkgs.laminar ];
-in {
+in
+{
   services.laminar.cfgFiles.jobs = {
     "logfeed.run" = pkgs.writeShellScript "logfeed.run" ''
       set -e

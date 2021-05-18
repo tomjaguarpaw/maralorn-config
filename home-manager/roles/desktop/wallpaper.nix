@@ -1,10 +1,11 @@
 { pkgs, ... }:
 let
-  randomWallpaper = pkgs.writeHaskellScript {
-    name = "random-wallpaper";
-    imports = [ "System.Random" ];
-    bins = [ pkgs.coreutils pkgs.glib ];
-  } ''
+  randomWallpaper = pkgs.writeHaskellScript
+    {
+      name = "random-wallpaper";
+      imports = [ "System.Random" ];
+      bins = [ pkgs.coreutils pkgs.glib ];
+    } ''
     main = do
        mode <- cat "/home/maralorn/volatile/mode" |> captureTrim
        (lines . decodeUtf8 -> files) <- ls ([i|/home/maralorn/.wallpapers/#{mode}|] :: String) |> captureTrim
@@ -15,7 +16,8 @@ let
          gsettings "set" "org.gnome.desktop.background" "picture-uri" new
          gsettings "set" "org.gnome.desktop.screensaver" "picture-uri" new
   '';
-in {
+in
+{
   home.packages = [ randomWallpaper ];
   systemd.user = {
     services.random-wallpaper = {

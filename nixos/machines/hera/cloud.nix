@@ -1,14 +1,15 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  adminCreds = pkgs.privateValue {
-    adminpass = "";
-    dbpass = "";
-    adminuser = "";
-  } "nextcloud-admin";
+  adminCreds = pkgs.privateValue
+    {
+      adminpass = "";
+      dbpass = "";
+      adminuser = "";
+    } "nextcloud-admin";
   inherit (config.m-0) hosts;
   certPath = "/var/lib/acme";
-  nextcloud-container = { v6, v4, hostname, rss ? false, extraMounts ? {} }: {
+  nextcloud-container = { v6, v4, hostname, rss ? false, extraMounts ? { } }: {
     bindMounts = {
       "${certPath}" = {
         hostPath = certPath;
@@ -99,9 +100,10 @@ let
             wantedBy = [ "multi-user.target" ];
           };
           pg_backup = {
-            script = let
-              name = "nextcloud-psql-${hostname}";
-            in
+            script =
+              let
+                name = "nextcloud-psql-${hostname}";
+              in
               ''
                 ${config.services.postgresql.package}/bin/pg_dump nextcloud > /var/lib/db-backup-dumps/${name}
               '';
@@ -120,18 +122,19 @@ let
             serviceConfig = {
               Type = "oneshot";
               User = "nextcloud";
-              ExecStart = let
-                config = pkgs.writeText "updater.ini" (
-                  generators.toINI {} {
-                    updater = {
-                      user = adminCreds.adminuser;
-                      password = adminCreds.adminpass;
-                      url = "https://${hostname}/";
-                      mode = "singlerun";
-                    };
-                  }
-                );
-              in
+              ExecStart =
+                let
+                  config = pkgs.writeText "updater.ini" (
+                    generators.toINI { } {
+                      updater = {
+                        user = adminCreds.adminuser;
+                        password = adminCreds.adminpass;
+                        url = "https://${hostname}/";
+                        mode = "singlerun";
+                      };
+                    }
+                  );
+                in
                 "${pkgs.nextcloud-news-updater}/bin/nextcloud-news-updater -c ${config}";
             };
           };

@@ -14,19 +14,23 @@ let
       writeFileText "derivation" derivationName
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
-  test-system-config = pkgs.writeHaskellScript {
-    name = "test-system-config";
-    inherit bins;
-    inherit imports;
-  } (haskellBody "system" ''
-    buildSystemParams ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|]]'');
+  test-system-config = pkgs.writeHaskellScript
+    {
+      name = "test-system-config";
+      inherit bins;
+      inherit imports;
+    }
+    (haskellBody "system" ''
+      buildSystemParams ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|]]'');
 
-  test-home-config = pkgs.writeHaskellScript {
-    name = "test-home-config";
-    inherit bins;
-    inherit imports;
-  } (haskellBody "home"
-    ''paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname]'');
+  test-home-config = pkgs.writeHaskellScript
+    {
+      name = "test-home-config";
+      inherit bins;
+      inherit imports;
+    }
+    (haskellBody "home"
+      ''paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname]'');
   path = [ pkgs.git pkgs.nix pkgs.gnutar pkgs.gzip pkgs.openssh pkgs.laminar ];
   common = ''
     set -e
@@ -70,33 +74,42 @@ let
   });
   deployCommand = "${pkgs.writeShellScript "deploy-system-config"
     "${pkgs.systemd}/bin/systemctl start --no-block update-config"}";
-in {
+in
+{
   services.laminar.cfgFiles.jobs = {
-    "test-config.run" = pkgs.writeHaskell "test-config" {
-      libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
-      ghcEnv = {
-        HOMES = lib.concatStringsSep " " homes;
-        SYSTEMS = lib.concatStringsSep " " systems;
-        DEPLOY = deployCommand;
-        PATH = "${lib.makeBinPath [ pkgs.laminar pkgs.git ]}:$PATH";
-      };
-      ghcArgs = [ "-threaded" ];
-    } (builtins.readFile ./test-config.hs);
-    "bump-config.run" = pkgs.writeHaskell "bump-config" {
-      libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
-      ghcEnv.PATH = "${lib.makeBinPath [ pkgs.git pkgs.niv pkgs.nix ]}:$PATH";
-      ghcArgs = [ "-threaded" ];
-    } (builtins.readFile ./bump-config.hs);
+    "test-config.run" = pkgs.writeHaskell "test-config"
+      {
+        libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
+        ghcEnv = {
+          HOMES = lib.concatStringsSep " " homes;
+          SYSTEMS = lib.concatStringsSep " " systems;
+          DEPLOY = deployCommand;
+          PATH = "${lib.makeBinPath [ pkgs.laminar pkgs.git ]}:$PATH";
+        };
+        ghcArgs = [ "-threaded" ];
+      }
+      (builtins.readFile ./test-config.hs);
+    "bump-config.run" = pkgs.writeHaskell "bump-config"
+      {
+        libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
+        ghcEnv.PATH = "${lib.makeBinPath [ pkgs.git pkgs.niv pkgs.nix ]}:$PATH";
+        ghcArgs = [ "-threaded" ];
+      }
+      (builtins.readFile ./bump-config.hs);
   } // lib.listToAttrs (map mkHomeJob homes)
-    // lib.listToAttrs (map mkSystemJob homes);
-  security.sudo.extraRules = let allowedCommands = [ deployCommand ];
-  in [{
-    commands = map (command: {
-      inherit command;
-      options = [ "NOPASSWD" ];
-    }) allowedCommands;
-    users = [ "laminar" ];
-  }];
+  // lib.listToAttrs (map mkSystemJob homes);
+  security.sudo.extraRules =
+    let allowedCommands = [ deployCommand ];
+    in
+    [{
+      commands = map
+        (command: {
+          inherit command;
+          options = [ "NOPASSWD" ];
+        })
+        allowedCommands;
+      users = [ "laminar" ];
+    }];
   systemd.services = {
     update-config = {
       path = [ pkgs.git pkgs.nix ];
@@ -111,13 +124,15 @@ in {
         StartLimitIntervalSec = 360;
         StartLimitBurst = 3;
       };
-      script = let user = "maralorn";
-      in ''
-        /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull --ff-only
-        /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos submodule update --init
-        /var/cache/gc-links/system-config-hera/bin/switch-to-configuration switch
-        /run/wrappers/bin/sudo -u ${user} /var/cache/gc-links/home-config-hera/default/activate
-      '';
+      script =
+        let user = "maralorn";
+        in
+        ''
+          /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull --ff-only
+          /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos submodule update --init
+          /var/cache/gc-links/system-config-hera/bin/switch-to-configuration switch
+          /run/wrappers/bin/sudo -u ${user} /var/cache/gc-links/home-config-hera/default/activate
+        '';
     };
   };
 }

@@ -20,7 +20,7 @@ let
     (heading "nix-output-monitor" "https://github.com/maralorn/nix-output-monitor")
     (badge "https://repology.org/badge/vertical-allrepos/nix-output-monitor.svg?columns=3&header=" "https://repology.org/project/nix-output-monitor/versions")
   ];
-  dashboards = pkgs.runCommand "dashboards" {} ''
+  dashboards = pkgs.runCommand "dashboards" { } ''
     mkdir -p $out
     cp ${./grafana-dashboards}/* $out
     substituteInPlace $out/health-status.json --replace '@BADGES@' '${badges}' \

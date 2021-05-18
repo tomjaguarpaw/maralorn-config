@@ -1,6 +1,6 @@
 self: super:
 let
-  unstable = import super.sources.nixos-unstable {};
+  unstable = import super.sources.nixos-unstable { };
 in
 {
   inherit (unstable)

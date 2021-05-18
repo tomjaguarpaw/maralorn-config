@@ -3,11 +3,14 @@ let
   explicitUsePrivate = builtins.getEnv "WITH_SECRETS" == "true";
   explicitNotUsePrivate = builtins.getEnv "WITH_SECRETS" == "false";
   usePrivate = !explicitNotUsePrivate && (explicitUsePrivate || privateExists);
-  withSecrets = builtins.trace (if usePrivate then
-    assert privateExists; "Building _with_ secrets!"
-  else
-    "Building _without_ secrets!") usePrivate;
-in {
+  withSecrets = builtins.trace
+    (if usePrivate then
+      assert privateExists; "Building _with_ secrets!"
+    else
+      "Building _without_ secrets!")
+    usePrivate;
+in
+{
   inherit withSecrets;
   privatePath = name:
     let path = "/etc/nixos/private/${name}";

@@ -49,7 +49,7 @@ self: super: {
       nixfmt nixpkgs-fmt rnix-lsp tmate rustup kitty nix-top ghcWithPackages ghcid matrix-commander upterm
       lazygit
       ;
-    obelisk = (import self.sources.obelisk {}).command;
+    obelisk = (import self.sources.obelisk { }).command;
   };
   accounting-pkgs = {
     inherit (self.haskellPackages) hledger hledger-ui hledger-web hledger-iadd;
@@ -57,7 +57,7 @@ self: super: {
   };
   system-pkgs = self.core-system-pkgs // self.extra-system-pkgs // {
     home-manager =
-      self.callPackage "${self.sources.${self.home-manager-channel}}/home-manager" {};
+      self.callPackage "${self.sources.${self.home-manager-channel}}/home-manager" { };
   };
   foreign-home-pkgs = self.extra-system-pkgs;
 }

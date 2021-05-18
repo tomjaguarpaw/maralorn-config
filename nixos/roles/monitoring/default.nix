@@ -10,7 +10,8 @@ let
     '';
     basicAuthFile = pkgs.privateFile "basic-auth/monitoring";
   };
-in {
+in
+{
   imports = [
     ./alertmanager.nix
     ./grafana.nix

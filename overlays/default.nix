@@ -9,4 +9,5 @@ let
   isOverlay = n: (isNixDir n || isNixFile n) && notDefault n;
   overlays = builtins.filter isOverlay candidates;
   importOverlay = n: import (pathToOverlay n);
-in map importOverlay overlays
+in
+map importOverlay overlays

@@ -36,7 +36,8 @@ let
       };
       Misc = { Debug = true; };
     });
-in {
+in
+{
   systemd.services.email2matrix = {
     script =
       "${pkgs.email2matrix}/bin/devture-email2matrix --config ${email2matrix-config}";

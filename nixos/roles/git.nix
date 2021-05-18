@@ -7,14 +7,15 @@ let
     "test-config.service"
     "--no-block"
   ];
-  post-update = pkgs.writeHaskellScript {
-    name = "post-update";
-    bins = [ pkgs.git pkgs.laminar ];
-    imports = [
-      "System.Environment (lookupEnv)"
-      "System.Directory (withCurrentDirectory)"
-    ];
-  } ''
+  post-update = pkgs.writeHaskellScript
+    {
+      name = "post-update";
+      bins = [ pkgs.git pkgs.laminar ];
+      imports = [
+        "System.Environment (lookupEnv)"
+        "System.Directory (withCurrentDirectory)"
+      ];
+    } ''
     checkout :: String -> IO FilePath
     checkout path = do
       (decodeUtf8 -> repoDir) <-  mktemp "-d" |> captureTrim
@@ -40,10 +41,13 @@ let
         bracket (checkout path) (rm "-rf") $ \repoDir -> withCurrentDirectory repoDir $ nix_build "-o" ([i|/var/www/#{deploy}|] :: String) target
         say "Done"
   '';
-in {
-  systemd.tmpfiles.rules = let cfg = config.services.gitolite;
-  in lib.mkAfter
-  [ "z ${cfg.dataDir}/.ssh/id_ed25519 0600 ${cfg.user} ${cfg.group} - -" ];
+in
+{
+  systemd.tmpfiles.rules =
+    let cfg = config.services.gitolite;
+    in
+    lib.mkAfter
+      [ "z ${cfg.dataDir}/.ssh/id_ed25519 0600 ${cfg.user} ${cfg.group} - -" ];
   services.gitolite = {
     enable = true;
     user = "git";

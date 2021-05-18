@@ -2,13 +2,15 @@
 let
   modes = pkgs.lib.attrNames (import ../machines.nix).apollo;
   configPath = "${config.home.homeDirectory}/git/config";
-in {
+in
+{
 
   home.packages = builtins.attrValues rec {
     zoom = pkgs.zoom-us.overrideAttrs (old: {
       postFixup = old.postFixup + ''
         wrapProgram $out/bin/zoom-us --unset XDG_SESSION_TYPE
-      '';});
+      '';
+    });
 
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
@@ -27,10 +29,11 @@ in {
         exe ([i|/home/maralorn/.modes/#{mode}/activate|] :: String)
         exe "random-wallpaper"
     '';
-    updateModes = pkgs.writeHaskellScript {
-      name = "update-modes";
-      bins = [ activateMode pkgs.git pkgs.nix-output-monitor ];
-    } ''
+    updateModes = pkgs.writeHaskellScript
+      {
+        name = "update-modes";
+        bins = [ activateMode pkgs.git pkgs.nix-output-monitor ];
+      } ''
       params = ["${configPath}/home-manager/target.nix", "-A", "apollo", "-o", "/home/maralorn/.modes"]
 
       main = do
@@ -42,10 +45,11 @@ in {
         nom_build nixPath params
         activate_mode
     '';
-    quickUpdateMode = pkgs.writeHaskellScript {
-      name = "quick-update-mode";
-      bins = [ updateModes pkgs.git pkgs.home-manager pkgs.nix-output-monitor ];
-    } ''
+    quickUpdateMode = pkgs.writeHaskellScript
+      {
+        name = "quick-update-mode";
+        bins = [ updateModes pkgs.git pkgs.home-manager pkgs.nix-output-monitor ];
+      } ''
       getMode :: IO Text
       getMode = decodeUtf8 <$> (cat "/home/maralorn/volatile/mode" |> captureTrim)
 
@@ -56,16 +60,17 @@ in {
         home_manager (nixPath <> ["switch", "-A", [i|apollo-#{mode}|]]) &!> StdOut |> nom
         update_modes
     '';
-    selectMode = pkgs.writeHaskellScript {
-      name = "select-mode";
-      bins = [
-        pkgs.dialog
-        activateMode
-        pkgs.ncurses
-        pkgs.sway
-        pkgs.gnome3.gnome-session
-      ];
-    } ''
+    selectMode = pkgs.writeHaskellScript
+      {
+        name = "select-mode";
+        bins = [
+          pkgs.dialog
+          activateMode
+          pkgs.ncurses
+          pkgs.sway
+          pkgs.gnome3.gnome-session
+        ];
+      } ''
       main = do
         mode <- decodeUtf8 <$> (dialog "--menu" "Select Mode" "20" "80" "5" ${
           lib.concatStrings (map (mode: ''"${mode}" "" '') modes)
@@ -80,7 +85,7 @@ in {
     inherit (pkgs.gnome3) nautilus;
     inherit (pkgs.xorg) xbacklight;
     inherit (pkgs)
-    # web
+      # web
       chromium
 
       skypeforlinux google-chrome

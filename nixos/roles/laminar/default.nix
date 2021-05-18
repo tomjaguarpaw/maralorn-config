@@ -8,12 +8,14 @@ let
     echo "Cached build-result $1 to"
     ${pkgs.nix}/bin/nix-store -r --indirect --add-root "/var/cache/gc-links/$2" "$1"
   ''}";
-in {
+in
+{
   options = {
     services.laminar = {
       cfgFiles = mkOption {
-        type = let valueType = with types; oneOf [ path (attrsOf valueType) ];
-        in valueType;
+        type =
+          let valueType = with types; oneOf [ path (attrsOf valueType) ];
+          in valueType;
         default = { };
         description = ''
           Every entry will be copied to /var/lib/laminar/cfg/<name>
@@ -25,24 +27,30 @@ in {
   };
   imports = [ ./kassandra.nix ./test-config.nix ./projects.nix ];
   config = {
-    security.sudo.extraRules = let allowedCommands = [ cacheResult ];
-    in [{
-      commands = map (command: {
-        inherit command;
-        options = [ "NOPASSWD" ];
-      }) allowedCommands;
-      users = [ "laminar" ];
-    }];
+    security.sudo.extraRules =
+      let allowedCommands = [ cacheResult ];
+      in
+      [{
+        commands = map
+          (command: {
+            inherit command;
+            options = [ "NOPASSWD" ];
+          })
+          allowedCommands;
+        users = [ "laminar" ];
+      }];
     services.laminar.cfgFiles = {
       env = builtins.toFile "laminar-env" ''
         TIMEOUT=14400
       '';
       scripts = {
-        "nix-jobs" = pkgs.writeHaskell "nix-jobs" {
-          libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
-          ghcEnv.PATH = "${lib.makeBinPath [ pkgs.laminar pkgs.nix ]}:$PATH";
-          ghcArgs = [ "-threaded" ];
-        } (builtins.readFile ./nix-jobs.hs);
+        "nix-jobs" = pkgs.writeHaskell "nix-jobs"
+          {
+            libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
+            ghcEnv.PATH = "${lib.makeBinPath [ pkgs.laminar pkgs.nix ]}:$PATH";
+            ghcArgs = [ "-threaded" ];
+          }
+          (builtins.readFile ./nix-jobs.hs);
       };
       jobs = {
         "nix-build.run" = pkgs.writeShellScript "nix-build" ''
@@ -92,17 +100,19 @@ in {
         LimitNOFILE = "1024000";
       };
       after = [ "network.target" ];
-      preStart = let
-        linkToPath = path: fileOrDir:
-          (if types.path.check fileOrDir then
-            [ "ln -sT ${fileOrDir} ${path}" ]
-          else
-            [ "mkdir -p ${path}" ] ++ lib.concatLists (lib.mapAttrsToList
-              (dirName: content: linkToPath "${path}/${dirName}" content)
-              fileOrDir));
-        cfgDirContent = pkgs.runCommand "laminar-cfg-dir" { }
-          (lib.concatStringsSep "\n" (linkToPath "$out" cfg.cfgFiles));
-      in "ln -sfT ${cfgDirContent} ${cfgDir}";
+      preStart =
+        let
+          linkToPath = path: fileOrDir:
+            (if types.path.check fileOrDir then
+              [ "ln -sT ${fileOrDir} ${path}" ]
+            else
+              [ "mkdir -p ${path}" ] ++ lib.concatLists (lib.mapAttrsToList
+                (dirName: content: linkToPath "${path}/${dirName}" content)
+                fileOrDir));
+          cfgDirContent = pkgs.runCommand "laminar-cfg-dir" { }
+            (lib.concatStringsSep "\n" (linkToPath "$out" cfg.cfgFiles));
+        in
+        "ln -sfT ${cfgDirContent} ${cfgDir}";
     };
     services = {
       nginx = {

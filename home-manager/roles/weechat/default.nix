@@ -10,7 +10,8 @@ let
       scripts = [ pkgs.weechatScripts.weechat-matrix ];
     };
   };
-in {
+in
+{
 
   home.file = {
     python_plugins = {

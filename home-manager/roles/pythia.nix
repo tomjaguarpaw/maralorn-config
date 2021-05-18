@@ -100,5 +100,6 @@ let
     ${pkgs.taskwarrior}/bin/task gen_id:meditation done
     ${hold}
     exit
-        '';
-in { home.packages = [ pythia meditate ]; }
+  '';
+in
+{ home.packages = [ pythia meditate ]; }

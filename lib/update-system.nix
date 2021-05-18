@@ -3,10 +3,11 @@ let
   configPath = "/etc/nixos";
 in
 {
-  update-system = pkgs.writeHaskellScript {
-    name = "update-system";
-    bins = [ nixos-rebuild pkgs.nix-output-monitor (import pkgs.sources.nvd { inherit pkgs; }) ];
-  } ''
+  update-system = pkgs.writeHaskellScript
+    {
+      name = "update-system";
+      bins = [ nixos-rebuild pkgs.nix-output-monitor (import pkgs.sources.nvd { inherit pkgs; }) ];
+    } ''
     main = do
         paths <- myNixPath "${configPath}"
         args <- getArgs

@@ -1,5 +1,6 @@
-{ pkgs, ... }: let
-  dhallFiles = pkgs.runCommand "kassandra-config-src" {} ''
+{ pkgs, ... }:
+let
+  dhallFiles = pkgs.runCommand "kassandra-config-src" { } ''
     mkdir $out
     ${pkgs.kassandra2}/bin/kassandra2 print-types > $out/types.dhall
     ln -s ${./kassandra}/{config,backend}.dhall $out
@@ -18,17 +19,18 @@
     dependencies = [ pkgs.dhallPackages.Prelude ];
   };
 
-  dhallResult = pkgs.runCommand "kassandra-config" {} ''
+  dhallResult = pkgs.runCommand "kassandra-config" { } ''
     mkdir $out
     ln -s ${backend}/source.dhall $out/backend.dhall
     ln -s ${standalone}/source.dhall $out/config.dhall
   '';
 in
 {
-  home.file = if pkgs.withSecrets then {
-    "kassandra-config" = {
-      target = ".config/kassandra";
-      source = dhallResult.out;
-    };
-  } else {};
+  home.file =
+    if pkgs.withSecrets then {
+      "kassandra-config" = {
+        target = ".config/kassandra";
+        source = dhallResult.out;
+      };
+    } else { };
 }

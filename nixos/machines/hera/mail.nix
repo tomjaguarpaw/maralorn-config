@@ -51,8 +51,8 @@ in
     enableImapSsl = true;
     fqdn = "hera.m-0.eu";
     domains = [ "m-0.eu" "maralorn.de" "choreutes.de" "mathechor.de" ];
-    forwards = pkgs.privateValue {} "mail/forwards";
-    loginAccounts = pkgs.privateValue {} "mail/users";
+    forwards = pkgs.privateValue { } "mail/forwards";
+    loginAccounts = pkgs.privateValue { } "mail/users";
     hierarchySeparator = "/";
     certificateScheme = 1;
     certificateFile = "${certPath}/fullchain.pem";

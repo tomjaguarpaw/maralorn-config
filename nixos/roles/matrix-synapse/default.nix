@@ -8,21 +8,21 @@ in
   systemd.services = {
     synapse-cleanup = {
       serviceConfig = {
-        ExecStart = pkgs.writeHaskell "synapse-cleanup" {
-          libraries = builtins.attrValues pkgs.myHaskellScriptPackages ++ [
-            pkgs.haskellPackages.postgresql-simple
-            pkgs.haskellPackages.HTTP
-          ];
-          ghcEnv.PATH = "${lib.makeBinPath [ pkgs.matrix-synapse-tools.rust-synapse-compress-state pkgs.postgresql_12 ]}:$PATH";
-          ghcArgs = [ "-threaded" ];
-        } (builtins.readFile ./synapse-cleanup.hs);
+        ExecStart = pkgs.writeHaskell "synapse-cleanup"
+          {
+            libraries = builtins.attrValues pkgs.myHaskellScriptPackages ++ [
+              pkgs.haskellPackages.postgresql-simple
+              pkgs.haskellPackages.HTTP
+            ];
+            ghcEnv.PATH = "${lib.makeBinPath [ pkgs.matrix-synapse-tools.rust-synapse-compress-state pkgs.postgresql_12 ]}:$PATH";
+            ghcArgs = [ "-threaded" ];
+          }
+          (builtins.readFile ./synapse-cleanup.hs);
         User = "matrix-synapse";
         Type = "oneshot";
       };
     };
-    synapse-worker-1 = {
-
-    };
+    synapse-worker-1 = { };
   };
   services = {
     nginx = {
@@ -31,9 +31,10 @@ in
         enableACME = true;
         forceSSL = true;
         locations = {
-          "/.well-known/matrix/server".extraConfig = let
-            server."m.server" = "${hostName}:443";
-          in
+          "/.well-known/matrix/server".extraConfig =
+            let
+              server."m.server" = "${hostName}:443";
+            in
             ''
               add_header Content-Type application/json;
               return 200 '${builtins.toJSON server}';
@@ -42,11 +43,11 @@ in
             let
               client."m.homeserver".base_url = "https://${hostName}";
             in
-              ''
-                add_header Content-Type application/json;
-                add_header Access-Control-Allow-Origin *;
-                return 200 '${builtins.toJSON client}';
-              '';
+            ''
+              add_header Content-Type application/json;
+              add_header Access-Control-Allow-Origin *;
+              return 200 '${builtins.toJSON client}';
+            '';
         };
       };
       virtualHosts."${hostName}" = {
@@ -69,12 +70,14 @@ in
     };
 
     # Synapse
-    matrix-synapse = let
-      server-secrets = pkgs.privateValue {
-        registration_shared_secret = "";
-        macaroon_secret_key = "";
-      } "matrix/server-secrets";
-    in
+    matrix-synapse =
+      let
+        server-secrets = pkgs.privateValue
+          {
+            registration_shared_secret = "";
+            macaroon_secret_key = "";
+          } "matrix/server-secrets";
+      in
       server-secrets // {
         enable = true;
         package = pkgs.matrix-synapse;
@@ -86,14 +89,15 @@ in
         max_upload_size = "30M";
         dynamic_thumbnails = true;
         turn_shared_secret = config.services.coturn.static-auth-secret;
-        turn_uris = let
-          turns = "turns:${config.services.coturn.realm}:${
+        turn_uris =
+          let
+            turns = "turns:${config.services.coturn.realm}:${
           toString config.services.coturn.tls-listening-port
           }";
-          turn = "turn:${config.services.coturn.realm}:${
+            turn = "turn:${config.services.coturn.realm}:${
           toString config.services.coturn.listening-port
           }";
-        in
+          in
           [
             "${turns}?transport=udp"
             "${turns}?transport=tcp"
@@ -145,7 +149,7 @@ in
             type = "metrics";
             port = 9148;
             bind_address = "127.0.0.1";
-            resources = [];
+            resources = [ ];
             tls = false;
           }
           {

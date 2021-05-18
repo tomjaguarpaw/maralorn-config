@@ -13,4 +13,5 @@ let
       mkdir $out
       ${lib.concatStringsSep "\n" (lib.mapAttrsToList (mode: config:
         "ln -s ${buildHomeManager host mode} $out/${mode}") modes)}'';
-in lib.mapAttrs buildModesForHost modes
+in
+lib.mapAttrs buildModesForHost modes

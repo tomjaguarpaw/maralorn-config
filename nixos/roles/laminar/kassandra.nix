@@ -31,7 +31,8 @@ let
     nix-jobs realise $drv
     laminarc set "RESULTDRV=$drv"
   '';
-in {
+in
+{
   security.sudo.extraRules = [{
     commands = [{
       command = deploy;

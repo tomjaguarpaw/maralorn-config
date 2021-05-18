@@ -9,5 +9,6 @@ self: super: {
         buildInputs = [ openssl ];
         cargoSha256 = "0nlc09sh679vfq7n08836mnjsax2pnskm64jk3c6k0l2spina3nd";
         doCheck = false;
-      }) { };
+      })
+    { };
 }

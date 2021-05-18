@@ -2,7 +2,7 @@
 let
   inherit (config.m-0.private) me;
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
-  backupJobs = pkgs.privateValue {} "borgbackup";
+  backupJobs = pkgs.privateValue { } "borgbackup";
   backupJobNames = map (name: "borgbackup-job-${name}") (lib.attrNames backupJobs);
 in
 {
@@ -49,9 +49,10 @@ in
   };
   nixpkgs.config.android_sdk.accept_license = true;
   systemd.services = {
-    pg_backup = let
-      name = "matrix-synapse";
-    in
+    pg_backup =
+      let
+        name = "matrix-synapse";
+      in
       {
         script = ''
           ${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}
@@ -62,10 +63,11 @@ in
         };
       };
     night-routines = {
-      script = let
-        start = "${pkgs.systemd}/bin/systemctl start";
-        container = "${pkgs.nixos-container}/bin/nixos-container run";
-      in
+      script =
+        let
+          start = "${pkgs.systemd}/bin/systemctl start";
+          container = "${pkgs.nixos-container}/bin/nixos-container run";
+        in
         ''
           set -x
           set +e

@@ -2,7 +2,8 @@
 let
   watchNixpkgsPackage = name: branch: path:
     let job_name = "nixpkgs ${name} on ${branch}";
-    in {
+    in
+    {
       inherit job_name;
       metrics_path = "/job/${path}/prometheus";
       scheme = "https";
@@ -20,7 +21,7 @@ let
     };
   watchHaskellUnstable = name:
     watchNixpkgsPackage name "haskell-updates"
-    "nixpkgs/haskell-updates/haskellPackages.${name}.x86_64-linux";
+      "nixpkgs/haskell-updates/haskellPackages.${name}.x86_64-linux";
   watchedHaskellUpdatesPkgs = builtins.attrNames (pkgs.myHaskellPackages) ++ [
     "jsaddle-warp"
     "stan"
@@ -38,7 +39,8 @@ let
     "cachix"
     "taffybar"
   ];
-in {
+in
+{
   services.prometheus.scrapeConfigs =
     map watchHaskellUnstable watchedHaskellUpdatesPkgs ++ [
       (watchNixpkgsPackage "haskell-language-server-toplevel" "haskell-updates"

@@ -42,7 +42,7 @@
       volume-down = [ "<Primary><Shift>section" ];
       volume-up = [ "<Primary><Shift>degree" ];
       area-screenshot-clip = [ "Print" ];
-      screenshot = [];
+      screenshot = [ ];
     };
   };
 }

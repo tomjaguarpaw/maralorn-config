@@ -3,7 +3,8 @@ let
   inherit (python3Packages) jinja2 pendulum GitPython buildPythonApplication;
   pname = "jali";
   version = "b47d3b9";
-in buildPythonApplication {
+in
+buildPythonApplication {
   name = "${pname}-${version}";
   inherit pname version;
   doCheck = false;

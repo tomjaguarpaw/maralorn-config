@@ -86,9 +86,10 @@
       controlMaster = "auto";
       controlPersist = "120";
       enable = true;
-      matchBlocks = let
-        agHost = "fb04217.mathematik.tu-darmstadt.de";
-      in
+      matchBlocks =
+        let
+          agHost = "fb04217.mathematik.tu-darmstadt.de";
+        in
         {
           athene.hostname = "192.168.178.22";
           git-auto = {

@@ -1,112 +1,113 @@
 let
-  inherit (import (import ../nix/sources.nix).nixos-unstable {}) lib;
+  inherit (import (import ../nix/sources.nix).nixos-unstable { }) lib;
   makeConfig = hostName: imports:
-  { ... }: {
-    imports = imports ++ [ ./roles/default.nix ];
-    m-0.hostName = hostName;
-    nixpkgs.overlays = [ (_: _: (import ../channels.nix).${hostName}) ];
-  };
+    { ... }: {
+      imports = imports ++ [ ./roles/default.nix ];
+      m-0.hostName = hostName;
+      nixpkgs.overlays = [ (_: _: (import ../channels.nix).${hostName}) ];
+    };
 in
 {
-  apollo = let
-    install = f: ({ pkgs, ... }: { home.packages = f pkgs; });
-    makeAutostart = name:
-    { config, ... }: {
-      config.home.file.".config/autostart/${name}.desktop".source =
-        "${config.home.path}/share/applications/${name}.desktop";
-    };
-    setStartpage = startpage:
-    { ... }: {
-      programs.firefox.profiles."fz2sm95u.default".settings = {
-        "browser.startup.homepage" = startpage;
-      };
-    };
-    makeBlock = list:
-    { pkgs, lib, ... }: {
-      systemd.user.services.blockserver = {
-        Unit.Description = "Serve a blocklist";
-        Service = {
-          ExecStart = "${pkgs.python3}/bin/python -m http.server 8842 -d ${
+  apollo =
+    let
+      install = f: ({ pkgs, ... }: { home.packages = f pkgs; });
+      makeAutostart = name:
+        { config, ... }: {
+          config.home.file.".config/autostart/${name}.desktop".source =
+            "${config.home.path}/share/applications/${name}.desktop";
+        };
+      setStartpage = startpage:
+        { ... }: {
+          programs.firefox.profiles."fz2sm95u.default".settings = {
+            "browser.startup.homepage" = startpage;
+          };
+        };
+      makeBlock = list:
+        { pkgs, lib, ... }: {
+          systemd.user.services.blockserver = {
+            Unit.Description = "Serve a blocklist";
+            Service = {
+              ExecStart = "${pkgs.python3}/bin/python -m http.server 8842 -d ${
           pkgs.writeTextDir "blocklist" (lib.concatStringsSep "\r\n" list)
           }";
-          Restart = "always";
+              Restart = "always";
+            };
+            Install.WantedBy = [ "default.target" ];
+          };
         };
-        Install.WantedBy = [ "default.target" ];
-      };
-    };
-    setWorkspaceName = name:
-    { pkgs, lib, ... }: {
-      dconf.settings = {
-        "org/gnome/desktop/wm/preferences" = {
-          workspace-names = [ name ]; # use neo
+      setWorkspaceName = name:
+        { pkgs, lib, ... }: {
+          dconf.settings = {
+            "org/gnome/desktop/wm/preferences" = {
+              workspace-names = [ name ]; # use neo
+            };
+          };
         };
-      };
-    };
-    tinkerPages = [
-      "reddit.com"
-      "github.com"
-      "*.ccc.de"
-      "haskell.org"
-      "*.haskell.org"
-      "*.nixos.org"
-      "nixos.org"
-      "matrix.org"
-      "element.io"
-      "youtube.de"
-      "youtube.com"
-      "*.element.io"
-    ];
-    leisurePages = [
-      "zeit.de"
-      "heise.de"
-      "spiegel.de"
-      "xkcd.com"
-      "smbc-comics.com"
-      "tagesschau.de"
-      "welt.de"
-      "ndr.de"
-      "ard.de"
-      "zdf.de"
-      "twitter.com"
-      "chaos.social"
-    ];
-    apolloConfig = name: imports:
-      makeConfig "apollo" (
-        imports ++ [
-          ./roles/arbtt
-          ./roles/zettelkasten.nix
-          ./roles/hoogle.nix
-          ./roles/battery.nix
-          ./roles/mpd.nix
-          ./roles/beets.nix
-          ./roles/mpclient.nix
-          ./roles/on-my-machine.nix
-          ./roles/desktop
-          ./roles/kassandra.nix
-          ./roles/git-sign.nix
-          ./roles/laptop.nix
-          ./roles/mail.nix
-          ./roles/update_tasks.nix
-          ./roles/research.nix
-          ./roles/vdirsyncer.nix
-          ./roles/khard.nix
-          ./roles/khal.nix
-          ./roles/taskwarrior.nix
-          ./roles/taskwarrior-git.nix
-          (makeAutostart "unlock-ssh")
-          (setWorkspaceName name)
-        ]
-      );
-    unrestricted = [
-      ./roles/accounting.nix
-      ./roles/mail-client.nix
-      ./roles/pythia.nix
-      ./roles/tinkering.nix
-      ./roles/chat.nix
-      (setStartpage "https://stats.maralorn.de/d/health-status")
-      (makeBlock [])
-    ];
-  in
+      tinkerPages = [
+        "reddit.com"
+        "github.com"
+        "*.ccc.de"
+        "haskell.org"
+        "*.haskell.org"
+        "*.nixos.org"
+        "nixos.org"
+        "matrix.org"
+        "element.io"
+        "youtube.de"
+        "youtube.com"
+        "*.element.io"
+      ];
+      leisurePages = [
+        "zeit.de"
+        "heise.de"
+        "spiegel.de"
+        "xkcd.com"
+        "smbc-comics.com"
+        "tagesschau.de"
+        "welt.de"
+        "ndr.de"
+        "ard.de"
+        "zdf.de"
+        "twitter.com"
+        "chaos.social"
+      ];
+      apolloConfig = name: imports:
+        makeConfig "apollo" (
+          imports ++ [
+            ./roles/arbtt
+            ./roles/zettelkasten.nix
+            ./roles/hoogle.nix
+            ./roles/battery.nix
+            ./roles/mpd.nix
+            ./roles/beets.nix
+            ./roles/mpclient.nix
+            ./roles/on-my-machine.nix
+            ./roles/desktop
+            ./roles/kassandra.nix
+            ./roles/git-sign.nix
+            ./roles/laptop.nix
+            ./roles/mail.nix
+            ./roles/update_tasks.nix
+            ./roles/research.nix
+            ./roles/vdirsyncer.nix
+            ./roles/khard.nix
+            ./roles/khal.nix
+            ./roles/taskwarrior.nix
+            ./roles/taskwarrior-git.nix
+            (makeAutostart "unlock-ssh")
+            (setWorkspaceName name)
+          ]
+        );
+      unrestricted = [
+        ./roles/accounting.nix
+        ./roles/mail-client.nix
+        ./roles/pythia.nix
+        ./roles/tinkering.nix
+        ./roles/chat.nix
+        (setStartpage "https://stats.maralorn.de/d/health-status")
+        (makeBlock [ ])
+      ];
+    in
     {
       unrestricted = apolloConfig "Unrestricted" unrestricted;
       orga = apolloConfig "Orga" [

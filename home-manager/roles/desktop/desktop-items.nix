@@ -16,15 +16,16 @@ let
   superSimpleDesktopItem = name: simpleDesktopItem name name;
   terminalDesktopItem = name: namedTerminalDesktopItem name name;
 
-in {
+in
+{
   home.packages = map superSimpleDesktopItem [ "kassandra2" "gw2" "chat" ]
     ++ map terminalDesktopItem [
-      "maintenance"
-      "ncmpcpp"
-      "kassandra"
-      "hotkeys"
-      "vim"
-      "select-mode"
-      "unlock-ssh"
-    ];
+    "maintenance"
+    "ncmpcpp"
+    "kassandra"
+    "hotkeys"
+    "vim"
+    "select-mode"
+    "unlock-ssh"
+  ];
 }

@@ -4,7 +4,8 @@ let
     let
       pname = "matrix-commander";
       version = "67a6a89";
-    in python3Packages.buildPythonApplication {
+    in
+    python3Packages.buildPythonApplication {
       name = "${pname}-${version}";
       inherit pname version;
       src = fetchFromGitHub {
@@ -31,4 +32,5 @@ let
         $out/bin/matrix-commander --help > /dev/null
       '';
     };
-in { matrix-commander = self.callPackage package { }; }
+in
+{ matrix-commander = self.callPackage package { }; }

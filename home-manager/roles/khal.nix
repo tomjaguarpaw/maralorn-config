@@ -1,5 +1,6 @@
-{ pkgs, ... }: let
-  calendars = pkgs.privateValue [] "calendars";
+{ pkgs, ... }:
+let
+  calendars = pkgs.privateValue [ ] "calendars";
 in
 {
   home = {

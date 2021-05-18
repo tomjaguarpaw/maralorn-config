@@ -1,5 +1,11 @@
-{ stdenv, lib, grafana, writeScriptBin, symlinkJoin, writeTextFile
-, grafanaPlugins ? { } }:
+{ stdenv
+, lib
+, grafana
+, writeScriptBin
+, symlinkJoin
+, writeTextFile
+, grafanaPlugins ? { }
+}:
 let
   provision = symlinkJoin {
     name = "provision-files";
@@ -47,7 +53,8 @@ let
       })
     ];
   };
-in writeScriptBin "grafana-devel" ''
+in
+writeScriptBin "grafana-devel" ''
   #! ${stdenv.shell}
   set -ex
   DIR=$(mktemp -d)

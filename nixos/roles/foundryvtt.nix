@@ -3,7 +3,8 @@ let
   name = "foundryvtt";
   stateDir = "/var/lib/${name}";
   port = "3333";
-in {
+in
+{
   config = {
     users = {
       groups.${name} = { };

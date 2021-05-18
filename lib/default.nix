@@ -1,7 +1,8 @@
 rec {
   themes = rec {
     default = material-light;
-    material-light = rec { # Matches papercolor
+    material-light = rec {
+      # Matches papercolor
       primary = {
         foreground = "#2e2e2d";
         background = "#eaeaea";

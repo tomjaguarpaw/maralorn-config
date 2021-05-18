@@ -7,7 +7,8 @@ let
     nixpkgs-channel = "nixos-unstable";
     home-manager-channel = "home-manager-master";
   };
-in rec {
+in
+rec {
   hera = nixos-20-09;
   apollo = nixos-20-09;
   cloud = hera;

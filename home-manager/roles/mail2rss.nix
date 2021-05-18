@@ -1,10 +1,11 @@
 { lib, pkgs, config, ... }:
 let
-  mail2rss = pkgs.writeHaskellScript {
-    name = "mail2rss";
-    bins = [ pkgs.notmuch pkgs.mblaze pkgs.isync pkgs.logfeed ];
-    imports = [ "System.Environment (setEnv)" ];
-  } ''
+  mail2rss = pkgs.writeHaskellScript
+    {
+      name = "mail2rss";
+      bins = [ pkgs.notmuch pkgs.mblaze pkgs.isync pkgs.logfeed ];
+      imports = [ "System.Environment (setEnv)" ];
+    } ''
     main = do
        setEnv "NOTMUCH_CONFIG" "${
          config.home.sessionVariables.NOTMUCH_CONFIG or ""
@@ -17,7 +18,8 @@ let
        mbsync "-a"
        notmuch "new" "--quiet"
   '';
-in {
+in
+{
   systemd.user = {
     timers.mail2rss = {
       Timer.OnCalendar = "19:58";

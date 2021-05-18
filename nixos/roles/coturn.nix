@@ -2,25 +2,28 @@
 let
   fqdn = "${config.networking.hostName}.${config.networking.domain}";
   key_dir = config.security.acme.certs."${fqdn}".directory;
-in {
+in
+{
   users.users.turnserver.extraGroups = [ "nginx" ]; # For read access to certs;
-  networking.firewall = let
-    range = [{
-      from = config.services.coturn.min-port;
-      to = config.services.coturn.max-port;
-    }];
-    ports = [
-      config.services.coturn.listening-port
-      config.services.coturn.alt-listening-port
-      config.services.coturn.tls-listening-port
-      config.services.coturn.alt-tls-listening-port
-    ];
-  in {
-    allowedUDPPortRanges = range;
-    allowedTCPPortRanges = range;
-    allowedTCPPorts = ports;
-    allowedUDPPorts = ports;
-  };
+  networking.firewall =
+    let
+      range = [{
+        from = config.services.coturn.min-port;
+        to = config.services.coturn.max-port;
+      }];
+      ports = [
+        config.services.coturn.listening-port
+        config.services.coturn.alt-listening-port
+        config.services.coturn.tls-listening-port
+        config.services.coturn.alt-tls-listening-port
+      ];
+    in
+    {
+      allowedUDPPortRanges = range;
+      allowedTCPPortRanges = range;
+      allowedTCPPorts = ports;
+      allowedUDPPorts = ports;
+    };
   security.acme.certs.${fqdn} = {
     postRun = "systemctl restart coturn.service";
   };

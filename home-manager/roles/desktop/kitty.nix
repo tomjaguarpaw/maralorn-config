@@ -2,10 +2,11 @@
 let
   my-lib = import ../../../lib;
   theme = my-lib.themes.default;
-in {
+in
+{
   home.sessionVariables.TERMINAL = "${pkgs.kitty}/bin/kitty";
   home.packages = [
-    (pkgs.runCommandLocal "fake-gnome-terminal" {} ''
+    (pkgs.runCommandLocal "fake-gnome-terminal" { } ''
       mkdir -p $out/bin
       ln -s ${pkgs.kitty}/bin/kitty $out/bin/gnome-terminal
     '')
