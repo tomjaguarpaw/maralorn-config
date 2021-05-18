@@ -19,7 +19,7 @@ import Say
 import Shh
 import System.Environment
 
-load Absolute ["laminarc", "git"]
+load Absolute ["laminarc", "git", "nix-instantiate"]
 
 repo = "git@hera.m-0.eu:nixos-config"
 
@@ -46,16 +46,18 @@ main = do
   branch <- process <$> lookupEnv "BRANCH"
   jobId <- getEnv "JOB"
   runId <- getEnv "RUN"
+  git "clone" repo "."
+  git "checkout" "branch"
+  (Text.dropAround ('"' ==) . decodeUtf8 . trim -> derivationName) <- nix_instantiate "test.nix" |> captureTrim
   setEnv "LAMINAR_REASON" [i|Building config branch #{branch} for all systems in #{jobId}:#{runId}|]
   say [i|Starting builds of branch #{branch} for all systems.|]
-  mapConcurrently_ (\x -> laminarc ["run", x, [i|BRANCH=#{branch}|]]) jobs
+  concurrently_ (mapConcurrently_ (\x -> laminarc ["run", x, [i|BRANCH=#{branch}|]]) jobs) $ exe "nix-jobs" ["realise", toString derivationName]
   say [i|Builds succeeded.|]
   when (branch == "master") $ do
     say [i|Deploying new config to localhost.|]
     exe "/run/wrappers/bin/sudo" deployCommand
   when (branch == "niv-bump") $ do
     say [i|Merging branch niv-bump into master.|]
-    git "clone" repo "."
     git "checkout" "master"
     git "merge" "origin/niv-bump"
     git "push"
