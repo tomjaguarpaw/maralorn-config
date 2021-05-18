@@ -101,7 +101,7 @@ in
           (builtins.readFile ./test-config.hs);
       in
       pkgs.writeShellScript "test-config" ''
-        PATH=${pkgs.gnutar}/bin:$PATH ${test-config}
+        PATH=${lib.makeBinPath [ pkgs.gnutar pkgs.nix pkgs.laminar]}:$PATH ${test-config}
       '';
     "bump-config.run" = pkgs.writeHaskell "bump-config"
       {
