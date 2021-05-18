@@ -1,5 +1,5 @@
 { pkgs, config, lib, ... }: {
-  imports = [ ../../common ./admin.nix ];
+  imports = [ ../../common ./admin.nix ../../cachix.nix ];
 
   i18n.defaultLocale = "en_US.UTF-8";
 
