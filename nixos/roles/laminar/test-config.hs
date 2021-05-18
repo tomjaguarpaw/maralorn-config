@@ -49,7 +49,7 @@ main = do
   jobId <- getEnv "JOB"
   runId <- getEnv "RUN"
   git "clone" repo "."
-  git "checkout" "branch"
+  git "checkout" branch
   (Text.dropAround ('"' ==) . decodeUtf8 . trim -> derivationName) <- nix_instantiate "test.nix" |> captureTrim
   setEnv "LAMINAR_REASON" [i|Building config branch #{branch} for all systems in #{jobId}:#{runId}|]
   say [i|Starting builds of branch #{branch} for all systems.|]
