@@ -5,5 +5,5 @@ let
   nvd = import pkgs.sources.nvd { inherit pkgs; };
 in
 {
-  home.activation.report-changes = dag.entryAnywhere "${nvd}/bin/nvd $oldGenPath $newGenPath";
+  home.activation.report-changes = dag.entryAnywhere "${nvd}/bin/nvd diff $oldGenPath $newGenPath";
 }
