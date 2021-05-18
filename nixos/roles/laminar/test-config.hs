@@ -7,12 +7,14 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TupleSections #-}
+{-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# OPTIONS_GHC -Wall -Werror -Wno-missing-signatures -Wno-type-defaults -Wno-orphans #-}
 
 import Control.Concurrent.Async
 import Data.String.Interpolate
 import Data.Text (stripPrefix)
+import qualified Data.Text as Text
 import Language.Haskell.TH.Syntax
 import Relude
 import Say
