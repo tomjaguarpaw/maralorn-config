@@ -17,6 +17,6 @@ in
         oldSystem <- readlink "-f" "/run/current-system" |> captureTrim
         nixos_rebuild (paths ++ ["switch"] ++ fmap toString args) &!> StdOut |> nom
         newSystem <- readlink "-f" "/run/current-system" |> captureTrim
-        nvd oldSystem newSystem
+        nvd "diff" oldSystem newSystem
   '';
 }
