@@ -17,10 +17,10 @@
         "homepage": "",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "01ec2aaefeeed45764841cf42e1de56e01209e66",
-        "sha256": "0bjmqyv2jpgi5nrva7lyaxj4qwxpfpckrimknixcfwg3jh90fp6f",
+        "rev": "91450f23ce658bd529ed6d79b599f0766fc3b71c",
+        "sha256": "1nb2s05ww7adli1iwk4d16l8xqxm6nm237by3z6ssr317fvplwbk",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/01ec2aaefeeed45764841cf42e1de56e01209e66.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/91450f23ce658bd529ed6d79b599f0766fc3b71c.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "kassandra": {
@@ -50,10 +50,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "7974217f94c2970026c411d9234dbb47e93a7306",
-        "sha256": "0hh91i4zk74g1lrk11x62kdnvn5435nw1jnhkyk3yw4ck4f2qv8d",
+        "rev": "52090c613ad854abb824dcbba20e19bfa3890e91",
+        "sha256": "08ckikizpya76b1vmaglkh4aqh661h3r2qzss69106amqmvwl9i6",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/7974217f94c2970026c411d9234dbb47e93a7306.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/52090c613ad854abb824dcbba20e19bfa3890e91.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
@@ -93,10 +93,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "6a5c85e92620368a1503abec60dcabb684a3dbe9",
-        "sha256": "14kidjyxrjsgz81rx6rwiwxvwxhxmb0d7s7vh9kdw4hpj8yvxl0b",
+        "rev": "e3f825bdc2132c3534c583cf332d0a091458b723",
+        "sha256": "0izp57nv8z52cwq7n4a3zgn0pp6j85svr0zscpa4dckl19dx842d",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/6a5c85e92620368a1503abec60dcabb684a3dbe9.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/e3f825bdc2132c3534c583cf332d0a091458b723.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nvd": {
