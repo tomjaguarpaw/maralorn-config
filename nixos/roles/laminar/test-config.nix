@@ -1,6 +1,7 @@
 { pkgs, lib, config, ... }:
 let
-  bins = [ pkgs.nix pkgs.laminar ];
+  bins = lib.attrValues { inherit (pkgs) git nix niv gnutar gzip openssh laminar; };
+  standardPath = lib.makeBinPath bins;
   imports = [ "Control.Exception (onException)" ];
   haskellBody = name: drv: ''
     main = do
@@ -35,10 +36,9 @@ let
       haskellBody "home"
         ''paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname]''
     );
-  path = [ pkgs.git pkgs.nix pkgs.gnutar pkgs.gzip pkgs.openssh pkgs.laminar ];
   common = ''
     set -e
-    export PATH=${lib.makeBinPath path}:$PATH
+    export PATH=${standardPath}:$PATH
     export NIX_PATH="/etc/nix-path:nixos-config=/etc/nixos/configuration.nix"
   '';
   checkout = ''
@@ -94,19 +94,19 @@ in
               HOMES = lib.concatStringsSep " " homes;
               SYSTEMS = lib.concatStringsSep " " systems;
               DEPLOY = deployCommand;
-              PATH = "${lib.makeBinPath [ pkgs.laminar pkgs.git pkgs.nix pkgs.gnutar ]}:$PATH";
+              PATH = "${standardPath}:$PATH";
             };
             ghcArgs = [ "-threaded" ];
           }
           (builtins.readFile ./test-config.hs);
       in
       pkgs.writeShellScript "test-config" ''
-        FLAGS="" PATH=${lib.makeBinPath [ pkgs.gnutar pkgs.nix pkgs.laminar]}:$PATH ${test-config}
+        FLAGS="" PATH=${standardPath}:$PATH ${test-config}
       '';
     "bump-config.run" = pkgs.writeHaskell "bump-config"
       {
         libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
-        ghcEnv.PATH = "${lib.makeBinPath [ pkgs.git pkgs.niv pkgs.nix ]}:$PATH";
+        ghcEnv.PATH = "${standardPath}:$PATH";
         ghcArgs = [ "-threaded" ];
       }
       (builtins.readFile ./bump-config.hs);
