@@ -109,7 +109,7 @@ in
     };
   };
   boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };
-  systemd.tmpfiles.rules = [ "Z /media 0750 maralorn nginx - -" ];
+  systemd.tmpfiles.rules = [ "Z /media 0770 maralorn nginx - -" ];
 
   users.users.choreutes = {
     description = "choreutes";
