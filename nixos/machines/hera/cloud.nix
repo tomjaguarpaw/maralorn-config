@@ -192,5 +192,5 @@ in
       v4 = hosts.chor-cloud-intern-v4;
     };
   };
-  users.users.nextcloud.groups = [ "nginx" ];
+  users.users.nextcloud.extraGroups = [ "nginx" ];
 }
