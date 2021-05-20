@@ -184,16 +184,6 @@ in
       host = "chor-cloud:9113";
       container = true;
     }
-    {
-      name = "cloud container";
-      host = "cloud:9100";
-      container = true;
-    }
-    {
-      name = "cloud nginx";
-      host = "cloud:9113";
-      container = true;
-    }
   ];
   containers = {
     chor-cloud = nextcloud-container {
@@ -202,5 +192,5 @@ in
       v4 = hosts.chor-cloud-intern-v4;
     };
   };
-  users.nextcloud.groups = [ "nginx" ];
+  users.users.nextcloud.groups = [ "nginx" ];
 }
