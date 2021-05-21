@@ -35,7 +35,9 @@ self: super: {
     '';
   };
   desktop-pkgs = {
-    inherit (self) lm_sensors xwayland xdg_utils libnotify kassandra kassandra2 shotcut mlt audacity paprefs wl-clipboard;
+    inherit (self) lm_sensors xwayland xdg_utils libnotify kassandra kassandra2 shotcut mlt audacity paprefs wl-clipboard
+      neochat nheko mirage-im
+      ;
     inherit (self.gnomeExtensions) appindicator system-monitor clipboard-indicator emoji-selector sound-output-device-chooser window-is-ready-remover;
     inherit (self.gnome3)
       dconf dconf-editor gnome-tweaks gnome-shell-extensions adwaita-icon-theme
