@@ -111,6 +111,13 @@ purgeUpToEvent token roomId upToTime (eventName, eventTime) =
             (decode . encodeUtf8 . rspBody $ resp)
       )
 
+purgeRoom :: Text -> Text -> IO ()
+purgeRoom token roomID = handleResponse =<< (simpleHTTP . giveToken token) (postRequestWithBody url contentType body)
+ where
+  body = [i|{"room_id":"${roomID}"}|]
+  url = [i|#{apiUrl}/purge_room|]
+  handleResponse = either (\e -> sayErr [i|Could not purge room #{roomID}. Error #{e}|]) (const pass)
+
 processRoom :: Text -> PSQL.Connection -> UTCTime -> Text -> IO ()
 processRoom token conn upToTime roomId = do
   whenJustM (queryLastKeptEvent conn roomId) (purgeUpToEvent token roomId upToTime)
@@ -119,17 +126,32 @@ processRoom token conn upToTime roomId = do
   cat filename |> psql "matrix-synapse"
   rm filename
 
+locallyUnjoinedRoomsQuery = "SELECT r.room_id FROM rooms AS r LEFT JOIN (SELECT room_id FROM local_current_membership WHERE membership = 'join' GROUP BY room_id) AS l ON l.room_id = r.room_id WHERE l.room_id IS NULL"
+largeRoomsQuery = "SELECT q.room_id FROM (select count(*) as numberofusers, room_id FROM current_state_events WHERE type ='m.room.member' AND membership = 'join' GROUP BY room_id) AS q LEFT JOIN room_aliases a ON q.room_id=a.room_id WHERE q.numberofusers > ? ORDER BY numberofusers desc"
+
 main :: IO ()
 main = do
   _ <- missingExecutables
   hSetBuffering stdout LineBuffering
+
   upToTime <- addUTCTime ((-1) * realToFrac daysOld * nominalDay) <$> getCurrentTime
+  let upToTimeStamp = floor . (* 1000) . utcTimeToPOSIXSeconds $ upToTime
+
   conn <- connectPostgreSQL "dbname='matrix-synapse'"
   token <- getToken conn
-  let upToTimeStamp = floor . (* 1000) . utcTimeToPOSIXSeconds $ upToTime
-      queryString = "SELECT q.room_id FROM (select count(*) as numberofusers, room_id FROM current_state_events WHERE type ='m.room.member' GROUP BY room_id) AS q LEFT JOIN room_aliases a ON q.room_id=a.room_id WHERE q.numberofusers > ? ORDER BY numberofusers desc"
-  roomIds <- fromOnly @Text <<$>> query conn queryString (Only minUsersToPurgeRoom)
-  mapM_ (processRoom token conn upToTime) roomIds
+
+  -- Get rooms without locally member and purge them
+  say "Purging obsolete rooms ..."
+  obsoleteRoomIds <- fromOnly @Text <<$>> query conn locallyUnjoinedRoomsQuery ()
+  mapM_ (purgeRoom token) obsoleteRoomIds
+
+  -- Get large rooms and then
+  -- 1. only keep max(last 30 days, 500 events) of history
+  -- 2. compress state events
+  say "Compressing large rooms ..."
+  largeRoomIds <- fromOnly @Text <<$>> query conn largeRoomsQuery (Only minUsersToPurgeRoom)
+  mapM_ (processRoom token conn upToTime) largeRoomIds
+
   say "Pruning remote media ..."
   _ <- simpleHTTP . giveToken token . postRequest $ [i|#{apiUrl}/purge_media_cache/?before_ts=#{upToTimeStamp}|]
   say "Finished"
