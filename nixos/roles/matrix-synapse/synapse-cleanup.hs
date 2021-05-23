@@ -28,12 +28,15 @@ import Database.PostgreSQL.Simple as PSQL (
 import Network.HTTP (
   Header (Header),
   HeaderName (HdrAuthorization),
+  RequestMethod (DELETE),
   Request_String,
-  Response (rspBody),
+  Response (rspBody, rspReason),
   getRequest,
   insertHeaders,
   postRequest,
   postRequestWithBody,
+  rqMethod,
+  rspCode,
   simpleHTTP,
  )
 import Relude
@@ -112,11 +115,13 @@ purgeUpToEvent token roomId upToTime (eventName, eventTime) =
       )
 
 purgeRoom :: Text -> Text -> IO ()
-purgeRoom token roomID = handleResponse =<< (simpleHTTP . giveToken token) (postRequestWithBody url contentType body)
+purgeRoom token roomID = do
+  say [i|Deleting #{roomID}...|]
+  handleResponse =<< (simpleHTTP . giveToken token . \x -> x{rqMethod = DELETE}) (postRequestWithBody url contentType "{}")
  where
-  body = [i|{"room_id":"${roomID}"}|]
-  url = [i|#{apiUrl}/purge_room|]
-  handleResponse = either (\e -> sayErr [i|Could not purge room #{roomID}. Error #{e}|]) (const pass)
+  url = [i|#{apiUrl}/rooms/#{roomID}|]
+  handleResponse = either printErr (\x -> say [i|#{rspCode x}: #{rspReason x}\n#{rspBody x}|])
+  printErr e = sayErr [i|Could not purge room #{roomID}. Error #{e}|]
 
 processRoom :: Text -> PSQL.Connection -> UTCTime -> Text -> IO ()
 processRoom token conn upToTime roomId = do
