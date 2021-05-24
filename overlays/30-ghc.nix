@@ -1,8 +1,7 @@
-self: super:
+final: prev:
 let
-  inherit (super) fetchFromGitHub;
-  unstable = import super.sources.nixos-unstable { };
-  inherit (unstable.haskell.lib) overrideCabal unmarkBroken doJailbreak dontCheck;
+  inherit (prev) ghc haskellPackages;
+  inherit (prev.haskell.lib) overrideCabal unmarkBroken doJailbreak dontCheck;
   makeHaskellScriptPackages = p: {
     inherit (p)
       aeson shh string-interpolate relude replace-megaparsec async say
@@ -20,16 +19,8 @@ let
         hedgehog nix-derivation req
         ;
     } // makeHaskellScriptPackages p;
-  overrides = self: super: {
-    generic-optics = dontCheck (unmarkBroken super.generic-optics);
-  };
-  haskellPackages = unstable.haskellPackages.extend overrides;
-  ghc = haskellPackages.ghc;
 in
 {
-  inherit ghc haskellPackages;
-  cachix = unstable.cachix;
-  nix-output-monitor = unstable.nix-output-monitor;
   myHaskellPackages = makeHaskellPackages haskellPackages;
   myHaskellScriptPackages = makeHaskellScriptPackages haskellPackages;
   ghcWithPackages = ghc.withHoogle (p: builtins.attrValues (makeHaskellPackages p));
