@@ -6,6 +6,12 @@ in
 {
   environment.systemPackages = [ pkgs.matrix-synapse-tools.rust-synapse-compress-state ];
   systemd.services = {
+    # use jemalloc to improve the memory situation with synapse
+    matrix-synapse.environment = {
+      LD_PRELOAD = "${pkgs.jemalloc}/lib/libjemalloc.so";
+      SYNAPSE_CACHE_FACTOR = "1.0";
+      LimitNOFILE = "4096";
+    };
     synapse-cleanup = {
       serviceConfig = {
         ExecStart = pkgs.writeHaskell "synapse-cleanup"
@@ -93,11 +99,11 @@ in
         turn_uris =
           let
             turns = "turns:${config.services.coturn.realm}:${
-          toString config.services.coturn.tls-listening-port
-          }";
+              toString config.services.coturn.tls-listening-port
+              }";
             turn = "turn:${config.services.coturn.realm}:${
-          toString config.services.coturn.listening-port
-          }";
+              toString config.services.coturn.listening-port
+              }";
           in
           [
             "${turns}?transport=udp"
