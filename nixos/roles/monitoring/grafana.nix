@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, utils, ... }:
 let
   heading = name: link: ''<h2><a href=\"${link}\">${name}</a></h2>'';
   badge = src: link: ''<a href=\"${link}\">\n  <img src=\"${src}\">\n</a>'';
@@ -23,8 +23,7 @@ let
   dashboards = pkgs.runCommand "dashboards" { } ''
     mkdir -p $out
     cp ${./grafana-dashboards}/* $out
-    cp ${lib.utils.copyFile "${pkgs.matrix-synapse.src}/contrib/grafana/synapse.json"} $out/
-    substituteInPlace $out/health-status.json --replace '@BADGES@' '${badges}' \
+    substituteInPlace $out/health-status.json --replace '@BADGES@' '${badges}'
   '';
 in
 {
