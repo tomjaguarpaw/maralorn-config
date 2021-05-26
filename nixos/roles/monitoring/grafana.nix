@@ -23,6 +23,7 @@ let
   dashboards = pkgs.runCommand "dashboards" { } ''
     mkdir -p $out
     cp ${./grafana-dashboards}/* $out
+    cp ${lib.utils.copyFile "${pkgs.matrix-synapse.src}/contrib/grafana/synapse.json"} $out/
     substituteInPlace $out/health-status.json --replace '@BADGES@' '${badges}' \
   '';
 in
