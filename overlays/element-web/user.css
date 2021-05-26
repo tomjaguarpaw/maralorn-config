@@ -79,7 +79,7 @@ input[type=text], textarea {
 .mx_RoomSublist_resizeBox  {
 	user-select: none !important;
 }
-	
+
 .mx_LeftPanel.mx_LeftPanel_minimized .mx_LeftPanel_roomListContainer {
 	width: 48px;
 }
