@@ -1,0 +1,196 @@
+/* Basic styles */
+
+body {
+	color: #000;
+	user-select: none !important;
+}
+
+input, textarea {
+	user-select: text !important;
+}
+input[type=text], textarea {
+	cursor: text;
+}
+
+/* App header */
+
+.mx_RoomHeader {
+	background: #efefef;
+	border-bottom: 1px solid #ccc;
+}
+.mx_RoomHeader_buttons {
+	background: transparent;
+}
+
+/* Bottom bar */
+
+.mx_MessageComposer {
+	background: #efefef;
+	border-top: 1px solid #ccc;
+}
+
+.mx_MessageComposer_avatar img {
+	background-color: transparent;
+}
+
+.mx_BasicMessageComposer_input {
+	background: #fff;
+	padding: 8px !important;
+	border-radius: 8px;
+}
+
+/* Left bars */
+
+.mx_SpacePanel_spaceTreeWrapper {
+	background: transparent;
+	padding: 0 !important;
+}
+
+.mx_LeftPanel,
+.mx_SpacePanel {
+	background: #EFEFEF !important;
+}
+.mx_LeftPanel > * {
+	background: transparent !important;
+}
+.mx_LeftPanel .mx_LeftPanel_roomListContainer {
+	backdrop-filter: none;
+}
+
+.mx_SpacePanel {
+	border-right: 1px solid #ccc;
+}
+
+.mx_SpacePanel_toggleCollapse,
+.mx_SpacePanel li > div {
+	padding: 0;
+	margin: 0 !important;
+}
+
+.mx_LeftPanel .mx_LeftPanel_roomListContainer .mx_LeftPanel_filterContainer {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.mx_LeftPanel .mx_LeftPanel_roomListContainer .mx_LeftPanel_userHeader {
+	padding: 12px 0 !important;
+}
+
+.mx_RoomSublist_resizeBox  {
+	user-select: none !important;
+}
+	
+.mx_LeftPanel.mx_LeftPanel_minimized .mx_LeftPanel_roomListContainer {
+	width: 48px;
+}
+
+.mx_RoomTile.mx_RoomTile_selected {
+	background-color: #308CC6;
+	border-radius: 8px;
+}
+.mx_DecoratedRoomAvatar_icon {
+	background: #fff !important;
+	margin: 2px !important;
+	border: 2px solid #fff;
+}
+
+.mx_RoomSublist_resizeBox {
+	overflow: initial !important;
+}
+
+
+.mx_SpaceButton_narrow {
+	position: relative;
+}
+
+.mx_SpaceButton_narrow > .mx_SpaceButton_toggleCollapse {
+	width: 10px !important;
+	height: 12px !important;
+	border-radius: 4px;
+	border: 1px solid #ccc !important;
+	background-color: #efefef !important;
+	position: absolute;
+	bottom: 0px;
+	right:  0px;
+	z-index: 10;
+	-webkit-mask-image: unset !important;
+	mask-image: unset !important;
+	transform: unset !important;
+}
+.mx_SpaceButton_narrow > .mx_SpaceButton_toggleCollapse::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 5px;
+	height: 5px;
+	display: block;
+	border-top: 2px solid #ccc;
+	border-right: 2px solid #ccc;
+	transform:  translateX(-3px) translateY(2px) rotate(45deg);
+}
+
+.mx_SpaceButton_selectionWrapper {
+}
+.mx_SpaceButton_active .mx_SpaceButton_selectionWrapper {
+	border-radius: 8px !important;
+	border-color: #308cc6 !important;
+	background: #308cc6 !important;
+}
+.mx_SpaceButton_active .mx_SpaceButton_selectionWrapper > img {
+	border-radius: 5px !important;;
+}
+.mx_SpaceButton_selectionWrapper > img {
+	border-radius: 6px !important;
+	height: 32px !important;
+	width: 32px !important;
+	position: relative;
+}
+
+.mx_ResizeHandle:hover {
+	background: #cccccc;
+}
+
+.mx_ResizeHandle {
+	background: #cccc;
+	width: 1px !important;
+	padding: 0 !important;
+	margin: 0;
+	margin-right: 0 !important;
+}
+
+/* Messages view */
+
+.mx_RoomView_MessageList {
+	user-select: text !important;
+	padding: 0;
+	padding-left: 2px;
+}
+
+.mx_RoomView_messageListWrapper {
+	/* Ensures read state is trackable */
+	padding-bottom: 2px;
+}
+
+.mx_WhoIsTypingTile {
+	border-top: 1px solid #ccc;
+	background: #efefef;
+	padding: 0;
+	position: relative;
+	top: 2px; /* See .mx_RoomView_messageListWrapper */
+}
+
+.mx_IRCLayout .mx_EventTile .mx_MessageTimestamp {
+	width: auto;
+}
+
+.mx_EventTile_content {
+	margin-right: initial;
+}
+
+.mx_MImageBody_thumbnail_container {
+	max-height: 64px !important;
+}
+.mx_MImageBody_thumbnail {
+	width: auto;
+}
