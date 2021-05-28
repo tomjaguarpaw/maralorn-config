@@ -63,8 +63,7 @@ in
     #  username = "maralorn";
     #  token = pkgs.privateValue "" "factorio";
     #};
-    inherit (pkgs) #steam minetest 
-      minecraft;
+    inherit (pkgs) steam minecraft;
     inherit gw2run gw2setup wine gw2installdxvk;
   };
 }
