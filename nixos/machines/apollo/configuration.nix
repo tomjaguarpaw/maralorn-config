@@ -65,6 +65,7 @@ in
   };
 
   services = {
+    teamviewer.enable = true;
     fwupd.enable = true;
     upower.enable = true;
     printing = {
