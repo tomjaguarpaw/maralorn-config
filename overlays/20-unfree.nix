@@ -5,5 +5,6 @@ let
     import self.sources.nixos-unstable { config.allowUnfree = true; };
 in
 {
-  inherit (unfree) discord factorio steam zoom-us skypeforlinux google-chrome minecraft;
+  inherit (unfree) discord factorio zoom-us skypeforlinux google-chrome minecraft;
+  inherit (unstableUnfree) steam;
 }
