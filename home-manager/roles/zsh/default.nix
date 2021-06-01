@@ -17,15 +17,6 @@
       plugins = [ "colored-man-pages" ];
     };
     plugins = [
-      #{
-      #name = "titles";
-      #src = pkgs.fetchFromGitHub {
-      #owner = "jreese";
-      #repo = "zsh-titles";
-      #rev = "b7d46d7";
-      #sha256 = "0rca9a22vz11pnkks5vlspfnmd3m1s38hz901gvgfa39ch3va9ad";
-      #};
-      #}
       {
         name = "auto-notify";
         src = pkgs.fetchFromGitHub {
