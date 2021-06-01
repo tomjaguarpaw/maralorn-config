@@ -86,13 +86,15 @@
     };
     htop = {
       enable = true;
-      hideThreads = true;
-      hideUserlandThreads = true;
-      highlightBaseName = true;
-      shadowOtherUsers = true;
-      showProgramPath = false;
-      treeView = true;
-      sortKey = "USER";
+      settings = {
+        hide_threads = true;
+        hide_userland_threads = true;
+        highlight_base_name = true;
+        shadow_other_users = true;
+        show_program_path = false;
+        tree_view = true;
+        sort_key = "USER";
+      };
     };
     ssh = {
       controlMaster = "auto";
