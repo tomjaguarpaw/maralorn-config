@@ -13,6 +13,18 @@
 
   programs = {
     home-manager.enable = true;
+    nix-index = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+    exa = {
+      enable = true;
+      enableAliases = true;
+    };
+    lazygit = {
+      settings.gui.theme.lightTheme = true;
+      enable = true;
+    };
     direnv = {
       enable = true;
       enableZshIntegration = true;
