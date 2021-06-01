@@ -4,7 +4,7 @@ let
   configPath = "${config.home.homeDirectory}/git/config";
 in
 {
-
+  services.syncthing.tray.enable = true;
   home.packages = builtins.attrValues rec {
     zoom = pkgs.zoom-us.overrideAttrs (old: {
       postFixup = old.postFixup + ''
