@@ -68,7 +68,7 @@ in
           activateMode
           pkgs.ncurses
           pkgs.sway
-          pkgs.gnome3.gnome-session
+          pkgs.gnome.gnome-session
         ];
       } ''
       main = do
@@ -82,7 +82,7 @@ in
         ignoreFailure $ gnome_session_quit "--no-prompt"
     '';
 
-    inherit (pkgs.gnome3) nautilus;
+    inherit (pkgs.gnome) nautilus;
     inherit (pkgs.xorg) xbacklight;
     inherit (pkgs)
       # web

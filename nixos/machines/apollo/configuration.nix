@@ -127,9 +127,9 @@ in
         };
         gdm.enable = true;
       };
-      desktopManager.gnome3.enable = true;
+      desktopManager.gnome.enable = true;
     };
-    gnome3 = {
+    gnome = {
       evolution-data-server.enable = lib.mkForce false;
       gnome-keyring.enable = lib.mkForce false;
       at-spi2-core.enable = lib.mkForce false;

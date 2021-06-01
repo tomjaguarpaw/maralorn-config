@@ -39,7 +39,7 @@ self: super: {
       nheko
       ;
     inherit (self.gnomeExtensions) appindicator system-monitor clipboard-indicator emoji-selector sound-output-device-chooser window-is-ready-remover;
-    inherit (self.gnome3)
+    inherit (self.gnome)
       dconf dconf-editor gnome-tweaks gnome-shell-extensions adwaita-icon-theme
       gnome-session
       ;
