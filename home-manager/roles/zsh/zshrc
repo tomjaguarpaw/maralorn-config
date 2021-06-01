@@ -52,7 +52,6 @@ alias s='sudo -A systemctl'
 alias g='lazygit'
 alias u='systemctl --user'
 alias m=man
-alias ls='exa -lh --git'
 
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
