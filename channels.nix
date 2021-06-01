@@ -1,4 +1,8 @@
 let
+  nixos-21-05 = {
+    nixpkgs-channel = "nixos-21.05";
+    home-manager-channel = "home-manager-21.05";
+  };
   nixos-20-09 = {
     nixpkgs-channel = "nixos-20.09";
     home-manager-channel = "home-manager-20.09";
@@ -10,6 +14,6 @@ let
 in
 rec {
   hera = nixos-20-09;
-  apollo = nixos-20-09;
+  apollo = nixos-21-05;
   chor-cloud = hera;
 }
