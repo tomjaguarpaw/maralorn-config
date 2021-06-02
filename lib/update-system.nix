@@ -6,7 +6,7 @@ in
   update-system = pkgs.writeHaskellScript
     {
       name = "update-system";
-      bins = [ nixos-rebuild pkgs.nix-output-monitor (import pkgs.sources.nvd { inherit pkgs; }) ];
+      bins = [ nixos-rebuild pkgs.nix-output-monitor pkgs.nvd ];
     } ''
     main = do
         paths <- myNixPath "${configPath}"
