@@ -13,7 +13,7 @@ let
   };
 in
 rec {
-  hera = nixos-20-09;
+  hera = nixos-21-05;
   apollo = nixos-21-05;
   chor-cloud = hera;
 }
