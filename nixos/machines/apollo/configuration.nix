@@ -19,6 +19,7 @@ in
     ../../roles/standalone
     vpn
   ];
+  systemd.services.lenovo_fix.path = [ pkgs.kmod ];
 
   networking = {
     hostName = "apollo";
