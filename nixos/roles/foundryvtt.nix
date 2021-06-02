@@ -11,6 +11,7 @@ in
       users.${name} = {
         group = name;
         home = stateDir;
+        isSystemUser = true;
       };
     };
     systemd.services.${name} = {

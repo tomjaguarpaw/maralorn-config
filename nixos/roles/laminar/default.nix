@@ -85,6 +85,7 @@ in
       users.laminar = {
         group = "laminar";
         home = stateDir;
+        isSystemUser = true;
       };
     };
     environment.systemPackages = [ pkgs.laminar ];
