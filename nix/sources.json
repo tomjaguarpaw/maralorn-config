@@ -1,16 +1,4 @@
 {
-    "home-manager-20.09": {
-        "branch": "release-20.09",
-        "description": "Manage a user environment using Nix",
-        "homepage": "",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "49706878e1580d796cc99b63574310405935113f",
-        "sha256": "07f903ij0czyhly8kvwjazvz3s6kflxzh5fs6j8781lkxsy47i9f",
-        "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/49706878e1580d796cc99b63574310405935113f.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "home-manager-21.05": {
         "branch": "release-21.05",
         "description": "Manage a user environment using Nix",
@@ -21,18 +9,6 @@
         "sha256": "1w7qxjibrjlqi7l293pnxxww1wxsq46wf3xbcpibys6g165s05f4",
         "type": "tarball",
         "url": "https://github.com/nix-community/home-manager/archive/ab64dc32493996c24607eab2cae6663466ddfb8a.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "home-manager-master": {
-        "branch": "master",
-        "description": "Manage a user environment using Nix",
-        "homepage": "",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "2a4ab0d891a59fd3a0fc09e9805aad5a8f82dfac",
-        "sha256": "1szil3m4k2mrpmqimy5ykgba9ls4j7iai0q817r29wnyh3py5m58",
-        "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/2a4ab0d891a59fd3a0fc09e9805aad5a8f82dfac.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "kassandra": {
@@ -56,18 +32,6 @@
         "rev": "efb3e962f7ce7e685e72bc67d9835e501c047e2a",
         "type": "git"
     },
-    "nixos-20.09": {
-        "branch": "nixos-20.09",
-        "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
-        "homepage": null,
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "38fce8ec004b3e61c241e3b64c683f719644f350",
-        "sha256": "12azgdf3zihlxqiw33dx0w9afhgzka8pqha4irp7sn0jgka0zyxs",
-        "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/38fce8ec004b3e61c241e3b64c683f719644f350.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "nixos-21.05": {
         "branch": "nixos-21.05",
         "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
@@ -86,10 +50,10 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "d38958a6aa5bdbf3239f26a04689f3d9ae7da0c0",
-        "sha256": "04s224x3fhmglaf97c6bsld1r29z33gr92w7vb44fkgzajb24kvk",
+        "rev": "b2186d6c3cdc58fb3a8def0f608bcae61138cc6f",
+        "sha256": "1faln5gvzavhgbd2s5psyvch5fx0mfxzxq5cn2dfc3f7vap2lxzd",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/d38958a6aa5bdbf3239f26a04689f3d9ae7da0c0.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/b2186d6c3cdc58fb3a8def0f608bcae61138cc6f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
@@ -110,24 +74,6 @@
         "type": "tarball",
         "url": "https://github.com/NixOS/nixpkgs/archive/6933d068c5d2fcff398e802f7c4e271bbdab6705.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "nixpkgs-master": {
-        "branch": "master",
-        "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
-        "homepage": null,
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "de7e0f7dee2deeda620e0c940362e2e63ad5f6bf",
-        "sha256": "0zw3i0l90wiz8chlalk43w25189zqx5nk2k6gb6p2d2hqv4g4fpd",
-        "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/de7e0f7dee2deeda620e0c940362e2e63ad5f6bf.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "nvd": {
-        "branch": "master",
-        "repo": "https://gitlab.com/khumba/nvd.git",
-        "rev": "1e6e419be37fca2748f73b084962849692d7d77c",
-        "type": "git"
     },
     "obelisk": {
         "branch": "master",
