@@ -1,3 +1,11 @@
+.mx_NotificationBadge_dot {
+   display: none !important;
+}
+
+.mx_RoomTile_nameHasUnreadEvents {
+   font-weight: normal !important;
+}
+
 /* Basic styles */
 
 body {
