@@ -83,22 +83,6 @@ in
           Configuration options should match those described in
           <link xlink:href="https://github.com/tulir/mautrix-signal/blob/master/mautrix_signal/example-config.yaml">
           example-config.yaml</link>.
-          </para>
-
-          <para>
-          Secret tokens should be specified using <option>environmentFile</option>
-          instead of this world-readable attribute set.
-        '';
-      };
-
-      environmentFile = mkOption {
-        type = types.nullOr types.path;
-        default = null;
-        description = ''
-          File containing environment variables to be passed to the mautrix-signal service,
-          in which secret tokens can be specified securely by defining values for
-          <literal>MAUTRIX_SIGNAL_APPSERVICE_AS_TOKEN</literal>,
-          <literal>MAUTRIX_SIGNAL_APPSERVICE_HS_TOKEN</literal>,
         '';
       };
 
@@ -113,6 +97,19 @@ in
   };
 
   config = mkIf cfg.enable {
+    services.postgresql =
+      {
+        ensureDatabases = [ "mautrix-signal" ];
+        ensureUsers = [
+          {
+            name = "mautrix-signal";
+            ensurePermissions = {
+              "DATABASE \"mautrix-signal\"" = "ALL PRIVILEGES";
+            };
+          }
+        ];
+      };
+    services.matrix-synapse.app_service_config_files = [ registrationFile ];
     systemd.services.mautrix-signal = {
       description = "Mautrix-Signal, a Matrix-Signal hybrid puppeting/relaybot bridge.";
 
@@ -121,26 +118,41 @@ in
       after = [ "network-online.target" "signald.target" ];
 
       preStart = ''
-        # Not all secrets can be passed as environment variable (yet)
-        [ -f ${settingsFile} ] && rm -f ${settingsFile}
         old_umask=$(umask)
-        umask 0277
-        ${pkgs.envsubst}/bin/envsubst \
-          -o ${settingsFile} \
-          -i ${settingsFileUnsubstituted}
-        umask $old_umask
+        makeSettingsFile () {
+          tempjson=$(${pkgs.coreutils}/bin/mktemp)
+          ${pkgs.yq}/bin/yq . '${registrationFile}' > "$tempjson"
+          [ -f ${settingsFile} ] && rm -f ${settingsFile}
+          umask 0277
+          ${pkgs.jq}/bin/jq '.[0] * { appservice : { as_token: .[1].as_token, hs_token: .[1].hs_token }}' \
+            -s '${settingsFileUnsubstituted}' $tempjson > '${settingsFile}'
+          rm $tempjson
+          umask $old_umask
+        }
 
-        # generate the appservice's registration file if absent
-        if [ ! -f '${registrationFile}' ]; then
+        if [ -f '${registrationFile}' ]; then
+          makeSettingsFile
+        else
+          umask 0277
+          cp '${settingsFileUnsubstituted}' '${settingsFile}'
+          umask 0077
+          # generate the appservice's registration file if absent
           ${pkgs.mautrix-signal}/bin/mautrix-signal \
             --generate-registration \
-            --base-config='${pkgs.mautrix-signal}/${pkgs.mautrix-signal.pythonModule.sitePackages}/mautrix_signal/example-config.yaml' \
             --config='${settingsFile}' \
-            --registration='${registrationFile}'
+            --registration='${registrationFile}' \
+            -n
+          umask $old_umask
+          makeSettingsFile
+        fi
+        # Allow synapse access to the registration
+        if ${getBin pkgs.glibc}/bin/getent group matrix-synapse > /dev/null; then
+          chgrp matrix-synapse ${registrationFile}
+          chmod g+r ${registrationFile}
         fi
       '';
 
-      serviceConfig = {
+      serviceConfig = rec {
         Type = "simple";
         Restart = "always";
 
@@ -149,13 +161,21 @@ in
         ProtectKernelTunables = true;
         ProtectKernelModules = true;
         ProtectControlGroups = true;
+        User = "mautrix-signal";
+        Group = "mautrix-signal";
 
-        DynamicUser = true;
+        CapabilityBoundingSet = [ "CAP_CHOWN" ];
+        AmbientCapabilities = CapabilityBoundingSet;
+        NoNewPrivileges = true;
+
+        LockPersonality = true;
+        RestrictRealtime = true;
+
         SupplementaryGroups = [ "signald" ];
         BindPaths = "/var/lib/signald";
         StateDirectory = baseNameOf dataDir;
+        StateDirectoryMode = "711";
         UMask = 0023;
-        EnvironmentFile = cfg.environmentFile;
 
         ExecStart = ''
           ${pkgs.mautrix-signal}/bin/mautrix-signal \
@@ -167,6 +187,12 @@ in
       };
 
       restartTriggers = [ settingsFileUnsubstituted ];
+    };
+    users.groups.mautrix-signal = { };
+    users.users.mautrix-signal = {
+      description = "Service user for the Matrix-Signal bridge";
+      group = "mautrix-signal";
+      isSystemUser = true;
     };
   };
 

@@ -13,7 +13,6 @@ in
 
   services.mautrix-signal = {
     enable = true;
-    environmentFile = pkgs.privateFile "mautrix-signal.env";
     settings = {
       homeserver = {
         address = "http://localhost:${builtins.toString synapse-port}";
