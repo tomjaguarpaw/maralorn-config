@@ -25,6 +25,7 @@ in
     ../../roles/laminar
     ../../roles/kassandra-server.nix
     ../../roles/foundryvtt.nix
+    ../../roles/home-assistant
     ./web.nix
     ./mail.nix
     ./boot.nix
