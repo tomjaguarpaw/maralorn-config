@@ -60,7 +60,7 @@
         "branch": "master",
         "ref": "master",
         "repo": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver",
-        "rev": "2ca02f32c828c3b1dd27f3e290102b283edfdd26",
+        "rev": "49074b7835c6d40846cb23953c04a03e1d2a4a9e",
         "type": "git"
     },
     "nixos-unstable": {
