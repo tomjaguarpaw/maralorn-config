@@ -33,8 +33,7 @@ in
         #fi
         #fi
         #'';
-        ExecStart =
-          "${pkgs.nodejs}/bin/node ${stateDir}/app/resources/app/main.js --port=${port} --dataPath=${stateDir}/data";
+        ExecStart = "${pkgs.nodejs}/bin/node ${stateDir}/app/resources/app/main.js --port=${port} --dataPath=${stateDir}/data";
         User = name;
       };
     };
