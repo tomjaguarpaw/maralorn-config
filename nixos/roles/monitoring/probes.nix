@@ -23,9 +23,10 @@ let
         target_label = "instance";
       }
       {
+        # The blackbox exporter's real hostname:port.
         target_label = "__address__";
         replacement = "localhost:9115";
-      } # The blackbox exporter's real hostname:port.
+      }
     ];
   };
 in
@@ -45,15 +46,27 @@ in
       (makeProbe "http" [ "hera.m-0.eu:80" ])
       (makeProbe "https" [
         "https://hera.m-0.eu"
-        "https://blog.maralorn.de"
-        "https://www.mathechor.de"
+
         "https://cloud.mathechor.de"
+        "https://mathechor.de"
+        "https://www.mathechor.de"
+
+        "https://alerts.maralorn.de"
+        "https://blog.maralorn.de"
+        "https://ci.maralorn.de"
         "https://cloud.maralorn.de"
         "https://element.maralorn.de"
+        "https://fdroid.maralorn.de"
+        "https://home.maralorn.de"
+        "https://matrix.maralorn.de"
+        "https://monitoring.maralorn.de"
+        "https://rpg.maralorn.de"
+        "https://stats.maralorn.de"
+        "https://tasks.maralorn.de"
+
         "https://wiki.vocalensemble-darmstadt.de"
         "https://cloud.vocalensemble-darmstadt.de"
         "https://www.vocalensemble-darmstadt.de"
-        "https://matrix.maralorn.de"
       ])
     ];
   };
