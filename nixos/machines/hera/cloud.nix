@@ -110,6 +110,7 @@ let
         postgresql = {
           enable = true;
           package = pkgs.postgresql_12;
+          ensureDatabases = [ "nextcloud" ];
         };
       };
     };
@@ -137,6 +138,7 @@ in
   };
   services = {
     nextcloud = nextcloudConf mainHostName;
+    postgresql.ensureDatabases = [ "nextcloud" ];
     nginx = {
       enable = true;
       virtualHosts."cloud.maralorn.de" = {

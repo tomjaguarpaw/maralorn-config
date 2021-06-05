@@ -73,6 +73,7 @@ in
       enable = true;
       package = pkgs.postgresql_12;
       settings = import ./postgres-tuning.nix;
+      ensureDatabases = [ "matrix-synapse" ];
     };
 
     # Synapse

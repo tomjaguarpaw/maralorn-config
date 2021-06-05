@@ -52,15 +52,12 @@ in
   nixpkgs.config.android_sdk.accept_license = true;
   systemd.services = {
     pg_backup =
-      let
-        name = "matrix-synapse";
-      in
       {
-        script = ''
-          ${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}
-        '';
+        script = lib.concatMapStringsSep "\n"
+          (name: "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}")
+          config.services.postgresql.ensureDatabases;
         serviceConfig = {
-          User = name;
+          User = "postgres";
           Type = "oneshot";
         };
       };
@@ -74,7 +71,6 @@ in
           set -x
           set +e
           ${start} pg_backup
-          ${start} nextcloud-pg-backup
           ${container} chor-cloud -- ${start} nextcloud-pg-backup
           ${lib.concatMapStringsSep "\n" (name: "${start} ${name}") backupJobNames}
           ${pkgs.coreutils}/bin/rm -rf /var/lib/db-backup-dumps/*
