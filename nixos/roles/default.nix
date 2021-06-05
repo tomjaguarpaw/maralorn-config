@@ -20,6 +20,8 @@
       );
   };
 
+  boot.tmpOnTmpfs = true;
+
   security.acme = {
     email = "security@maralorn.de";
     acceptTerms = true;
