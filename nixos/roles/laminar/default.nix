@@ -90,12 +90,11 @@ in
     };
     environment.systemPackages = [ pkgs.laminar ];
     systemd.services.laminar = {
-      enable = true;
+      wantedBy = [ "multi-user.target" ];
       description = "Laminar continuous integration service";
       serviceConfig = {
         WorkingDirectory = stateDir;
         ExecStart = "${pkgs.laminar}/bin/laminard";
-        DynamicUser = false;
         User = "laminar";
         StateDirectory = "laminar";
         LimitNOFILE = "1024000";

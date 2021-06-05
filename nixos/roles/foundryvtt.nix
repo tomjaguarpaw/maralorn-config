@@ -19,28 +19,27 @@ in
 {
   config = {
     systemd.services.${name} = {
-      enable = true;
+      wantedBy = [ "multi-user.target" ];
       description = "Foundryvtt server";
+      preStart = ''
+        mkdir -p ${dataDir}
+        if [[ -f "${configFile}" ]]; then
+          tempfile=$(mktemp)
+          cp "${configFile}" "$tempfile"
+          ${pkgs.jq}/bin/jq ".[0] * .[1]" -s "$tempfile" "${declarativeConfigFile}" > "${configFile}"
+        else
+          cp "${declarativeConfigFile}" "${configFile}"
+        fi
+        if [[ ! -f "${stateDir}/app/resources/app/main.js" ]]; then
+          echo "No ${name} app found. Please download zip from foundryvtt.com and extract to ${stateDir}/app"
+        fi
+      '';
       serviceConfig = {
         StateDirectory = "${name}";
         WorkingDirectory = stateDir;
         DynamicUser = true;
         Restart = "always";
-        ExecStartPre = pkgs.writeShellScript "setup-foundry-vtt" ''
-          uid
-          mkdir -p ${stateDir}/app
-          if [[ -f "${configFile}" ]]; then
-            tempfile=$(mktemp)
-            cp "${configFile}" "$tempfile"
-            ${pkgs.jq}/bin/jq ".[0] * .[1]" -s "$tempfile" "${declarativeConfigFile}" > "${configFile}"
-          else
-            cp "${declarativeConfigFile}" "${configFile}"
-          fi
-          if [[ ! -f "${stateDir}/app/resources/app/main.js" ]]; then
-            echo "No ${name} app found. Please download zip from foundryvtt.com and extract to ${stateDir}/app"
-          fi
-        '';
-        ExecStart = "${pkgs.nodejs}/bin/node ${stateDir}/app/resources/app/main.js --dataPath=${stateDir}/data";
+        ExecStart = "${pkgs.nodejs}/bin/node ${stateDir}/app/resources/app/main.js --dataPath=\"${dataDir}\"";
       };
     };
     services = {
