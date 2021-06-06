@@ -100,19 +100,7 @@ in
         LimitNOFILE = "1024000";
       };
       after = [ "network.target" ];
-      preStart =
-        let
-          linkToPath = path: fileOrDir:
-            (if types.path.check fileOrDir then
-              [ "ln -sT ${fileOrDir} ${path}" ]
-            else
-              [ "mkdir -p ${path}" ] ++ lib.concatLists (lib.mapAttrsToList
-                (dirName: content: linkToPath "${path}/${dirName}" content)
-                fileOrDir));
-          cfgDirContent = pkgs.runCommand "laminar-cfg-dir" { }
-            (lib.concatStringsSep "\n" (linkToPath "$out" cfg.cfgFiles));
-        in
-        "ln -sfT ${cfgDirContent} ${cfgDir}";
+      preStart = "ln -sfT ${pkgs.setToDirectories cfg.cfgFiles} ${cfgDir}";
     };
     services = {
       nginx = {
