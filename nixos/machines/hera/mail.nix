@@ -1,6 +1,7 @@
 { pkgs, config, lib, ... }:
 let
   certPath = "/var/lib/acme/hera.m-0.eu";
+  nonMailboxDomains = [ "lists.maralorn.de" ];
 in
 {
   networking.firewall.allowedTCPPorts = [ 25 143 587 993 ];
@@ -40,8 +41,8 @@ in
       transport = "email2matrix.maralorn.de smtp:[::1]:2525";
       config = {
         # Allow TLSv1 because we need to be able to receive mail from legacy servers.
-        smtpd_tls_protocols = lib.mkForce
-          "TLSv1.3, TLSv1.2, TLSv1.1, TLSv1, !SSLv2, !SSLv3";
+        smtpd_tls_protocols = lib.mkForce "TLSv1.3, TLSv1.2, TLSv1.1, TLSv1, !SSLv2, !SSLv3";
+        virtual_mailbox_domains = lib.mkForce (builtins.toFile "vhosts" (lib.concatStringsSep "\n" (builtins.filter (x: !builtins.elem x nonMailboxDomains) config.mailserver.domains)));
       };
     };
   };
@@ -51,7 +52,7 @@ in
     enableImapSsl = true;
     fqdn = "hera.m-0.eu";
     rewriteMessageId = true;
-    domains = [ "m-0.eu" "maralorn.de" "choreutes.de" "mathechor.de" ];
+    domains = [ "m-0.eu" "maralorn.de" "choreutes.de" "mathechor.de" "lists.maralorn.de" ];
     forwards = pkgs.privateValue { } "mail/forwards";
     loginAccounts = pkgs.privateValue { } "mail/users";
     hierarchySeparator = "/";
