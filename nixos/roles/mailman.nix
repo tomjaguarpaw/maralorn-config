@@ -1,7 +1,7 @@
-{ ... }:
+{ pkgs, lib, ... }:
 let
   hostname = "lists.maralorn.de";
-  admin = "admin@maralorn.de";
+  admin = "malte.brandy@maralorn.de";
 in
 {
   services = {
@@ -11,6 +11,29 @@ in
       serve.enable = true;
       enablePostfix = true;
       siteOwner = admin;
+      settings = {
+        mailman.default_language = "de";
+        "paths.fhs".template_dir = lib.mkForce (pkgs.setToDirectories {
+          site.de = {
+            "list:user:notice:goodbye.txt" = builtins.toFile "goodbye" ''
+              Du erhältst nun keine E-Mails mehr über diese Mailingliste.
+
+              Bei Fragen oder wenn Du doch E-Mails von dieser Liste bekommen möchtest wende Dich an ${admin}.
+            '';
+            "list:member:generic:footer.txt" = builtins.toFile "footer" ''
+              ---
+              Du erhältst diese E-Mail über die Mailingliste "$display_name".
+              Bei Fragen oder wenn Du diese E-Mails nicht mehr bekommen möchtest wende Dich an ${admin}.
+            '';
+
+            "list:user:notice:welcome.txt" = builtins.toFile "welcome" ''
+              Herzlich Willkommen auf der Mailingliste "$display_name".
+
+              Bei Fragen und wenn Du keine E-Mails von dieser Liste mehr bekommen möchtest wende Dich an ${admin}.
+            '';
+          };
+        }).outPath;
+      };
     };
     postfix = {
       relayDomains = [ "hash:/var/lib/mailman/data/postfix_domains" ];
