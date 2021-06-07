@@ -1,5 +1,7 @@
 { pkgs, ... }:
 {
+  imports = [ ./hexa-cards.nix ];
+
   services.home-assistant = {
     enable = true;
     package = pkgs.home-assistant.overrideAttrs (
@@ -44,6 +46,9 @@
               entity = "weather.dwd_darmstadt";
             }
             {
+              type = "custom:sun-card";
+            }
+            {
               type = "picture";
               image = "https://www.dwd.de/DWD/wetter/radar/radfilm_hes_akt.gif";
             }
@@ -55,6 +60,10 @@
                 "sensor.kalliope_battery_level"
                 "sensor.kalliope_battery_state"
               ];
+            }
+            {
+              type = "custom:rmv-card";
+              entity = "sensor.darmstadt_schulstrasse";
             }
           ];
         }
@@ -70,6 +79,13 @@
         proxyPass = "http://[::1]:8123";
         proxyWebsockets = true;
       };
+      locations."/custom/" = {
+        alias = "/run/hass/";
+      };
+      extraConfig = ''
+        proxy_buffering off;
+      '';
+
     };
   };
 
