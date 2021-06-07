@@ -22,7 +22,22 @@
       enableAliases = true;
     };
     lazygit = {
-      settings.gui.theme.lightTheme = true;
+      settings = {
+        customCommands = [
+          {
+            key = "s";
+            command = "git sync";
+            context = "global";
+            subprocess = true;
+          }
+          {
+            key = "s";
+            command = "git sync";
+            context = "files";
+            subprocess = true;
+          }
+        ];
+      };
       enable = true;
     };
     direnv = {
