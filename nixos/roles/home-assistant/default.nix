@@ -10,6 +10,16 @@
     );
     config = {
       default_config = { };
+      sensor = [
+        {
+          platform = "rmvtransport";
+          next_departure = [
+            {
+              station = "3024634";
+            }
+          ];
+        }
+      ];
       weather = [
         {
           platform = "warnwetter";
