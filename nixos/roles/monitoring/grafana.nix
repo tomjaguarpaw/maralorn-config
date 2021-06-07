@@ -33,6 +33,7 @@ in
       enable = true;
       auth.anonymous.enable = true;
       extraOptions = {
+        USERS_DEFAULT_THEME = "light";
         AUTH_BASIC_ENABLED = "false";
         DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH =
           "${dashboards}/health-status.json";
