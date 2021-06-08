@@ -33,10 +33,10 @@ in
       enable = true;
       auth.anonymous.enable = true;
       extraOptions = {
+        SECURITY_ALLOW_EMBEDDING = "true";
         USERS_DEFAULT_THEME = "light";
         AUTH_BASIC_ENABLED = "false";
-        DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH =
-          "${dashboards}/health-status.json";
+        DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH = "${dashboards}/health-status.json";
       };
       provision = {
         enable = true;
