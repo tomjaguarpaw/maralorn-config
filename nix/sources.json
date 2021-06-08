@@ -1,4 +1,16 @@
 {
+    "hexa-nur-packages": {
+        "branch": "master",
+        "description": "My personal NUR repository: [maintainer=@mweinelt] ",
+        "homepage": "",
+        "owner": "mweinelt",
+        "repo": "nur-packages",
+        "rev": "0e816f9438fa9049ffbed03db576948ddf51e419",
+        "sha256": "1zr6dad3d9dc6lq1r1cdrrnpypix3qffjwgvy181ld5f8zg069ir",
+        "type": "tarball",
+        "url": "https://github.com/mweinelt/nur-packages/archive/0e816f9438fa9049ffbed03db576948ddf51e419.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "home-manager-21.05": {
         "branch": "release-21.05",
         "description": "Manage a user environment using Nix",
@@ -69,22 +81,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "1ca6b0a0cc38dbba0441202535c92841dd39d1ae",
-        "sha256": "0mwnlc5v16wm9hqq8k09vry7qzhiy6kp52nn51s33iq4hrx9d364",
+        "rev": "fbfb79400a08bf754e32b4d4fc3f7d8f8055cf94",
+        "sha256": "0pgyx1l1gj33g5i9kwjar7dc3sal2g14mhfljcajj8bqzzrbc3za",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/1ca6b0a0cc38dbba0441202535c92841dd39d1ae.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "hexa-nur-packages": {
-        "branch": "master",
-        "description": "My personal NUR repository: [maintainer=@mweinelt] ",
-        "homepage": "",
-        "owner": "mweinelt",
-        "repo": "nur-packages",
-        "rev": "0e816f9438fa9049ffbed03db576948ddf51e419",
-        "sha256": "1zr6dad3d9dc6lq1r1cdrrnpypix3qffjwgvy181ld5f8zg069ir",
-        "type": "tarball",
-        "url": "https://github.com/mweinelt/nur-packages/archive/0e816f9438fa9049ffbed03db576948ddf51e419.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/fbfb79400a08bf754e32b4d4fc3f7d8f8055cf94.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
