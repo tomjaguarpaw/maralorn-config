@@ -20,25 +20,8 @@ let
       }];
     };
   watchHaskellUnstable = name:
-    watchNixpkgsPackage name "haskell-updates"
-      "nixpkgs/haskell-updates/haskellPackages.${name}.x86_64-linux";
-  watchedHaskellUpdatesPkgs = builtins.attrNames (pkgs.myHaskellPackages) ++ [
-    "jsaddle-warp"
-    "stan"
-    "dependent-sum-template"
-    "universe-dependent-sum"
-    "hnix"
-    "ref-tf"
-    "modern-uri"
-    "network-uri"
-    "github"
-    "cookie"
-    "shelly"
-    "nix-output-monitor"
-    "servant"
-    "cachix"
-    "taffybar"
-  ];
+    watchNixpkgsPackage name "haskell-updates" "nixpkgs/haskell-updates/haskellPackages.${name}.x86_64-linux";
+  watchedHaskellUpdatesPkgs = builtins.attrNames (pkgs.myHaskellPackages) ++ [ "nix-output-monitor" ];
 in
 {
   services.prometheus.scrapeConfigs =
