@@ -21,12 +21,8 @@ let
     };
   watchHaskellUnstable = name:
     watchNixpkgsPackage name "haskell-updates" "nixpkgs/haskell-updates/haskellPackages.${name}.x86_64-linux";
-  watchedHaskellUpdatesPkgs = builtins.attrNames (pkgs.myHaskellPackages) ++ [ "nix-output-monitor" ];
+  watchedHaskellUpdatesPkgs = builtins.attrNames (pkgs.myHaskellPackages);
 in
 {
-  services.prometheus.scrapeConfigs =
-    map watchHaskellUnstable watchedHaskellUpdatesPkgs ++ [
-      (watchNixpkgsPackage "haskell-language-server-toplevel" "haskell-updates"
-        "nixpkgs/haskell-updates/haskell-language-server.x86_64-linux")
-    ];
+  services.prometheus.scrapeConfigs = map watchHaskellUnstable watchedHaskellUpdatesPkgs;
 }
