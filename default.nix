@@ -1,20 +1,2 @@
-{ pkgs ? import (import nix/sources.nix).nixpkgs { } }:
-let
-  haskellPackages = pkgs.haskellPackages;
-  drv = haskellPackages.callCabal2nix "logfeed" ./. { };
-in {
-  shell = haskellPackages.shellFor {
-    withHoogle = true;
-    packages = p: [ drv ];
-    buildInputs = with haskellPackages; [
-      hlint
-      cabal-install
-      brittany
-      pkgs.coreutils
-      pkgs.zlib
-      notmuch
-      hsemail
-    ];
-  };
-  pkg = drv;
-}
+{ pkgs ? import (import nix/sources.nix).nixpkgs {} }:
+pkgs.haskellPackages.callCabal2nix "logfeed" ./. {}
