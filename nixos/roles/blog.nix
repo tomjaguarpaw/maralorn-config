@@ -7,7 +7,7 @@
         enableACME = true;
         locations = {
           "/" = {
-            root = "/var/www/blog";
+            root = "/var/cache/gc-links/blog";
             index = "index.html";
           };
         };
