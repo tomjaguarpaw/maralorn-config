@@ -14,6 +14,7 @@ self: super: {
       tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle vnstat
       entr libargon2 mblaze niv compsize mediainfo asciinema gomuks nix-output-monitor fdroidserver jq cachix
       ;
+    nixFlakes = self.writeShellScriptBin "flaky-nix" ''exec ${self.nixUnstable}/bin/nix --experimental-features "nix-command flakes" "$@"'';
   };
 
   my-home-pkgs = {
