@@ -5,10 +5,11 @@ let
     set -e
     export PATH=${lib.makeBinPath path}:$PATH
     git clone git@localhost:${name} .
-    git show -q
+    git show -q --oneline
     echo "Evaluating nix-expression."
     export FLAGS='--builders @/etc/nix/machines --max-jobs 0'
-    drv=$(readlink -f $(nix-instantiate --add-root ./drv --indirect $FLAGS))
+    nix-instantiate --add-root ./drv --indirect $FLAGS
+    drv=$(readlink -f ./drv)
     echo "Evaluation done."
     nix-jobs realise $drv
     laminarc set "RESULTDRV=$drv"
