@@ -41,7 +41,7 @@
         "branch": "master",
         "ref": "master",
         "repo": "git@hera.m-0.eu:logfeed",
-        "rev": "efb3e962f7ce7e685e72bc67d9835e501c047e2a",
+        "rev": "546d9afefb5c98c43dac572b94bef24b44dac6b5",
         "type": "git"
     },
     "nixos-21.05": {
@@ -81,10 +81,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "fbfb79400a08bf754e32b4d4fc3f7d8f8055cf94",
-        "sha256": "0pgyx1l1gj33g5i9kwjar7dc3sal2g14mhfljcajj8bqzzrbc3za",
+        "rev": "432fc2d9a67f92e05438dff5fdc2b39d33f77997",
+        "sha256": "0npj480pxjzl5vjsbijsn275z48jpqpjp0q5xbwpr3fx6m8lcvr6",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/fbfb79400a08bf754e32b4d4fc3f7d8f8055cf94.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/432fc2d9a67f92e05438dff5fdc2b39d33f77997.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
