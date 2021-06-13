@@ -8,8 +8,7 @@
         locations = {
           "/" = {
             root = "/var/cache/gc-links/blog";
-            index = "index.html";
-            tryFiles = "$uri $uri.html =404";
+            tryFiles = "$uri $uri/index.html $uri.html =404";
           };
         };
         extraConfig = ''
