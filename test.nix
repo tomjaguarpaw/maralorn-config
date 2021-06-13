@@ -8,7 +8,6 @@ in
       hlint.enable = true;
       nixpkgs-fmt.enable = true;
       fourmolu.enable = true;
-      shellcheck.enable = true;
     };
   };
 }
