@@ -11,6 +11,7 @@ let
     (job "kassandra")
     (job "test-config")
     (job "logfeed")
+    (job "blog")
 
     (heading "haskell-taskwarrior" "https://hackage.haskell.org/package/taskwarrior")
     (badge "https://github.com/maralorn/haskell-taskwarrior/actions/workflows/haskell.yml/badge.svg" "https://github.com/maralorn/haskell-taskwarrior/actions")
