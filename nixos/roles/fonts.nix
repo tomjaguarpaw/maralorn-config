@@ -6,7 +6,7 @@
       defaultFonts = {
         monospace = [ "JetBrainsMono Nerd Font" "DejaVu Sans Mono" ];
         sansSerif = [ "B612" "DejaVu Sans" ];
-        serif = [ "Linux Libertine" "DejaVu Serif" ];
+        serif = [ "Libertinus" "DejaVu Serif" ];
       };
     };
     enableDefaultFonts = true;
@@ -14,7 +14,7 @@
     fonts = builtins.attrValues {
       inherit (pkgs)
         nerdfonts# For all my terminal needs.
-        libertine# nice text font
+        libertinus# nice text font
         material-icons# icons in my app
         b612; # sans font, very good for displays
     };
