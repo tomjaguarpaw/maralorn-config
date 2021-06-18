@@ -10,7 +10,7 @@ let
     export FLAGS='--builders @/etc/nix/machines --max-jobs 0'
     if [[ -e "flake.nix" ]]; then
       echo "Flake detected. Using flake.nix"
-      drv=$(${pkgs.nixFlakes}/bin/flaky-nix eval --raw .#defaultPackage.x86_64-linux.drvPath)
+      drv=$(${pkgs.nixFlakes}/bin/flix eval --raw .#defaultPackage.x86_64-linux.drvPath)
     else
       nix-instantiate --add-root ./drv --indirect $FLAGS
       drv=$(readlink -f ./drv)
