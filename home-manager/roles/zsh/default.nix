@@ -7,6 +7,10 @@
       save = 1000000;
       size = 1000000;
     };
+    # Workaround for the limitation that gnome unsets some variables for following sessions (like EDITOR) but __HM_SESS_VARS_SOURCED apparently not.
+    initExtraFirst = ''
+      export __HM_SESS_VARS_SOURCED=""
+    '';
     initExtra = ''
       ${builtins.readFile ./zshrc}
       source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
