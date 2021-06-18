@@ -1,6 +1,6 @@
 self: super: {
   # pkgs assumed to be present on a non nixos host
-  nixFlakes = self.writeShellScriptBin "flaky-nix" ''exec ${self.nixUnstable}/bin/nix --experimental-features "nix-command flakes" --log-format bar-with-logs "$@"'';
+  nixFlakes = self.writeShellScriptBin "flix" ''exec ${self.nixUnstable}/bin/nix --experimental-features "nix-command flakes" --log-format bar-with-logs "$@"'';
   core-system-pkgs = {
     inherit (self)
       gitFull gnumake mkpasswd file wget curl wireguard gnupg mutt bind liboping
