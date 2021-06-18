@@ -1,5 +1,6 @@
 self: super: {
   # pkgs assumed to be present on a non nixos host
+  nixFlakes = self.writeShellScriptBin "flaky-nix" ''exec ${self.nixUnstable}/bin/nix --experimental-features "nix-command flakes" "$@"'';
   core-system-pkgs = {
     inherit (self)
       gitFull gnumake mkpasswd file wget curl wireguard gnupg mutt bind liboping
@@ -13,8 +14,8 @@ self: super: {
       htop tree pwgen borgbackup inotifyTools direnv socat nmap ncdu
       tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle vnstat
       entr libargon2 mblaze niv compsize mediainfo asciinema gomuks nix-output-monitor fdroidserver jq cachix
+      nixFlakes
       ;
-    nixFlakes = self.writeShellScriptBin "flaky-nix" ''exec ${self.nixUnstable}/bin/nix --experimental-features "nix-command flakes" "$@"'';
   };
 
   my-home-pkgs = {
