@@ -5,10 +5,10 @@
         "homepage": "",
         "owner": "mweinelt",
         "repo": "nur-packages",
-        "rev": "74dd27e5b8ca81a916a008a2b56580b9676e8fe4",
-        "sha256": "0nw2d5bip1wivq0d66v9iqxc7vfvh18pks0jgnbap708pbvrd2ma",
+        "rev": "f54ca11721eb14c993d58c31769902dbdf97cfcf",
+        "sha256": "0xcx9bhvlh6cndg3mswzbim1ljgv13zyysfnj3s8zhq6v9b18rlf",
         "type": "tarball",
-        "url": "https://github.com/mweinelt/nur-packages/archive/74dd27e5b8ca81a916a008a2b56580b9676e8fe4.tar.gz",
+        "url": "https://github.com/mweinelt/nur-packages/archive/f54ca11721eb14c993d58c31769902dbdf97cfcf.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager-21.05": {
@@ -50,10 +50,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "246502ae2d5ca9def252abe0ce6363a0f08382a7",
-        "sha256": "18glj62yy0l917092izcby6pdj56yzq8sdh3c525kbf14zqa7q3j",
+        "rev": "bad3ccd099ebe9a8aa017bda8500ab02787d90aa",
+        "sha256": "07ik6rcfpcvj2zch3mzkxwxjs817iysbvsydkm85f14kn7gnyzp5",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/246502ae2d5ca9def252abe0ce6363a0f08382a7.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/bad3ccd099ebe9a8aa017bda8500ab02787d90aa.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
