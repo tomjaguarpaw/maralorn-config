@@ -1,12 +1,6 @@
 { config, pkgs, lib, ... }:
 let
-  locations = {
-    "/" = {
-      extraConfig = ''
-        return 200 "Hello there. I hope you are having a very nice day! If you don't know what to find here, you probably don't care about this domain.";
-      '';
-    };
-  };
+  locations."/".extraConfig = "return 301 https://blog.maralorn.de$request_uri;";
 in
 {
   networking.firewall.allowedTCPPorts = [ 80 443 ];
