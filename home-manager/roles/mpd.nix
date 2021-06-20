@@ -6,8 +6,7 @@
       extraConfig = ''
         audio_output {
               type "pulse"
-              name "Pulseaudio"
-              server "localhost"
+              name "Pipewire"
         }
       '';
     };
