@@ -5,9 +5,17 @@
       virtualHosts."blog.maralorn.de" = {
         forceSSL = true;
         enableACME = true;
+        root = "/var/cache/gc-links/blog";
         locations = {
+          "~* \\.(?:ico|css|gif|jpe?g|png)$" = {
+            extraConfig = ''
+              rewrite ^(.*)\.[\d]+\.(css)$ $1.$2 last;
+              expires 100y;
+              add_header Pragma public;
+              add_header Cache-Control "public";
+            '';
+          };
           "/" = {
-            root = "/var/cache/gc-links/blog";
             tryFiles = "$uri $uri/index.html $uri.html";
             extraConfig = ''
               error_page   404  =  /not-found.html;
