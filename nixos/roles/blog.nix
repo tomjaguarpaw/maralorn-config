@@ -9,11 +9,11 @@
           "/" = {
             root = "/var/cache/gc-links/blog";
             tryFiles = "$uri $uri/index.html $uri.html";
+            extraConfig = ''
+              error_page   404  =  /not-found.html;
+            '';
           };
         };
-        extraConfig = ''
-          error_page   404  =  /not-found.html;
-        '';
       };
     };
   };
