@@ -7,21 +7,21 @@
         enableACME = true;
         root = "/var/cache/gc-links/blog";
         locations = {
-          "~* \\.(?:ico|css|gif|jpe?g|png)$" = {
+          "/static" = {
             extraConfig = ''
-              rewrite ^(.*)\.[\d]+\.(css)$ $1.$2 last;
+              rewrite ^(.*)\.[0-9a-f]+\.(css)$ $1.$2 last;
               expires 100y;
               add_header Pragma public;
               add_header Cache-Control "public";
             '';
           };
           "/" = {
-            tryFiles = "$uri $uri/index.html $uri.html =404";
-            extraConfig = ''
-              error_page   404  =  /not-found.html;
-            '';
+            tryFiles = "$uri $uri.html $uri/index.html =404";
           };
         };
+        extraConfig = ''
+          error_page 404 /not-found.html;
+        '';
       };
     };
   };
