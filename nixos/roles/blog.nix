@@ -16,7 +16,7 @@
             '';
           };
           "/" = {
-            tryFiles = "$uri $uri/index.html $uri.html";
+            tryFiles = "$uri $uri/index.html $uri.html =404";
             extraConfig = ''
               error_page   404  =  /not-found.html;
             '';
