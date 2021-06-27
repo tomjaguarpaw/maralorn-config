@@ -18,12 +18,12 @@ in
   systemd.services = {
     rspamd = {
       serviceConfig = {
-        Restart = "always";
-        RestartSec = 3;
+        #Restart = "always";
+        #RestartSec = 3;
       };
       unitConfig = {
-        StartLimitIntervalSec = 60;
-        StartLimitBurst = 15;
+        #StartLimitIntervalSec = 60;
+        #StartLimitBurst = 15;
       };
     };
   };

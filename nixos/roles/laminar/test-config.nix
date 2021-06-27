@@ -136,12 +136,12 @@ in
       unitConfig.X-StopOnRemoval = false;
       serviceConfig = {
         Type = "oneshot";
-        Restart = "on-failure";
-        RestartSec = 1;
+        #Restart = "on-failure";
+        #RestartSec = 1;
       };
       unitConfig = {
-        StartLimitIntervalSec = 360;
-        StartLimitBurst = 3;
+        #StartLimitIntervalSec = 360;
+        #StartLimitBurst = 3;
       };
       script =
         let

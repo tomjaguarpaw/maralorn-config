@@ -121,10 +121,10 @@ in
   systemd = {
     services = {
       "container@chor-cloud" = {
-        serviceConfig.RestartSec = 10;
+        #serviceConfig.RestartSec = 10;
         unitConfig = {
-          StartLimitIntervalSec = 30;
-          StartLimitBurst = 2;
+          #StartLimitIntervalSec = 30;
+          #StartLimitBurst = 2;
         };
       };
       rss-server = {
