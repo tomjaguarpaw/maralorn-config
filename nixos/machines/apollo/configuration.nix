@@ -71,13 +71,13 @@ in
   services = {
     #teamviewer.enable = true;
     pipewire = {
-      enable = true;
-      alsa = {
-        enable = true;
-        support32Bit = true;
-      };
-      pulse.enable = true;
-      media-session.enable = true;
+      enable = lib.mkForce false;
+      #alsa = {
+      #enable = true;
+      #support32Bit = true;
+      #};
+      #pulse.enable = true;
+      #media-session.enable = true;
     };
     fwupd.enable = true;
     upower.enable = true;
@@ -153,7 +153,7 @@ in
       driSupport32Bit = true; # for gw2
     };
     pulseaudio = {
-      enable = false;
+      enable = true;
       support32Bit = true;
       tcp = {
         enable = true;
