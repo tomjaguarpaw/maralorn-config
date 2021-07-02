@@ -227,6 +227,13 @@ in
           unset wait_key
           color normal default default
 
+          macro index,pager a ":set confirmappend=no delete=yes\n<save-message>=hera/Archiv/unsortiert\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n" "move message to archive"
+          macro index,pager s ":set confirmappend=no delete=yes\n<save-message>=hera/Junk\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n" "move message to spam"
+          macro index,pager t ":set confirmappend=no delete=yes\n<save-message>=hera/Move/todo\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n" "move message to todo list"
+          macro index,pager l ":set confirmappend=no delete=yes\n<save-message>=hera/Move/readlater\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n" "move message to readlater list"
+
+          macro index,pager A "<pipe-message>${pkgs.khard}/bin/khard add-email<return>" "add sender to to khard"
+
           set query_format="%4c %t %-70.70a %-70.70n %?e?(%e)?"
           set query_command = "${pkgs.notmuch}/bin/notmuch address --output=recipients --deduplicate=address '%s' | grep -i '%s'"
           bind editor <Tab> complete-query
@@ -294,7 +301,6 @@ in
           (lib.imap1 (n: x: "alias f__${toString n} ${name} <${x}>")
             alternates)}
           send2-hook '~f fill-later' "push <edit-from><kill-line>f__<complete><search>${mail}<enter>"
-          macro index,pager a "<pipe-message>${pkgs.khard}/bin/khard add-email<return>" "add sender to to khard"
           set query_command = "${pkgs.khard}/bin/khard email --parsable %s"
         '';
       };
