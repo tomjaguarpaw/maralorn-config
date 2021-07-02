@@ -227,10 +227,10 @@ in
           unset wait_key
           color normal default default
 
-          macro index,pager a ":set confirmappend=no delete=yes\n<save-message>=hera/Archiv/unsortiert\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n" "move message to archive"
-          macro index,pager s ":set confirmappend=no delete=yes\n<save-message>=hera/Junk\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n" "move message to spam"
-          macro index,pager t ":set confirmappend=no delete=yes\n<save-message>=hera/Move/todo\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n" "move message to todo list"
-          macro index,pager l ":set confirmappend=no delete=yes\n<save-message>=hera/Move/readlater\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n" "move message to readlater list"
+          macro index,pager a ":set confirmappend=no delete=yes\n<save-message>=hera/Archiv/unsortiert\n:set confirmappend=yes\n" "move message to archive"
+          macro index,pager s ":set confirmappend=no delete=yes\n<save-message>=hera/Junk\n:set confirmappend=yes\n" "move message to spam"
+          macro index,pager t ":set confirmappend=no delete=yes\n<save-message>=hera/Move/todo\n:set confirmappend=yes\n" "move message to todo list"
+          macro index,pager l ":set confirmappend=no delete=yes\n<save-message>=hera/Move/readlater\n:set confirmappend=yes\n" "move message to readlater list"
 
           macro index,pager A "<pipe-message>${pkgs.khard}/bin/khard add-email<return>" "add sender to to khard"
 
