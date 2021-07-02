@@ -1,7 +1,5 @@
 final: prev:
 let
-  ghc = prev.unstableGhc;
-  haskellPackages = prev.unstableHaskellPackages;
   inherit (prev.haskell.lib) overrideCabal unmarkBroken doJailbreak dontCheck;
   makeHaskellScriptPackages = p: {
     inherit (p)
@@ -21,7 +19,7 @@ let
     } // makeHaskellScriptPackages p;
 in
 {
-  myHaskellPackages = makeHaskellPackages haskellPackages;
-  myHaskellScriptPackages = makeHaskellScriptPackages haskellPackages;
-  ghcWithPackages = ghc.withHoogle (p: builtins.attrValues (makeHaskellPackages p));
+  myHaskellPackages = makeHaskellPackages prev.unstableHaskellPackages;
+  myHaskellScriptPackages = makeHaskellScriptPackages prev.haskellPackages;
+  ghcWithPackages = prev.unstableGhc.withHoogle (p: builtins.attrValues (makeHaskellPackages p));
 }
