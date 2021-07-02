@@ -1,6 +1,7 @@
 final: prev:
 let
-  inherit (prev) ghc haskellPackages;
+  ghc = prev.unstableGhc;
+  haskellPackages = prev.unstableHaskellPackages;
   inherit (prev.haskell.lib) overrideCabal unmarkBroken doJailbreak dontCheck;
   makeHaskellScriptPackages = p: {
     inherit (p)
@@ -12,11 +13,10 @@ let
     {
       inherit (p)
         brittany ormolu releaser cabal-fmt stack ghcid ghcide arbtt iCalendar
-        pretty-simple tz stm-containers streamly
-        haskell-language-server cabal-install dhall taskwarrior pandoc hlint
-        cabal2nix weeder reflex-dom password optics shh-extras neuron
-        hspec-discover paths hmatrix postgresql-simple snap
-        hedgehog nix-derivation req
+        pretty-simple tz stm-containers streamly haskell-language-server
+        cabal-install dhall taskwarrior pandoc hlint cabal2nix weeder
+        reflex-dom password optics shh-extras neuron hspec-discover paths
+        hmatrix postgresql-simple snap hedgehog nix-derivation req
         ;
     } // makeHaskellScriptPackages p;
 in
