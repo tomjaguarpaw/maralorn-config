@@ -5,10 +5,10 @@
         "homepage": "",
         "owner": "mweinelt",
         "repo": "nur-packages",
-        "rev": "33c0913dd708c2602a5bff6fea115a5cbac720f7",
-        "sha256": "15krd1xs0kib3yp0cfadkrxn24aiqhhgnalb8cp7zdxwxknhvyhp",
+        "rev": "96805579bd93cc097f058c38cb72d18a1860c2b3",
+        "sha256": "0iky06vjzyh7k7ms6f6wzizj4q7wcvxf0v5dk759cq61w8ah0a43",
         "type": "tarball",
-        "url": "https://github.com/mweinelt/nur-packages/archive/33c0913dd708c2602a5bff6fea115a5cbac720f7.tar.gz",
+        "url": "https://github.com/mweinelt/nur-packages/archive/96805579bd93cc097f058c38cb72d18a1860c2b3.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager-21.05": {
@@ -50,10 +50,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e9148dc1c30e02aae80cc52f68ceb37b772066f3",
-        "sha256": "1xs5all93r3fg4ld13s9lmzri0bgq25d9dydb08caqa7pc10f5ki",
+        "rev": "21b696caf392ad6fa513caf3327d0aa0430ffb72",
+        "sha256": "1056r3383aaf5zhf7rbvka76gqxb8b7rwqxnmar29vxhs9h56m5k",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/e9148dc1c30e02aae80cc52f68ceb37b772066f3.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/21b696caf392ad6fa513caf3327d0aa0430ffb72.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
@@ -81,10 +81,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "3a8d7958a610cd3fec3a6f424480f91a1b259185",
-        "sha256": "0bmxrdn9sn6mxvkyyxdlxlzczfh59iy66c55ql144ilc1cjk28is",
+        "rev": "d8079260a3028ae3221d7a5467443ee3a9edd2b8",
+        "sha256": "0xjcji6z00i49xaanf193n3kr34m4if6qg9npcnh30acv8gx9krk",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/3a8d7958a610cd3fec3a6f424480f91a1b259185.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/d8079260a3028ae3221d7a5467443ee3a9edd2b8.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
