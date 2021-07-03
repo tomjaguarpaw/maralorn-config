@@ -211,7 +211,7 @@ in
           bind index <enter> display-message
         '';
         mailcap = pkgs.writeText "mailcap" ''
-          text/html; ${pkgs.lynx}/bin/lynx -stdin -dump -force_html ; copiousoutput
+          text/html; ${pkgs.lynx}/bin/lynx -assume_charset=%{charset} -display_charset=utf-8 -collapse_br_tags -dump %s; nametemplate=%s.html; copiousoutput
           application/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
           image/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
           video/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
@@ -231,6 +231,7 @@ in
           macro index,pager s ":set confirmappend=no delete=yes\n<save-message>=hera/Junk\n:set confirmappend=yes\n" "move message to spam"
           macro index,pager t ":set confirmappend=no delete=yes\n<save-message>=hera/Move/todo\n:set confirmappend=yes\n" "move message to todo list"
           macro index,pager l ":set confirmappend=no delete=yes\n<save-message>=hera/Move/readlater\n:set confirmappend=yes\n" "move message to readlater list"
+          macro attach 'V' "<pipe-entry>iconv -c --to-code=UTF8 > ~/.cache/mutt/mail.html<enter><shell-escape>firefox ~/.cache/mutt/mail.html<enter>"
 
           macro index,pager <F6> "<shell-escape>${pkgs.zsh}/bin/zsh -c '${pkgs.sieve-connect}/bin/sieve-connect -s ${config.accounts.email.accounts.hera.imap.host or ""} -u ${config.accounts.email.accounts.hera.userName or ""} --passwordfd 3 --edit --remotesieve filter 3<<(pass eu/m-0/hera/mail.hera.m-0.eu/maralorn)'\n"
           macro index,pager A "<pipe-message>${pkgs.khard}/bin/khard add-email<return>" "add sender to to khard"
