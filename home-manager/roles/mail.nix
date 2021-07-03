@@ -232,6 +232,7 @@ in
           macro index,pager t ":set confirmappend=no delete=yes\n<save-message>=hera/Move/todo\n:set confirmappend=yes\n" "move message to todo list"
           macro index,pager l ":set confirmappend=no delete=yes\n<save-message>=hera/Move/readlater\n:set confirmappend=yes\n" "move message to readlater list"
 
+          macro index,pager <F6> "<shell-escape>${pkgs.sieve-connect}/bin/sieve-connect -s ${config.accounts.email.accounts.hera.imap.host} -u ${config.accounts.email.accounts.hera.userName} --passwordfd <(pass eu/m-0/hera/mail.hera.m-0.eu/maralorn)"
           macro index,pager A "<pipe-message>${pkgs.khard}/bin/khard add-email<return>" "add sender to to khard"
 
           set query_format="%4c %t %-70.70a %-70.70n %?e?(%e)?"
