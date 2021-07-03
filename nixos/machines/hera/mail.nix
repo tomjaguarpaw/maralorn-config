@@ -4,8 +4,6 @@ let
   nonMailboxDomains = [ "lists.maralorn.de" ];
 in
 {
-  networking.firewall.allowedTCPPorts = [ 25 143 587 993 ];
-
   m-0.monitoring = [
     {
       name = "postfix on hera";
@@ -15,18 +13,6 @@ in
 
   imports = [ ../../roles "${(import ../../../nix/sources.nix).nixos-mailserver}" ];
 
-  systemd.services = {
-    rspamd = {
-      serviceConfig = {
-        #Restart = "always";
-        #RestartSec = 3;
-      };
-      unitConfig = {
-        #StartLimitIntervalSec = 60;
-        #StartLimitBurst = 15;
-      };
-    };
-  };
   services = {
     prometheus.exporters = {
       postfix = {
@@ -49,7 +35,9 @@ in
   mailserver = {
     dkimKeyDirectory = "/var/lib/opendkim/keys";
     enable = true;
+    openFirewall = true;
     enableImapSsl = true;
+    enableManageSieve = true;
     fqdn = "hera.m-0.eu";
     rewriteMessageId = true;
     domains = [ "m-0.eu" "maralorn.de" "choreutes.de" "mathechor.de" "lists.maralorn.de" ];
