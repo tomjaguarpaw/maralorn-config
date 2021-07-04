@@ -261,7 +261,7 @@ in
 
           alternates ${mutt_alternates}
           set folder="${maildir}"
-          mailboxes `find ${maildir} -type d -name Inbox -printf '"%h" '` `find ${maildir} -type d -name cur -printf '"%h" '`
+          mailboxes `find -L ${maildir} -type d -name Inbox -printf '"%h" '` `find -L ${maildir} -type d -name cur -printf '"%h" '`
           set sendmail="${pkgs.msmtp}/bin/msmtp --read-envelope-from"
           set sort=threads
           set sort_aux=last-date-received
