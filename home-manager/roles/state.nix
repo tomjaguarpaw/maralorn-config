@@ -3,7 +3,7 @@ let
   # Persistent means that files get snapshoted and kept for a month
   # Volatile means that files just lay on the disk
   # Backups are organized independently on this system
-  persistentStateDirs = [ "git" "media" "Maildir" ".ssh" ".task" ".gnupg" ".calendars" ".contacts" ".wallpapers" ".local/share/direnv" ];
+  persistentStateDirs = [ "git" "media" "Maildir" ".ssh" ".task" ".gnupg" ".calendars" ".contacts" ".wallpapers" ".local/share/direnv" ".vdirsyncer" ];
   persistentStateFiles = [ ".chpwd-recent-dirs" ".zsh_history" ];
   volatileStateFiles = [ ];
   volatileStateDirs = [ ".steam" ".local/share/Steam" ];
