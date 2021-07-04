@@ -7,7 +7,7 @@ self: super: {
         src = super.sources.kassandra;
         nativeBuildInputs = [ pkgconfig ];
         buildInputs = [ openssl ];
-        cargoSha256 = "0nlc09sh679vfq7n08836mnjsax2pnskm64jk3c6k0l2spina3nd";
+        cargoSha256 = "068x6f6bxb36vxskr75g5d5yfhpc1fmnw5hv13mk3v1ibny5hrka";
         doCheck = false;
       })
     { };
