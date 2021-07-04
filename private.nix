@@ -1,7 +1,10 @@
 let
+  persistPath = "/disk/persist/maralorn";
+  hasPersistDisk = builtins.pathExists persistPath;
   privateExists = builtins.pathExists private/submodule-is-checked-out;
-  explicitUsePrivate = builtins.getEnv "WITH_SECRETS" == "true";
-  explicitNotUsePrivate = builtins.getEnv "WITH_SECRETS" == "false";
+  var = "WITH_SECRETS";
+  explicitUsePrivate = builtins.getEnv var == "true";
+  explicitNotUsePrivate = builtins.getEnv var == "false";
   usePrivate = !explicitNotUsePrivate && (explicitUsePrivate || privateExists);
   withSecrets = builtins.trace
     (if usePrivate then
@@ -13,7 +16,7 @@ in
 {
   inherit withSecrets;
   privatePath = name:
-    let path = "/etc/nixos/private/${name}";
+    let path = "${if hasPersistDisk then persistPath else "/home/maralorn"}/git/config/private/${name}";
     in if withSecrets then assert builtins.pathExists (./private + "/${name}"); path else path;
   privateValue = default: name:
     if withSecrets then import (./private + "/${name}.nix") else default;
