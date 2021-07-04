@@ -127,6 +127,35 @@ in
       ];
       gaming = apolloConfig "Gaming" (unrestricted ++ [ ./roles/games.nix ]);
     };
+  zeus = {
+    default = makeConfig "zeus" [
+      ./roles/accounting.nix
+      ./roles/arbtt
+      ./roles/beets.nix
+      ./roles/chat.nix
+      ./roles/desktop
+      ./roles/games.nix
+      ./roles/git-sign.nix
+      ./roles/hoogle.nix
+      ./roles/kassandra.nix
+      ./roles/khal.nix
+      ./roles/khard.nix
+      ./roles/laptop.nix
+      ./roles/mail-client.nix
+      ./roles/mail.nix
+      ./roles/mail2rss.nix
+      ./roles/mpclient.nix
+      ./roles/mpd.nix
+      ./roles/on-my-machine.nix
+      ./roles/pythia.nix
+      ./roles/research.nix
+      ./roles/state.nix
+      ./roles/taskwarrior.nix
+      ./roles/tinkering.nix
+      ./roles/update_tasks.nix
+      ./roles/vdirsyncer.nix
+    ];
+  };
   hera = {
     default = makeConfig "hera" [
       ./roles/on-my-machine.nix
