@@ -7,8 +7,8 @@ in
 {
   dconf.settings = {
     "org/gnome/desktop/wm/keybindings" = {
-      switch-input-source = "@as []";
-      switch-input-source-backward = "@as []";
+      switch-input-source = [ ];
+      switch-input-source-backward = [ ];
     };
 
     "org/gnome/desktop/interface" = {
@@ -18,7 +18,7 @@ in
     };
 
     "org/gnome/shell/extensions/gtile" = {
-      show-toggle-tiling-alt = [ "<Alt>t" ];
+      show-toggle-tiling-alt = [ "<Super>t" ];
     };
 
     "org/gnome/shell" = {
