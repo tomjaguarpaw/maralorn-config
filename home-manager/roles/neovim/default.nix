@@ -85,8 +85,8 @@ in
         ;
     };
   };
+  xdg.configFile."nvim/coc-settings.json".text = builtins.toJSON cocSettings;
   home = {
-    file.".config/nvim/coc-settings.json".text = builtins.toJSON cocSettings;
     packages = [ pkgs.neuron-language-server ];
     sessionVariables.EDITOR = "nvim";
   };

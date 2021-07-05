@@ -33,11 +33,13 @@ let
       "storage ${remoteName}" = {
         inherit type;
         inherit url;
-      } // (if (type == "caldav") then {
-        inherit username;
-        "password.fetch" = [ "command" "${pkgs.pass}/bin/pass" passwordPath ];
-        read_only = readOnly;
-      } else { });
+      } // (
+        if (type == "caldav") then {
+          inherit username;
+          "password.fetch" = [ "command" "${pkgs.pass}/bin/pass" passwordPath ];
+          read_only = readOnly;
+        } else { }
+      );
     };
   mkAddressbook = { name, url, username, passwordPath, collections ? [ "from a" "from b" ], readOnly ? false }:
     let
@@ -66,17 +68,15 @@ let
     };
 in
 {
-  home = {
-    packages = [ pkgs.vdirsyncer ];
-    file.".config/vdirsyncer/config".source = mkConfig
-      (
-        pkgs.lib.fold (a: b: a // b)
-          {
-            general.status_path = "~/.vdirsyncer/status";
-          }
-          (map mkCalendar calendars ++ map mkAddressbook addressbooks)
-      );
-  };
+  xdg.configFile."vdirsyncer/config".source = mkConfig
+    (
+      pkgs.lib.fold (a: b: a // b)
+        {
+          general.status_path = "~/.vdirsyncer/status";
+        }
+        (map mkCalendar calendars ++ map mkAddressbook addressbooks)
+    );
+  home.packages = [ pkgs.vdirsyncer ];
 
   systemd.user = {
     services.vdirsyncer = {

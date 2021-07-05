@@ -1,5 +1,5 @@
 { pkgs, config, ... }: {
-  home.file.".config/beets/config.yaml".text = builtins.toJSON {
+  xdg.configFile."beets/config.yaml".text = builtins.toJSON {
     directory = config.services.mpd.musicDirectory;
     import.move = true;
     paths = {

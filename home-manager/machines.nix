@@ -8,7 +8,7 @@ let
     };
   makeAutostart = name:
     { config, ... }: {
-      config.home.file.".config/autostart/${name}.desktop".source =
+      config.xdg.configFile."autostart/${name}.desktop".source =
         "${config.home.path}/share/applications/${name}.desktop";
     };
   makeBlock = list:

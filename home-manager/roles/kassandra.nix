@@ -26,11 +26,8 @@ let
   '';
 in
 {
-  home.file =
+  xdg.configFile =
     if pkgs.withSecrets then {
-      "kassandra-config" = {
-        target = ".config/kassandra";
-        source = dhallResult.out;
-      };
+      kassandra.source = dhallResult.out;
     } else { };
 }
