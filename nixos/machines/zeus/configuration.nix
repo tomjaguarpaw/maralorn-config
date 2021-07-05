@@ -134,7 +134,7 @@ in
     unbound.enable = true;
     fstrim.enable = true;
     snapper = {
-      configs.home = {
+      configs.persist = {
         subvolume = "/disk/persist";
         extraConfig = ''
           TIMELINE_MIN_AGE="3600"
