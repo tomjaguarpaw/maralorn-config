@@ -110,13 +110,13 @@ in
   programs = {
     #adb.enable = true;
     sway.enable = true;
-    #ssh = {
-    #  extraConfig = ''
-    #    Host fb04*.mathematik.tu-darmstadt.de
-    #      ProxyJump brandy@gwres1.mathematik.tu-darmstadt.de
-    #  '';
-    #  startAgent = true;
-    #};
+    ssh = {
+      #  extraConfig = ''
+      #    Host fb04*.mathematik.tu-darmstadt.de
+      #      ProxyJump brandy@gwres1.mathematik.tu-darmstadt.de
+      #  '';
+      startAgent = true;
+    };
     seahorse.enable = lib.mkForce false;
     dconf.enable = true;
   };
