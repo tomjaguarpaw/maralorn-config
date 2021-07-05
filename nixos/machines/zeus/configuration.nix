@@ -3,14 +3,14 @@
 let
   #wireguard = import ../../../common/wireguard.nix;
   #inherit (config.m-0) hosts prefix;
-  #nixos-hardware = (import ../../../nix/sources.nix).nixos-hardware;
-  #inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
+  nixos-hardware = (import ../../../nix/sources.nix).nixos-hardware;
+  inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
   #vpn = (import ../../../private.nix).privateValue ({ ... }: { }) "vpn";
 in
 {
 
   imports = [
-    #"${nixos-hardware}/lenovo/thinkpad/t480s"
+    "${nixos-hardware}/common/gpu/amd/sea-islands"
     ./hardware-configuration.nix
     ../../roles
     ../../roles/admin.nix
@@ -124,53 +124,42 @@ in
   security.rtkit.enable = true;
   services = {
     #teamviewer.enable = true;
-    pipewire = {
-      enable = lib.mkForce false;
-      #alsa = {
-      #enable = true;
-      #support32Bit = true;
-      #};
-      #pulse.enable = true;
-      #media-session.enable = true;
-    };
-    #fwupd.enable = true;
+    pipewire.enable = lib.mkForce false;
+    fwupd.enable = true;
     #upower.enable = true;
     #printing = {
     #  enable = true;
     #  drivers = [ pkgs.gutenprint pkgs.hplip ];
     #};
-    #unbound.enable = true;
-    #fstrim.enable = true;
-    #snapper = {
-    #  configs.home = {
-    #    subvolume = "/home";
-    #    extraConfig = ''
-    #      TIMELINE_MIN_AGE="3600"
-    #      TIMELINE_LIMIT_WEEKLY="4"
-    #      TIMELINE_LIMIT_MONTHLY="1"
-    #      TIMELINE_LIMIT_YEARLY="0"
-    #      TIMELINE_CREATE="yes"
-    #      TIMELINE_CLEANUP="yes"
-    #    '';
-    #  };
-    #  cleanupInterval = "15m";
-    #  snapshotInterval = "*:00/3:00";
-    #};
+    unbound.enable = true;
+    fstrim.enable = true;
+    snapper = {
+      configs.home = {
+        subvolume = "/disk/persist";
+        extraConfig = ''
+          TIMELINE_MIN_AGE="3600"
+          TIMELINE_LIMIT_WEEKLY="4"
+          TIMELINE_LIMIT_MONTHLY="1"
+          TIMELINE_LIMIT_YEARLY="0"
+          TIMELINE_CREATE="yes"
+          TIMELINE_CLEANUP="yes"
+        '';
+      };
+      cleanupInterval = "15m";
+      snapshotInterval = "*:00/3:00";
+    };
     #prometheus.exporters.node = {
     #  firewallFilter = "-i m0wire -p tcp -m tcp --dport 9100";
     #  openFirewall = true;
     #};
-    #syncthing = {
-    #  enable = true;
-    #  group = "users";
-    #  user = "maralorn";
-    #  openDefaultPorts = true;
-    #  declarative = syncthing.declarativeWith [ "hera" ] "/home/maralorn/media"
-    #    // {
-    #    cert = pkgs.privatePath "syncthing/apollo/cert.pem";
-    #    key = pkgs.privatePath "syncthing/apollo/key.pem";
-    #  };
-    #};
+    syncthing = {
+      enable = true;
+      group = "users";
+      user = "maralorn";
+      openDefaultPorts = true;
+      configDir = "/disc/persist/syncthing";
+      declarative = syncthing.declarativeWith [ "hera" "apollo" ] "/disk/persist/maralorn/media";
+    };
     xserver = {
       enable = true;
       displayManager = {
