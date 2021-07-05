@@ -48,7 +48,7 @@ let
     REPODIR=.
   '';
   remoteFlags = "--builders @/etc/nix/machines --max-jobs 0";
-  systems = [ "apollo" "hera" ];
+  systems = builtins.readDir (builtins.attrNames ../../machines);
   homes = lib.attrNames (import ../../../home-manager/machines.nix);
   mkHomeJob = (
     host: {
