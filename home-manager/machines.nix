@@ -6,33 +6,31 @@ let
       m-0.hostName = hostName;
       nixpkgs.overlays = [ (_: _: (import ../channels.nix).${hostName}) ];
     };
+  makeAutostart = name:
+    { config, ... }: {
+      config.home.file.".config/autostart/${name}.desktop".source =
+        "${config.home.path}/share/applications/${name}.desktop";
+    };
+  makeBlock = list:
+    { pkgs, lib, ... }: {
+      systemd.user.services.blockserver = {
+        Unit.Description = "Serve a blocklist";
+        Service = {
+          ExecStart = "${pkgs.python3}/bin/python -m http.server 8842 -d ${pkgs.writeTextDir "blocklist" (lib.concatStringsSep "\r\n" list)}";
+          Restart = "always";
+        };
+        Install.WantedBy = [ "default.target" ];
+      };
+    };
 in
 {
   apollo =
     let
       install = f: ({ pkgs, ... }: { home.packages = f pkgs; });
-      makeAutostart = name:
-        { config, ... }: {
-          config.home.file.".config/autostart/${name}.desktop".source =
-            "${config.home.path}/share/applications/${name}.desktop";
-        };
       setStartpage = startpage:
         { ... }: {
           programs.firefox.profiles."fz2sm95u.default".settings = {
             "browser.startup.homepage" = startpage;
-          };
-        };
-      makeBlock = list:
-        { pkgs, lib, ... }: {
-          systemd.user.services.blockserver = {
-            Unit.Description = "Serve a blocklist";
-            Service = {
-              ExecStart = "${pkgs.python3}/bin/python -m http.server 8842 -d ${
-          pkgs.writeTextDir "blocklist" (lib.concatStringsSep "\r\n" list)
-          }";
-              Restart = "always";
-            };
-            Install.WantedBy = [ "default.target" ];
           };
         };
       setWorkspaceName = name:
@@ -154,6 +152,8 @@ in
       ./roles/tinkering.nix
       ./roles/update_tasks.nix
       ./roles/vdirsyncer.nix
+      (makeAutostart "kassandra2")
+      (makeAutostart "unlock-ssh")
     ];
   };
   hera = {
