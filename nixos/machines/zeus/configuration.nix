@@ -64,6 +64,7 @@ in
         efiInstallAsRemovable = true; # Make loader discoverable by filename on efidisk without needing to write efivars to system
         efiSupport = true;
         enableCryptodisk = true;
+        backgroundColor = "#000000";
       };
     };
     kernelParams = [ "amdgpu.cik_support=1" ];
