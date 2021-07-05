@@ -84,6 +84,7 @@ let
   };
 in
 {
+  imports = [ ./spelling.nix ];
   home = {
     file.".config/nvim/coc-settings.json".text = builtins.toJSON cocSettings;
     packages = [ neovim pkgs.neuron-language-server ];
