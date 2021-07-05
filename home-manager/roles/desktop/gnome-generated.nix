@@ -6,6 +6,10 @@ let
 in
 {
   dconf.settings = {
+    "org/gnome/desktop/wm/keybindings" = {
+      switch-input-source = "@as []";
+      switch-input-source-backward = "@as []";
+    };
 
     "org/gnome/desktop/interface" = {
       gtk-im-module = "gtk-im-context-simple";
