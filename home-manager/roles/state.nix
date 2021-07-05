@@ -19,6 +19,7 @@ let
     "Maildir"
     "git"
     "media"
+    ".zotero/zotero"
   ];
   persistentStateFiles = [ ".chpwd-recent-dirs" ".zsh_history" ];
   volatileStateFiles = [ ];
