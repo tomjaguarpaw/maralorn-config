@@ -140,7 +140,6 @@ in
       ./roles/khard.nix
       ./roles/mail-client.nix
       ./roles/mail.nix
-      ./roles/mail2rss.nix
       ./roles/mpclient.nix
       ./roles/mpd.nix
       ./roles/on-my-machine.nix
