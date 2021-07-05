@@ -1,65 +1,6 @@
 { pkgs, config, ... }:
 let
-  neovim = pkgs.neovim.override {
-    configure = {
-      customRC = builtins.readFile ./vimrc;
-      packages.myVimPackage = {
-        start = builtins.attrValues {
-          inherit (pkgs.vimPlugins)
-            # coc-tabnine (TODO: Why doesn‘t it work?)
-            # TODO: tabnine config in home-manager
-            # TODO: tabnine lsp: nix, rust, pandoc/latex lsp? was noch?
-
-            # ===
-            # Basic IDE plugins
-            coc-nvim airline
-            # same word highlighting when not supported by language
-            coc-highlight coc-explorer
-            # searches
-            coc-fzf fzf-vim
-
-            # general whitespace
-            vim-trailing-whitespace vim-autoformat
-
-            # Git
-            coc-git# statusline, numberline and explorer infos
-            fugitive# various git commands
-
-            # Commenting and Uncommenting
-            nerdcommenter
-
-            # Theme
-            papercolor-theme vim-airline-themes
-
-            # ===
-            # Languages
-            # haskell syntax highlighting
-            haskell-vim vim-hoogle
-            # nix syntax highlighting
-            vim-nix vim-markdown
-            # latex
-            vimtex coc-vimtex# not sure if I need two
-            # ledger
-            vim-ledger
-            # rust
-            coc-rls
-            # python
-            coc-python
-            # css
-            coc-css
-            # yaml
-            coc-yaml
-            # json
-            coc-json
-            # html
-            coc-html
-            # dhall
-            dhall-vim
-            ;
-        };
-      };
-    };
-  };
+  list = builtins.attrValues;
   cocSettings = {
     "diagnostic.maxWindowHeight" = 60;
     "diagnostic.virtualText" = true;
@@ -85,9 +26,68 @@ let
 in
 {
   imports = [ ./spelling.nix ];
+  programs.neovim = {
+    enable = true;
+    vimAlias = true;
+    vimdiffAlias = true;
+    extraConfig = builtins.readFile ./vimrc;
+    plugins = list {
+      inherit (pkgs.vimPlugins)
+        # coc-tabnine (TODO: Why doesn‘t it work?)
+        # TODO: tabnine config in home-manager
+        # TODO: tabnine lsp: nix, rust, pandoc/latex lsp? was noch?
+
+        # ===
+        # Basic IDE plugins
+        coc-nvim airline
+        # same word highlighting when not supported by language
+        coc-highlight coc-explorer
+        # searches
+        coc-fzf fzf-vim
+
+        # general whitespace
+        vim-trailing-whitespace vim-autoformat
+
+        # Git
+        coc-git# statusline, numberline and explorer infos
+        fugitive# various git commands
+
+        # Commenting and Uncommenting
+        nerdcommenter
+
+        # Theme
+        papercolor-theme vim-airline-themes
+
+        # ===
+        # Languages
+        # haskell syntax highlighting
+        haskell-vim vim-hoogle
+        # nix syntax highlighting
+        vim-nix vim-markdown
+        # latex
+        vimtex coc-vimtex# not sure if I need two
+        # ledger
+        vim-ledger
+        # rust
+        coc-rls
+        # python
+        coc-python
+        # css
+        coc-css
+        # yaml
+        coc-yaml
+        # json
+        coc-json
+        # html
+        coc-html
+        # dhall
+        dhall-vim
+        ;
+    };
+  };
   home = {
     file.".config/nvim/coc-settings.json".text = builtins.toJSON cocSettings;
     packages = [ neovim pkgs.neuron-language-server ];
-    sessionVariables.EDITOR = "${neovim}/bin/nvim";
+    sessionVariables.EDITOR = "nvim";
   };
 }
