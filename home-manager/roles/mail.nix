@@ -298,6 +298,9 @@ in
           color sidebar_highlight white blue
           set sidebar_format = "%B%* %?N?%N/?%S"
 
+          ignore *
+          unignore from date cc bcc to subject list-unsubscribe
+
           alias f__0 ${name} <${mail}>
           ${builtins.concatStringsSep "\n"
           (lib.imap1 (n: x: "alias f__${toString n} ${name} <${x}>")
