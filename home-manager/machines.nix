@@ -72,26 +72,26 @@ in
       apolloConfig = name: imports:
         makeConfig "apollo" (
           imports ++ [
-            ./roles/arbtt
-            ./roles/zettelkasten.nix
-            ./roles/hoogle.nix
             ./roles/battery.nix
-            ./roles/mpd.nix
             ./roles/beets.nix
-            ./roles/mpclient.nix
-            ./roles/on-my-machine.nix
+            ./roles/daily-driver-programs.nix
             ./roles/desktop
-            ./roles/kassandra.nix
             ./roles/git-sign.nix
-            ./roles/laptop.nix
-            ./roles/mail.nix
-            ./roles/update_tasks.nix
-            ./roles/research.nix
-            ./roles/vdirsyncer.nix
-            ./roles/khard.nix
+            ./roles/hoogle.nix
+            ./roles/kassandra.nix
             ./roles/khal.nix
-            ./roles/taskwarrior.nix
+            ./roles/khard.nix
+            ./roles/mail.nix
+            ./roles/mpclient.nix
+            ./roles/mpd.nix
+            ./roles/on-my-machine.nix
+            ./roles/research.nix
             ./roles/taskwarrior-git.nix
+            ./roles/taskwarrior.nix
+            ./roles/update_tasks.nix
+            ./roles/vdirsyncer.nix
+            ./roles/zettelkasten.nix
+            (import ./roles/mode-switching.nix { modeDir = ".modes"; modeFile = "volatile/mode"; })
             (makeAutostart "unlock-ssh")
             (setWorkspaceName name)
           ]
@@ -128,9 +128,9 @@ in
   zeus = {
     default = makeConfig "zeus" [
       ./roles/accounting.nix
-      ./roles/arbtt
       ./roles/beets.nix
       ./roles/chat.nix
+      ./roles/daily-driver-programs.nix
       ./roles/desktop
       ./roles/games.nix
       ./roles/git-sign.nix
@@ -138,7 +138,6 @@ in
       ./roles/kassandra.nix
       ./roles/khal.nix
       ./roles/khard.nix
-      ./roles/laptop.nix
       ./roles/mail-client.nix
       ./roles/mail.nix
       ./roles/mail2rss.nix
@@ -152,6 +151,7 @@ in
       ./roles/tinkering.nix
       ./roles/update_tasks.nix
       ./roles/vdirsyncer.nix
+      (import ./roles/mode-switching.nix { modeDir = ".volatile/modes"; modeFile = ".volatile/mode"; })
       (makeAutostart "kassandra2")
       (makeAutostart "unlock-ssh")
     ];

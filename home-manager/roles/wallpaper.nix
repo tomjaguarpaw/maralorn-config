@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ modeFile }: { pkgs, ... }:
 let
   randomWallpaper = pkgs.writeHaskellScript
     {
@@ -7,7 +7,7 @@ let
       bins = [ pkgs.coreutils pkgs.glib ];
     } ''
     main = do
-       mode <- cat "/home/maralorn/volatile/mode" |> captureTrim
+       mode <- cat "${modeFile}" |> captureTrim
        (lines . decodeUtf8 -> files) <- ls ([i|/home/maralorn/.wallpapers/#{mode}|] :: String) |> captureTrim
        ((files Unsafe.!!) -> file) <- getStdRandom $ randomR (0, length files - 1)
        (decodeUtf8 -> current) <- gsettings "get" "org.gnome.desktop.background" "picture-uri" |> captureTrim

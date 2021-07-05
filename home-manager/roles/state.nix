@@ -1,8 +1,9 @@
-{ lib, ... }:
+{ lib, config, ... }:
 let
   # Persistent means that files get snapshoted and kept for a month
   # Volatile means that files just lay on the disk
   # Backups are organized independently on this system
+  home = config.home.homeDirectory;
   persistentStateDirs = [ "git" "media" "Maildir" ".ssh" ".task" ".gnupg" ".calendars" ".contacts" ".wallpapers" ".local/share/direnv" ".vdirsyncer" ];
   persistentStateFiles = [ ".chpwd-recent-dirs" ".zsh_history" ];
   volatileStateFiles = [ ];
@@ -12,7 +13,7 @@ let
     let
       target = "/disk/${persistence}/maralorn/${name}";
     in
-    [ (mkLine "L+" "/home/maralorn/${name}" target) (mkLine type target "") ];
+    [ (mkLine "L+" "${home}/${name}" target) (mkLine type target "") ];
 in
 {
   systemd.user.tmpfiles.rules = lib.concatLists
@@ -22,9 +23,12 @@ in
         map (mkEntry "f" "persist") persistentStateFiles ++
         map (mkEntry "d" "persist") persistentStateDirs
     ) ++ [
-    (mkLine "L+" "/home/maralorn/.password-store" "git/password-store")
-    (mkLine "f" "/home/maralorn/documents/orga/listen/checklisten/orga-pre.md" "")
-    (mkLine "f" "/home/maralorn/tmp/today.md" "")
-    (mkLine "f" "/home/maralorn/volatile/mode" "default")
+    (mkLine "L+" "${home}/.password-store" "git/password-store")
+    (mkLine "f" "${home}/documents/orga/listen/checklisten/orga-pre.md" "")
+    (mkLine "f" "${home}/tmp/today.md" "")
+    (mkLine "L+" "${home}/.volatile" "/disk/volatile/maralorn")
+    (mkLine "L+" "${home}/.config/nixpkgs/home.nix" "${home}/git/config/home.nix")
+    (mkLine "L+" "${home}/.persist" "/disk/persist/maralorn")
+    (mkLine "f" "/disk/volatile/maralorn/mode" "default")
   ];
 }
