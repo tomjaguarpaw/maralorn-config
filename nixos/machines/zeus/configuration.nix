@@ -157,7 +157,7 @@ in
       group = "users";
       user = "maralorn";
       openDefaultPorts = true;
-      configDir = "/disc/persist/syncthing";
+      configDir = "/disk/persist/syncthing";
       declarative = syncthing.declarativeWith [ "hera" "apollo" ] "/disk/persist/maralorn/media";
     };
     xserver = {
