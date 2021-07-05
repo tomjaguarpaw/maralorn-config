@@ -101,7 +101,7 @@ in
       group = "nginx";
       user = "maralorn";
       openDefaultPorts = true;
-      declarative = syncthing.declarativeWith [ "apollo" ] "/media" // {
+      declarative = syncthing.declarativeWith [ "apollo" "zeus" ] "/media" // {
         cert = pkgs.privatePath "syncthing/hera/cert.pem";
         key = pkgs.privatePath "syncthing/hera/key.pem";
       };
