@@ -1,4 +1,5 @@
 { pkgs, lib, ... }: {
+  imports = [ ./gnome-generated.nix ];
   services.gpg-agent.pinentryFlavor = "gnome3";
   dconf.settings = {
     "org/gnome/desktop/input-sources" = {
