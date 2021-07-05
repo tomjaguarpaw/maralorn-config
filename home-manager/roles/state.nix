@@ -4,7 +4,22 @@ let
   # Volatile means that files just lay on the disk
   # Backups are organized independently on this system
   home = config.home.homeDirectory;
-  persistentStateDirs = [ "git" "media" "Maildir" ".ssh" ".task" ".gnupg" ".calendars" ".contacts" ".wallpapers" ".local/share/direnv" ".vdirsyncer" ];
+  persistentStateDirs = [
+    ".calendars"
+    ".config/Element"
+    ".config/discord"
+    ".contacts"
+    ".gnupg"
+    ".local/share/direnv"
+    ".ssh"
+    ".task"
+    ".vdirsyncer"
+    ".vimhist"
+    ".wallpapers"
+    "Maildir"
+    "git"
+    "media"
+  ];
   persistentStateFiles = [ ".chpwd-recent-dirs" ".zsh_history" ];
   volatileStateFiles = [ ];
   volatileStateDirs = [ ".steam" ".local/share/Steam" ];
@@ -18,10 +33,7 @@ in
 {
   systemd.user.tmpfiles.rules = lib.concatLists
     (
-      map (mkEntry "f" "volatile") volatileStateFiles ++
-        map (mkEntry "d" "volatile") volatileStateDirs ++
-        map (mkEntry "f" "persist") persistentStateFiles ++
-        map (mkEntry "d" "persist") persistentStateDirs
+      map (mkEntry "f" "volatile") volatileStateFiles ++ map (mkEntry "d" "volatile") volatileStateDirs ++ map (mkEntry "f" "persist") persistentStateFiles ++ map (mkEntry "d" "persist") persistentStateDirs
     ) ++ [
     (mkLine "L+" "${home}/.password-store" "git/password-store")
     (mkLine "f" "${home}/documents/orga/listen/checklisten/orga-pre.md" "")
