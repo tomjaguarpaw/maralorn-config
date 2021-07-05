@@ -11,6 +11,10 @@ in
       switch-input-source-backward = [ ];
     };
 
+    "org/gnome/desktop/wm/keybindings" = {
+      close = [ "<Super>q" ];
+    };
+
     "org/gnome/desktop/interface" = {
       gtk-im-module = "gtk-im-context-simple";
       gtk-theme = "Arc";
