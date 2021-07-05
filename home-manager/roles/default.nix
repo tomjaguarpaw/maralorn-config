@@ -71,7 +71,7 @@
       };
       extraConfig = {
         pull.ff = "only";
-        core.editor = "nvim";
+        core.editor = "nvr --remote-wait-silent";
       };
       enable = true;
       ignores = [

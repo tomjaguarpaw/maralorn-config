@@ -220,7 +220,7 @@ in
       in
       {
         ".neomuttrc".text = ''
-          set editor = "nvim"
+          set editor = "nvr --remote-wait-silent"
           alternative_order text/plain text/html
           auto_view text/*
           auto_view message/*
