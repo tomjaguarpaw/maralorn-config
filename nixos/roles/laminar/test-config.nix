@@ -48,7 +48,7 @@ let
     REPODIR=.
   '';
   remoteFlags = "--builders @/etc/nix/machines --max-jobs 0";
-  systems = builtins.readDir (builtins.attrNames ../../machines);
+  systems = builtins.attrNames (builtins.readDir ../../machines);
   homes = lib.attrNames (import ../../../home-manager/machines.nix);
   mkHomeJob = (
     host: {
@@ -136,12 +136,6 @@ in
       unitConfig.X-StopOnRemoval = false;
       serviceConfig = {
         Type = "oneshot";
-        #Restart = "on-failure";
-        #RestartSec = 1;
-      };
-      unitConfig = {
-        #StartLimitIntervalSec = 360;
-        #StartLimitBurst = 3;
       };
       script =
         let
