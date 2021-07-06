@@ -177,6 +177,7 @@ processMessage msg = do
   fromField <- tryHdr "from" msg
   toField   <- tryHdr "to" msg
   cc        <- tryHdr "cc" msg
+  unsub     <- tryHdr "list-unsubscribe" msg
   let hdrs = mapMaybe
         (\(x, a) -> (x, ) <$> a)
         [ ("Subject", subject)
@@ -184,6 +185,7 @@ processMessage msg = do
         , ("To"     , toField)
         , ("Cc"     , cc)
         , ("Date"   , Just (timestamp date))
+        , ("Unsubscribe"  , unsub)
         ]
   msgEither <- runExceptT $ withExceptT
     (\er -> [i|Failed to read msg\nFilename:#{fileName}\nerror: #{er}|])
