@@ -30,10 +30,6 @@ in
       welcome-dialog-last-shown-version = "40.1";
     };
 
-    "org/gnome/shell/extensions/system-monitor" = {
-      icon-display = false;
-    };
-
     "org/gnome/shell/extensions/user-theme" = {
       name = "Arc-Lighter";
     };
