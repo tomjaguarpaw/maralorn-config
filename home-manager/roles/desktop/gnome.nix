@@ -14,12 +14,6 @@ in
       sleep-inactive-ac-type = "nothing";
     };
 
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-      binding = "<Super>F5";
-      command = "systemctl suspend";
-      name = "Standby";
-    };
-
     "org/gnome/desktop/wm/keybindings" = {
       close = [ "<Super>q" ];
     };
@@ -90,6 +84,12 @@ in
         command = "dbus-send --session --type=method_call --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:'Main.panel.statusArea.dateMenu._messageList._sectionList.get_children().forEach(s => s.clear());'";
         name = "Clear Notifications";
       };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby" = {
+      binding = "<Super>F5";
+      command = "systemctl suspend";
+      name = "Standby";
+    };
+
     "org/gnome/shell/extensions/nothing-to-say" = {
       icon-visibility = "always";
       keybinding-toggle-mute = [ "<Primary><Shift>U+2113" ]; # Mouse key side middle
@@ -98,6 +98,7 @@ in
       custom-keybindings = [
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/clear-notifications/"
       ];
       next = [ "<Primary><Shift>dollar" ];
