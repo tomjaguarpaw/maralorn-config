@@ -42,5 +42,22 @@ in
       region = "en_DK.UTF-8";
     };
 
+    "org/gnome/shell/extensions/system-monitor" = {
+      center-display = true;
+      compact-display = true;
+      cpu-show-menu = false;
+      cpu-show-text = false;
+      cpu-style = "graph";
+      icon-display = false;
+      memory-show-text = false;
+      memory-style = "graph";
+      move-clock = false;
+      net-show-menu = true;
+      net-show-text = false;
+      net-speed-in-bits = true;
+      net-style = "both";
+      show-tooltip = true;
+    };
+
   };
 }
