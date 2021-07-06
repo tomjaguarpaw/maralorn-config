@@ -11,6 +11,10 @@ in
       switch-input-source-backward = [ ];
     };
 
+    "org/gnome/settings-daemon/plugins/power" = {
+      sleep-inactive-ac-type = "nothing";
+    };
+
     "org/gnome/desktop/wm/keybindings" = {
       close = [ "<Super>q" ];
     };
