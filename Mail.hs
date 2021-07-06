@@ -22,7 +22,7 @@ import           Data.MIME.Charset
 import           Control.Lens            hiding ( argument )
 import           Control.Error                  ( withExceptT
                                                 , throwE
-                                                , tryJust
+                                                , tryJust, tryRight
                                                 )
 import qualified Data.Text                     as T
 import           Control.Monad.Catch            ( MonadCatch
@@ -35,6 +35,7 @@ import qualified Options.Applicative           as O
 import           Text.Atom.Feed.Export          ( textFeed )
 import           Text.Atom.Feed
 import           Text.HTML.TagSoup
+import Data.Either.Extra (mapLeft)
 
 data Options = Options
   { dbPath :: String
@@ -200,7 +201,7 @@ processMessage msg = do
         )
         parseResult
       (if isHtml textPart then HTMLBody else TextBody)
-        <$> tryJust [i|Could not decode message|] (decode textPart)
+        <$> tryRight (mapLeft ("Could not decode message "<> ) $ decode textPart)
   pure $ Message { date, headers = hdrs, body = either TextBody id msgEither }
 
 tryHdr :: MonadIO m => ByteString -> Notmuch.Message n a -> m (Maybe Text)
@@ -215,6 +216,5 @@ isTextPlain =
 isHtml :: MIME.WireEntity -> Bool
 isHtml = MIME.matchContentType "text" (Just "html") . view MIME.contentType
 
-decode :: MIME.WireEntity -> Maybe Text
-decode = preview
-  (MIME.transferDecoded' . _Right . charsetText' defaultCharsets . _Right)
+decode :: MIME.WireEntity -> Either Text Text
+decode = mapLeft show . view MIME.transferDecoded' >=> mapLeft show . view (charsetText' defaultCharsets)
