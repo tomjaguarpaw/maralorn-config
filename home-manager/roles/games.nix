@@ -48,15 +48,15 @@ let
 in
 {
 
-  dconf.settings."org/gnome/settings-daemon/plugins/media-keys" = {
-    mic-mute = lib.mkForce [ ];
-    next = lib.mkForce [ ];
-    play = lib.mkForce [ ];
-    previous = lib.mkForce [ ];
-    screensaver = lib.mkForce [ ];
-    volume-down = lib.mkForce [ ];
-    volume-up = lib.mkForce [ ];
-  };
+  #dconf.settings."org/gnome/settings-daemon/plugins/media-keys" = {
+  #mic-mute = lib.mkForce [ ];
+  #next = lib.mkForce [ ];
+  #play = lib.mkForce [ ];
+  #previous = lib.mkForce [ ];
+  #screensaver = lib.mkForce [ ];
+  #volume-down = lib.mkForce [ ];
+  #volume-up = lib.mkForce [ ];
+  #};
 
   home.packages = builtins.attrValues {
     #factorio = pkgs.factorio.override {

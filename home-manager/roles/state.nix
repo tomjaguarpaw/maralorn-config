@@ -15,7 +15,6 @@ let
     ".task"
     ".vdirsyncer"
     ".vimhist"
-    ".wallpapers"
     "Maildir"
     "git"
     "media"
