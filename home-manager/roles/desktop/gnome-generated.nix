@@ -26,6 +26,7 @@ in
     };
 
     "org/gnome/shell" = {
+      disable-user-extensions = false;
       enabled-extensions = [ "gTile@vibou" "clipboard-indicator@tudmotu.com" "appindicatorsupport@rgcjonas.gmail.com" "nothing-to-say@extensions.gnome.wouter.bolsterl.ee" "notification-position@drugo.dev" "drive-menu@gnome-shell-extensions.gcampax.github.com" "sound-output-device-chooser@kgshank.net" "system-monitor@paradoxxx.zero.gmail.com" "user-theme@gnome-shell-extensions.gcampax.github.com" ];
       welcome-dialog-last-shown-version = "40.1";
     };
