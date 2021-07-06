@@ -41,7 +41,7 @@
         "branch": "master",
         "ref": "master",
         "repo": "git@hera.m-0.eu:logfeed",
-        "rev": "546d9afefb5c98c43dac572b94bef24b44dac6b5",
+        "rev": "e232c0b64ee2bb8baf87d3e541948f8c40dc2f29",
         "type": "git"
     },
     "nixos-21.05": {
