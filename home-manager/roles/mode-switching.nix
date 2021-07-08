@@ -20,7 +20,7 @@ in
       ${configGit} merge --ff-only origin/master master
       ${configGit} submodule update
       ${updateModes}/bin/update-modes
-      /run/current-system/sw/bin/sudo -A /run/current-system/sw/bin/update-system
+      /run/wrappers/bin/sudo -A /run/current-system/sw/bin/update-system
     '';
     activateMode = pkgs.writeHaskellScript { name = "activate-mode"; } ''
       getMode :: IO Text
