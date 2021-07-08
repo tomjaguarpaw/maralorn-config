@@ -115,7 +115,6 @@ in
         (setStartpage "https://habitica.com")
         (makeBlock (tinkerPages ++ leisurePages))
         (makeAutostart "firefox")
-        (makeAutostart "kassandra")
         (makeAutostart "kassandra2")
         (install (p: [ p.discord ])) # For teaching
       ];
