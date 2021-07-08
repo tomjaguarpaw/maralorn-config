@@ -5,7 +5,7 @@
       Unit.Description = "Routine maintenance";
       Service = {
         Type = "oneshot";
-        ExecStart = "${pkgs.kitty}/bin/kitty ${config.home.profileDirectory}/bin/maintenance --only-on-update";
+        ExecStart = "${pkgs.kitty}/bin/kitty --hold ${config.home.profileDirectory}/bin/maintenance --only-on-update";
       };
     };
     timers.maintenance = {
