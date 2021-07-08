@@ -135,6 +135,7 @@ in
       ./roles/games.nix
       ./roles/git-sign.nix
       ./roles/hoogle.nix
+      ./roles/hourly-maintenance.nix
       ./roles/kassandra.nix
       ./roles/khal.nix
       ./roles/khard.nix
