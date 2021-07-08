@@ -5,16 +5,22 @@ let
   configPath = "${config.home.homeDirectory}/git/config";
   modeFile = "${config.home.homeDirectory}/${opts.modeFile}";
   modeDir = "${config.home.homeDirectory}/${opts.modeDir}";
+  configGit = "${pkgs.git}/bin/git -C ${configPath}";
 in
 {
   imports = [ (import ./wallpaper.nix { inherit modeFile; }) ];
   home.packages = builtins.attrValues rec {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
-      set -e
-      git -C ~/git/config pull --ff-only
-      git -C ~/git/config submodule update
-      update-modes
-      sudo -A update-system
+      set -ex
+      ${configGit} fetch
+      if [[ "$1" == "--only-on-update" && "$(${configGit} rev-parse master)" == "$(${configGit} rev-parse origin/master)" ]]; then
+        echo "Git repo up-to-date, not doing anything."
+        exit 0;
+      fi
+      ${configGit} merge --ff-only origin/master master
+      ${configGit} submodule update
+      ${updateModes}/bin/update-modes
+      /var/run/current-system/bin/sudo -A /var/run/current-system/bin/update-system
     '';
     activateMode = pkgs.writeHaskellScript { name = "activate-mode"; } ''
       getMode :: IO Text
