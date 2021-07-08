@@ -29,6 +29,8 @@ in
 
       selection_foreground = theme.primary.background;
       selection_background = theme.primary.foreground;
+      background_opacity = "0.9";
+      background_tint = "0.9";
 
       # black
       color0 = theme.normal.white;
