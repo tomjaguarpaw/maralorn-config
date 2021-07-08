@@ -11,7 +11,7 @@ in
   imports = [ (import ./wallpaper.nix { inherit modeFile; }) ];
   home.packages = builtins.attrValues rec {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
-      set -ex
+      set -e
       ${configGit} fetch
       if [[ "$1" == "--only-on-update" && "$(${configGit} rev-parse master)" == "$(${configGit} rev-parse origin/master)" ]]; then
         echo "Git repo up-to-date, not doing anything."
@@ -20,7 +20,7 @@ in
       ${configGit} merge --ff-only origin/master master
       ${configGit} submodule update
       ${updateModes}/bin/update-modes
-      /var/run/current-system/bin/sudo -A /var/run/current-system/bin/update-system
+      /run/current-system/bin/sudo -A /run/current-system/bin/update-system
     '';
     activateMode = pkgs.writeHaskellScript { name = "activate-mode"; } ''
       getMode :: IO Text
