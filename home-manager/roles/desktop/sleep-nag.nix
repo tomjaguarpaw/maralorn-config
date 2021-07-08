@@ -16,12 +16,14 @@ let
        time <- getZonedTime
        let tod = localTimeOfDay . zonedTimeToLocalTime$ time
            hour = todHour tod
+           minute = todMinute tod
+           evening = hour == 0
            night = (hour < 6 && hour >= 1)
-       if night then do {
-         notify_send ([i|Es ist #{formatTime defaultTimeLocale "%H:%M" time} Uhr: Zeit ins Bett zu gehen!|]::String) "Du kannst das hier auch morgen tun!";
-         threadDelay 600000000}
-       else
-         threadDelay 600000000
+           action
+            | evening = notify_send "Shutdown alert!" ([i|Rechner fährt in #{59-minute} Minuten runter.|]::String)
+            | night = exe "/run/current-system/sw/bin/sudo" "systemctl" "shutdown"
+       action
+       threadDelay 600000000
   '';
 in
 {
