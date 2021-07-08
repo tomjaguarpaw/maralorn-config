@@ -16,7 +16,7 @@ let
        time <- getZonedTime
        let tod = localTimeOfDay . zonedTimeToLocalTime$ time
            hour = todHour tod
-           minute = todMinute tod
+           minute = todMin tod
            evening = hour == 0
            night = (hour < 6 && hour >= 1)
            action
