@@ -11,7 +11,8 @@ in
     };
 
     "org/gnome/settings-daemon/plugins/power" = {
-      sleep-inactive-ac-type = "nothing";
+      sleep-inactive-ac-timeout = 10800;
+      sleep-inactive-ac-type = "suspend";
     };
 
     "org/gnome/desktop/wm/keybindings" = {
