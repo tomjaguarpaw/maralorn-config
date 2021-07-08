@@ -121,7 +121,6 @@ in
       ];
       research = apolloConfig "Research" [
         (makeBlock (tinkerPages ++ leisurePages))
-        (setStartpage "http://localhost:8042")
       ];
       gaming = apolloConfig "Gaming" (unrestricted ++ [ ./roles/games.nix ]);
     };
