@@ -23,7 +23,10 @@ set mouse=
 set showcmd
 set title
 
-set backupdir=~/.vimbackupfiles/
+" Set this here so that nothing get’s overriden later
+filetype plugin indent on
+syntax on
+
 set undodir=~/.vimhist/
 set undofile
 set undolevels=100
