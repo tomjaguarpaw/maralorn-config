@@ -22,6 +22,7 @@ let
            action
             | evening = notify_send "Shutdown alert!" ([i|Rechner fährt in #{59-minute} Minuten runter.|]::String)
             | night = exe "/run/current-system/sw/bin/sudo" "systemctl" "shutdown"
+            | otherwise = pass
        action
        threadDelay 600000000
   '';
