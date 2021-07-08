@@ -114,7 +114,6 @@ in
         ./roles/pythia.nix
         (setStartpage "https://habitica.com")
         (makeBlock (tinkerPages ++ leisurePages))
-        (makeAutostart "firefox")
         (makeAutostart "kassandra2")
         (install (p: [ p.discord ])) # For teaching
       ];
