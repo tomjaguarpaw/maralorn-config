@@ -10,7 +10,7 @@ let
         "Control.Concurrent"
         "Data.Functor"
       ];
-      bins = [ pkgs.libnotify ];
+      bins = [ pkgs.libnotify pkgs.systemd ];
     } ''
     main = forever $ do
        time <- getZonedTime
@@ -21,7 +21,7 @@ let
            night = (hour < 6 && hour >= 1)
            action
             | evening = notify_send "Shutdown alert!" ([i|Rechner fährt in #{59-minute} Minuten runter.|]::String)
-            | night = exe "/run/wrappers/bin/sudo" "systemctl" "poweroff"
+            | night = systemctl "poweroff"
             | otherwise = pass
        action
        threadDelay 600000000
