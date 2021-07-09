@@ -29,6 +29,11 @@ in
       "/disk" = { neededForBoot = true; } // btrfsOptions;
       "/boot" = btrfsOptions;
       "/nix" = btrfsOptions;
+      "/home/maralorn/.config/pulse" = {
+        mountPoint = "/home/maralorn/.config/pulse";
+        device = "/disk/persist/maralorn/.config/pulse";
+        options = [ "bind" ];
+      };
     };
 
   environment.etc."nixos".source = "/disk/persist/maralorn/git/config";
@@ -47,6 +52,7 @@ in
     "d /disk/persist/root 700 root root - -"
     "d /disk/persist/root/.ssh 700 root root - -"
     "d /disk/persist/maralorn 700 maralorn users - -"
+    "d /disk/persist/maralorn/.config/pulse 700 maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/var/lib/bluetooth - - - - -"
     "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"

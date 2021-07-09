@@ -9,7 +9,6 @@ let
     ".config/Element"
     ".config/Signal"
     ".config/discord"
-    ".config/pulse"
     ".contacts"
     ".gnupg"
     ".local/share/mpd"
