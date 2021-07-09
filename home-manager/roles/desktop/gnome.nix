@@ -76,6 +76,7 @@ in
         "caffeine@patapon.info"
         "dash-to-panel@jderose9.github.com"
         "system-monitor@paradoxxx.zero.gmail.com"
+        "windowsNavigator@gnome-shell-extensions.gcampax.github.com"
       ];
       welcome-dialog-last-shown-version = "40.1";
     };
