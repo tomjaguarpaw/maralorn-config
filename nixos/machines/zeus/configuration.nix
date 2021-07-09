@@ -38,7 +38,7 @@ in
     serviceConfig = {
       Type = "oneshot";
       User = "maralorn";
-      ExecStart = "/disk/volatile/maralorn/modes/default/activate";
+      ExecStart = "/disk/volatile/maralorn/modes/orga/activate";
     };
     wantedBy = [ "multi-user.target" ];
   };

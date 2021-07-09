@@ -1,5 +1,31 @@
 let
   inherit (import (import ../nix/sources.nix).nixos-unstable { }) lib;
+  restrictedPages = [
+    "reddit.com"
+    "github.com"
+    "*.ccc.de"
+    "haskell.org"
+    "*.haskell.org"
+    "*.nixos.org"
+    "nixos.org"
+    "matrix.org"
+    "element.io"
+    "youtube.de"
+    "youtube.com"
+    "*.element.io"
+    "zeit.de"
+    "heise.de"
+    "spiegel.de"
+    "xkcd.com"
+    "smbc-comics.com"
+    "tagesschau.de"
+    "welt.de"
+    "ndr.de"
+    "ard.de"
+    "zdf.de"
+    "twitter.com"
+    "chaos.social"
+  ];
   makeConfig = hostName: imports:
     { ... }: {
       imports = imports ++ [ ./roles/default.nix ];
@@ -41,34 +67,6 @@ in
             };
           };
         };
-      tinkerPages = [
-        "reddit.com"
-        "github.com"
-        "*.ccc.de"
-        "haskell.org"
-        "*.haskell.org"
-        "*.nixos.org"
-        "nixos.org"
-        "matrix.org"
-        "element.io"
-        "youtube.de"
-        "youtube.com"
-        "*.element.io"
-      ];
-      leisurePages = [
-        "zeit.de"
-        "heise.de"
-        "spiegel.de"
-        "xkcd.com"
-        "smbc-comics.com"
-        "tagesschau.de"
-        "welt.de"
-        "ndr.de"
-        "ard.de"
-        "zdf.de"
-        "twitter.com"
-        "chaos.social"
-      ];
       apolloConfig = name: imports:
         makeConfig "apollo" (
           imports ++ [
@@ -118,41 +116,51 @@ in
         (install (p: [ p.discord ])) # For teaching
       ];
       research = apolloConfig "Research" [
-        (makeBlock (tinkerPages ++ leisurePages))
+        (makeBlock restrictedPages)
       ];
       gaming = apolloConfig "Gaming" (unrestricted ++ [ ./roles/games.nix ]);
     };
-  zeus = {
-    default = makeConfig "zeus" [
-      ./roles/accounting.nix
-      ./roles/beets.nix
-      ./roles/chat.nix
-      ./roles/daily-driver-programs.nix
-      ./roles/desktop
-      ./roles/games.nix
-      ./roles/git-sign.nix
-      ./roles/hoogle.nix
-      ./roles/hourly-maintenance.nix
-      ./roles/kassandra.nix
-      ./roles/khal.nix
-      ./roles/khard.nix
-      ./roles/mail-client.nix
-      ./roles/mail.nix
-      ./roles/mpclient.nix
-      ./roles/mpd.nix
-      ./roles/on-my-machine.nix
-      ./roles/pythia.nix
-      ./roles/research.nix
-      ./roles/state.nix
-      ./roles/taskwarrior.nix
-      ./roles/tinkering.nix
-      ./roles/update_tasks.nix
-      ./roles/vdirsyncer.nix
-      (import ./roles/mode-switching.nix { modeDir = ".volatile/modes"; modeFile = ".volatile/mode"; })
-      (makeAutostart "kassandra2")
-      (makeAutostart "unlock-ssh")
-    ];
-  };
+  zeus =
+    let
+      all = [
+        ./roles/accounting.nix
+        ./roles/beets.nix
+        ./roles/daily-driver-programs.nix
+        ./roles/desktop
+        ./roles/git-sign.nix
+        ./roles/hoogle.nix
+        ./roles/hourly-maintenance.nix
+        ./roles/kassandra.nix
+        ./roles/khal.nix
+        ./roles/khard.nix
+        ./roles/mail.nix
+        ./roles/mpclient.nix
+        ./roles/mpd.nix
+        ./roles/on-my-machine.nix
+        ./roles/pythia.nix
+        ./roles/research.nix
+        ./roles/state.nix
+        ./roles/taskwarrior.nix
+        ./roles/tinkering.nix
+        ./roles/update_tasks.nix
+        ./roles/vdirsyncer.nix
+        (import ./roles/mode-switching.nix { modeDir = ".volatile/modes"; modeFile = ".volatile/mode"; })
+        (makeAutostart "kassandra2")
+        (makeAutostart "unlock-ssh")
+      ];
+      orga = all ++ [
+        ./roles/mail-client.nix
+      ];
+      leisure = orga ++ [
+        ./roles/games.nix
+        ./roles/chat.nix
+      ];
+    in
+    {
+      research = makeConfig "zeus" all;
+      orga = makeConfig "zeus" orga;
+      leisure = makeConfig "zeus" leisure;
+    };
   hera = {
     default = makeConfig "hera" [
       ./roles/on-my-machine.nix
