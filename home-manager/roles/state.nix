@@ -7,18 +7,24 @@ let
   persistentStateDirs = [
     ".calendars"
     ".config/Element"
+    ".config/Signal"
     ".config/discord"
+    ".config/pulse"
     ".contacts"
     ".gnupg"
+    ".local/share/mpd"
+    ".local/share/Mumble"
+    ".local/share/TelegramDesktop"
     ".local/share/direnv"
     ".ssh"
     ".task"
     ".vdirsyncer"
     ".vimhist"
+    ".zoom"
+    ".zotero/zotero"
     "Maildir"
     "git"
     "media"
-    ".zotero/zotero"
   ];
   persistentStateFiles = [ ".chpwd-recent-dirs" ".zsh_history" ];
   volatileStateFiles = [ ];
