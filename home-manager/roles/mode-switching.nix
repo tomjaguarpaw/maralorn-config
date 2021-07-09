@@ -2,9 +2,9 @@ opts: { pkgs, lib, config, ... }:
 let
   inherit (config.m-0) hostName;
   modes = pkgs.lib.attrNames (import ../machines.nix).${hostName};
-  configPath = "${config.home.homeDirectory}/git/config";
   modeFile = "${config.home.homeDirectory}/${opts.modeFile}";
   modeDir = "${config.home.homeDirectory}/${opts.modeDir}";
+  configPath = "${config.home.homeDirectory}/git/config";
   configGit = "${pkgs.git}/bin/git -C ${configPath}";
 in
 {
@@ -12,12 +12,7 @@ in
   home.packages = builtins.attrValues rec {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
-      ${configGit} fetch
-      if [[ "$1" == "--only-on-update" && "$(${configGit} rev-parse master)" == "$(${configGit} rev-parse origin/master)" ]]; then
-        echo "Git repo up-to-date, not doing anything."
-        exit 0;
-      fi
-      ${configGit} merge --ff-only origin/master master
+      ${configGit} pull --ff-only
       ${configGit} submodule update
       ${updateModes}/bin/update-modes
       /run/wrappers/bin/sudo -A /run/current-system/sw/bin/update-system
