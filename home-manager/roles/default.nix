@@ -204,6 +204,7 @@
   };
 
   xdg = {
+    configFile."mimeapps.list".force = true;
     enable = true;
     mime.enable = true;
     mimeApps = {
