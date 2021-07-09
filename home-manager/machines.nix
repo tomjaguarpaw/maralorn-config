@@ -111,7 +111,7 @@ in
         ./roles/accounting.nix
         ./roles/pythia.nix
         (setStartpage "https://habitica.com")
-        (makeBlock (tinkerPages ++ leisurePages))
+        (makeBlock restrictedPages)
         (makeAutostart "kassandra2")
         (install (p: [ p.discord ])) # For teaching
       ];
