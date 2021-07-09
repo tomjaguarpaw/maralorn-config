@@ -59,14 +59,6 @@ in
             "browser.startup.homepage" = startpage;
           };
         };
-      setWorkspaceName = name:
-        { pkgs, lib, ... }: {
-          dconf.settings = {
-            "org/gnome/desktop/wm/preferences" = {
-              workspace-names = [ name ]; # use neo
-            };
-          };
-        };
       apolloConfig = name: imports:
         makeConfig "apollo" (
           imports ++ [
@@ -91,7 +83,6 @@ in
             ./roles/zettelkasten.nix
             (import ./roles/mode-switching.nix { modeDir = ".modes"; modeFile = "volatile/mode"; })
             (makeAutostart "unlock-ssh")
-            (setWorkspaceName name)
           ]
         );
       unrestricted = [
