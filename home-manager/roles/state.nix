@@ -48,5 +48,6 @@ in
     (mkLine "L+" "${home}/.config/nixpkgs/home.nix" "${home}/git/config/home.nix")
     (mkLine "L+" "${home}/.persist" "/disk/persist/maralorn")
     (mkLine "f" "${home}/.mode" "orga")
+    (mkLine "f" "${home}/.config/lazygit/state.yml" "startuppopupversion: 5")
   ];
 }
