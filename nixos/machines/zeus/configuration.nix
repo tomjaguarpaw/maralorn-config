@@ -53,6 +53,8 @@ in
     "d /disk/persist/root/.ssh 700 root root - -"
     "d /disk/persist/maralorn 700 maralorn users - -"
     "d /disk/persist/maralorn/.config/pulse 700 maralorn users - -"
+    "d /home/maralorn/.config 700 maralorn users - -"
+    "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/var/lib/bluetooth - - - - -"
     "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"
