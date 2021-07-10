@@ -14,6 +14,12 @@ in
       cycle-windows-backward = [ "<Shift><Super>Tab" ];
     };
 
+    "org/gnome/settings-daemon/plugins/color" = {
+      night-light-enabled = true;
+      night-light-schedule-automatic = false;
+      night-light-schedule-from = 0.0;
+    };
+
     "org/gnome/settings-daemon/plugins/power" = {
       sleep-inactive-ac-timeout = 10800;
       sleep-inactive-ac-type = "suspend";
