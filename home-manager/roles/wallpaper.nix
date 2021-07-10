@@ -29,7 +29,7 @@ in
       };
     };
     timers.random-wallpaper = {
-      Timer = { OnCalendar = "*:00/30:00"; OnActiveSec = 10; };
+      Timer = { OnCalendar = "*:00/30:00"; OnActiveSec = 1; };
       Install = { WantedBy = [ "timers.target" ]; };
     };
   };
