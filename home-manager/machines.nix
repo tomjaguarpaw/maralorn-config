@@ -135,7 +135,7 @@ in
         ./roles/tinkering.nix
         ./roles/update_tasks.nix
         ./roles/vdirsyncer.nix
-        (import ./roles/mode-switching.nix { modeDir = ".volatile/modes"; modeFile = ".volatile/mode"; })
+        (import ./roles/mode-switching.nix { modeDir = ".volatile/modes"; modeFile = ".mode"; })
         (makeAutostart "kassandra2")
         (makeAutostart "unlock-ssh")
       ];

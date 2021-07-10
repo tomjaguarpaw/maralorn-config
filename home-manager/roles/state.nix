@@ -46,6 +46,6 @@ in
     (mkLine "L+" "${home}/.volatile" "/disk/volatile/maralorn")
     (mkLine "L+" "${home}/.config/nixpkgs/home.nix" "${home}/git/config/home.nix")
     (mkLine "L+" "${home}/.persist" "/disk/persist/maralorn")
-    (mkLine "f" "/disk/volatile/maralorn/mode" "orga")
+    (mkLine "f" "${home}/.mode" "orga")
   ];
 }
