@@ -177,6 +177,8 @@ in
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/clear-notifications/"
       ];
+      switch-applications = [ ];
+      switch-applications-backward = [ ];
       cycle-windows = [ "<Super>Tab" ];
       cycle-windows-backward = [ "<Shift><Super>Tab" ];
       next = [ "<Primary><Shift>dollar" ];
