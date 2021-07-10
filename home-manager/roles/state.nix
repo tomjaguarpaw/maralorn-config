@@ -11,6 +11,7 @@ let
     ".config/discord"
     ".contacts"
     ".gnupg"
+    ".local/share/khal"
     ".local/share/mpd"
     ".local/share/Mumble"
     ".local/share/TelegramDesktop"
