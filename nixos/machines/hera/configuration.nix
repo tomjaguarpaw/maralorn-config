@@ -27,6 +27,7 @@ in
     ../../roles/foundryvtt.nix
     ../../roles/mailman.nix
     ../../roles/home-assistant
+    ../../roles/firefox-sync.nix
     ./web.nix
     ./mail.nix
     ./boot.nix
