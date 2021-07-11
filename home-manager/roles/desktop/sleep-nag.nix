@@ -12,6 +12,8 @@ let
       ];
       bins = [ pkgs.libnotify pkgs.systemd ];
     } ''
+    interval = 5
+
     main = forever $ do
        time <- getZonedTime
        let tod = localTimeOfDay . zonedTimeToLocalTime$ time
@@ -24,7 +26,7 @@ let
             | night = systemctl "poweroff"
             | otherwise = pass
        action
-       threadDelay 600000000
+       threadDelay $ (interval - (minute `mod` interval)) * 60 * 1000000
   '';
 in
 {
