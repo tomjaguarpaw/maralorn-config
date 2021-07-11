@@ -17,11 +17,11 @@ in
     "org/gnome/settings-daemon/plugins/color" = {
       night-light-enabled = true;
       night-light-schedule-automatic = false;
-      night-light-schedule-from = 0.0;
+      night-light-schedule-from = 23.0;
     };
 
     "org/gnome/settings-daemon/plugins/power" = {
-      sleep-inactive-ac-timeout = 10800;
+      sleep-inactive-ac-timeout = 900;
       sleep-inactive-ac-type = "suspend";
     };
 
@@ -51,6 +51,7 @@ in
       resize8 = "6x2 2:0 3:0, 1:0 4:0";
       resize9 = "6x2 4:0 5:0,3:0 5:0,2:0 5:0,5:0 5:0";
       show-toggle-tiling-alt = [ "<Super>t" ];
+      show-icon = false;
     };
 
     "org/gnome/desktop/interface" = {
