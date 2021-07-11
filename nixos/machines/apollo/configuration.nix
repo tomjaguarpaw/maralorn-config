@@ -25,10 +25,12 @@ in
     hostName = "apollo";
     domain = "m-0.eu";
     firewall.allowedTCPPorts = [
+      4713
       8123 # Weiterleitung von stream.maralorn.de
       64738
     ];
     firewall.allowedUDPPorts = [
+      4713
       64738
     ];
     wireguard.interfaces = {
@@ -157,7 +159,7 @@ in
       support32Bit = true;
       tcp = {
         enable = true;
-        anonymousClients.allowedIpRanges = [ "127.0.0.1" "::1" ];
+        anonymousClients.allowedIpRanges = [ "127.0.0.1" "::1" "192.168.178.0/24" ];
       };
     };
   };
