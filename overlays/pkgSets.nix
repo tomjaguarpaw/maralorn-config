@@ -40,10 +40,11 @@ self: super: {
     inherit (self) lm_sensors xwayland xdg_utils libnotify kassandra kassandra2 shotcut mlt audacity paprefs wl-clipboard
       nheko dconf2nix
       ;
+    bubblemail-service = self.bubblemail;
     inherit (self.gnomeExtensions) appindicator system-monitor
       clipboard-indicator emoji-selector sound-output-device-chooser
       window-is-ready-remover nothing-to-say notification-banner-position gtile
-      caffeine executor dash-to-panel
+      caffeine executor dash-to-panel bubblemail
       ;
     inherit (self.gnome)
       dconf dconf-editor gnome-tweaks gnome-shell-extensions adwaita-icon-theme
@@ -55,7 +56,7 @@ self: super: {
     inherit (self)
       go gdb mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole
       nixfmt nixpkgs-fmt rnix-lsp tmate rustup kitty nix-top ghcWithPackages ghcid matrix-commander upterm
-      lazygit
+      lazygit bubblemail
       ;
     obelisk = (import self.sources.obelisk { }).command;
   };
