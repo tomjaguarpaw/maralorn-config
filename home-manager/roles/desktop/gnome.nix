@@ -53,9 +53,9 @@ in
         resize4 = "6x1 ${left "0"}";
         resize5 = "6x1 ${middle "0"}";
         resize6 = "6x1 ${right "0"}";
-        resize7 = "6x1 ${left "0"}";
-        resize8 = "6x1 ${middle "0"}";
-        resize9 = "6x1 ${right "0"}";
+        resize7 = "6x2 ${left "0"}";
+        resize8 = "6x2 ${middle "0"}";
+        resize9 = "6x2 ${right "0"}";
         show-toggle-tiling-alt = [ "<Super>t" ];
         show-icon = false;
       };
