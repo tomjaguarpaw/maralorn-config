@@ -56,6 +56,7 @@ in
         "https://ci.maralorn.de"
         "https://cloud.maralorn.de"
         "https://element.maralorn.de"
+        "https://firefox-sync.maralorn.de"
         "https://fdroid.maralorn.de/index-v1.json"
         "https://home.maralorn.de"
         "https://matrix.maralorn.de"
