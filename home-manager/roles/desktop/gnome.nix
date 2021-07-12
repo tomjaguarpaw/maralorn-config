@@ -29,30 +29,36 @@ in
       close = [ "<Super>q" ];
     };
 
-    "org/gnome/shell/extensions/gtile" = {
-      global-presets = true;
-      grid-sizes = "6x2";
-      preset-resize-1 = [ "<Super>KP_1" ];
-      preset-resize-2 = [ "<Super>KP_2" ];
-      preset-resize-3 = [ "<Super>KP_3" ];
-      preset-resize-4 = [ "<Super>KP_4" ];
-      preset-resize-5 = [ "<Super>KP_5" ];
-      preset-resize-6 = [ "<Super>KP_6" ];
-      preset-resize-7 = [ "<Super>KP_7" ];
-      preset-resize-8 = [ "<Super>KP_8" ];
-      preset-resize-9 = [ "<Super>KP_9" ];
-      resize1 = "6x2 0:1 1:1,0:1 2:1,0:1 3:1,0:1 0:1";
-      resize2 = "6x2 2:1 3:1, 1:1 4:1";
-      resize3 = "6x2 4:1 5:1,3:1 5:1,2:1 5:1,5:1 5:1";
-      resize4 = "6x1 0:0 1:0,0:0 2:0,0:0 3:0,0:0 0:0";
-      resize5 = "6x1 2:0 3:0, 1:0 4:0";
-      resize6 = "6x1 4:0 5:0,3:0 5:0,2:0 5:0,5:0 5:0";
-      resize7 = "6x2 0:0 1:0,0:0 2:0,0:0 3:0,0:0 0:0";
-      resize8 = "6x2 2:0 3:0, 1:0 4:0";
-      resize9 = "6x2 4:0 5:0,3:0 5:0,2:0 5:0,5:0 5:0";
-      show-toggle-tiling-alt = [ "<Super>t" ];
-      show-icon = false;
-    };
+    "org/gnome/shell/extensions/gtile" =
+      let
+        left = r: "0:${r} 1:${r},0:${r} 2:${r},0:${r} 3:${r},0:${r} 0:${r}, 1:${r} 1:${r}";
+        right = r: "4:${r} 5:${r},3:${r} 5:${r},2:${r} 5:${r},5:${r} 5:${r}, 4:${r} 4:${r}";
+        middle = r: "2:${r} 3:${r}, 1:${r} 4:${r}, 1:${r} 3:${r}, 2:${r} 4:${r}, 2:${r} 2:${r}, 3:${r} 3:${r}";
+      in
+      {
+        global-presets = true;
+        grid-sizes = "6x2";
+        preset-resize-1 = [ "<Super>KP_1" ];
+        preset-resize-2 = [ "<Super>KP_2" ];
+        preset-resize-3 = [ "<Super>KP_3" ];
+        preset-resize-4 = [ "<Super>KP_4" ];
+        preset-resize-5 = [ "<Super>KP_5" ];
+        preset-resize-6 = [ "<Super>KP_6" ];
+        preset-resize-7 = [ "<Super>KP_7" ];
+        preset-resize-8 = [ "<Super>KP_8" ];
+        preset-resize-9 = [ "<Super>KP_9" ];
+        resize1 = "6x2 ${left "1"}";
+        resize2 = "6x2 ${middle "1"}";
+        resize3 = "6x2 ${right "1"}";
+        resize4 = "6x1 ${left "0"}";
+        resize5 = "6x1 ${middle "0"}";
+        resize6 = "6x1 ${right "0"}";
+        resize7 = "6x1 ${left "0"}";
+        resize8 = "6x1 ${middle "0"}";
+        resize9 = "6x1 ${right "0"}";
+        show-toggle-tiling-alt = [ "<Super>t" ];
+        show-icon = false;
+      };
 
     "org/gnome/desktop/interface" = {
       gtk-theme = "Arc";
