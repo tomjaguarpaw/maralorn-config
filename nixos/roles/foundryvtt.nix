@@ -39,6 +39,7 @@ in
         WorkingDirectory = stateDir;
         DynamicUser = true;
         Restart = "always";
+        Environment = "HOME=${stateDir}";
         ExecStart = "${pkgs.nodejs}/bin/node ${stateDir}/app/resources/app/main.js --dataPath=\"${dataDir}\"";
       };
     };
