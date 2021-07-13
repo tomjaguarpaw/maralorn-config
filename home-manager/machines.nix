@@ -97,7 +97,7 @@ in
       ];
     in
     {
-      unrestricted = apolloConfig "Unrestricted" unrestricted;
+      leisure = apolloConfig "Leisure" (unrestricted ++ [ ./roles/games.nix ]);
       orga = apolloConfig "Orga" [
         ./roles/mail-client.nix
         ./roles/accounting.nix
@@ -110,7 +110,6 @@ in
       research = apolloConfig "Research" [
         (makeBlock restrictedPages)
       ];
-      gaming = apolloConfig "Gaming" (unrestricted ++ [ ./roles/games.nix ]);
     };
   zeus =
     let
