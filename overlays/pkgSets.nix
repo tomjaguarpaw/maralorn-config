@@ -43,8 +43,13 @@ self: super: {
     inherit (self.gnomeExtensions) appindicator system-monitor
       clipboard-indicator emoji-selector sound-output-device-chooser
       window-is-ready-remover nothing-to-say notification-banner-position gtile
-      caffeine executor dash-to-panel
+      caffeine dash-to-panel
       ;
+    executor = self.gnomeExtensions.executor.overrideAttrs (old: {
+      buildCommand = old.buildCommand + ''
+        substituteInPlace $out/share/gnome-shell/extensions/executor@raujonas.github.io/extension.js --replace "'/bin/bash'" "'/usr/bin/env', 'bash'"
+      '';
+    });
     inherit (self.gnome)
       dconf dconf-editor gnome-tweaks gnome-shell-extensions adwaita-icon-theme
       gnome-session
