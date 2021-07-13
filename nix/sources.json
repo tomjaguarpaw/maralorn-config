@@ -62,10 +62,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "9376bf7b34218e2a7f92af91089b0cb413a605e2",
-        "sha256": "0mr3pc6n6rflp7dxwlwf916i2w97jhlsl60i65wnmh6sf373cm7v",
+        "rev": "07909ad7f44d16ac32164b4ef5d6c777f42bd5a7",
+        "sha256": "0vn10by9hn3zch0vk8jk1qazn09q9rld22rzrb04jy33pznilyyp",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/9376bf7b34218e2a7f92af91089b0cb413a605e2.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/07909ad7f44d16ac32164b4ef5d6c777f42bd5a7.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
@@ -74,7 +74,7 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "417v75780a0b6b32b3d32dcc32bb9bc6df809062d",
+        "rev": "41775780a0b6b32b3d32dcc32bb9bc6df809062d",
         "sha256": "0121bmdga42zkn4y3wsy71b5lglzn180q7vmxaprqp5lvr27v8ik",
         "type": "tarball",
         "url": "https://github.com/nixos/nixos-hardware/archive/41775780a0b6b32b3d32dcc32bb9bc6df809062d.tar.gz",
@@ -84,7 +84,7 @@
         "branch": "master",
         "ref": "master",
         "repo": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver",
-        "rev": "a9f87ca461a1f0e23e85a1ba8c696672ed9e11e2",
+        "rev": "a37dac9d66b0bbfc28ca64e7efbf4ce55be94143",
         "type": "git"
     },
     "nixos-unstable": {
@@ -93,10 +93,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "87807e64a5ef5206b745a40af118c7be8db73681",
-        "sha256": "056jv0m6x3q95ndj8mrwsy90s4imv34dl1lri9qyjrvl8r33kzzy",
+        "rev": "8743b115bbac05b0dd802149594c747bbab1de26",
+        "sha256": "0fnyjc2xkm7840sbd8mr0lxgp7xrgx1pxk9vdpm6rbyiqgb92429",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/87807e64a5ef5206b745a40af118c7be8db73681.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/8743b115bbac05b0dd802149594c747bbab1de26.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
