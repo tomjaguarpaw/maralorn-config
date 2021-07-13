@@ -62,6 +62,7 @@ in
       apolloConfig = name: imports:
         makeConfig "apollo" (
           imports ++ [
+            ./roles/systemd-exporter.nix
             ./roles/battery.nix
             ./roles/beets.nix
             ./roles/daily-driver-programs.nix
