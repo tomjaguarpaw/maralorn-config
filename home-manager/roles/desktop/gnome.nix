@@ -1,6 +1,29 @@
 { pkgs, lib, ... }:
 let
   mkTuple = lib.hm.gvariant.mkTuple;
+  statusScript = pkgs.writeHaskellScript
+    {
+      name = "status-script";
+      bins = [ pkgs.notmuch pkgs.coreutils ];
+      imports = [
+        "Control.Exception"
+      ];
+    } ''
+    data Mode = Research | Orga | Leisure deriving (Eq, Ord, Show, Enum, Bounded)
+    modes = enumFrom Research
+    getMode = do
+      name <- Text.strip <$> readFileText "/home/maralorn/.mode" `onException` say "File /home/maralorn/.mode not found."
+      maybe (say [i|Unknown mode #{name}|] >> error [i|Unknown mode #{name}|]) pure $ find (\mode -> name == (Text.toLower $ show mode)) $ modes
+
+    main = do
+      mode <- getMode
+      unread <- notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
+      inbox <- notmuch "count" "folder:hera/Inbox" |> captureTrim
+      say . Text.intercalate " " $
+        [show mode] ++
+        (if (unread /= "0") && mode >= Orga then one [i|Unread: #{unread}|] else []) ++
+        (if (inbox /= "0") && mode >= Leisure then one [i|Inbox: #{inbox}|] else [])
+  '';
 in
 {
   services.gpg-agent.pinentryFlavor = "gnome3";
@@ -79,6 +102,15 @@ in
       titlebar-font = "B612 9";
     };
 
+    "org/gnome/shell/extensions/executor" = {
+      center-active = true;
+      center-commands-json = ''{"commands":[{"command":"${statusScript}/bin/status-script","interval":1,"uuid":"d20a15a4-aea9-48e1-955f-4bd9f55b08bc"}]}'';
+      center-index = 0;
+      left-active = false;
+      location = 1;
+      right-active = false;
+    };
+
     "org/gnome/shell" = {
       disable-user-extensions = false;
       enabled-extensions = [
@@ -94,6 +126,7 @@ in
         "dash-to-panel@jderose9.github.com"
         "system-monitor@paradoxxx.zero.gmail.com"
         "windowsNavigator@gnome-shell-extensions.gcampax.github.com"
+        "executor@raujonas.github.io"
       ];
       welcome-dialog-last-shown-version = "40.1";
     };
