@@ -5,6 +5,10 @@ let
   mail = "malte.brandy@maralorn.de";
   alternates = pkgs.privateValue [ ] "mail/alternates";
   lists = pkgs.privateValue { sortLists = [ ]; stupidLists = [ ]; notifications = [ ]; } "mail/filters";
+  quick-sync = pkgs.writeShellScript "quick-mail-sync" ''
+    ${pkgs.isync}/bin/mbsync hera:INBOX
+    ${pkgs.notmuch}/bin/notmuch new
+  '';
   maildir = config.accounts.email.maildirBasePath;
   # mhdr -h List-ID -d Maildir/hera/Archiv/unsortiert | sort | sed 's/^.*<\(.*\)>$/\1/' | uniq | xargs -I '{}' sh -c "notmuch count List:{} | sed 's/$/: {}/'" | sort
   # To find candidates
@@ -40,73 +44,75 @@ let
         "System.Environment (setEnv)"
       ];
     } ''
-    reScan = notmuch "new" "--quiet"
+      reScan = notmuch "new" "--quiet"
 
-    findFilterMail :: (Text,Text) -> IO (Maybe (LByteString, Text, Text))
-    findFilterMail (filter_, target) = do
-       files <- notmuch "search" "--output" "files" (toString filter_) "folder:${unsortedSuffix}" |> capture
-       pure $ if (LBS.length files > 0) then Just (files, filter_, target) else Nothing
+      findFilterMail :: (Text,Text) -> IO (Maybe (LByteString, Text, Text))
+      findFilterMail (filter_, target) = do
+         files <- notmuch "search" "--output" "files" (toString filter_) "folder:${unsortedSuffix}" |> capture
+         pure $ if (LBS.length files > 0) then Just (files, filter_, target) else Nothing
 
-    executeFilterMail :: (LByteString, Text, Text) -> IO ()
-    executeFilterMail (files, filter_, target) = do
-       say [i|Sorting "#{filter_}" into #{target}|]
-       writeOutput files |> mscan
-       mmkdir ([i|${archive}/#{target}|] :: String)
-       writeOutput files |> mrefile ([i|${archive}/#{target}|] :: String)
+      executeFilterMail :: (LByteString, Text, Text) -> IO ()
+      executeFilterMail (files, filter_, target) = do
+         say [i|Sorting "#{filter_}" into #{target}|]
+         writeOutput files |> mscan
+         mmkdir ([i|${archive}/#{target}|] :: String)
+         writeOutput files |> mrefile ([i|${archive}/#{target}|] :: String)
 
-    myFilters :: [(Text,Text)]
-    myFilters = [${
-      lib.concatStringsSep ","
-      (builtins.map ({ filter, target }: ''("${filter}","${target}")'')
-        myFilters)
+      myFilters :: [(Text,Text)]
+      myFilters = [${
+    lib.concatStringsSep ","
+      (
+        builtins.map ({ filter, target }: ''("${filter}","${target}")'')
+          myFilters
+      )
     }]
 
-    filtersFromTo :: Text -> Maybe (Text,Text)
-    filtersFromTo = filtersFromField "to" [toToName]
-    toToName :: Text -> Maybe Text
-    toToName (T.splitOn "@" -> [name, "maralorn.de"])
-          | not (T.isInfixOf "randy" name) = Just . ("to/" <>) . T.intercalate "_" . T.splitOn "." $ name
-    toToName _ = Nothing
-    filtersFromField :: Text -> [Text-> Maybe Text] -> Text -> Maybe (Text,Text)
-    filtersFromField field filters text = fmap ([i|#{field}:#{text}|],) . viaNonEmpty Relude.head . mapMaybe ($ text) $ filters
-    filtersFromListIDs :: Text -> Maybe (Text,Text)
-    filtersFromListIDs = filtersFromField "List" [githubNameFolderFromId, gitlabNameFolderFromId]
-    githubNameFolderFromId :: Text -> Maybe Text
-    githubNameFolderFromId (reverse . T.splitOn "." -> ("com":"github":org:name)) = Just [i|github/#{org}/#{T.intercalate "_" $ reverse name}|]
-    githubNameFolderFromId _ = Nothing
-    gitlabNameFolderFromId :: Text -> Maybe Text
-    gitlabNameFolderFromId (reverse . T.splitOn "." -> ("de":"ccc":"darmstadt":"git":org:name1:name)) = Just [i|cda-gitlab/#{org}/#{T.intercalate "_" . toList . Relude.tail $ NE.reverse (name1:|name)}|]
-    gitlabNameFolderFromId _ = Nothing
+      filtersFromTo :: Text -> Maybe (Text,Text)
+      filtersFromTo = filtersFromField "to" [toToName]
+      toToName :: Text -> Maybe Text
+      toToName (T.splitOn "@" -> [name, "maralorn.de"])
+            | not (T.isInfixOf "randy" name) = Just . ("to/" <>) . T.intercalate "_" . T.splitOn "." $ name
+      toToName _ = Nothing
+      filtersFromField :: Text -> [Text-> Maybe Text] -> Text -> Maybe (Text,Text)
+      filtersFromField field filters text = fmap ([i|#{field}:#{text}|],) . viaNonEmpty Relude.head . mapMaybe ($ text) $ filters
+      filtersFromListIDs :: Text -> Maybe (Text,Text)
+      filtersFromListIDs = filtersFromField "List" [githubNameFolderFromId, gitlabNameFolderFromId]
+      githubNameFolderFromId :: Text -> Maybe Text
+      githubNameFolderFromId (reverse . T.splitOn "." -> ("com":"github":org:name)) = Just [i|github/#{org}/#{T.intercalate "_" $ reverse name}|]
+      githubNameFolderFromId _ = Nothing
+      gitlabNameFolderFromId :: Text -> Maybe Text
+      gitlabNameFolderFromId (reverse . T.splitOn "." -> ("de":"ccc":"darmstadt":"git":org:name1:name)) = Just [i|cda-gitlab/#{org}/#{T.intercalate "_" . toList . Relude.tail $ NE.reverse (name1:|name)}|]
+      gitlabNameFolderFromId _ = Nothing
 
-    type Parser = Parsec Text Text
-    listId :: Parser Text
-    listId = manyTill anySingle (char '<') *> (toText <$> manyTill anySingle (char '>'))
+      type Parser = Parsec Text Text
+      listId :: Parser Text
+      listId = manyTill anySingle (char '<') *> (toText <$> manyTill anySingle (char '>'))
 
-    mySearch :: [String] -> IO [Text]
-    mySearch param = lines . decodeUtf8 <$> (Main.find ("${archive}":param) |> captureTrim)
+      mySearch :: [String] -> IO [Text]
+      mySearch param = lines . decodeUtf8 <$> (Main.find ("${archive}":param) |> captureTrim)
 
-    main = do
-       setEnv "MBLAZE_PAGER" "cat"
-       setEnv "NOTMUCH_CONFIG" "${config.home.sessionVariables.NOTMUCH_CONFIG or ""}"
-       reScan
-       (listIDs,tos) <- concurrently (mhdr "-h" "List-ID" "-d" "${unsorted}" |> capture) (mhdr "-h" "To" "-d" "${unsorted}" "-A" |> capture)
-       let listFilters = mapMaybe filtersFromListIDs . sortNub . mapMaybe (parseMaybe listId) . lines . decodeUtf8 $ listIDs
-           toFilters = mapMaybe filtersFromTo . sortNub . fmap (\x -> maybe x Relude.id $ parseMaybe listId x) . lines . decodeUtf8 $ tos
-       applicableFilters <- catMaybes <$> forConcurrently (listFilters <> myFilters <> toFilters) findFilterMail
-       for_ applicableFilters executeFilterMail
-       reScan
-       --syncStates <- mySearch ["-name", ".mbsyncstate"]
-       --dbFiles <- mySearch ["-name", ".isyncuidmap.db"]
-       --dirs <- mySearch ["-type", "d"]
-       --maildirs <- sortNub <$> (lines . decodeUtf8 =<<) <$> forM dirs (\dir -> mdirs (toString dir) |> captureTrim)
-       --emptyMaildirs <- filterM (\dir -> (== 0) . LBS.length <$> (mlist (toString dir) |> captureTrim)) maildirs
-       --forM_ emptyMaildirs $ \dir -> rmdir ([[i|#{dir}/cur|],[i|#{dir}/new|],[i|#{dir}/tmp|]] :: [String])
-       -- let nonMaildirs = filter (`notElem` maildirs) dirs
-       --    delSyncs = filter (`elem` syncStates) $ (\x -> [i|#{x}/.mbsyncstate|]) <$> nonMaildirs
-       --    delDbs = filter (`elem` dbFiles) $ (\x -> [i|#{x}/.isyncuidmap.db|]) <$> nonMaildirs
-       -- whenNotNull (delSyncs ++ delDbs) $ rm . fmap toString . toList
-       -- emptyDirs <- Main.find "${archive}" "-type" "d" "-empty" "!" "-name" "cur" "!" "-name" "tmp" "!" "-name" "new" "-print0" |> capture
-       -- when (LBS.length emptyDirs > 0) $ writeOutput emptyDirs |> xargs "-0" "rmdir"
+      main = do
+         setEnv "MBLAZE_PAGER" "cat"
+         setEnv "NOTMUCH_CONFIG" "${config.home.sessionVariables.NOTMUCH_CONFIG or ""}"
+         reScan
+         (listIDs,tos) <- concurrently (mhdr "-h" "List-ID" "-d" "${unsorted}" |> capture) (mhdr "-h" "To" "-d" "${unsorted}" "-A" |> capture)
+         let listFilters = mapMaybe filtersFromListIDs . sortNub . mapMaybe (parseMaybe listId) . lines . decodeUtf8 $ listIDs
+             toFilters = mapMaybe filtersFromTo . sortNub . fmap (\x -> maybe x Relude.id $ parseMaybe listId x) . lines . decodeUtf8 $ tos
+         applicableFilters <- catMaybes <$> forConcurrently (listFilters <> myFilters <> toFilters) findFilterMail
+         for_ applicableFilters executeFilterMail
+         reScan
+         --syncStates <- mySearch ["-name", ".mbsyncstate"]
+         --dbFiles <- mySearch ["-name", ".isyncuidmap.db"]
+         --dirs <- mySearch ["-type", "d"]
+         --maildirs <- sortNub <$> (lines . decodeUtf8 =<<) <$> forM dirs (\dir -> mdirs (toString dir) |> captureTrim)
+         --emptyMaildirs <- filterM (\dir -> (== 0) . LBS.length <$> (mlist (toString dir) |> captureTrim)) maildirs
+         --forM_ emptyMaildirs $ \dir -> rmdir ([[i|#{dir}/cur|],[i|#{dir}/new|],[i|#{dir}/tmp|]] :: [String])
+         -- let nonMaildirs = filter (`notElem` maildirs) dirs
+         --    delSyncs = filter (`elem` syncStates) $ (\x -> [i|#{x}/.mbsyncstate|]) <$> nonMaildirs
+         --    delDbs = filter (`elem` dbFiles) $ (\x -> [i|#{x}/.isyncuidmap.db|]) <$> nonMaildirs
+         -- whenNotNull (delSyncs ++ delDbs) $ rm . fmap toString . toList
+         -- emptyDirs <- Main.find "${archive}" "-type" "d" "-empty" "!" "-name" "cur" "!" "-name" "tmp" "!" "-name" "new" "-print0" |> capture
+         -- when (LBS.length emptyDirs > 0) $ writeOutput emptyDirs |> xargs "-0" "rmdir"
   '';
 in
 {
@@ -138,8 +144,7 @@ in
             exports.tlsOptions = { "rejectUnauthorized": false };
             exports.username = "${account.userName}";
             exports.password = getStdout("${toString account.passwordCommand}");
-            exports.onNotify = "${pkgs.isync}/bin/mbsync ${name}"
-            exports.onNotifyPost = "${pkgs.notmuch}/bin/notmuch new"
+            exports.onNotify = "${quick-sync}"
             exports.boxes = [ "Inbox" ];
           '';
         in
@@ -157,8 +162,23 @@ in
         value = mkService name account;
       };
       hasImapHost = name: account: account.imap != null;
+      mkEntrService = name: account: {
+        name = "entr-watch-${name}-maildir";
+        value = {
+          Unit.Description = "Watch maildir for changes for account ${name}";
+          Service = {
+            ExecStart = toString (pkgs.writeShellScript "entr-watch-${name}-maildir" ''
+              while true; do
+                ${pkgs.fd}/bin/fd . ${maildir}/${name}/Inbox | ${pkgs.entr}/bin/entr -n -d ${quick-sync}
+              done
+            '');
+          };
+          Install.WantedBy = [ "default.target" ];
+        };
+      };
     in
-    lib.mapAttrs' mkServiceWithName
+    lib.mapAttrs' mkEntrService
+      (lib.filterAttrs hasImapHost config.accounts.email.accounts) // lib.mapAttrs' mkServiceWithName
       (lib.filterAttrs hasImapHost config.accounts.email.accounts) // {
       mbsync.Service = {
         Environment = "PATH=${pkgs.coreutils}/bin";
@@ -283,7 +303,7 @@ in
           set mime_forward=yes
           set mime_forward_rest=yes
 
-          macro index <F5> "!systemctl --user start mbsync > /dev/null<enter>"
+          macro index <F5> "!${quick-sync} > /dev/null<enter>"
 
           source "${hide-sidebar}"
           macro index <right> "<enter-command>source ${hide-sidebar}<enter>"
@@ -303,8 +323,10 @@ in
 
           alias f__0 ${name} <${mail}>
           ${builtins.concatStringsSep "\n"
-          (lib.imap1 (n: x: "alias f__${toString n} ${name} <${x}>")
-            alternates)}
+          (
+            lib.imap1 (n: x: "alias f__${toString n} ${name} <${x}>")
+              alternates
+          )}
           send2-hook '~f fill-later' "push <edit-from><kill-line>f__<complete><search>${mail}<enter>"
           set query_command = "${pkgs.khard}/bin/khard email --parsable %s"
         '';
