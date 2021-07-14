@@ -4,9 +4,10 @@ let
   statusScript = pkgs.writeHaskellScript
     {
       name = "status-script";
-      bins = [ pkgs.notmuch pkgs.coreutils ];
+      bins = [ pkgs.notmuch pkgs.coreutils pkgs.git ];
       imports = [
         "Control.Exception"
+        "System.Directory"
       ];
     } ''
     data Mode = Research | Orga | Leisure deriving (Eq, Ord, Show, Enum, Bounded)
@@ -15,14 +16,25 @@ let
       name <- Text.strip <$> readFileText "/home/maralorn/.mode" `onException` say "File /home/maralorn/.mode not found."
       maybe (say [i|Unknown mode #{name}|] >> error [i|Unknown mode #{name}|]) pure $ find (\mode -> name == (Text.toLower $ show mode)) $ modes
 
+    isDirty gitDir = (/= "") <$> (git "-C" gitDir "status" "--porcelain" |> captureTrim)
+    isUnpushed gitDir = do
+      gitHead <- git "-C" gitDir "rev-parse" "HEAD" |> captureTrim
+      origin <- git "-C" gitDir "rev-parse" "origin/HEAD" |> captureTrim
+      pure (gitHead /= origin)
+
     main = do
       mode <- getMode
       unread <- notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
       inbox <- notmuch "count" "folder:hera/Inbox" |> captureTrim
+      dirs <- listDirectory "/home/maralorn/git"
+      dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/"<>)) dirs
+      unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/"<>)) dirs
       say . Text.intercalate " " $
         [show mode] ++
-        (if (unread /= "0") && mode >= Orga then one [i|Unread: #{unread}|] else []) ++
-        (if (inbox /= "0") && mode >= Leisure then one [i|Inbox: #{inbox}|] else [])
+        memptyIfFalse ((unread /= "0") && mode >= Orga) (one [i|Unread: #{unread}|]) ++
+        memptyIfFalse ((inbox /= "0") && mode >= Leisure) (one [i|Inbox: #{inbox}|]) ++
+        memptyIfFalse (length unpushed /= 0) (one [i|Unpushed: #{Text.intercalate " " unpushed}|]) ++
+        memptyIfFalse (length dirty /= 0) (one [i|Dirty: #{Text.intercalate " " dirty}|])
   '';
 in
 {
