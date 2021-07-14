@@ -168,7 +168,9 @@ in
           Unit.Description = "Watch maildir for changes for account ${name}";
           Service = {
             ExecStart = toString (pkgs.writeShellScript "entr-watch-${name}-maildir" ''
-              while true; do
+              while sleep 1s; do
+                echo "Watching the following files or directories:"
+                ${pkgs.fd}/bin/fd . ${maildir}/${name}/Inbox
                 ${pkgs.fd}/bin/fd . ${maildir}/${name}/Inbox | ${pkgs.entr}/bin/entr -n -d ${quick-sync}
               done
             '');
