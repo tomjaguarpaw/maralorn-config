@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 let
   addressbooks = pkgs.privateValue [ ] "addressbooks";
   calendars = pkgs.privateValue [ ] "calendars";
@@ -79,6 +79,19 @@ in
   home.packages = [ pkgs.vdirsyncer ];
 
   systemd.user = {
+    services.entr-watch-vdir = {
+      Unit.Description = "Watch vdir data for changes";
+      Service = {
+        ExecStart = toString (
+          pkgs.writeShellScript "entr-watch-vdir" ''
+            while sleep 1s; do
+              ${pkgs.fd}/bin/fd . ${config.home.homeDirectory}/.contacts ${config.home.homeDirectory}/.calendars | ${pkgs.entr}/bin/entr -n -d ${pkgs.vdirsyncer}/bin/vdirsyncer sync
+            done
+          ''
+        );
+      };
+      Install.WantedBy = [ "default.target" ];
+    };
     services.vdirsyncer = {
       Unit.Description = "vdirsyncer sync";
       Service = {
