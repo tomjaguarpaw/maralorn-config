@@ -47,7 +47,7 @@ self: super: {
       ;
     executor = self.gnomeExtensions.executor.overrideAttrs (old: {
       buildCommand = old.buildCommand + ''
-        substituteInPlace $out/share/gnome-shell/extensions/executor@raujonas.github.io/extension.js --replace "'/bin/bash'" "'/usr/bin/env', 'bash'"
+        substituteInPlace $out/share/gnome-shell/extensions/executor@raujonas.github.io/extension.js --replace "'/bin/bash'" "'bash'"
       '';
     });
     inherit (self.gnome)
