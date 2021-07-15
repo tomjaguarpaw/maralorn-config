@@ -46,6 +46,8 @@ in
       ExecStart = "/disk/volatile/maralorn/modes/orga/activate";
     };
     wantedBy = [ "multi-user.target" ];
+    # Try to avoid race conditions, when the user get’s logged in before activation was completed.
+    before = [ "display-manager.service" ];
   };
 
   systemd.tmpfiles.rules = [
