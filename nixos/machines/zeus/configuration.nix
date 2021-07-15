@@ -36,7 +36,10 @@ in
       };
     };
 
-  environment.etc."nixos".source = "/disk/persist/maralorn/git/config";
+  environment.etc = {
+    nixos.source = "/disk/persist/maralorn/git/config";
+    machine-id.source = "/disk/persist/machine-id";
+  };
 
   systemd.services."activate-home-manager" = {
     path = [ pkgs.nix pkgs.dbus ];
