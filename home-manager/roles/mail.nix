@@ -162,16 +162,15 @@ in
         value = mkService name account;
       };
       hasImapHost = name: account: account.imap != null;
-      mkEntrService = name: account: {
-        name = "entr-watch-${name}-maildir";
+      mkWatchService = name: account: {
+        name = "watch-${name}-maildir";
         value = {
           Unit.Description = "Watch maildir for changes for account ${name}";
           Service = {
-            ExecStart = toString (pkgs.writeShellScript "entr-watch-${name}-maildir" ''
+            ExecStart = toString (pkgs.writeShellScript "watch-${name}-maildir" ''
               while sleep 1s; do
-                echo "Watching the following files or directories:"
-                ${pkgs.fd}/bin/fd . ${maildir}/${name}/Inbox
-                ${pkgs.fd}/bin/fd . ${maildir}/${name}/Inbox | ${pkgs.entr}/bin/entr -n -d ${quick-sync}
+                ${quick-sync}
+                ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete -r ${maildir}/${name}/Inbox
               done
             '');
           };
@@ -179,7 +178,7 @@ in
         };
       };
     in
-    lib.mapAttrs' mkEntrService
+    lib.mapAttrs' mkWatchService
       (lib.filterAttrs hasImapHost config.accounts.email.accounts) // lib.mapAttrs' mkServiceWithName
       (lib.filterAttrs hasImapHost config.accounts.email.accounts) // {
       mbsync.Service = {

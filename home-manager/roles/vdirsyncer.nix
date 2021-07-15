@@ -79,13 +79,14 @@ in
   home.packages = [ pkgs.vdirsyncer ];
 
   systemd.user = {
-    services.entr-watch-vdir = {
+    services.watch-vdir = {
       Unit.Description = "Watch vdir data for changes";
       Service = {
         ExecStart = toString (
-          pkgs.writeShellScript "entr-watch-vdir" ''
+          pkgs.writeShellScript "watch-vdir" ''
             while sleep 1s; do
-              ${pkgs.fd}/bin/fd . ${config.home.homeDirectory}/.contacts ${config.home.homeDirectory}/.calendars | ${pkgs.entr}/bin/entr -n -d ${pkgs.vdirsyncer}/bin/vdirsyncer sync
+              ${pkgs.vdirsyncer}/bin/vdirsyncer sync
+              ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete,modify -r ${config.home.homeDirectory}/.contacts ${config.home.homeDirectory}/.calendars
             done
           ''
         );
