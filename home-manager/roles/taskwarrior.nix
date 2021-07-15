@@ -4,6 +4,20 @@
     enable = true;
     frequency = "*:0/1";
   };
+  systemd.user.services.watch-tasks = {
+    Unit.Description = "Watch tasks for changes and trigger sync";
+    Service = {
+      ExecStart = toString (
+        pkgs.writeShellScript "watch-vdir" ''
+          while sleep 1s; do
+            ${pkgs.taskwarrior}/bin/task sync
+            ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete,modify -r ${config.home.homeDirectory}/.task
+          done
+        ''
+      );
+    };
+    Install.WantedBy = [ "default.target" ];
+  };
   home.file = {
     "add-kassandra-notification" = {
       target = ".task/hooks/on-add.kassandra-notification";
