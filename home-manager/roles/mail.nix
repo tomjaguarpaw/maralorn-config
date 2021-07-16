@@ -168,7 +168,7 @@ in
           Unit.Description = "Watch maildir for changes for account ${name}";
           Service = {
             ExecStart = toString (pkgs.writeShellScript "watch-${name}-maildir" ''
-              while sleep 1s; do
+              while ${pkgs.coreutils}/bin/sleep 1s; do
                 ${quick-sync}
                 ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete -r ${maildir}/${name}/Inbox
               done

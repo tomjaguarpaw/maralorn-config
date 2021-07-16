@@ -84,7 +84,7 @@ in
       Service = {
         ExecStart = toString (
           pkgs.writeShellScript "watch-vdir" ''
-            while sleep 1s; do
+            while ${pkgs.coreutils}/bin/sleep 1s; do
               ${pkgs.vdirsyncer}/bin/vdirsyncer sync
               ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete,modify -r ${config.home.homeDirectory}/.contacts ${config.home.homeDirectory}/.calendars
             done
