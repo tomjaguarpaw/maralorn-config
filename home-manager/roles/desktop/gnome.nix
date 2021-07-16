@@ -130,7 +130,6 @@ in
         "clipboard-indicator@tudmotu.com"
         "appindicatorsupport@rgcjonas.gmail.com"
         "nothing-to-say@extensions.gnome.wouter.bolsterl.ee"
-        "notification-position@drugo.dev"
         "drive-menu@gnome-shell-extensions.gcampax.github.com"
         "sound-output-device-chooser@kgshank.net"
         "user-theme@gnome-shell-extensions.gcampax.github.com"
