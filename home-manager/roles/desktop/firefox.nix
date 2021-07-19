@@ -5,7 +5,6 @@
       userChrome = ""; # css
       userContent = ""; # css
       settings = {
-        "browser.startup.homepage" = "https://stats.maralorn.de";
         "browser.search.region" = "DE";
         "distribution.searchplugins.defaultLocale" = "de-DE";
         "general.useragent.locale" = "de-DE";

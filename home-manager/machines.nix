@@ -55,7 +55,7 @@ in
       install = f: ({ pkgs, ... }: { home.packages = f pkgs; });
       setStartpage = startpage:
         { ... }: {
-          programs.firefox.profiles."fz2sm95u.default".settings = {
+          programs.firefox.profiles."maralorn-default".settings = {
             "browser.startup.homepage" = startpage;
           };
         };
@@ -92,7 +92,7 @@ in
         ./roles/pythia.nix
         ./roles/tinkering.nix
         ./roles/chat.nix
-        (setStartpage "https://stats.maralorn.de/d/health-status")
+        (setStartpage "https://stats.maralorn.de")
         (makeBlock [ ])
       ];
     in
@@ -136,6 +136,7 @@ in
         ./roles/update_tasks.nix
         ./roles/vdirsyncer.nix
         (import ./roles/mode-switching.nix { modeDir = ".volatile/modes"; modeFile = ".mode"; })
+        (setStartpage "https://stats.maralorn.de")
         (makeAutostart "kassandra2")
         (makeAutostart "unlock-ssh")
       ];
@@ -148,9 +149,9 @@ in
       ];
     in
     {
-      research = makeConfig "zeus" all;
-      orga = makeConfig "zeus" orga;
-      leisure = makeConfig "zeus" leisure;
+      research = makeConfig "zeus" (all ++ [ (makeBlock restrictedPages) ]);
+      orga = makeConfig "zeus" (orga ++ [ (makeBlock restrictedPages) ]);
+      leisure = makeConfig "zeus" (leisure ++ [ (makeBlock [ ]) ]);
     };
   hera = {
     default = makeConfig "hera" [
