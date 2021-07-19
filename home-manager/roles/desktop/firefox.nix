@@ -1,6 +1,24 @@
-{ ... }: {
-  programs.firefox.enable = true;
-  programs.browserpass.enable = true;
+{ pkgs, ... }: {
+  programs.firefox = {
+    profiles.maralorn-default = {
+      extraConfig = ""; # user.js
+      userChrome = ""; # css
+      userContent = ""; # css
+      settings = {
+        "browser.startup.homepage" = "https://stats.maralorn.de";
+        "browser.search.region" = "DE";
+        "distribution.searchplugins.defaultLocale" = "de-DE";
+        "general.useragent.locale" = "de-DE";
+        "identity.sync.tokenserver.uri" = "https://firefox-sync.maralorn.de/token/1.0/sync/1.5";
+      };
+    };
+    enable = true;
+  };
+
+  programs.browserpass = {
+    browsers = [ "firefox" ];
+    enable = true;
+  };
   home.sessionVariables = {
     MOZ_ENABLE_WAYLAND = 1; # So that firefox uses wayland.
 

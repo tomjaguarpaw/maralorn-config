@@ -17,6 +17,7 @@ let
     ".local/share/direnv"
     ".local/share/khal"
     ".local/share/mpd"
+    ".mozilla/firefox/maralorn-default"
     ".ssh"
     ".task"
     ".vdirsyncer"
