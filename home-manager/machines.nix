@@ -26,6 +26,12 @@ let
     "twitter.com"
     "chaos.social"
   ];
+  setStartpage = startpage:
+    { ... }: {
+      programs.firefox.profiles."maralorn-default".settings = {
+        "browser.startup.homepage" = startpage;
+      };
+    };
   makeConfig = hostName: imports:
     { ... }: {
       imports = imports ++ [ ./roles/default.nix ];
@@ -53,12 +59,6 @@ in
   apollo =
     let
       install = f: ({ pkgs, ... }: { home.packages = f pkgs; });
-      setStartpage = startpage:
-        { ... }: {
-          programs.firefox.profiles."maralorn-default".settings = {
-            "browser.startup.homepage" = startpage;
-          };
-        };
       apolloConfig = name: imports:
         makeConfig "apollo" (
           imports ++ [
