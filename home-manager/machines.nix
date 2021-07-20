@@ -115,6 +115,7 @@ in
     let
       all = [
         ./roles/accounting.nix
+        ./roles/systemd-exporter.nix
         ./roles/beets.nix
         ./roles/daily-driver-programs.nix
         ./roles/desktop
