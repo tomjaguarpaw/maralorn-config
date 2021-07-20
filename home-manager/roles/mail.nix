@@ -149,13 +149,13 @@ in
           '';
         in
         {
-          Unit = { Description = "Run imapnotify for imap account ${name}"; };
+          Unit.Description = "Run imapnotify for imap account ${name}";
           Service = {
             ExecStart = "${pkgs.imapnotify}/bin/imapnotify -c ${configjs}";
             Restart = "always";
             RestartSec = "1min";
           };
-          Install = { WantedBy = [ "default.target" ]; };
+          Install.WantedBy = [ "default.target" ];
         };
       mkServiceWithName = name: account: {
         name = "imapnotify-${name}-inbox";
