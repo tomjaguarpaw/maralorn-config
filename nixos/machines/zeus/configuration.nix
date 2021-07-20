@@ -1,8 +1,8 @@
 { config, pkgs, lib, ... }:
 
 let
-  #wireguard = import ../../../common/wireguard.nix;
-  #inherit (config.m-0) hosts prefix;
+  wireguard = import ../../../common/wireguard.nix;
+  inherit (config.m-0) hosts prefix;
   nixos-hardware = (import ../../../nix/sources.nix).nixos-hardware;
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
   #vpn = (import ../../../private.nix).privateValue ({ ... }: { }) "vpn";
@@ -98,26 +98,24 @@ in
     hostName = "zeus";
     domain = "m-0.eu";
     interfaces.enp34s0.useDHCP = true;
-    #wireguard.interfaces = {
-    #  m0wire = {
-    #    allowedIPsAsRoutes = false;
-    #    ips = [ "${hosts.apollo-wg}/112" ];
-    #    privateKeyFile = pkgs.privatePath "wireguard/apollo-private";
-    #    peers = [
-    #      {
-    #        publicKey = wireguard.pub.hera;
-    #        allowedIPs = [ "::/0" ];
-    #        # endpoint =
-    #        #  "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
-    #        endpoint = "[${hosts.hera-v4}]:${builtins.toString wireguard.port}";
-    #        presharedKeyFile = pkgs.privatePath "wireguard/psk";
-    #        persistentKeepalive = 25;
-    #      }
-    #    ];
-    #    postSetup =
-    #      [ "${pkgs.iproute}/bin/ip route add ${prefix}::/96 dev m0wire" ];
-    #  };
-    #};
+    wireguard.interfaces = {
+      m0wire = {
+        allowedIPsAsRoutes = false;
+        ips = [ "${hosts.zeus-wg}/112" ];
+        privateKeyFile = "/disk/persist/wireguard-private-key";
+        peers = [
+          {
+            publicKey = wireguard.pub.hera;
+            allowedIPs = [ "::/0" ];
+            endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
+            presharedKeyFile = pkgs.privatePath "wireguard/psk";
+            persistentKeepalive = 25;
+          }
+        ];
+        postSetup =
+          [ "${pkgs.iproute}/bin/ip route add ${prefix}::/96 dev m0wire" ];
+      };
+    };
   };
 
   programs = {

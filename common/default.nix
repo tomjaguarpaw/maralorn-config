@@ -61,20 +61,15 @@ with lib;
 
           hera-wg = "${wg-p}:1";
           apollo-wg = "${wg-p}:2";
+          zeus-wg = "${wg-p}:3";
 
           hera-intern = "${hera-p}:1";
-          git = "${hera-p}:2";
-          borg = "${hera-p}:3";
-          matrix = "${hera-p}:8";
-          cloud = "${hera-p}:9";
           chor-cloud = "${hera-p}:b";
 
           apollo = apollo-wg;
 
           hera-intern-v4 = "${v4-p}.1";
-          cloud-intern-v4 = "${v4-p}.2";
           chor-cloud-intern-v4 = "${v4-p}.3";
-          matrix-intern-v4 = "${v4-p}.4";
         };
     };
   };

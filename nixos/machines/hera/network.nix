@@ -65,10 +65,15 @@ in
         privateKeyFile = pkgs.privatePath "wireguard/hera-private";
         listenPort = wireguard.port;
         peers = [{
-          publicKey = wireguard.pub.apollo;
-          allowedIPs = [ "${hosts.apollo-wg}/128" ];
+          publicKey = wireguard.pub.zeus;
+          allowedIPs = [ "${hosts.zeus-wg}/128" ];
           presharedKeyFile = pkgs.privatePath "wireguard/psk";
-        }];
+        }
+          {
+            publicKey = wireguard.pub.apollo;
+            allowedIPs = [ "${hosts.apollo-wg}/128" ];
+            presharedKeyFile = pkgs.privatePath "wireguard/psk";
+          }];
       };
     };
   };
