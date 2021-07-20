@@ -51,6 +51,7 @@
                   inherit name;
                   inherit alert_type;
                   inContainer = lib.boolToString entry.container;
+                  flaky = lib.boolToString entry.flaky;
                 };
               }];
             })

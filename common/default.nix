@@ -9,6 +9,22 @@ with lib;
       {
         host = "apollo:9100";
         name = "apollo";
+        flaky = true;
+      }
+      {
+        host = "apollo:9558";
+        name = "apollo-user";
+        flaky = true;
+      }
+      {
+        host = "zeus:9100";
+        name = "zeus";
+        flaky = true;
+      }
+      {
+        host = "zeus:9558";
+        name = "zeus-user";
+        flaky = true;
       }
       {
         name = "ved server";
@@ -36,6 +52,10 @@ with lib;
           name = mkOption { type = types.str; };
           host = mkOption { type = types.str; };
           container = mkOption {
+            type = types.bool;
+            default = false;
+          };
+          flaky = mkOption {
             type = types.bool;
             default = false;
           };
@@ -67,6 +87,7 @@ with lib;
           chor-cloud = "${hera-p}:b";
 
           apollo = apollo-wg;
+          zeus = zeus-wg;
 
           hera-intern-v4 = "${v4-p}.1";
           chor-cloud-intern-v4 = "${v4-p}.3";
