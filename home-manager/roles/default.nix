@@ -193,7 +193,10 @@
     };
   };
 
-  systemd.user.startServices = true;
+  systemd.user = {
+    startServices = true;
+    sessionVariables = config.home.sessionVariables;
+  };
 
   services = {
     gpg-agent = {
