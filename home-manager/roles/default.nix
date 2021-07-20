@@ -184,7 +184,7 @@
     ];
     sessionVariables = {
       PATH = "$HOME/.nix-profile/bin:$PATH";
-      BROWSER = "${pkgs.firefox}/bin/firefox";
+      BROWSER = "firefox";
       EMAIL = "malte.brandy@maralorn.de";
       SUDO_ASKPASS = toString (
         pkgs.writeShellScript "print-sudo-pw"
