@@ -90,6 +90,8 @@ in
             done
           ''
         );
+        Restart = "always";
+        RestartSec = "1min";
       };
       Install.WantedBy = [ "default.target" ];
     };
