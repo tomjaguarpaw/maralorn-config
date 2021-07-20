@@ -38,9 +38,9 @@ in
         say "Building ~/.modes for ${hostName}"
         nixPath <- myNixPath "${configPath}"
         setEnv "WITH_SECRETS" "false"
-        nix_build nixPath (params ++ remoteBuildParams) &!> StdOut |> nom
+        nom_build nixPath (params ++ remoteBuildParams)
         setEnv "WITH_SECRETS" "true"
-        nix_build nixPath params &!> StdOut |> nom
+        nom_build nixPath params
         activate_mode
     '';
     quickUpdateMode = pkgs.writeHaskellScript
