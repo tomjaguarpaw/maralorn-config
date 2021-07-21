@@ -90,8 +90,6 @@ in
             done
           ''
         );
-        Restart = "always";
-        RestartSec = "1min";
       };
       Install.WantedBy = [ "default.target" ];
     };
@@ -100,6 +98,8 @@ in
       Service = {
         Type = "oneshot";
         ExecStart = "${pkgs.vdirsyncer}/bin/vdirsyncer sync";
+        Restart = "on-failure";
+        RestartSec = "1min";
       };
     };
     timers.vdirsyncer = {
