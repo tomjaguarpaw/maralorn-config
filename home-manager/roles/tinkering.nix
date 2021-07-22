@@ -6,4 +6,11 @@
       meld icedtea8_web octave filezilla nix-review gparted
       grafana-devel;
   };
+  home.file.".cabal/config".text = ''
+    repository hackage.haskell.org
+      url: http://hackage.haskell.org/
+
+    username: maralorn
+    password-command: ${pkgs.writeShellScript "hackage-pw" ''pass org/haskell/hackage.haskell.org/maralorn | head -n1''}
+  '';
 }
