@@ -181,6 +181,9 @@
         pkgs.writeShellScriptBin "print-ssh-pw"
           "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/ssh-key"
       )
+      (
+        pkgs.writeShellScriptBin "dingdingding" (builtins.readFile ./signal.sh)
+      )
     ];
     sessionVariables = {
       PATH = "$HOME/.nix-profile/bin:$PATH";
