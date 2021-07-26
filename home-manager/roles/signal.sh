@@ -28,5 +28,5 @@ echo "Sleeping for $sleep_seconds seconds."
 sleep $sleep_seconds
 
 echo "Ringing Bell"
-mpv ./bell.opus
+mpv $HOME/media/audio/bell.opus
 done
