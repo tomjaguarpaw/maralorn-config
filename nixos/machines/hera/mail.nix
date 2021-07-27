@@ -26,9 +26,6 @@ in
       "multimap.conf".text =
         let
           allow-ip = builtins.toFile "allow-ip.map" ''
-            # tu-darmstadt
-            130.83.0.0/16
-            2001:41b8:800::/40
           '';
           allow-host = builtins.toFile "allow-host.map" ''
             gmx.de
