@@ -71,10 +71,10 @@ let
         pcre
         speechd
         zeroc-ice.all
+        libpulseaudio
       ]
       ++ lib.optional stdenv.isLinux alsaLib
-      ++ lib.optional jackSupport libjack2
-      ++ lib.optional pulseSupport libpulseaudio;
+      ++ lib.optional jackSupport libjack2;
 
       configureFlags = [
         "CONFIG+=no-server"
@@ -82,6 +82,8 @@ let
 
       cmakeFlags = [
         "-Dice=off"
+        "-Dpulseaudio=on"
+        "-Dalsa=on"
         "-Doverlay-xcompile=off"
         "-DRELEASE_ID=${source.version}"
       ];
@@ -89,6 +91,8 @@ let
       installPhase = ''
         # bin stuff
         install -Dm755 mumble $out/bin/mumble
+        wrapProgram $out/bin/mumble \
+          --prefix LD_LIBRARY_PATH : "${libpulseaudio}/lib"
         install -Dm755 $src/scripts/mumble-overlay $out/bin/mumble-overlay
 
         # lib stuff
