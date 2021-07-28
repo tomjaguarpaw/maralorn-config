@@ -9,6 +9,11 @@
         "distribution.searchplugins.defaultLocale" = "de-DE";
         "general.useragent.locale" = "de-DE";
         "identity.sync.tokenserver.uri" = "https://firefox-sync.maralorn.de/token/1.0/sync/1.5";
+        "browser.download.useDownloadDir" = "false";
+        "browser.newtab.extensionControlled" = "true";
+        "browser.newtab.privateAllowed" = "true";
+        "font.name.serif.x-western" = "B612";
+        "services.sync.username" = "firefox@maralorn.de";
       };
     };
     enable = true;
