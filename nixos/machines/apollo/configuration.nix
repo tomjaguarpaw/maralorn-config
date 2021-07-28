@@ -5,7 +5,7 @@ let
   inherit (config.m-0) hosts prefix;
   nixos-hardware = (import ../../../nix/sources.nix).nixos-hardware;
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
-  vpn = (import ../../../private.nix).privateValue ({ ... }: { }) "vpn";
+  vpn = (import ../../../private.nix).privateValue (_: _: { }) "vpn";
 in
 {
 
@@ -17,7 +17,7 @@ in
     ../../roles/earlyoom.nix
     ../../roles/boot-key.nix
     ../../roles/standalone
-    vpn
+    (vpn "apollo")
   ];
   systemd.services.lenovo_fix.path = [ pkgs.kmod ];
 
