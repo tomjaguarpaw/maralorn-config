@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+startpage: { pkgs, ... }: {
   programs.firefox = {
     profiles.maralorn-default = {
       extraConfig = ""; # user.js
@@ -14,6 +14,7 @@
         "browser.newtab.privateAllowed" = "true";
         "font.name.serif.x-western" = "B612";
         "services.sync.username" = "firefox@maralorn.de";
+        "browser.startup.homepage" = startpage;
       };
     };
     enable = true;

@@ -1,6 +1,6 @@
 { pkgs, ... }:
 let
-  my-lib = import ../../../lib;
+  my-lib = import ../../lib;
   theme = my-lib.themes.default;
 in
 {

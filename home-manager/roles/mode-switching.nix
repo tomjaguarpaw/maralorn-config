@@ -1,9 +1,9 @@
-opts: { pkgs, lib, config, ... }:
+{ pkgs, lib, config, ... }:
 let
   inherit (config.m-0) hostName;
   modes = pkgs.lib.attrNames (import ../machines.nix).${hostName};
   modeFile = "${config.home.homeDirectory}/.mode";
-  modeDir = "${config.home.homeDirectory}/${opts.modeDir}";
+  modeDir = "${config.home.homeDirectory}/.volatile/modes";
   configPath = "${config.home.homeDirectory}/git/config";
   configGit = "${pkgs.git}/bin/git -C ${configPath}";
 in

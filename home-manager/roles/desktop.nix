@@ -1,9 +1,7 @@
 { pkgs, lib, config, ... }:
-let inherit (import ../../../lib) colors;
+let inherit (import ../../lib) colors;
 in
 {
-  imports =
-    [ ./sleep-nag.nix ./kitty.nix ./gnome.nix ./firefox.nix ./desktop-items.nix ];
   m-0.colors = colors;
   home = {
     packages = builtins.attrValues pkgs.desktop-pkgs;
