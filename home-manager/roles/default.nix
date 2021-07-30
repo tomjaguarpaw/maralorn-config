@@ -69,9 +69,12 @@
         sync = "!git pull -r && git push";
         cpr = "!f() { git fetch origin refs/pull/$1/head && git checkout FETCH_HEAD; }; f";
       };
+      delta.enable = true;
+
       extraConfig = {
         pull.ff = "only";
         core.editor = "vim";
+        init.defaultBranch = "main";
       };
       enable = true;
       ignores = [
