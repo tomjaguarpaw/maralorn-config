@@ -87,7 +87,7 @@ in
             ./roles/update_tasks.nix
             ./roles/vdirsyncer.nix
             ./roles/zettelkasten.nix
-            (import ./roles/mode-switching.nix { modeDir = ".modes"; modeFile = "volatile/mode"; })
+            (import ./roles/mode-switching.nix { modeDir = ".modes"; })
             (makeAutostart "unlock-ssh")
           ]
         );
@@ -141,7 +141,7 @@ in
         ./roles/tinkering.nix
         ./roles/update_tasks.nix
         ./roles/vdirsyncer.nix
-        (import ./roles/mode-switching.nix { modeDir = ".volatile/modes"; modeFile = ".mode"; })
+        (import ./roles/mode-switching.nix { modeDir = ".volatile/modes"; })
         (setStartpage "http://localhost:8842")
         (makeAutostart "kassandra2")
         (makeAutostart "unlock-ssh")
