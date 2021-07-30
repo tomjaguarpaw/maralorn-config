@@ -60,7 +60,6 @@
     buildMachines = pkgs.privateValue [ ] "remote-builders";
     extraOptions = ''
       fallback = true
-      keep-outputs = true
       auto-optimise-store = true
       builders-use-substitutes = true
     '';
