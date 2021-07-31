@@ -180,7 +180,16 @@ in
         };
         gdm.enable = true;
       };
-      desktopManager.gnome.enable = true;
+      desktopManager.gnome = {
+        enable = true;
+        extraGSettingsOverrides = ''
+          [com.ubuntu.login-screen]
+          background-repeat='no-repeat'
+          background-size='cover'
+          background-color='#0000ff'
+          background-picture-uri='file:///disk/persist/maralorn/media/images/wallpapers/orga/gdm.jpg'
+        '';
+      };
     };
     gnome = {
       evolution-data-server.enable = lib.mkForce false;
