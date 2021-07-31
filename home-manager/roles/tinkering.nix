@@ -11,6 +11,6 @@
       url: http://hackage.haskell.org/
 
     username: maralorn
-    password-command: ${pkgs.writeShellScript "hackage-pw" ''pass org/haskell/hackage.haskell.org/maralorn | head -n1''}
+    password-command: pass org/haskell/hackage.haskell.org/maralorn
   '';
 }
