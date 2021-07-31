@@ -65,8 +65,7 @@ in
           pkgs.dialog
           activateMode
           pkgs.ncurses
-          pkgs.sway
-          pkgs.gnome.gnome-session
+          pkgs.psmisc
         ];
       } ''
       main = do
@@ -76,8 +75,7 @@ in
         clear
         writeFile "${modeFile}" mode
         activate_mode
-        ignoreFailure $ swaymsg "exit"
-        ignoreFailure $ gnome_session_quit "--no-prompt"
+        ignoreFailure $ killall ".firefox-wrapped"
     '';
   };
 }
