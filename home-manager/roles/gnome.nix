@@ -20,8 +20,6 @@ let
     isUnpushed gitDir = do
       gitHead <- tryCmd (git "-C" gitDir "rev-parse" "HEAD")
       origin <- tryCmd (git "-C" gitDir "rev-parse" "origin/HEAD")
-      say [i|#{gitDir :: FilePath}|]
-      say [i|head: #{gitHead}, origin: #{origin}|]
       pure (gitHead /= origin)
 
     tryCmd x = ignoreFailure x |> captureTrim
