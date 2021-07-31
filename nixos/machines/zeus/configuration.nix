@@ -43,10 +43,17 @@ in
 
   systemd.services."activate-home-manager" = {
     path = [ pkgs.nix pkgs.dbus ];
+    script = ''
+      if [[ -e /home/maralorn/.mode ]]; then
+        MODE="$(cat /home/maralorn/.mode)"
+      else
+        MODE="orga"
+      fi
+      /disk/volatile/maralorn/modes/$MODE/activate
+    '';
     serviceConfig = {
       Type = "oneshot";
       User = "maralorn";
-      ExecStart = "/disk/volatile/maralorn/modes/orga/activate";
     };
     wantedBy = [ "multi-user.target" ];
     # Try to avoid race conditions, when the user get’s logged in before activation was completed.
@@ -186,8 +193,8 @@ in
           [com.ubuntu.login-screen]
           background-repeat='no-repeat'
           background-size='cover'
-          background-color='#0000ff'
-          background-picture-uri='file:///disk/persist/maralorn/media/images/wallpapers/orga/gdm.jpg'
+          background-color='#443388'
+          background-picture-uri='file:///disk/volatile/gdm.jpg'
         '';
       };
     };
