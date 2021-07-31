@@ -4,7 +4,7 @@ let
   statusScript = pkgs.writeHaskellScript
     {
       name = "status-script";
-      bins = [ pkgs.notmuch pkgs.coreutils pkgs.git ];
+      bins = [ pkgs.notmuch pkgs.coreutils pkgs.git pkgs.playerctl ];
       imports = [
         "Control.Exception"
         "System.Directory"
@@ -18,11 +18,16 @@ let
 
     isDirty gitDir = ((/= "") <$> (git "-C" gitDir "status" "--porcelain" |> captureTrim)) `catch` (\(_ :: SomeException) -> pure True)
     isUnpushed gitDir = do
-      gitHead <- ignoreFailure (git "-C" gitDir "rev-parse" "HEAD" |> captureTrim)
-      origin <- ignoreFailure (git "-C" gitDir "rev-parse" "origin/HEAD" |> captureTrim)
+      gitHead <- tryCmd (git "-C" gitDir "rev-parse" "HEAD")
+      origin <- tryCmd (git "-C" gitDir "rev-parse" "origin/HEAD")
+      say [i|#{gitDir :: FilePath}|]
+      say [i|head: #{gitHead}, origin: #{origin}|]
       pure (gitHead /= origin)
 
+    tryCmd x = ignoreFailure x |> captureTrim
+
     main = do
+      playing <- Text.intercalate " " . fmap decodeUtf8 . filter (/= "") <$> mapM tryCmd [playerctl "status", playerctl "metadata" "title", playerctl "metadata" "artist"]
       mode <- getMode
       unread <- notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
       inbox <- notmuch "count" "folder:hera/Inbox" |> captureTrim
@@ -30,7 +35,7 @@ let
       dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/"<>)) dirs
       unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/"<>)) dirs
       say . Text.intercalate " " $
-        [show mode] ++
+        [playing, show mode] ++
         memptyIfFalse ((unread /= "0") && mode >= Orga) (one [i|Unread: #{unread}|]) ++
         memptyIfFalse ((inbox /= "0") && mode >= Leisure) (one [i|Inbox: #{inbox}|]) ++
         memptyIfFalse (length unpushed /= 0) (one [i|Unpushed: #{Text.intercalate " " unpushed}|]) ++
