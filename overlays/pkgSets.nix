@@ -41,7 +41,7 @@ self: super: {
       nheko dconf2nix
       ;
     inherit (self.gnomeExtensions) appindicator system-monitor
-      clipboard-indicator emoji-selector sound-output-device-chooser
+      clipboard-indicator emoji-selector
       window-is-ready-remover nothing-to-say notification-banner-position gtile
       caffeine dash-to-panel
       ;

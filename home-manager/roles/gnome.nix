@@ -134,7 +134,6 @@ in
         "appindicatorsupport@rgcjonas.gmail.com"
         "nothing-to-say@extensions.gnome.wouter.bolsterl.ee"
         "drive-menu@gnome-shell-extensions.gcampax.github.com"
-        "sound-output-device-chooser@kgshank.net"
         "user-theme@gnome-shell-extensions.gcampax.github.com"
         "caffeine@patapon.info"
         "dash-to-panel@jderose9.github.com"
