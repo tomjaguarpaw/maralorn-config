@@ -105,7 +105,6 @@ in
       ./roles/mail2rss.nix
       ./roles/headless-mpd.nix
       ./roles/headless.nix
-      ({ ... }: { programs.ssh.matchBlocks."hera".identityFile = "~/.ssh/id_auto_ed25519"; })
     ]);
   };
 }
