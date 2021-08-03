@@ -18,9 +18,8 @@ let
 
     isDirty gitDir = ((/= "") <$> (git "-C" gitDir "status" "--porcelain" |> captureTrim)) `catch` (\(_ :: SomeException) -> pure True)
     isUnpushed gitDir = do
-      gitHead <- tryCmd (git "-C" gitDir "rev-parse" "HEAD")
-      origin <- tryCmd (git "-C" gitDir "rev-parse" "origin/HEAD")
-      pure (gitHead /= origin)
+      revs <- LBS.split 10 <$> tryCmd (git "-C" gitDir "rev-parse" "@{u}" "HEAD")
+      pure $ length revs /= 2 || (revs !!? 0 /= revs !!? 1)
 
     tryCmd x = ignoreFailure x |> captureTrim
 
