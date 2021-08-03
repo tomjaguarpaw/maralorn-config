@@ -100,11 +100,11 @@ in
     ./roles/state.nix
   ];
   hera = {
-    default = makeConfig "hera" [
+    default = makeConfig "hera" (on-my-machines ++ [
       ./roles/weechat
       ./roles/mail2rss.nix
       ./roles/headless-mpd.nix
       ./roles/headless.nix
-    ];
+    ]);
   };
 }
