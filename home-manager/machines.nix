@@ -105,6 +105,7 @@ in
       ./roles/mail2rss.nix
       ./roles/headless-mpd.nix
       ./roles/headless.nix
+      ({ ... }: { programs.ssh.matchBlocks."*".certificateFile = "~/.ssh/id_auto_ed25519"; })
     ]);
   };
 }
