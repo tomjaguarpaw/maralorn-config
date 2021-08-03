@@ -107,6 +107,19 @@ in
     isSystemUser = true;
     group = gitoliteCfg.group;
   };
+  systemd.services.gitolite-init.postStart = lib.mkIf pkgs.withSecrets ''
+    export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
+    dir=$(mktemp -d)
+    cd $dir
+    git clone git@localhost:gitolite-admin
+    cd gitolite-admin
+    cp -r ${../../private/gitolite}/* .
+    if [[ "$(git status --porcelain)" != "" ]]; then
+      git add -A
+      git commit -m 'Overwrite gitolite config from nixos config'
+      git push -u origin master
+    fi
+  '';
   services = {
     gitolite = {
       enable = true;
