@@ -46,6 +46,7 @@ let
     ./roles/khard.nix
     ./roles/khal.nix
     ./roles/mode-switching.nix
+    ./roles/systemd-exporter.nix
   ];
   daily-driver = name: extra:
     let
@@ -67,7 +68,6 @@ let
         ./roles/pythia.nix
         ./roles/research.nix
         ./roles/sleep-nag.nix
-        ./roles/systemd-exporter.nix
         ./roles/tinkering.nix
         ./roles/update_tasks.nix
       ];

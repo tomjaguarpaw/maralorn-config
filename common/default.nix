@@ -17,6 +17,11 @@ with lib;
         flaky = true;
       }
       {
+        host = "hera:9558";
+        name = "hera-user";
+        flaky = true;
+      }
+      {
         host = "zeus:9100";
         name = "zeus";
         flaky = true;

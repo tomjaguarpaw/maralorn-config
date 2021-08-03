@@ -226,7 +226,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "up{instance!=\"apollo:9100\"} +1 == 1",
+          "expr": "up{flaky!=\"true\"} +1 == 1",
           "interval": "",
           "legendFormat": "{{name}}",
           "refId": "A"
