@@ -24,7 +24,7 @@ in
         mode <- getMode
         say [i|Switching to mode #{mode}...|]
         exe ([i|${modeDir}/#{mode}/activate|] :: String)
-        exe "random-wallpaper"
+        ignoreFailure $ exe "random-wallpaper"
     '';
     updateModes = pkgs.writeHaskellScript
       {
