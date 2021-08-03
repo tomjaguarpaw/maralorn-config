@@ -70,6 +70,7 @@ let
         ./roles/sleep-nag.nix
         ./roles/tinkering.nix
         ./roles/update_tasks.nix
+        ./roles/wallpaper.nix
       ];
       orgaExtra = [
         ./roles/accounting.nix

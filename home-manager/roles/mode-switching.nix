@@ -8,7 +8,6 @@ let
   configGit = "${pkgs.git}/bin/git -C ${configPath}";
 in
 {
-  imports = [ (import ./wallpaper.nix { inherit modeFile; }) ];
   home.packages = builtins.attrValues rec {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
