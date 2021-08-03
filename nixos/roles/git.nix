@@ -115,6 +115,8 @@ in
     cd gitolite-admin
     cp -r ${../../private/gitolite}/* .
     if [[ "$(git status --porcelain)" != "" ]]; then
+      git "config" "user.email" "git@hera.m-0.eu"
+      git "config" "user.name" "git user"
       git add -A
       git commit -m 'Overwrite gitolite config from nixos config'
       git push -u origin master
