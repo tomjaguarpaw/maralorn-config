@@ -162,7 +162,7 @@ in
         ProtectKernelModules = true;
         ProtectControlGroups = true;
         User = "mautrix-signal";
-        Group = "mautrix-signal";
+        Group = "signald";
 
         CapabilityBoundingSet = [ "CAP_CHOWN" ];
         AmbientCapabilities = CapabilityBoundingSet;
@@ -174,8 +174,8 @@ in
         SupplementaryGroups = [ "signald" ];
         BindPaths = "/var/lib/signald";
         StateDirectory = baseNameOf dataDir;
-        StateDirectoryMode = "711";
-        UMask = 0023;
+        StateDirectoryMode = "771";
+        UMask = 0007;
 
         ExecStart = ''
           ${pkgs.mautrix-signal}/bin/mautrix-signal \

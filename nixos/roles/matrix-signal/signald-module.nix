@@ -28,7 +28,7 @@ in
   config = mkIf cfg.enable {
     users.users."signald" = { isSystemUser = true; };
     users.groups."signald" = { };
-    systemd.tmpfiles.rules = [ "Z /var/lib/signald 0750 signald signald - -" ];
+    systemd.tmpfiles.rules = [ "Z /var/lib/signald 0770 signald signald - -" ];
 
     systemd.services.signald = {
       description = "A daemon for interacting with the Signal Private Messenger";
@@ -53,7 +53,7 @@ in
         Group = "signald";
         User = "signald";
         StateDirectory = "signald";
-        UMask = 0027;
+        UMask = 0007;
 
         ExecStart = ''
           ${pkgs.signald}/bin/signald \
