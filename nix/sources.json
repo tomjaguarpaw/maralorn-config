@@ -62,10 +62,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "ff1ea3a36c1dfafdf0490e0d144c5a0ed0891bb9",
-        "sha256": "0vp8rnc9qn4sg7pgz772xgc1f7v8kq3dxv6fxy64clp3aiivdxr3",
+        "rev": "733682c32929293341f113f297b64ea6319e9089",
+        "sha256": "0f6zi45av9s176a2pi15jyf08xk0nsg181hhjhnz3asr0whyarf1",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/ff1ea3a36c1dfafdf0490e0d144c5a0ed0891bb9.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/733682c32929293341f113f297b64ea6319e9089.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
@@ -84,7 +84,7 @@
         "branch": "master",
         "ref": "master",
         "repo": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver",
-        "rev": "42db23553d433646398ca08e9c61071d01d3350f",
+        "rev": "72748d7b6d706ca17817389952a3a7d9185b0d5c",
         "type": "git"
     },
     "nixos-unstable": {
@@ -93,10 +93,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c464dc811babfe316ed4ab7bbc12351122e69dd7",
-        "sha256": "0aij4q6pc99xjqh0inv6z74wiqfdgxnbg7jli6gnjqxg2lcirrc2",
+        "rev": "439b1605227b8adb1357b55ce8529d541abbe9eb",
+        "sha256": "1jmlia9670lq89ic241zvif5q68qsqhqzm68pbdacxjmdrr0ahqf",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/c464dc811babfe316ed4ab7bbc12351122e69dd7.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/439b1605227b8adb1357b55ce8529d541abbe9eb.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
