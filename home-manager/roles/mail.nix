@@ -248,10 +248,10 @@ in
           unset wait_key
           color normal default default
 
-          macro index,pager a ":set confirmappend=no delete=yes\n<save-message>=hera/Archiv/unsortiert\n:set confirmappend=yes\n" "move message to archive"
-          macro index,pager s ":set confirmappend=no delete=yes\n<save-message>=hera/Junk\n:set confirmappend=yes\n" "move message to spam"
-          macro index,pager t ":set confirmappend=no delete=yes\n<save-message>=hera/Move/todo\n:set confirmappend=yes\n" "move message to todo list"
-          macro index,pager l ":set confirmappend=no delete=yes\n<save-message>=hera/Move/readlater\n:set confirmappend=yes\n" "move message to readlater list"
+          macro index,pager a ":set confirmappend=no\n<save-message>=hera/Archiv/unsortiert\n:set confirmappend=yes\n" "move message to archive"
+          macro index,pager s ":set confirmappend=no\n<save-message>=hera/Junk\n:set confirmappend=yes\n" "move message to spam"
+          macro index,pager t ":set confirmappend=no\n<save-message>=hera/Move/todo\n:set confirmappend=yes\n" "move message to todo list"
+          macro index,pager l ":set confirmappend=no\n<save-message>=hera/Move/readlater\n:set confirmappend=yes\n" "move message to readlater list"
           macro attach 'V' "<pipe-entry>iconv -c --to-code=UTF8 > ~/.cache/mutt/mail.html<enter><shell-escape>firefox ~/.cache/mutt/mail.html<enter>"
 
           macro index,pager <F6> "<shell-escape>${pkgs.zsh}/bin/zsh -c '${pkgs.sieve-connect}/bin/sieve-connect -s ${config.accounts.email.accounts.hera.imap.host or ""} -u ${config.accounts.email.accounts.hera.userName or ""} --passwordfd 3 --edit --remotesieve filter 3<<(pass eu/m-0/hera/mail.hera.m-0.eu/maralorn)'\n"
@@ -262,6 +262,7 @@ in
           bind editor <Tab> complete-query
           bind editor ^T complete
 
+          set delete = yes
           set crypt_use_gpgme = yes
           set pgp_use_gpg_agent = yes
           set pgp_auto_decode = yes
