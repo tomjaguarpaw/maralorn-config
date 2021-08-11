@@ -15,6 +15,7 @@ let
         cabal-install dhall taskwarrior pandoc hlint cabal2nix weeder
         reflex-dom password optics shh-extras neuron hspec-discover paths
         hmatrix postgresql-simple snap hedgehog nix-derivation req
+        witch
         ;
     } // makeHaskellScriptPackages p;
 in
