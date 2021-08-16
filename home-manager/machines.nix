@@ -39,6 +39,7 @@ let
     };
   on-my-machines = [
     ./roles/on-my-machine.nix
+    ./roles/accounting.nix
     ./roles/mail.nix
     ./roles/kassandra.nix
     ./roles/taskwarrior.nix
@@ -54,7 +55,6 @@ let
         (import ./roles/firefox.nix "http://localhost:8842")
         (makeAutostart "kassandra2")
         (makeAutostart "unlock-ssh")
-        ./roles/accounting.nix
         ./roles/beets.nix
         ./roles/daily-driver-programs.nix
         ./roles/desktop-items.nix
@@ -102,6 +102,7 @@ in
   ];
   hera = {
     default = makeConfig "hera" (on-my-machines ++ [
+      ./roles/fetch-banking-timer.nix
       ./roles/weechat
       ./roles/mail2rss.nix
       ./roles/headless-mpd.nix
