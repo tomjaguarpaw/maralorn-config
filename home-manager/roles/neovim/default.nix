@@ -87,10 +87,10 @@ in
   };
   xdg.configFile."nvim/coc-settings.json".text = builtins.toJSON cocSettings;
   home = {
-    packages = [ pkgs.neuron-language-server pkgs.neovim-remote ];
+    packages = [ pkgs.neuron-language-server ];
     sessionVariables = {
-      EDITOR = "nvr --remote-wait-silent";
-      VISUAL = "nvr --remote-wait-silent";
+      EDITOR = "nvim";
+      VISUAL = "nvim";
     };
   };
 }
