@@ -5,6 +5,7 @@ let
   # Backups are organized independently on this system
   home = config.home.homeDirectory;
   persistentStateDirs = [
+    ".aqbanking"
     ".calendars"
     ".config/Element"
     ".config/Mumble"
