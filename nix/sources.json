@@ -62,10 +62,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "74d017edb6717ad76d38edc02ad3210d4ad66b96",
-        "sha256": "0wvz41izp4djzzr0a6x54hcm3xjr51nlj8vqghfgyrjpk8plyk4s",
+        "rev": "110a2c9ebbf5d4a94486854f18a37a938cfacbbb",
+        "sha256": "0v12ylqxy1kl06dgln6h5k8vhlfzp8xvdymljj7bl0avr0nrgrcm",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/74d017edb6717ad76d38edc02ad3210d4ad66b96.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/110a2c9ebbf5d4a94486854f18a37a938cfacbbb.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
