@@ -42,72 +42,126 @@ StandaloneAccount = < RemoteAccount :
             { viewList :
                 List
                   < SearchWidget
-                  | ConfigListWidget : { name : Text, limit : Optional Natural }
+                  | DefinitionElementWidget :
+                      { name : Text
+                      , definitionElement :
+                          < ConfigList :
+                              { name : Text, limit : Optional Natural }
+                          | ListElement :
+                              { item :
+                                  < TaskwarriorTask : { uuid : Text }
+                                  | AdHocTask : { description : Text }
+                                  | HabiticaTask :
+                                      { task : < HabiticaDaily | HabiticaTodo >
+                                      }
+                                  | Mail : { id : Text }
+                                  >
+                              }
+                          | QueryList :
+                              { query :
+                                  List
+                                    < HasProperty :
+                                        { property :
+                                            < DescriptionMatches :
+                                                { filter : Text }
+                                            | ParentBlocked
+                                            | Blocked
+                                            | Waiting
+                                            | Pending
+                                            | Completed
+                                            | Deleted
+                                            | IsParent
+                                            | OnList
+                                            | HasTag : { tag : Text }
+                                            | HasParent
+                                            >
+                                        }
+                                    | HasntProperty :
+                                        { property :
+                                            < DescriptionMatches :
+                                                { filter : Text }
+                                            | ParentBlocked
+                                            | Blocked
+                                            | Waiting
+                                            | Pending
+                                            | Completed
+                                            | Deleted
+                                            | IsParent
+                                            | OnList
+                                            | HasTag : { tag : Text }
+                                            | HasParent
+                                            >
+                                        }
+                                    >
+                              }
+                          | TagList : { name : Text }
+                          | ChildrenList : { uuid : Text }
+                          | DependenciesList : { uuid : Text }
+                          | HabiticaList :
+                              { list : < HabiticaDailys | HabiticaTodos > }
+                          | Mails
+                          >
+                      }
                   >
             , configuredLists :
                 List
                   { name : Text
                   , list :
-                      < QueryList :
-                          { query :
-                              List
-                                < HasProperty :
-                                    { property :
-                                        < DescriptionMatches : { filter : Text }
-                                        | ParentBlocked
-                                        | Blocked
-                                        | Waiting
-                                        | Pending
-                                        | Completed
-                                        | Deleted
-                                        | IsParent
-                                        | OnList
-                                        | HasTag : { tag : Text }
-                                        | HasParent
-                                        >
-                                    }
-                                | HasntProperty :
-                                    { property :
-                                        < DescriptionMatches : { filter : Text }
-                                        | ParentBlocked
-                                        | Blocked
-                                        | Waiting
-                                        | Pending
-                                        | Completed
-                                        | Deleted
-                                        | IsParent
-                                        | OnList
-                                        | HasTag : { tag : Text }
-                                        | HasParent
-                                        >
-                                    }
+                      List
+                        < ConfigList : { name : Text, limit : Optional Natural }
+                        | ListElement :
+                            { item :
+                                < TaskwarriorTask : { uuid : Text }
+                                | AdHocTask : { description : Text }
+                                | HabiticaTask :
+                                    { task : < HabiticaDaily | HabiticaTodo > }
+                                | Mail : { id : Text }
                                 >
-                          }
-                      | TagList : { name : Text }
-                      | DefinitionList :
-                          { elements :
-                              List
-                                < ConfigList :
-                                    { name : Text, limit : Optional Natural }
-                                | ListElement :
-                                    { item :
-                                        < TaskwarriorTask : { uuid : Text }
-                                        | AdHocTask : { description : Text }
-                                        | HabiticaTask :
-                                            { task :
-                                                < HabiticaDaily | HabiticaTodo >
-                                            }
-                                        | Mail : { id : Text }
-                                        >
-                                    }
-                                >
-                          }
-                      | ChildrenList : { uuid : Text }
-                      | DependenciesList : { uuid : Text }
-                      | HabiticaList :
-                          { list : < HabiticaDailys | HabiticaTodos > }
-                      | Mails
-                      >
+                            }
+                        | QueryList :
+                            { query :
+                                List
+                                  < HasProperty :
+                                      { property :
+                                          < DescriptionMatches :
+                                              { filter : Text }
+                                          | ParentBlocked
+                                          | Blocked
+                                          | Waiting
+                                          | Pending
+                                          | Completed
+                                          | Deleted
+                                          | IsParent
+                                          | OnList
+                                          | HasTag : { tag : Text }
+                                          | HasParent
+                                          >
+                                      }
+                                  | HasntProperty :
+                                      { property :
+                                          < DescriptionMatches :
+                                              { filter : Text }
+                                          | ParentBlocked
+                                          | Blocked
+                                          | Waiting
+                                          | Pending
+                                          | Completed
+                                          | Deleted
+                                          | IsParent
+                                          | OnList
+                                          | HasTag : { tag : Text }
+                                          | HasParent
+                                          >
+                                      }
+                                  >
+                            }
+                        | TagList : { name : Text }
+                        | ChildrenList : { uuid : Text }
+                        | DependenciesList : { uuid : Text }
+                        | HabiticaList :
+                            { list : < HabiticaDailys | HabiticaTodos > }
+                        | Mails
+                        >
                   }
             , uiFeatures :
                 { sortInTag : Bool
@@ -152,81 +206,131 @@ BackendConfig = { users :
                   { viewList :
                       List
                         < SearchWidget
-                        | ConfigListWidget :
-                            { name : Text, limit : Optional Natural }
+                        | DefinitionElementWidget :
+                            { name : Text
+                            , definitionElement :
+                                < ConfigList :
+                                    { name : Text, limit : Optional Natural }
+                                | ListElement :
+                                    { item :
+                                        < TaskwarriorTask : { uuid : Text }
+                                        | AdHocTask : { description : Text }
+                                        | HabiticaTask :
+                                            { task :
+                                                < HabiticaDaily | HabiticaTodo >
+                                            }
+                                        | Mail : { id : Text }
+                                        >
+                                    }
+                                | QueryList :
+                                    { query :
+                                        List
+                                          < HasProperty :
+                                              { property :
+                                                  < DescriptionMatches :
+                                                      { filter : Text }
+                                                  | ParentBlocked
+                                                  | Blocked
+                                                  | Waiting
+                                                  | Pending
+                                                  | Completed
+                                                  | Deleted
+                                                  | IsParent
+                                                  | OnList
+                                                  | HasTag : { tag : Text }
+                                                  | HasParent
+                                                  >
+                                              }
+                                          | HasntProperty :
+                                              { property :
+                                                  < DescriptionMatches :
+                                                      { filter : Text }
+                                                  | ParentBlocked
+                                                  | Blocked
+                                                  | Waiting
+                                                  | Pending
+                                                  | Completed
+                                                  | Deleted
+                                                  | IsParent
+                                                  | OnList
+                                                  | HasTag : { tag : Text }
+                                                  | HasParent
+                                                  >
+                                              }
+                                          >
+                                    }
+                                | TagList : { name : Text }
+                                | ChildrenList : { uuid : Text }
+                                | DependenciesList : { uuid : Text }
+                                | HabiticaList :
+                                    { list : < HabiticaDailys | HabiticaTodos >
+                                    }
+                                | Mails
+                                >
+                            }
                         >
                   , configuredLists :
                       List
                         { name : Text
                         , list :
-                            < QueryList :
-                                { query :
-                                    List
-                                      < HasProperty :
-                                          { property :
-                                              < DescriptionMatches :
-                                                  { filter : Text }
-                                              | ParentBlocked
-                                              | Blocked
-                                              | Waiting
-                                              | Pending
-                                              | Completed
-                                              | Deleted
-                                              | IsParent
-                                              | OnList
-                                              | HasTag : { tag : Text }
-                                              | HasParent
-                                              >
+                            List
+                              < ConfigList :
+                                  { name : Text, limit : Optional Natural }
+                              | ListElement :
+                                  { item :
+                                      < TaskwarriorTask : { uuid : Text }
+                                      | AdHocTask : { description : Text }
+                                      | HabiticaTask :
+                                          { task :
+                                              < HabiticaDaily | HabiticaTodo >
                                           }
-                                      | HasntProperty :
-                                          { property :
-                                              < DescriptionMatches :
-                                                  { filter : Text }
-                                              | ParentBlocked
-                                              | Blocked
-                                              | Waiting
-                                              | Pending
-                                              | Completed
-                                              | Deleted
-                                              | IsParent
-                                              | OnList
-                                              | HasTag : { tag : Text }
-                                              | HasParent
-                                              >
-                                          }
+                                      | Mail : { id : Text }
                                       >
-                                }
-                            | TagList : { name : Text }
-                            | DefinitionList :
-                                { elements :
-                                    List
-                                      < ConfigList :
-                                          { name : Text
-                                          , limit : Optional Natural
-                                          }
-                                      | ListElement :
-                                          { item :
-                                              < TaskwarriorTask :
-                                                  { uuid : Text }
-                                              | AdHocTask :
-                                                  { description : Text }
-                                              | HabiticaTask :
-                                                  { task :
-                                                      < HabiticaDaily
-                                                      | HabiticaTodo
-                                                      >
-                                                  }
-                                              | Mail : { id : Text }
-                                              >
-                                          }
-                                      >
-                                }
-                            | ChildrenList : { uuid : Text }
-                            | DependenciesList : { uuid : Text }
-                            | HabiticaList :
-                                { list : < HabiticaDailys | HabiticaTodos > }
-                            | Mails
-                            >
+                                  }
+                              | QueryList :
+                                  { query :
+                                      List
+                                        < HasProperty :
+                                            { property :
+                                                < DescriptionMatches :
+                                                    { filter : Text }
+                                                | ParentBlocked
+                                                | Blocked
+                                                | Waiting
+                                                | Pending
+                                                | Completed
+                                                | Deleted
+                                                | IsParent
+                                                | OnList
+                                                | HasTag : { tag : Text }
+                                                | HasParent
+                                                >
+                                            }
+                                        | HasntProperty :
+                                            { property :
+                                                < DescriptionMatches :
+                                                    { filter : Text }
+                                                | ParentBlocked
+                                                | Blocked
+                                                | Waiting
+                                                | Pending
+                                                | Completed
+                                                | Deleted
+                                                | IsParent
+                                                | OnList
+                                                | HasTag : { tag : Text }
+                                                | HasParent
+                                                >
+                                            }
+                                        >
+                                  }
+                              | TagList : { name : Text }
+                              | ChildrenList : { uuid : Text }
+                              | DependenciesList : { uuid : Text }
+                              | HabiticaList :
+                                  { list : < HabiticaDailys | HabiticaTodos > }
+                              | Mails
+                              >
                         }
                   , uiFeatures :
                       { sortInTag : Bool
@@ -238,65 +342,115 @@ BackendConfig = { users :
           }
       }
 },
-Widget = < SearchWidget | ConfigListWidget : { name : Text, limit : Optional Natural } >,
+Widget = < SearchWidget
+| DefinitionElementWidget :
+    { name : Text
+    , definitionElement :
+        < ConfigList : { name : Text, limit : Optional Natural }
+        | ListElement :
+            { item :
+                < TaskwarriorTask : { uuid : Text }
+                | AdHocTask : { description : Text }
+                | HabiticaTask : { task : < HabiticaDaily | HabiticaTodo > }
+                | Mail : { id : Text }
+                >
+            }
+        | QueryList :
+            { query :
+                List
+                  < HasProperty :
+                      { property :
+                          < DescriptionMatches : { filter : Text }
+                          | ParentBlocked
+                          | Blocked
+                          | Waiting
+                          | Pending
+                          | Completed
+                          | Deleted
+                          | IsParent
+                          | OnList
+                          | HasTag : { tag : Text }
+                          | HasParent
+                          >
+                      }
+                  | HasntProperty :
+                      { property :
+                          < DescriptionMatches : { filter : Text }
+                          | ParentBlocked
+                          | Blocked
+                          | Waiting
+                          | Pending
+                          | Completed
+                          | Deleted
+                          | IsParent
+                          | OnList
+                          | HasTag : { tag : Text }
+                          | HasParent
+                          >
+                      }
+                  >
+            }
+        | TagList : { name : Text }
+        | ChildrenList : { uuid : Text }
+        | DependenciesList : { uuid : Text }
+        | HabiticaList : { list : < HabiticaDailys | HabiticaTodos > }
+        | Mails
+        >
+    }
+>,
 NamedListQuery = { name : Text
 , list :
-    < QueryList :
-        { query :
-            List
-              < HasProperty :
-                  { property :
-                      < DescriptionMatches : { filter : Text }
-                      | ParentBlocked
-                      | Blocked
-                      | Waiting
-                      | Pending
-                      | Completed
-                      | Deleted
-                      | IsParent
-                      | OnList
-                      | HasTag : { tag : Text }
-                      | HasParent
-                      >
-                  }
-              | HasntProperty :
-                  { property :
-                      < DescriptionMatches : { filter : Text }
-                      | ParentBlocked
-                      | Blocked
-                      | Waiting
-                      | Pending
-                      | Completed
-                      | Deleted
-                      | IsParent
-                      | OnList
-                      | HasTag : { tag : Text }
-                      | HasParent
-                      >
-                  }
+    List
+      < ConfigList : { name : Text, limit : Optional Natural }
+      | ListElement :
+          { item :
+              < TaskwarriorTask : { uuid : Text }
+              | AdHocTask : { description : Text }
+              | HabiticaTask : { task : < HabiticaDaily | HabiticaTodo > }
+              | Mail : { id : Text }
               >
-        }
-    | TagList : { name : Text }
-    | DefinitionList :
-        { elements :
-            List
-              < ConfigList : { name : Text, limit : Optional Natural }
-              | ListElement :
-                  { item :
-                      < TaskwarriorTask : { uuid : Text }
-                      | AdHocTask : { description : Text }
-                      | HabiticaTask :
-                          { task : < HabiticaDaily | HabiticaTodo > }
-                      | Mail : { id : Text }
-                      >
-                  }
-              >
-        }
-    | ChildrenList : { uuid : Text }
-    | DependenciesList : { uuid : Text }
-    | HabiticaList : { list : < HabiticaDailys | HabiticaTodos > }
-    | Mails
-    >
+          }
+      | QueryList :
+          { query :
+              List
+                < HasProperty :
+                    { property :
+                        < DescriptionMatches : { filter : Text }
+                        | ParentBlocked
+                        | Blocked
+                        | Waiting
+                        | Pending
+                        | Completed
+                        | Deleted
+                        | IsParent
+                        | OnList
+                        | HasTag : { tag : Text }
+                        | HasParent
+                        >
+                    }
+                | HasntProperty :
+                    { property :
+                        < DescriptionMatches : { filter : Text }
+                        | ParentBlocked
+                        | Blocked
+                        | Waiting
+                        | Pending
+                        | Completed
+                        | Deleted
+                        | IsParent
+                        | OnList
+                        | HasTag : { tag : Text }
+                        | HasParent
+                        >
+                    }
+                >
+          }
+      | TagList : { name : Text }
+      | ChildrenList : { uuid : Text }
+      | DependenciesList : { uuid : Text }
+      | HabiticaList : { list : < HabiticaDailys | HabiticaTodos > }
+      | Mails
+      >
 },
 LocalBackend = < TaskwarriorBackend :
     { taskRcPath : Optional Text
@@ -372,82 +526,140 @@ StandaloneConfig = { backends :
                       { viewList :
                           List
                             < SearchWidget
-                            | ConfigListWidget :
-                                { name : Text, limit : Optional Natural }
+                            | DefinitionElementWidget :
+                                { name : Text
+                                , definitionElement :
+                                    < ConfigList :
+                                        { name : Text
+                                        , limit : Optional Natural
+                                        }
+                                    | ListElement :
+                                        { item :
+                                            < TaskwarriorTask : { uuid : Text }
+                                            | AdHocTask : { description : Text }
+                                            | HabiticaTask :
+                                                { task :
+                                                    < HabiticaDaily
+                                                    | HabiticaTodo
+                                                    >
+                                                }
+                                            | Mail : { id : Text }
+                                            >
+                                        }
+                                    | QueryList :
+                                        { query :
+                                            List
+                                              < HasProperty :
+                                                  { property :
+                                                      < DescriptionMatches :
+                                                          { filter : Text }
+                                                      | ParentBlocked
+                                                      | Blocked
+                                                      | Waiting
+                                                      | Pending
+                                                      | Completed
+                                                      | Deleted
+                                                      | IsParent
+                                                      | OnList
+                                                      | HasTag : { tag : Text }
+                                                      | HasParent
+                                                      >
+                                                  }
+                                              | HasntProperty :
+                                                  { property :
+                                                      < DescriptionMatches :
+                                                          { filter : Text }
+                                                      | ParentBlocked
+                                                      | Blocked
+                                                      | Waiting
+                                                      | Pending
+                                                      | Completed
+                                                      | Deleted
+                                                      | IsParent
+                                                      | OnList
+                                                      | HasTag : { tag : Text }
+                                                      | HasParent
+                                                      >
+                                                  }
+                                              >
+                                        }
+                                    | TagList : { name : Text }
+                                    | ChildrenList : { uuid : Text }
+                                    | DependenciesList : { uuid : Text }
+                                    | HabiticaList :
+                                        { list :
+                                            < HabiticaDailys | HabiticaTodos >
+                                        }
+                                    | Mails
+                                    >
+                                }
                             >
                       , configuredLists :
                           List
                             { name : Text
                             , list :
-                                < QueryList :
-                                    { query :
-                                        List
-                                          < HasProperty :
-                                              { property :
-                                                  < DescriptionMatches :
-                                                      { filter : Text }
-                                                  | ParentBlocked
-                                                  | Blocked
-                                                  | Waiting
-                                                  | Pending
-                                                  | Completed
-                                                  | Deleted
-                                                  | IsParent
-                                                  | OnList
-                                                  | HasTag : { tag : Text }
-                                                  | HasParent
+                                List
+                                  < ConfigList :
+                                      { name : Text, limit : Optional Natural }
+                                  | ListElement :
+                                      { item :
+                                          < TaskwarriorTask : { uuid : Text }
+                                          | AdHocTask : { description : Text }
+                                          | HabiticaTask :
+                                              { task :
+                                                  < HabiticaDaily
+                                                  | HabiticaTodo
                                                   >
                                               }
-                                          | HasntProperty :
-                                              { property :
-                                                  < DescriptionMatches :
-                                                      { filter : Text }
-                                                  | ParentBlocked
-                                                  | Blocked
-                                                  | Waiting
-                                                  | Pending
-                                                  | Completed
-                                                  | Deleted
-                                                  | IsParent
-                                                  | OnList
-                                                  | HasTag : { tag : Text }
-                                                  | HasParent
-                                                  >
-                                              }
+                                          | Mail : { id : Text }
                                           >
-                                    }
-                                | TagList : { name : Text }
-                                | DefinitionList :
-                                    { elements :
-                                        List
-                                          < ConfigList :
-                                              { name : Text
-                                              , limit : Optional Natural
-                                              }
-                                          | ListElement :
-                                              { item :
-                                                  < TaskwarriorTask :
-                                                      { uuid : Text }
-                                                  | AdHocTask :
-                                                      { description : Text }
-                                                  | HabiticaTask :
-                                                      { task :
-                                                          < HabiticaDaily
-                                                          | HabiticaTodo
-                                                          >
-                                                      }
-                                                  | Mail : { id : Text }
-                                                  >
-                                              }
-                                          >
-                                    }
-                                | ChildrenList : { uuid : Text }
-                                | DependenciesList : { uuid : Text }
-                                | HabiticaList :
-                                    { list : < HabiticaDailys | HabiticaTodos >
-                                    }
-                                | Mails
-                                >
+                                      }
+                                  | QueryList :
+                                      { query :
+                                          List
+                                            < HasProperty :
+                                                { property :
+                                                    < DescriptionMatches :
+                                                        { filter : Text }
+                                                    | ParentBlocked
+                                                    | Blocked
+                                                    | Waiting
+                                                    | Pending
+                                                    | Completed
+                                                    | Deleted
+                                                    | IsParent
+                                                    | OnList
+                                                    | HasTag : { tag : Text }
+                                                    | HasParent
+                                                    >
+                                                }
+                                            | HasntProperty :
+                                                { property :
+                                                    < DescriptionMatches :
+                                                        { filter : Text }
+                                                    | ParentBlocked
+                                                    | Blocked
+                                                    | Waiting
+                                                    | Pending
+                                                    | Completed
+                                                    | Deleted
+                                                    | IsParent
+                                                    | OnList
+                                                    | HasTag : { tag : Text }
+                                                    | HasParent
+                                                    >
+                                                }
+                                            >
+                                      }
+                                  | TagList : { name : Text }
+                                  | ChildrenList : { uuid : Text }
+                                  | DependenciesList : { uuid : Text }
+                                  | HabiticaList :
+                                      { list :
+                                          < HabiticaDailys | HabiticaTodos >
+                                      }
+                                  | Mails
+                                  >
                             }
                       , uiFeatures :
                           { sortInTag : Bool
@@ -494,71 +706,120 @@ AccountConfig = { passwordHash : Text
         { viewList :
             List
               < SearchWidget
-              | ConfigListWidget : { name : Text, limit : Optional Natural }
+              | DefinitionElementWidget :
+                  { name : Text
+                  , definitionElement :
+                      < ConfigList : { name : Text, limit : Optional Natural }
+                      | ListElement :
+                          { item :
+                              < TaskwarriorTask : { uuid : Text }
+                              | AdHocTask : { description : Text }
+                              | HabiticaTask :
+                                  { task : < HabiticaDaily | HabiticaTodo > }
+                              | Mail : { id : Text }
+                              >
+                          }
+                      | QueryList :
+                          { query :
+                              List
+                                < HasProperty :
+                                    { property :
+                                        < DescriptionMatches : { filter : Text }
+                                        | ParentBlocked
+                                        | Blocked
+                                        | Waiting
+                                        | Pending
+                                        | Completed
+                                        | Deleted
+                                        | IsParent
+                                        | OnList
+                                        | HasTag : { tag : Text }
+                                        | HasParent
+                                        >
+                                    }
+                                | HasntProperty :
+                                    { property :
+                                        < DescriptionMatches : { filter : Text }
+                                        | ParentBlocked
+                                        | Blocked
+                                        | Waiting
+                                        | Pending
+                                        | Completed
+                                        | Deleted
+                                        | IsParent
+                                        | OnList
+                                        | HasTag : { tag : Text }
+                                        | HasParent
+                                        >
+                                    }
+                                >
+                          }
+                      | TagList : { name : Text }
+                      | ChildrenList : { uuid : Text }
+                      | DependenciesList : { uuid : Text }
+                      | HabiticaList :
+                          { list : < HabiticaDailys | HabiticaTodos > }
+                      | Mails
+                      >
+                  }
               >
         , configuredLists :
             List
               { name : Text
               , list :
-                  < QueryList :
-                      { query :
-                          List
-                            < HasProperty :
-                                { property :
-                                    < DescriptionMatches : { filter : Text }
-                                    | ParentBlocked
-                                    | Blocked
-                                    | Waiting
-                                    | Pending
-                                    | Completed
-                                    | Deleted
-                                    | IsParent
-                                    | OnList
-                                    | HasTag : { tag : Text }
-                                    | HasParent
-                                    >
-                                }
-                            | HasntProperty :
-                                { property :
-                                    < DescriptionMatches : { filter : Text }
-                                    | ParentBlocked
-                                    | Blocked
-                                    | Waiting
-                                    | Pending
-                                    | Completed
-                                    | Deleted
-                                    | IsParent
-                                    | OnList
-                                    | HasTag : { tag : Text }
-                                    | HasParent
-                                    >
-                                }
+                  List
+                    < ConfigList : { name : Text, limit : Optional Natural }
+                    | ListElement :
+                        { item :
+                            < TaskwarriorTask : { uuid : Text }
+                            | AdHocTask : { description : Text }
+                            | HabiticaTask :
+                                { task : < HabiticaDaily | HabiticaTodo > }
+                            | Mail : { id : Text }
                             >
-                      }
-                  | TagList : { name : Text }
-                  | DefinitionList :
-                      { elements :
-                          List
-                            < ConfigList :
-                                { name : Text, limit : Optional Natural }
-                            | ListElement :
-                                { item :
-                                    < TaskwarriorTask : { uuid : Text }
-                                    | AdHocTask : { description : Text }
-                                    | HabiticaTask :
-                                        { task :
-                                            < HabiticaDaily | HabiticaTodo >
-                                        }
-                                    | Mail : { id : Text }
-                                    >
-                                }
-                            >
-                      }
-                  | ChildrenList : { uuid : Text }
-                  | DependenciesList : { uuid : Text }
-                  | HabiticaList : { list : < HabiticaDailys | HabiticaTodos > }
-                  | Mails
-                  >
+                        }
+                    | QueryList :
+                        { query :
+                            List
+                              < HasProperty :
+                                  { property :
+                                      < DescriptionMatches : { filter : Text }
+                                      | ParentBlocked
+                                      | Blocked
+                                      | Waiting
+                                      | Pending
+                                      | Completed
+                                      | Deleted
+                                      | IsParent
+                                      | OnList
+                                      | HasTag : { tag : Text }
+                                      | HasParent
+                                      >
+                                  }
+                              | HasntProperty :
+                                  { property :
+                                      < DescriptionMatches : { filter : Text }
+                                      | ParentBlocked
+                                      | Blocked
+                                      | Waiting
+                                      | Pending
+                                      | Completed
+                                      | Deleted
+                                      | IsParent
+                                      | OnList
+                                      | HasTag : { tag : Text }
+                                      | HasParent
+                                      >
+                                  }
+                              >
+                        }
+                    | TagList : { name : Text }
+                    | ChildrenList : { uuid : Text }
+                    | DependenciesList : { uuid : Text }
+                    | HabiticaList :
+                        { list : < HabiticaDailys | HabiticaTodos > }
+                    | Mails
+                    >
               }
         , uiFeatures :
             { sortInTag : Bool
@@ -577,8 +838,7 @@ DefinitionElement = < ConfigList : { name : Text, limit : Optional Natural }
         | Mail : { id : Text }
         >
     }
->,
-ListQuery = < QueryList :
+| QueryList :
     { query :
         List
           < HasProperty :
@@ -614,25 +874,62 @@ ListQuery = < QueryList :
           >
     }
 | TagList : { name : Text }
-| DefinitionList :
-    { elements :
-        List
-          < ConfigList : { name : Text, limit : Optional Natural }
-          | ListElement :
-              { item :
-                  < TaskwarriorTask : { uuid : Text }
-                  | AdHocTask : { description : Text }
-                  | HabiticaTask : { task : < HabiticaDaily | HabiticaTodo > }
-                  | Mail : { id : Text }
-                  >
-              }
-          >
-    }
 | ChildrenList : { uuid : Text }
 | DependenciesList : { uuid : Text }
 | HabiticaList : { list : < HabiticaDailys | HabiticaTodos > }
 | Mails
 >,
+ListQuery = List
+  < ConfigList : { name : Text, limit : Optional Natural }
+  | ListElement :
+      { item :
+          < TaskwarriorTask : { uuid : Text }
+          | AdHocTask : { description : Text }
+          | HabiticaTask : { task : < HabiticaDaily | HabiticaTodo > }
+          | Mail : { id : Text }
+          >
+      }
+  | QueryList :
+      { query :
+          List
+            < HasProperty :
+                { property :
+                    < DescriptionMatches : { filter : Text }
+                    | ParentBlocked
+                    | Blocked
+                    | Waiting
+                    | Pending
+                    | Completed
+                    | Deleted
+                    | IsParent
+                    | OnList
+                    | HasTag : { tag : Text }
+                    | HasParent
+                    >
+                }
+            | HasntProperty :
+                { property :
+                    < DescriptionMatches : { filter : Text }
+                    | ParentBlocked
+                    | Blocked
+                    | Waiting
+                    | Pending
+                    | Completed
+                    | Deleted
+                    | IsParent
+                    | OnList
+                    | HasTag : { tag : Text }
+                    | HasParent
+                    >
+                }
+            >
+      }
+  | TagList : { name : Text }
+  | ChildrenList : { uuid : Text }
+  | DependenciesList : { uuid : Text }
+  | HabiticaList : { list : < HabiticaDailys | HabiticaTodos > }
+  | Mails
+  >,
 RemoteBackend = { url : Text
 , user : Text
 , password :
