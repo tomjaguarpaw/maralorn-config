@@ -12,6 +12,7 @@
             shake fetch
             if [[ "$(git status --porcelain */raw)" != "" ]]; then
                git add */raw
+               git add */prices
                git commit -m "Load transactions and balances"
                git push
             fi
