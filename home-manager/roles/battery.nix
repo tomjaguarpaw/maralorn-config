@@ -68,6 +68,7 @@ in
       Service = {
         ExecStart = "${battery-watch}/bin/battery-watch";
         Restart = "always";
+        RestartSec = 60;
       };
       Install.WantedBy = [ "default.target" ];
     };
