@@ -10,7 +10,7 @@
             cd ~/git/buchhaltung
             git pull
             shake fetch
-            if [[ "$(git status --porcelain */raw)" != "" ]]; then
+            if [[ "$(git status --porcelain */raw */prices)" != "" ]]; then
                git add */raw
                git add */prices
                git commit -m "Load transactions and balances"
