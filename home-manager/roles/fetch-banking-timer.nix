@@ -9,7 +9,7 @@
             set -e
             cd ~/git/buchhaltung
             git pull
-            nix-shell --run "shake fetch"
+            ${pkgs.nix}/bin/nix-shell --run "shake fetch"
             if [[ "$(git status --porcelain */raw */prices)" != "" ]]; then
                git add */raw
                git add */prices
