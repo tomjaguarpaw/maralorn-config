@@ -17,7 +17,6 @@ in
     ./grafana.nix
     ./prometheus.nix
     ./probes.nix
-    ./nixpkgs.nix
   ];
 
   services = {

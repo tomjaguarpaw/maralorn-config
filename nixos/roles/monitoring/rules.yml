@@ -8,15 +8,8 @@ groups:
              severity: critical
           annotations:
              description: '{{ $labels.instance }} probe {{ $labels.job}} failed.'
-        - alert: nixpkgs
-          expr: hydra_job_failed == 1
-          for: 2h
-          labels:
-             severity: warning
-          annotations:
-             description: 'hydra build {{ $labels.packageName }} on nixpkgs branch {{ $labels.jobset }} failed.'
         - alert: node_down
-          expr: 'up{flaky!="true",instance!="hydra.nixos.org:443"} == 0'
+          expr: 'up{flaky!="true"} == 0'
           for: 5m
           labels:
              severity: critical
