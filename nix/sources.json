@@ -17,10 +17,10 @@
         "homepage": "",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "7d9ba15214004c979d2c8733f8be12ce6502cf8a",
-        "sha256": "18kmvzinsi9xgm81dk5kyd03m3y5nn125kmbkxf66xasrg13yqdv",
+        "rev": "382505714d10c6791a96712e0554587c75c5bf8b",
+        "sha256": "0p06wz9yfaf27c7978hcizjb3a6zb3dx1bpzky8wvyi3dh436593",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/7d9ba15214004c979d2c8733f8be12ce6502cf8a.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/382505714d10c6791a96712e0554587c75c5bf8b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "kassandra": {
