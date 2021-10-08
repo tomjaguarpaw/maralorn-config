@@ -95,10 +95,12 @@ in
 {
   apollo = daily-driver "apollo" [
     ./roles/battery.nix
+    ./roles/untrusted-env.nix
   ];
   zeus = daily-driver "zeus" [
     ./roles/hourly-maintenance.nix
     ./roles/state.nix
+    ./roles/trusted-env.nix
   ];
   hera = {
     default = makeConfig "hera" (on-my-machines ++ [

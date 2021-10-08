@@ -180,6 +180,14 @@ in
       region = "en_DK.UTF-8";
     };
 
+    "org/gnome/desktop/screensaver" = {
+      lock-delay = "0"; # lock screen immediately on screen blank
+    };
+
+    "org/gnome/desktop/session" = {
+      idle-delay = "300"; # blank screen after 5 minutes
+    };
+
     "org/gnome/shell/extensions/system-monitor" = {
       center-display = true;
       compact-display = true;
