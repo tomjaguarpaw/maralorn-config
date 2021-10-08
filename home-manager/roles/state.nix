@@ -11,6 +11,7 @@ let
     ".config/Mumble"
     ".config/Signal"
     ".config/discord"
+    ".config/gh"
     ".contacts"
     ".gnupg"
     ".local/share/Mumble"
