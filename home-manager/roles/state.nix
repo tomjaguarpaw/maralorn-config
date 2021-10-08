@@ -52,5 +52,6 @@ in
     (mkLine "L+" "${home}/.persist" "/disk/persist/maralorn")
     (mkLine "f" "${home}/.mode" "orga")
     (mkLine "f" "${home}/.config/lazygit/state.yml" "startuppopupversion: 5")
+    (mkLine "d" "${home}/.cache/mutt" "")
   ];
 }
