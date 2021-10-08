@@ -13,8 +13,8 @@ echo "$x rings left"
 x=$(( x - 1 ))
 fi
 
-current_seconds=$(date +%S)
-current_minute=$(date +%M)
+current_seconds=$(date +%-S)
+current_minute=$(date +%-M)
 
 if (($current_minute < 30)); then
 echo "Next ring at half hour."
