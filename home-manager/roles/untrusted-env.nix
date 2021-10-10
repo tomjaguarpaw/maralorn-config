@@ -2,7 +2,7 @@
 {
   dconf.settings = {
     "org/gnome/desktop/screensaver" = {
-      lock = true;
+      lock-enabled = true;
     };
   };
 }
