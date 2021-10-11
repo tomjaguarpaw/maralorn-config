@@ -54,6 +54,7 @@ alias u='systemctl --user'
 alias m=man
 alias v="nvim"
 alias vim="nvim"
+alias merge-master="git fetch origin && git checkout haskell-updates && git pull && git merge origin/master && git push"
 
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
