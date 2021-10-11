@@ -16,9 +16,9 @@ let
       name <- Text.strip <$> readFileText "/home/maralorn/.mode" `onException` say "File /home/maralorn/.mode not found."
       maybe (say [i|Unknown mode #{name}|] >> error [i|Unknown mode #{name}|]) pure $ find (\mode -> name == (Text.toLower $ show mode)) $ modes
 
-    isDirty gitDir = ((/= "") <$> (git "-C" gitDir "status" "--porcelain" |> captureTrim)) `catch` (\(_ :: SomeException) -> pure True)
+    isDirty gitDir = ((/= "") <$> (git "--no-optional-locks" "-C" gitDir "status" "--porcelain" |> captureTrim)) `catch` (\(_ :: SomeException) -> pure True)
     isUnpushed gitDir = do
-      revs <- LBS.split 10 <$> tryCmd (git "-C" gitDir "rev-parse" "@{u}" "HEAD")
+      revs <- LBS.split 10 <$> tryCmd (git "--no-optional-locks" "-C" gitDir "rev-parse" "@{u}" "HEAD")
       pure $ length revs /= 2 || (revs !!? 0 /= revs !!? 1)
 
     tryCmd x = ignoreFailure x |> captureTrim
