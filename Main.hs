@@ -6,7 +6,6 @@
 
 import Data.Aeson (
    FromJSON (..),
-   eitherDecodeFileStrict',
    withObject,
  )
 import qualified Data.Aeson.Key as Key
@@ -16,8 +15,11 @@ import Dialog
 import Relude
 import System.Process (callCommand)
 import Witch
+import qualified Data.Text as Text
+import System.Posix.Daemon (runDetached, Redirection (DevNull))
+import Data.Yaml (decodeFileEither)
 
-type Command = Text
+data Command = Run Text | Fork Text deriving (Show)
 
 instance FromJSON (Menu Command) where
    parseJSON = parseMenu "Hotkeys"
@@ -26,17 +28,21 @@ instance FromJSON (Menu Command) where
          fmap (Menu name) $
             forM (Aeson.toList object) $ \(Key.toText -> key, val) ->
                case val of
-                  String cmd -> pure $ Dialog.Option key cmd
+                  String cmd -> pure $ Dialog.Option key (text2cmd cmd)
                   innerObj -> Dialog.SubMenu <$> parseMenu key innerObj
+      text2cmd t = if Text.isPrefixOf "fork " t then Fork (Text.drop 5 t) else Run t
+
 
 main :: IO ()
 main = do
-   menuCommand <- eitherDecodeFileStrict' "menu.json"
+   [menuFileName] <- getArgs
+   menuCommand <- decodeFileEither menuFileName
    case menuCommand of
-      Left err -> putStrLn err
+      Left err -> print err
       Right a -> do
          cmd <- runClearingHaskeline $ menu Nothing a
          maybe pass runCommand cmd
 
 runCommand :: Command -> IO ()
-runCommand = callCommand . into
+runCommand (Run cmd) = callCommand $ into cmd
+runCommand (Fork cmd) = runDetached Nothing DevNull (callCommand $ into cmd)

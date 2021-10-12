@@ -1,9 +1,0 @@
-{
-   "Firefox": "firefox",
-   "Htop": "htop",
-   "Discord": "discord",
-   "Headset": {
-      "connect": "bluetoothctl connect AC:12:2F:4F:EB:FA",
-      "disconnect": "bluetoothctl disconnect AC:12:2F:4F:EB:FA"
-   }
-}
