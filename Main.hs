@@ -1,123 +1,42 @@
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE PartialTypeSignatures #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
-import           Control.Monad.IO.Class
-import           System.Console.Wizard
-import           System.Console.Wizard.Internal
-import           System.Console.Haskeline
-import           System.Console.Wizard.Haskeline
-import           System.Console.ANSI
-import           Data.Maybe
-import           Data.List
-import           Control.Monad                  ( MonadPlus(mzero) )
-import           Control.Applicative            ( Alternative((<|>)) )
-import           Data.Char                      ( isLower
-                                                , isUpper
-                                                , toUpper
-                                                , toLower
-                                                )
+import Data.Aeson (
+   FromJSON (..),
+   eitherDecodeFileStrict',
+   withObject,
+ )
+import qualified Data.Aeson.Key as Key
+import qualified Data.Aeson.KeyMap as Aeson
+import Data.Aeson.Types (Value (String))
+import Dialog
+import Relude
+import System.Process (callCommand)
+import Witch
 
-newtype ClearingHaskeline a = ClearingHaskeline { runClearing :: InputT IO a } deriving newtype (Functor, Applicative, Monad)
+type Command = Text
 
-instance Run ClearingHaskeline Haskeline where
-  runAlgebra =
-    ClearingHaskeline . prependClearing . runAlgebra . fmap runClearing
-   where
-    prependClearing a = liftIO (clearScreen >> setCursorPosition 0 0) >> a
+instance FromJSON (Menu Command) where
+   parseJSON = parseMenu "Hotkeys"
+     where
+      parseMenu name = withObject "mapping to menu entries" $ \object ->
+         fmap (Menu name) $
+            forM (Aeson.toList object) $ \(Key.toText -> key, val) ->
+               case val of
+                  String cmd -> pure $ Dialog.Option key cmd
+                  innerObj -> Dialog.SubMenu <$> parseMenu key innerObj
 
-data MenuEntry a = Option String a | SubMenu (Menu a) deriving Show
+main :: IO ()
+main = do
+   menuCommand <- eitherDecodeFileStrict' "menu.json"
+   case menuCommand of
+      Left err -> putStrLn err
+      Right a -> do
+         cmd <- runClearingHaskeline $ menu Nothing a
+         maybe pass runCommand cmd
 
-data Menu a = Menu String [MenuEntry a]
-  deriving Show
-
-cancelCharacter :: Char
-cancelCharacter = '.'
-
-menu
-  :: forall a m
-   . (Character :<: m, Show a)
-  => Maybe String
-  -> Menu a
-  -> Wizard m a
-menu = runMenu True
- where
-  runMenu top prompt thisMenu@(Menu name options) = do
-    response <- retry . validator (`elem` hotkeys) $ character
-      (intercalate "\n" wholePrompt)
-    case lookup (toLower response) mappings of
-      Just (Option _ a) -> pure a
-      Just (SubMenu submenu) ->
-        runMenu False prompt submenu <|> runMenu True prompt thisMenu
-      Nothing -> mzero
-   where
-    hotkeys :: [Char]
-    mappings :: [(Char, MenuEntry a)]
-    (hotkeys, mappings) = foldr foldMappings ([cancelCharacter], []) options
-
-    foldMappings
-      :: MenuEntry a
-      -> ([Char], [(Char, MenuEntry a)])
-      -> ([Char], [(Char, MenuEntry a)])
-    foldMappings option accu@(accuHotkeys, accuMappings)
-      | Just hotkey <- chooseHotkey accuHotkeys (getLabel option)
-      = (hotkey : accuHotkeys, accuMappings <> [(hotkey, option)])
-      | otherwise
-      = accu
-
-    chooseHotkey :: [Char] -> [Char] -> Maybe Char
-    chooseHotkey used label =
-      find (`notElem` used)
-        $   toLower
-        <$> filter isUpper label
-        <>  filter isLower label
-        <>  label
-
-    getLabel :: MenuEntry a -> String
-    getLabel (Option label _        ) = label
-    getLabel (SubMenu (Menu label _)) = label
-
-    wholePrompt :: [String]
-    wholePrompt =
-      maybe id (:) prompt
-        $ name
-        : (if top then ".: Leave Menu" else ".: Back")
-        : ((promptLabel <$> mappings) <> ["> "])
-
-    promptLabel :: (Char, MenuEntry a) -> [Char]
-    promptLabel (c, option) = toUpper c : (": " <> getLabel option)
-
-confirm :: Character :<: m => String -> Wizard m Bool
-confirm prompt =
-  menu Nothing $ Menu prompt [Option "Yes" True, Option "No" False]
-
--- From Hledger.Cli.Commands.Add
-withCompletion
-  :: (WithSettings :<: m) => CompletionFunc IO -> Wizard m a -> Wizard m a
-withCompletion c = withSettings (setComplete c defaultSettings)
-
-getLineWithDefaultAndSuggestions
-  :: (WithSettings :<: m, LinePrewritten :<: m)
-  => PromptString
-  -> Maybe String
-  -> [String]
-  -> Wizard m String
-getLineWithDefaultAndSuggestions prompt startInput completions =
-  retry . withCompletion completeFunc $ linePrewritten (prompt <> "\n> ")
-                                                       prewritten
-                                                       ""
- where
-  completeFunc (before, _) = pure ("", simpleCompletion <$> match completions)
-    where match = filter (isInfixOf $ reverse before)
-  prewritten = fromMaybe "" startInput
-
-runHaskeline :: MonadIO m => Wizard Haskeline a -> m (Maybe a)
-runHaskeline = liftIO . runInputT defaultSettings . run
-
-runClearingHaskeline :: MonadIO m => Wizard Haskeline a -> m (Maybe a)
-runClearingHaskeline = liftIO . runInputT defaultSettings . runClearing . run
+runCommand :: Command -> IO ()
+runCommand = callCommand . into
