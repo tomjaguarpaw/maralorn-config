@@ -1,8 +1,73 @@
 { pkgs, lib, ... }:
 let
-  hotkeys = {
-    Firefox = "firefox";
-  };
+  hotkeys =
+    let
+      fork = cmd: "fork ${cmd}";
+    in
+    {
+      Orga = {
+        Kassandra2 = fork "kassandra2";
+        Kassandra = fork "kassandra";
+        Kalendar = "ikhal";
+        Habitica = fork "firefox https://habitica.com";
+        Tasks = "tasksh";
+        Meditate = "meditate";
+        Pythia = "pythia";
+      };
+      Research = {
+        Zotero = fork "zotero";
+      };
+      Power = {
+        Shutdown = "systemctl poweroff";
+        Suspend = "systemctl suspend";
+        Reboot = "systemctl reboot";
+      };
+      SSH =
+        let
+          ssh = host: fork "kitty +kitten ssh ${host}";
+        in
+        {
+          hera = ssh "hera";
+          remote-builder = ssh "phoibe.cysec.de";
+          ag = ssh "ag-forward";
+          gwres1 = ssh "gw";
+          cysec = ssh "borg.cysec.de";
+          shells = ssh "shells";
+        };
+      Sound = {
+        MPD = "ncmpcpp";
+        "Lautstärke" = "ncpamixer";
+        Pavucontrol = fork "pavucontrol";
+        Headset = {
+          connect = "bluetoothctl connect AC:12:2F:4F:EB:FA";
+          disconnect = "bluetoothctl disconnect AC:12:2F:4F:EB:FA";
+        };
+      };
+      Web = {
+        Browser = fork "firefox";
+        "Private Browser" = fork "firefox --private-window";
+        Chromium = fork "chromium";
+        Games = {
+          Steam = fork "steam";
+        };
+        Deluge = fork "deluge";
+      };
+      Files = fork "nautilus";
+      Passmenu = "pass clip -f";
+      "Select Mode" = "select-mode";
+      Communication = {
+        Matrix = fork "element-desktop";
+        Mutt = "neomutt";
+        Mumble = fork "mumble mumble://maralorn@mumble.hax404.de";
+        Weechat = "weechat";
+        Signal = fork "signal-desktop";
+        Zoom = fork "zoom";
+        Telegram = fork "telegram-desktop";
+        Discord = fork "Discord";
+        Jabber = fork "dino";
+      };
+      "Monitor (htop)" = "htop";
+    };
   mkTuple = lib.hm.gvariant.mkTuple;
   statusScript = pkgs.writeHaskellScript
     {
