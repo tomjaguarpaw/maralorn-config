@@ -1,7 +1,4 @@
-Firefox: fork firefox
 Htop: htop
-Discord: fork discord
-Headset:
-  connect: bluetoothctl connect AC:12:2F:4F:EB:FA
-  disconnect: bluetoothctl disconnect AC:12:2F:4F:EB:FA
-Kassandra2: fork kassandra2
+Web:
+  Firefox: fork firefox
+  Thunderbird: fork thunderbird
