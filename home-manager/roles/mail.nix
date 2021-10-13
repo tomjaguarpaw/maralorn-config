@@ -264,15 +264,14 @@ in
 
           set delete = yes
           set crypt_use_gpgme = yes
-          set pgp_use_gpg_agent = yes
-          set pgp_auto_decode = yes
-          set pgp_autosign = yes
-          set pgp_replysign = yes
-          set pgp_replyencrypt = yes
           set crypt_replysignencrypted = yes
           set crypt_verify_sig = yes
-          set pgp_sign_as="${gpg}"
           set pgp_use_gpg_agent = yes
+          set pgp_auto_decode = yes
+          set pgp_autosign = no
+          set pgp_replysign = yes
+          set pgp_replyencrypt = yes
+          set pgp_sign_as="${gpg}"
           set pgp_default_key="${gpg}"
           set timeout = 5
           set ts_enabled = yes
