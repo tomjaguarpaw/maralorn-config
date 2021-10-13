@@ -26,7 +26,7 @@ instance FromJSON (Menu Command) where
      where
       parseMenu name = withObject "mapping to menu entries" $ \object ->
          fmap (Menu name) $
-            forM (Aeson.toList object) $ \(Key.toText -> key, val) ->
+            forM (reverse $ Aeson.toList object) $ \(Key.toText -> key, val) ->
                case val of
                   String cmd -> pure $ Dialog.Option key (text2cmd cmd)
                   innerObj -> Dialog.SubMenu <$> parseMenu key innerObj
