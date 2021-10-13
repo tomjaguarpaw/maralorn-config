@@ -1,5 +1,8 @@
 { pkgs, lib, ... }:
 let
+  hotkeys = {
+    Firefox = "firefox";
+  };
   mkTuple = lib.hm.gvariant.mkTuple;
   statusScript = pkgs.writeHaskellScript
     {
@@ -221,7 +224,7 @@ in
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" =
       {
         binding = "<Super>space";
-        command = "kitty hotkeys";
+        command = "kitty ${pkgs.haskell-dialog}/bin/hotkeys ${pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)}";
         name = "Hotkeys";
       };
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/clear-notifications" =

@@ -1,4 +1,10 @@
 {
+    "haskell-dialog": {
+        "branch": "main",
+        "repo": "git:haskell-dialog",
+        "rev": "66354c1cf519957c5acae1b14a99ba8c941a06c6",
+        "type": "git"
+    },
     "hexa-nur-packages": {
         "branch": "master",
         "description": "My personal NUR repository: [maintainer=@mweinelt] ",
