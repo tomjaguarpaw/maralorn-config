@@ -2,7 +2,7 @@
     "haskell-dialog": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:haskell-dialog",
-        "rev": "66354c1cf519957c5acae1b14a99ba8c941a06c6",
+        "rev": "ec9a33de9e00965f460c1a9388393d0c1616615c",
         "type": "git"
     },
     "hexa-nur-packages": {
