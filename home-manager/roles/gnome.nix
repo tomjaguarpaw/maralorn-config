@@ -40,6 +40,7 @@ let
       }
       {
         Sound = {
+          "Play/Pause" = "${pkgs.playerctl}/bin/playerctl play-pause";
           MPD = "ncmpcpp";
           "Lautstärke" = "ncpamixer";
           Pavucontrol = fork "pavucontrol";
