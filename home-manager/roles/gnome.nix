@@ -90,7 +90,7 @@ let
       ];
     } ''
     data Mode = Klausur | Orga | Communication | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
-    modes = enumFrom Research
+    modes = enumFrom Klausur
     getMode = do
       name <- Text.strip <$> readFileText "/home/maralorn/.mode" `onException` say "File /home/maralorn/.mode not found."
       maybe (say [i|Unknown mode #{name}|] >> error [i|Unknown mode #{name}|]) pure $ find (\mode -> name == (Text.toLower $ show mode)) $ modes
