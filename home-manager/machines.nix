@@ -96,7 +96,7 @@ let
           (blockServer restrictedPages)
         ]
       );
-      communictions = makeConfig name (
+      communication = makeConfig name (
         all ++ orgaExtra ++ [
           ./roles/chat.nix
           (blockServer restrictedPages)
