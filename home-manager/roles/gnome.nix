@@ -89,7 +89,7 @@ let
         "System.Directory"
       ];
     } ''
-    data Mode = Research | Orga | Leisure deriving (Eq, Ord, Show, Enum, Bounded)
+    data Mode = Klausur | Orga | Communication | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
     modes = enumFrom Research
     getMode = do
       name <- Text.strip <$> readFileText "/home/maralorn/.mode" `onException` say "File /home/maralorn/.mode not found."
