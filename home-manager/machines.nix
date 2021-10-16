@@ -10,12 +10,17 @@ let
     "nixos.org"
     "matrix.org"
     "element.io"
-    "youtube.de"
-    "youtube.com"
+    "youtube.*"
     "*.element.io"
+    "chaos.social"
+  ] ++ newsPages;
+  newsPages = [
     "zeit.de"
     "heise.de"
     "spiegel.de"
+    "taz.de"
+    "faz.net"
+    "bild.de"
     "xkcd.com"
     "smbc-comics.com"
     "tagesschau.de"
@@ -24,8 +29,8 @@ let
     "ard.de"
     "zdf.de"
     "twitter.com"
-    "chaos.social"
   ];
+
   makeConfig = hostName: imports:
     { ... }: {
       imports = imports ++ [ ./roles/default.nix ];
@@ -81,9 +86,30 @@ let
       blockServer = import ./roles/block-server.nix;
     in
     {
-      research = makeConfig name (all ++ [ (blockServer restrictedPages) ]);
-      orga = makeConfig name (all ++ orgaExtra ++ [ (blockServer restrictedPages) ]);
+      klausur = makeConfig name (
+        all ++ [
+          (blockServer restrictedPages)
+        ]
+      );
+      orga = makeConfig name (
+        all ++ orgaExtra ++ [
+          (blockServer restrictedPages)
+        ]
+      );
+      communictions = makeConfig name (
+        all ++ orgaExtra ++ [
+          ./roles/chat.nix
+          (blockServer restrictedPages)
+        ]
+      );
       leisure = makeConfig name (
+        all ++ orgaExtra ++ [
+          ./roles/games.nix
+          ./roles/chat.nix
+          (blockServer newsPages)
+        ]
+      );
+      unrestricted = makeConfig name (
         all ++ orgaExtra ++ [
           ./roles/games.nix
           ./roles/chat.nix
