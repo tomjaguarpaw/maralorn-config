@@ -111,6 +111,7 @@ in
   boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };
   systemd.tmpfiles.rules = [ "Z /media 0770 maralorn nginx - -" ];
   nix.sshServe = {
+    protcol = "ssh-ng";
     enable = true;
     keys = pkgs.privateValue [ ] "root-ssh-keys";
   };
