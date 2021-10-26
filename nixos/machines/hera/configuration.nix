@@ -110,6 +110,10 @@ in
   };
   boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };
   systemd.tmpfiles.rules = [ "Z /media 0770 maralorn nginx - -" ];
+  nix.sshServe = {
+    enable = true;
+    keys = pkgs.privateValue [ ] "ssh-keys";
+  };
 
   users.users.choreutes = {
     description = "choreutes";
