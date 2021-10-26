@@ -112,7 +112,7 @@ in
   systemd.tmpfiles.rules = [ "Z /media 0770 maralorn nginx - -" ];
   nix.sshServe = {
     enable = true;
-    keys = pkgs.privateValue [ ] "ssh-keys";
+    keys = pkgs.privateValue [ ] "root-ssh-keys";
   };
 
   users.users.choreutes = {
