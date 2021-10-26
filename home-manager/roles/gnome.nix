@@ -27,11 +27,11 @@ let
       {
         SSH =
           let
-            ssh = host: fork "kitty +kitten ssh ${host}";
+            ssh = host: "ssh ${host}";
           in
           {
             hera = ssh "hera";
-            remote-builder = ssh "phoibe.cysec.de";
+            remote-builder = ssh "phoibe.cased.de";
             ag = ssh "ag-forward";
             gwres1 = ssh "gw";
             cysec = ssh "borg.cysec.de";

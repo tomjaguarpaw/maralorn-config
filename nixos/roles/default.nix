@@ -48,11 +48,12 @@
     lib.mkIf (!pkgs.withSecrets) { text = "echo No secrets loaded!; exit 1;"; };
 
   nix = {
-    binaryCaches =
+    binaryCaches = lib.mkAfter (
       pkgs.privateValue [ ] "binary-caches"
       ++ (
         if config.networking.hostName != "hera" then [ "ssh-ng://nix-ssh@hera.m-0.eu?trusted=true" ] else [ ]
-      );
+      )
+    );
     binaryCachePublicKeys =
       [
         "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI="
