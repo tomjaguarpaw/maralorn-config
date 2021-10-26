@@ -20,11 +20,13 @@ in
       getMode :: IO Text
       getMode = decodeUtf8 <$> (cat "${modeFile}" |> captureTrim)
 
+      wallpaperCmd = "random-wallpaper"
+
       main = do
         mode <- getMode
         say [i|Switching to mode #{mode}...|]
         exe ([i|${modeDir}/#{mode}/activate|] :: String)
-        ignoreFailure $ exe "random-wallpaper"
+        whenM (elem wallpaperCmd <$> pathBins) $ exe wallpaperCmd
     '';
     updateModes = pkgs.writeHaskellScript
       {
