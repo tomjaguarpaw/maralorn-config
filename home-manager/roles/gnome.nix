@@ -78,6 +78,13 @@ let
         ];
       }
       { "Monitor (htop)" = "htop"; }
+      {
+        "W17" = {
+          Summer = "ssh door@burbon.w17.io buzzer";
+          Open = "ssh door@burbon.w17.io open";
+          Close = "ssh door@burbon.w17.io close";
+        };
+      }
     ];
   mkTuple = lib.hm.gvariant.mkTuple;
   statusScript = pkgs.writeHaskellScript
