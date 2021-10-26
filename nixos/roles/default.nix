@@ -49,7 +49,9 @@
 
   nix = {
     binaryCaches =
-      [ "https://cache.nixos.org/" "https://nixcache.reflex-frp.org" "https://hydra.iohk.io" ];
+      [ "https://nixcache.reflex-frp.org" "https://hydra.iohk.io" ] ++ (
+        if config.networking.hostName != hera then [ "ssh://nix-ssh@hera.m-0.eu" ] else [ ]
+      );
     binaryCachePublicKeys =
       [
         "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI="
