@@ -75,6 +75,7 @@ let
           { Telegram = fork "telegram-desktop"; }
           { Discord = fork "Discord"; }
           { Jabber = fork "dino"; }
+          { Tmate = "tmate"; }
         ];
       }
       { "Monitor (htop)" = "htop"; }
