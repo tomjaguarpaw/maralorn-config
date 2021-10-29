@@ -25,7 +25,7 @@ in
   {
     SSH =
       let
-        ssh = host: "ssh ${host}";
+        ssh = host: "kitty +kitten ssh ${host}";
       in
       {
         hera = ssh "hera";
