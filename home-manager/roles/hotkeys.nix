@@ -34,7 +34,7 @@ in
         gwres1 = ssh "gw";
         backup-server = ssh "borg.cysec.de";
         shells = ssh "shells";
-        "bach (ved)" = ssh "root@bach.vocalensemble-darmstadt.de";
+        "bach (ved)" = ssh "bach.vocalensemble-darmstadt.de";
       };
   }
   {
