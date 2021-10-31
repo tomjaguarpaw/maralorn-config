@@ -24,6 +24,9 @@ in
       serve.enable = true;
       enablePostfix = true;
       siteOwner = admin;
+      webSettings = {
+        ACCOUNT_ADAPTER = "django_mailman3.views.user_adapter.DisableSignupAdapter";
+      };
       settings = {
         mailman.default_language = "de";
         "paths.fhs".template_dir = lib.mkForce (
