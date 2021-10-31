@@ -25,7 +25,8 @@ in
       enablePostfix = true;
       siteOwner = admin;
       webSettings = {
-        ACCOUNT_ADAPTER = "django_mailman3.views.user_adapter.DisableSignupAdapter";
+        #Try this option again with django_mailman3 1.3.6 on nixos-21.11
+        #ACCOUNT_ADAPTER = "django_mailman3.views.user_adapter.DisableSignupAdapter";
       };
       settings = {
         mailman.default_language = "de";
