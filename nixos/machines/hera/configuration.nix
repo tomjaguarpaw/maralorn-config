@@ -116,12 +116,18 @@ in
     keys = pkgs.privateValue [ ] "root-ssh-keys";
   };
 
-  users.users.choreutes = {
-    description = "choreutes";
-    isNormalUser = true;
-    uid = 1001;
-    extraGroups = [ "wheel" "systemd-journal" ];
-    passwordFile = pkgs.privatePath "pam-login-password-choreutes";
+  users.users = {
+    choreutes = {
+      description = "choreutes";
+      isNormalUser = true;
+      uid = 1001;
+      extraGroups = [ "wheel" "systemd-journal" ];
+      passwordFile = pkgs.privatePath "pam-login-password-choreutes";
+    };
+    ved-backup = {
+      isNormalUser = true;
+      openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDSldCn4LJcIos8PVI7PJZSM5aQ8FoDPUzMTwSHm6NUl root@bach" ];
+    };
   };
 
   # This value determines the NixOS release with which your system is to be
