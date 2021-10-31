@@ -32,7 +32,7 @@ in
             web.de
             google.com
             meteosafe.com # Wetterwarnungen
-            tu-darmstadt.de
+            # tu-darmstadt.de # Not safe because of spam via cda
             ccc.de
             discourse.cloud
             haskell.org
