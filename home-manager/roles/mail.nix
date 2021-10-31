@@ -319,6 +319,12 @@ in
           color sidebar_highlight white blue
           set sidebar_format = "%B%* %?N?%N/?%S"
 
+          set date_format="%F %R"
+          set index_format="%D %-15.15L %Z %s"
+
+          set display_filter="exec sed -r \"s/^Date:\\s*(([F-Wa-u]{3},\\s*)?[[:digit:]]{1,2}\\s+[A-Sa-y]{3}\\s+[[:digit:]]{4}\\s+[[:digit:]]{1,2}:[[:digit:]]{1,2}(:[[:digit:]]{1,2})?\\s+[+-][[:digit:]]{4})/date +'Date: %F (%a) %R' -d '\\1'/e\""
+
+
           ignore *
           unignore from date cc bcc to subject list-unsubscribe
 
