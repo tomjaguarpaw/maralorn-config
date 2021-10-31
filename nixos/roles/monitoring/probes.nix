@@ -66,6 +66,7 @@ in
         "https://tasks.maralorn.de"
 
         "https://wiki.vocalensemble-darmstadt.de"
+        "https://lists.vocalensemble-darmstadt.de"
         "https://cloud.vocalensemble-darmstadt.de"
         "https://www.vocalensemble-darmstadt.de"
       ])
