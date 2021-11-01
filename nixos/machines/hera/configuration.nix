@@ -28,6 +28,7 @@ in
     ../../roles/mailman.nix
     ../../roles/home-assistant
     ../../roles/firefox-sync.nix
+    ../../roles/goatcounter.nix
     ./web.nix
     ./mail.nix
     ./boot.nix

@@ -111,7 +111,6 @@
       recommendedGzipSettings = true;
       recommendedTlsSettings = true;
       clientMaxBodySize = "500m";
-      appendHttpConfig = "access_log off;";
     };
   };
   programs = {

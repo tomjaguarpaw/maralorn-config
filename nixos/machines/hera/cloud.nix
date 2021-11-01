@@ -104,7 +104,7 @@ let
           node.openFirewall = true;
           nginx.openFirewall = true;
         };
-
+        nginx.appendHttpConfig = "access_log off;";
         redis.enable = true;
 
         postgresql = {
