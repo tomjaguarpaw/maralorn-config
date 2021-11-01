@@ -23,12 +23,19 @@ in
     }];
     ensureDatabases = [ "goatcounter" ];
   };
-  services.nginx.appendHttpConfig = lib.mkAfter ''
-    log_format vcombined '$host $remote_addr - $remote_user [$time_local] '
-                           '"$request" $status $body_bytes_sent '
-                           '"$http_referer" "$http_user_agent"';
-    access_log /run/nginx/access.log vcombined;
-  '';
+  services.nginx = {
+    appendHttpConfig = lib.mkAfter ''
+      log_format vcombined '$host $remote_addr - $remote_user [$time_local] '
+                             '"$request" $status $body_bytes_sent '
+                             '"$http_referer" "$http_user_agent"';
+      access_log /run/nginx/access.log vcombined;
+    '';
+    virtualHosts."analytics.maralorn.de" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/".proxyPass = "http://localhost:8081/";
+    };
+  };
   systemd.services = {
     goatcounter = {
       serviceConfig = {
@@ -41,15 +48,16 @@ in
       serviceConfig.User = "nginx";
       script = ''
         while true; do
-          sleep 10s
+          sleep 60s
           truncate --size 0 /run/nginx/access.log
         done
       '';
+      wantedBy = [ "multi-user.target" ];
     };
     goatcounter-feeder = {
       serviceConfig.User = "nginx";
       script = ''
-        tail -F /run/nginx/access.log |\
+        tail -F /run/nginx/access.log 2> /dev/null |\
          sed 's/\([^ ]*\) \(.*"[^ ]* \/\)/\2\1\//; s/ \(\/.*\)?[^ ]* / \1 /' |\
          GOATCOUNTER_API_KEY=17cmkvh7s0bq2xfoc1iejr3v61lmumzwrx13sy13xqd6yuva3qp ${goatcounter-bin}/bin/goatcounter import -site http://localhost:8081 - -format combined --follow \
            -exclude static \
