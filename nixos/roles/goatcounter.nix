@@ -37,6 +37,15 @@ in
       };
       wantedBy = [ "multi-user.target" ];
     };
+    nginx-log-cleaner = {
+      serviceConfig.User = "nginx";
+      script = ''
+        while true; do
+          sleep 10s
+          truncate --size 0 /run/nginx/access.log
+        done
+      '';
+    };
     goatcounter-feeder = {
       serviceConfig.User = "nginx";
       script = ''
