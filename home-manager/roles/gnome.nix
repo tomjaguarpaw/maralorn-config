@@ -107,6 +107,7 @@ in
       font-name = "B612 9";
       clock-show-weekday = true;
       monospace-font-name = "JetBrainsMono Nerd Font Mono Bold 9";
+      locate-pointer = true;
     };
 
     "org/gnome/desktop/calendar" = {
