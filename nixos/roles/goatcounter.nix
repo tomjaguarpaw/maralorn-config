@@ -9,6 +9,7 @@ let
     gunzip -c ${src} > $out/bin/goatcounter
     chmod +x $out/bin/goatcounter
   '';
+  goatcounter-token = pkgs.privateValue "" "goatcounter-token";
 in
 {
   environment.systemPackages = [ goatcounter-bin ];
@@ -59,7 +60,7 @@ in
       script = ''
         tail -F /run/nginx/access.log 2> /dev/null |\
          sed 's/\([^ ]*\) \(.*"[^ ]* \/\)/\2\1\//; s/ \(\/.*\)?[^ ]* / \1 /' |\
-         GOATCOUNTER_API_KEY=17cmkvh7s0bq2xfoc1iejr3v61lmumzwrx13sy13xqd6yuva3qp ${goatcounter-bin}/bin/goatcounter import -site http://localhost:8081 - -format combined --follow \
+         GOATCOUNTER_API_KEY=${goatcounter-token} ${goatcounter-bin}/bin/goatcounter import -site http://localhost:8081 - -format combined --follow \
            -exclude static \
            -exclude '!method:GET' \
            -exclude 'remote_addr:2a02:c207:3002:7584:' \
