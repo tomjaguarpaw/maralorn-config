@@ -188,10 +188,9 @@ in
 
       restartTriggers = [ settingsFileUnsubstituted ];
     };
-    users.groups.mautrix-signal = { };
     users.users.mautrix-signal = {
       description = "Service user for the Matrix-Signal bridge";
-      group = "mautrix-signal";
+      group = "signald";
       isSystemUser = true;
     };
   };

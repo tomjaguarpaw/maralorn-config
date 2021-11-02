@@ -7,4 +7,6 @@ in
   inherit (unstable) cachix nix-output-monitor cabal2nix;
   unstableHaskellPackages = unstable.haskellPackages;
   unstableGhc = unstable.ghc;
+  mautrix-signal = unstable.mautrix-signal;
+  signald = unstable.signald;
 }

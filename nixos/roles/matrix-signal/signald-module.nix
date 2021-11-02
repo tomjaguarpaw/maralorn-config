@@ -26,7 +26,7 @@ in
 
 
   config = mkIf cfg.enable {
-    users.users."signald" = { isSystemUser = true; };
+    users.users."signald" = { isSystemUser = true; group = "signald"; };
     users.groups."signald" = { };
     systemd.tmpfiles.rules = [ "Z /var/lib/signald 0770 signald signald - -" ];
 
@@ -49,7 +49,6 @@ in
         ProtectControlGroups = true;
 
         DynamicUser = false;
-        PrivateTmp = true;
         Group = "signald";
         User = "signald";
         StateDirectory = "signald";
@@ -61,9 +60,6 @@ in
             --data=''${STATE_DIRECTORY} \
             --database=jdbc:sqlite:''${STATE_DIRECTORY}/signald.db
         '';
-      };
-      unitConfig = {
-        JoinsNamespaceOf = "mautrix-signal.service";
       };
     };
   };
