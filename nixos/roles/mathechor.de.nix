@@ -30,6 +30,7 @@
             extraConfig = ''
               proxy_ssl_name cloud.mathechor.de;
               proxy_ssl_server_name on;
+              set $args export;
             '';
           };
         };
