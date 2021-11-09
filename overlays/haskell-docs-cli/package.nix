@@ -34,8 +34,8 @@ mkDerivation {
   pname = "haskell-docs-cli";
   version = "1.0.0.0";
   src = fetchzip {
-    url = "https://github.com/lazamar/haskell-docs-cli/archive/refs/heads/main.tar.gz";
-    sha256 = "0zfvh7bfvrvqw6y2galf410cfrk782psr5mfkl0pl8lpgzksa5kw";
+    url = "https://github.com/lazamar/haskell-docs-cli/archive/e7f1a60db8696fc96987a3447d402c4d0d54b5e0.zip";
+    sha256 = "0n784lr4jqx8i2a9jhbcrmb5swvsggrz6viwbv73y1qvb1f67mgz";
   };
   isLibrary = true;
   isExecutable = true;
