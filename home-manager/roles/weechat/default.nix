@@ -22,17 +22,6 @@ in
       target = ".weechat/perl";
       source = ./plugins/perl;
     };
-    buffer_autoset = {
-      target = ".weechat/buffer_autoset.conf";
-      text = ''
-        [look]
-        timer = 1000
-
-        [buffer]
-        python.maralorn.de.*.highlight_words = ""
-        python.maralorn.de.*.highlight_regex = ".*maralorn([^\.].*|\.|\.[^d].*|)$"
-      '';
-    };
     buflist = {
       target = ".weechat/buflist.conf";
       text = ''
@@ -46,6 +35,8 @@ in
         [look]
         buffer_notify_default = "highlight"
         jump_current_to_previous_buffer = off
+        highlight_words = ""
+        highlight_regex = ".*maralorn([^\.].*|\.|\.[^d].*|)$"
 
         [key]
         meta-g = "/go"
