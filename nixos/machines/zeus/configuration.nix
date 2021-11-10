@@ -41,6 +41,8 @@ in
     machine-id.source = "/disk/persist/machine-id";
   };
 
+  boot.kernelPackages = pkgs.linuxPackages_testing;
+
   systemd.services."activate-home-manager" = {
     path = [ pkgs.nix pkgs.dbus ];
     script = ''
