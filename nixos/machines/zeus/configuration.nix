@@ -72,8 +72,6 @@ in
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/var/lib/bluetooth - - - - -"
     "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"
-    "d /disk/persist/var/log/journal - - - - -"
-    "L+ /var/log/journal - - - - /disk/persist/var/log/journal"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
 
