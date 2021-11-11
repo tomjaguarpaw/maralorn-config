@@ -123,10 +123,10 @@
         "homepage": "",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "06fa80325b6fe3b28d136071dd0ce55d4817e9fd",
-        "sha256": "0yc4rcfwaxnz11ls9hvl8i1llqkngpbw182q9rgankgaazil6pw5",
+        "rev": "433808cba23975201a48a3bb8ebc76029191fafd",
+        "sha256": "17a21w3l2z1ng36f37rxv8bw3sy7qppyf1yzsqgy88f98fs0r4il",
         "type": "tarball",
-        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/06fa80325b6fe3b28d136071dd0ce55d4817e9fd.tar.gz",
+        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/433808cba23975201a48a3bb8ebc76029191fafd.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "taskwarrior-git-backend": {
