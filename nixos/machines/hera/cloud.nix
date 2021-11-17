@@ -25,8 +25,8 @@ let
     };
     prometheus-nginx-exporter.serviceConfig.RestartSec = 10;
     nextcloud-setup = {
-      requires = [ "postgresql.service" ];
-      after = [ "postgresql.service" ];
+      requires = [ "postgresql.service" "redis.service" ];
+      after = [ "postgresql.service" "redis.service" ];
     };
   };
   nextcloudConf = hostname:

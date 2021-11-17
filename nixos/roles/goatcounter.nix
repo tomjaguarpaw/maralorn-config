@@ -39,9 +39,8 @@ in
   };
   systemd.services = {
     goatcounter = {
-      unitConfig = {
-        Requires = "postgresql.service";
-      };
+      requires = [ "postgresql.service" ];
+      after = [ "postgresql.service" ];
       serviceConfig = {
         User = "goatcounter";
         ExecStart = "${goatcounter-bin}/bin/goatcounter serve -db 'postgresql://host=/run/postgresql dbname=goatcounter' -listen *:8081 -tls http -automigrate";
@@ -59,6 +58,8 @@ in
       wantedBy = [ "multi-user.target" ];
     };
     goatcounter-feeder = {
+      requires = [ "goatcounter.service" ];
+      after = [ "goatcounter.service" ];
       serviceConfig.User = "nginx";
       script = ''
         tail -F /run/nginx/access.log 2> /dev/null |\
