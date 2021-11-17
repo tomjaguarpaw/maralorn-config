@@ -4,13 +4,15 @@ let
   standardPath = lib.makeBinPath bins;
   imports = [ "Control.Exception (onException)" ];
   haskellBody = name: drv: ''
+
+    myTrim = Text.dropAround ('"' ==) . decodeUtf8 . trim
     main = do
       (configDir:hostname:_) <-  getArgs
-      (Text.dropAround ('"' ==) . decodeUtf8 . trim -> homeManagerChannel) <- nix_instantiate "--eval" "-E" ([i|(import #{configDir}/channels.nix).#{hostname}.home-manager-channel|] :: String) |> captureTrim
-      (Text.dropAround ('"' ==) . decodeUtf8 . trim -> nixpkgsChannel) <- nix_instantiate "--eval" "-E" ([i|(import #{configDir}/channels.nix).#{hostname}.nixpkgs-channel|] :: String) |> captureTrim
+      (myTrim -> homeManagerChannel) <- nix_instantiate "--show-trace" "--eval" "-E" ([i|(import #{configDir}/channels.nix).#{hostname}.home-manager-channel|] :: String) |> captureTrim
+      (myTrim -> nixpkgsChannel) <- nix_instantiate "--show-trace" "--eval" "-E" ([i|(import #{configDir}/channels.nix).#{hostname}.nixpkgs-channel|] :: String) |> captureTrim
       paths <- aNixPath homeManagerChannel nixpkgsChannel (toText configDir)
       say [i|Trying to build ${name} config for #{hostname}.|]
-      (Text.dropAround ('"' ==) . decodeUtf8 . trim -> derivationName) <- (nix_instantiate $ ${drv}) |> captureTrim
+      (myTrim -> derivationName) <- (nix_instantiate "--show-trace" $ ${drv}) |> captureTrim
       exe "nix-jobs" ["realise", toString derivationName]
       writeFileText "derivation" derivationName
       say [i|Build of ${name} config for #{hostname} was successful.|]
