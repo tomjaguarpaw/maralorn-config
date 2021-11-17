@@ -39,6 +39,9 @@ in
   };
   systemd.services = {
     goatcounter = {
+      unitConfig = {
+        Requires = "postgresql.service";
+      };
       serviceConfig = {
         User = "goatcounter";
         ExecStart = "${goatcounter-bin}/bin/goatcounter serve -db 'postgresql://host=/run/postgresql dbname=goatcounter' -listen *:8081 -tls http -automigrate";
