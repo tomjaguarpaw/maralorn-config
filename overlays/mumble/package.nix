@@ -80,6 +80,8 @@ let
         "CONFIG+=no-server"
       ];
 
+      NIX_CFLAGS_COMPILE = "-w";
+
       cmakeFlags = [
         "-Dice=off"
         "-Dpulseaudio=on"
