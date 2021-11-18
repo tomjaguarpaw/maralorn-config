@@ -170,7 +170,7 @@ in
             ExecStart = toString (pkgs.writeShellScript "watch-${name}-maildir" ''
               while ${pkgs.coreutils}/bin/sleep 1s; do
                 ${quick-sync}
-                ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete -r ${maildir}/${name}/Inbox
+                ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete -r ${maildir}/${name}/Inbox ${maildir}/${name}/Code
               done
             '');
           };
