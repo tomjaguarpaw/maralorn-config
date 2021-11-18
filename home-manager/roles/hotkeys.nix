@@ -66,7 +66,13 @@ in
   {
     Communication = [
       { Matrix = fork "element-desktop"; }
-      { Mutt = "neomutt"; }
+      {
+        Mail = {
+          Open = "neomutt";
+          Inbox = "neomutt -f ~/Maildir/hera/Inbox";
+          Code = "neomutt -f ~/Maildir/hera/Code";
+        };
+      }
       { Mumble = fork "mumble mumble://maralorn@mumble.hax404.de"; }
       { Weechat = "weechat"; }
       { Signal = fork "signal-desktop"; }
