@@ -75,7 +75,7 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
-        "branch": "master",
+        "branch": "4045d5f",
         "description": "A collection of NixOS modules covering hardware quirks.",
         "homepage": "",
         "owner": "nixos",
