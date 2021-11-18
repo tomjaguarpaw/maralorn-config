@@ -145,7 +145,7 @@ in
             exports.username = "${account.userName}";
             exports.password = getStdout("${toString account.passwordCommand}");
             exports.onNotify = "${quick-sync}"
-            exports.boxes = [ "Inbox" "Code" ];
+            exports.boxes = [ "Inbox", "Code" ];
           '';
         in
         {
