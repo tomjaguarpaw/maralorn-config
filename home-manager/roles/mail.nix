@@ -6,7 +6,7 @@ let
   alternates = pkgs.privateValue [ ] "mail/alternates";
   lists = pkgs.privateValue { sortLists = [ ]; stupidLists = [ ]; notifications = [ ]; } "mail/filters";
   quick-sync = pkgs.writeShellScript "quick-mail-sync" ''
-    ${pkgs.isync}/bin/mbsync hera:INBOX
+    ${pkgs.isync}/bin/mbsync hera:INBOX,Code
     ${pkgs.notmuch}/bin/notmuch new
   '';
   maildir = config.accounts.email.maildirBasePath;
@@ -145,7 +145,7 @@ in
             exports.username = "${account.userName}";
             exports.password = getStdout("${toString account.passwordCommand}");
             exports.onNotify = "${quick-sync}"
-            exports.boxes = [ "Inbox" ];
+            exports.boxes = [ "Inbox" "Code" ];
           '';
         in
         {

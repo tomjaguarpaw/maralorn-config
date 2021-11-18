@@ -11,7 +11,7 @@ let
         "System.Directory"
       ];
     } ''
-    data Mode = Klausur | Orga | Communication | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
+    data Mode = Klausur | Orga | Communication | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
     modes = enumFrom Klausur
     getMode = do
       name <- Text.strip <$> readFileText "/home/maralorn/.mode" `onException` say "File /home/maralorn/.mode not found."
@@ -29,13 +29,15 @@ let
       mode <- getMode
       unread <- notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
       inbox <- notmuch "count" "folder:hera/Inbox" |> captureTrim
+      codeMails <- notmuch "count" "folder:hera/Code" |> captureTrim
       dirs <- listDirectory "/home/maralorn/git"
       dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/"<>)) dirs
       unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/"<>)) dirs
       say . Text.intercalate " " $
         [playing, show mode] ++
         memptyIfFalse ((unread /= "0") && mode >= Orga) (one [i|Unread: #{unread}|]) ++
-        memptyIfFalse ((inbox /= "0") && mode >= Leisure) (one [i|Inbox: #{inbox}|]) ++
+        memptyIfFalse ((inbox /= "0") && mode == Leisure) (one [i|Inbox: #{inbox}|]) ++
+        memptyIfFalse ((codeMails /= "0") && mode == Code) (one [i|Code: #{codeMails}|]) ++
         memptyIfFalse (length unpushed /= 0) (one [i|Unpushed: #{Text.intercalate " " unpushed}|]) ++
         memptyIfFalse (length dirty /= 0) (one [i|Dirty: #{Text.intercalate " " dirty}|])
   '';

@@ -102,6 +102,12 @@ let
           (blockServer restrictedPages)
         ]
       );
+      code = makeConfig name (
+        all ++ orgaExtra ++ [
+          ./roles/chat.nix
+          (blockServer newsPages)
+        ]
+      );
       leisure = makeConfig name (
         all ++ orgaExtra ++ [
           ./roles/games.nix
