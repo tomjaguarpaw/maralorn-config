@@ -14,7 +14,7 @@ self: super: {
       htop tree pwgen borgbackup inotifyTools direnv socat nmap ncdu
       tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle vnstat
       entr libargon2 mblaze niv compsize mediainfo asciinema gomuks nix-output-monitor fdroidserver jq cachix
-      nixFlakes
+      nixFlakes nix-du
       ;
   };
 
