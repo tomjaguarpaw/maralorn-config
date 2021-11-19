@@ -15,10 +15,6 @@
 
   programs = {
     home-manager.enable = true;
-    nix-index = {
-      enable = true;
-      enableZshIntegration = true;
-    };
     exa = {
       enable = true;
       enableAliases = true;
