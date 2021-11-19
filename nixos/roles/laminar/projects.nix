@@ -7,7 +7,7 @@ let
     git clone git@localhost:${name} .
     git show -q --oneline
     echo "Evaluating nix-expression."
-    export FLAGS='--builders @/etc/nix/machines --max-jobs 0'
+    export FLAGS='--builders @/etc/nix/machines --max-jobs 1'
     if [[ -e "flake.nix" ]]; then
       echo "Flake detected. Using flake.nix"
       drv=$(${pkgs.nixFlakes}/bin/flix eval --raw .#defaultPackage.x86_64-linux.drvPath)

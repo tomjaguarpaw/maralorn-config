@@ -49,7 +49,7 @@ let
     git show -q
     REPODIR=.
   '';
-  remoteFlags = "--builders @/etc/nix/machines --max-jobs 0";
+  remoteFlags = "--builders @/etc/nix/machines --max-jobs 1";
   systems = builtins.attrNames (builtins.readDir ../../machines);
   homes = lib.attrNames (import ../../../home-manager/machines.nix);
   mkHomeJob = (

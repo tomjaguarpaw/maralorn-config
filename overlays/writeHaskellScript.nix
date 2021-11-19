@@ -106,7 +106,7 @@ in
       buildSystemParams = ["<nixpkgs/nixos>", "-A", "system"]
 
       remoteBuildParams :: [String]
-      remoteBuildParams = ["--builders", "@/etc/nix/machines", "--max-jobs", "0"]
+      remoteBuildParams = ["--builders", "@/etc/nix/machines", "--max-jobs", "1"]
 
       main :: IO ()
       ${code}
