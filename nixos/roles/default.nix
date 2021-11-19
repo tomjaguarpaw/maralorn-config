@@ -115,8 +115,7 @@
   };
   programs = {
     command-not-found.dbPath = "${builtins.fetchTarball {
-      url = "https://releases.nixos.org/nixos/unstable/nixos-21.11pre331460.931ab058dab/nixexprs.tar.xz";
-      sha256 = "10dmf56j95ba5pj03qrh059mbb72qj2cbyi9gnlkafgmvnyc97v7";
+      url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
     }}/programs.sqlite";
     zsh = {
       enable = true;
