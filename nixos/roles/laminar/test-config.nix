@@ -1,6 +1,6 @@
 { pkgs, lib, config, ... }:
 let
-  bins = lib.attrValues { inherit (pkgs) git nix niv gnutar gzip openssh laminar; };
+  bins = lib.attrValues { inherit (pkgs) git nix niv gnutar xz gzip openssh laminar; };
   standardPath = lib.makeBinPath bins;
   imports = [ "Control.Exception (onException)" ];
   haskellBody = name: drv: ''
