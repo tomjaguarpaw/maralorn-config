@@ -35,7 +35,7 @@ in
         backup-server = ssh "borg.cysec.de";
         shells = ssh "shells";
         "bach (ved)" = ssh "bach.vocalensemble-darmstadt.de";
-        "nixbuild.net" = "kitty +kitten rlwrap ssh eu.nixbuild.net -i /etc/nixos/private/id_ed25519-nix-builder shell";
+        "nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net -i /etc/nixos/private/id_ed25519-nix-builder shell";
       };
   }
   {
