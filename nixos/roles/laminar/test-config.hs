@@ -14,14 +14,13 @@
 import Control.Concurrent.Async
 import Data.String.Interpolate
 import Data.Text (stripPrefix)
-import qualified Data.Text as Text
 import Language.Haskell.TH.Syntax
 import Relude
 import Say
 import Shh
 import System.Environment
 
-load Absolute ["laminarc", "git", "nix-instantiate"]
+load Absolute ["laminarc", "git", "nix-build"]
 
 repo = "git@hera.m-0.eu:nixos-config"
 
@@ -50,10 +49,9 @@ main = do
   runId <- getEnv "RUN"
   git "clone" repo "."
   git "checkout" (toString branch)
-  (Text.dropAround ('"' ==) . decodeUtf8 . trim -> derivationName) <- nix_instantiate "test.nix" |> captureTrim
   setEnv "LAMINAR_REASON" [i|Building config branch #{branch} for all systems in #{jobId}:#{runId}|]
   say [i|Starting builds of branch #{branch} for all systems.|]
-  concurrently_ (mapConcurrently_ (\x -> laminarc ["run", x, [i|BRANCH=#{branch}|]]) jobs) $ exe "nix-jobs" ["realise", toString derivationName]
+  concurrently_ (mapConcurrently_ (\x -> laminarc ["run", x, [i|BRANCH=#{branch}|]]) jobs) $ nix_build "test.nix"
   say [i|Builds succeeded.|]
   when (branch == "master") $ do
     say [i|Deploying new config to localhost.|]

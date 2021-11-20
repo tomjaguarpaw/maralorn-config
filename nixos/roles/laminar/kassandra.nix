@@ -24,12 +24,7 @@ let
     export HOME=$PWD
     git clone git@localhost:kassandra2 .
     git show -q
-    echo "Evaluating nix-expression."
-    export FLAGS='--builders @/etc/nix/machines'
-    drv=$(readlink -f $(nix-instantiate release.nix -A ${name} --add-root ./drv --indirect $FLAGS))
-    echo "Evaluation done."
-    nix-jobs realise $drv
-    laminarc set "RESULTDRV=$drv"
+    nix-build release.nix -A ${name} --builders '@/etc/nix/machines' --show-trace -o /var/cache/gc-links/$JOB
   '';
 in
 {

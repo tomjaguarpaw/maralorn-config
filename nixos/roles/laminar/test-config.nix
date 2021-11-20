@@ -4,17 +4,16 @@ let
   standardPath = lib.makeBinPath bins;
   imports = [ "Control.Exception (onException)" ];
   haskellBody = name: drv: ''
-
     myTrim = Text.dropAround ('"' ==) . decodeUtf8 . trim
+
     main = do
-      (configDir:hostname:_) <-  getArgs
+      (configDir:hostname:remote:_) <-  getArgs
+      let flags = if remote == "remote" then ["--builders", "@/etc/nix/machines"] else []
       (myTrim -> homeManagerChannel) <- nix_instantiate "--show-trace" "--eval" "-E" ([i|(import #{configDir}/channels.nix).#{hostname}.home-manager-channel|] :: String) |> captureTrim
       (myTrim -> nixpkgsChannel) <- nix_instantiate "--show-trace" "--eval" "-E" ([i|(import #{configDir}/channels.nix).#{hostname}.nixpkgs-channel|] :: String) |> captureTrim
       paths <- aNixPath homeManagerChannel nixpkgsChannel (toText configDir)
       say [i|Trying to build ${name} config for #{hostname}.|]
-      (myTrim -> derivationName) <- (nix_instantiate "--show-trace" $ ${drv}) |> captureTrim
-      exe "nix-jobs" ["realise", toString derivationName]
-      writeFileText "derivation" derivationName
+      nix_build $ ["--show-trace", "-o", [i|/var/cache/gc-links/${name}-config-#{hostname}|]] ++ flags ++ ${drv}
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
   test-system-config = pkgs.writeHaskellScript
@@ -58,12 +57,9 @@ let
       value = pkgs.writeShellScript "test-${host}-home-config.run" ''
         ${common}
         ${checkout}
-        export FLAGS='${remoteFlags}'
-        ${test-home-config}/bin/test-home-config $REPODIR ${host}
+        ${test-home-config}/bin/test-home-config $REPODIR ${host} "remote"
         git -C $REPODIR submodule update --init
-        export FLAGS=""
-        ${test-home-config}/bin/test-home-config $REPODIR ${host}
-        laminarc set "RESULTDRV=$(cat ./derivation)"
+        ${test-home-config}/bin/test-home-config $REPODIR ${host} ""
       '';
     }
   );
@@ -73,12 +69,9 @@ let
       value = pkgs.writeShellScript "test-${host}-system-config.run" ''
         ${common}
         ${checkout}
-        export FLAGS='${remoteFlags}'
-        ${test-system-config}/bin/test-system-config $REPODIR ${host}
+        ${test-system-config}/bin/test-system-config $REPODIR ${host} "remote"
         git -C $REPODIR submodule update --init
-        export FLAGS=""
-        ${test-system-config}/bin/test-system-config $REPODIR ${host}
-        laminarc set "RESULTDRV=$(cat ./derivation)"
+        ${test-system-config}/bin/test-system-config $REPODIR ${host} ""
       '';
     }
   );

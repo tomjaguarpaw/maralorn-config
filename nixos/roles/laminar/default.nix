@@ -4,10 +4,6 @@ let
   stateDir = "/var/lib/laminar";
   cfgDir = "${stateDir}/cfg";
   cfg = config.services.laminar;
-  cacheResult = "${pkgs.writeShellScript "cache-result-as-root" ''
-    echo "Cached build-result $1 to"
-    ${pkgs.nix}/bin/nix-store -r --indirect --add-root "/var/cache/gc-links/$2" "$1"
-  ''}";
 in
 {
   options = {
@@ -27,44 +23,11 @@ in
   };
   imports = [ ./kassandra.nix ./test-config.nix ./projects.nix ];
   config = {
-    security.sudo.extraRules =
-      let allowedCommands = [ cacheResult ];
-      in
-      [{
-        commands = map
-          (command: {
-            inherit command;
-            options = [ "NOPASSWD" ];
-          })
-          allowedCommands;
-        users = [ "laminar" ];
-      }];
     services.laminar.cfgFiles = {
       env = builtins.toFile "laminar-env" ''
         TIMEOUT=14400
       '';
-      scripts = {
-        "nix-jobs" = pkgs.writeHaskell "nix-jobs"
-          {
-            libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
-            ghcEnv.PATH = "${lib.makeBinPath [ pkgs.laminar pkgs.nix ]}:$PATH";
-            ghcArgs = [ "-threaded" ];
-          }
-          (builtins.readFile ./nix-jobs.hs);
-      };
-      jobs = {
-        "nix-build.run" = pkgs.writeShellScript "nix-build" ''
-          set -e
-          PATH=${
-            lib.makeBinPath [ pkgs.laminar pkgs.nix ]
-          }:$PATH nix-jobs realise-here "$DERIVATION"
-        '';
-      };
       after = pkgs.writeShellScript "after-all-jobs-script" ''
-        if [[ "$RESULTDRV" != "" ]]; then
-          /run/wrappers/bin/sudo ${cacheResult} "$RESULTDRV" "$JOB"
-        fi
-        if [[ "$JOB$RESULT" != "nix-buildsuccess" ]]; then
         LAMINAR_URL="https://ci.maralorn.de"
         exec 100>${stateDir}/matrix-lock
         ${pkgs.utillinux}/bin/flock -w 10 100
@@ -73,11 +36,10 @@ in
         $JOB #$RUN: $BRANCH$DERIVATION $RESULT https://ci.m-0.eu/jobs/$JOB/$RUN
         $(if [[ $RESULT == "failed" ]]; then echo -e 'maralorn'; ${pkgs.curl}/bin/curl -m5 -s $LAMINAR_URL/log/$JOB/$RUN | tail; fi)
         EOF
-        fi
         echo "Result was: $RESULT"
       '';
       contexts = {
-        "default.conf" = builtins.toFile "default.conf" "EXECUTORS=32";
+        "default.conf" = builtins.toFile "default.conf" "EXECUTORS=8";
       };
     };
     users = {

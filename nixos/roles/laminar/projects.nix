@@ -6,18 +6,14 @@ let
     export PATH=${lib.makeBinPath path}:$PATH
     git clone git@localhost:${name} .
     git show -q --oneline
-    echo "Evaluating nix-expression."
-    export FLAGS='--builders @/etc/nix/machines'
+    export FLAGS='--builders @/etc/nix/machines -o /var/cache/gc-links/$JOB'
     if [[ -e "flake.nix" ]]; then
       echo "Flake detected. Using flake.nix"
-      drv=$(${pkgs.nixFlakes}/bin/flix eval --raw .#defaultPackage.x86_64-linux.drvPath)
+      ${pkgs.nixFlakes}/bin/flix build .#defaultPackage.x86_64-linux $FLAGS
     else
-      nix-instantiate --add-root ./drv --indirect $FLAGS
-      drv=$(readlink -f ./drv)
+      echo "Building default.nix"
+      nix-build $FLAGS
     fi
-    echo "Evaluation done."
-    nix-jobs realise $drv
-    laminarc set "RESULTDRV=$drv"
   '';
 in
 {
