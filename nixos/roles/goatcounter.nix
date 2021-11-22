@@ -47,31 +47,22 @@ in
       };
       wantedBy = [ "multi-user.target" ];
     };
-    nginx-log-cleaner = {
-      serviceConfig.User = "nginx";
-      script = ''
-        while true; do
-          sleep 60s
-          truncate --size 0 /run/nginx/access.log
-        done
-      '';
-      wantedBy = [ "multi-user.target" ];
-    };
     goatcounter-feeder = {
       requires = [ "goatcounter.service" ];
       after = [ "goatcounter.service" ];
       serviceConfig.User = "nginx";
       script = ''
-        tail -F /run/nginx/access.log 2> /dev/null |\
-         sed 's/\([^ ]*\) \(.*"[^ ]* \/\)/\2\1\//; s/ \(\/.*\)?[^ ]* / \1 /' |\
-         GOATCOUNTER_API_KEY=${goatcounter-token} ${goatcounter-bin}/bin/goatcounter import -site http://localhost:8081 - -format combined --follow \
-           -exclude static \
-           -exclude '!method:GET' \
-           -exclude 'remote_addr:2a02:c207:3002:7584:' \
-           -exclude 'remote_addr:glob:::1' \
-           -exclude 'remote_addr:127.0.0.1' \
-           -exclude 'user_agent:Go-http-client' \
-           -exclude redirect
+        while true; do
+          sleep 60s
+          (cat /run/nginx/access.log && truncate --size 0 /run/nginx/access.log) |\
+           sed 's/\([^ ]*\) \(.*"[^ ]* \/\)/\2\1\//; s/ \(\/.*\)?[^ ]* / \1 /' |\
+           GOATCOUNTER_API_KEY=${goatcounter-token} ${goatcounter-bin}/bin/goatcounter import -follow -site http://localhost:8081 - -format combined \
+             -exclude '!method:GET' \
+             -exclude 'remote_addr:2a02:c207:3002:7584:' \
+             -exclude 'remote_addr:glob:::1' \
+             -exclude 'remote_addr:127.0.0.1' \
+             -exclude redirect
+        done
       '';
       wantedBy = [ "multi-user.target" ];
     };
