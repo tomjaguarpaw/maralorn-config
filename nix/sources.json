@@ -68,10 +68,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "24528474d2b3370f2f23879a557ae2cc92a5d50b",
-        "sha256": "0pdmqzk1l7cwwfp005kzv0dwnmg8xnskzc745052gdxp8pzh1w45",
+        "rev": "d5b65f812cd4f5a8fa74b406075b59a46f1cfd98",
+        "sha256": "0lq7p6lfgwammpcm3ghdnxd83jwqcd816qs03m46pchy5sb1fdxs",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/24528474d2b3370f2f23879a557ae2cc92a5d50b.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/d5b65f812cd4f5a8fa74b406075b59a46f1cfd98.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
@@ -80,10 +80,10 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "5a7e613703ea349fd46b3fa2f3dfe3bd5444d591",
-        "sha256": "088z9p9ycsvnghqbksxrssk43wfsnm9caks9lch90jp2x8c8aw7x",
+        "rev": "08cda8e3a5a4e685af525e5a589dfeb74267d505",
+        "sha256": "0bf3mbss7c3lyf5h8g1vwjbs0cg4h0c8ixbaz1kv24ahyy8n61y3",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/5a7e613703ea349fd46b3fa2f3dfe3bd5444d591.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/08cda8e3a5a4e685af525e5a589dfeb74267d505.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
