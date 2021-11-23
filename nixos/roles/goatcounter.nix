@@ -50,21 +50,26 @@ in
     goatcounter-feeder = {
       requires = [ "goatcounter.service" ];
       after = [ "goatcounter.service" ];
-      serviceConfig.User = "nginx";
+      serviceConfig = {
+        User = "nginx";
+        Type = "oneshot";
+      };
       script = ''
-        while true; do
-          sleep 60s
-          (cat /run/nginx/access.log && truncate --size 0 /run/nginx/access.log) |\
-           sed 's/\([^ ]*\) \(.*"[^ ]* \/\)/\2\1\//; s/ \(\/.*\)?[^ ]* / \1 /' |\
-           GOATCOUNTER_API_KEY=${goatcounter-token} ${goatcounter-bin}/bin/goatcounter import -follow -site http://localhost:8081 - -format combined \
-             -exclude '!method:GET' \
-             -exclude 'remote_addr:2a02:c207:3002:7584:' \
-             -exclude 'remote_addr:glob:::1' \
-             -exclude 'remote_addr:127.0.0.1' \
-             -exclude redirect
-        done
+        (cat /run/nginx/access.log && truncate --size 0 /run/nginx/access.log) |\
+         sed 's/\([^ ]*\) \(.*"[^ ]* \/\)/\2\1\//; s/ \(\/.*\)?[^ ]* / \1 /' |\
+         GOATCOUNTER_API_KEY=${goatcounter-token} ${goatcounter-bin}/bin/goatcounter import -follow -site http://localhost:8081 - -format combined \
+           -exclude '!method:GET' \
+           -exclude 'remote_addr:2a02:c207:3002:7584:' \
+           -exclude 'remote_addr:glob:::1' \
+           -exclude 'remote_addr:127.0.0.1' \
+           -exclude redirect
       '';
-      wantedBy = [ "multi-user.target" ];
+    };
+  };
+  systemd.timers = {
+    goatcounter-feeder = {
+      timerConfig.OnCalendar = "minutely";
+      wantedBy = [ "timers.target" ];
     };
   };
 }
