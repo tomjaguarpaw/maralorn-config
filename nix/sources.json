@@ -99,10 +99,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "263ef4cc4146c9fab808085487438c625d4426a9",
-        "sha256": "0739s6g7ixrcl0wgmc730m4482n75q7pd56ni4mf22jaa70hqhif",
+        "rev": "39cb89ef2ffcbef8d2ac2d52267ac69121a6becb",
+        "sha256": "1x9vzpay56ap4hgfq1giz00050crdngv5jkxgkxzx276mzhw93na",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/263ef4cc4146c9fab808085487438c625d4426a9.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/39cb89ef2ffcbef8d2ac2d52267ac69121a6becb.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
@@ -123,10 +123,10 @@
         "homepage": "",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "50cfce93606c020b9e69dce24f039b39c34a4c2d",
-        "sha256": "0q0irn855y3gr3aqvbbv4dygq8bs1pqjfqc8k8kmc9g0c990r6i9",
+        "rev": "c3b4f94350b0e59c2546fa85890cc70d03616b9c",
+        "sha256": "1x90b2m8kzxzslfssvnaq9s1m0n9rxqw41qhz298gnv4nvahcr0f",
         "type": "tarball",
-        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/50cfce93606c020b9e69dce24f039b39c34a4c2d.tar.gz",
+        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/c3b4f94350b0e59c2546fa85890cc70d03616b9c.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "taskwarrior-git-backend": {
