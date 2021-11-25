@@ -71,6 +71,7 @@ in
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/var/lib/bluetooth - - - - -"
+    "d /tmp/scans/scans 777 ftp ftp - -"
     "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
@@ -107,6 +108,10 @@ in
     hostName = "zeus";
     domain = "m-0.eu";
     interfaces.enp34s0.useDHCP = true;
+    firewall = {
+      allowedTCPPorts = [ 21 ];
+      allowedTCPPortRanges = [{ from = 51000; to = 51999; }];
+    };
     wireguard.interfaces = {
       m0wire = {
         allowedIPsAsRoutes = false;
@@ -147,10 +152,21 @@ in
     pipewire.enable = lib.mkForce false;
     fwupd.enable = true;
     #upower.enable = true;
-    #printing = {
-    #  enable = true;
-    #  drivers = [ pkgs.gutenprint pkgs.hplip ];
-    #};
+    printing.enable = true;
+    vsftpd = {
+      extraConfig = ''
+        pasv_enable=Yes
+        pasv_min_port=51000
+        pasv_max_port=51999
+      '';
+      enable = true;
+      anonymousUploadEnable = true;
+      anonymousUser = true;
+      anonymousUserHome = "/tmp/scans";
+      anonymousUserNoPassword = true;
+      anonymousUmask = "000";
+      writeEnable = true;
+    };
     unbound.enable = true;
     fstrim.enable = true;
     snapper = {
