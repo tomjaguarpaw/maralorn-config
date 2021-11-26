@@ -18,5 +18,5 @@ let
 
 in
 {
-  home.packages = map superSimpleDesktopItem [ "kassandra" ] ++ map terminalDesktopItem [ "unlock-ssh" ];
+  home.packages = map superSimpleDesktopItem [ "kassandra2" ] ++ map terminalDesktopItem [ "unlock-ssh" ];
 }

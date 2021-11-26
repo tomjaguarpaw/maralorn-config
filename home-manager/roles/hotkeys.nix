@@ -5,7 +5,7 @@ in
 [
   {
     Orga = [
-      { Kassandra = fork "kassandra"; }
+      { Kassandra = fork "kassandra2"; }
       { Kalendar = "ikhal"; }
       { Habitica = fork "firefox https://habitica.com"; }
       { Tasks = "tasksh"; }
