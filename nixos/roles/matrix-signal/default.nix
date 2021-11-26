@@ -15,7 +15,7 @@ in
     enable = true;
     settings = {
       homeserver = {
-        address = "http://localhost:${builtins.toString synapse-port}";
+        address = "https://matrix.maralorn.de";
         domain = "maralorn.de";
       };
       bridge = {
