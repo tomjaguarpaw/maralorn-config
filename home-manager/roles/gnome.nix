@@ -229,12 +229,6 @@ in
         command = "kitty ${pkgs.haskell-dialog}/bin/hotkeys ${pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)}";
         name = "Hotkeys";
       };
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/clear-notifications" =
-      {
-        binding = "<Super>r";
-        command = "dbus-send --session --type=method_call --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:'Main.panel.statusArea.dateMenu._messageList._sectionList.get_children().forEach(s => s.clear());'";
-        name = "Clear Notifications";
-      };
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby" = {
       binding = "<Super>F5";
       command = "systemctl suspend";
@@ -250,7 +244,6 @@ in
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby/"
-        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/clear-notifications/"
       ];
       next = [ "<Primary><Shift>dollar" ];
       play = [ "<Primary><Shift>guillemotleft" ];
