@@ -54,6 +54,10 @@ in
         StateDirectory = "signald";
         UMask = 0007;
 
+        WatchdogSignal = "SIGTERM";
+        WatchdogSec = "20m";
+        Restart = "always";
+
         ExecStart = ''
           ${pkgs.signald}/bin/signald \
             ${optionalString (cfg.socketFile != null) "--socket ${cfg.socketFile}"} \

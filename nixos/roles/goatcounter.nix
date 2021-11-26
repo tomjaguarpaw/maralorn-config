@@ -44,6 +44,9 @@ in
       serviceConfig = {
         User = "goatcounter";
         ExecStart = "${goatcounter-bin}/bin/goatcounter serve -db 'postgresql://host=/run/postgresql dbname=goatcounter' -listen *:8081 -tls http -automigrate";
+        WatchdogSignal = "SIGTERM";
+        WatchdogSec = "20m";
+        Restart = "always";
       };
       wantedBy = [ "multi-user.target" ];
     };
