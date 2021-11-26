@@ -68,8 +68,8 @@ in
     "d /home/maralorn/.config 700 maralorn users - -"
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
-    "d /disk/persist/var/lib/bluetooth 770 root users - -"
-    "d /disk/persist/var/lib/waydroid - - - - -"
+    "d /disk/persist/var/lib/bluetooth - - - - -"
+    "d /disk/persist/var/lib/waydroid 770 root users - -"
     "d /tmp/scans/scans 777 ftp ftp - -"
     "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"
     "L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
@@ -148,7 +148,7 @@ in
 
   security.rtkit.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
-  virtualisation.waydroid.enable = true;
+  #virtualisation.waydroid.enable = true;
   services = {
     #teamviewer.enable = true;
     pipewire.enable = lib.mkForce false;
