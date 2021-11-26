@@ -46,7 +46,7 @@ self: super: {
       caffeine dash-to-panel
       ;
     executor = self.gnomeExtensions.executor.overrideAttrs (old: {
-      buildCommand = old.buildCommand + ''
+      postInstall = (old.postInstall or "") + ''
         substituteInPlace $out/share/gnome-shell/extensions/executor@raujonas.github.io/extension.js --replace "'/bin/bash'" "'bash'"
       '';
     });

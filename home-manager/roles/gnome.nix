@@ -130,6 +130,7 @@ in
     };
 
     "org/gnome/shell" = {
+      disable-extension-version-validation = true;
       disable-user-extensions = false;
       enabled-extensions = [
         "gTile@vibou"

@@ -41,8 +41,6 @@ in
     machine-id.source = "/disk/persist/machine-id";
   };
 
-  boot.kernelPackages = pkgs.linuxPackages_testing;
-
   systemd.services."activate-home-manager" = {
     path = [ pkgs.nix pkgs.dbus ];
     script = ''
@@ -70,9 +68,11 @@ in
     "d /home/maralorn/.config 700 maralorn users - -"
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
-    "d /disk/persist/var/lib/bluetooth - - - - -"
+    "d /disk/persist/var/lib/bluetooth 770 root users - -"
+    "d /disk/persist/var/lib/waydroid - - - - -"
     "d /tmp/scans/scans 777 ftp ftp - -"
     "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"
+    "L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
 
@@ -147,6 +147,8 @@ in
   };
 
   security.rtkit.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages_xanmod;
+  virtualisation.waydroid.enable = true;
   services = {
     #teamviewer.enable = true;
     pipewire.enable = lib.mkForce false;
@@ -194,8 +196,7 @@ in
       user = "maralorn";
       openDefaultPorts = true;
       configDir = "/disk/persist/syncthing";
-      declarative = syncthing.declarativeWith [ "hera" "apollo" ] "/disk/persist/maralorn/media";
-    };
+    } // syncthing.declarativeWith [ "hera" "apollo" ] "/disk/persist/maralorn/media";
     xserver = {
       enable = true;
       displayManager = {
@@ -205,16 +206,7 @@ in
         };
         gdm.enable = true;
       };
-      desktopManager.gnome = {
-        enable = true;
-        extraGSettingsOverrides = ''
-          [com.ubuntu.login-screen]
-          background-repeat='no-repeat'
-          background-size='cover'
-          background-color='#443388'
-          background-picture-uri='file:///disk/volatile/gdm.jpg'
-        '';
-      };
+      desktopManager.gnome.enable = true;
     };
     gnome = {
       evolution-data-server.enable = lib.mkForce false;
