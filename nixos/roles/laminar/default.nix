@@ -40,6 +40,10 @@ in
       '';
       contexts = {
         "default.conf" = builtins.toFile "default.conf" "EXECUTORS=3";
+        "test-config.conf" = builtins.toFile "test-config.conf" ''
+          EXECUTORS=1
+          JOBS=test-config
+        '';
       };
     };
     users = {
