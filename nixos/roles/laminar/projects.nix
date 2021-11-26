@@ -20,5 +20,6 @@ in
   services.laminar.cfgFiles.jobs = {
     "logfeed.run" = mkJob "logfeed";
     "blog.run" = mkJob "blog";
+    "haskell-taskwarrior.run" = mkJob "haskell-taskwarrior";
   };
 }
