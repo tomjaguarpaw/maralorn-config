@@ -39,7 +39,7 @@ in
 
       serviceConfig = {
         Type = "simple";
-        Restart = "always";
+
         PermissionsStartOnly = true;
         RuntimeDirectory = "signald";
 
