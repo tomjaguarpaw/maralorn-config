@@ -39,7 +39,7 @@ in
         echo "Result was: $RESULT"
       '';
       contexts = {
-        "default.conf" = builtins.toFile "default.conf" "EXECUTORS=4";
+        "default.conf" = builtins.toFile "default.conf" "EXECUTORS=3";
       };
     };
     users = {
