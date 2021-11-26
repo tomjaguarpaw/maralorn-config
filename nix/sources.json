@@ -42,13 +42,6 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "kassandra": {
-        "branch": "main",
-        "ref": "main",
-        "repo": "git@hera.m-0.eu:kassandra",
-        "rev": "62231410301e4735c28c0dcde877fe288430e7cd",
-        "type": "git"
-    },
-    "kassandra2": {
         "branch": "master",
         "ref": "master",
         "repo": "git@hera.m-0.eu:kassandra2",

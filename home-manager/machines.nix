@@ -58,7 +58,7 @@ let
     let
       all = extra ++ on-my-machines ++ [
         (import ./roles/firefox.nix "http://localhost:8842")
-        (makeAutostart "kassandra2")
+        (makeAutostart "kassandra")
         (makeAutostart "unlock-ssh")
         ./roles/beets.nix
         ./roles/daily-driver-programs.nix

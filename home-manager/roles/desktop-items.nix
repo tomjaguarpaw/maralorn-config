@@ -18,14 +18,5 @@ let
 
 in
 {
-  home.packages = map superSimpleDesktopItem [ "kassandra2" "gw2" "chat" ]
-    ++ map terminalDesktopItem [
-    "maintenance"
-    "ncmpcpp"
-    "kassandra"
-    "hotkeys"
-    "vim"
-    "select-mode"
-    "unlock-ssh"
-  ];
+  home.packages = map superSimpleDesktopItem [ "kassandra" ] ++ map terminalDesktopItem [ "unlock-ssh" ];
 }
