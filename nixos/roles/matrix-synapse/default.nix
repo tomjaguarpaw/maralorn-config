@@ -96,7 +96,9 @@ in
         max_upload_size = "30M";
         dynamic_thumbnails = true;
         turn_shared_secret = config.services.coturn.static-auth-secret;
-        extraConfig = '' experimental_features: { spaces_enabled: true } '';
+        extraConfig = ''
+          serve_server_wellknown: true
+        '';
         turn_uris =
           let
             turns = "turns:${config.services.coturn.realm}:${
