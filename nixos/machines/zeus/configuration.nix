@@ -148,7 +148,16 @@ in
 
   security.rtkit.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
-  #virtualisation.waydroid.enable = true;
+  virtualisation.waydroid.enable = true;
+  hardware.printers.ensurePrinters = [
+    {
+      name = "Klio";
+      location = "Wohnzimmer";
+      description = "Brother MFC-L3750CDW";
+      deviceUri = "ipp://klio.m-0.eu/ipp";
+      model = "everywhere";
+    }
+  ];
   services = {
     #teamviewer.enable = true;
     pipewire.enable = lib.mkForce false;
