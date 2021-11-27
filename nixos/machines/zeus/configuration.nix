@@ -69,10 +69,10 @@ in
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/var/lib/bluetooth - - - - -"
-    "d /disk/persist/var/lib/waydroid 770 root users - -"
+    #"d /disk/persist/var/lib/waydroid 770 root users - -"
     "d /tmp/scans/scans 777 ftp ftp - -"
     "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"
-    "L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
+    #"L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
 
