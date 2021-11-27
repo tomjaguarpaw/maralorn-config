@@ -6,7 +6,10 @@ let
   alternates = pkgs.privateValue [ ] "mail/alternates";
   lists = pkgs.privateValue { sortLists = [ ]; stupidLists = [ ]; notifications = [ ]; } "mail/filters";
   quick-sync = pkgs.writeShellScript "quick-mail-sync" ''
-    ${pkgs.isync}/bin/mbsync hera:INBOX,Code
+    ${pkgs.isync}/bin/mbsync hera:INBOX,Code,Move/todo
+    ${pkgs.fd}/bin/fd -tf . ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mscan -f "E-Mail from %f: %S" | xargs -I '{}' ${pkgs.taskwarrior}/bin/task add '"{}"'
+    ${pkgs.mblaze}/bin/mlist ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mrefile ${unsorted}
+    ${pkgs.mblaze}/bin/mlist ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mflag -S
     ${pkgs.notmuch}/bin/notmuch new
   '';
   maildir = config.accounts.email.maildirBasePath;
@@ -88,9 +91,6 @@ let
       listId :: Parser Text
       listId = manyTill anySingle (char '<') *> (toText <$> manyTill anySingle (char '>'))
 
-      mySearch :: [String] -> IO [Text]
-      mySearch param = lines . decodeUtf8 <$> (Main.find ("${archive}":param) |> captureTrim)
-
       main = do
          setEnv "MBLAZE_PAGER" "cat"
          setEnv "NOTMUCH_CONFIG" "${config.home.sessionVariables.NOTMUCH_CONFIG or ""}"
@@ -101,18 +101,6 @@ let
          applicableFilters <- catMaybes <$> forConcurrently (listFilters <> myFilters <> toFilters) findFilterMail
          for_ applicableFilters executeFilterMail
          reScan
-         --syncStates <- mySearch ["-name", ".mbsyncstate"]
-         --dbFiles <- mySearch ["-name", ".isyncuidmap.db"]
-         --dirs <- mySearch ["-type", "d"]
-         --maildirs <- sortNub <$> (lines . decodeUtf8 =<<) <$> forM dirs (\dir -> mdirs (toString dir) |> captureTrim)
-         --emptyMaildirs <- filterM (\dir -> (== 0) . LBS.length <$> (mlist (toString dir) |> captureTrim)) maildirs
-         --forM_ emptyMaildirs $ \dir -> rmdir ([[i|#{dir}/cur|],[i|#{dir}/new|],[i|#{dir}/tmp|]] :: [String])
-         -- let nonMaildirs = filter (`notElem` maildirs) dirs
-         --    delSyncs = filter (`elem` syncStates) $ (\x -> [i|#{x}/.mbsyncstate|]) <$> nonMaildirs
-         --    delDbs = filter (`elem` dbFiles) $ (\x -> [i|#{x}/.isyncuidmap.db|]) <$> nonMaildirs
-         -- whenNotNull (delSyncs ++ delDbs) $ rm . fmap toString . toList
-         -- emptyDirs <- Main.find "${archive}" "-type" "d" "-empty" "!" "-name" "cur" "!" "-name" "tmp" "!" "-name" "new" "-print0" |> capture
-         -- when (LBS.length emptyDirs > 0) $ writeOutput emptyDirs |> xargs "-0" "rmdir"
   '';
 in
 {
@@ -321,9 +309,6 @@ in
 
           set date_format="%F %R"
           set index_format="%Z %D %-15.15L %s"
-
-          set display_filter="exec sed -r \"s/^Date:\\s*(([F-Wa-u]{3},\\s*)?[[:digit:]]{1,2}\\s+[A-Sa-y]{3}\\s+[[:digit:]]{4}\\s+[[:digit:]]{1,2}:[[:digit:]]{1,2}(:[[:digit:]]{1,2})?\\s+[+-][[:digit:]]{4})/date +'Date: %F (%a) %R' -d '\\1'/e\""
-
 
           ignore *
           unignore from date cc bcc to subject list-unsubscribe
