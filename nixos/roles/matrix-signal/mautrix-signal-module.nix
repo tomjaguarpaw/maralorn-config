@@ -114,8 +114,9 @@ in
       description = "Mautrix-Signal, a Matrix-Signal hybrid puppeting/relaybot bridge.";
 
       wantedBy = [ "multi-user.target" ];
-      wants = [ "network-online.target" "signald.target" ];
-      after = [ "network-online.target" "signald.target" ];
+      wants = [ "network-online.target" "signald.service" ];
+      after = [ "network-online.target" "signald.service" ];
+      bindsTo = [ "signald.service" ];
 
       preStart = ''
         old_umask=$(umask)
