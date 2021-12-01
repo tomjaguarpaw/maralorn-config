@@ -73,7 +73,12 @@ in
           Code = "neomutt -f ~/Maildir/hera/Code";
         };
       }
-      { Mumble = fork "mumble mumble://maralorn@mumble.hax404.de"; }
+      {
+        Mumble = {
+          CDA = fork "mumble mumble://maralorn@mumble.hax404.de";
+          Nixos = fork "mumble mumble://maralorn@lassul.us/nixos";
+        };
+      }
       { Weechat = "weechat"; }
       { Signal = fork "signal-desktop"; }
       { Zoom = fork "zoom"; }
