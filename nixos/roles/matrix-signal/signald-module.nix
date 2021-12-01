@@ -39,6 +39,9 @@ in
 
       serviceConfig = {
         Type = "simple";
+        WatchdogSignal = "SIGTERM";
+        WatchdogSec = "60m";
+        Restart = "always";
 
         PermissionsStartOnly = true;
         RuntimeDirectory = "signald";
@@ -54,9 +57,6 @@ in
         StateDirectory = "signald";
         UMask = 0007;
 
-        WatchdogSignal = "SIGTERM";
-        WatchdogSec = "20m";
-        Restart = "always";
 
         ExecStart = ''
           ${pkgs.signald}/bin/signald \

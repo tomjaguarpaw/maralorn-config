@@ -116,7 +116,6 @@ in
       wantedBy = [ "multi-user.target" ];
       wants = [ "network-online.target" "signald.service" ];
       after = [ "network-online.target" "signald.service" ];
-      bindsTo = [ "signald.service" ];
 
       preStart = ''
         old_umask=$(umask)
@@ -155,6 +154,8 @@ in
 
       serviceConfig = rec {
         Type = "simple";
+        WatchdogSignal = "SIGTERM";
+        WatchdogSec = "60m";
         Restart = "always";
 
         ProtectSystem = "full";
