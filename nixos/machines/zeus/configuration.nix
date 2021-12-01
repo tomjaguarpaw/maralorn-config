@@ -69,9 +69,11 @@ in
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/var/lib/bluetooth - - - - -"
+    "d /disk/persist/var/lib/home-assistant - - - - -"
     #"d /disk/persist/var/lib/waydroid 770 root users - -"
     "d /tmp/scans/scans 777 ftp ftp - -"
     "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"
+    "L+ /var/lib/home-assistant - - - - /disk/persist/var/lib/home-assistant"
     #"L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
@@ -158,7 +160,31 @@ in
       model = "everywhere";
     }
   ];
+  systemd.services.home-assistant.serviceConfig.DeviceAllow = [ "char-ttyUSB rw" ];
   services = {
+    home-assistant = {
+      enable = true;
+      package = (pkgs.home-assistant.override {
+        # https://github.com/NixOS/nixpkgs/blob/master/pkgs/servers/home-assistant/component-packages.nix
+        extraComponents = [
+          "default_config"
+          "zha"
+          "met"
+          "tts"
+          "brother"
+          "ipp"
+        ];
+        extraPackages = py: with py; [
+          # Are you using a database server for youre recorder?
+          # https://www.home-assistant.io/integrations/recorder/
+          #mysqlclient
+          #psycopg2
+        ];
+      }).overrideAttrs (oldAttrs: {
+        # Don't run package tests, they take a long time
+        doInstallCheck = false;
+      });
+    };
     #teamviewer.enable = true;
     pipewire.enable = lib.mkForce false;
     fwupd.enable = true;
