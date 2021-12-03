@@ -1,6 +1,6 @@
 final: prev: {
-  inherit (final.unstable.callPackage ./package.nix {
-    avahi = final.unstable.avahi-compat;
+  inherit (final.callPackage ./package.nix {
+    avahi = final.avahi-compat;
     jackSupport = false;
     speechdSupport = false;
     pulseSupport = true;
