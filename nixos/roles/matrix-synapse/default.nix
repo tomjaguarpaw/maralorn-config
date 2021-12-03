@@ -20,7 +20,7 @@ in
               pkgs.haskellPackages.postgresql-simple
               pkgs.haskellPackages.HTTP
             ];
-            ghcEnv.PATH = "${lib.makeBinPath [ pkgs.matrix-synapse-tools.rust-synapse-compress-state pkgs.postgresql_12 ]}:$PATH";
+            ghcEnv.PATH = "${lib.makeBinPath [ pkgs.matrix-synapse-tools.rust-synapse-compress-state config.services.postgresql.package ]}:$PATH";
             ghcArgs = [ "-threaded" ];
           }
           (builtins.readFile ./synapse-cleanup.hs);
@@ -71,7 +71,6 @@ in
     # Postgres
     postgresql = {
       enable = true;
-      package = pkgs.postgresql_12;
       settings = import ./postgres-tuning.nix;
       ensureDatabases = [ "matrix-synapse" ];
     };

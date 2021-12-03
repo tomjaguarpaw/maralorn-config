@@ -2,7 +2,7 @@
 {
   containers.temp-pg.config.services.postgresql = {
     enable = true;
-    package = pkgs.postgresql_12;
+    package = pkgs.postgresql_14;
   };
   environment.systemPackages =
     let newpg = config.containers.temp-pg.config.services.postgresql;

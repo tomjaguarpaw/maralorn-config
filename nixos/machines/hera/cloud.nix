@@ -112,7 +112,7 @@ let
 
         postgresql = {
           enable = true;
-          package = pkgs.postgresql_12;
+          package = pkgs.postgresql_14;
           ensureDatabases = [ "nextcloud" ];
         };
       };

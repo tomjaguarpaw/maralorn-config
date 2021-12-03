@@ -91,6 +91,10 @@ in
     };
   } // lib.listToAttrs (map (name: { name = name; value = { serviceConfig.Type = "oneshot"; }; }) backupJobNames);
   services = {
+    postgresql = {
+      enable = true;
+      package = pkgs.postgresql_14;
+    };
     borgbackup.jobs = backupJobs;
     taskserver = {
       enable = true;
