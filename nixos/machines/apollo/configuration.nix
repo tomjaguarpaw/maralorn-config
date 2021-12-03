@@ -117,12 +117,10 @@ in
       group = "users";
       user = "maralorn";
       openDefaultPorts = true;
-      declarative = syncthing.declarativeWith [ "hera" "zeus" ] "/home/maralorn/media"
-        // {
-        cert = pkgs.privatePath "syncthing/apollo/cert.pem";
-        key = pkgs.privatePath "syncthing/apollo/key.pem";
-      };
-    };
+      cert = pkgs.privatePath "syncthing/apollo/cert.pem";
+      key = pkgs.privatePath "syncthing/apollo/key.pem";
+    }
+    // syncthing.declarativeWith [ "hera" "zeus" ] "/home/maralorn/media";
     xserver = {
       enable = true;
       displayManager = {
