@@ -76,10 +76,10 @@ in
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/var/lib/bluetooth - - - - -"
     "d /disk/persist/var/lib/hass - - - - -"
-    #"d /disk/persist/var/lib/waydroid 770 root users - -"
+    "d /disk/persist/var/lib/waydroid 777 root root - -"
     "d /tmp/scans/scans 777 ftp ftp - -"
     "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"
-    #"L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
+    "L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
 
@@ -104,7 +104,10 @@ in
         allowDiscards = true;
         keyFile = "/diskkey.bin";
       };
-      kernelModules = [ "amdgpu" ]; # For earlier and better framebuffer
+      kernelModules = [
+        "amdgpu" # For earlier and better framebuffer
+        "binder_linux"
+      ];
       secrets = {
         "diskkey.bin" = "/disk/persist/diskkey.bin"; # Key can live on crypted disk, is copied to initrd on install
       };
@@ -174,6 +177,7 @@ in
         default_config = { };
         zha = { };
         ipp = { };
+        brother = { };
       };
     };
     #teamviewer.enable = true;
