@@ -11,4 +11,5 @@ in
   unstableGhc = unstable.ghc;
   mautrix-signal = unstable.mautrix-signal;
   signald = unstable.signald;
+  home-assistant = unstable.home-assistant;
 }

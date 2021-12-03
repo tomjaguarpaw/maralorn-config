@@ -4,12 +4,18 @@ let
   wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts prefix;
   nixos-hardware = (import ../../../nix/sources.nix).nixos-hardware;
+  nixos-unstable = (import ../../../nix/sources.nix).nixos-unstable;
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
   vpn = (import ../../../private.nix).privateValue (_: _: { }) "vpn";
 in
 {
 
+  disabledModules = [
+    "services/misc/home-assistant.nix"
+  ];
+
   imports = [
+    "${nixos-unstable}/nixos/modules/services/misc/home-assistant.nix"
     "${nixos-hardware}/common/gpu/amd/sea-islands"
     ./hardware-configuration.nix
     ../../roles
