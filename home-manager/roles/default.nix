@@ -232,7 +232,6 @@
       createDirectories = false;
       desktop = "$HOME";
       download = "$HOME";
-      download = "$HOME";
       documents = "$HOME/media/documents/aktuell/";
       music = "$HOME/media/audio";
       pictures = "$HOME/media/images";
