@@ -46,8 +46,6 @@ in
       map (mkEntry "f" "volatile") volatileStateFiles ++ map (mkEntry "d" "volatile") volatileStateDirs ++ map (mkEntry "f" "persist") persistentStateFiles ++ map (mkEntry "d" "persist") persistentStateDirs
     ) ++ [
     (mkLine "L+" "${home}/.password-store" "git/password-store")
-    (mkLine "f" "${home}/documents/orga/listen/checklisten/orga-pre.md" "")
-    (mkLine "f" "${home}/tmp/today.md" "")
     (mkLine "L+" "${home}/.volatile" "/disk/volatile/maralorn")
     (mkLine "L+" "${home}/.config/nixpkgs/home.nix" "${home}/git/config/home.nix")
     (mkLine "L+" "${home}/.persist" "/disk/persist/maralorn")
