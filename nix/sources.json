@@ -17,18 +17,6 @@
         "url": "https://github.com/mweinelt/nur-packages/archive/5f00162d14b12f73b6d7b0203004821246d7d647.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "home-manager-21.05": {
-        "branch": "release-21.05",
-        "description": "Manage a user environment using Nix",
-        "homepage": "",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "7329ffc6e911106494183557fc249180d5422929",
-        "sha256": "1liqvc6bhfypscbvq953j8izw806xn4vklh86zyqpkmsa5ac0yvp",
-        "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/7329ffc6e911106494183557fc249180d5422929.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "home-manager-21.11": {
         "branch": "release-21.11",
         "description": "Manage a user environment using Nix",
@@ -65,18 +53,6 @@
         "sha256": "157c64220lf825ll4c0cxsdwg7cxqdx4z559fdp7kpz0g6p8fhhr",
         "type": "tarball",
         "url": "https://github.com/NixOS/nixpkgs/archive/75f4ba05c63be3f147bcc2f7bd4ba1f029cedcb1.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "nixos-21.05": {
-        "branch": "nixos-21.05",
-        "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
-        "homepage": null,
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "2553aee74fed8c2205a4aeb3ffd206ca14ede60f",
-        "sha256": "16v5qjc84gg57yd8pzp9np420h72ahrgpp8hmcnmz4nf8x5alhvy",
-        "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/2553aee74fed8c2205a4aeb3ffd206ca14ede60f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-21.11": {
