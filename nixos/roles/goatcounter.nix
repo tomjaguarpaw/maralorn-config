@@ -13,7 +13,13 @@ let
 in
 {
   environment.systemPackages = [ goatcounter-bin ];
-  users.users.goatcounter.isSystemUser = true;
+  users = {
+    users.goatcounter = {
+      isSystemUser = true;
+      group = "goatcounter";
+    };
+    groups.goatcounter = { };
+  };
   services.postgresql = {
     enable = true;
     ensureUsers = [{

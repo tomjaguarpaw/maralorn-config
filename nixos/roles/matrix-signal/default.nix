@@ -5,7 +5,6 @@ let
 in
 {
   imports = [
-    ./signald-module.nix
     ./mautrix-signal-module.nix
   ];
 

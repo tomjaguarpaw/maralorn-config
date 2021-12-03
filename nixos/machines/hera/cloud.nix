@@ -46,7 +46,10 @@ let
         dbuser = "nextcloud";
         dbhost = "localhost";
         defaultPhoneRegion = "DE";
-      } // adminCreds;
+        adminuser = "maralorn";
+        dbpassFile = builtins.toFile "nextcloud-dbpass" adminCreds.dbpass;
+        adminpassFile = builtins.toFile "nextcloud-adminpass" adminCreds.adminpass;
+      };
       autoUpdateApps = {
         enable = true;
         startAt = "20:30";

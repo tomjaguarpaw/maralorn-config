@@ -103,11 +103,9 @@ in
       group = "nginx";
       user = "maralorn";
       openDefaultPorts = true;
-      declarative = syncthing.declarativeWith [ "apollo" "zeus" ] "/media" // {
-        cert = pkgs.privatePath "syncthing/hera/cert.pem";
-        key = pkgs.privatePath "syncthing/hera/key.pem";
-      };
-    };
+      cert = pkgs.privatePath "syncthing/hera/cert.pem";
+      key = pkgs.privatePath "syncthing/hera/key.pem";
+    } // syncthing.declarativeWith [ "apollo" "zeus" ] "/media";
   };
   boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };
   systemd.tmpfiles.rules = [ "Z /media 0770 maralorn nginx - -" ];
