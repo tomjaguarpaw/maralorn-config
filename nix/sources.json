@@ -23,10 +23,10 @@
         "homepage": "",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "3e93c4e8b2b479c712b7c20a428993b459118842",
-        "sha256": "0wgx47fyypbzpm2sbxj8xs846wvdkw1f76a8g3lbkxpla075vrl5",
+        "rev": "6ce1d64073f48b9bc9425218803b1b607454c1e7",
+        "sha256": "00wq584g2gs62rjxax3qi5q9ns1044j4bprbxjvxq3rdhf6i7qcm",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/3e93c4e8b2b479c712b7c20a428993b459118842.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/6ce1d64073f48b9bc9425218803b1b607454c1e7.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "kassandra": {
@@ -73,10 +73,10 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "6b3f79de09c3de7c91ab51e55e87879f61b6faec",
-        "sha256": "15gbdl1i9d2g479sqxk3pcxhxb4pmdl0szvmfncks9yk2vxdy75w",
+        "rev": "4c9f07277bd4bc29a051ff2a0ca58c6403e3881a",
+        "sha256": "0kz99f42173dh6sa7vw31vr4w348whmbv5n8yfylcjk6widhsslj",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/6b3f79de09c3de7c91ab51e55e87879f61b6faec.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/4c9f07277bd4bc29a051ff2a0ca58c6403e3881a.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
