@@ -28,6 +28,7 @@ in
       in
       {
         hera = ssh "hera";
+        fluffy = ssh "fluffy.lo.m-0.eu";
         remote-builder = ssh "phoibe.cased.de -i /etc/nixos/private/id_ed25519-nix-builder";
         ag = ssh "ag-forward";
         gwres1 = ssh "gw";
