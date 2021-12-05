@@ -60,10 +60,11 @@ in
     "d /disk/persist/root/.ssh 700 root root - -"
     "d /disk/persist/maralorn 700 maralorn users - -"
     "d /home/maralorn/.config 700 maralorn users - -"
+    "z / 755 - - - -"
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/var/lib/hass - - - - -"
-    #"d /tmp/scans/scans 777 ftp ftp - -"
+    "d /tmp/scans/scans 777 ftp ftp - -"
     "L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
@@ -122,61 +123,60 @@ in
   };
 
   security.rtkit.enable = true;
-  #hardware.printers.ensurePrinters = [
-  #  {
-  #    name = "Klio";
-  #    location = "Wohnzimmer";
-  #    description = "Brother MFC-L3750CDW";
-  #    deviceUri = "ipp://klio.lo.m-0.eu/ipp";
-  #    model = "everywhere";
-  #  }
-  #];
+  hardware.printers.ensurePrinters = [
+    {
+      name = "Klio";
+      location = "Wohnzimmer";
+      description = "Brother MFC-L3750CDW";
+      deviceUri = "ipp://klio.lo.m-0.eu/ipp";
+      model = "everywhere";
+    }
+  ];
   services = {
-    #home-assistant = {
-    #  enable = true;
-    #  configDir = "/disk/persist/var/lib/hass";
-    #  config = {
-    #    met = { };
-    #    default_config = { };
-    #    zha = { };
-    #    ipp = { };
-    #    brother = { };
-    #  };
-    #};
-    #fwupd.enable = true;
+    home-assistant = {
+      enable = true;
+      configDir = "/disk/persist/var/lib/hass";
+      config = {
+        met = { };
+        default_config = { };
+        zha = { };
+        ipp = { };
+        brother = { };
+      };
+    };
+    fwupd.enable = true;
     #upower.enable = true;
-    #printing.enable = true;
-    #vsftpd = {
-    #  extraConfig = ''
-    #    pasv_enable=Yes
-    #    pasv_min_port=51000
-    #    pasv_max_port=51999
-    #  '';
-    #  enable = true;
-    #  anonymousUploadEnable = true;
-    #  anonymousUser = true;
-    #  anonymousUserHome = "/tmp/scans";
-    #  anonymousUserNoPassword = true;
-    #  anonymousUmask = "000";
-    #  writeEnable = true;
-    #};
-    #unbound.enable = true;
-    #fstrim.enable = true;
-    #snapper = {
-    #  configs.persist = {
-    #    subvolume = "/disk/persist";
-    #    extraConfig = ''
-    #      TIMELINE_MIN_AGE="3600"
-    #      TIMELINE_LIMIT_WEEKLY="4"
-    #      TIMELINE_LIMIT_MONTHLY="1"
-    #      TIMELINE_LIMIT_YEARLY="0"
-    #      TIMELINE_CREATE="yes"
-    #      TIMELINE_CLEANUP="yes"
-    #    '';
-    #  };
-    #  cleanupInterval = "15m";
-    #  snapshotInterval = "*:00/3:00";
-    #};
+    printing.enable = true;
+    vsftpd = {
+      extraConfig = ''
+        pasv_enable=Yes
+        pasv_min_port=51000
+        pasv_max_port=51999
+      '';
+      enable = true;
+      anonymousUploadEnable = true;
+      anonymousUser = true;
+      anonymousUserHome = "/tmp/scans";
+      anonymousUserNoPassword = true;
+      anonymousUmask = "000";
+      writeEnable = true;
+    };
+    fstrim.enable = true;
+    snapper = {
+      configs.persist = {
+        subvolume = "/disk/persist";
+        extraConfig = ''
+          TIMELINE_MIN_AGE="3600"
+          TIMELINE_LIMIT_WEEKLY="4"
+          TIMELINE_LIMIT_MONTHLY="1"
+          TIMELINE_LIMIT_YEARLY="0"
+          TIMELINE_CREATE="yes"
+          TIMELINE_CLEANUP="yes"
+        '';
+      };
+      cleanupInterval = "15m";
+      snapshotInterval = "*:00/3:00";
+    };
     #prometheus.exporters.node = {
     #  firewallFilter = "-i m0wire -p tcp -m tcp -m multiport --dports 9100,9558";
     #  openFirewall = true;
