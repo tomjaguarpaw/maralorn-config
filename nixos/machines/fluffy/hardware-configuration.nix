@@ -8,24 +8,28 @@
   boot.kernelModules = [ "kvm-intel" ];
 
   fileSystems."/" =
-    { device = "tmpfs";
+    {
+      device = "tmpfs";
       fsType = "tmpfs";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/C617-5CCC";
+    {
+      device = "/dev/disk/by-uuid/C617-5CCC";
       fsType = "vfat";
     };
 
   fileSystems."/disk" =
-    { device = "/dev/disk/by-uuid/9acbc122-e818-49fa-bc2e-de7d9f822d5a";
+    {
+      device = "/dev/disk/by-uuid/9acbc122-e818-49fa-bc2e-de7d9f822d5a";
       fsType = "btrfs";
     };
 
   boot.initrd.luks.devices."crypted-nixos".device = "/dev/disk/by-uuid/020fde09-f651-45a2-9c6a-9b060edf967d";
 
   fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/9acbc122-e818-49fa-bc2e-de7d9f822d5a";
+    {
+      device = "/dev/disk/by-uuid/9acbc122-e818-49fa-bc2e-de7d9f822d5a";
       fsType = "btrfs";
       options = [ "subvol=nix" ];
     };
