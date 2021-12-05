@@ -13,19 +13,19 @@
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/43AC-25F1";
+    { device = "/dev/disk/by-uuid/C617-5CCC";
       fsType = "vfat";
     };
 
   fileSystems."/disk" =
-    { device = "/dev/disk/by-uuid/573176bd-8420-4174-a39c-0387c1ee1ac8";
+    { device = "/dev/disk/by-uuid/9acbc122-e818-49fa-bc2e-de7d9f822d5a";
       fsType = "btrfs";
     };
 
-  boot.initrd.luks.devices."crypted-nixos".device = "/dev/disk/by-uuid/ceb2366c-099a-4ad1-b9b0-1bfa84189a6e";
+  boot.initrd.luks.devices."crypted-nixos".device = "/dev/disk/by-uuid/020fde09-f651-45a2-9c6a-9b060edf967d";
 
   fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/573176bd-8420-4174-a39c-0387c1ee1ac8";
+    { device = "/dev/disk/by-uuid/9acbc122-e818-49fa-bc2e-de7d9f822d5a";
       fsType = "btrfs";
       options = [ "subvol=nix" ];
     };

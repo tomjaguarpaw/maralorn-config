@@ -27,33 +27,33 @@ in
       btrfsOptions = { options = [ "compress=zstd" "autodefrag" "noatime" ]; };
     in
     {
-      "/disk" = btrfsOptions;
+      "/disk" = { neededForBoot = true; } // btrfsOptions;
       "/nix" = btrfsOptions;
     };
 
   environment.etc = {
-  #  nixos.source = "/disk/persist/maralorn/git/config";
+    nixos.source = "/disk/persist/maralorn/git/config";
     machine-id.source = "/disk/persist/machine-id";
   };
 
-  #systemd.services."activate-home-manager" = {
-  #  path = [ pkgs.nix pkgs.dbus ];
-  #  script = ''
-  #    if [[ -e /home/maralorn/.mode ]]; then
-  #      MODE="$(cat /home/maralorn/.mode)"
-  #    else
-  #      MODE="orga"
-  #    fi
-  #    /disk/volatile/maralorn/modes/$MODE/activate
-  #  '';
-  #  serviceConfig = {
-  #    Type = "oneshot";
-  #    User = "maralorn";
-  #  };
-  #  wantedBy = [ "multi-user.target" ];
-  #  # Try to avoid race conditions, when the user get’s logged in before activation was completed.
-  #  before = [ "display-manager.service" ];
-  #};
+  systemd.services."activate-home-manager" = {
+    path = [ pkgs.nix pkgs.dbus ];
+    script = ''
+      if [[ -e /home/maralorn/.mode ]]; then
+        MODE="$(cat /home/maralorn/.mode)"
+      else
+        MODE="default"
+      fi
+      /disk/volatile/maralorn/modes/$MODE/activate
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      User = "maralorn";
+    };
+    wantedBy = [ "multi-user.target" ];
+    # Try to avoid race conditions, when the user get’s logged in before activation was completed.
+    before = [ "display-manager.service" ];
+  };
 
   systemd.tmpfiles.rules = [
     "d /disk/persist/root 700 root root - -"
@@ -63,15 +63,18 @@ in
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/var/lib/hass - - - - -"
-    "d /tmp/scans/scans 777 ftp ftp - -"
+    #"d /tmp/scans/scans 777 ftp ftp - -"
     "L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
 
   boot = {
     loader = {
-      systemd-boot.enable = true;
-      efi.canTouchEfiVariables = true;
+      grub = {
+        device = "nodev";
+        efiSupport = true;
+        efiInstallAsRemovable = true;
+      };
     };
     initrd = {
       luks.devices."crypted-nixos" = {
@@ -88,7 +91,10 @@ in
   networking = {
     hostName = "fluffy";
     domain = "lo.m-0.eu";
-    interfaces.enp1s0.useDHCP = true;
+    interfaces.enp1s0 = {
+      ipv6.addresses = [{ address = "fdc0:1::2"; prefixLength = 64; }];
+      useDHCP = true;
+    };
     #wireguard.interfaces = {
     #  m0wire = {
     #    allowedIPsAsRoutes = false;
@@ -106,7 +112,7 @@ in
     #    postSetup =
     #      [ "${pkgs.iproute}/bin/ip route add ${prefix}::/96 dev m0wire" ];
     #  };
-    };
+    #};
   };
 
   programs = {
@@ -187,9 +193,6 @@ in
   #boot.kernel.sysctl."fs.inotify.max_user_watches" = 204800;
   console.keyMap = "neo";
 
-
-  networking.interfaces.enp1s0.useDHCP = true;
-
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
@@ -199,4 +202,3 @@ in
   system.stateVersion = "21.11"; # Did you read the comment?
 
 }
-

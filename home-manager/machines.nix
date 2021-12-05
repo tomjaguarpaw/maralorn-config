@@ -133,6 +133,16 @@ in
     ./roles/state.nix
     ./roles/trusted-env.nix
   ];
+  fluffy = {
+    default = makeConfig "hera" ([
+    ./roles/on-my-machine.nix
+    ./roles/accounting.nix
+    ./roles/mode-switching.nix
+    ./roles/systemd-exporter.nix
+    ./roles/headless.nix
+    ./roles/state.nix
+    ]);
+  };
   hera = {
     default = makeConfig "hera" (on-my-machines ++ [
       ./roles/fetch-banking-timer.nix
