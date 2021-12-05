@@ -134,9 +134,8 @@ in
     ./roles/trusted-env.nix
   ];
   fluffy = {
-    default = makeConfig "hera" ([
+    default = makeConfig "fluffy" ([
       ./roles/on-my-machine.nix
-      ./roles/accounting.nix
       ./roles/mode-switching.nix
       ./roles/systemd-exporter.nix
       ./roles/headless.nix
