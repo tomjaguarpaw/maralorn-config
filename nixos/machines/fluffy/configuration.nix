@@ -93,7 +93,7 @@ in
     hostName = "fluffy";
     domain = "lo.m-0.eu";
     firewall = {
-      allowedTCPPorts = [ 21 ];
+      allowedTCPPorts = [ 21 80 ];
       allowedTCPPortRanges = [{ from = 51000; to = 51999; }];
     };
     interfaces.enp1s0 = {
@@ -137,6 +137,18 @@ in
     }
   ];
   services = {
+    nginx = {
+      enable = true;
+      virtualHosts = {
+        "home.lo.m-0.eu" = {
+          locations."/".proxyPass =
+            "http://[::1]:8123";
+        };
+        "fluffy.lo.m-0.eu" = {
+          locations."/".extraConfig = "return 301 http://home.lo.m-0.eu$request_uri;";
+        };
+      };
+    };
     home-assistant = {
       enable = true;
       configDir = "/disk/persist/var/lib/hass";
