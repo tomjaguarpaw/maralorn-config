@@ -92,6 +92,10 @@ in
   networking = {
     hostName = "fluffy";
     domain = "lo.m-0.eu";
+    firewall = {
+      allowedTCPPorts = [ 21 ];
+      allowedTCPPortRanges = [{ from = 51000; to = 51999; }];
+    };
     interfaces.enp1s0 = {
       ipv6.addresses = [{ address = "fdc0:1::2"; prefixLength = 64; }];
       useDHCP = true;

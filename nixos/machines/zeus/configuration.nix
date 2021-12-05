@@ -75,9 +75,7 @@ in
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/var/lib/bluetooth - - - - -"
-    "d /disk/persist/var/lib/hass - - - - -"
     "d /disk/persist/var/lib/waydroid 777 root root - -"
-    "d /tmp/scans/scans 777 ftp ftp - -"
     "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"
     "L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
@@ -117,10 +115,9 @@ in
   networking = {
     hostName = "zeus";
     domain = "m-0.eu";
-    interfaces.enp34s0.useDHCP = true;
-    firewall = {
-      allowedTCPPorts = [ 21 ];
-      allowedTCPPortRanges = [{ from = 51000; to = 51999; }];
+    interfaces.enp34s0 = {
+      useDHCP = true;
+      ipv6.addresses = [{ address = "fdc0:1::4"; prefixLength = 64; }];
     };
     wireguard.interfaces = {
       m0wire = {
@@ -159,46 +156,10 @@ in
   security.rtkit.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
   virtualisation.waydroid.enable = true;
-  hardware.printers.ensurePrinters = [
-    {
-      name = "Klio";
-      location = "Wohnzimmer";
-      description = "Brother MFC-L3750CDW";
-      deviceUri = "ipp://klio.m-0.eu/ipp";
-      model = "everywhere";
-    }
-  ];
   services = {
-    home-assistant = {
-      enable = true;
-      configDir = "/disk/persist/var/lib/hass";
-      config = {
-        met = { };
-        default_config = { };
-        zha = { };
-        ipp = { };
-        brother = { };
-      };
-    };
-    #teamviewer.enable = true;
     pipewire.enable = lib.mkForce false;
     fwupd.enable = true;
     #upower.enable = true;
-    printing.enable = true;
-    vsftpd = {
-      extraConfig = ''
-        pasv_enable=Yes
-        pasv_min_port=51000
-        pasv_max_port=51999
-      '';
-      enable = true;
-      anonymousUploadEnable = true;
-      anonymousUser = true;
-      anonymousUserHome = "/tmp/scans";
-      anonymousUserNoPassword = true;
-      anonymousUmask = "000";
-      writeEnable = true;
-    };
     unbound.enable = true;
     fstrim.enable = true;
     snapper = {
