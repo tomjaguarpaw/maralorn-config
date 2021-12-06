@@ -77,9 +77,10 @@ in
         };
       };
       lovelaceConfig = {
+        title = "Kiesstraße 10, 1. OG, links";
         views = [
           {
-            title = "Kiesstraße 10, 1. OG, links";
+            title = "Übersicht";
             cards = [
               {
                 type = "weather-forecast";
