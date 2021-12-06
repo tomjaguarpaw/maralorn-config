@@ -130,7 +130,7 @@ in
   ];
   zeus = daily-driver "zeus" [
     ./roles/hourly-maintenance.nix
-    ./roles/state.nix
+    (import ./roles/state.nix "orga")
     ./roles/trusted-env.nix
   ];
   fluffy = {
@@ -139,7 +139,7 @@ in
       ./roles/mode-switching.nix
       ./roles/systemd-exporter.nix
       ./roles/headless.nix
-      ./roles/state.nix
+      (import ./roles/state.nix "default")
     ]);
   };
   hera = {
