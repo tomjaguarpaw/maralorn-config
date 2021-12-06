@@ -3,23 +3,18 @@
 let
   #wireguard = import ../../../common/wireguard.nix;
   #inherit (config.m-0) hosts prefix;
-  #nixos-unstable = (import ../../../nix/sources.nix).nixos-unstable;
   #inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
 in
 {
 
-  #disabledModules = [
-  #  "services/misc/home-assistant.nix"
-  #];
-
   imports = [
-    #"${nixos-unstable}/nixos/modules/services/misc/home-assistant.nix"
     ./hardware-configuration.nix
     ../../roles
     ../../roles/admin.nix
     ../../roles/fonts.nix
     ../../roles/earlyoom.nix
     ../../roles/standalone
+    ../../roles/home-assistant-local
   ];
 
   fileSystems =
@@ -58,6 +53,7 @@ in
   systemd.tmpfiles.rules = [
     "d /disk/persist/root 700 root root - -"
     "d /disk/persist/root/.ssh 700 root root - -"
+    "d /disk/persist/etc/ssh 755 root root - -"
     "d /disk/persist/maralorn 700 maralorn users - -"
     "d /home/maralorn/.config 700 maralorn users - -"
     "z / 755 - - - -"
@@ -65,8 +61,8 @@ in
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/var/lib/hass - - - - -"
     "d /tmp/scans/scans 777 ftp ftp - -"
-    "L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
+    "L+ /etc/ssh - - - - /disk/persist/etc/ssh"
   ];
 
   boot = {
@@ -127,43 +123,20 @@ in
   };
 
   security.rtkit.enable = true;
-  hardware.printers.ensurePrinters = [
-    {
-      name = "Klio";
-      location = "Wohnzimmer";
-      description = "Brother MFC-L3750CDW";
-      deviceUri = "ipp://klio.lo.m-0.eu/ipp";
-      model = "everywhere";
-    }
-  ];
+  hardware.printers = {
+    ensureDefaultPrinter = "Klio";
+    ensurePrinters = [
+      {
+        name = "Klio";
+        location = "Wohnzimmer";
+        description = "Brother MFC-L3750CDW";
+        deviceUri = "ipp://klio.lo.m-0.eu/ipp";
+        model = "everywhere";
+      }
+    ];
+  };
   services = {
-    nginx = {
-      enable = true;
-      virtualHosts = {
-        "home.lo.m-0.eu" = {
-          extraConfig = "proxy_buffering off;";
-          locations."/" = {
-            proxyPass = "http://[::1]:8123";
-            proxyWebsockets = true;
-          };
-        };
-        "fluffy.lo.m-0.eu" = {
-          default = true;
-          locations."/".extraConfig = "return 301 http://home.lo.m-0.eu$request_uri;";
-        };
-      };
-    };
-    home-assistant = {
-      enable = true;
-      configDir = "/disk/persist/var/lib/hass";
-      config = {
-        met = { };
-        default_config = { };
-        zha = { };
-        ipp = { };
-        brother = { };
-      };
-    };
+    unbound.enable = true;
     fwupd.enable = true;
     #upower.enable = true;
     printing.enable = true;

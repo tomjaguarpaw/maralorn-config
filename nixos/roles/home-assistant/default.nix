@@ -12,13 +12,6 @@
     );
     config = {
       default_config = { };
-      panel_iframe = {
-        graphen = { title = "Graphen"; url = "https://stats.maralorn.de/?kiosk"; icon = "mdi:chart-line"; };
-        tasks = { title = "Tasks"; url = "https://tasks.maralorn.de"; icon = "mdi:format-list-checks"; };
-        ci = { title = "CI"; url = "https://ci.maralorn.de"; icon = "mdi:code-tags-check"; };
-        monitoring = { title = "Monitoring"; url = "https://monitoring.maralorn.de/alerts"; icon = "mdi:binoculars"; };
-        alerts = { title = "Alerts"; url = "https://alerts.maralorn.de"; icon = "mdi:bell"; };
-      };
       sensor = [
         {
           platform = "rmvtransport";
