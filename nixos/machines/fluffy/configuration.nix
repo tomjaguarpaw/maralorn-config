@@ -141,16 +141,15 @@ in
       enable = true;
       virtualHosts = {
         "home.lo.m-0.eu" = {
-          default = true;
-          extraConfig = ''
-            proxy_buffering off;
-          '';
+          extraConfig = "proxy_buffering off;";
           locations."/" = {
-            proxyPass =
-
-              "http://[::1]:8123";
-              proxyWebsockets = true;
-            };
+            proxyPass = "http://[::1]:8123";
+            proxyWebsockets = true;
+          };
+        };
+        "fluffy.lo.m-0.eu" = {
+          default = true;
+          locations."/".extraConfig = "return 301 http://home.lo.m-0.eu$request_uri;";
         };
       };
     };
