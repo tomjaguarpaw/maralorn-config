@@ -30,9 +30,9 @@ let
   '';
 in
 {
-  #systemd.user.services.sleep-nag = {
-  #  Unit.Description = "Sleep nag";
-  #  Service.ExecStart = "${sleep-nag}/bin/sleep-nag";
-  #  Install.WantedBy = [ "graphical-session.target" ];
-  #};
+  systemd.user.services.sleep-nag = {
+    Unit.Description = "Sleep nag";
+    Service.ExecStart = "${sleep-nag}/bin/sleep-nag";
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 }
