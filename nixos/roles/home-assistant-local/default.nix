@@ -87,11 +87,11 @@ in
             trigger = [{ platform = "state"; entity_id = "sensor.bad_humidity"; }];
             action = [{
               choose = [{
-                conditions = [{ condition = "numeric_state"; entity_id = "sensor.bad_humidity"; above = 60; }];
+                conditions = [{ condition = "numeric_state"; entity_id = "sensor.bad_humidity"; above = 65; }];
                 sequence = { service = "switch.turn_on"; target.entity_id = "switch.lueftung_bad"; };
               }
                 {
-                  conditions = [{ condition = "numeric_state"; entity_id = "sensor.bad_humidity"; below = 55; }];
+                  conditions = [{ condition = "numeric_state"; entity_id = "sensor.bad_humidity"; below = 62; }];
                   sequence = { service = "switch.turn_off"; target.entity_id = "switch.lueftung_bad"; };
                 }];
             }];
