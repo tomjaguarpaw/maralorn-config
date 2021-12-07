@@ -192,9 +192,9 @@ in
                 {% if is_state('input_select.scene_wohnzimmer', 'empty') %}
                   15
                 {% elif is_state('input_select.scene_wohnzimmer', 'cozy') %}
-                  23
+                  25
                 {% else %}
-                  21
+                  23
                 {% endif %}
               '';
             }];
@@ -213,7 +213,7 @@ in
                 {% elif is_state('input_select.scene_schlafzimmer', 'sleep') %}
                   19
                 {% else %}
-                  21
+                  20
                 {% endif %}
               '';
             }];
@@ -408,8 +408,10 @@ in
                       name = "Temperatur";
                       attribute = "current_temperature";
                       unit = false;
-                      entities = [{ entity = "climate.wohnzimmer"; name = "Heizung"; }
-                        { entity = "input_number.target_temperature_schlafzimmer"; name = "Zieltemp."; unit = false; }];
+                      entities = [
+                        { entity = "climate.wohnzimmer"; name = "Heizung"; }
+                        { entity = "input_number.target_temperature_wohnzimmer"; name = "Zieltemp."; unit = false; }
+                      ];
                     }
                     {
                       type = "custom:multiple-entity-row";
