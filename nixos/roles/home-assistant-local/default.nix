@@ -62,7 +62,10 @@ in
         automation = [
           {
             alias = "Entfeuchtersteuerung Schlafzimmer";
-            trigger = [{ platform = "state"; entity_id = "sensor.schlafzimmer_humidity"; } { platform = "state"; entity_id = "binary_sensor.schlafzimmerfenster"; }];
+            trigger = [
+              { platform = "state"; entity_id = "sensor.schlafzimmer_humidity"; }
+              { platform = "state"; entity_id = "binary_sensor.schlafzimmerfenster"; }
+            ];
             action = [{
               choose = [
                 {
@@ -102,6 +105,7 @@ in
               { platform = "state"; entity_id = "input_number.target_temperature_schlafzimmer"; }
               { platform = "state"; entity_id = "sensor.schlafzimmer_temperature"; }
               { platform = "state"; entity_id = "binary_sensor.schlafzimmerfenster"; }
+              { platform = "state"; entity_id = "climate.schlafzimmer"; }
             ];
             action = [{
               choose = [{
@@ -127,6 +131,7 @@ in
               { platform = "state"; entity_id = "input_number.target_temperature_kueche"; }
               { platform = "state"; entity_id = "sensor.kueche_temperature"; }
               { platform = "state"; entity_id = "binary_sensor.kuechenfenster"; }
+              { platform = "state"; entity_id = "climate.kueche"; }
             ];
             action = [{
               choose = [{
@@ -151,6 +156,7 @@ in
             trigger = [
               { platform = "state"; entity_id = "input_number.target_temperature_wohnzimmer"; }
               { platform = "state"; entity_id = "binary_sensor.wohnzimmerfenster"; }
+              { platform = "state"; entity_id = "climate.wohnzimmer"; }
             ];
             action = [{
               choose = [{
@@ -175,9 +181,9 @@ in
               target.entity_id = "input_number.target_temperature_kueche";
               data.value = ''
                 {% if is_state('input_select.scene_kueche', 'empty') %}
-                  15
+                  19
                 {% else %}
-                  21
+                  22
                 {% endif %}
               '';
             }];
@@ -190,11 +196,9 @@ in
               target.entity_id = "input_number.target_temperature_wohnzimmer";
               data.value = ''
                 {% if is_state('input_select.scene_wohnzimmer', 'empty') %}
-                  15
-                {% elif is_state('input_select.scene_wohnzimmer', 'cozy') %}
-                  25
+                  19
                 {% else %}
-                  23
+                  22
                 {% endif %}
               '';
             }];
@@ -207,43 +211,39 @@ in
               target.entity_id = "input_number.target_temperature_schlafzimmer";
               data.value = ''
                 {% if is_state('input_select.scene_schlafzimmer', 'empty') %}
-                  15
-                {% elif is_state('input_select.scene_schlafzimmer', 'cozy') %}
-                  23
-                {% elif is_state('input_select.scene_schlafzimmer', 'sleep') %}
                   19
                 {% else %}
-                  20
+                  22
                 {% endif %}
               '';
             }];
           }
-          {
-            alias = "Wohnzimmerlichter";
-            trigger = [{ platform = "state"; entity_id = "input_select.scene_wohnzimmer"; } { platform = "state"; entity_id = "sun.sun"; }];
-            action = [{
-              service = ''
-                {% if is_state('input_select.scene_wohnzimmer', 'empty') or is_state('sun.sun', 'above_horizon') %}
-                  homeassistant.turn_off
-                {% else %}
-                  homeassistant.turn_on
-                {% endif %}'';
-              target.entity_id = "group.wohnzimmer_lights";
-            }];
-          }
-          {
-            alias = "Schlafzimmerlichter";
-            trigger = [{ platform = "state"; entity_id = "input_select.scene_schlafzimmer"; } { platform = "state"; entity_id = "sun.sun"; }];
-            action = [{
-              service = ''
-                {% if is_state('input_select.scene_schlafzimmer', 'empty') or is_state('input_select.scene_schlafzimmer', 'sleep') or is_state('sun.sun', 'above_horizon') %}
-                  homeassistant.turn_off
-                {% else %}
-                  homeassistant.turn_on
-                {% endif %}'';
-              target.entity_id = "group.schlafzimmer_lights";
-            }];
-          }
+          #{
+          #alias = "Wohnzimmerlichter";
+          #trigger = [{ platform = "state"; entity_id = "input_select.scene_wohnzimmer"; } { platform = "state"; entity_id = "sun.sun"; }];
+          #action = [{
+          #service = ''
+          #{% if is_state('input_select.scene_wohnzimmer', 'empty') or is_state('sun.sun', 'above_horizon') %}
+          #homeassistant.turn_off
+          #{% else %}
+          #homeassistant.turn_on
+          #{% endif %}'';
+          #target.entity_id = "group.wohnzimmer_lights";
+          #}];
+          #}
+          #{
+          #alias = "Schlafzimmerlichter";
+          #trigger = [{ platform = "state"; entity_id = "input_select.scene_schlafzimmer"; } { platform = "state"; entity_id = "sun.sun"; }];
+          #action = [{
+          #service = ''
+          #{% if is_state('input_select.scene_schlafzimmer', 'empty') or is_state('input_select.scene_schlafzimmer', 'sleep') or is_state('sun.sun', 'above_horizon') %}
+          #homeassistant.turn_off
+          #{% else %}
+          #homeassistant.turn_on
+          #{% endif %}'';
+          #target.entity_id = "group.schlafzimmer_lights";
+          #}];
+          #}
           # Warnung für offene Fenster oder Türen
           # Warnungen für niedrige Akkustände
           # Warnungen für hohe Luftfeuchtigkeit
@@ -282,15 +282,15 @@ in
         input_select = {
           scene_schlafzimmer = {
             name = "Szene Schlafzimmer";
-            options = [ "empty" "sleep" "normal" "cozy" ];
+            options = [ "empty" "cozy" ];
           };
           scene_wohnzimmer = {
             name = "Szene Wohnzimmer";
-            options = [ "empty" "normal" "cozy" ];
+            options = [ "empty" "cozy" ];
           };
           scene_kueche = {
             name = "Szene Kueche";
-            options = [ "empty" "normal" ];
+            options = [ "empty" "cozy" ];
           };
         };
         system_health = { };
@@ -385,11 +385,6 @@ in
                       entity = "input_select.scene_wohnzimmer";
                       entities = [
                         {
-                          icon = "mdi:account";
-                          name = "Normal";
-                          tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_wohnzimmer"; option = "normal"; }; };
-                        }
-                        {
                           icon = "mdi:sofa-single";
                           name = "Gemütlich";
                           tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_wohnzimmer"; option = "cozy"; }; };
@@ -398,7 +393,6 @@ in
                           icon = "mdi:account-off";
                           name = "Abwesend";
                           tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_wohnzimmer"; option = "empty"; }; };
-
                         }
                       ];
                     }
@@ -453,15 +447,14 @@ in
                       entity = "input_select.scene_kueche";
                       entities = [
                         {
-                          icon = "mdi:account";
-                          name = "Normal";
-                          tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_kueche"; option = "normal"; }; };
+                          icon = "mdi:sofa-single";
+                          name = "Gemütlich";
+                          tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_kueche"; option = "cozy"; }; };
                         }
                         {
                           icon = "mdi:account-off";
                           name = "Abwesend";
                           tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_kueche"; option = "empty"; }; };
-
                         }
                       ];
                     }
@@ -510,16 +503,7 @@ in
                       name = "Szene";
                       icon = false;
                       entity = "input_select.scene_schlafzimmer";
-                      entities = [{
-                        icon = "mdi:sleep";
-                        name = "Schlafen";
-                        tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_schlafzimmer"; option = "sleep"; }; };
-                      }
-                        {
-                          icon = "mdi:account";
-                          name = "Normal";
-                          tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_schlafzimmer"; option = "normal"; }; };
-                        }
+                      entities = [
                         {
                           icon = "mdi:sofa-single";
                           name = "Gemütlich";
@@ -529,8 +513,8 @@ in
                           icon = "mdi:account-off";
                           name = "Abwesend";
                           tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_schlafzimmer"; option = "empty"; }; };
-
-                        }];
+                        }
+                      ];
                     }
                     {
                       type = "custom:multiple-entity-row";
