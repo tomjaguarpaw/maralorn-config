@@ -198,7 +198,7 @@ in
                 {% if is_state('input_select.scene_wohnzimmer', 'empty') %}
                   19
                 {% else %}
-                  22
+                  25
                 {% endif %}
               '';
             }];
