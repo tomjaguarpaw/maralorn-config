@@ -18,5 +18,8 @@ in
       name = "Arc";
       package = pkgs.arc-theme;
     };
+    gtk3.bookmarks = [
+      "ftp://fluffy.lo.m-0.eu"
+    ];
   };
 }
