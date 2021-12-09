@@ -3,10 +3,10 @@ let
     nixpkgs-channel = "nixos-21.11";
     home-manager-channel = "home-manager-21.11";
   };
-  unstable = {
-    nixpkgs-channel = "nixos-unstable";
-    home-manager-channel = "home-manager-master";
-  };
+  #unstable = {
+  #  nixpkgs-channel = "nixos-unstable";
+  #  home-manager-channel = "home-manager-master";
+  #};
 in
 rec {
   hera = nixos-21-11;

@@ -1,13 +1,6 @@
 { config, pkgs, lib, ... }:
 let
   gitoliteCfg = config.services.gitolite;
-  me = config.m-0.private.me;
-  update-command = [
-    "${pkgs.systemd}/bin/systemctl"
-    "restart"
-    "test-config.service"
-    "--no-block"
-  ];
   post-update = pkgs.writeHaskellScript
     {
       name = "post-update";

@@ -1,8 +1,4 @@
 { pkgs, config, lib, ... }:
-let
-  synapse-port = 8008;
-
-in
 {
   imports = [
     ./mautrix-signal-module.nix

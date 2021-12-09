@@ -1,5 +1,4 @@
 let
-  inherit (import (import ../nix/sources.nix).nixos-unstable { }) lib;
   restrictedPages = [
     "reddit.com"
     "github.com"

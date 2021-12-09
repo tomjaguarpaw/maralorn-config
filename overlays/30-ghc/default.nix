@@ -1,6 +1,5 @@
 final: prev:
 let
-  inherit (prev.haskell.lib) overrideCabal unmarkBroken doJailbreak dontCheck;
   myPkgs = import ./packages.nix;
 in
 {

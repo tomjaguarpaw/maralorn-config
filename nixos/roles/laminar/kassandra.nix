@@ -6,7 +6,6 @@ let
     export PATH=${lib.makeBinPath path}:$PATH
   '';
   repo = "/var/www/fdroid";
-  appName = "de.maralorn.kassandra";
   deploy = "${pkgs.writeShellScript "deploy" ''
     systemctl restart kassandra
     cd /var/cache/gc-links/kassandra-android

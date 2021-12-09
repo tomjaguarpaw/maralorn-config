@@ -1,6 +1,5 @@
 { config, pkgs, lib, ... }:
 let
-  inherit (config.m-0.private) me;
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
   backupJobs = pkgs.privateValue { } "borgbackup";
   backupJobNames = map (name: "borgbackup-job-${name}") (lib.attrNames backupJobs);
