@@ -540,7 +540,7 @@ in
                       state_color = true;
                       name = "Lichter";
                       entities = [
-                        { entity = "switch.lichterkette_schlafzimmer"; state_color = true; toggle = true; name = "Lichterkette"; }
+                        # { entity = "switch.lichterkette_schlafzimmer"; state_color = true; toggle = true; name = "Lichterkette"; }
                         { entity = "switch.weihnachtsstern_schlafzimmer"; state_color = true; toggle = true; name = "Stern"; }
                       ];
                     }
