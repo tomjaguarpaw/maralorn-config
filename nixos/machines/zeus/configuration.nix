@@ -76,6 +76,7 @@ in
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/var/lib/bluetooth - - - - -"
     "d /disk/persist/var/lib/waydroid 777 root root - -"
+    "d /disk/persist/minecraft 700 minecraft minecraft - -"
     "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"
     "L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
@@ -114,7 +115,8 @@ in
 
   networking = {
     hostName = "zeus";
-    domain = "m-0.eu";
+    domain = "lo.m-0.eu";
+    networkmanager.enable = false;
     interfaces.enp34s0 = {
       useDHCP = true;
       ipv6.addresses = [{ address = "fdc0:1::4"; prefixLength = 64; }];
@@ -206,6 +208,12 @@ in
       tracker.enable = false;
       tracker-miners.enable = false;
       gnome-online-miners.enable = lib.mkForce false;
+    };
+    minecraft-server = {
+      enable = true;
+      openFirewall = true;
+      eula = true;
+      dataDir = "/disk/persist/minecraft";
     };
   };
 

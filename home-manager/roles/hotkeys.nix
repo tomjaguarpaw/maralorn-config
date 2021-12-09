@@ -57,6 +57,7 @@ in
       Chromium = fork "chromium";
       Games = {
         Steam = fork "steam";
+        Minecraft = fork "minecraft-launcher";
       };
       Deluge = fork "deluge";
     };

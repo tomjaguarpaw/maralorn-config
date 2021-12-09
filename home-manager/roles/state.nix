@@ -20,6 +20,7 @@ let
     ".local/share/khal"
     ".local/share/mpd"
     ".mozilla/firefox/maralorn-default"
+    ".minecraft"
     ".ssh"
     ".task"
     ".vdirsyncer"
