@@ -4,6 +4,7 @@ let
   #wireguard = import ../../../common/wireguard.nix;
   #inherit (config.m-0) hosts prefix;
   #inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
+  localAddress = "fdc0:1::2";
 in
 {
 
@@ -89,11 +90,12 @@ in
     hostName = "fluffy";
     domain = "lo.m-0.eu";
     firewall = {
-      allowedTCPPorts = [ 21 80 ];
+      allowedUDPPorts = [ 631 ];
+      allowedTCPPorts = [ 21 80 631 ];
       allowedTCPPortRanges = [{ from = 51000; to = 51999; }];
     };
     interfaces.enp1s0 = {
-      ipv6.addresses = [{ address = "fdc0:1::2"; prefixLength = 64; }];
+      ipv6.addresses = [{ address = localAddress; prefixLength = 64; }];
       useDHCP = true;
     };
     #wireguard.interfaces = {
@@ -127,9 +129,9 @@ in
     ensureDefaultPrinter = "Klio";
     ensurePrinters = [
       {
-        name = "Klio";
+        name = "klio";
         location = "Wohnzimmer";
-        description = "Brother MFC-L3750CDW";
+        description = "Klio (Brother MFC-L3750CDW) via Fluffy";
         deviceUri = "ipp://klio.lo.m-0.eu/ipp";
         model = "everywhere";
       }
@@ -138,8 +140,21 @@ in
   services = {
     unbound.enable = true;
     fwupd.enable = true;
-    #upower.enable = true;
-    printing.enable = true;
+    avahi = {
+      enable = true;
+      openFirewall = true;
+      publish = {
+        enable = true;
+        userServices = true;
+      };
+    };
+    printing = {
+      enable = true;
+      browsing = true;
+      allowFrom = [ "all" ];
+      listenAddresses = [ "${localAddress}:631" ];
+      defaultShared = true;
+    };
     vsftpd = {
       extraConfig = ''
         pasv_enable=Yes
