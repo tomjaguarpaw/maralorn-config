@@ -8,8 +8,8 @@ let
   quick-sync = pkgs.writeShellScript "quick-mail-sync" ''
     ${pkgs.isync}/bin/mbsync hera:INBOX,Code,Move/todo
     ${pkgs.fd}/bin/fd -tf . ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mscan -f "E-Mail from %f: %S" | xargs -I '{}' ${pkgs.taskwarrior}/bin/task add '"{}"'
-    ${pkgs.mblaze}/bin/mlist ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mrefile ${unsorted}
     ${pkgs.mblaze}/bin/mlist ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mflag -S
+    ${pkgs.mblaze}/bin/mlist ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mrefile ${unsorted}
     ${pkgs.notmuch}/bin/notmuch new
   '';
   maildir = config.accounts.email.maildirBasePath;
