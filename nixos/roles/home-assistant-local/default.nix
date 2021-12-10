@@ -259,24 +259,24 @@ in
         input_number = {
           target_temperature_schlafzimmer = {
             name = "Zieltemperatur Schlafzimmer";
-            initial = "19";
             unit_of_measurement = "°C";
-            min = "15";
+            min = "17";
             max = "25";
+            step = "0.25";
           };
           target_temperature_wohnzimmer = {
             name = "Zieltemperatur Wohnzimmer";
-            initial = "19";
             unit_of_measurement = "°C";
-            min = "15";
+            min = "17";
             max = "25";
+            step = "0.25";
           };
           target_temperature_kueche = {
             name = "Zieltemperatur Küche";
-            initial = "19";
             unit_of_measurement = "°C";
-            min = "15";
+            min = "17";
             max = "25";
+            step = "0.25";
           };
         };
         input_select = {
