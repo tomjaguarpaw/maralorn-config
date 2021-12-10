@@ -38,17 +38,7 @@ in
             entities = [ "switch.lichterkette_schlafzimmer" "switch.weihnachtsstern_schlafzimmer" ];
           };
         };
-        homeassistant = {
-          name = "Kiesstraße 10, 1. OG, links";
-          latitude = "49.8766";
-          longitude = "8.6524";
-          elevation = "150";
-          unit_system = "metric";
-          currency = "EUR";
-          time_zone = "Europe/Berlin";
-          external_url = "http://home.wg.m-0.eu";
-          internal_url = "http://home.lo.m-0.eu";
-        };
+        homeassistant = pkgs.privateValue { } "homeassistant-home";
         logger = {
           default = "info";
           logs = {
