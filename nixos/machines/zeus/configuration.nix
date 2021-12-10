@@ -161,8 +161,7 @@ in
   services = {
     pipewire.enable = lib.mkForce false;
     fwupd.enable = true;
-    #upower.enable = true;
-    unbound.enable = true;
+    printing = { enable = true; clientConf = "ServerName fluffy.lo.m-0.eu"; };
     fstrim.enable = true;
     snapper = {
       configs.persist = {
