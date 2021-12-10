@@ -129,30 +129,21 @@ in
     ensureDefaultPrinter = "Klio";
     ensurePrinters = [
       {
-        name = "klio";
+        name = "Klio";
         location = "Wohnzimmer";
-        description = "Klio (Brother MFC-L3750CDW) via Fluffy";
+        description = "Klio (Brother MFC-L3750CDW)";
         deviceUri = "ipp://klio.lo.m-0.eu/ipp";
         model = "everywhere";
       }
     ];
   };
   services = {
-    unbound.enable = true;
     fwupd.enable = true;
-    avahi = {
-      enable = true;
-      openFirewall = true;
-      publish = {
-        enable = true;
-        userServices = true;
-      };
-    };
     printing = {
       enable = true;
-      browsing = true;
       allowFrom = [ "all" ];
-      listenAddresses = [ "${localAddress}:631" ];
+      listenAddresses = [ "[${localAddress}]:631" ];
+      extraConf = "ServerAlias *";
       defaultShared = true;
     };
     vsftpd = {
