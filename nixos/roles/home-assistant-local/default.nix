@@ -173,7 +173,7 @@ in
                 {% if is_state('input_select.scene_kueche', 'empty') %}
                   19
                 {% else %}
-                  22
+                  21
                 {% endif %}
               '';
             }];
@@ -188,7 +188,7 @@ in
                 {% if is_state('input_select.scene_wohnzimmer', 'empty') %}
                   19
                 {% else %}
-                  25
+                  24
                 {% endif %}
               '';
             }];
@@ -203,37 +203,43 @@ in
                 {% if is_state('input_select.scene_schlafzimmer', 'empty') %}
                   19
                 {% else %}
-                  22
+                  21
                 {% endif %}
               '';
             }];
           }
-          #{
-          #alias = "Wohnzimmerlichter";
-          #trigger = [{ platform = "state"; entity_id = "input_select.scene_wohnzimmer"; } { platform = "state"; entity_id = "sun.sun"; }];
-          #action = [{
-          #service = ''
-          #{% if is_state('input_select.scene_wohnzimmer', 'empty') or is_state('sun.sun', 'above_horizon') %}
-          #homeassistant.turn_off
-          #{% else %}
-          #homeassistant.turn_on
-          #{% endif %}'';
-          #target.entity_id = "group.wohnzimmer_lights";
-          #}];
-          #}
-          #{
-          #alias = "Schlafzimmerlichter";
-          #trigger = [{ platform = "state"; entity_id = "input_select.scene_schlafzimmer"; } { platform = "state"; entity_id = "sun.sun"; }];
-          #action = [{
-          #service = ''
-          #{% if is_state('input_select.scene_schlafzimmer', 'empty') or is_state('input_select.scene_schlafzimmer', 'sleep') or is_state('sun.sun', 'above_horizon') %}
-          #homeassistant.turn_off
-          #{% else %}
-          #homeassistant.turn_on
-          #{% endif %}'';
-          #target.entity_id = "group.schlafzimmer_lights";
-          #}];
-          #}
+          {
+            alias = "Wohnzimmerlichter";
+            trigger = [{ platform = "state"; entity_id = "input_select.scene_wohnzimmer"; } { platform = "state"; entity_id = "sun.sun"; }];
+            action = [{
+              service = ''
+                {% if is_state('input_select.scene_wohnzimmer', 'active') and is_state('sun.sun', 'below_horizon') %}
+                homeassistant.turn_on
+                {% else %}
+                homeassistant.turn_off
+                {% endif %}'';
+              target.entity_id = "group.wohnzimmer_lights";
+            }];
+          }
+          {
+            alias = "Schlafzimmerlichter";
+            trigger = [{ platform = "state"; entity_id = "input_select.scene_schlafzimmer"; } { platform = "state"; entity_id = "sun.sun"; }];
+            action = [{
+              service = ''
+                {% if is_state('input_select.scene_schlafzimmer', 'active') and is_state('sun.sun', 'below_horizon') %}
+                homeassistant.turn_on
+                {% else %}
+                homeassistant.turn_off
+                {% endif %}'';
+              target.entity_id = "group.schlafzimmer_lights";
+            }];
+          }
+          {
+            alias = "Schlafzimmer vorheizen";
+            trigger = [{ platform = "time"; at = "21:00:00"; }];
+            condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "empty"; }];
+            action = [{ service = "input_select.set_value"; data.value = "heat"; entity_id = "input_select.scene_schlafzimmer"; }];
+          }
           # Warnung für offene Fenster oder Türen
           # Warnungen für niedrige Akkustände
           # Warnungen für hohe Luftfeuchtigkeit
@@ -272,15 +278,15 @@ in
         input_select = {
           scene_schlafzimmer = {
             name = "Szene Schlafzimmer";
-            options = [ "empty" "cozy" ];
+            options = [ "empty" "heat" "active" ];
           };
           scene_wohnzimmer = {
             name = "Szene Wohnzimmer";
-            options = [ "empty" "cozy" ];
+            options = [ "empty" "heat" "active" ];
           };
           scene_kueche = {
             name = "Szene Kueche";
-            options = [ "empty" "cozy" ];
+            options = [ "empty" "heat" "active" ];
           };
         };
         system_health = { };
