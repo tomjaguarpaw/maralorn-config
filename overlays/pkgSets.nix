@@ -38,13 +38,11 @@ self: super: {
   };
   desktop-pkgs = {
     inherit (self) lm_sensors xwayland xdg_utils libnotify kassandra shotcut mlt audacity paprefs wl-clipboard
-      nheko dconf2nix haskell-docs-cli
-      ;
+      nheko dconf2nix haskell-docs-cli falsisign;
     inherit (self.gnomeExtensions) appindicator system-monitor
       clipboard-indicator emoji-selector
       window-is-ready-remover nothing-to-say notification-banner-position gtile
-      caffeine dash-to-panel
-      ;
+      caffeine dash-to-panel;
     executor = self.gnomeExtensions.executor.overrideAttrs (old: {
       postInstall = (old.postInstall or "") + ''
         substituteInPlace $out/share/gnome-shell/extensions/executor@raujonas.github.io/extension.js --replace "'/bin/bash'" "'bash'"
@@ -52,8 +50,7 @@ self: super: {
     });
     inherit (self.gnome)
       dconf dconf-editor gnome-tweaks gnome-shell-extensions adwaita-icon-theme
-      gnome-session
-      ;
+      gnome-session;
   };
   home-pkgs = {
     inherit (self.pythonPackages) yapf jsbeautifier;
