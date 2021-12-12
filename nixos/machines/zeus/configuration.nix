@@ -77,6 +77,7 @@ in
     "d /disk/persist/var/lib/bluetooth - - - - -"
     "d /disk/persist/var/lib/waydroid 777 root root - -"
     "d /disk/persist/minecraft 700 minecraft minecraft - -"
+    "d /var/lib/misc 755 - - - -"
     "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"
     "L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
