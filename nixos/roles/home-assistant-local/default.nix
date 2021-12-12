@@ -376,24 +376,6 @@ in
                   entities = [
                     {
                       type = "custom:multiple-entity-row";
-                      name = "Szene";
-                      icon = false;
-                      entity = "input_select.scene_wohnzimmer";
-                      entities = [
-                        {
-                          icon = "mdi:sofa-single";
-                          name = "Gemütlich";
-                          tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_wohnzimmer"; option = "cozy"; }; };
-                        }
-                        {
-                          icon = "mdi:account-off";
-                          name = "Abwesend";
-                          tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_wohnzimmer"; option = "empty"; }; };
-                        }
-                      ];
-                    }
-                    {
-                      type = "custom:multiple-entity-row";
                       entity = "climate.wohnzimmer";
                       name = "Temperatur";
                       attribute = "current_temperature";
@@ -438,24 +420,6 @@ in
                   entities = [
                     {
                       type = "custom:multiple-entity-row";
-                      name = "Szene";
-                      icon = false;
-                      entity = "input_select.scene_kueche";
-                      entities = [
-                        {
-                          icon = "mdi:sofa-single";
-                          name = "Gemütlich";
-                          tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_kueche"; option = "cozy"; }; };
-                        }
-                        {
-                          icon = "mdi:account-off";
-                          name = "Abwesend";
-                          tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_kueche"; option = "empty"; }; };
-                        }
-                      ];
-                    }
-                    {
-                      type = "custom:multiple-entity-row";
                       entity = "sensor.kueche_temperature";
                       name = "Temperatur";
                       unit = false;
@@ -494,24 +458,6 @@ in
                   icon = "mdi:bed-king";
                   show_header_toggle = false;
                   entities = [
-                    {
-                      type = "custom:multiple-entity-row";
-                      name = "Szene";
-                      icon = false;
-                      entity = "input_select.scene_schlafzimmer";
-                      entities = [
-                        {
-                          icon = "mdi:sofa-single";
-                          name = "Gemütlich";
-                          tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_schlafzimmer"; option = "cozy"; }; };
-                        }
-                        {
-                          icon = "mdi:account-off";
-                          name = "Abwesend";
-                          tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_schlafzimmer"; option = "empty"; }; };
-                        }
-                      ];
-                    }
                     {
                       type = "custom:multiple-entity-row";
                       entity = "sensor.schlafzimmer_temperature";
