@@ -213,7 +213,7 @@ in
             trigger = [{ platform = "state"; entity_id = "input_select.scene_wohnzimmer"; } { platform = "state"; entity_id = "sun.sun"; }];
             action = [{
               service = ''
-                {% if is_state('input_select.scene_wohnzimmer', 'active') and is_state('sun.sun', 'below_horizon') %}
+                {% if is_state('input_select.scene_wohnzimmer', 'force-active') or (is_state('input_select.scene_wohnzimmer', 'active') and state_attr('sun.sun', 'elevation') < 6) %}
                 homeassistant.turn_on
                 {% else %}
                 homeassistant.turn_off
@@ -226,7 +226,7 @@ in
             trigger = [{ platform = "state"; entity_id = "input_select.scene_schlafzimmer"; } { platform = "state"; entity_id = "sun.sun"; }];
             action = [{
               service = ''
-                {% if is_state('input_select.scene_schlafzimmer', 'active') and is_state('sun.sun', 'below_horizon') %}
+                {% if is_state('input_select.scene_schlafzimmer', 'force-active') or (is_state('input_select.scene_schlafzimmer', 'active') and state_attr('sun.sun', 'elevation') < 6) %}
                 homeassistant.turn_on
                 {% else %}
                 homeassistant.turn_off
@@ -239,6 +239,12 @@ in
             trigger = [{ platform = "time"; at = "21:00:00"; }];
             condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "empty"; }];
             action = [{ service = "input_select.set_value"; data.value = "heat"; entity_id = "input_select.scene_schlafzimmer"; }];
+          }
+          {
+            alias = "Morgens Licht an";
+            trigger = [{ platform = "time"; at = "08:00:00"; }];
+            condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "heat"; }];
+            action = [{ service = "input_select.set_value"; data.value = "active"; entity_id = "input_select.scene_schlafzimmer"; }];
           }
           # Warnung für offene Fenster oder Türen
           # Warnungen für niedrige Akkustände
@@ -278,15 +284,15 @@ in
         input_select = {
           scene_schlafzimmer = {
             name = "Szene Schlafzimmer";
-            options = [ "empty" "heat" "active" ];
+            options = [ "empty" "heat" "active" "force-active" ];
           };
           scene_wohnzimmer = {
             name = "Szene Wohnzimmer";
-            options = [ "empty" "heat" "active" ];
+            options = [ "empty" "heat" "active" "force-active" ];
           };
           scene_kueche = {
             name = "Szene Kueche";
-            options = [ "empty" "heat" "active" ];
+            options = [ "empty" "heat" "active" "force-active" ];
           };
         };
         system_health = { };
