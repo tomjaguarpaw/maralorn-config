@@ -171,7 +171,7 @@ in
               target.entity_id = "input_number.target_temperature_kueche";
               data.value = ''
                 {% if is_state('input_select.scene_kueche', 'empty') %}
-                  19
+                  18
                 {% else %}
                   21
                 {% endif %}
@@ -186,7 +186,7 @@ in
               target.entity_id = "input_number.target_temperature_wohnzimmer";
               data.value = ''
                 {% if is_state('input_select.scene_wohnzimmer', 'empty') %}
-                  19
+                  18
                 {% else %}
                   24
                 {% endif %}
@@ -201,7 +201,7 @@ in
               target.entity_id = "input_number.target_temperature_schlafzimmer";
               data.value = ''
                 {% if is_state('input_select.scene_schlafzimmer', 'empty') %}
-                  19
+                  18
                 {% else %}
                   21
                 {% endif %}
