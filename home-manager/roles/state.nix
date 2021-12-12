@@ -19,6 +19,7 @@ let
     ".local/share/direnv"
     ".local/share/khal"
     ".local/share/mpd"
+    ".local/share/waydroid"
     ".mozilla/firefox/maralorn-default"
     ".minecraft"
     ".ssh"
