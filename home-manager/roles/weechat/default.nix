@@ -46,9 +46,6 @@ in
         chat_nick_colors = "cyan,magenta,green,brown,lightblue,default,lightcyan,lightmagenta,lightgreen,blue,31,35,38,40,49,63,70,80,92,99,112,126,130,138,142,148,160,162,167,169,174,176,178,184,186,210,212,215,228"
         chat_highlight = "black"
         chat_highlight_bg = "lightblue"
-
-        [filter]
-        smart = on;*;irc_smart_filter,matrix_smart_filter;*
       '';
     };
     logger = {
@@ -59,7 +56,6 @@ in
 
         [mask]
         python = "%Y/matrix:$server/$channel/%Y-%m-%d-$name.weechatlog"
-        irc = "%Y/irc:$server/$channel/%Y-%m-%d.weechatlog"
 
         [file]
         mask = "%Y/$name/%Y-%m-%d.weechatlog"
@@ -79,26 +75,6 @@ in
             ${server}.username = "${serverConfig.user}"
             ${server}.password = "${serverConfig.password}"
           '') (pkgs.privateValue { } "weechat/matrix"))}
-      '';
-    };
-    irc = {
-      target = ".weechat/irc.conf";
-      text = ''
-        [look]
-        color_nicks_in_nicklist = on
-
-        [server]
-        ${lib.concatStringsSep "\n" (lib.mapAttrsToList
-          (server: serverConfig: ''
-            ${server}.addresses = "${serverConfig.address}/${serverConfig.port}"
-            ${server}.ssl = on
-            ${server}.sasl_mechanism = plain
-            ${server}.sasl_username = "${serverConfig.user}"
-            ${server}.sasl_password = "${serverConfig.password}"
-            ${server}.autoconnect = on
-            ${server}.username = "${serverConfig.user}"
-            ${server}.autojoin = "${serverConfig.channels}"
-          '') (pkgs.privateValue { } "weechat/irc"))}
       '';
     };
   };
