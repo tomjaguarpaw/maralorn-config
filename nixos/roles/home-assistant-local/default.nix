@@ -62,14 +62,14 @@ in
                   conditions = [{
                     condition = "or";
                     conditions = [
-                      { condition = "numeric_state"; entity_id = "sensor.schlafzimmer_humidity"; below = 62; }
+                      { condition = "numeric_state"; entity_id = "sensor.schlafzimmer_humidity"; below = 64; }
                       { condition = "state"; entity_id = "binary_sensor.schlafzimmerfenster"; state = "on"; }
                     ];
                   }];
                   sequence = { service = "switch.turn_off"; target.entity_id = "switch.luftentfeuchter"; };
                 }
                 {
-                  conditions = [{ condition = "numeric_state"; entity_id = "sensor.schlafzimmer_humidity"; above = 65; }];
+                  conditions = [{ condition = "numeric_state"; entity_id = "sensor.schlafzimmer_humidity"; above = 66; }];
                   sequence = { service = "switch.turn_on"; target.entity_id = "switch.luftentfeuchter"; };
                 }
               ];
@@ -80,11 +80,11 @@ in
             trigger = [{ platform = "state"; entity_id = "sensor.bad_humidity"; }];
             action = [{
               choose = [{
-                conditions = [{ condition = "numeric_state"; entity_id = "sensor.bad_humidity"; above = 65; }];
+                conditions = [{ condition = "numeric_state"; entity_id = "sensor.bad_humidity"; above = 66; }];
                 sequence = { service = "switch.turn_on"; target.entity_id = "switch.lueftung_bad"; };
               }
                 {
-                  conditions = [{ condition = "numeric_state"; entity_id = "sensor.bad_humidity"; below = 62; }];
+                  conditions = [{ condition = "numeric_state"; entity_id = "sensor.bad_humidity"; below = 64; }];
                   sequence = { service = "switch.turn_off"; target.entity_id = "switch.lueftung_bad"; };
                 }];
             }];
@@ -238,13 +238,13 @@ in
             alias = "Schlafzimmer vorheizen";
             trigger = [{ platform = "time"; at = "21:00:00"; }];
             condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "empty"; }];
-            action = [{ service = "input_select.set_value"; data.value = "heat"; entity_id = "input_select.scene_schlafzimmer"; }];
+            action = [{ service = "input_select.select_option"; data.option = "heat"; entity_id = "input_select.scene_schlafzimmer"; }];
           }
           {
             alias = "Morgens Licht an";
             trigger = [{ platform = "time"; at = "08:00:00"; }];
             condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "heat"; }];
-            action = [{ service = "input_select.set_value"; data.value = "active"; entity_id = "input_select.scene_schlafzimmer"; }];
+            action = [{ service = "input_select.select_option"; data.option = "active"; entity_id = "input_select.scene_schlafzimmer"; }];
           }
           # Warnung für offene Fenster oder Türen
           # Warnungen für niedrige Akkustände
