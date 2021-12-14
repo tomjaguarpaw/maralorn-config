@@ -236,9 +236,15 @@ in
           }
           {
             alias = "Schlafzimmer vorheizen";
-            trigger = [{ platform = "time"; at = "21:00:00"; }];
+            trigger = [{ platform = "time"; at = "19:00:00"; } { platform = "time"; at = "04:00:00"; }];
             condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "empty"; }];
             action = [{ service = "input_select.select_option"; data.option = "heat"; entity_id = "input_select.scene_schlafzimmer"; }];
+          }
+          {
+            alias = "Schlafzimmer nachts kühl";
+            trigger = [{ platform = "time"; at = "01:00:00"; }];
+            condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "heat"; }];
+            action = [{ service = "input_select.select_option"; data.option = "empty"; entity_id = "input_select.scene_schlafzimmer"; }];
           }
           {
             alias = "Morgens Licht an";
