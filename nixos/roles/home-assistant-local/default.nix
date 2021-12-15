@@ -502,15 +502,22 @@ in
                   ];
                 }
                 {
-                  type = "gauge";
-                  entity = "sensor.schlafzimmer_humidity";
-                  name = "Luftfeuchtigkeit";
-                  needle = true;
-                  severity = {
-                    green = 30;
-                    yellow = 60;
-                    red = 65;
+                  type = "custom:mini-graph-card";
+                  entities = [
+                    { entity = "sensor.schlafzimmer_humidity"; state_adaptive_color = true; }
+                  ];
+                  color_thresholds = [{ value = 0; color = "#009933"; } { value = 64; color = "#ffbf00"; } { value = 66; color = "#ff0000"; }];
+                  color_thresholds_transition = "hard";
+                  show = {
+                    fill = "fade";
+                    labels = true;
                   };
+                  upper_bound = "~70";
+                  hour24 = true;
+                  lower_bound = "~50";
+                  decimals = 1;
+                  update_interval = 30;
+                  points_per_hour = 12;
                 }
                 {
                   type = "history-graph";
