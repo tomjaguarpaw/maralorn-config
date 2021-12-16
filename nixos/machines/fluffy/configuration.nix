@@ -1,8 +1,8 @@
 { config, pkgs, lib, ... }:
 
 let
-  #wireguard = import ../../../common/wireguard.nix;
-  #inherit (config.m-0) hosts prefix;
+  wireguard = import ../../../common/wireguard.nix;
+  inherit (config.m-0) hosts prefix;
   #inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
   localAddress = "fdc0:1::2";
 in
