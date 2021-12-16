@@ -3,7 +3,6 @@
 let
   wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts prefix;
-  #inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
   localAddress = "fdc0:1::2";
 in
 {
@@ -173,17 +172,10 @@ in
       cleanupInterval = "15m";
       snapshotInterval = "*:00/3:00";
     };
-    #prometheus.exporters.node = {
-    #  firewallFilter = "-i m0wire -p tcp -m tcp -m multiport --dports 9100,9558";
-    #  openFirewall = true;
-    #};
-    #syncthing = {
-    #  enable = true;
-    #  group = "users";
-    #  user = "maralorn";
-    #  openDefaultPorts = true;
-    #  configDir = "/disk/persist/syncthing";
-    #} // syncthing.declarativeWith [ "hera" "apollo" ] "/disk/persist/maralorn/media";
+    prometheus.exporters.node = {
+      firewallFilter = "-i m0wire -p tcp -m tcp -m multiport --dports 9100,9558";
+      openFirewall = true;
+    };
   };
 
   #boot.kernel.sysctl."fs.inotify.max_user_watches" = 204800;
