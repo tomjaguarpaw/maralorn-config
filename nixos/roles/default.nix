@@ -15,7 +15,7 @@
     useDHCP = false;
     hosts = lib.zipAttrs
       (
-        lib.mapAttrsToList (host: ip: { "${ip}" = "${host} ${host}.m-0.eu"; })
+        lib.mapAttrsToList (host: ip: if builtins.typeOf ip == "set" then { } else { "${ip}" = "${host} ${host}.m-0.eu"; })
           config.m-0.hosts
       );
   };

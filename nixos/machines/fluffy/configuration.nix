@@ -98,24 +98,21 @@ in
       ipv6.addresses = [{ address = localAddress; prefixLength = 64; }];
       useDHCP = true;
     };
-    #wireguard.interfaces = {
-    #  m0wire = {
-    #    allowedIPsAsRoutes = false;
-    #    ips = [ "${hosts.zeus-wg}/112" ];
-    #    privateKeyFile = "/disk/persist/wireguard-private-key";
-    #    peers = [
-    #      {
-    #        publicKey = wireguard.pub.hera;
-    #        allowedIPs = [ "::/0" ];
-    #        endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
-    #        presharedKeyFile = pkgs.privatePath "wireguard/psk";
-    #        persistentKeepalive = 25;
-    #      }
-    #    ];
-    #    postSetup =
-    #      [ "${pkgs.iproute}/bin/ip route add ${prefix}::/96 dev m0wire" ];
-    #  };
-    #};
+    wireguard.interfaces = {
+      m0wire = {
+        ips = [ "${hosts.vpn.fluffy}/64" ];
+        privateKeyFile = "/disk/persist/wireguard-private-key";
+        peers = [
+          {
+            publicKey = wireguard.pub.hera;
+            allowedIPs = [ "${hosts.vpn.prefix}::/64" ];
+            endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
+            presharedKeyFile = pkgs.privatePath "wireguard/psk";
+            persistentKeepalive = 25;
+          }
+        ];
+      };
+    };
   };
 
   programs = {

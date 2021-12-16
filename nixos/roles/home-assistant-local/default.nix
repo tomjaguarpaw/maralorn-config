@@ -264,6 +264,11 @@ in
         mobile_app = { };
         recorder = { };
         ssdp = { };
+        template = [
+          { sensor = [{ state = "{% if is_state('switch.luftentfeuchter', 'on') %}1{% else %}0{% endif %}"; name = "Luftentfeuchter"; }]; }
+          { sensor = [{ state = "{% if is_state('binary_sensor.schlafzimmerfenster', 'on') %}1{% else %}0{% endif %}"; name = "Schlafzimmerfenster"; }]; }
+          { sensor = [{ state = "{% if is_state('climate.schlafzimmer', 'heat') %}1{% else %}0{% endif %}"; name = "Schlafzimmerheizung"; }]; }
+        ];
         input_number = {
           target_temperature_schlafzimmer = {
             name = "Zieltemperatur Schlafzimmer";
@@ -465,69 +470,68 @@ in
               inherit badges;
               cards = [
                 {
-                  type = "entities";
-                  title = "Schlafzimmer";
-                  icon = "mdi:bed-king";
-                  show_header_toggle = false;
-                  entities = [
+                  type = "vertical-stack";
+                  cards = [
                     {
-                      type = "custom:multiple-entity-row";
-                      entity = "sensor.schlafzimmer_temperature";
-                      name = "Temperatur";
-                      unit = false;
-                      entities = [{ entity = "climate.schlafzimmer"; name = "Heizung"; }
-                        { entity = "climate.schlafzimmer"; attribute = "temperature"; name = "Zieltemp. an Heizung"; }
-                        { entity = "climate.schlafzimmer"; attribute = "current_temperature"; name = "Temp. an Heizung"; unit = false; }
-                        { entity = "input_number.target_temperature_schlafzimmer"; name = "Zieltemp."; unit = false; }];
-                    }
-                    {
-                      type = "custom:multiple-entity-row";
-                      entity = "switch.luftentfeuchter";
-                      toggle = true;
-                      state_color = true;
-                      entities = [{ entity = "sensor.schlafzimmer_humidity"; name = "Luftfeuchtigkeit"; }];
-                    }
-                    {
-                      type = "custom:multiple-entity-row";
-                      entity = "group.schlafzimmer_lights";
-                      toggle = true;
-                      state_color = true;
-                      name = "Lichter";
+                      type = "custom:mini-graph-card";
                       entities = [
-                        # { entity = "switch.lichterkette_schlafzimmer"; state_color = true; toggle = true; name = "Lichterkette"; }
-                        { entity = "switch.weihnachtsstern_schlafzimmer"; state_color = true; toggle = true; name = "Stern"; }
+                        { entity = "sensor.schlafzimmer_humidity"; name = "Luftfeuchtigkeit"; show_fill = false; state_adaptive_color = true; }
+                        { entity = "sensor.luftentfeuchter"; name = "Entfeuchter"; color = "#0000ff"; y_axis = "secondary"; show_fill = true; show_points = false; show_line = false; smoothing = false; }
+                        { entity = "sensor.schlafzimmerfenster"; name = "Fenster"; color = "#ff0000"; y_axis = "secondary"; show_fill = true; show_points = false; show_line = false; smoothing = false; }
+                      ];
+                      color_thresholds = [{ value = 0; color = "#009933"; } { value = 64; color = "#ffbf00"; } { value = 66; color = "#ff0000"; }];
+                      color_thresholds_transition = "hard";
+                      show = {
+                        labels = true;
+                        labels_secondary = "hover";
+                      };
+                      lower_bound_secondary = 0;
+                      upper_bound_secondary = 1;
+                      hour24 = true;
+                      decimals = 1;
+                      points_per_hour = 6;
+                      hours_to_show = 6;
+                      update_interval = 30;
+                      line_width = 3;
+                      state_map = [
+                        { value = 0; label = "Zu/Aus"; }
+                        { value = 1; label = "An/Auf"; }
                       ];
                     }
-                    { entity = "binary_sensor.schlafzimmerfenster"; secondary_info = "last-changed"; name = "Fenster"; }
+                    {
+                      type = "custom:mini-graph-card";
+                      entities = [
+                        { entity = "sensor.schlafzimmer_temperature"; name = "Temperatur"; show_fill = false; }
+                        { entity = "input_number.target_temperature_schlafzimmer"; name = "Zieltemperatur"; show_fill = false; }
+                        { entity = "sensor.schlafzimmerheizung"; name = "Heizung"; y_axis = "secondary"; show_fill = true; show_points = false; show_line = false; smoothing = false; }
+                      ];
+                      show = {
+                        labels = true;
+                        labels_secondary = "hover";
+                      };
+                      lower_bound_secondary = 0;
+                      upper_bound_secondary = 1;
+                      hours_to_show = 6;
+                      update_interval = 30;
+                      line_width = 3;
+                      hour24 = true;
+                      decimals = 1;
+                      points_per_hour = 6;
+                      state_map = [
+                        { value = 0; label = "Aus"; }
+                        { value = 1; label = "An"; }
+                      ];
+                    }
                   ];
                 }
                 {
-                  type = "custom:mini-graph-card";
-                  entities = [
-                    { entity = "sensor.schlafzimmer_humidity"; state_adaptive_color = true; }
+                  type = "grid";
+                  cards = [
+                    { type = "custom:slider-button-card"; entity = "switch.weihnachtsstern_schlafzimmer"; }
+                    { type = "custom:slider-button-card"; entity = "switch.luftentfeuchter"; }
+                    { type = "custom:slider-button-card"; entity = "climate.schlafzimmer"; }
                   ];
-                  color_thresholds = [{ value = 0; color = "#009933"; } { value = 64; color = "#ffbf00"; } { value = 66; color = "#ff0000"; }];
-                  color_thresholds_transition = "hard";
-                  show = {
-                    fill = "fade";
-                    labels = true;
-                  };
-                  upper_bound = "~70";
-                  hour24 = true;
-                  lower_bound = "~50";
-                  decimals = 1;
-                  update_interval = 30;
-                  points_per_hour = 12;
-                }
-                {
-                  type = "history-graph";
-                  entities = [
-                    "sensor.schlafzimmer_temperature"
-                    "input_number.target_temperature_schlafzimmer"
-                    "sensor.schlafzimmer_humidity"
-                    "climate.schlafzimmer"
-                    "switch.luftentfeuchter"
-                  ];
+
                 }
               ];
             }

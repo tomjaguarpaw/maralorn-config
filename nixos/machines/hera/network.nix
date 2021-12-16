@@ -61,19 +61,26 @@ in
     firewall.allowedUDPPorts = [ wireguard.port ];
     wireguard.interfaces = {
       m0wire = {
-        ips = [ "${hosts.hera-wg}/112" ];
+        ips = [ "${hosts.hera-wg}/112" "${hosts.vpn.hera}/64" ];
         privateKeyFile = pkgs.privatePath "wireguard/hera-private";
         listenPort = wireguard.port;
-        peers = [{
-          publicKey = wireguard.pub.zeus;
-          allowedIPs = [ "${hosts.zeus-wg}/128" ];
-          presharedKeyFile = pkgs.privatePath "wireguard/psk";
-        }
+        peers = [
+          {
+            publicKey = wireguard.pub.zeus;
+            allowedIPs = [ "${hosts.zeus-wg}/128" "${hosts.vpn.zeus}/128" ];
+            presharedKeyFile = pkgs.privatePath "wireguard/psk";
+          }
           {
             publicKey = wireguard.pub.apollo;
-            allowedIPs = [ "${hosts.apollo-wg}/128" ];
+            allowedIPs = [ "${hosts.apollo-wg}/128" "${hosts.vpn.apollo}/128" ];
             presharedKeyFile = pkgs.privatePath "wireguard/psk";
-          }];
+          }
+          {
+            publicKey = wireguard.pub.fluffy;
+            allowedIPs = [ "${hosts.vpn.fluffy}/128" ];
+            presharedKeyFile = pkgs.privatePath "wireguard/psk";
+          }
+        ];
       };
     };
   };

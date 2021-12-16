@@ -15,7 +15,7 @@ in
     "L+ /run/hass/mini-media-player.js - - - - ${nur.hassLovelaceModules.mini-media-player}/mini-media-player-bundle.js"
     "L+ /run/hass/multiple-entity-row.js - - - - ${nur.hassLovelaceModules.multiple-entity-row}/multiple-entity-row.js"
     "L+ /run/hass/sun-card.js - - - - ${nur.hassLovelaceModules.sun-card}/sun-card.js"
-    "L+ /run/hass/swipe-navigation.js - - - - ${nur.hassLovelaceModules.swipe-navigation}/swipe-navigation.js"
+    "L+ /run/hass/slider-button-card.js - - - - ${nur.hassLovelaceModules.slider-button-card}/slider-button-card.js"
     "L+ /run/hass/rmv-card.js - - - - ${nur.hassLovelaceModules.rmv-card}/rmv-card.js"
     "L+ /run/hass/weather-card-chart.js - - - - ${nur.hassLovelaceModules.weather-card-chart}/weather-card-chart.js"
   ];
@@ -28,7 +28,7 @@ in
       (mkLovelaceModule "rmv-card")
       (mkLovelaceModule "weather-card-chart")
       (mkLovelaceModule "sun-card")
-      (mkLovelaceModule "swipe-navigation")
+      (mkLovelaceModule "slider-button-card")
     ];
   };
 }

@@ -80,6 +80,13 @@ with lib;
         in
         rec {
           hera = "${p}::1";
+          vpn = rec {
+            prefix = "fdc0:7";
+            hera = "${prefix}::1";
+            fluffy = "${prefix}::2";
+            apollo = "${prefix}::5";
+            zeus = "${prefix}::4";
+          };
           hera-wg-host = "${p}::100:0:1";
 
           hera-v4 = "213.136.94.190";
