@@ -591,6 +591,7 @@ in
       enable = true;
       virtualHosts = {
         "home.lo.m-0.eu" = {
+          serverAliases = "home.vpn.m-0.eu";
           extraConfig = "proxy_buffering off;";
           locations."/" = {
             proxyPass = "http://[::1]:8123";
