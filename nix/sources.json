@@ -11,10 +11,10 @@
         "homepage": "",
         "owner": "mweinelt",
         "repo": "nur-packages",
-        "rev": "5f00162d14b12f73b6d7b0203004821246d7d647",
-        "sha256": "03zpa7cpfdil15b3w8pbr3ghxqwdl3a98jy7jpak90xsm1bbhx4y",
+        "rev": "2e3497e1337e2410e31ab6c7069b161c655f8109",
+        "sha256": "0fz5970qwkdz4bgy67k5hrzzn2gxalr8j0bfymsdgxf1n1164rdd",
         "type": "tarball",
-        "url": "https://github.com/mweinelt/nur-packages/archive/5f00162d14b12f73b6d7b0203004821246d7d647.tar.gz",
+        "url": "https://github.com/mweinelt/nur-packages/archive/2e3497e1337e2410e31ab6c7069b161c655f8109.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager-21.11": {
