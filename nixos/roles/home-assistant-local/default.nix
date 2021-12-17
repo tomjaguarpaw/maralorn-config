@@ -266,8 +266,15 @@ in
         ssdp = { };
         template = [
           { sensor = [{ state = "{% if is_state('switch.luftentfeuchter', 'on') %}1{% else %}0{% endif %}"; name = "Luftentfeuchter"; }]; }
+          { sensor = [{ state = "{% if is_state('switch.lueftung_bad', 'on') %}1{% else %}0{% endif %}"; name = "Lüftung"; }]; }
           { sensor = [{ state = "{% if is_state('binary_sensor.schlafzimmerfenster', 'on') %}1{% else %}0{% endif %}"; name = "Schlafzimmerfenster"; }]; }
+          { sensor = [{ state = "{% if is_state('binary_sensor.wohnzimmerfenster', 'on') %}1{% else %}0{% endif %}"; name = "Balkontür"; }]; }
+          { sensor = [{ state = "{% if is_state('binary_sensor.kuechenfenster', 'on') %}1{% else %}0{% endif %}"; name = "Küchenfenster"; }]; }
+          { sensor = [{ state = "{% if is_state('binary_sensor.wohnungstuer', 'on') %}1{% else %}0{% endif %}"; name = "Wohnungstür"; }]; }
           { sensor = [{ state = "{% if is_state('climate.schlafzimmer', 'heat') %}1{% else %}0{% endif %}"; name = "Schlafzimmerheizung"; }]; }
+          { sensor = [{ state = "{% if is_state('climate.wohnzimmer', 'heat') %}1{% else %}0{% endif %}"; name = "Wohnzimmerheizung"; }]; }
+          { sensor = [{ state = "{% if is_state('climate.kueche', 'heat') %}1{% else %}0{% endif %}"; name = "Küchenheizung"; }]; }
+          { sensor = [{ state = "{{ state_attr('climate.wohnzimmer', 'current_temperature') }}"; name = "Temperatur Wohnzimmer"; }]; }
         ];
         input_number = {
           target_temperature_schlafzimmer = {
@@ -365,15 +372,20 @@ in
               inherit badges;
               cards = [
                 {
-                  type = "weather-forecast";
-                  entity = "weather.dwd_darmstadt";
-                }
-                {
-                  type = "picture";
-                  image = "https://www.dwd.de/DWD/wetter/radar/radfilm_hes_akt.gif";
-                }
-                {
-                  type = "custom:sun-card";
+                  type = "vertical-stack";
+                  cards = [
+                    {
+                      type = "custom:sun-card";
+                    }
+                    {
+                      type = "weather-forecast";
+                      entity = "weather.dwd_darmstadt";
+                    }
+                    {
+                      type = "picture";
+                      image = "https://www.dwd.de/DWD/wetter/radar/radfilm_hes_akt.gif";
+                    }
+                  ];
                 }
                 {
                   type = "custom:rmv-card";
@@ -386,43 +398,43 @@ in
               inherit badges;
               cards = [
                 {
-                  type = "entities";
-                  icon = "mdi:sofa";
-                  title = "Wohnzimmer";
-                  show_header_toggle = false;
-                  entities = [
+                  type = "vertical-stack";
+                  cards = [
                     {
-                      type = "custom:multiple-entity-row";
-                      entity = "climate.wohnzimmer";
-                      name = "Temperatur";
-                      attribute = "current_temperature";
-                      unit = false;
+                      type = "custom:mini-graph-card";
                       entities = [
-                        { entity = "climate.wohnzimmer"; name = "Heizung"; }
-                        { entity = "input_number.target_temperature_wohnzimmer"; name = "Zieltemp."; unit = false; }
+                        { entity = "sensor.temperatur_wohnzimmer"; name = "Temperatur"; show_fill = false; }
+                        { entity = "input_number.target_temperature_wohnzimmer"; name = "Zieltemperatur"; show_fill = false; }
+                        { entity = "sensor.wohnzimmerheizung"; name = "Heizung"; y_axis = "secondary"; show_fill = true; show_points = false; show_line = false; smoothing = false; }
+                      ];
+                      show = {
+                        labels = true;
+                        labels_secondary = "hover";
+                      };
+                      lower_bound_secondary = 0;
+                      upper_bound_secondary = 1;
+                      hours_to_show = 6;
+                      update_interval = 30;
+                      line_width = 3;
+                      hour24 = true;
+                      decimals = 1;
+                      points_per_hour = 6;
+                      state_map = [
+                        { value = 0; label = "Aus"; }
+                        { value = 1; label = "An"; }
                       ];
                     }
-                    {
-                      type = "custom:multiple-entity-row";
-                      entity = "group.wohnzimmer_lights";
-                      toggle = true;
-                      state_color = true;
-                      name = "Lichter";
-                      entities = [
-                        { entity = "switch.lichterkette_schrank"; state_color = true; toggle = true; name = "Ballons"; }
-                        { entity = "switch.lichterkette_fernseher"; state_color = true; toggle = true; name = "Blumen"; }
-                        { entity = "switch.blaue_lichterkette"; state_color = true; toggle = true; name = "Blaue Kette"; }
-                      ];
-                    }
-                    { entity = "binary_sensor.wohnzimmerfenster"; secondary_info = "last-changed"; name = "Balkontür"; }
                   ];
                 }
                 {
-                  type = "history-graph";
-                  entities = [
-                    "input_number.target_temperature_wohnzimmer"
-                    "climate.wohnzimmer"
+                  type = "grid";
+                  cards = [
+                    { type = "custom:slider-button-card"; entity = "switch.lichterkette_fernseher"; }
+                    { type = "custom:slider-button-card"; entity = "switch.lichterkette_schrank"; }
+                    { type = "custom:slider-button-card"; entity = "switch.blaue_lichterkette"; }
+                    { type = "custom:slider-button-card"; entity = "climate.schlafzimmer"; }
                   ];
+
                 }
               ];
             }
@@ -431,36 +443,61 @@ in
               inherit badges;
               cards = [
                 {
-                  type = "entities";
-                  title = "Küche";
-                  icon = "mdi:countertop";
-                  entities = [
+                  type = "vertical-stack";
+                  cards = [
                     {
-                      type = "custom:multiple-entity-row";
-                      entity = "sensor.kueche_temperature";
-                      name = "Temperatur";
-                      unit = false;
-                      entities = [{ entity = "climate.kueche"; name = "Heizung"; }
-                        { entity = "climate.kueche"; attribute = "temperature"; name = "Zieltemp. an Heizung"; }
-                        { entity = "climate.kueche"; attribute = "current_temperature"; name = "Temp. an Heizung"; unit = false; }
-                        { entity = "input_number.target_temperature_kueche"; name = "Zieltemp."; unit = false; }];
+                      type = "custom:mini-graph-card";
+                      entities = [
+                        { entity = "sensor.kueche_humidity"; name = "Luftfeuchtigkeit"; show_fill = false; state_adaptive_color = true; }
+                        { entity = "sensor.kuchenfenster"; name = "Fenster"; color = "#ff0000"; y_axis = "secondary"; show_fill = true; show_points = false; show_line = false; smoothing = false; }
+                      ];
+                      color_thresholds = [{ value = 0; color = "#009933"; } { value = 64; color = "#ffbf00"; } { value = 66; color = "#ff0000"; }];
+                      color_thresholds_transition = "hard";
+                      show = {
+                        labels = true;
+                        labels_secondary = "hover";
+                      };
+                      lower_bound_secondary = 0;
+                      upper_bound_secondary = 1;
+                      hour24 = true;
+                      decimals = 1;
+                      points_per_hour = 6;
+                      hours_to_show = 6;
+                      update_interval = 30;
+                      line_width = 3;
+                      state_map = [
+                        { value = 0; label = "Zu"; }
+                        { value = 1; label = "Auf"; }
+                      ];
                     }
                     {
-                      type = "custom:multiple-entity-row";
-                      entity = "binary_sensor.kuechenfenster";
-                      secondary_info = "last-changed";
-                      name = "Fenster";
-                      entities = [{ entity = "sensor.bad_humidity"; name = "Luftfeuchtigkeit"; }];
+                      type = "custom:mini-graph-card";
+                      entities = [
+                        { entity = "sensor.kueche_temperature"; name = "Temperatur"; show_fill = false; }
+                        { entity = "input_number.target_temperature_kueche"; name = "Zieltemperatur"; show_fill = false; }
+                        { entity = "sensor.kuchenheizung"; name = "Heizung"; y_axis = "secondary"; show_fill = true; show_points = false; show_line = false; smoothing = false; }
+                      ];
+                      show = {
+                        labels = true;
+                        labels_secondary = "hover";
+                      };
+                      lower_bound_secondary = 0;
+                      upper_bound_secondary = 1;
+                      hours_to_show = 6;
+                      update_interval = 30;
+                      line_width = 3;
+                      hour24 = true;
+                      decimals = 1;
+                      points_per_hour = 6;
+                      state_map = [
+                        { value = 0; label = "Aus"; }
+                        { value = 1; label = "An"; }
+                      ];
                     }
-                  ];
-                }
-                {
-                  type = "history-graph";
-                  entities = [
-                    "sensor.kueche_temperature"
-                    "input_number.target_temperature_kueche"
-                    "sensor.kueche_humidity"
-                    "climate.kueche"
+                    {
+                      type = "grid";
+                      cards = [{ type = "custom:slider-button-card"; entity = "climate.kueche"; }];
+                    }
                   ];
                 }
               ];
@@ -494,7 +531,7 @@ in
                       update_interval = 30;
                       line_width = 3;
                       state_map = [
-                        { value = 0; label = "Zu/Aus"; }
+                        { value = 0; label = "Aus/Zu"; }
                         { value = 1; label = "An/Auf"; }
                       ];
                     }
@@ -522,16 +559,16 @@ in
                         { value = 1; label = "An"; }
                       ];
                     }
-                  ];
-                }
-                {
-                  type = "grid";
-                  cards = [
-                    { type = "custom:slider-button-card"; entity = "switch.weihnachtsstern_schlafzimmer"; }
-                    { type = "custom:slider-button-card"; entity = "switch.luftentfeuchter"; }
-                    { type = "custom:slider-button-card"; entity = "climate.schlafzimmer"; }
-                  ];
+                    {
+                      type = "grid";
+                      cards = [
+                        { type = "custom:slider-button-card"; entity = "switch.weihnachtsstern_schlafzimmer"; }
+                        { type = "custom:slider-button-card"; entity = "switch.luftentfeuchter"; }
+                        { type = "custom:slider-button-card"; entity = "climate.schlafzimmer"; }
+                      ];
 
+                    }
+                  ];
                 }
               ];
             }
@@ -540,25 +577,59 @@ in
               inherit badges;
               cards = [
                 {
-                  type = "entities";
-                  entities = [{
-                    type = "custom:multiple-entity-row";
-                    entity = "switch.lueftung_bad";
-                    toggle = true;
-                    state_color = true;
-                    name = "Lüftung";
-                    entities = [
-                      { entity = "sensor.bad_humidity"; name = "Luftfeuchtigkeit"; }
-                      { entity = "sensor.bad_temperature"; name = "Temperatur"; }
-                    ];
-                  }];
-                }
-                {
-                  type = "history-graph";
-                  entities = [
-                    "sensor.bad_temperature"
-                    "sensor.bad_humidity"
-                    "switch.lueftung_bad"
+                  type = "vertical-stack";
+                  cards = [
+                    {
+                      type = "custom:mini-graph-card";
+                      entities = [
+                        { entity = "sensor.bad_humidity"; name = "Luftfeuchtigkeit"; show_fill = false; state_adaptive_color = true; }
+                        { entity = "sensor.luftung"; name = "Lüftung"; color = "#0000ff"; y_axis = "secondary"; show_fill = true; show_points = false; show_line = false; smoothing = false; }
+                      ];
+                      color_thresholds = [{ value = 0; color = "#009933"; } { value = 64; color = "#ffbf00"; } { value = 66; color = "#ff0000"; }];
+                      color_thresholds_transition = "hard";
+                      show = {
+                        labels = true;
+                        labels_secondary = "hover";
+                      };
+                      lower_bound_secondary = 0;
+                      upper_bound_secondary = 1;
+                      hour24 = true;
+                      decimals = 1;
+                      points_per_hour = 6;
+                      hours_to_show = 6;
+                      update_interval = 30;
+                      line_width = 3;
+                      state_map = [
+                        { value = 0; label = "Aus"; }
+                        { value = 1; label = "An"; }
+                      ];
+                    }
+                    {
+                      type = "custom:mini-graph-card";
+                      entities = [
+                        { entity = "sensor.bad_temperature"; name = "Temperatur"; show_fill = false; }
+                      ];
+                      show = {
+                        labels = true;
+                        labels_secondary = "hover";
+                      };
+                      lower_bound_secondary = 0;
+                      upper_bound_secondary = 1;
+                      hours_to_show = 6;
+                      update_interval = 30;
+                      line_width = 3;
+                      hour24 = true;
+                      decimals = 1;
+                      points_per_hour = 6;
+                      state_map = [
+                        { value = 0; label = "Aus"; }
+                        { value = 1; label = "An"; }
+                      ];
+                    }
+                    {
+                      type = "grid";
+                      cards = [{ type = "custom:slider-button-card"; entity = "switch.lueftung_bad"; }];
+                    }
                   ];
                 }
               ];
@@ -568,11 +639,26 @@ in
               inherit badges;
               cards = [
                 {
-                  type = "entities";
-                  title = "Flur";
-                  entities = [{ entity = "binary_sensor.wohnungstuer"; secondary_info = "last-changed"; }];
+                  type = "custom:mini-graph-card";
+                  entities = [
+                    { entity = "sensor.wohnungstur"; name = "Wohnungstür"; color = "#ff0000"; show_fill = true; aggregate_func = "max"; smoothing = false; }
+                  ];
+                  show = {
+                    labels = true;
+                  };
+                  lower_bound = 0;
+                  upper_bound = 1;
+                  hour24 = true;
+                  decimals = 1;
+                  points_per_hour = 6;
+                  hours_to_show = 6;
+                  update_interval = 30;
+                  line_width = 3;
+                  state_map = [
+                    { value = 0; label = "Zu"; }
+                    { value = 1; label = "Auf"; }
+                  ];
                 }
-                { type = "history-graph"; entities = [ "binary_sensor.wohnungstuer" ]; }
               ];
             }
             #{
