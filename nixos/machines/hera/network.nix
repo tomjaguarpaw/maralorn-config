@@ -4,6 +4,7 @@ let
   inherit (config.m-0) hosts;
 in
 {
+  boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
   networking = {
     hostName = "hera";
     domain = "m-0.eu";
@@ -32,10 +33,10 @@ in
 
     firewall = {
       extraCommands = ''
-        ip6tables -A INPUT -s ${config.m-0.prefix}::/64 -j ACCEPT
+        ip6tables -A INPUT -i m0wire -j ACCEPT
         ip6tables -A FORWARD -p ipv6-icmp -j ACCEPT
         ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-        ip6tables -A FORWARD ! -s ${config.m-0.prefix}::/64 -j DROP
+        ip6tables -A FORWARD ! -i m0wire -j nixos-fw-log-refuse
       '';
     };
 
