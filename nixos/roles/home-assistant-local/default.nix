@@ -49,7 +49,15 @@ in
             zhaquirks = "debug";
           };
         };
+        frontend.themes.ourdefault = {
+          primary-color = "#858EFF";
+        };
         automation = [
+          {
+            alias = "Set theme at startup'";
+            trigger = { platform = "homeassistant"; event = "start"; };
+            action = { service = "frontend.set_theme"; data.name = "ourdefault"; };
+          }
           {
             alias = "Entfeuchtersteuerung Schlafzimmer";
             trigger = [
@@ -432,7 +440,7 @@ in
                     { type = "custom:slider-button-card"; entity = "switch.lichterkette_fernseher"; }
                     { type = "custom:slider-button-card"; entity = "switch.lichterkette_schrank"; }
                     { type = "custom:slider-button-card"; entity = "switch.blaue_lichterkette"; }
-                    { type = "custom:slider-button-card"; entity = "climate.schlafzimmer"; }
+                    { type = "custom:slider-button-card"; entity = "climate.wohnzimmer"; }
                   ];
 
                 }
