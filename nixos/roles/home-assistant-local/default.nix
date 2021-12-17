@@ -421,28 +421,31 @@ in
                       };
                       lower_bound_secondary = 0;
                       upper_bound_secondary = 1;
-                      hours_to_show = 6;
+                      hours_to_show = 24;
                       update_interval = 30;
-                      line_width = 3;
+                      line_width = 2;
                       hour24 = true;
                       decimals = 1;
-                      points_per_hour = 6;
+                      points_per_hour = 3;
                       state_map = [
                         { value = 0; label = "Aus"; }
                         { value = 1; label = "An"; }
                       ];
                     }
+                    {
+                      type = "grid";
+                      cards = [
+                        { type = "custom:slider-button-card"; entity = "switch.lichterkette_fernseher"; }
+                        { type = "custom:slider-button-card"; entity = "switch.lichterkette_schrank"; }
+                        { type = "custom:slider-button-card"; entity = "switch.blaue_lichterkette"; }
+                        { type = "custom:slider-button-card"; entity = "climate.wohnzimmer"; }
+                      ];
+                    }
+                    {
+                      type = "logbook";
+                      entities = [ "input_select.scene_wohnzimmer" "binary_sensor.wohnzimmerfenster" "switch.lichterkette_fernseher" "switch.lichterkette_schrank" "switch.blaue_lichterkette" ];
+                    }
                   ];
-                }
-                {
-                  type = "grid";
-                  cards = [
-                    { type = "custom:slider-button-card"; entity = "switch.lichterkette_fernseher"; }
-                    { type = "custom:slider-button-card"; entity = "switch.lichterkette_schrank"; }
-                    { type = "custom:slider-button-card"; entity = "switch.blaue_lichterkette"; }
-                    { type = "custom:slider-button-card"; entity = "climate.wohnzimmer"; }
-                  ];
-
                 }
               ];
             }
@@ -469,10 +472,10 @@ in
                       upper_bound_secondary = 1;
                       hour24 = true;
                       decimals = 1;
-                      points_per_hour = 6;
-                      hours_to_show = 6;
+                      points_per_hour = 3;
+                      hours_to_show = 24;
                       update_interval = 30;
-                      line_width = 3;
+                      line_width = 2;
                       state_map = [
                         { value = 0; label = "Zu"; }
                         { value = 1; label = "Auf"; }
@@ -491,12 +494,12 @@ in
                       };
                       lower_bound_secondary = 0;
                       upper_bound_secondary = 1;
-                      hours_to_show = 6;
+                      hours_to_show = 24;
                       update_interval = 30;
-                      line_width = 3;
+                      line_width = 2;
                       hour24 = true;
                       decimals = 1;
-                      points_per_hour = 6;
+                      points_per_hour = 3;
                       state_map = [
                         { value = 0; label = "Aus"; }
                         { value = 1; label = "An"; }
@@ -505,6 +508,10 @@ in
                     {
                       type = "grid";
                       cards = [{ type = "custom:slider-button-card"; entity = "climate.kueche"; }];
+                    }
+                    {
+                      type = "logbook";
+                      entities = [ "input_select.scene_kueche" "climate.kueche" "binary_sensor.kuechenfenster" ];
                     }
                   ];
                 }
@@ -534,10 +541,10 @@ in
                       upper_bound_secondary = 1;
                       hour24 = true;
                       decimals = 1;
-                      points_per_hour = 6;
-                      hours_to_show = 6;
+                      points_per_hour = 3;
+                      hours_to_show = 24;
                       update_interval = 30;
-                      line_width = 3;
+                      line_width = 2;
                       state_map = [
                         { value = 0; label = "Aus/Zu"; }
                         { value = 1; label = "An/Auf"; }
@@ -556,12 +563,12 @@ in
                       };
                       lower_bound_secondary = 0;
                       upper_bound_secondary = 1;
-                      hours_to_show = 6;
+                      hours_to_show = 24;
                       update_interval = 30;
-                      line_width = 3;
+                      line_width = 2;
                       hour24 = true;
                       decimals = 1;
-                      points_per_hour = 6;
+                      points_per_hour = 3;
                       state_map = [
                         { value = 0; label = "Aus"; }
                         { value = 1; label = "An"; }
@@ -574,7 +581,10 @@ in
                         { type = "custom:slider-button-card"; entity = "switch.luftentfeuchter"; }
                         { type = "custom:slider-button-card"; entity = "climate.schlafzimmer"; }
                       ];
-
+                    }
+                    {
+                      type = "logbook";
+                      entities = [ "input_select.scene_schlafzimmer" "switch.weihnachtsstern_schlafzimmer" "switch.luftentfeuchter" "climate.schlafzimmer" "binary_sensor.schlafzimmerfenster" ];
                     }
                   ];
                 }
@@ -603,10 +613,10 @@ in
                       upper_bound_secondary = 1;
                       hour24 = true;
                       decimals = 1;
-                      points_per_hour = 6;
-                      hours_to_show = 6;
+                      points_per_hour = 3;
+                      hours_to_show = 24;
                       update_interval = 30;
-                      line_width = 3;
+                      line_width = 2;
                       state_map = [
                         { value = 0; label = "Aus"; }
                         { value = 1; label = "An"; }
@@ -623,12 +633,12 @@ in
                       };
                       lower_bound_secondary = 0;
                       upper_bound_secondary = 1;
-                      hours_to_show = 6;
+                      hours_to_show = 24;
                       update_interval = 30;
-                      line_width = 3;
+                      line_width = 2;
                       hour24 = true;
                       decimals = 1;
-                      points_per_hour = 6;
+                      points_per_hour = 3;
                       state_map = [
                         { value = 0; label = "Aus"; }
                         { value = 1; label = "An"; }
@@ -637,6 +647,10 @@ in
                     {
                       type = "grid";
                       cards = [{ type = "custom:slider-button-card"; entity = "switch.lueftung_bad"; }];
+                    }
+                    {
+                      type = "logbook";
+                      entities = [ "switch.lueftung_bad" ];
                     }
                   ];
                 }
@@ -658,14 +672,18 @@ in
                   upper_bound = 1;
                   hour24 = true;
                   decimals = 1;
-                  points_per_hour = 6;
-                  hours_to_show = 6;
+                  points_per_hour = 3;
+                  hours_to_show = 24;
                   update_interval = 30;
-                  line_width = 3;
+                  line_width = 2;
                   state_map = [
                     { value = 0; label = "Zu"; }
                     { value = 1; label = "Auf"; }
                   ];
+                }
+                {
+                  type = "logbook";
+                  entities = [ "binary_sensor.wohnungstuer" ];
                 }
               ];
             }
