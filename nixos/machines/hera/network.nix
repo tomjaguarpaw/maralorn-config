@@ -81,6 +81,11 @@ in
             allowedIPs = [ "${hosts.vpn.fluffy}/128" ];
             presharedKeyFile = pkgs.privatePath "wireguard/psk";
           }
+          {
+            publicKey = wireguard.pub.pegasus;
+            allowedIPs = [ "${hosts.vpn.pegasus}/128" ];
+            presharedKeyFile = pkgs.privatePath "wireguard/psk";
+          }
         ];
       };
     };

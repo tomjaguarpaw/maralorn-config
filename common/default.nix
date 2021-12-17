@@ -86,6 +86,7 @@ with lib;
             fluffy = "${prefix}::2";
             apollo = "${prefix}::5";
             zeus = "${prefix}::4";
+            pegasus = "${prefix}::6";
           };
           hera-wg-host = "${p}::100:0:1";
 
