@@ -36,7 +36,7 @@ in
     wireguard.interfaces = {
       m0wire = {
         allowedIPsAsRoutes = false;
-        ips = [ "${hosts.apollo-wg}/112" ];
+        ips = [ "${hosts.apollo-wg}/112" "${hosts.vpn.apollo}/64" ];
         privateKeyFile = pkgs.privatePath "wireguard/apollo-private";
         peers = [
           {
