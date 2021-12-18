@@ -11,10 +11,10 @@
         "homepage": "",
         "owner": "mweinelt",
         "repo": "nur-packages",
-        "rev": "2e3497e1337e2410e31ab6c7069b161c655f8109",
-        "sha256": "0fz5970qwkdz4bgy67k5hrzzn2gxalr8j0bfymsdgxf1n1164rdd",
+        "rev": "57a8eb7078ce3a3db772b267c5a853624ca240a1",
+        "sha256": "19w1hc9wi08wi4ddhzd98vxfrqigfayhb9y85mnh61f30b5dwlsr",
         "type": "tarball",
-        "url": "https://github.com/mweinelt/nur-packages/archive/2e3497e1337e2410e31ab6c7069b161c655f8109.tar.gz",
+        "url": "https://github.com/mweinelt/nur-packages/archive/57a8eb7078ce3a3db772b267c5a853624ca240a1.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager-21.11": {
@@ -33,7 +33,7 @@
         "branch": "master",
         "ref": "master",
         "repo": "git@hera.m-0.eu:kassandra2",
-        "rev": "2d7bc743b2beccdda1e7a9005c3651c41415fa20",
+        "rev": "309ad547dce6a41d8cfb433b27de9edcc4f55980",
         "type": "git"
     },
     "logfeed": {
