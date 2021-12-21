@@ -32,6 +32,10 @@ with lib;
         flaky = true;
       }
       {
+        host = "fluffy.vpn.m-0.eu:9100";
+        name = "fluffy";
+      }
+      {
         name = "ved server";
         host = "bach.vocalensemble-darmstadt.de:9100";
       }
