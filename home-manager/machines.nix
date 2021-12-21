@@ -132,22 +132,18 @@ in
     (import ./roles/state.nix "orga")
     ./roles/trusted-env.nix
   ];
-  fluffy = {
-    default = makeConfig "fluffy" ([
-      ./roles/on-my-machine.nix
-      ./roles/mode-switching.nix
-      ./roles/systemd-exporter.nix
-      ./roles/headless.nix
-      (import ./roles/state.nix "default")
-    ]);
-  };
-  hera = {
-    default = makeConfig "hera" (on-my-machines ++ [
-      ./roles/fetch-banking-timer.nix
-      ./roles/weechat
-      ./roles/mail2rss.nix
-      ./roles/headless-mpd.nix
-      ./roles/headless.nix
-    ]);
-  };
+  fluffy.default = makeConfig "fluffy" [
+    ./roles/on-my-machine.nix
+    ./roles/mode-switching.nix
+    ./roles/systemd-exporter.nix
+    ./roles/headless.nix
+    (import ./roles/state.nix "default")
+  ];
+  hera.default = makeConfig "hera" (on-my-machines ++ [
+    ./roles/fetch-banking-timer.nix
+    ./roles/weechat
+    ./roles/mail2rss.nix
+    ./roles/headless-mpd.nix
+    ./roles/headless.nix
+  ]);
 }
