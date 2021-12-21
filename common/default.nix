@@ -36,6 +36,10 @@ with lib;
         name = "fluffy";
       }
       {
+        host = "fluffy.vpn.m-0.eu:9558";
+        name = "fluffy-user";
+      }
+      {
         name = "ved server";
         host = "bach.vocalensemble-darmstadt.de:9100";
       }
