@@ -27,8 +27,8 @@ in
         ssh = host: "kitty +kitten ssh ${host}";
       in
       {
-        hera = ssh "hera";
-        fluffy = ssh "fluffy.lo.m-0.eu";
+        "hera via vpn" = ssh "hera.vpn.m-0.eu";
+        "fluffy via vpn" = ssh "fluffy.vpn.m-0.eu";
         remote-builder = ssh "phoibe.cased.de -i /etc/nixos/private/id_ed25519-nix-builder";
         ag = ssh "ag-forward";
         gwres1 = ssh "gw";
@@ -36,6 +36,8 @@ in
         shells = ssh "shells";
         "bach (ved)" = ssh "bach.vocalensemble-darmstadt.de";
         "nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net -i /etc/nixos/private/id_ed25519-nix-builder shell";
+        "fluffy via local network" = ssh "fluffy.lo.m-0.eu";
+        "hera via public v4" = ssh "hera-v4";
       };
   }
   {
