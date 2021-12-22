@@ -101,5 +101,10 @@ let
 in
 {
   services.mbsync.postExec = "${sortMail}/bin/sort-mail-archive";
-  accounts.email.accounts = lib.mkIf pkgs.withSecrets { hera.imapnotify.onNotify = lib.mkForce "${quick-sync}"; };
+  accounts.email.accounts = lib.mkIf pkgs.withSecrets {
+    hera.imapnotify = {
+      onNotify = lib.mkForce "${quick-sync}";
+      boxes = [ "Move/todo" ];
+    };
+  };
 }
