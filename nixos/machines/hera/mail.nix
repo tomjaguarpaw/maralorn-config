@@ -62,7 +62,7 @@ in
         '';
     };
     postfix = {
-      networks = [ "[::1]/128" "127.0.0.1/32" "[${config.m-0.prefix}::]/64" "[${config.m-0.vpn.prefix}::]/64" "10.0.0.0/24" ];
+      networks = [ "[::1]/128" "127.0.0.1/32" "[${config.m-0.prefix}::]/64" "[${hosts.vpn.prefix}::]/64" "10.0.0.0/24" ];
       transport = "email2matrix.maralorn.de smtp:[::1]:2525";
       config = {
         # Allow TLSv1 because we need to be able to receive mail from legacy servers.
