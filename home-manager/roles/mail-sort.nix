@@ -1,9 +1,9 @@
 { pkgs, lib, config, ... }:
 let
   mail2task = pkgs.writeShellScript "mail2task" ''
-    set -euxo pipefail
+    set -euo pipefail
     ${pkgs.isync}/bin/mbsync hera:Move/todo
-    ${pkgs.fd}/bin/fd -tf . ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mscan -f "E-Mail from %f: %S" | xargs -I '{}' ${pkgs.taskwarrior}/bin/task add '"{}"'
+    ${pkgs.fd}/bin/fd -tf . ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mscan -f "E-Mail from %f: %S" | ${pkgs.findutils}/bin/xargs -I '{}' ${pkgs.taskwarrior}/bin/task add '"{}"'
     ${pkgs.mblaze}/bin/mlist ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mflag -S
     ${pkgs.mblaze}/bin/mlist ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mrefile ${unsorted}
     ${pkgs.notmuch}/bin/notmuch new
