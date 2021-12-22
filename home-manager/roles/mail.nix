@@ -52,7 +52,7 @@ in
     msmtp.enable = true;
     mbsync.enable = true;
     notmuch = {
-      enable = config.accounts.email.accounts != { };
+      enable = pkgs.withSecrets;
       hooks.postInsert = ''
         ${pkgs.notmuch}/bin/notmuch tag +deleted -- "folder:/Trash/ (not tag:deleted)"
         ${pkgs.notmuch}/bin/notmuch tag -deleted -- "(not folder:/Trash/) tag:deleted"
