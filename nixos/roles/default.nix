@@ -94,6 +94,7 @@
     { nix-optimise.serviceConfig.Type = "oneshot"; } // builtins.listToAttrs (map makeConfig hosts);
 
   services = {
+    logind.killUserProcesses = false;
     journald.extraConfig = "SystemMaxUse=512M";
     prometheus.exporters = {
       node = {
