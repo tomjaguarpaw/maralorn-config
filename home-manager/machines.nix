@@ -142,6 +142,7 @@ in
   hera.default = makeConfig "hera" (on-my-machines ++ [
     ./roles/fetch-banking-timer.nix
     ./roles/weechat
+    ./roles/mail-sort.nix
     ./roles/mail2rss.nix
     ./roles/headless-mpd.nix
     ./roles/headless.nix
