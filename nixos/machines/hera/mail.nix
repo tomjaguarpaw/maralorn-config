@@ -2,6 +2,7 @@
 let
   certPath = "/var/lib/acme/hera.m-0.eu";
   nonMailboxDomains = [ "lists.maralorn.de" ];
+  inherit (config.m-0) hosts;
 in
 {
   m-0.monitoring = [
@@ -61,12 +62,14 @@ in
         '';
     };
     postfix = {
-      networks = [ "[::1]/128" "127.0.0.1/32" "[${config.m-0.prefix}::]/64" "10.0.0.0/24" ];
+      networks = [ "[::1]/128" "127.0.0.1/32" "[${config.m-0.prefix}::]/64" "[${config.m-0.vpn.prefix}::]/64" "10.0.0.0/24" ];
       transport = "email2matrix.maralorn.de smtp:[::1]:2525";
       config = {
         # Allow TLSv1 because we need to be able to receive mail from legacy servers.
         smtpd_tls_protocols = lib.mkForce "TLSv1.3, TLSv1.2, TLSv1.1, TLSv1, !SSLv2, !SSLv3";
         virtual_mailbox_domains = lib.mkForce (builtins.toFile "vhosts" (lib.concatStringsSep "\n" (builtins.filter (x: !builtins.elem x nonMailboxDomains) config.mailserver.domains)));
+        smtp_bind_address = hosts.hera-v4;
+        smtp_bind_address6 = hosts.hera;
       };
     };
   };
