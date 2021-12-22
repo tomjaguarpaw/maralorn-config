@@ -1,7 +1,8 @@
 { pkgs, lib, config, ... }:
 let
-  quick-sync = pkgs.writeShellScript "quick-mail-and-todo-sync" ''
-    ${pkgs.isync}/bin/mbsync hera:INBOX,Code,Move/todo
+  mail2task = pkgs.writeShellScript "mail2task" ''
+    set -euxo pipefail
+    ${pkgs.isync}/bin/mbsync hera:Move/todo
     ${pkgs.fd}/bin/fd -tf . ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mscan -f "E-Mail from %f: %S" | xargs -I '{}' ${pkgs.taskwarrior}/bin/task add '"{}"'
     ${pkgs.mblaze}/bin/mlist ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mflag -S
     ${pkgs.mblaze}/bin/mlist ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mrefile ${unsorted}
@@ -103,7 +104,7 @@ in
   services.mbsync.postExec = "${sortMail}/bin/sort-mail-archive";
   accounts.email.accounts = lib.mkIf pkgs.withSecrets {
     hera.imapnotify = {
-      onNotify = lib.mkForce "${quick-sync}";
+      onNotifyPost = "${mail2task}";
       boxes = [ "Move/todo" ];
     };
   };
