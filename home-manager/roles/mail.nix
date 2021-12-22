@@ -12,10 +12,13 @@ let
 in
 {
 
-  services.mbsync = {
-    enable = true;
-    frequency = "*:0/30";
-    verbose = false;
+  services = {
+    mbsync = {
+      enable = true;
+      frequency = "*:0/30";
+      verbose = false;
+    };
+    imapnotify.enable = true;
   };
   systemd.user.timers.mbsync.Timer.RandomizedDelaySec = "10m";
 
