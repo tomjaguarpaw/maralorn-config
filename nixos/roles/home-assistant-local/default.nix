@@ -1,5 +1,37 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
+  haLib = import ./lib.nix lib;
+  inherit (haLib) modules util cards conditions triggers;
+  modes =
+    let
+      empty = {
+        icon = util.mkIcon "account-off";
+        title = "Leer";
+      };
+      heat = {
+        icon = util.mkIcon "radiator";
+        title = "Heizen";
+      };
+      active = {
+        icon = util.mkIcon "account";
+        title = "Aktiv";
+      };
+      force-active = {
+        icon = util.mkIcon "lightbulb-on";
+        title = "Alles An";
+      };
+      vacation = {
+        icon = util.mkIcon "airplane";
+        title = "Urlaub";
+      };
+    in
+    {
+      flat = {
+        title = "Wohnung";
+        name = "flat";
+        options = { inherit active vacation; };
+      };
+    };
   inherit (import ../../../nix/sources.nix) nixos-unstable;
   homeAssistantDir = "/disk/persist/home-assistant";
 in
@@ -10,6 +42,7 @@ in
   ];
 
   imports = [
+    (modules.mkModeSwitcher modes.flat { })
     "${nixos-unstable}/nixos/modules/services/misc/home-assistant.nix"
     ./hexa-cards.nix
   ];
@@ -39,16 +72,6 @@ in
           };
         };
         homeassistant = pkgs.privateValue { } "homeassistant-home";
-        logger = {
-          default = "info";
-          logs = {
-            "homeassistant.core" = "debug";
-            "homeassistant.components.zha" = "debug";
-            zigpy = "debug";
-            zigpy_znp = "debug";
-            zhaquirks = "debug";
-          };
-        };
         frontend.themes.ourdefault = {
           primary-color = "#858EFF";
         };
@@ -99,17 +122,19 @@ in
           }
           {
             alias = "Thermostatsteuerung Schlafzimmer";
-            trigger = [
-              { platform = "state"; entity_id = "input_number.target_temperature_schlafzimmer"; }
-              { platform = "state"; entity_id = "sensor.schlafzimmer_temperature"; }
-              { platform = "state"; entity_id = "binary_sensor.schlafzimmerfenster"; }
-              { platform = "state"; entity_id = "climate.schlafzimmer"; }
+            trigger = with triggers; [
+              (stateTrigger "input_number.target_temperature_schlafzimmer")
+              (stateTrigger "sensor.schlafzimmer_temperature")
+              (stateTrigger "binary_sensor.schlafzimmerfenster")
+              (stateTrigger "climate.schlafzimmer")
+              (modeSwitchTrigger modes.flat)
             ];
             action = [{
               choose = [{
                 conditions = [
                   { condition = "numeric_state"; entity_id = "sensor.schlafzimmer_temperature"; below = "input_number.target_temperature_schlafzimmer"; }
                   { condition = "state"; entity_id = "binary_sensor.schlafzimmerfenster"; state = "off"; }
+                  (conditions.modeIs modes.flat "active")
                 ];
                 sequence = {
                   service = "climate.set_temperature";
@@ -125,17 +150,19 @@ in
           }
           {
             alias = "Thermostatsteuerung Küche";
-            trigger = [
+            trigger = with triggers; [
               { platform = "state"; entity_id = "input_number.target_temperature_kueche"; }
               { platform = "state"; entity_id = "sensor.kueche_temperature"; }
               { platform = "state"; entity_id = "binary_sensor.kuechenfenster"; }
               { platform = "state"; entity_id = "climate.kueche"; }
+              (modeSwitchTrigger modes.flat)
             ];
             action = [{
               choose = [{
                 conditions = [
                   { condition = "numeric_state"; entity_id = "sensor.kueche_temperature"; below = "input_number.target_temperature_kueche"; }
                   { condition = "state"; entity_id = "binary_sensor.kuechenfenster"; state = "off"; }
+                  (conditions.modeIs modes.flat "active")
                 ];
                 sequence = {
                   service = "climate.set_temperature";
@@ -151,14 +178,16 @@ in
           }
           {
             alias = "Thermostatsteuerung Wohnzimmer";
-            trigger = [
+            trigger = with triggers; [
               { platform = "state"; entity_id = "input_number.target_temperature_wohnzimmer"; }
               { platform = "state"; entity_id = "binary_sensor.wohnzimmerfenster"; }
               { platform = "state"; entity_id = "climate.wohnzimmer"; }
+              (modeSwitchTrigger modes.flat)
             ];
             action = [{
               choose = [{
-                conditions = [{ condition = "state"; entity_id = "binary_sensor.wohnzimmerfenster"; state = "off"; }];
+                conditions = [{ condition = "state"; entity_id = "binary_sensor.wohnzimmerfenster"; state = "off"; }
+                  (conditions.modeIs modes.flat "active")];
                 sequence = {
                   service = "climate.set_temperature";
                   target.area_id = "wohnzimmer";
@@ -179,7 +208,7 @@ in
               target.entity_id = "input_number.target_temperature_kueche";
               data.value = ''
                 {% if is_state('input_select.scene_kueche', 'empty') %}
-                  17
+                  18
                 {% else %}
                   21
                 {% endif %}
@@ -194,7 +223,7 @@ in
               target.entity_id = "input_number.target_temperature_wohnzimmer";
               data.value = ''
                 {% if is_state('input_select.scene_wohnzimmer', 'empty') %}
-                  17
+                  18
                 {% else %}
                   24
                 {% endif %}
@@ -209,7 +238,7 @@ in
               target.entity_id = "input_number.target_temperature_schlafzimmer";
               data.value = ''
                 {% if is_state('input_select.scene_schlafzimmer', 'empty') %}
-                  17
+                  18
                 {% else %}
                   21
                 {% endif %}
@@ -245,19 +274,19 @@ in
           {
             alias = "Schlafzimmer vorheizen";
             trigger = [{ platform = "time"; at = "19:00:00"; } { platform = "time"; at = "04:00:00"; }];
-            condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "empty"; }];
+            condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "empty"; } (conditions.modeIs modes.flat "active")];
             action = [{ service = "input_select.select_option"; data.option = "heat"; entity_id = "input_select.scene_schlafzimmer"; }];
           }
           {
             alias = "Schlafzimmer nachts kühl";
             trigger = [{ platform = "time"; at = "01:00:00"; }];
-            condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "heat"; }];
+            condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "heat"; } (conditions.modeIs modes.flat "active")];
             action = [{ service = "input_select.select_option"; data.option = "empty"; entity_id = "input_select.scene_schlafzimmer"; }];
           }
           {
             alias = "Morgens Licht an";
             trigger = [{ platform = "time"; at = "08:00:00"; }];
-            condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "heat"; }];
+            condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "heat"; } (conditions.modeIs modes.flat "active")];
             action = [{ service = "input_select.select_option"; data.option = "active"; entity_id = "input_select.scene_schlafzimmer"; }];
           }
           # Warnung für offene Fenster oder Türen
@@ -662,6 +691,7 @@ in
           flurstack = {
             type = "vertical-stack";
             cards = [
+              (cards.modeSwitcher modes.flat)
               {
                 type = "custom:mini-graph-card";
                 entities = [
