@@ -6,7 +6,7 @@ let
     export PATH=${lib.makeBinPath path}:$PATH
     git clone git@localhost:${name} .
     git show -q --oneline
-    export FLAGS='--builders @/etc/nix/machines -o /var/cache/gc-links/$JOB'
+    export FLAGS="--builders @/etc/nix/machines -o /var/cache/gc-links/$JOB"
     if [[ -e "flake.nix" ]]; then
       echo "Flake detected. Using flake.nix"
       ${pkgs.nixFlakes}/bin/flix build .#defaultPackage.x86_64-linux $FLAGS
