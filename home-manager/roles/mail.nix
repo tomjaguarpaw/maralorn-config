@@ -4,7 +4,7 @@ let
   name = "Malte Brandy";
   mail = "malte.brandy@maralorn.de";
   alternates = pkgs.privateValue [ ] "mail/alternates";
-  quick-sync = pkgs.writeShellScriptBin "quick-mail-sync" ''
+  quick-mail-sync = pkgs.writeShellScriptBin "quick-mail-sync" ''
     ${pkgs.isync}/bin/mbsync hera:INBOX,Code
     ${pkgs.notmuch}/bin/notmuch new
   '';
@@ -33,7 +33,7 @@ in
           Service = {
             ExecStart = toString (pkgs.writeShellScript "watch-${name}-maildir" ''
               while ${pkgs.coreutils}/bin/sleep 1s; do
-                ${quick-sync}
+                ${quick-mail-sync}/bin/quick-mail-sync
                 ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete -r ${maildir}/${name}/Inbox ${maildir}/${name}/Code
               done
             '');
@@ -71,7 +71,7 @@ in
   };
 
   home = {
-    packages = [ quick-sync ];
+    packages = [ quick-mail-sync ];
     file =
       let
         mutt_alternates = "@maralorn.de " + (builtins.concatStringsSep " " alternates);
@@ -168,7 +168,7 @@ in
           set mime_forward=yes
           set mime_forward_rest=yes
 
-          macro index <F5> "!${quick-sync} > /dev/null<enter>"
+          macro index <F5> "!${quick-mail-sync}/bin/quick-mail-sync > /dev/null<enter>"
 
           source "${hide-sidebar}"
           macro index <right> "<enter-command>source ${hide-sidebar}<enter>"
