@@ -57,6 +57,7 @@ in
 
         # Theme
         papercolor-theme vim-airline-themes
+        LanguageTool-nvim
 
         # ===
         # Languages
@@ -87,6 +88,7 @@ in
   };
   xdg.configFile."nvim/coc-settings.json".text = builtins.toJSON cocSettings;
   home = {
+    packages = [ pkgs.languagetool ];
     sessionVariables = {
       EDITOR = "nvim";
       VISUAL = "nvim";
