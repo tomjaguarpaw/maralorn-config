@@ -21,5 +21,6 @@ in
     "logfeed.run" = mkJob "logfeed";
     "blog.run" = mkJob "blog";
     "haskell-taskwarrior.run" = mkJob "haskell-taskwarrior";
+    "nix-output-monitor.run" = mkJob "nix-output-monitor";
   };
 }
