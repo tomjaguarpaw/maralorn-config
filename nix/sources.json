@@ -1,4 +1,10 @@
 {
+    "nix-output-monitor": {
+        "branch": "master",
+        "repo": "git@git:nix-output-monitor",
+        "rev": "71a64d043e6ca34551fa2e20bc46b81375713598",
+        "type": "git"
+    },
     "haskell-dialog": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:haskell-dialog",
