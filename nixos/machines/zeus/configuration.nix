@@ -75,11 +75,9 @@ in
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/var/lib/bluetooth - - - - -"
-    "d /disk/persist/var/lib/waydroid 777 root root - -"
     "d /disk/persist/minecraft 700 minecraft minecraft - -"
     "d /var/lib/misc 755 - - - -"
     "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"
-    "L+ /var/lib/waydroid - - - - /disk/persist/var/lib/waydroid"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
 
@@ -106,7 +104,6 @@ in
       };
       kernelModules = [
         "amdgpu" # For earlier and better framebuffer
-        "binder_linux"
       ];
       secrets = {
         "diskkey.bin" = "/disk/persist/diskkey.bin"; # Key can live on crypted disk, is copied to initrd on install
@@ -157,8 +154,7 @@ in
   };
 
   security.rtkit.enable = true;
-  boot.kernelPackages = pkgs.linuxPackages_xanmod;
-  virtualisation.waydroid.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages_testing;
   services = {
     pipewire.enable = lib.mkForce false;
     fwupd.enable = true;
