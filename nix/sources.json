@@ -46,7 +46,7 @@
     "nix-output-monitor": {
         "branch": "master",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "dab95c0c26eaf293d8941b6b51dca798ef001e33",
+        "rev": "0539a30d156129aab8d71c51f19d175410507876",
         "type": "git"
     },
     "nixos-19.09": {
@@ -79,10 +79,10 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "2a76e1204f3a605f8d8d2f323671e1a295a5246d",
-        "sha256": "0kxqjlrnppr8dfx85lc8vrdvyw8hp97v16kqhx6j1a45l675i0kl",
+        "rev": "46df95ca81e7e4cf3458cdb4b7d1714b5fce9da5",
+        "sha256": "0rxff15a2z9hcs4xkaymdwgqlkjxvyyylcg66qhi23lia995f2ga",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/2a76e1204f3a605f8d8d2f323671e1a295a5246d.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/46df95ca81e7e4cf3458cdb4b7d1714b5fce9da5.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
@@ -110,10 +110,10 @@
         "homepage": "",
         "owner": "obsidiansystems",
         "repo": "obelisk",
-        "rev": "7ad33cbe3e84b209e83c505ce25486445bbd602e",
-        "sha256": "0dlk8y6rxc87crw7764zq2py7nqn38lw496ca1y893m9gdq8qdkz",
+        "rev": "9127921ab7cd1e67f6869ee814491a5a7aafb698",
+        "sha256": "1kf76sbf50y5qdsqr9mmi16njffvg8p12sncdlf92rqmjr8185ka",
         "type": "tarball",
-        "url": "https://github.com/obsidiansystems/obelisk/archive/7ad33cbe3e84b209e83c505ce25486445bbd602e.tar.gz",
+        "url": "https://github.com/obsidiansystems/obelisk/archive/9127921ab7cd1e67f6869ee814491a5a7aafb698.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "pre-commit-hooks.nix": {
