@@ -67,6 +67,7 @@
       };
 
       extraConfig = {
+        merge.conflictStyle = "diff3";
         pull.ff = "only";
         core.editor = "vim";
         init.defaultBranch = "main";
