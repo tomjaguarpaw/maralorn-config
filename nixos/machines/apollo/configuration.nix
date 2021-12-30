@@ -24,15 +24,15 @@ in
   networking = {
     hostName = "apollo";
     domain = "m-0.eu";
-    firewall.allowedTCPPorts = [
-      4713
-      8123 # Weiterleitung von stream.maralorn.de
-      64738
-    ];
-    firewall.allowedUDPPorts = [
-      4713
-      64738
-    ];
+    networkmanager.enable = true;
+    firewall = {
+      allowedTCPPorts = [
+        4713 # pulseaudio
+      ];
+      allowedUDPPorts = [
+        4713 # pulseaudio
+      ];
+    };
     wireguard.interfaces = {
       m0wire = {
         allowedIPsAsRoutes = false;
@@ -143,26 +143,25 @@ in
   };
 
   boot.kernel.sysctl."fs.inotify.max_user_watches" = 204800;
-  networking = { networkmanager.enable = true; };
   console.keyMap = "neo";
 
   sound.enable = true;
-  hardware = {
-    opengl = {
-      enable = true;
-      driSupport32Bit = true; # for gw2
-    };
-    pulseaudio = {
-      enable = true;
-      support32Bit = true;
-      tcp = {
-        enable = true;
-        anonymousClients.allowedIpRanges = [ "127.0.0.1" "::1" "192.168.178.0/24" ];
-      };
-    };
-  };
+  #hardware = {
+  #opengl = {
+  #enable = true;
+  #driSupport32Bit = true; # for gw2
+  #};
+  #pulseaudio = {
+  #enable = true;
+  #support32Bit = true;
+  #tcp = {
+  #enable = true;
+  #anonymousClients.allowedIpRanges = [ "127.0.0.1" "::1" "192.168.178.0/24" ];
+  #};
+  #};
+  #};
 
-  virtualisation.docker.enable = true;
+  # virtualisation.docker.enable = true;
 
   system.stateVersion = "19.09";
 }
