@@ -46,7 +46,7 @@
     "nix-output-monitor": {
         "branch": "master",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "d7fc057e17dde024d108bbd9db5189f15ef1c8c6",
+        "rev": "7111f54765c5752ebcf4cc77ef66a5bceccdd419",
         "type": "git"
     },
     "nixos-19.09": {
@@ -98,10 +98,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "ac169ec6371f0d835542db654a65e0f2feb07838",
-        "sha256": "0bwjyz15sr5f7z0niwls9127hikp2b6fggisysk0cnk3l6fa8abh",
+        "rev": "5b091d4fbe3b7b7493c3b46fe0842e4b30ea24b3",
+        "sha256": "0yb7l5p4k9q8avwiq0fgp87ij50d6yavgh4dfw14jh2lf8daqbmp",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/ac169ec6371f0d835542db654a65e0f2feb07838.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/5b091d4fbe3b7b7493c3b46fe0842e4b30ea24b3.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
