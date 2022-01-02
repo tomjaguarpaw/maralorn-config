@@ -122,7 +122,7 @@ in
     wireguard.interfaces = {
       m0wire = {
         allowedIPsAsRoutes = false;
-        ips = [ "${hosts.zeus-wg}/112" ];
+        ips = [ "${hosts.zeus-wg}/112" "${hosts.vpn.zeus}/64" ];
         privateKeyFile = "/disk/persist/wireguard-private-key";
         peers = [
           {
