@@ -31,23 +31,26 @@ in
     machine-id.source = "/disk/persist/machine-id";
   };
 
-  systemd.services."activate-home-manager" = {
-    path = [ pkgs.nix pkgs.dbus ];
-    script = ''
-      if [[ -e /home/maralorn/.mode ]]; then
-        MODE="$(cat /home/maralorn/.mode)"
-      else
-        MODE="default"
-      fi
-      /disk/volatile/maralorn/modes/$MODE/activate
-    '';
-    serviceConfig = {
-      Type = "oneshot";
-      User = "maralorn";
+  systemd.services = {
+    ensure-printers.serviceConfig.SuccessExitStatus = "0 1";
+    activate-home-manager = {
+      path = [ pkgs.nix pkgs.dbus ];
+      script = ''
+        if [[ -e /home/maralorn/.mode ]]; then
+          MODE="$(cat /home/maralorn/.mode)"
+        else
+          MODE="default"
+        fi
+        /disk/volatile/maralorn/modes/$MODE/activate
+      '';
+      serviceConfig = {
+        Type = "oneshot";
+        User = "maralorn";
+      };
+      wantedBy = [ "multi-user.target" ];
+      # Try to avoid race conditions, when the user get’s logged in before activation was completed.
+      before = [ "display-manager.service" ];
     };
-    wantedBy = [ "multi-user.target" ];
-    # Try to avoid race conditions, when the user get’s logged in before activation was completed.
-    before = [ "display-manager.service" ];
   };
 
   systemd.tmpfiles.rules = [
@@ -59,9 +62,7 @@ in
     "z / 755 - - - -"
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
-    "d /disk/persist/cups - - - - -"
     "d /tmp/scans/scans 777 ftp ftp - -"
-    "L+ /var/lib/cups - - - - /disk/persist/cups"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
     "L+ /etc/ssh - - - - /disk/persist/etc/ssh"
   ];
