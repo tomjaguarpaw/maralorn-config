@@ -27,22 +27,22 @@ let
     in
     {
       flat = {
-        title = "Wohnung";
+        title = "Wohnungsmodus";
         name = "flat";
         options = { inherit active vacation; };
       };
       wohnzimmer = {
-        title = "Wohnzimmer";
+        title = "Wohnzimmermodus";
         name = "wohnzimmer";
         options = { inherit empty heat active force_active; };
       };
       kueche = {
-        title = "Küche";
+        title = "Küchenmodus";
         name = "kueche";
         options = { inherit empty active; };
       };
       schlafzimmer = {
-        title = "Schlafzimmer";
+        title = "Schlafzimmermodus";
         name = "schlafzimmer";
         options = { inherit empty heat active force_active; };
       };
