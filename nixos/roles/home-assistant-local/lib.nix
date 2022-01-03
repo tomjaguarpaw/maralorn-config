@@ -6,11 +6,30 @@ let
 in
 rec {
   jinja = import ./jinja.nix lib;
-  tap_actions = {
+  tap_actions =
+    let
+      fromServiceAction = action:
+        {
+          action = "call-service";
+          inherit (action) service;
+          service_data = action.data or { } // {
+            inherit (action) entity_id;
+          };
+        };
+    in
+    {
+      setMode = mode: option: fromServiceAction (actions.setMode mode option);
+      cycleMode = mode: fromServiceAction (actions.cycleMode mode);
+    };
+  actions = {
+    cycleMode = mode: {
+      service = "input_select.select_next";
+      entity_id = util.modeSelectEntity mode;
+    };
     setMode = mode: option: {
-      action = "call-service";
       service = "input_select.select_option";
-      service_data = { entity_id = util.modeSelectEntity mode; inherit option; };
+      data = { inherit option; };
+      entity_id = util.modeSelectEntity mode;
     };
   };
   util = rec {
@@ -37,7 +56,10 @@ rec {
         options = builtins.attrNames mode.options;
       in
       mkHAConfig {
-        input_select.${util.modeSelectName mode} = { inherit options; } // attrs;
+        input_select.${util.modeSelectName mode} = {
+          inherit options;
+          name = mode.title;
+        } // attrs;
         template = builtins.map (templates.binarySensorForMode mode) options;
       };
   };

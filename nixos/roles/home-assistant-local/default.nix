@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 let
   haLib = import ./lib.nix lib;
-  inherit (haLib) modules util cards conditions triggers;
+  inherit (haLib) modules util cards conditions triggers jinja actions tap_actions;
   modes =
     let
       empty = {
@@ -16,7 +16,7 @@ let
         icon = util.mkIcon "account";
         title = "Aktiv";
       };
-      force-active = {
+      force_active = {
         icon = util.mkIcon "lightbulb-on";
         title = "Alles An";
       };
@@ -31,6 +31,21 @@ let
         name = "flat";
         options = { inherit active vacation; };
       };
+      wohnzimmer = {
+        title = "Wohnzimmer";
+        name = "wohnzimmer";
+        options = { inherit empty heat active force_active; };
+      };
+      kueche = {
+        title = "Küche";
+        name = "kueche";
+        options = { inherit empty active; };
+      };
+      schlafzimmer = {
+        title = "Schlafzimmer";
+        name = "schlafzimmer";
+        options = { inherit empty heat active force_active; };
+      };
     };
   inherit (import ../../../nix/sources.nix) nixos-unstable;
   homeAssistantDir = "/disk/persist/home-assistant";
@@ -42,6 +57,9 @@ in
   ];
 
   imports = [
+    (modules.mkModeSwitcher modes.wohnzimmer { })
+    (modules.mkModeSwitcher modes.kueche { })
+    (modules.mkModeSwitcher modes.schlafzimmer { })
     (modules.mkModeSwitcher modes.flat { })
     "${nixos-unstable}/nixos/modules/services/misc/home-assistant.nix"
     ./hexa-cards.nix
@@ -151,10 +169,10 @@ in
           {
             alias = "Thermostatsteuerung Küche";
             trigger = with triggers; [
-              { platform = "state"; entity_id = "input_number.target_temperature_kueche"; }
-              { platform = "state"; entity_id = "sensor.kueche_temperature"; }
-              { platform = "state"; entity_id = "binary_sensor.kuechenfenster"; }
-              { platform = "state"; entity_id = "climate.kueche"; }
+              (stateTrigger "input_number.target_temperature_kueche")
+              (stateTrigger "sensor.kueche_temperature")
+              (stateTrigger "binary_sensor.kuechenfenster")
+              (stateTrigger "climate.kueche")
               (modeSwitchTrigger modes.flat)
             ];
             action = [{
@@ -179,9 +197,9 @@ in
           {
             alias = "Thermostatsteuerung Wohnzimmer";
             trigger = with triggers; [
-              { platform = "state"; entity_id = "input_number.target_temperature_wohnzimmer"; }
-              { platform = "state"; entity_id = "binary_sensor.wohnzimmerfenster"; }
-              { platform = "state"; entity_id = "climate.wohnzimmer"; }
+              (stateTrigger "input_number.target_temperature_wohnzimmer")
+              (stateTrigger "binary_sensor.wohnzimmerfenster")
+              (stateTrigger "climate.wohnzimmer")
               (modeSwitchTrigger modes.flat)
             ];
             action = [{
@@ -202,92 +220,93 @@ in
           }
           {
             alias = "Küchentemperatur";
-            trigger = [{ platform = "state"; entity_id = "input_select.scene_kueche"; }];
+            trigger = [ (triggers.modeSwitchTrigger modes.kueche) ];
             action = [{
               service = "input_number.set_value";
               target.entity_id = "input_number.target_temperature_kueche";
-              data.value = ''
-                {% if is_state('input_select.scene_kueche', 'empty') %}
-                  18
-                {% else %}
-                  21
-                {% endif %}
-              '';
+              data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.kueche) "empty") "18" "20";
             }];
           }
           {
             alias = "Wohnzimmertemperatur";
-            trigger = [{ platform = "state"; entity_id = "input_select.scene_wohnzimmer"; }];
+            trigger = [ (triggers.modeSwitchTrigger modes.wohnzimmer) ];
             action = [{
               service = "input_number.set_value";
               target.entity_id = "input_number.target_temperature_wohnzimmer";
-              data.value = ''
-                {% if is_state('input_select.scene_wohnzimmer', 'empty') %}
-                  18
-                {% else %}
-                  24
-                {% endif %}
-              '';
+              data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "empty") "18" "24";
             }];
           }
           {
             alias = "Schlafzimmertemperatur";
-            trigger = [{ platform = "state"; entity_id = "input_select.scene_schlafzimmer"; }];
+            trigger = [ (triggers.modeSwitchTrigger modes.schlafzimmer) ];
             action = [{
               service = "input_number.set_value";
               target.entity_id = "input_number.target_temperature_schlafzimmer";
-              data.value = ''
-                {% if is_state('input_select.scene_schlafzimmer', 'empty') %}
-                  18
-                {% else %}
-                  21
-                {% endif %}
-              '';
+              data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "empty") "18" "20";
             }];
           }
           {
             alias = "Wohnzimmerlichter";
-            trigger = [{ platform = "state"; entity_id = "input_select.scene_wohnzimmer"; } { platform = "state"; entity_id = "sun.sun"; }];
+            trigger = with triggers; [
+              (modeSwitchTrigger modes.wohnzimmer)
+              (stateTrigger "sun.sun")
+            ];
             action = [{
-              service = ''
-                {% if is_state('input_select.scene_wohnzimmer', 'force-active') or (is_state('input_select.scene_wohnzimmer', 'active') and state_attr('sun.sun', 'elevation') < 6) %}
-                homeassistant.turn_on
-                {% else %}
-                homeassistant.turn_off
-                {% endif %}'';
+              service = jinja.if'
+                (jinja.or
+                  (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "force_active")
+                  (jinja.and
+                    (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "active")
+                    "state_attr('sun.sun', 'elevation') < 6"))
+                "homeassistant.turn_on"
+                "homeassistant.turn_off";
               target.entity_id = "group.wohnzimmer_lights";
             }];
           }
           {
             alias = "Schlafzimmerlichter";
-            trigger = [{ platform = "state"; entity_id = "input_select.scene_schlafzimmer"; } { platform = "state"; entity_id = "sun.sun"; }];
+            trigger = with triggers; [
+              (modeSwitchTrigger modes.schlafzimmer)
+              (stateTrigger "sun.sun")
+            ];
             action = [{
-              service = ''
-                {% if is_state('input_select.scene_schlafzimmer', 'force-active') or (is_state('input_select.scene_schlafzimmer', 'active') and state_attr('sun.sun', 'elevation') < 6) %}
-                homeassistant.turn_on
-                {% else %}
-                homeassistant.turn_off
-                {% endif %}'';
+              service = jinja.if'
+                (jinja.or
+                  (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "force_active")
+                  (jinja.and
+                    (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "active")
+                    "state_attr('sun.sun', 'elevation') < 6"))
+                "homeassistant.turn_on"
+                "homeassistant.turn_off";
               target.entity_id = "group.schlafzimmer_lights";
             }];
           }
           {
             alias = "Schlafzimmer vorheizen";
             trigger = [{ platform = "time"; at = "19:00:00"; } { platform = "time"; at = "04:00:00"; }];
-            condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "empty"; } (conditions.modeIs modes.flat "active")];
-            action = [{ service = "input_select.select_option"; data.option = "heat"; entity_id = "input_select.scene_schlafzimmer"; }];
+            condition = [
+              (conditions.modeIs modes.schlafzimmer "empty")
+              (conditions.modeIs modes.flat "active")
+            ];
+            action = [ (actions.setMode modes.schlafzimmer "heat") ];
           }
           {
             alias = "Schlafzimmer nachts kühl";
             trigger = [{ platform = "time"; at = "01:00:00"; }];
-            condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "heat"; } (conditions.modeIs modes.flat "active")];
-            action = [{ service = "input_select.select_option"; data.option = "empty"; entity_id = "input_select.scene_schlafzimmer"; }];
+            condition = [
+              (conditions.modeIs modes.schlafzimmer "heat")
+              (conditions.modeIs modes.flat "active")
+            ];
+            action = [ (actions.setMode modes.schlafzimmer "empty") ];
           }
           {
             alias = "Morgens Licht an";
             trigger = [{ platform = "time"; at = "08:00:00"; }];
-            condition = [{ condition = "state"; entity_id = "input_select.scene_schlafzimmer"; state = "heat"; } (conditions.modeIs modes.flat "active")];
-            action = [{ service = "input_select.select_option"; data.option = "active"; entity_id = "input_select.scene_schlafzimmer"; }];
+            condition = [
+              (conditions.modeIs modes.schlafzimmer "heat")
+              (conditions.modeIs modes.flat "active")
+            ];
+            action = [ (actions.setMode modes.schlafzimmer "active") ];
           }
           # Warnung für offene Fenster oder Türen
           # Warnungen für niedrige Akkustände
@@ -312,18 +331,6 @@ in
           { sensor = [{ state = "{% if is_state('climate.wohnzimmer', 'heat') %}1{% else %}0{% endif %}"; name = "Wohnzimmerheizung"; }]; }
           { sensor = [{ state = "{% if is_state('climate.kueche', 'heat') %}1{% else %}0{% endif %}"; name = "Küchenheizung"; }]; }
           { sensor = [{ state = "{{ state_attr('climate.wohnzimmer', 'current_temperature') }}"; name = "Temperatur Wohnzimmer"; }]; }
-          { binary_sensor = [{ state = "{% if is_state('input_select.scene_schlafzimmer', 'empty') %}1{% else %}0{% endif %}"; name = "schlafzimmer_empty"; }]; }
-          { binary_sensor = [{ state = "{% if is_state('input_select.scene_schlafzimmer', 'heat') %}1{% else %}0{% endif %}"; name = "schlafzimmer_heat"; }]; }
-          { binary_sensor = [{ state = "{% if is_state('input_select.scene_schlafzimmer', 'active') %}1{% else %}0{% endif %}"; name = "schlafzimmer_active"; }]; }
-          { binary_sensor = [{ state = "{% if is_state('input_select.scene_schlafzimmer', 'force-active') %}1{% else %}0{% endif %}"; name = "schlafzimmer_force_active"; }]; }
-          { binary_sensor = [{ state = "{% if is_state('input_select.scene_wohnzimmer', 'empty') %}1{% else %}0{% endif %}"; name = "wohnzimmer_empty"; }]; }
-          { binary_sensor = [{ state = "{% if is_state('input_select.scene_wohnzimmer', 'heat') %}1{% else %}0{% endif %}"; name = "wohnzimmer_heat"; }]; }
-          { binary_sensor = [{ state = "{% if is_state('input_select.scene_wohnzimmer', 'active') %}1{% else %}0{% endif %}"; name = "wohnzimmer_active"; }]; }
-          { binary_sensor = [{ state = "{% if is_state('input_select.scene_wohnzimmer', 'force-active') %}1{% else %}0{% endif %}"; name = "wohnzimmer_force_active"; }]; }
-          { binary_sensor = [{ state = "{% if is_state('input_select.scene_kueche', 'empty') %}1{% else %}0{% endif %}"; name = "kueche_empty"; }]; }
-          { binary_sensor = [{ state = "{% if is_state('input_select.scene_kueche', 'heat') %}1{% else %}0{% endif %}"; name = "kueche_heat"; }]; }
-          { binary_sensor = [{ state = "{% if is_state('input_select.scene_kueche', 'active') %}1{% else %}0{% endif %}"; name = "kueche_active"; }]; }
-          { binary_sensor = [{ state = "{% if is_state('input_select.scene_kueche', 'force-active') %}1{% else %}0{% endif %}"; name = "kueche_force_active"; }]; }
         ];
         input_number = {
           target_temperature_schlafzimmer = {
@@ -346,20 +353,6 @@ in
             min = "17";
             max = "25";
             step = "0.25";
-          };
-        };
-        input_select = {
-          scene_schlafzimmer = {
-            name = "Szene Schlafzimmer";
-            options = [ "empty" "heat" "active" "force-active" ];
-          };
-          scene_wohnzimmer = {
-            name = "Szene Wohnzimmer";
-            options = [ "empty" "heat" "active" "force-active" ];
-          };
-          scene_kueche = {
-            name = "Szene Kueche";
-            options = [ "empty" "heat" "active" "force-active" ];
           };
         };
         system_health = { };
@@ -410,11 +403,21 @@ in
               state_filter = [ "on" ];
             }
           ];
-          badges = [
-            { type = "state-label"; entity = "input_select.scene_wohnzimmer"; name = "Wohnzimmer"; tap_action = { action = "call-service"; service = "input_select.select_next"; service_data.entity_id = "input_select.scene_wohnzimmer"; }; }
-            { type = "state-label"; entity = "input_select.scene_kueche"; name = "Küche"; tap_action = { action = "call-service"; service = "input_select.select_next"; service_data.entity_id = "input_select.scene_kueche"; }; }
-            { type = "state-label"; entity = "input_select.scene_schlafzimmer"; name = "Schlafzimmer"; tap_action = { action = "call-service"; service = "input_select.select_next"; service_data.entity_id = "input_select.scene_schlafzimmer"; }; }
-          ];
+          badges =
+            let
+              badge = mode:
+                {
+                  type = "state-label";
+                  entity = util.modeSelectEntity mode;
+                  name = mode.title;
+                  tap_action = tap_actions.cycleMode mode;
+                };
+            in
+            [
+              (badge modes.wohnzimmer)
+              (badge modes.kueche)
+              (badge modes.schlafzimmer)
+            ];
           envstack =
             {
               type = "vertical-stack";
@@ -440,18 +443,7 @@ in
             {
               type = "vertical-stack";
               cards = [
-                {
-                  type = "glance";
-                  title = "Wohnzimmer";
-                  columns = 4;
-                  show_state = false;
-                  entities = [
-                    { entity = "binary_sensor.wohnzimmer_empty"; name = "Leer"; icon = "mdi:account-off"; tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_wohnzimmer"; option = "empty"; }; }; }
-                    { entity = "binary_sensor.wohnzimmer_heat"; name = "Heizen"; icon = "mdi:radiator"; tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_wohnzimmer"; option = "heat"; }; }; }
-                    { entity = "binary_sensor.wohnzimmer_active"; name = "Aktiv"; icon = "mdi:account"; tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_wohnzimmer"; option = "active"; }; }; }
-                    { entity = "binary_sensor.wohnzimmer_force_active"; name = "Alles An"; icon = "mdi:lightbulb-on"; tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_wohnzimmer"; option = "force-active"; }; }; }
-                  ];
-                }
+                (cards.modeSwitcher modes.wohnzimmer)
                 {
                   type = "custom:mini-graph-card";
                   entities = [
@@ -478,25 +470,14 @@ in
                 }
                 {
                   type = "logbook";
-                  entities = [ "input_select.scene_wohnzimmer" "binary_sensor.wohnzimmerfenster" "switch.lichterkette_fernseher" "switch.lichterkette_schrank" "switch.blaue_lichterkette" ];
+                  entities = [ (util.modeSelectEntity modes.wohnzimmer) "binary_sensor.wohnzimmerfenster" "switch.lichterkette_fernseher" "switch.lichterkette_schrank" "switch.blaue_lichterkette" ];
                 }
               ];
             };
           kuechenstack = {
             type = "vertical-stack";
             cards = [
-              {
-                type = "glance";
-                title = "Küche";
-                columns = 4;
-                show_state = false;
-                entities = [
-                  { entity = "binary_sensor.kueche_empty"; name = "Leer"; icon = "mdi:account-off"; tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_kueche"; option = "empty"; }; }; }
-                  { entity = "binary_sensor.kueche_heat"; name = "Heizen"; icon = "mdi:radiator"; tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_kueche"; option = "heat"; }; }; }
-                  { entity = "binary_sensor.kueche_active"; name = "Aktiv"; icon = "mdi:account"; tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_kueche"; option = "active"; }; }; }
-                  { entity = "binary_sensor.kueche_force_active"; name = "Alles An"; icon = "mdi:lightbulb-on"; tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_kueche"; option = "force-active"; }; }; }
-                ];
-              }
+              (cards.modeSwitcher modes.kueche)
               {
                 type = "custom:mini-graph-card";
                 entities = [
@@ -548,7 +529,7 @@ in
               }
               {
                 type = "logbook";
-                entities = [ "input_select.scene_kueche" "climate.kueche" "binary_sensor.kuechenfenster" ];
+                entities = [ (util.modeSelectEntity modes.kueche) "climate.kueche" "binary_sensor.kuechenfenster" ];
               }
             ];
           };
@@ -556,18 +537,7 @@ in
             {
               type = "vertical-stack";
               cards = [
-                {
-                  type = "glance";
-                  title = "Schlafzimmer";
-                  columns = 4;
-                  show_state = false;
-                  entities = [
-                    { entity = "binary_sensor.schlafzimmer_empty"; name = "Leer"; icon = "mdi:account-off"; tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_schlafzimmer"; option = "empty"; }; }; }
-                    { entity = "binary_sensor.schlafzimmer_heat"; name = "Heizen"; icon = "mdi:radiator"; tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_schlafzimmer"; option = "heat"; }; }; }
-                    { entity = "binary_sensor.schlafzimmer_active"; name = "Aktiv"; icon = "mdi:account"; tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_schlafzimmer"; option = "active"; }; }; }
-                    { entity = "binary_sensor.schlafzimmer_force_active"; name = "Alles An"; icon = "mdi:lightbulb-on"; tap_action = { action = "call-service"; service = "input_select.select_option"; service_data = { entity_id = "input_select.scene_schlafzimmer"; option = "force-active"; }; }; }
-                  ];
-                }
+                (cards.modeSwitcher modes.schlafzimmer)
                 {
                   type = "custom:mini-graph-card";
                   entities = [
@@ -620,7 +590,7 @@ in
                 }
                 {
                   type = "logbook";
-                  entities = [ "input_select.scene_schlafzimmer" "switch.weihnachtsstern_schlafzimmer" "switch.luftentfeuchter" "climate.schlafzimmer" "binary_sensor.schlafzimmerfenster" ];
+                  entities = [ (util.modeSelectEntity modes.schlafzimmer) "switch.weihnachtsstern_schlafzimmer" "switch.luftentfeuchter" "climate.schlafzimmer" "binary_sensor.schlafzimmerfenster" ];
                 }
               ];
             };
@@ -723,6 +693,14 @@ in
         {
           views = [
             { icon = "mdi:city"; inherit badges; cards = [ envstack ]; }
+            {
+              icon = "mdi:switch"; inherit alertbadges; cards = [
+              (cards.modeSwitcher modes.wohnzimmer)
+              (cards.modeSwitcher modes.kueche)
+              (cards.modeSwitcher modes.schlafzimmer)
+              (cards.modeSwitcher modes.flat)
+            ];
+            }
             { icon = "mdi:floor-plan"; inherit alertbadges; cards = [ wohnzimmerstack kuechenstack schlafzimmerstack badstack ]; }
             { icon = "mdi:sofa"; inherit badges; cards = [ wohnzimmerstack ]; }
             { icon = "mdi:countertop"; inherit badges; cards = [ kuechenstack ]; }
