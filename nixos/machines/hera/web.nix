@@ -28,7 +28,7 @@ in
           };
         };
         "hera.m-0.eu" = {
-          defaultHost = true;
+          default = true;
           enableACME = true;
           inherit locations;
         };
