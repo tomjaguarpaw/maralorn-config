@@ -301,12 +301,12 @@ in
           }
           {
             alias = "Morgens Licht an";
-            trigger = [{ platform = "time"; at = "08:00:00"; }];
+            trigger = [{ platform = "time"; at = "07:00:00"; }];
             condition = [
               (conditions.modeIs modes.schlafzimmer "heat")
               (conditions.modeIs modes.flat "active")
             ];
-            action = [ (actions.setMode modes.schlafzimmer "active") ];
+            action = [ (actions.setMode modes.schlafzimmer "force_active") ];
           }
           # Warnung für offene Fenster oder Türen
           # Warnungen für niedrige Akkustände
