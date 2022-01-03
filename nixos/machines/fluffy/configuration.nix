@@ -59,8 +59,9 @@ in
     "z / 755 - - - -"
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
-    "d /disk/persist/var/lib/hass - - - - -"
+    "d /disk/persist/cups - - - - -"
     "d /tmp/scans/scans 777 ftp ftp - -"
+    "L+ /var/lib/cups - - - - /disk/persist/cups"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
     "L+ /etc/ssh - - - - /disk/persist/etc/ssh"
   ];
