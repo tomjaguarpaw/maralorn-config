@@ -28,8 +28,8 @@ in
           };
         };
         "hera.m-0.eu" = {
+          defaultHost = true;
           enableACME = true;
-          forceSSL = true;
           inherit locations;
         };
         "maralorn.de" = {
