@@ -28,7 +28,9 @@ in
           };
         };
         "hera.m-0.eu" = {
+          serverAliases = [ "malte-und-clai.re" ];
           default = true;
+          enableSSL = true;
           enableACME = true;
           inherit locations;
         };
