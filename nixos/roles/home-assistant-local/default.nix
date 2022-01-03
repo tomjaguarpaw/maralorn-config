@@ -692,7 +692,6 @@ in
         in
         {
           views = [
-            { icon = "mdi:city"; inherit badges; cards = [ envstack ]; }
             {
               icon = "mdi:switch"; inherit alertbadges; cards = [
               (cards.modeSwitcher modes.wohnzimmer)
@@ -701,12 +700,13 @@ in
               (cards.modeSwitcher modes.flat)
             ];
             }
-            { icon = "mdi:floor-plan"; inherit alertbadges; cards = [ wohnzimmerstack kuechenstack schlafzimmerstack badstack ]; }
             { icon = "mdi:sofa"; inherit badges; cards = [ wohnzimmerstack ]; }
             { icon = "mdi:countertop"; inherit badges; cards = [ kuechenstack ]; }
             { icon = "mdi:bed-king"; inherit badges; cards = [ schlafzimmerstack ]; }
             { icon = "mdi:shower-head"; inherit badges; cards = [ badstack ]; }
             { icon = "mdi:door-closed"; inherit badges; cards = [ flurstack ]; }
+            { icon = "mdi:city"; inherit badges; cards = [ envstack ]; }
+            { icon = "mdi:floor-plan"; inherit alertbadges; cards = [ wohnzimmerstack kuechenstack schlafzimmerstack badstack ]; }
           ];
         };
     };
