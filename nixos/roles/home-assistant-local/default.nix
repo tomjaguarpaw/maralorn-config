@@ -111,14 +111,14 @@ in
                   conditions = [{
                     condition = "or";
                     conditions = [
-                      { condition = "numeric_state"; entity_id = "sensor.schlafzimmer_humidity"; below = 64; }
+                      { condition = "numeric_state"; entity_id = "sensor.schlafzimmer_humidity"; below = 69; }
                       { condition = "state"; entity_id = "binary_sensor.schlafzimmerfenster"; state = "on"; }
                     ];
                   }];
                   sequence = { service = "switch.turn_off"; target.entity_id = "switch.luftentfeuchter"; };
                 }
                 {
-                  conditions = [{ condition = "numeric_state"; entity_id = "sensor.schlafzimmer_humidity"; above = 66; }];
+                  conditions = [{ condition = "numeric_state"; entity_id = "sensor.schlafzimmer_humidity"; above = 71; }];
                   sequence = { service = "switch.turn_on"; target.entity_id = "switch.luftentfeuchter"; };
                 }
               ];
