@@ -81,7 +81,7 @@ in
     enableManageSieve = true;
     fqdn = "hera.m-0.eu";
     rewriteMessageId = true;
-    domains = [ "m-0.eu" "maralorn.de" "choreutes.de" "mathechor.de" "lists.maralorn.de" ];
+    domains = [ "m-0.eu" "maralorn.de" "choreutes.de" "mathechor.de" "lists.maralorn.de" "malte-und-clai.re" ];
     forwards = pkgs.privateValue { } "mail/forwards";
     loginAccounts = pkgs.privateValue { } "mail/users";
     hierarchySeparator = "/";
