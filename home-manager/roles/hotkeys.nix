@@ -109,4 +109,5 @@ in
       Close = "ssh door@burbon.w17.io close";
     };
   }
+  { DarkKitty = fork "kitty -o 'background #000000' -o 'foreground #ffffff'"; }
 ]
