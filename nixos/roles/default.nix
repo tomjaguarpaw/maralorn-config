@@ -95,7 +95,7 @@
 
   services = {
     logind.killUserProcesses = false;
-    journald.extraConfig = "SystemMaxUse=512M";
+    journald.extraConfig = "SystemMaxUse=5G";
     prometheus.exporters = {
       node = {
         enable = true;
