@@ -114,11 +114,21 @@ in
                       { condition = "numeric_state"; entity_id = "sensor.schlafzimmer_humidity"; below = 69; }
                       { condition = "state"; entity_id = "binary_sensor.schlafzimmerfenster"; state = "on"; }
                     ];
-                  }];
+                  }
+                    {
+                      condition = "or";
+                      conditions = [
+                        { condition = "numeric_state"; entity_id = "sensor.schlafzimmer_humidity"; below = 65; }
+                        { condition = "state"; entity_id = "binary_sensor.schlafzimmerfenster"; state = "on"; }
+                        (conditions.modeIs modes.schlafzimmer "active")
+                        (conditions.modeIs modes.schlafzimmer "force-active")
+                        (conditions.modeIs modes.schlafzimmer "empty")
+                      ];
+                    }];
                   sequence = { service = "switch.turn_off"; target.entity_id = "switch.luftentfeuchter"; };
                 }
                 {
-                  conditions = [{ condition = "numeric_state"; entity_id = "sensor.schlafzimmer_humidity"; above = 71; }];
+                  conditions = [{ condition = "numeric_state"; entity_id = "sensor.schlafzimmer_humidity"; above = 70; }];
                   sequence = { service = "switch.turn_on"; target.entity_id = "switch.luftentfeuchter"; };
                 }
               ];
