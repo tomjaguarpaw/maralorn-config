@@ -13,7 +13,17 @@ in
       { Pythia = "pythia"; }
     ];
   }
-  { Research = { Zotero = fork "zotero"; }; }
+  {
+    Research = {
+      Zotero = fork "zotero";
+      Launch = pkgs.writeShellScript "research" ''
+        cd ~/git/promotion
+        kitty vim chapters &
+        evince print.pdf &
+        flix develop -c flix run
+      '';
+    };
+  }
   {
     Power = {
       Shutdown = "systemctl poweroff";
