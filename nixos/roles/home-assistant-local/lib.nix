@@ -22,6 +22,10 @@ rec {
       cycleMode = mode: fromServiceAction (actions.cycleMode mode);
     };
   actions = {
+    notify = message: {
+      service = "notify.notify";
+      data = { inherit message; };
+    };
     cycleMode = mode: {
       service = "input_select.select_next";
       entity_id = util.modeSelectEntity mode;

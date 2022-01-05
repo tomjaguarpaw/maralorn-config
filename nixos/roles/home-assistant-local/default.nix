@@ -314,7 +314,39 @@ in
             ];
             action = [ (actions.setMode modes.schlafzimmer "force_active") ];
           }
-          # Warnung für offene Fenster oder Türen
+          {
+            alias = "Warnung bei lange offenem Fenster";
+            trigger = map (name: triggers.stateTrigger "binary_sensor.${name}" // { to = "on"; for = "00:10:00"; })
+              [
+                "kuechenfenster"
+                "wohnzimmerfenster"
+                "schlafzimmerfenster"
+                "wohnungstuer"
+              ];
+            action = [ (actions.notify "{{ trigger.to_state.name }} ist seit mehr als 10 Minuten offen.") ];
+          }
+          {
+            alias = "Warnung bei niedrigem Akkustand";
+            trigger =
+              {
+                platform = "numeric_state";
+                below = "25";
+                entity_id = map (name: "sensor.${name}") [
+                  "wohnzimmerfenster_battery"
+                  "thermostat_kueche_battery"
+                  "thermostat_schlafzimmer_battery"
+                  "thermostat_wohnzimmer_battery"
+                  "klimasensor_bad_battery"
+                  "klimasensor_kueche_battery"
+                  "klimasensor_schlafzimmer_battery"
+                  "kuechenfenster_battery"
+                  "pegasus_battery_level"
+                  "schlafzimmerfenster_battery"
+                  "wohnungstuer_battery"
+                ];
+              };
+            action = [ (actions.notify "{{ trigger.to_state.name }} ist unter 25%.") ];
+          }
           # Warnungen für niedrige Akkustände
           # Warnungen für hohe Luftfeuchtigkeit
         ];
