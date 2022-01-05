@@ -20,6 +20,7 @@ in
         cd ~/git/promotion
         kitty vim chapters &
         evince print.pdf &
+        zotero &
         flix develop -c flix run
       '';
     };
