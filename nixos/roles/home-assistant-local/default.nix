@@ -455,7 +455,7 @@ in
               (badge modes.wohnzimmer)
               (badge modes.kueche)
               (badge modes.schlafzimmer)
-            ];
+            ] ++ alertbadges;
           envstack =
             {
               type = "vertical-stack";
@@ -731,12 +731,14 @@ in
         {
           views = [
             {
-              icon = "mdi:switch"; inherit alertbadges; cards = [
-              (cards.modeSwitcher modes.wohnzimmer)
-              (cards.modeSwitcher modes.kueche)
-              (cards.modeSwitcher modes.schlafzimmer)
-              (cards.modeSwitcher modes.flat)
-            ];
+              icon = "mdi:switch";
+              badges = alertbadges;
+              cards = [
+                (cards.modeSwitcher modes.wohnzimmer)
+                (cards.modeSwitcher modes.kueche)
+                (cards.modeSwitcher modes.schlafzimmer)
+                (cards.modeSwitcher modes.flat)
+              ];
             }
             { icon = "mdi:sofa"; inherit badges; cards = [ wohnzimmerstack ]; }
             { icon = "mdi:countertop"; inherit badges; cards = [ kuechenstack ]; }
@@ -744,7 +746,7 @@ in
             { icon = "mdi:shower-head"; inherit badges; cards = [ badstack ]; }
             { icon = "mdi:door-closed"; inherit badges; cards = [ flurstack ]; }
             { icon = "mdi:city"; inherit badges; cards = [ envstack ]; }
-            { icon = "mdi:floor-plan"; inherit alertbadges; cards = [ wohnzimmerstack kuechenstack schlafzimmerstack badstack ]; }
+            { icon = "mdi:floor-plan"; badges = alertbadges; cards = [ wohnzimmerstack kuechenstack schlafzimmerstack badstack ]; }
           ];
         };
     };
