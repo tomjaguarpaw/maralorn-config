@@ -30,7 +30,7 @@ in
         "hera.m-0.eu" = {
           serverAliases = [ "malte-und-clai.re" ];
           default = true;
-          enableSSL = true;
+          forceSSL = true;
           enableACME = true;
           inherit locations;
         };
