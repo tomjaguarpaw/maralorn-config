@@ -22,6 +22,7 @@ let
     ".local/share/waydroid"
     ".mozilla/firefox/maralorn-default"
     ".minecraft"
+    ".newsboat"
     ".ssh"
     ".task"
     ".vdirsyncer"

@@ -25,6 +25,8 @@
       abcde beets zbar
 
       # media
-      ncpamixer pavucontrol deluge gmpc vlc mpv youtubeDL syncplay;
+      ncpamixer pavucontrol deluge gmpc vlc mpv youtubeDL syncplay
+
+      newsboat;
   };
 }
