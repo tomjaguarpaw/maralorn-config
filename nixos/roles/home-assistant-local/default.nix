@@ -47,6 +47,26 @@ let
         options = { inherit empty heat active force_active; };
       };
     };
+  fenster = map (name: "binary_sensor.${name}")
+    [
+      "kuechenfenster"
+      "wohnzimmerfenster"
+      "schlafzimmerfenster"
+      "wohnungstuer"
+    ];
+  batteries = map (name: "sensor.${name}") [
+    "wohnzimmerfenster_battery"
+    "thermostat_kueche_battery"
+    "thermostat_schlafzimmer_battery"
+    "thermostat_wohnzimmer_battery"
+    "klimasensor_bad_battery"
+    "klimasensor_kueche_battery"
+    "klimasensor_schlafzimmer_battery"
+    "kuechenfenster_battery"
+    "pegasus_battery_level"
+    "schlafzimmerfenster_battery"
+    "wohnungstuer_battery"
+  ];
   inherit (import ../../../nix/sources.nix) nixos-unstable;
   homeAssistantDir = "/disk/persist/home-assistant";
 in
@@ -316,13 +336,7 @@ in
           }
           {
             alias = "Warnung bei lange offenem Fenster";
-            trigger = map (name: triggers.stateTrigger "binary_sensor.${name}" // { to = "on"; for = "00:10:00"; })
-              [
-                "kuechenfenster"
-                "wohnzimmerfenster"
-                "schlafzimmerfenster"
-                "wohnungstuer"
-              ];
+            trigger = map (name: triggers.stateTrigger name // { to = "on"; for = "00:10:00"; }) fenster;
             action = [ (actions.notify "{{ trigger.to_state.name }} ist seit mehr als 10 Minuten offen.") ];
           }
           {
@@ -331,19 +345,7 @@ in
               {
                 platform = "numeric_state";
                 below = "25";
-                entity_id = map (name: "sensor.${name}") [
-                  "wohnzimmerfenster_battery"
-                  "thermostat_kueche_battery"
-                  "thermostat_schlafzimmer_battery"
-                  "thermostat_wohnzimmer_battery"
-                  "klimasensor_bad_battery"
-                  "klimasensor_kueche_battery"
-                  "klimasensor_schlafzimmer_battery"
-                  "kuechenfenster_battery"
-                  "pegasus_battery_level"
-                  "schlafzimmerfenster_battery"
-                  "wohnungstuer_battery"
-                ];
+                entity_id = batteries;
               };
             action = [ (actions.notify "{{ trigger.to_state.name }} ist unter 25%.") ];
           }
@@ -437,8 +439,13 @@ in
           alertbadges = [
             {
               type = "entity-filter";
-              entities = [ "binary_sensor.wohnzimmerfenster" "binary_sensor.schlafzimmerfenster" "binary_sensor.kuechenfenster" "binary_sensor.wohnungstuer" ];
+              entities = fenster;
               state_filter = [ "on" ];
+            }
+            {
+              type = "entity-filter";
+              entities = batteries;
+              state_filter = [{ value = 25; operator = "<"; }];
             }
           ];
           badges =
