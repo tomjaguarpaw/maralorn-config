@@ -79,6 +79,12 @@ in
       );
       configDir = homeAssistantDir;
       config = {
+        matrix = {
+          homeserver = "https://matrix.maralorn.de";
+          username = "@marabot:maralorn.de";
+          password = pkgs.privateValue "" "matrix/marabot-pw";
+        };
+        notify = [{ platform = "matrix"; default_room = "#fluffy:maralorn.de"; }];
         group = {
           wohnzimmer_lights = {
             name = "Lichter Wohnzimmer";
