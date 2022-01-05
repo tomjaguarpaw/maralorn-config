@@ -33,6 +33,10 @@ in
             double_puppet_server_map = { };
             login_shared_secret_map = { };
           };
+          signal = {
+            socket_path = "/run/signald/signald.sock";
+            outgoing_attachment_dir = "/var/lib/signald/tmp";
+          };
 
           logging = {
             version = 1;
@@ -164,7 +168,6 @@ in
         ProtectKernelModules = true;
         ProtectControlGroups = true;
         User = "mautrix-signal";
-        Group = "signald";
 
         CapabilityBoundingSet = [ "CAP_CHOWN" ];
         AmbientCapabilities = CapabilityBoundingSet;
@@ -173,7 +176,8 @@ in
         LockPersonality = true;
         RestrictRealtime = true;
 
-        SupplementaryGroups = [ "signald" ];
+        ReadWritePaths = [ "/var/lib/signald" ];
+
         BindPaths = "/var/lib/signald";
         StateDirectory = baseNameOf dataDir;
         StateDirectoryMode = "771";
@@ -184,17 +188,15 @@ in
             --config='${settingsFile}'
         '';
       };
-      unitConfig = {
-        JoinsNamespaceOf = "signald.service";
-      };
 
       restartTriggers = [ settingsFileUnsubstituted ];
     };
     users.users.mautrix-signal = {
       description = "Service user for the Matrix-Signal bridge";
-      group = "signald";
       isSystemUser = true;
+      group = "mautrix-signal";
     };
+    users.groups.mautrix-signal = { };
   };
 
   meta.maintainers = with maintainers; [ expipiplus1 ];

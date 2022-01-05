@@ -4,7 +4,12 @@
     ./mautrix-signal-module.nix
   ];
 
-  services.signald.enable = true;
+  services.signald = {
+    enable = true;
+    user = "mautrix-signal";
+    group = "mautrix-signal";
+  };
+
 
   services.mautrix-signal = {
     enable = true;
