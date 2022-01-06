@@ -46,7 +46,7 @@
     "nix-output-monitor": {
         "branch": "master",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "36db53981fc25d30cac9776c682849d41a2d69de",
+        "rev": "401d5bbc12225c30ec4ff12a3e640817242e46a0",
         "type": "git"
     },
     "nixos-19.09": {
@@ -110,10 +110,10 @@
         "homepage": "",
         "owner": "obsidiansystems",
         "repo": "obelisk",
-        "rev": "f0acb10c066a29d0ef14cd27ddcd43783b42b330",
-        "sha256": "0mb3v8scn3gkcj6gidp1bnxa7c1ljbgbl90rqw2g4lfsxvhc2xkg",
+        "rev": "e7ccc91806b94b424b086bf75087a0a5fd3ff0b5",
+        "sha256": "1xmfz5ck3bg7daxmalvzr4a58zmfrsp1h6y5zcii9ccxqmf3xl6g",
         "type": "tarball",
-        "url": "https://github.com/obsidiansystems/obelisk/archive/f0acb10c066a29d0ef14cd27ddcd43783b42b330.tar.gz",
+        "url": "https://github.com/obsidiansystems/obelisk/archive/e7ccc91806b94b424b086bf75087a0a5fd3ff0b5.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "pre-commit-hooks.nix": {
