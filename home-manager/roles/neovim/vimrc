@@ -132,12 +132,12 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gr <Plug>(coc-references)
 
-nmap <silent> gs :Gstatus<CR>
+nmap <silent> gs :Git status<CR>
 nmap <silent> gu :CocCommand git.chunkUndo<CR>
 nmap <silent> gi :CocCommand git.chunkInfo<CR>
 nmap <silent> ga :CocCommand git.chunkStage<CR>
 nmap <silent> gb :CocCommand git.showCommit<CR>
-nmap <silent> gc :Gcommit<CR>
+nmap <silent> gc :Git commit<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
