@@ -96,6 +96,9 @@ let g:languagetool_server_command = "languagetool-http-server"
 
 colorscheme PaperColor
 
+highlight CursorColumn ctermbg=8
+highlight CursorLine ctermbg=8
+
 " if hidden is not set, TextEdit might fail.
 set hidden
 
@@ -218,24 +221,6 @@ nnoremap <a-right> :bn<CR>
 inoremap <a-left> <ESC>:bp<CR>
 inoremap <a-right> <ESC>:bn<CR>
 
-"let $FZF_DEFAULT_OPTS .= '--border --layout=reverse'
-"function! FloatingFZF()
-"  let width = float2nr(&columns * 0.9)
-"  let height = float2nr(&lines * 0.6)
-"  let opts = { 'relative': 'editor',
-"         \ 'row': (&lines - height) / 2,
-"         \ 'col': (&columns - width) / 2,
-"         \ 'width': width,
-"         \ 'height': height,
-"         \ 'style': 'minimal'
-"         \}
-"
-"  let win = nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
-"  call setwinvar(win, '&winhighlight', 'NormalFloat:TabLine')
-"endfunction
-"
-"let g:fzf_layout = { 'window': 'call FloatingFZF()' }
-
 " Use <tab> for select selections ranges, needs server support, like: coc-tsserver, coc-python
 nnoremap <silent> <TAB> <Plug>(coc-range-select)
 xmap <silent> <TAB> <Plug>(coc-range-select)
@@ -245,12 +230,10 @@ xmap <silent> <S-TAB> <Plug>(coc-range-select-backword)
 command! -nargs=0 Format :call CocAction('format')
 
 " Use `:Fold` to fold current buffer
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+command! -nargs=? Fold :call CocAction('fold', <f-args>)
 
 " use `:OR` for organize import of current buffer
-command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
-
-autocmd CursorHold * silent call CocActionAsync('highlight')
+command! -nargs=0 OR   :call CocAction('runCommand', 'editor.action.organizeImport')
 
 imap <ESC>[1~ <HOME>
 imap <ESC>[4~ <End>
