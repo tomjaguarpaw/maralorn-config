@@ -99,6 +99,7 @@ in
       );
       configDir = homeAssistantDir;
       config = {
+        shopping_list = { };
         matrix = {
           homeserver = "https://matrix.maralorn.de";
           username = "@marabot:maralorn.de";
