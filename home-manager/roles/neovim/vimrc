@@ -5,9 +5,17 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#nvimlsp#enabled = 0
 let g:tex_flavor = 'latex'
 
-nmap <space>e :CocCommand explorer --no-toggle<CR>
+function! MyExplorer()
+  if &filetype == 'coc-explorer'
+    wincmd w
+  else
+    CocCommand explorer --no-toggle
+  endif
+endfunction
 
-set foldcolumn=1
+nnoremap <space>e :call MyExplorer()<CR>
+
+set nofoldenable
 set background=light
 set autoindent
 set nosmartindent
@@ -124,20 +132,20 @@ inoremap <silent><expr> <c-space> coc#refresh()
 " Coc only does snippet and additional edit on confirm.
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
-nmap <silent> gp <Plug>(coc-diagnostic-prev)
-nmap <silent> gn <Plug>(coc-diagnostic-next)
+nnoremap <silent> gp <Plug>(coc-diagnostic-prev)
+nnoremap <silent> gn <Plug>(coc-diagnostic-next)
 
 " Remap keys for gotos
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gr <Plug>(coc-references)
+nnoremap <silent> gd <Plug>(coc-definition)
+nnoremap <silent> gy <Plug>(coc-type-definition)
+nnoremap <silent> gr <Plug>(coc-references)
 
-nmap <silent> gs :Git status<CR>
-nmap <silent> gu :CocCommand git.chunkUndo<CR>
-nmap <silent> gi :CocCommand git.chunkInfo<CR>
-nmap <silent> ga :CocCommand git.chunkStage<CR>
-nmap <silent> gb :CocCommand git.showCommit<CR>
-nmap <silent> gc :Git commit<CR>
+nnoremap <silent> gs :Git status<CR>
+nnoremap <silent> gu :CocCommand git.chunkUndo<CR>
+nnoremap <silent> gi :CocCommand git.chunkInfo<CR>
+nnoremap <silent> ga :CocCommand git.chunkStage<CR>
+nnoremap <silent> gb :CocCommand git.showCommit<CR>
+nnoremap <silent> gc :Git commit<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -148,14 +156,14 @@ function! s:show_documentation()
   endif
 endfunction
 
-nmap <silent> <space>i :call <SID>show_documentation()<CR>
+nnoremap <silent> <space>i :call <SID>show_documentation()<CR>
 
 " Remap for rename current word
-nmap <space>r <Plug>(coc-rename)
+nnoremap <space>r <Plug>(coc-rename)
 
 " Remap for format selected region
 xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+nnoremap <leader>f  <Plug>(coc-format-selected)
 
 augroup mygroup
   autocmd!
@@ -167,9 +175,9 @@ augroup end
 
 " Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
 xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <silent> <space>f  :Format<CR>
-nmap <space>l  <Plug>(coc-codelens-action)
+nnoremap <leader>a  <Plug>(coc-codeaction-selected)
+nnoremap <silent> <space>f  :Format<CR>
+nnoremap <space>l  <Plug>(coc-codelens-action)
 
 " Create mappings for function text object, requires document symbols feature of languageserver.
 
@@ -179,13 +187,31 @@ omap if <Plug>(coc-funcobj-i)
 omap af <Plug>(coc-funcobj-a)
 
 " FZF ctrl-p style search
-nmap <space>p :Files<CR>
-nmap <space>g :Rg<CR>
-nmap <space>h :History<CR>
-nmap <space>b :Buffers<CR>
-nmap <space>k :qa<CR>
-nmap <space>q :q<CR>
-nmap <space>s :w<CR>
+nnoremap <space>p :Files<CR>
+nnoremap <space>g :Rg<CR>
+nnoremap <space>h :History<CR>
+nnoremap <space>b :Buffers<CR>
+
+function MyClose()
+   if &readonly
+      quit
+   else
+      write
+      quit
+   endif
+endfunction
+
+function MyCloseAll()
+   if &readonly
+      quitall
+   else
+      wall
+      quitall
+   endif
+endfunction
+nnoremap <space>q :call MyClose()<CR>
+nnoremap <space>k :call MyCloseAll()<CR>
+nnoremap <space>s :w<CR>
 
 nnoremap <a-left> :bp<CR>
 nnoremap <a-right> :bn<CR>
@@ -211,7 +237,7 @@ inoremap <a-right> <ESC>:bn<CR>
 "let g:fzf_layout = { 'window': 'call FloatingFZF()' }
 
 " Use <tab> for select selections ranges, needs server support, like: coc-tsserver, coc-python
-nmap <silent> <TAB> <Plug>(coc-range-select)
+nnoremap <silent> <TAB> <Plug>(coc-range-select)
 xmap <silent> <TAB> <Plug>(coc-range-select)
 xmap <silent> <S-TAB> <Plug>(coc-range-select-backword)
 
@@ -239,8 +265,6 @@ nnoremap <silent> <space>o  :<C-u>CocFzfList outline<cr>
 nnoremap <silent> <space>a  :<C-u>CocFzfList actions<cr>
 " Do default action for next item.
 nnoremap <silent> <space>j  :<C-u>CocNext<CR>
-" Do default action for previous item.
-nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 
 imap <Enter> <CR>
 
