@@ -336,11 +336,6 @@ in
             action = [ (actions.setMode modes.schlafzimmer "force_active") ];
           }
           {
-            alias = "Warnung bei lange offenem Fenster";
-            trigger = map (name: triggers.stateTrigger name // { to = "on"; for = "00:10:00"; }) fenster;
-            action = [ (actions.notify "{{ trigger.to_state.name }} ist seit mehr als 10 Minuten offen.") ];
-          }
-          {
             alias = "Warnung bei niedrigem Akkustand";
             trigger = map
               (limit: {
@@ -350,9 +345,14 @@ in
               }) [ 25 20 15 10 5 4 3 2 1 ];
             action = [ (actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.value }}%.") ];
           }
-          # Warnungen für niedrige Akkustände
           # Warnungen für hohe Luftfeuchtigkeit
-        ];
+        ] ++ (map
+          (minutes:
+            {
+              alias = "Warnung bei lange offenem Fenster";
+              trigger = map (name: triggers.stateTrigger name // { to = "on"; for = "00:${toString minutes}:00"; }) fenster;
+              action = [ (actions.notify "{{ trigger.to_state.name }} ist seit mehr als ${toString minutes} Minuten offen.") ];
+            }) [ 10 20 30 40 50 60 ]);
         history = { };
         image = { };
         sun = { };
