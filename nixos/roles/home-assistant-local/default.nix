@@ -342,13 +342,13 @@ in
           }
           {
             alias = "Warnung bei niedrigem Akkustand";
-            trigger =
-              {
+            trigger = map
+              (limit: {
                 platform = "numeric_state";
-                below = "25";
+                below = toString limit;
                 entity_id = batteries;
-              };
-            action = [ (actions.notify "{{ trigger.to_state.name }} ist unter 25%.") ];
+              }) [ 25 20 15 10 5 4 3 2 1 ];
+            action = [ (actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.value }}%.") ];
           }
           # Warnungen für niedrige Akkustände
           # Warnungen für hohe Luftfeuchtigkeit
