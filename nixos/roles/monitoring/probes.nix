@@ -43,7 +43,10 @@ in
         "bach.vocalensemble-darmstadt.de:25"
         "hera.m-0.eu:25"
       ])
-      (makeProbe "http" [ "hera.m-0.eu:80" ])
+      (makeProbe "http" [
+        "hera.m-0.eu:80"
+        "home.vpn.m-0.eu"
+      ])
       (makeProbe "https" [
         "https://hera.m-0.eu"
 
@@ -58,7 +61,6 @@ in
         "https://element.maralorn.de"
         "https://firefox-sync.maralorn.de"
         "https://fdroid.maralorn.de/index-v1.json"
-        "https://home.maralorn.de"
         "https://matrix.maralorn.de"
         "https://monitoring.maralorn.de"
         "https://rpg.maralorn.de"

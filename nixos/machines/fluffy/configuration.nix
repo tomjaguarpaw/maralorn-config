@@ -14,7 +14,7 @@ in
     ../../roles/fonts.nix
     ../../roles/earlyoom.nix
     ../../roles/standalone
-    ../../roles/home-assistant-local
+    ../../roles/home-assistant
   ];
 
   fileSystems =

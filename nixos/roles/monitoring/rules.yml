@@ -50,10 +50,3 @@ groups:
              severity: warning
           annotations:
              description: "mail queue {{ $labels.queue }} of {{ $labels.name }} has accumulated a waiting time of {{ $value | humanizeDuration }}."
-        - alert: battery_low
-          expr:  label_replace(hass_battery_percent, "device", "$1", "entity", "sensor.(.*)_battery_level") < 25 and on(device) label_replace(hass_binary_sensor_state{entity=~"binary_sensor.*_is_charging"}, "device", "$1", "entity", "binary_sensor.(.*)_is_charging") and on(entity) hass_entity_available == 1
-          for: 5m
-          labels:
-             severity: warning
-          annotations:
-             description: "battery on {{ $labels.device }} is at {{ $value }} while discharging."

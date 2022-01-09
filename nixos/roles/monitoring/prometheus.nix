@@ -15,15 +15,6 @@
         let alert_type = "infrastructure";
         in
         [
-          {
-            job_name = "home-assistant";
-            metrics_path = "/api/prometheus";
-            bearer_token = pkgs.privateValue "" "home-assistant";
-            scheme = "https";
-            static_configs = [{
-              targets = [ "home.maralorn.de" ];
-            }];
-          }
           (
             let name = "matrix-synapse";
             in
