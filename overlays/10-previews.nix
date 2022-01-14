@@ -11,6 +11,6 @@ in
   home-assistant = unstable.home-assistant;
   nix-output-monitor = unstable.nix-output-monitor.overrideAttrs (old: {
     src = super.sources.nix-output-monitor;
-    buildInputs = old.buildInputs ++ (with unstable.haskellPackages; [ streamly optics generic-optics ]);
+    buildInputs = old.buildInputs ++ (with unstable.haskellPackages; [ streamly optics generic-optics these ]);
   });
 }
