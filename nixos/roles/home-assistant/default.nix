@@ -64,6 +64,7 @@ let
     "klimasensor_schlafzimmer_battery"
     "kuechenfenster_battery"
     "pegasus_battery_level"
+    "kalliope_battery_level"
     "schlafzimmerfenster_battery"
     "wohnungstuer_battery"
   ];
