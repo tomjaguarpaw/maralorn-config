@@ -17,7 +17,6 @@ rec {
         cyan = "#0e717c";
         white = "#efefef";
       };
-
       bright = {
         white = "#bcbcbc";
         red = "#d70000";
@@ -29,6 +28,7 @@ rec {
         black = "#005f87";
       };
     };
+
     solarized-light = {
       primary = {
         foreground = "#586e75";
@@ -44,7 +44,6 @@ rec {
         cyan = "#2aa198";
         white = "#eee8d5";
       };
-
       bright = {
         black = "#002b36";
         red = "#cb4b16";
@@ -56,6 +55,7 @@ rec {
         white = "#fdf6e3";
       };
     };
+
     maralorn-dark = {
       primary = {
         foreground = "#dddbff";
