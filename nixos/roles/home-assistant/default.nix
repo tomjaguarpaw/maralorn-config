@@ -343,7 +343,7 @@ in
                 below = toString limit;
                 entity_id = batteries;
               }) [ 25 20 15 10 5 4 3 2 1 ];
-            action = [ (actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.value }}%.") ];
+            action = [ (actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%.") ];
           }
           # Warnungen für hohe Luftfeuchtigkeit
         ] ++ (map
