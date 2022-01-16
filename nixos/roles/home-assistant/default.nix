@@ -140,7 +140,14 @@ in
                     condition = "or";
                     conditions = [
                       { condition = "numeric_state"; entity_id = "sensor.schlafzimmer_humidity"; below = 65; }
-                      { condition = "state"; entity_id = "binary_sensor.schlafzimmerfenster"; state = "on"; }
+                      {
+                        condition = "state";
+                        entity_id = "binary_sensor.schlafzimmerfenster";
+                        state = [
+                          "on"
+                          "unavailable"
+                        ];
+                      }
                     ];
                   }];
                   sequence = { service = "switch.turn_off"; target.entity_id = "switch.luftentfeuchter"; };
@@ -178,8 +185,19 @@ in
             action = [{
               choose = [{
                 conditions = [
-                  { condition = "numeric_state"; entity_id = "sensor.schlafzimmer_temperature"; below = "input_number.target_temperature_schlafzimmer"; }
-                  { condition = "state"; entity_id = "binary_sensor.schlafzimmerfenster"; state = "off"; }
+                  {
+                    condition = "numeric_state";
+                    entity_id = "sensor.schlafzimmer_temperature";
+                    below = "input_number.target_temperature_schlafzimmer";
+                  }
+                  {
+                    condition = "state";
+                    entity_id = "binary_sensor.schlafzimmerfenster";
+                    state = [
+                      "off"
+                      "unavailable"
+                    ];
+                  }
                   (conditions.modeIs modes.flat "active")
                 ];
                 sequence = {
@@ -207,7 +225,14 @@ in
               choose = [{
                 conditions = [
                   { condition = "numeric_state"; entity_id = "sensor.kueche_temperature"; below = "input_number.target_temperature_kueche"; }
-                  { condition = "state"; entity_id = "binary_sensor.kuechenfenster"; state = "off"; }
+                  {
+                    condition = "state";
+                    entity_id = "binary_sensor.kuechenfenster";
+                    state = [
+                      "off"
+                      "unavailable"
+                    ];
+                  }
                   (conditions.modeIs modes.flat "active")
                 ];
                 sequence = {
@@ -232,7 +257,14 @@ in
             ];
             action = [{
               choose = [{
-                conditions = [{ condition = "state"; entity_id = "binary_sensor.wohnzimmerfenster"; state = "off"; }
+                conditions = [{
+                  condition = "state";
+                  entity_id = "binary_sensor.wohnzimmerfenster";
+                  state = [
+                    "off"
+                    "unavailable"
+                  ];
+                }
                   (conditions.modeIs modes.flat "active")];
                 sequence = {
                   service = "climate.set_temperature";
