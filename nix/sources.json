@@ -46,7 +46,7 @@
     "nix-output-monitor": {
         "branch": "master",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "a1f5c4e9b148a28fb66aaf8d4368117337d6ab94",
+        "rev": "6e8a2255ca1afb0d1922b961ea73437f942e11bb",
         "type": "git"
     },
     "nixos-19.09": {
