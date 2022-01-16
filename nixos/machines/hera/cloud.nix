@@ -153,7 +153,7 @@ in
         forceSSL = true;
         locations = {
           "/" = {
-            proxyPass = "http://chor-cloud";
+            proxyPass = "http://[${hosts.chor-cloud}]";
             extraConfig = "proxy_set_header Host $host; proxy_buffering off;";
           };
           "^~ /.well-known" = {
