@@ -145,7 +145,6 @@ in
                         entity_id = "binary_sensor.schlafzimmerfenster";
                         state = [
                           "on"
-                          "unavailable"
                         ];
                       }
                     ];
