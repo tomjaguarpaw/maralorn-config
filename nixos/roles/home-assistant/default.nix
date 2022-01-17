@@ -292,7 +292,7 @@ in
             action = [{
               service = "input_number.set_value";
               target.entity_id = "input_number.target_temperature_wohnzimmer";
-              data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "empty") "18" "24";
+              data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "empty") "18" "26";
             }];
           }
           {
@@ -417,7 +417,7 @@ in
             name = "Zieltemperatur Wohnzimmer";
             unit_of_measurement = "°C";
             min = "17";
-            max = "25";
+            max = "26";
             step = "0.25";
           };
           target_temperature_kueche = {
