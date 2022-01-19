@@ -19,7 +19,7 @@ in
       Launch = pkgs.writeShellScript "research" ''
         cd ~/git/promotion
         kitty vim chapters &
-        evince print.pdf &
+        evince out/print.pdf &
         zotero &
         flix develop -c flix run
       '';
