@@ -11,29 +11,29 @@
         name = "My Theme";
         is_dark = false;
         colors = {
-          accent-color = "#3daee9";
-          accent = "#3daee9";
-          primary-color = "#00aff4";
+          accent-color = "#6060ff";
+          accent = "#6060ff";
+          primary-color = "#333399";
           warning-color = "#da4453";
           alert = "#da4453";
 
-          sidebar-color = "#31363b";
-          roomlist-background-color = "#2a2e32";
-          roomlist-text-color = "#b8b9ba";
-          roomlist-text-secondary-color = "#808182";
-          roomlist-highlights-color = "#4b4f54";
-          roomlist-separator-color = "#64686b";
+          sidebar-color = "#ddddff";
+          roomlist-background-color = "#eeeeff";
+          roomlist-text-color = "#00008a";
+          roomlist-text-secondary-color = "#202099";
+          roomlist-highlights-color = "#9988ee";
+          roomlist-separator-color = "#8888aa";
 
-          timeline-background-color = "#1b1e20";
-          timeline-text-color = "#fcfcfc";
-          secondary-content = "#b8b9ba";
-          tertiary-content = "#b8b9ba";
-          timeline-text-secondary-color = "#74828f";
-          timeline-highlights-color = "#232629";
-          eventbubble-others-bg = "#232629";
-          eventbubble-self-bg = "#223b49";
-          eventbubble-selected-bg = "#2d5c76";
-          reaction-row-button-selected-bg-color = "#346e8e";
+          timeline-background-color = "#ffffff";
+          timeline-text-color = "#000022";
+          secondary-content = "#333399";
+          tertiary-content = "#5555aa";
+          timeline-text-secondary-color = "#222255";
+          timeline-highlights-color = "#eeddff";
+          eventbubble-others-bg = "#ddddff";
+          eventbubble-self-bg = "#aaaaff";
+          eventbubble-selected-bg = "#c0c0ff";
+          reaction-row-button-selected-bg-color = "#ddddff";
         };
       }
     ];
