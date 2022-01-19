@@ -59,6 +59,8 @@ in
         papercolor-theme vim-airline-themes
         LanguageTool-nvim
 
+        vim-css-color
+
         # ===
         # Languages
         # haskell syntax highlighting
