@@ -376,6 +376,11 @@ in
               }) [ 25 20 15 10 5 4 3 2 1 ];
             action = [ (actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%.") ];
           }
+          {
+            alias = "Abend";
+            trigger = [{ platform = "time"; at = "23:00:00"; }];
+            action = [ (actions.notify "Es ist 23 Uhr.") ];
+          }
           # Warnungen für hohe Luftfeuchtigkeit
         ] ++ (map
           (minutes:
