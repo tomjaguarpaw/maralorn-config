@@ -16,13 +16,9 @@ in
   {
     Research = {
       Zotero = fork "zotero";
-      Launch = pkgs.writeShellScript "research" ''
-        cd ~/git/promotion
-        kitty vim chapters &
-        evince out/print.pdf &
-        zotero &
-        flix develop -c flix run
-      '';
+      Open = fork "evince out/print.pdf";
+      Build = "flix develop -c flix run";
+      Directory = fork "kitty -d ~/git/promotion";
     };
   }
   {
