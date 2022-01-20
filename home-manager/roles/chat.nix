@@ -29,9 +29,9 @@
           secondary-content = "#333399";
           tertiary-content = "#5555aa";
           timeline-text-secondary-color = "#222255";
-          timeline-highlights-color = "#eeddff";
-          eventbubble-others-bg = "#ddddff";
-          eventbubble-self-bg = "#aaaaff";
+          timeline-highlights-color = "#ffeeff";
+          eventbubble-others-bg = "#eeeeff";
+          eventbubble-self-bg = "#ccccff";
           eventbubble-selected-bg = "#c0c0ff";
           reaction-row-button-selected-bg-color = "#ddddff";
         };
