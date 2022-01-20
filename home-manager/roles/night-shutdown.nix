@@ -1,8 +1,8 @@
 { pkgs, ... }:
 let
-  sleep-nag = pkgs.writeHaskellScript
+  night-shutdown = pkgs.writeHaskellScript
     {
-      name = "sleep-nag";
+      name = "night-shutdown";
       imports = [
         "Data.Time.LocalTime"
         "Data.Time.Format"
@@ -30,9 +30,9 @@ let
   '';
 in
 {
-  systemd.user.services.sleep-nag = {
-    Unit.Description = "Sleep nag";
-    Service.ExecStart = "${sleep-nag}/bin/sleep-nag";
+  systemd.user.services.night-shutdown = {
+    Unit.Description = "Night Shutdown";
+    Service.ExecStart = "${night-shutdown}/bin/night-shutdown";
     Install.WantedBy = [ "graphical-session.target" ];
   };
 }
