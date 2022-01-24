@@ -12,6 +12,7 @@ let
     "youtube.*"
     "*.element.io"
     "chaos.social"
+    "twitter.com"
   ] ++ newsPages;
   newsPages = [
     "zeit.de"
@@ -27,7 +28,6 @@ let
     "ndr.de"
     "ard.de"
     "zdf.de"
-    "twitter.com"
   ];
 
   makeConfig = hostName: imports:
