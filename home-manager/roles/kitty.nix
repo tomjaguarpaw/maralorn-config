@@ -20,6 +20,7 @@ in
     settings = {
       linux_display_server = "wayland"; # Causes ugly decorations
       hide_window_decorations = true;
+      window_margin_width = 2;
       strip_trailing_spaces = "always";
 
       font_size = "10.5";
