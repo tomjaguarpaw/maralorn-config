@@ -51,6 +51,8 @@ in
         libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
       } ''
       {-# LANGUAGE DeriveDataTypeable #-}
+      {-# LANGUAGE DeriveGeneric #-}
+      {-# LANGUAGE DeriveAnyClass #-}
       {-# LANGUAGE TemplateHaskell #-}
       {-# LANGUAGE QuasiQuotes #-}
       {-# LANGUAGE OverloadedStrings #-}
