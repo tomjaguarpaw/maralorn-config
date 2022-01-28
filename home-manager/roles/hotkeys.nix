@@ -65,7 +65,8 @@ in
       Browser = fork "firefox";
       "Private Browser" = fork "firefox --private-window";
       Chromium = fork "chromium";
-      Watchfeeds = "newsboat -r";
+      Watchfeeds = "watchfeeds";
+      News = "news";
       Games = {
         Steam = fork "steam";
         Minecraft = fork "minecraft-launcher";
