@@ -110,6 +110,7 @@ let
         all ++ orgaExtra ++ [
           ./roles/games.nix
           ./roles/chat.nix
+          ./roles/leisure.nix
           (blockServer newsPages)
         ]
       );
@@ -117,6 +118,7 @@ let
         all ++ orgaExtra ++ [
           ./roles/games.nix
           ./roles/chat.nix
+          ./roles/leisure.nix
           (blockServer [ ])
         ]
       );
