@@ -61,6 +61,8 @@ in
 
         vim-css-color
 
+        vista-vim
+
         # ===
         # Languages
         # haskell syntax highlighting

@@ -14,6 +14,7 @@ function! MyExplorer()
 endfunction
 
 nnoremap <space>e :call MyExplorer()<CR>
+nnoremap <space>v :Vista coc<CR>
 
 set nofoldenable
 set background=light
@@ -135,13 +136,13 @@ inoremap <silent><expr> <c-space> coc#refresh()
 " Coc only does snippet and additional edit on confirm.
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
-nnoremap <silent> gp <Plug>(coc-diagnostic-prev)
-nnoremap <silent> gn <Plug>(coc-diagnostic-next)
+nnoremap <silent> gp :call CocAction('diagnosticPrevious')<cr>
+nnoremap <silent> gn :call CocAction('diagnosticNext')<cr>
 
 " Remap keys for gotos
-nnoremap <silent> gd <Plug>(coc-definition)
-nnoremap <silent> gy <Plug>(coc-type-definition)
-nnoremap <silent> gr <Plug>(coc-references)
+nnoremap <silent> gd :call CocAction('jumpDefinition')<cr>
+nnoremap <silent> gt :call CocAction('jumpTypeDefinition')<cr>
+nnoremap <silent> gr :call CocAction('jumpReferences')<cr>
 
 nnoremap <silent> gs :Git status<CR>
 nnoremap <silent> gu :CocCommand git.chunkUndo<CR>
@@ -153,7 +154,7 @@ nnoremap <silent> gc :Git commit<CR>
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
   elseif (coc#rpc#ready())
-    call CocActionAsync('doHover')
+    call CocActionAsync('definitionHover')
   else
     execute '!' . &keywordprg . " " . expand('<cword>')
   endif
@@ -181,13 +182,6 @@ xmap <leader>a  <Plug>(coc-codeaction-selected)
 nnoremap <leader>a  <Plug>(coc-codeaction-selected)
 nnoremap <silent> <space>f  :Format<CR>
 nnoremap <space>l  <Plug>(coc-codelens-action)
-
-" Create mappings for function text object, requires document symbols feature of languageserver.
-
-xmap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap if <Plug>(coc-funcobj-i)
-omap af <Plug>(coc-funcobj-a)
 
 " FZF ctrl-p style search
 nnoremap <space>p :Files<CR>
@@ -243,11 +237,9 @@ nnoremap <silent> <space>d  :<C-u>CocFzfList diagnostics<cr>
 " Show commands
 nnoremap <silent> <space>c  :<C-u>CocFzfList commands<cr>
 " Find symbol of current document
-nnoremap <silent> <space>o  :<C-u>CocFzfList outline<cr>
+nnoremap <silent> <space>o  :Vista finder coc<cr>
 " Find symbol of current document
-nnoremap <silent> <space>a  :<C-u>CocFzfList actions<cr>
-" Do default action for next item.
-nnoremap <silent> <space>j  :<C-u>CocNext<CR>
+nnoremap <silent> <space>a  :<C-u>CocAction<cr>
 
 imap <Enter> <CR>
 
