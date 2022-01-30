@@ -162,12 +162,6 @@ endfunction
 
 nnoremap <silent> <space>i :call <SID>show_documentation()<CR>
 
-" Remap for rename current word
-nnoremap <space>r <Plug>(coc-rename)
-
-" Remap for format selected region
-xmap <leader>f  <Plug>(coc-format-selected)
-nnoremap <leader>f  <Plug>(coc-format-selected)
 
 augroup mygroup
   autocmd!
@@ -177,11 +171,8 @@ augroup mygroup
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
 
-" Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nnoremap <leader>a  <Plug>(coc-codeaction-selected)
-nnoremap <silent> <space>f  :Format<CR>
-nnoremap <space>l  <Plug>(coc-codelens-action)
+nnoremap <silent> <space>f :call CocAction('format')<cr>
+nnoremap <silent> <space>l :call CocAction('codeLensAction')<cr>
 
 " FZF ctrl-p style search
 nnoremap <space>p :Files<CR>
@@ -220,8 +211,6 @@ nnoremap <silent> <TAB> <Plug>(coc-range-select)
 xmap <silent> <TAB> <Plug>(coc-range-select)
 xmap <silent> <S-TAB> <Plug>(coc-range-select-backword)
 
-" Use `:Format` to format current buffer
-command! -nargs=0 Format :call CocAction('format')
 
 " Use `:Fold` to fold current buffer
 command! -nargs=? Fold :call CocAction('fold', <f-args>)
