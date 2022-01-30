@@ -13,8 +13,8 @@ function! MyExplorer()
   endif
 endfunction
 
-nnoremap <space>e :call MyExplorer()<CR>
-nnoremap <space>v :Vista coc<CR>
+no <space>e :call MyExplorer()<CR>
+no <space>v :Vista coc<CR>
 
 set nofoldenable
 set background=light
@@ -48,13 +48,13 @@ augroup focus
     au BufLeave * silent! wall
 augroup END
 
-nnoremap <silent><cr> :nohlsearch<CR>
-vnoremap < <gv
-vnoremap > >gv
-nnoremap <c-down> <c-w><c-j>
-nnoremap <c-up> <c-w><c-k>
-nnoremap <c-right> <c-w><c-l>
-nnoremap <c-left> <c-w><c-h>
+no <silent><cr> :nohlsearch<CR>
+vno < <gv
+vno > >gv
+no <c-down> <c-w><c-j>
+no <c-up> <c-w><c-k>
+no <c-right> <c-w><c-l>
+no <c-left> <c-w><c-h>
 let mapleader=","
 
 
@@ -70,10 +70,10 @@ set ignorecase
 set wildmenu
 set hlsearch
 
-noremap  <buffer> <silent> <Up>   gk
-noremap  <buffer> <silent> <Down> gj
-noremap  <buffer> <silent> <Home> g<Home>
-noremap  <buffer> <silent> <End>  g<End>
+no  <buffer> <silent> <Up>   gk
+no  <buffer> <silent> <Down> gj
+no  <buffer> <silent> <Home> g<Home>
+no  <buffer> <silent> <End>  g<End>
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 let g:haskell_enable_quantification = 1   " to enable highlighting of `forall`
 let g:haskell_enable_recursivedo = 1      " to enable highlighting of `mdo` and `rec`
@@ -118,11 +118,11 @@ set signcolumn=yes
 
 " Use tab for trigger completion with characters ahead and navigate.
 " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
+ino <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+ino <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -130,26 +130,26 @@ function! s:check_back_space() abort
 endfunction
 
 " Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
+ino <silent><expr> <c-space> coc#refresh()
 
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
 " Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+ino <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
-nnoremap <silent> gp :call CocAction('diagnosticPrevious')<cr>
-nnoremap <silent> gn :call CocAction('diagnosticNext')<cr>
+no <silent> gp :call CocAction('diagnosticPrevious')<cr>
+no <silent> gn :call CocAction('diagnosticNext')<cr>
 
 " Remap keys for gotos
-nnoremap <silent> gd :call CocAction('jumpDefinition')<cr>
-nnoremap <silent> gt :call CocAction('jumpTypeDefinition')<cr>
-nnoremap <silent> gr :call CocAction('jumpReferences')<cr>
+no <silent> gd :call CocAction('jumpDefinition')<cr>
+no <silent> gt :call CocAction('jumpTypeDefinition')<cr>
+no <silent> gr :call CocAction('jumpReferences')<cr>
 
-nnoremap <silent> gs :Git status<CR>
-nnoremap <silent> gu :CocCommand git.chunkUndo<CR>
-nnoremap <silent> gi :CocCommand git.chunkInfo<CR>
-nnoremap <silent> ga :CocCommand git.chunkStage<CR>
-nnoremap <silent> gb :CocCommand git.showCommit<CR>
-nnoremap <silent> gc :Git commit<CR>
+no <silent> gs :Git status<CR>
+no <silent> gu :CocCommand git.chunkUndo<CR>
+no <silent> gi :CocCommand git.chunkInfo<CR>
+no <silent> ga :CocCommand git.chunkStage<CR>
+no <silent> gb :CocCommand git.showCommit<CR>
+no <silent> gc :Git commit<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -160,7 +160,7 @@ function! s:show_documentation()
   endif
 endfunction
 
-nnoremap <silent> <space>i :call <SID>show_documentation()<CR>
+no <silent> <space>i :call <SID>show_documentation()<CR>
 
 
 augroup mygroup
@@ -171,14 +171,14 @@ augroup mygroup
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
 
-nnoremap <silent> <space>f :call CocAction('format')<cr>
-nnoremap <silent> <space>l :call CocAction('codeLensAction')<cr>
+no <silent> <space>f :call CocAction('format')<cr>
+no <silent> <space>l :call CocAction('codeLensAction')<cr>
 
 " FZF ctrl-p style search
-nnoremap <space>p :Files<CR>
-nnoremap <space>g :Rg<CR>
-nnoremap <space>h :History<CR>
-nnoremap <space>b :Buffers<CR>
+no <space>p :Files<CR>
+no <space>g :Rg<CR>
+no <space>h :History<CR>
+no <space>b :Buffers<CR>
 
 function MyClose()
    if &readonly
@@ -197,19 +197,19 @@ function MyCloseAll()
       quitall
    endif
 endfunction
-nnoremap <space>q :call MyClose()<CR>
-nnoremap <space>k :call MyCloseAll()<CR>
-nnoremap <space>s :w<CR>
+no <space>q :call MyClose()<CR>
+no <space>k :call MyCloseAll()<CR>
+no <space>s :w<CR>
 
-nnoremap <a-left> :bp<CR>
-nnoremap <a-right> :bn<CR>
-inoremap <a-left> <ESC>:bp<CR>
-inoremap <a-right> <ESC>:bn<CR>
+no <a-left> :bp<CR>
+no <a-right> :bn<CR>
+ino <a-left> <ESC>:bp<CR>
+ino <a-right> <ESC>:bn<CR>
 
 " Use <tab> for select selections ranges, needs server support, like: coc-tsserver, coc-python
-nnoremap <silent> <TAB> <Plug>(coc-range-select)
-xmap <silent> <TAB> <Plug>(coc-range-select)
-xmap <silent> <S-TAB> <Plug>(coc-range-select-backword)
+no <silent> <TAB> <Plug>(coc-range-select)
+xno <silent> <TAB> <Plug>(coc-range-select)
+xno <silent> <S-TAB> <Plug>(coc-range-select-backword)
 
 
 " Use `:Fold` to fold current buffer
@@ -218,19 +218,19 @@ command! -nargs=? Fold :call CocAction('fold', <f-args>)
 " use `:OR` for organize import of current buffer
 command! -nargs=0 OR   :call CocAction('runCommand', 'editor.action.organizeImport')
 
-imap <ESC>[1~ <HOME>
-imap <ESC>[4~ <End>
+ino <ESC>[1~ <HOME>
+ino <ESC>[4~ <End>
 " Using CocList
 " Show all diagnostics
-nnoremap <silent> <space>d  :<C-u>CocFzfList diagnostics<cr>
+no <silent> <space>d  :<C-u>CocFzfList diagnostics<cr>
 " Show commands
-nnoremap <silent> <space>c  :<C-u>CocFzfList commands<cr>
+no <silent> <space>c  :<C-u>CocFzfList commands<cr>
 " Find symbol of current document
-nnoremap <silent> <space>o  :Vista finder coc<cr>
+no <silent> <space>o  :Vista finder coc<cr>
 " Find symbol of current document
-nnoremap <silent> <space>a  :<C-u>CocAction<cr>
+no <silent> <space>a  :<C-u>CocAction<cr>
 
-imap <Enter> <CR>
+ino <Enter> <CR>
 
 " Load this after theme
 hi Normal ctermbg=NONE
