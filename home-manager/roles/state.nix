@@ -33,7 +33,7 @@ let
     "git"
     "media"
   ];
-  persistentStateFiles = [ ".chpwd-recent-dirs" ".zsh_history" ];
+  persistentStateFiles = [ ".chpwd-recent-dirs" ".zsh_history" ".config/monitors.xml" ];
   volatileStateFiles = [ ];
   volatileStateDirs = [ ".steam" ".local/share/Steam" ];
   mkLine = type: to: from: "${type} ${to} - - - - ${from}";
