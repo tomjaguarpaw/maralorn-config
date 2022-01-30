@@ -133,6 +133,7 @@ in
     ./roles/hourly-maintenance.nix
     (import ./roles/state.nix "orga")
     ./roles/trusted-env.nix
+    ./roles/monitor-config
   ];
   fluffy.default = makeConfig "fluffy" [
     ./roles/on-my-machine.nix
