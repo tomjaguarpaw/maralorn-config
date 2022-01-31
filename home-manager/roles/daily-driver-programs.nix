@@ -1,5 +1,6 @@
 { pkgs, lib, config, ... }:
 {
+  imports = [ ./mpv ];
   home.packages = builtins.attrValues rec {
     zoom = pkgs.zoom-us.overrideAttrs (old: {
       postFixup = old.postFixup + ''
@@ -25,7 +26,6 @@
       abcde beets zbar
 
       # media
-      ncpamixer pavucontrol deluge gmpc vlc mpv youtubeDL syncplay;
-
+      ncpamixer pavucontrol deluge gmpc vlc youtubeDL syncplay;
   };
 }

@@ -14,6 +14,7 @@ let
     ".config/gh"
     ".contacts"
     ".gnupg"
+    ".config/mpv/watch_later"
     ".local/share/Mumble"
     ".local/share/TelegramDesktop"
     ".local/share/direnv"

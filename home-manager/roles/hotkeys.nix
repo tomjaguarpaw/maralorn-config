@@ -72,6 +72,7 @@ in
         Minecraft = fork "minecraft-launcher";
       };
       Deluge = fork "deluge";
+      VoxMachina = fork "mpv https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_";
     };
   }
   { Files = fork "nautilus"; }
