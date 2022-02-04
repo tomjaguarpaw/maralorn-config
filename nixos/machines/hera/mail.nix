@@ -15,6 +15,7 @@ in
   imports = [ ../../roles "${(import ../../../nix/sources.nix).nixos-mailserver}" ];
 
   services = {
+    unbound.enable = true;
     prometheus.exporters = {
       postfix = {
         enable = true;
@@ -76,6 +77,7 @@ in
   mailserver = {
     dkimKeyDirectory = "/var/lib/opendkim/keys";
     enable = true;
+    localDnsResolver = false; # Use unbound instead.
     openFirewall = true;
     enableImapSsl = true;
     enableManageSieve = true;
