@@ -53,14 +53,24 @@ in
             '';
             forceSSL = true;
             enableACME = true;
-            locations."/" = {
-              proxyPass = "http://[::1]:${toString config.port}";
-              proxyWebsockets = true;
-              extraConfig = ''
-                proxy_set_header Host $host;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
-              '';
+            locations = {
+              "/rules/" = {
+                root = pkgs.fetchFromGitHub {
+                  owner = "5etools-mirror-1";
+                  repo = "5etools-mirror-1.github.io";
+                  sha256 = "0000000000000000000000000000000000000000000000000000";
+                };
+                index = "index.html";
+              };
+              "/" = {
+                proxyPass = "http://[::1]:${toString config.port}";
+                proxyWebsockets = true;
+                extraConfig = ''
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+                '';
+              };
             };
           };
         };
