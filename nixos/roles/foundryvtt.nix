@@ -55,17 +55,20 @@ in
             enableACME = true;
             locations = {
               "/rules/" = {
-                root = pkgs.fetchFromGitHub {
-                  owner = "5etools-mirror-1";
-                  repo = "5etools-mirror-1.github.io";
-                  sha256 = "0000000000000000000000000000000000000000000000000000";
-                };
+                alias = "${pkgs.fetchzip {
+                  url = "https://github.com/5etools-mirror-1/5etools-mirror-1.github.io/releases/download/v1.149.1/5etools-v1.149.1.zip";
+                  sha256 = "sha256-vGGB0xaeQi4O4wIAFKtkRXCEPbB3TRo0OWhemBRCO5c=";
+                  stripRoot = false;
+                }}/";
                 index = "index.html";
               };
               "/" = {
                 proxyPass = "http://[::1]:${toString config.port}";
                 proxyWebsockets = true;
                 extraConfig = ''
+                  if ($request_uri ~ ^/rules$) {
+                     return 301 /rules/;
+                  }
                   proxy_set_header Host $host;
                   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                   proxy_set_header X-Forwarded-Proto $scheme;
