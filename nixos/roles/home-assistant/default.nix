@@ -301,7 +301,7 @@ in
             action = [{
               service = "input_number.set_value";
               target.entity_id = "input_number.target_temperature_schlafzimmer";
-              data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "empty") "18" "20.5";
+              data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "empty") "18" "21";
             }];
           }
           {
