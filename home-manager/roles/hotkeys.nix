@@ -67,10 +67,6 @@ in
       Chromium = fork "chromium";
       Watchfeeds = "watchfeeds";
       News = "news";
-      Games = {
-        Steam = fork "steam";
-        Minecraft = fork "minecraft-launcher";
-      };
       Deluge = fork "deluge";
       VoxMachina = fork "mpv https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_";
     };
@@ -111,4 +107,10 @@ in
     };
   }
   { DarkKitty = fork "kitty -o 'background #000000' -o 'foreground #ffffff'"; }
+  {
+    Games = {
+      Steam = fork "steam";
+      Minecraft = fork "minecraft-launcher";
+    };
+  }
 ]
