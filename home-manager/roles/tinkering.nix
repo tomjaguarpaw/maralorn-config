@@ -12,4 +12,8 @@
     username: maralorn
     password-command: pass org/haskell/hackage.haskell.org/maralorn
   '';
+  programs.vscode = {
+    enable = true;
+    package = pkgs.vscodium;
+  };
 }
