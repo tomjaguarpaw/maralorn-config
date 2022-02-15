@@ -50,6 +50,13 @@
       "extensions.autoUpdate" = false;
       "extensions.autoCheckUpdates" = false;
       "local-history.path" = "~/.volatile/vscode-local-history/";
+      "memo.links.rules" = [
+        {
+          "rule" = "\\.md$";
+          "comment" = "All notes";
+          "folder" = "$CURRENT_FILE_DIRECTORY";
+        }
+      ];
     };
   };
 }

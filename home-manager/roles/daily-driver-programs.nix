@@ -15,8 +15,6 @@
       # web
       chromium
 
-      skypeforlinux google-chrome
-
       mumble upower speedtest-cli acpi
 
       anki
