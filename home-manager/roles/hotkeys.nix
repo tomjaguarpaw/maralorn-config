@@ -61,6 +61,17 @@ in
     };
   }
   {
+    Apps = {
+      Editor = fork "codium";
+      Files = fork "nautilus";
+      DarkKitty = fork "kitty -o 'background #000000' -o 'foreground #ffffff'";
+      Games = {
+        Steam = fork "steam";
+        Minecraft = fork "minecraft-launcher";
+      };
+    };
+  }
+  {
     Web = {
       Browser = fork "firefox";
       "Private Browser" = fork "firefox --private-window";
@@ -71,7 +82,6 @@ in
       VoxMachina = fork "mpv https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_";
     };
   }
-  { Files = fork "nautilus"; }
   { Passmenu = "pass clip -f"; }
   { "Select Mode" = "select-mode"; }
   {
@@ -104,13 +114,6 @@ in
       Summer = "ssh door@burbon.w17.io buzzer";
       Open = "ssh door@burbon.w17.io open";
       Close = "ssh door@burbon.w17.io close";
-    };
-  }
-  { DarkKitty = fork "kitty -o 'background #000000' -o 'foreground #ffffff'"; }
-  {
-    Games = {
-      Steam = fork "steam";
-      Minecraft = fork "minecraft-launcher";
     };
   }
 ]

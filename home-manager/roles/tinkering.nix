@@ -28,7 +28,6 @@
       jnoortheen.nix-ide
       pkief.material-icon-theme
       yzhang.markdown-all-in-one
-      davidlday.languagetool-linter
       justusadam.language-haskell
       naumovs.color-highlight
       timonwong.shellcheck
@@ -39,7 +38,7 @@
     ];
     userSettings = {
       "editor.fontFamily" = "JetBrainsMono Nerd Font, monospace";
-      "files.autoSave" = "onFocusChange";
+      "files.autoSave" = "afterDelay";
       "editor.tabSize" = 3;
       "editor.fontLigatures" = true;
       "workbench.colorTheme" = "Default Light+";
@@ -50,6 +49,8 @@
       "extensions.autoUpdate" = false;
       "extensions.autoCheckUpdates" = false;
       "local-history.path" = "~/.volatile/vscode-local-history/";
+      "projectManager.git.baseFolders" = [ "~/git/" ];
+      "ltex.enabled" = false;
       "memo.links.rules" = [
         {
           "rule" = "\\.md$";

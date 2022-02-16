@@ -1,4 +1,16 @@
 {
+    "emanote": {
+        "branch": "master",
+        "description": "Spiritual successor to neuron, based on Ema.",
+        "homepage": "https://emanote.srid.ca",
+        "owner": "srid",
+        "repo": "emanote",
+        "rev": "c82d5e1b573a7bf1300b2b48090ae9d5ac1ce635",
+        "sha256": "0yp7k9gn20p6gv7hgfb3f7kj7zjgwk356hia26gxq2ay7ihddqk4",
+        "type": "tarball",
+        "url": "https://github.com/srid/emanote/archive/c82d5e1b573a7bf1300b2b48090ae9d5ac1ce635.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "haskell-dialog": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:haskell-dialog",

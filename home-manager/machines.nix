@@ -56,7 +56,7 @@ let
   daily-driver = name: extra:
     let
       all = extra ++ on-my-machines ++ [
-        (import ./roles/firefox.nix "http://localhost:8842")
+        (import ./roles/firefox.nix "http://localhost:7000")
         (makeAutostart "kassandra2")
         (makeAutostart "unlock-ssh")
         ./roles/beets.nix
@@ -74,6 +74,7 @@ let
         ./roles/night-shutdown.nix
         ./roles/tinkering.nix
         ./roles/wallpaper.nix
+        ./roles/zettelkasten.nix
       ];
       orgaExtra = [
         ./roles/accounting.nix

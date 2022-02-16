@@ -1,15 +1,16 @@
-{ pkgs, config, ... }:
+{ config, pkgs, ... }:
 let
-  notesDir = "${config.home.homeDirectory}/git/zettelkasten";
-  cmd = "${pkgs.myHaskellPackages.neuron}/bin/neuron -d ${notesDir} rib -w -s 127.0.0.1:8002";
+  emanote = import (import ../../nix/sources.nix).emanote;
 in
 {
-  systemd.user.services.neuron = {
-    Unit.Description = "Neuron zettelkasten service";
-    Install.WantedBy = [ "graphical-session.target" ];
-    Service = {
-      ExecStart = cmd;
-      Restart = "always";
-    };
+  imports = [ emanote.homeManagerModule ];
+  services.emanote = {
+    enable = true;
+    # host = "127.0.0.1"; # default listen address is 127.0.0.1
+    # port = 7000;        # default http port is 7000
+    notes = [
+      "${config.home.homeDirectory}/git/notes/content" # add as many layers as you like
+    ];
+    package = emanote.defaultPackage.${builtins.currentSystem};
   };
 }
