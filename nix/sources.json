@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "c82d5e1b573a7bf1300b2b48090ae9d5ac1ce635",
-        "sha256": "0yp7k9gn20p6gv7hgfb3f7kj7zjgwk356hia26gxq2ay7ihddqk4",
+        "rev": "65ed8a5cd726ac53bcd5728cfd2e98eda51b5ff8",
+        "sha256": "055i83av5lqiya8qlasw0laznz2mqag8arpg1d55bzc2bgz08hin",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/c82d5e1b573a7bf1300b2b48090ae9d5ac1ce635.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/65ed8a5cd726ac53bcd5728cfd2e98eda51b5ff8.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "haskell-dialog": {
@@ -79,10 +79,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "a03ae0e6d078cfdbb8404c3bff3622bd4e2f1c57",
-        "sha256": "0b9y0g268rmzdjxsm8psvdsrxw57b2blij9qg6ri5zvhrx5qbdxn",
+        "rev": "2128d0aa28edef51fd8fef38b132ffc0155595df",
+        "sha256": "1slxx8rc7kfm61826cjbz2wz18xc9sxhg1ki8b6254gizgh5gvw4",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/a03ae0e6d078cfdbb8404c3bff3622bd4e2f1c57.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/2128d0aa28edef51fd8fef38b132ffc0155595df.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
