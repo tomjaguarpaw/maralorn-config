@@ -5,13 +5,28 @@
       meld icedtea8_web octave filezilla nix-review gparted
       grafana-devel;
   };
-  home.file.".cabal/config".text = ''
-    repository hackage.haskell.org
-      url: http://hackage.haskell.org/
+  home.file = {
+    ".config/VSCodium/User/tasks.json".text = builtins.toJSON {
+      # See https://go.microsoft.com/fwlink/?LinkId=733558
+      # for the documentation about the tasks.json format
+      "version" = "2.0.0";
+      "tasks" = [
+        {
+          "label" = "lazygit";
+          "type" = "shell";
+          "command" = "lazygit";
+        }
+      ];
+    };
 
-    username: maralorn
-    password-command: pass org/haskell/hackage.haskell.org/maralorn
-  '';
+    ".cabal/config".text = ''
+      repository hackage.haskell.org
+        url: http://hackage.haskell.org/
+
+      username: maralorn
+      password-command: pass org/haskell/hackage.haskell.org/maralorn
+    '';
+  };
   programs.vscode = {
     enable = true;
     package = pkgs.vscodium;
