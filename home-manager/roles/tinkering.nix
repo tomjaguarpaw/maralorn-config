@@ -56,6 +56,7 @@
         }
       ];
       "vim.useCtrlKeys" = false;
+      "tabnine.experimentalAutoImports" = true;
     };
   };
 }
