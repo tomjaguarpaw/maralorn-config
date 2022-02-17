@@ -16,8 +16,6 @@
     enable = true;
     package = pkgs.vscodium;
     extensions = with pkgs.vscode-extensions; [
-      eamodio.gitlens
-      editorconfig.editorconfig
       haskell.haskell
       bbenoist.nix
       vscodevim.vim
@@ -58,6 +56,7 @@
           "folder" = "$CURRENT_FILE_DIRECTORY";
         }
       ];
+      "vim.useCtrlKeys" = false;
     };
   };
 }
