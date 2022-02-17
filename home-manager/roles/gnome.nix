@@ -99,6 +99,13 @@ in
         show-toggle-tiling-alt = [ "<Super>t" ];
         show-icon = false;
       };
+    # Generated via dconf2nix: https://github.com/gvolpe/dconf2nix
+    "keyboard" = {
+      mousekeys-accel-time = 2000;
+      mousekeys-enable = true;
+      mousekeys-init-delay = 0;
+      mousekeys-max-speed = 2000;
+    };
 
     "org/gnome/desktop/interface" = {
       gtk-theme = "Arc";
