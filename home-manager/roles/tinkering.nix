@@ -40,7 +40,6 @@
       "editor.tabSize" = 3;
       "editor.fontLigatures" = true;
       "workbench.colorTheme" = "Default Light+";
-      "gitlens.hovers.currentLine.over" = "line";
       "workbench.iconTheme" = "material-icon-theme";
       "update.mode" = "none";
       "update.showReleaseNotes" = false;
