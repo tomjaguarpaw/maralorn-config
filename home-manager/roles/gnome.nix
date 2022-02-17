@@ -78,15 +78,15 @@ in
       {
         global-presets = true;
         grid-sizes = "6x2";
-        preset-resize-1 = [ "<Super>KP_1" ];
-        preset-resize-2 = [ "<Super>KP_2" ];
-        preset-resize-3 = [ "<Super>KP_3" ];
-        preset-resize-4 = [ "<Super>KP_4" ];
-        preset-resize-5 = [ "<Super>KP_5" ];
-        preset-resize-6 = [ "<Super>KP_6" ];
-        preset-resize-7 = [ "<Super>KP_7" ];
-        preset-resize-8 = [ "<Super>KP_8" ];
-        preset-resize-9 = [ "<Super>KP_9" ];
+        preset-resize-1 = [ "<Control><Super>m" ];
+        preset-resize-2 = [ "<Control><Super>comma" ];
+        preset-resize-3 = [ "<Control><Super>period" ];
+        preset-resize-4 = [ "<Control><Super>n" ];
+        preset-resize-5 = [ "<Control><Super>r" ];
+        preset-resize-6 = [ "<Control><Super>t" ];
+        preset-resize-7 = [ "<Control><Super>h" ];
+        preset-resize-8 = [ "<Control><Super>g" ];
+        preset-resize-9 = [ "<Control><Super>f" ];
         resize1 = "6x2 ${left "1"}";
         resize2 = "6x2 ${middle "1"}";
         resize3 = "6x2 ${right "1"}";
