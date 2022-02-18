@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "65ed8a5cd726ac53bcd5728cfd2e98eda51b5ff8",
-        "sha256": "055i83av5lqiya8qlasw0laznz2mqag8arpg1d55bzc2bgz08hin",
+        "rev": "143b53cc4d5fdcb7580f6db2da3725575d7dcc15",
+        "sha256": "0xfzs43v3mvbc9c6666zxkp30xjzkdbvrpnj8kf3mdbwxcfdaj55",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/65ed8a5cd726ac53bcd5728cfd2e98eda51b5ff8.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/143b53cc4d5fdcb7580f6db2da3725575d7dcc15.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "haskell-dialog": {
@@ -23,10 +23,10 @@
         "homepage": "",
         "owner": "mweinelt",
         "repo": "nur-packages",
-        "rev": "e825fe2a8e7c4cd1c2cc3b1fd7a2547b8e4b558d",
-        "sha256": "0hw1w4w9b7fx7vf1z6varj47qv3brrjckg4awjx7lg06lsqsgjmq",
+        "rev": "6f5d59dd889e3adccc9593d61269efb4db6a594e",
+        "sha256": "0hsmgr0kwzdsywdpgbmhqcjg56iqb8j7akxw6jh1dw8rpa92mp36",
         "type": "tarball",
-        "url": "https://github.com/mweinelt/nur-packages/archive/e825fe2a8e7c4cd1c2cc3b1fd7a2547b8e4b558d.tar.gz",
+        "url": "https://github.com/mweinelt/nur-packages/archive/6f5d59dd889e3adccc9593d61269efb4db6a594e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager-21.11": {
