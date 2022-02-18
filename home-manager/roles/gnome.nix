@@ -100,7 +100,7 @@ in
         show-icon = false;
       };
     # Generated via dconf2nix: https://github.com/gvolpe/dconf2nix
-    "keyboard" = {
+    "org/gnome/desktop/a11y/keyboard" = {
       mousekeys-accel-time = 2000;
       mousekeys-enable = true;
       mousekeys-init-delay = 0;
