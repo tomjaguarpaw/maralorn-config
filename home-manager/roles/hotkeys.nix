@@ -11,6 +11,7 @@ in
       { Tasks = "tasksh"; }
       { Meditate = "meditate"; }
       { Pythia = "pythia"; }
+      { Notes = "codium ~/git/notes"; }
     ];
   }
   {
@@ -19,6 +20,7 @@ in
       Open = fork "evince ~/git/promotion/out/print.pdf";
       Build = "sh -c 'cd ~/git/promotion; flix develop -c flix run'";
       Directory = fork "kitty -d ~/git/promotion";
+      Edit = "codium ~/git/promotion";
     };
   }
   {
@@ -63,6 +65,7 @@ in
   {
     Apps = {
       Editor = fork "codium";
+      Config = "codium ~/git/config";
       Files = fork "nautilus";
       DarkKitty = fork "kitty -o 'background #000000' -o 'foreground #ffffff'";
       Games = {
