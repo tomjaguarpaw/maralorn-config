@@ -13,6 +13,7 @@
       "tasks" = [
         {
           "label" = "lazygit";
+          "problemMatcher" = [ ];
           "type" = "shell";
           "command" = "lazygit";
         }
