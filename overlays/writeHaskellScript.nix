@@ -64,6 +64,7 @@ in
       {-# LANGUAGE NoImplicitPrelude #-}
       {-# LANGUAGE TupleSections #-}
       {-# LANGUAGE PartialTypeSignatures #-}
+      {-# LANGUAGE BlockArguments #-}
 
       import Shh
       import Relude

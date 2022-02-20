@@ -5,7 +5,7 @@ let
   statusScript = pkgs.writeHaskellScript
     {
       name = "status-script";
-      bins = [ pkgs.notmuch pkgs.coreutils pkgs.git pkgs.playerctl ];
+      bins = [ pkgs.notmuch pkgs.coreutils pkgs.git pkgs.playerctl pkgs.khal ];
       imports = [
         "Control.Exception"
         "System.Directory"
@@ -26,6 +26,7 @@ let
 
     main = do
       playing <- Text.intercalate " " . fmap decodeUtf8 . filter (/= "") <$> mapM tryCmd [playerctl "status", playerctl "metadata" "title", playerctl "metadata" "artist"]
+      appointments <- Text.intercalate "; ". lines . decodeUtf8 <$> (tryCmd $ khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
       mode <- getMode
       unread <- notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
       inbox <- notmuch "count" "folder:hera/Inbox" |> captureTrim
@@ -33,8 +34,8 @@ let
       dirs <- listDirectory "/home/maralorn/git"
       dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/"<>)) dirs
       unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/"<>)) dirs
-      say . Text.intercalate " " $
-        [playing, show mode] ++
+      say . Text.intercalate " | " $
+        [appointments,playing, show mode] ++
         memptyIfFalse ((unread /= "0") && mode >= Orga) (one [i|Unread: #{unread}|]) ++
         memptyIfFalse ((inbox /= "0") && mode == Leisure) (one [i|Inbox: #{inbox}|]) ++
         memptyIfFalse ((codeMails /= "0") && mode == Code) (one [i|Code: #{codeMails}|]) ++
