@@ -34,8 +34,8 @@ let
       dirs <- listDirectory "/home/maralorn/git"
       dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/"<>)) dirs
       unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/"<>)) dirs
-      say . Text.unwords $ [
-          "<executor.markup.true><span background='white'>",
+      say . Text.replace "&" "&amp;" . Text.unwords $ [
+          "<executor.markup.true>",
           [i|<span foreground='\#8b008b'>#{appointments}</span>|],
           playing,
           [i|<span foreground='\#0000aa'>#{show mode}</span>|]
@@ -44,8 +44,7 @@ let
         memptyIfFalse ((inbox /= "0") && mode == Leisure) (one [i|<span foreground='\#7fff00'>Inbox: #{inbox}</span>|]) ++
         memptyIfFalse ((codeMails /= "0") && mode == Code) (one [i|<span foreground='\#006400'>Code: #{codeMails}</span>|]) ++
         memptyIfFalse (length unpushed /= 0) (one [i|<span foreground='\#d2691e'>Unpushed: #{Text.intercalate " " unpushed}</span>|]) ++
-        memptyIfFalse (length dirty /= 0) (one [i|<span foreground='\#ff7f50'>Dirty: #{Text.intercalate " " dirty}</span>|]) ++
-        ["</span>"]
+        memptyIfFalse (length dirty /= 0) (one [i|<span foreground='\#ff7f50'>Dirty: #{Text.intercalate " " dirty}</span>|])
   '';
 in
 {
@@ -167,13 +166,6 @@ in
       appicon-margin = 0;
       appicon-padding = 4;
       group-apps = false;
-      group-apps-label-font-color = "#613583";
-      group-apps-label-font-color-minimized = "#1a5fb4";
-      group-apps-label-font-size = 13;
-      group-apps-label-font-weight = "inherit";
-      group-apps-underline-unfocused = false;
-      group-apps-use-fixed-width = false;
-      group-apps-use-launchers = false;
       isolate-monitors = false;
       isolate-workspaces = true;
       leftbox-padding = -1;
@@ -185,8 +177,6 @@ in
       show-favorites = false;
       show-running-apps = true;
       status-icon-padding = -1;
-      trans-panel-opacity = 0.8;
-      trans-use-custom-opacity = true;
       tray-padding = -1;
     };
 
