@@ -34,13 +34,18 @@ let
       dirs <- listDirectory "/home/maralorn/git"
       dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/"<>)) dirs
       unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/"<>)) dirs
-      say . Text.unwords $
-        ["<executor.markup.true><span background='white'>", [i|<span foreground='\#8b008b'>#{appointments}</span>|],playing, [i|<span foreground='\#0000aa'>#{show mode}</span>|]] ++
+      say . Text.unwords $ [
+          "<executor.markup.true><span background='white'>",
+          [i|<span foreground='\#8b008b'>#{appointments}</span>|],
+          playing,
+          [i|<span foreground='\#0000aa'>#{show mode}</span>|]
+        ] ++
         memptyIfFalse ((unread /= "0") && mode >= Orga) (one [i|<span foreground='\#DC143C'>Unread: #{unread}</span>|]) ++
         memptyIfFalse ((inbox /= "0") && mode == Leisure) (one [i|<span foreground='\#7fff00'>Inbox: #{inbox}</span>|]) ++
         memptyIfFalse ((codeMails /= "0") && mode == Code) (one [i|<span foreground='\#006400'>Code: #{codeMails}</span>|]) ++
         memptyIfFalse (length unpushed /= 0) (one [i|<span foreground='\#d2691e'>Unpushed: #{Text.intercalate " " unpushed}</span>|]) ++
-        memptyIfFalse (length dirty /= 0) (one [i|<span foreground='\#ff7f50'>Dirty: #{Text.intercalate " " dirty}</span>|]) ++ ["</span>"]
+        memptyIfFalse (length dirty /= 0) (one [i|<span foreground='\#ff7f50'>Dirty: #{Text.intercalate " " dirty}</span>|]) ++
+        ["</span>"]
   '';
 in
 {
