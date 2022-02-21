@@ -25,7 +25,7 @@ let
     tryCmd x = ignoreFailure x |> captureTrim
 
     main = do
-      playing <- Text.intercalate " " . fmap decodeUtf8 . filter (/= "") <$> mapM tryCmd [playerctl "status", playerctl "metadata" "title", playerctl "metadata" "artist"]
+      playing <- Text.intercalate " - " . fmap decodeUtf8 . filter (/= "") <$> mapM tryCmd [playerctl "status", playerctl "metadata" "title", playerctl "metadata" "artist"]
       appointments <- Text.intercalate "; ". lines . decodeUtf8 <$> (tryCmd $ khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
       mode <- getMode
       unread <- notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
@@ -34,13 +34,13 @@ let
       dirs <- listDirectory "/home/maralorn/git"
       dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/"<>)) dirs
       unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/"<>)) dirs
-      say . Text.intercalate " | " $
-        [appointments,playing, show mode] ++
-        memptyIfFalse ((unread /= "0") && mode >= Orga) (one [i|Unread: #{unread}|]) ++
-        memptyIfFalse ((inbox /= "0") && mode == Leisure) (one [i|Inbox: #{inbox}|]) ++
-        memptyIfFalse ((codeMails /= "0") && mode == Code) (one [i|Code: #{codeMails}|]) ++
-        memptyIfFalse (length unpushed /= 0) (one [i|Unpushed: #{Text.intercalate " " unpushed}|]) ++
-        memptyIfFalse (length dirty /= 0) (one [i|Dirty: #{Text.intercalate " " dirty}|])
+      say . Text.unwords $
+        ["<executor.markup.true><span background='white'>", [i|<span foreground='\#8b008b'>#{appointments}</span>|],playing, [i|<span foreground='\#0000aa'>#{show mode}</span>|]] ++
+        memptyIfFalse ((unread /= "0") && mode >= Orga) (one [i|<span foreground='\#DC143C'>Unread: #{unread}</span>|]) ++
+        memptyIfFalse ((inbox /= "0") && mode == Leisure) (one [i|<span foreground='\#7fff00'>Inbox: #{inbox}</span>|]) ++
+        memptyIfFalse ((codeMails /= "0") && mode == Code) (one [i|<span foreground='\#006400'>Code: #{codeMails}</span>|]) ++
+        memptyIfFalse (length unpushed /= 0) (one [i|<span foreground='\#d2691e'>Unpushed: #{Text.intercalate " " unpushed}</span>|]) ++
+        memptyIfFalse (length dirty /= 0) (one [i|<span foreground='\#ff7f50'>Dirty: #{Text.intercalate " " dirty}</span>|]) ++ ["</span>"]
   '';
 in
 {
