@@ -91,17 +91,17 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "10eab1c4cd8e715c0b41d32c28af2b89fc67bed0",
-        "sha256": "1ig5d807x99c7rsma3r23vfys1n05836y6rj5iy6ypbad7vw7cs4",
+        "rev": "1ccfe243aa6e94bf80f2a66f6be41d086d37fc87",
+        "sha256": "1q5zawz0mp5z5cvhy6ni5g07af7kcxpis7dp7x4am4dnxxr799yy",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/10eab1c4cd8e715c0b41d32c28af2b89fc67bed0.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/1ccfe243aa6e94bf80f2a66f6be41d086d37fc87.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
         "branch": "master",
         "ref": "master",
         "repo": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver",
-        "rev": "6e3a7b2ea6f0d68b82027b988aa25d3423787303",
+        "rev": "665aa181e6a629482f85df46c58a2cc6e3998ded",
         "type": "git"
     },
     "nixos-unstable": {
