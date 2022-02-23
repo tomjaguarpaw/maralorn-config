@@ -112,6 +112,10 @@ in
       mousekeys-max-speed = 2000;
     };
 
+    "org/gnome/desktop/peripherals/mouse" = {
+      speed = 1;
+    };
+
     "org/gnome/desktop/interface" = {
       gtk-theme = "Arc";
       icon-theme = "Arc";
