@@ -10,12 +10,7 @@ let
 in
 {
 
-  disabledModules = [
-    "services/misc/home-assistant.nix"
-  ];
-
   imports = [
-    "${nixos-unstable}/nixos/modules/services/misc/home-assistant.nix"
     "${nixos-hardware}/common/gpu/amd/sea-islands"
     ./hardware-configuration.nix
     ../../roles
