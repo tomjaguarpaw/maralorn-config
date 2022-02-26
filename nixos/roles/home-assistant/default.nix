@@ -74,7 +74,7 @@ in
 {
 
   disabledModules = [
-    "services/misc/home-assistant.nix"
+    "services/home-automation/home-assistant.nix"
   ];
 
   imports = [
@@ -82,7 +82,7 @@ in
     (modules.mkModeSwitcher modes.kueche { })
     (modules.mkModeSwitcher modes.schlafzimmer { })
     (modules.mkModeSwitcher modes.flat { })
-    "${nixos-unstable}/nixos/modules/services/misc/home-assistant.nix"
+    "${nixos-unstable}/nixos/modules/services/home-automation/home-assistant.nix"
     ./hexa-cards.nix
   ];
   systemd.tmpfiles.rules = [
