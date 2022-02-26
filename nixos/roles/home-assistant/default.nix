@@ -74,7 +74,7 @@ in
 {
 
   disabledModules = [
-    "services/home-automation/home-assistant.nix"
+    "services/misc/home-assistant.nix"
   ];
 
   imports = [
