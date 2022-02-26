@@ -98,10 +98,10 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
-        "branch": "master",
-        "ref": "master",
+        "branch": "nixos-21.11",
+        "ref": "nixos-21.11",
         "repo": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver",
-        "rev": "665aa181e6a629482f85df46c58a2cc6e3998ded",
+        "rev": "6e3a7b2ea6f0d68b82027b988aa25d3423787303",
         "type": "git"
     },
     "nixos-unstable": {
