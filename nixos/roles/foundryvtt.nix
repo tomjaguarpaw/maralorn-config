@@ -55,7 +55,7 @@ in
             enableACME = true;
             locations = {
               "/rules/" = {
-                alias = "${pkgs.fetchzip (import ./5etools-url.nix)}/";
+                alias = "${pkgs.fetchzip (import ./5etools-url.nix // { stripRoot = false;})}/";
                 index = "index.html";
               };
               "/" = {
