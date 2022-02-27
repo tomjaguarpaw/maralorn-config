@@ -55,11 +55,7 @@ in
             enableACME = true;
             locations = {
               "/rules/" = {
-                alias = "${pkgs.fetchzip {
-                  url = "https://github.com/5etools-mirror-1/5etools-mirror-1.github.io/releases/download/v1.149.1/5etools-v1.149.1.zip";
-                  sha256 = "sha256-vGGB0xaeQi4O4wIAFKtkRXCEPbB3TRo0OWhemBRCO5c=";
-                  stripRoot = false;
-                }}/";
+                alias = "${pkgs.fetchzip (import ./5etools-url.nix)}/";
                 index = "index.html";
               };
               "/" = {
