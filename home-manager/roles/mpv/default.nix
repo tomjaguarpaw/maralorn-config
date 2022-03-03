@@ -13,7 +13,6 @@ in
     };
     scripts = [
       pkgs.mpvScripts.mpris
-      pkgs.mpvScripts.thumbnail
       script
     ];
   };
