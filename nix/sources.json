@@ -23,10 +23,10 @@
         "homepage": "",
         "owner": "mweinelt",
         "repo": "nur-packages",
-        "rev": "c609ecc5f4b23a3f26ff10ba7b0d113b120e75dc",
-        "sha256": "00qd2rmrk6pvdmc6j0ajvjhi2c8w2z62m5aqz3c67xa8wlvl9im8",
+        "rev": "b804d89788b79f8b7ba2b3de5e1ed451ffa19861",
+        "sha256": "1zmjjzmg7h2wdlk6kzzgn84jds7r6sr9z3p8i9ynxm028qs8yh8y",
         "type": "tarball",
-        "url": "https://github.com/mweinelt/nur-packages/archive/c609ecc5f4b23a3f26ff10ba7b0d113b120e75dc.tar.gz",
+        "url": "https://github.com/mweinelt/nur-packages/archive/b804d89788b79f8b7ba2b3de5e1ed451ffa19861.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager-21.11": {
@@ -91,10 +91,10 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "c3c66f6db4ac74a59eb83d83e40c10046ebc0b8c",
-        "sha256": "1h5x8zgmxzdj15pgssn7nihi24ni63571q75hdpsz7zxgyjw2nyh",
+        "rev": "a7bca8d0d8188ae9802ecc467150cf018e19b958",
+        "sha256": "0a04wix47smm684lc3g58ggsl25832va9d0yxc8wwb89x8085rd7",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/c3c66f6db4ac74a59eb83d83e40c10046ebc0b8c.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/a7bca8d0d8188ae9802ecc467150cf018e19b958.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
