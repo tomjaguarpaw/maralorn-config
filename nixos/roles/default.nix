@@ -50,9 +50,9 @@
   nix = {
     binaryCaches = lib.mkAfter (
       pkgs.privateValue [ ] "binary-caches"
-      ++ (
-        if config.networking.hostName != "hera" then [ "ssh-ng://nix-ssh@hera.m-0.eu?trusted=true&priority=100" ] else [ ]
-      )
+      # ++ (
+      #   if config.networking.hostName != "hera" then [ "ssh-ng://nix-ssh@hera.m-0.eu?trusted=true&priority=100" ] else [ ]
+      # )
     );
     binaryCachePublicKeys =
       [
