@@ -9,7 +9,6 @@ in
     enable = true;
     config = {
       save-position-on-quit = true;
-      osc = false;
     };
     scripts = [
       pkgs.mpvScripts.mpris
