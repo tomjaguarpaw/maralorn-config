@@ -13,6 +13,6 @@ in
   vscode = unstable.vscode;
   nix-output-monitor = unstable.nix-output-monitor.overrideAttrs (old: {
     src = super.sources.nix-output-monitor;
-    buildInputs = old.buildInputs ++ (with unstable.haskellPackages; [ streamly optics generic-optics extra safe ]);
+    buildInputs = old.buildInputs ++ (with unstable.haskellPackages; [ streamly optics generic-optics extra safe MemoTrie ]);
   });
 }
