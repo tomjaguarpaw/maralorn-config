@@ -20,10 +20,7 @@ in
       main = {
         term = "xterm-256color";
         font = "monospace:size=6";
-        include = toString (pkgs.fetchurl {
-          url = "https://codeberg.org/dnkl/foot/raw/commit/6e536e7ed8f1de2615fa323123ddb2b06a45a179/themes/paper-color-light";
-          sha256 = "sha256-20gnYRPQ5vB2IP/epPLm4gvx/j4P/MnCPiTuDDexpuw=";
-        });
+        include = "${pkgs.foot.src}/themes/selenized-white";
       };
       mouse = {
         hide-when-typing = "yes";
