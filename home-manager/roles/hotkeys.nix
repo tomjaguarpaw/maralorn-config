@@ -19,7 +19,7 @@ in
       Zotero = fork "zotero";
       Open = fork "evince ~/git/promotion/out/print.pdf";
       Build = "sh -c 'cd ~/git/promotion; flix develop -c flix run'";
-      Directory = fork "kitty -d ~/git/promotion";
+      Directory = fork "foot -d ~/git/promotion";
       Edit = "codium ~/git/promotion";
     };
   }
@@ -33,7 +33,7 @@ in
   {
     SSH =
       let
-        ssh = host: "kitty +kitten ssh ${host}";
+        ssh = host: "ssh ${host}";
       in
       [
         { "hera via vpn" = ssh "hera.vpn.m-0.eu"; }
@@ -47,7 +47,7 @@ in
         { "nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net -i /etc/nixos/private/id_ed25519-nix-builder shell"; }
         { "fluffy via local network" = ssh "fluffy.lo.m-0.eu"; }
         { "hera via public v4" = ssh "hera-v4"; }
-        { "TU Tunnel" = fork "kitty sshuttle --python python3.8 -r gw 130.83.0.0/16"; }
+        { "TU Tunnel" = "sshuttle --python python3.8 -r gw 130.83.0.0/16"; }
       ];
   }
   {
@@ -67,7 +67,7 @@ in
       Editor = fork "codium";
       Config = "codium ~/git/config";
       Files = fork "nautilus";
-      DarkKitty = fork "kitty -o 'background #000000' -o 'foreground #ffffff'";
+      DarkTerminal = fork "foot -o 'color.background=000000' -o 'foreground=ffffff'";
       Games = {
         Steam = fork "steam";
         Minecraft = fork "minecraft-launcher";

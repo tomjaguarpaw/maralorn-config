@@ -66,7 +66,7 @@ let
         ./roles/git-sign.nix
         ./roles/gnome.nix
         ./roles/hoogle.nix
-        ./roles/kitty.nix
+        ./roles/terminal.nix
         ./roles/mpclient.nix
         ./roles/mpd.nix
         ./roles/pythia.nix

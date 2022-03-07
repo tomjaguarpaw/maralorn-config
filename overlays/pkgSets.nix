@@ -56,7 +56,7 @@ self: super: {
     inherit (self.pythonPackages) yapf jsbeautifier;
     inherit (self)
       go gdb mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole
-      nixfmt nixpkgs-fmt rnix-lsp tmate rustup kitty nix-top ghcWithPackages ghcid matrix-commander upterm
+      nixfmt nixpkgs-fmt rnix-lsp tmate rustup foot kitty nix-top ghcWithPackages ghcid matrix-commander upterm
       lazygit gh
       ;
     obelisk = (import self.sources.obelisk { }).command;

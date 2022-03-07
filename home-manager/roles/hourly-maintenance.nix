@@ -10,7 +10,7 @@ let
       echo "Git repo up-to-date, not doing anything."
       exit 0;
     else
-      ${pkgs.kitty}/bin/kitty --hold ${config.home.profileDirectory}/bin/maintenance
+      ${pkgs.foot}/bin/foot --hold ${config.home.profileDirectory}/bin/maintenance
     fi
   '';
 in

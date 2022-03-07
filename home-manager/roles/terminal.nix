@@ -4,13 +4,35 @@ let
   theme = my-lib.themes.default;
 in
 {
-  home.sessionVariables.TERMINAL = "${pkgs.kitty}/bin/kitty";
+  home.sessionVariables.TERMINAL = "${pkgs.foot}/bin/foot";
   home.packages = [
     (pkgs.runCommandLocal "fake-gnome-terminal" { } ''
       mkdir -p $out/bin
-      ln -s ${pkgs.kitty}/bin/kitty $out/bin/gnome-terminal
+      ln -s ${pkgs.foot}/bin/foot $out/bin/gnome-terminal
     '')
   ];
+  programs.foot = {
+    enable = true;
+    settings = {
+      csd = {
+        preferred = "none";
+      };
+      main = {
+        term = "xterm-256color";
+        font = "monospace:size=6";
+        include = toString (pkgs.fetchurl {
+          url = "https://codeberg.org/dnkl/foot/raw/commit/6e536e7ed8f1de2615fa323123ddb2b06a45a179/themes/paper-color-light";
+          sha256 = "sha256-20gnYRPQ5vB2IP/epPLm4gvx/j4P/MnCPiTuDDexpuw=";
+        });
+      };
+      mouse = {
+        hide-when-typing = "yes";
+      };
+      scrollback = {
+        lines = 100000;
+      };
+    };
+  };
   programs.kitty = {
     enable = true;
     keybindings = {
