@@ -8,7 +8,10 @@ let
     git show -q --oneline
     export FLAGS="--builders @/etc/nix/machines -o /var/cache/gc-links/$JOB"
     if [[ -e "flake.nix" ]]; then
-      echo "Flake detected. Using flake.nix"
+      echo "Flake detected."
+      echo "Running 'flake check'"
+      ${pkgs.nixFlakes}/bin/flix flake check
+      echo "Building 'defaultPackage' from 'flake.nix'"
       ${pkgs.nixFlakes}/bin/flix build .#defaultPackage.x86_64-linux $FLAGS
     else
       echo "Building default.nix"
