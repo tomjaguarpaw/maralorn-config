@@ -23,10 +23,10 @@
         "homepage": "",
         "owner": "mweinelt",
         "repo": "nur-packages",
-        "rev": "b804d89788b79f8b7ba2b3de5e1ed451ffa19861",
-        "sha256": "1zmjjzmg7h2wdlk6kzzgn84jds7r6sr9z3p8i9ynxm028qs8yh8y",
+        "rev": "afda8e3b70c532c0f3d389790288962e98d8a81f",
+        "sha256": "0629ipppnp60r7hvw07l4rsn3kydnshb2zsanxm3fsz8g849fj0h",
         "type": "tarball",
-        "url": "https://github.com/mweinelt/nur-packages/archive/b804d89788b79f8b7ba2b3de5e1ed451ffa19861.tar.gz",
+        "url": "https://github.com/mweinelt/nur-packages/archive/afda8e3b70c532c0f3d389790288962e98d8a81f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager-21.11": {
@@ -58,7 +58,7 @@
     "nix-output-monitor": {
         "branch": "master",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "88b573810eed627685568d04e379a31e1f74d3ce",
+        "rev": "3263b0696ff30314d3d54eeb7ba56d847830be95",
         "type": "git"
     },
     "nixos-19.09": {
