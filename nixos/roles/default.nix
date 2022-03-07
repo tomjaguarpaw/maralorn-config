@@ -64,6 +64,7 @@
     trustedUsers = [ "maralorn" "laminar" ];
     buildMachines = pkgs.privateValue [ ] "remote-builders";
     extraOptions = ''
+      experimental-features = nix-command flakes
       fallback = true
       auto-optimise-store = true
       builders-use-substitutes = true

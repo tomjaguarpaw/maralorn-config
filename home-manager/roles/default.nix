@@ -41,8 +41,12 @@
     direnv = {
       enable = true;
       enableZshIntegration = true;
-      nix-direnv.enable = true;
+      nix-direnv = {
+        enable = true;
+        enableFlakes = true;
+      };
     };
+
     tmux = {
       enable = true;
       escapeTime = 1;
