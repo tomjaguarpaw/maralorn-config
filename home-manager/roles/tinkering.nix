@@ -73,6 +73,8 @@
       ];
       "vim.useCtrlKeys" = false;
       "tabnine.experimentalAutoImports" = true;
+      "haskell.formattingProvider" = "fourmolu";
+      "haskell.updateBehavior" = "never-check";
     };
   };
 }
