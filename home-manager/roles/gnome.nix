@@ -227,7 +227,7 @@ in
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal" =
       {
         binding = "<Super>Return";
-        command = "foot mytmux";
+        command = "foot";
         name = "Terminal";
       };
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" =
