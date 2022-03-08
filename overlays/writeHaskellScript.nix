@@ -87,8 +87,8 @@ in {
       -- Load binaries from Nix packages. The dependencies will be captured
       -- in the closure.
       loadFromBins (${
-        self.haskellList
-        (builtins.map toString (bins ++ [self.coreutils self.nix]))
+        pkgs.haskellList
+        (builtins.map toString (bins ++ [pkgs.coreutils pkgs.nix]))
       } :: [String])
 
       getNivPath :: Text -> Text -> IO Text
@@ -108,7 +108,7 @@ in {
          getNivAssign (name, repo) = tag name <$> getNivPath path repo
 
       myNixPath :: Text -> IO [String]
-      myNixPath = aNixPath "${self.home-manager-channel}" "${self.nixpkgs-channel}"
+      myNixPath = aNixPath "${pkgs.home-manager-channel}" "${pkgs.nixpkgs-channel}"
 
       buildSystemParams :: [String]
       buildSystemParams = ["<nixpkgs/nixos>", "-A", "system"]
@@ -119,7 +119,7 @@ in {
       main :: IO ()
       ${code}
     '';
-  get-niv-path = self.writeHaskellScript {name = "get-niv-path";} ''
+  get-niv-path = pkgs.writeHaskellScript {name = "get-niv-path";} ''
     main = do
         [sources, channel] <- fmap toText <$> getArgs
         path <- getNivPath sources channel
