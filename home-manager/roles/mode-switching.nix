@@ -5,7 +5,7 @@
   ...
 }: let
   inherit (config.m-0) hostName;
-  modes = pkgs.lib.attrNames (import ../machines.nix).${hostName};
+  modes = pkgs.lib.attrNames (import ../machines.nix)."${hostName}";
   modeFile = "${config.home.homeDirectory}/.mode";
   modeDir = "${config.home.homeDirectory}/.volatile/modes";
   configPath = "${config.home.homeDirectory}/git/config";

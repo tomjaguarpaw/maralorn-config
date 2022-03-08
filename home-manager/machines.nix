@@ -32,10 +32,10 @@ let
     "zdf.de"
   ];
 
-  makeConfig = hostName: imports: {...}: {
+  makeConfig = hostName: imports: _: {
     imports = imports ++ [./roles/default.nix];
     m-0.hostName = hostName;
-    nixpkgs.overlays = [(_: _: (import ../channels.nix).${hostName})];
+    nixpkgs.overlays = [(_: _: (import ../channels.nix)."${hostName}")];
   };
   makeAutostart = name: {config, ...}: {
     config.xdg.configFile."autostart/${name}.desktop".source = "${config.home.path}/share/applications/${name}.desktop";

@@ -54,30 +54,26 @@
   '';
   systems = builtins.attrNames (builtins.readDir ../../machines);
   homes = lib.attrNames (import ../../../home-manager/machines.nix);
-  mkHomeJob = (
-    host: {
-      name = "home-config-${host}.run";
-      value = pkgs.writeShellScript "test-${host}-home-config.run" ''
-        ${common}
-        ${checkout}
-        ${test-home-config}/bin/test-home-config $REPODIR ${host} "remote"
-        git -C $REPODIR submodule update --init
-        ${test-home-config}/bin/test-home-config $REPODIR ${host} ""
-      '';
-    }
-  );
-  mkSystemJob = (
-    host: {
-      name = "system-config-${host}.run";
-      value = pkgs.writeShellScript "test-${host}-system-config.run" ''
-        ${common}
-        ${checkout}
-        ${test-system-config}/bin/test-system-config $REPODIR ${host} "remote"
-        git -C $REPODIR submodule update --init
-        ${test-system-config}/bin/test-system-config $REPODIR ${host} ""
-      '';
-    }
-  );
+  mkHomeJob = host: {
+    name = "home-config-${host}.run";
+    value = pkgs.writeShellScript "test-${host}-home-config.run" ''
+      ${common}
+      ${checkout}
+      ${test-home-config}/bin/test-home-config $REPODIR ${host} "remote"
+      git -C $REPODIR submodule update --init
+      ${test-home-config}/bin/test-home-config $REPODIR ${host} ""
+    '';
+  };
+  mkSystemJob = host: {
+    name = "system-config-${host}.run";
+    value = pkgs.writeShellScript "test-${host}-system-config.run" ''
+      ${common}
+      ${checkout}
+      ${test-system-config}/bin/test-system-config $REPODIR ${host} "remote"
+      git -C $REPODIR submodule update --init
+      ${test-system-config}/bin/test-system-config $REPODIR ${host} ""
+    '';
+  };
   deployCommand = "${
     pkgs.writeShellScript "deploy-system-config"
     "${pkgs.systemd}/bin/systemctl start --no-block update-config"

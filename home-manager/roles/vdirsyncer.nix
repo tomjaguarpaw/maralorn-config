@@ -10,7 +10,7 @@
     (pkgs.formats.ini {}).generate "vdirsyncer-config" (
       lib.mapAttrs
       (
-        name: section: (lib.mapAttrs (name: option: builtins.toJSON option) section)
+        _: lib.mapAttrs (_: builtins.toJSON)
       )
       config
     );

@@ -33,7 +33,7 @@
       inherit
         (import ../../../lib/update-system.nix {
           inherit pkgs;
-          nixos-rebuild = config.system.build.nixos-rebuild;
+          inherit (config.system.build) nixos-rebuild;
         })
         update-system
         ;

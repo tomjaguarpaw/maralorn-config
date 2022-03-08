@@ -35,9 +35,9 @@
     // overrides
     // {
       pname = overrides.type;
-      version = source.version;
+      inherit (source) version;
 
-      patches = (source.patches or []);
+      patches = source.patches or [];
       nativeBuildInputs =
         [pkg-config python3 cmake]
         ++ (overrides.nativeBuildInputs or []);
@@ -115,25 +115,23 @@
     }
     source;
 
-  server = source:
-    generic
-    {
-      type = "murmur";
+  server = generic
+  {
+    type = "murmur";
 
-      configureFlags = [
-        "CONFIG+=no-client"
-      ];
+    configureFlags = [
+      "CONFIG+=no-client"
+    ];
 
-      buildInputs =
-        [libcap]
-        ++ lib.optionals grpcSupport [grpc which];
+    buildInputs =
+      [libcap]
+      ++ lib.optionals grpcSupport [grpc which];
 
-      installPhase = ''
-        # bin stuff
-        install -Dm755 release/murmurd $out/bin/murmurd
-      '';
-    }
-    source;
+    installPhase = ''
+      # bin stuff
+      install -Dm755 release/murmurd $out/bin/murmurd
+    '';
+  };
 
   source = rec {
     version = "1.4.0-development-snapshot-005";

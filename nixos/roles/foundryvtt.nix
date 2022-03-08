@@ -21,7 +21,7 @@
   declarativeConfigFile = builtins.toFile "foundry-options.json" (builtins.toJSON config);
 in {
   config = {
-    systemd.services.${name} = {
+    systemd.services."${name}" = {
       wantedBy = ["multi-user.target"];
       description = "Foundryvtt server";
       preStart = ''
@@ -49,7 +49,7 @@ in {
     services = {
       nginx = {
         virtualHosts = {
-          ${config.hostname} = {
+          "${config.hostname}" = {
             extraConfig = ''
               client_max_body_size 300M;
               proxy_set_header Host $host;

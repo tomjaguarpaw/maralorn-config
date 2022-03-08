@@ -1,8 +1,8 @@
-lib: let
-  # name refers to an internal name
-  # title refers to a human readable name
-  # mode = { name, title, options = { <option_name> : { title , icon } } }
-in rec {
+lib:
+# name refers to an internal name
+# title refers to a human readable name
+# mode = { name, title, options = { <option_name> : { title , icon } } }
+rec {
   jinja = import ./jinja.nix lib;
   tap_actions = let
     fromServiceAction = action: {
@@ -60,11 +60,11 @@ in rec {
     mkHAConfig = attrs: {
       services.home-assistant.config = attrs;
     };
-    mkModeSwitcher = mode: attrs: {...}: let
+    mkModeSwitcher = mode: attrs: _: let
       options = builtins.attrNames mode.options;
     in
       mkHAConfig {
-        input_select.${util.modeSelectName mode} =
+        input_select."${util.modeSelectName mode}" =
           {
             inherit options;
             name = mode.title;

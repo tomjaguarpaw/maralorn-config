@@ -9,8 +9,8 @@ with lib; let
     configure = {availablePlugins, ...}: {
       plugins = builtins.attrValues (availablePlugins
       // {
-        python = (availablePlugins.python.withPackages
-        (ps: [pkgs.weechatScripts.weechat-matrix]));
+        python = availablePlugins.python.withPackages
+        (ps: [pkgs.weechatScripts.weechat-matrix]);
       });
       scripts = [pkgs.weechatScripts.weechat-matrix];
     };

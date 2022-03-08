@@ -7,7 +7,7 @@ final: prev: let
       ["mkdir -p ${path}"]
       ++ lib.concatLists (
         lib.mapAttrsToList
-        (dirName: content: linkToPath "${path}/${dirName}" content)
+        (dirName: linkToPath "${path}/${dirName}")
         fileOrDir
       )
   );

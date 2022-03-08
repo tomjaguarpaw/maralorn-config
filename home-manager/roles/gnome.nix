@@ -4,7 +4,7 @@
   ...
 } @ args: let
   hotkeys = import ./hotkeys.nix args;
-  mkTuple = lib.hm.gvariant.mkTuple;
+  inherit (lib.hm.gvariant) mkTuple;
   statusScript = pkgs.writeHaskellScript
   {
     name = "status-script";

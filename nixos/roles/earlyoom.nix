@@ -1,4 +1,4 @@
-{...}: {
+_: {
   services.earlyoom = {
     enableNotifications = true;
     freeSwapThreshold = 100;

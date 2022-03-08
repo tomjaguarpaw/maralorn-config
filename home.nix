@@ -3,11 +3,12 @@ let
   modes = import home-manager/machines.nix;
 in
   lib.listToAttrs (lib.flatten (lib.mapAttrsToList
-  (host: configs:
-    lib.mapAttrsToList
-    (mode: config: {
-      name = "${host}-${mode}";
-      value = config;
-    })
-    configs)
+  (
+    host:
+      lib.mapAttrsToList
+      (mode: config: {
+        name = "${host}-${mode}";
+        value = config;
+      })
+  )
   modes))

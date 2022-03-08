@@ -5,7 +5,7 @@
   ...
 }:
 with lib; let
-  dag = config.lib.dag;
+  inherit (config.lib) dag;
 in {
   home.activation.report-changes = dag.entryAnywhere ''
      if [[ -n "$oldGenPath" && "$oldGenPath" != "$newGenPath" ]]; then

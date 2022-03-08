@@ -26,7 +26,7 @@ in {
     allowedTCPPorts = ports;
     allowedUDPPorts = ports;
   };
-  security.acme.certs.${fqdn} = {
+  security.acme.certs."${fqdn}" = {
     postRun = "systemctl restart coturn.service";
   };
   services = {

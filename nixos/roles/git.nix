@@ -101,7 +101,7 @@ in {
     ];
   users.users.cgit = {
     isSystemUser = true;
-    group = gitoliteCfg.group;
+    inherit (gitoliteCfg) group;
   };
   systemd.services.gitolite-init.postStart = lib.mkIf pkgs.withSecrets ''
     export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
@@ -133,7 +133,7 @@ in {
     fcgiwrap = {
       enable = true;
       user = "cgit";
-      group = gitoliteCfg.group;
+      inherit (gitoliteCfg) group;
     };
 
     nginx.virtualHosts."git.maralorn.de" = {

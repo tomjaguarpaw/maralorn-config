@@ -6,9 +6,7 @@ in {
   nix = self.nix_2_4;
   unstableHaskellPackages = unstable.haskellPackages;
   unstableGhc = unstable.ghc;
-  home-assistant = unstable.home-assistant;
-  vscode-extensions = unstable.vscode-extensions;
-  vscode = unstable.vscode;
+  inherit (unstable) home-assistant vscode-extensions vscode;
   nix-output-monitor = unstable.nix-output-monitor.overrideAttrs (old: {
     src = super.sources.nix-output-monitor;
     buildInputs = old.buildInputs ++ (with unstable.haskellPackages; [streamly optics generic-optics extra safe MemoTrie]);

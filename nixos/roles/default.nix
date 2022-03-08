@@ -10,7 +10,7 @@
 
   # For nixos-rebuild
   nixpkgs.overlays =
-    [(_: _: (import ../../channels.nix).${config.networking.hostName})]
+    [(_: _: (import ../../channels.nix)."${config.networking.hostName}")]
     ++ import ../../overlays {inherit lib;};
 
   time.timeZone = "Europe/Berlin";
@@ -44,10 +44,10 @@
       (name: value: lib.nameValuePair "nix-path/${name}" {source = value;})
       (lib.filterAttrs (name: value: name != "__functor") pkgs.sources)
       // {
-        "nix-path/nixos".source = pkgs.sources.${pkgs.nixpkgs-channel};
-        "nix-path/nixpkgs".source = pkgs.sources.${pkgs.nixpkgs-channel};
+        "nix-path/nixos".source = pkgs.sources."${pkgs.nixpkgs-channel}";
+        "nix-path/nixpkgs".source = pkgs.sources."${pkgs.nixpkgs-channel}";
         "nix-path/home-manager".source =
-          pkgs.sources.${pkgs.home-manager-channel};
+          pkgs.sources."${pkgs.home-manager-channel}";
       };
     variables =
       lib.genAttrs ["CURL_CA_BUNDLE" "GIT_SSL_CAINFO" "SSL_CERT_FILE"]
@@ -112,7 +112,7 @@
         disabledCollectors = ["timex"];
       };
       nginx = {
-        enable = config.services.nginx.enable;
+        inherit (config.services.nginx) enable;
         openFirewall = true;
       };
     };

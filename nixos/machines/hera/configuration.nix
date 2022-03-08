@@ -89,7 +89,7 @@ in {
       };
     }
     // lib.listToAttrs (map (name: {
-      name = name;
+      inherit name;
       value = {serviceConfig.Type = "oneshot";};
     })
     backupJobNames);

@@ -5,13 +5,13 @@
 }: let
   simpleDesktopItem = name: command:
     pkgs.makeDesktopItem {
-      name = name;
+      inherit name;
       desktopName = name;
       exec = command;
     };
   namedTerminalDesktopItem = name: command:
     pkgs.makeDesktopItem {
-      name = name;
+      inherit name;
       desktopName = name;
       exec = command;
       terminal = "true";

@@ -151,13 +151,8 @@ self: super: {
       nodejs
       tasksh
       magic-wormhole
-      nixfmt
-      nixpkgs-fmt
       rnix-lsp
-      tmate
       rustup
-      foot
-      kitty
       nix-top
       ghcWithPackages
       ghcid
@@ -169,7 +164,7 @@ self: super: {
     obelisk = (import self.sources.obelisk {}).command;
   };
   accounting-pkgs = {
-    inherit (self.haskellPackages) hledger hledger-ui hledger-web hledger-iadd;
+    inherit (self.haskellPackages) hledger hledger-ui hledger-web;
     inherit (self) ledger jali aqbanking;
   };
   system-pkgs =
@@ -177,7 +172,7 @@ self: super: {
     // self.extra-system-pkgs
     // {
       home-manager =
-        self.callPackage "${self.sources.${self.home-manager-channel}}/home-manager" {};
+        self.callPackage "${self.sources."${self.home-manager-channel}"}/home-manager" {};
     };
   foreign-home-pkgs = self.extra-system-pkgs;
 }

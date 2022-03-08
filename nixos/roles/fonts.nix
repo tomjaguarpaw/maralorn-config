@@ -39,7 +39,7 @@
     builtins.listToAttrs (lib.imap0
     (n: v:
       lib.nameValuePair "src-cache/fonts/${toString n}" {
-        source = builtins.toPath v;
+        source = /. + v;
       })
     font_sources);
 }

@@ -14,7 +14,7 @@ in {
     (
       x: ''
         ${cfg.package}/bin/mailman syncmembers -W -G - "${x}" << EOF
-        ${lib.concatStringsSep "\n" lists.${x}}
+        ${lib.concatStringsSep "\n" lists."${x}"}
         EOF
       ''
     )
@@ -68,7 +68,7 @@ in {
         local_recipient_maps = lmtp;
       };
     };
-    nginx.virtualHosts.${hostname} = {
+    nginx.virtualHosts."${hostname}" = {
       enableACME = true;
       forceSSL = true;
     };

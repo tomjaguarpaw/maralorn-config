@@ -6,8 +6,8 @@ in {
     hooks = {
       hlint.enable = true;
       alejandra.enable = true;
-      #nix-linter.enable = true;
-      #statix.enable = true;
+      nix-linter.enable = true;
+      statix.enable = true;
       fourmolu.enable = true;
       cabal-fmt.enable = true;
       shellcheck.enable = true;

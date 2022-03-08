@@ -178,12 +178,12 @@ in {
       '';
     };
 
-    users.users.${user} = {
+    users.users."${user}" = {
       inherit group;
       isSystemUser = true;
     };
 
-    users.groups.${group} = {};
+    users.groups."${group}" = {};
 
     services = {
       firefox.syncserver = {
