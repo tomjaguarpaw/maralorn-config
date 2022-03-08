@@ -19,8 +19,9 @@ in
       };
       main = {
         term = "xterm-256color";
-        font = "monospace:size=6";
-        include = "${pkgs.foot.src}/themes/selenized-white";
+        font = "monospace:size=10.5";
+        dpi-aware = "no";
+        include = "${pkgs.foot.themes}/share/foot/themes/selenized-white";
       };
       mouse = {
         hide-when-typing = "yes";
