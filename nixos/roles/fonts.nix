@@ -37,9 +37,9 @@
     font_sources = map (v: v.src) (lib.filter (v: v ? src) config.fonts.fonts);
   in
     builtins.listToAttrs (lib.imap0
-    (n: v:
+    (n: source:
       lib.nameValuePair "src-cache/fonts/${toString n}" {
-        source = /. + v;
+        inherit source;
       })
     font_sources);
 }

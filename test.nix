@@ -3,7 +3,7 @@ let
 in {
   pre-commit-check = nix-pre-commit-hooks.run {
     src = ./.;
-    excludes = ["nix/*"];
+    excludes = ["nix/.*"];
     hooks = {
       hlint.enable = true;
       alejandra.enable = true;
