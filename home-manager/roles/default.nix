@@ -1,7 +1,8 @@
-{ pkgs
-, config
-, lib
-, ...
+{
+  pkgs,
+  config,
+  lib,
+  ...
 }: {
   imports = [
     ./zsh
@@ -12,7 +13,7 @@
     ./neovim
     ./nvd.nix
   ];
-  nixpkgs.overlays = import ../../overlays { inherit lib; };
+  nixpkgs.overlays = import ../../overlays {inherit lib;};
 
   news.display = "silent";
 
@@ -63,7 +64,7 @@
       '';
     };
     password-store = {
-      package = pkgs.pass-wayland.withExtensions (exts: [ exts.pass-update pkgs.pass-clip exts.pass-otp ]);
+      package = pkgs.pass-wayland.withExtensions (exts: [exts.pass-update pkgs.pass-clip exts.pass-otp]);
       enable = true;
       settings.PASSWORD_STORE_DIR = "${config.home.homeDirectory}/git/password-store";
     };
@@ -124,8 +125,7 @@
       controlPersist = "120";
       enable = true;
       matchBlocks = {
-        git-auto.
-        identityFile = "~/.ssh/id_auto_ed25519";
+        git-auto.identityFile = "~/.ssh/id_auto_ed25519";
         "door.w17.io".identityFile = "~/.ssh/door_rsa";
       };
     };
@@ -142,11 +142,11 @@
         )
         (
           pkgs.writeShellScriptBin "print-radicle-pw"
-            "pass show etc/radicle/${config.m-0.hostName}"
+          "pass show etc/radicle/${config.m-0.hostName}"
         )
         (
           pkgs.writeShellScriptBin "print-ssh-pw"
-            "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/ssh-key"
+          "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/ssh-key"
         )
         (
           pkgs.writeShellScriptBin "dingdingding" (builtins.readFile ./signal.sh)
@@ -158,7 +158,7 @@
       EMAIL = "malte.brandy@maralorn.de";
       SUDO_ASKPASS = toString (
         pkgs.writeShellScript "print-sudo-pw"
-          "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/${config.home.username}"
+        "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/${config.home.username}"
       );
     };
   };
@@ -183,17 +183,17 @@
     mimeApps = {
       enable = true;
       defaultApplications = {
-        "application/pdf" = [ "org.gnome.Evince.desktop" ];
-        "x-scheme-handler/http" = [ "firefox.desktop" ];
-        "x-scheme-handler/https" = [ "firefox.desktop" ];
-        "x-scheme-handler/chrome" = [ "firefox.desktop" ];
-        "text/html" = [ "firefox.desktop" ];
-        "application/x-extension-htm" = [ "firefox.desktop" ];
-        "application/x-extension-html" = [ "firefox.desktop" ];
-        "application/x-extension-shtml" = [ "firefox.desktop" ];
-        "application/xhtml+xml" = [ "firefox.desktop" ];
-        "application/x-extension-xhtml" = [ "firefox.desktop" ];
-        "application/x-extension-xht" = [ "firefox.desktop" ];
+        "application/pdf" = ["org.gnome.Evince.desktop"];
+        "x-scheme-handler/http" = ["firefox.desktop"];
+        "x-scheme-handler/https" = ["firefox.desktop"];
+        "x-scheme-handler/chrome" = ["firefox.desktop"];
+        "text/html" = ["firefox.desktop"];
+        "application/x-extension-htm" = ["firefox.desktop"];
+        "application/x-extension-html" = ["firefox.desktop"];
+        "application/x-extension-shtml" = ["firefox.desktop"];
+        "application/xhtml+xml" = ["firefox.desktop"];
+        "application/x-extension-xhtml" = ["firefox.desktop"];
+        "application/x-extension-xht" = ["firefox.desktop"];
       };
     };
     userDirs = {
