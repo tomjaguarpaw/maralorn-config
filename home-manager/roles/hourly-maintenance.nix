@@ -1,6 +1,8 @@
-{ pkgs, config, ... }:
-let
-
+{
+  pkgs,
+  config,
+  ...
+}: let
   configPath = "${config.home.homeDirectory}/git/config";
   configGit = "${pkgs.git}/bin/git -C ${configPath}";
   script = pkgs.writeShellScript "hourly-maintenance" ''
@@ -13,8 +15,7 @@ let
       ${pkgs.foot}/bin/foot --hold ${config.home.profileDirectory}/bin/maintenance
     fi
   '';
-in
-{
+in {
   systemd.user = {
     services.maintenance = {
       Unit.Description = "Routine maintenance";
@@ -26,7 +27,7 @@ in
     timers.maintenance = {
       Unit.Description = "Hourly maintenance";
       Timer.OnCalendar = "hourly";
-      Install.WantedBy = [ "timers.target" ];
+      Install.WantedBy = ["timers.target"];
     };
   };
 }

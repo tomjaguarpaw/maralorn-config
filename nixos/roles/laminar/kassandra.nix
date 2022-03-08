@@ -1,23 +1,29 @@
-{ pkgs, lib, config, ... }:
-let
-  path = [ pkgs.git pkgs.nix pkgs.gnutar pkgs.gzip pkgs.openssh pkgs.laminar ];
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
+  path = [pkgs.git pkgs.nix pkgs.gnutar pkgs.gzip pkgs.openssh pkgs.laminar];
   setup = ''
     set -e
     export PATH=${lib.makeBinPath path}:$PATH
   '';
   repo = "/var/www/fdroid";
-  deploy = "${pkgs.writeShellScript "deploy" ''
-    systemctl restart kassandra
-    cd /var/cache/gc-links/kassandra-android
-    FILENAME=$(${pkgs.fd}/bin/fd .apk)
-    rm -f ${repo}/repo/*.apk
-    cp $FILENAME ${repo}/unsigned
-    cd ${repo}
-    export PATH=/run/current-system/sw/bin:$PATH
-    export ANDROID_HOME=${pkgs.androidsdk_9_0}/libexec/android-sdk
-    fdroid publish
-    fdroid update
-  ''}";
+  deploy = "${
+    pkgs.writeShellScript "deploy" ''
+      systemctl restart kassandra
+      cd /var/cache/gc-links/kassandra-android
+      FILENAME=$(${pkgs.fd}/bin/fd .apk)
+      rm -f ${repo}/repo/*.apk
+      cp $FILENAME ${repo}/unsigned
+      cd ${repo}
+      export PATH=/run/current-system/sw/bin:$PATH
+      export ANDROID_HOME=${pkgs.androidsdk_9_0}/libexec/android-sdk
+      fdroid publish
+      fdroid update
+    ''
+  }";
   target = name: ''
     ${setup}
     export HOME=$PWD
@@ -25,15 +31,18 @@ let
     git show -q
     nix-build release.nix -A ${name} --builders '@/etc/nix/machines' --show-trace -o /var/cache/gc-links/$JOB
   '';
-in
-{
-  security.sudo.extraRules = [{
-    commands = [{
-      command = deploy;
-      options = [ "NOPASSWD" ];
-    }];
-    users = [ "laminar" ];
-  }];
+in {
+  security.sudo.extraRules = [
+    {
+      commands = [
+        {
+          command = deploy;
+          options = ["NOPASSWD"];
+        }
+      ];
+      users = ["laminar"];
+    }
+  ];
   services.laminar.cfgFiles.jobs = {
     "kassandra.run" = pkgs.writeShellScript "kassandra" ''
       ${setup}

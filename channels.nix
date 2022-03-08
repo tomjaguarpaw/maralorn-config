@@ -7,8 +7,7 @@ let
   #  nixpkgs-channel = "nixos-unstable";
   #  home-manager-channel = "home-manager-master";
   #};
-in
-rec {
+in rec {
   hera = nixos-21-11;
   apollo = nixos-21-11;
   zeus = nixos-21-11;

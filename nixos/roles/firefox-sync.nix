@@ -1,9 +1,10 @@
-{ config, lib, ... }:
-
-with lib;
-
-let
-  pkgs = import (import ../../nix/sources.nix)."nixos-19.09" { };
+{
+  config,
+  lib,
+  ...
+}:
+with lib; let
+  pkgs = import (import ../../nix/sources.nix)."nixos-19.09" {};
 
   cfg = config.services.firefox.syncserver;
 
@@ -35,12 +36,10 @@ let
 
   user = "syncserver";
   group = "syncserver";
-in
+in {
+  disabledModules = ["services/networking/firefox/sync-server.nix"];
 
-{
-  disabledModules = [ "services/networking/firefox/sync-server.nix" ];
-
-  meta.maintainers = with lib.maintainers; [ nadrieril ];
+  meta.maintainers = with lib.maintainers; [nadrieril];
 
   options = {
     services.firefox.syncserver = {
@@ -132,14 +131,13 @@ in
   };
 
   config = {
-
     systemd.services.syncserver = {
-      after = [ "network.target" ];
+      after = ["network.target"];
       description = "Firefox Sync Server";
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
       path = [
         pkgs.coreutils
-        (pkgs.python.withPackages (ps: [ pkgs.syncserver ps.gunicorn ]))
+        (pkgs.python.withPackages (ps: [pkgs.syncserver ps.gunicorn]))
       ];
 
       serviceConfig = {
@@ -148,30 +146,32 @@ in
         PermissionsStartOnly = true;
       };
 
-      preStart = ''
-        if ! test -e ${cfg.privateConfig}; then
-          mkdir -p $(dirname ${cfg.privateConfig})
-          echo  > ${cfg.privateConfig} '[syncserver]'
+      preStart =
+        ''
+          if ! test -e ${cfg.privateConfig}; then
+            mkdir -p $(dirname ${cfg.privateConfig})
+            echo  > ${cfg.privateConfig} '[syncserver]'
+            chmod 600 ${cfg.privateConfig}
+            echo >> ${cfg.privateConfig} "secret = $(head -c 20 /dev/urandom | sha1sum | tr -d ' -')"
+          fi
           chmod 600 ${cfg.privateConfig}
-          echo >> ${cfg.privateConfig} "secret = $(head -c 20 /dev/urandom | sha1sum | tr -d ' -')"
-        fi
-        chmod 600 ${cfg.privateConfig}
-        chmod 755 $(dirname ${cfg.privateConfig})
-        chown ${user}:${group} ${cfg.privateConfig}
+          chmod 755 $(dirname ${cfg.privateConfig})
+          chown ${user}:${group} ${cfg.privateConfig}
 
-      '' + optionalString (cfg.sqlUri == defaultSqlUri) ''
-        if ! test -e $(dirname ${defaultDbLocation}); then
-          mkdir -m 700 -p $(dirname ${defaultDbLocation})
-          chown ${user}:${group} $(dirname ${defaultDbLocation})
-        fi
+        ''
+        + optionalString (cfg.sqlUri == defaultSqlUri) ''
+          if ! test -e $(dirname ${defaultDbLocation}); then
+            mkdir -m 700 -p $(dirname ${defaultDbLocation})
+            chown ${user}:${group} $(dirname ${defaultDbLocation})
+          fi
 
-        # Move previous database file if it exists
-        oldDb="/var/db/firefox-sync-server.db"
-        if test -f $oldDb; then
-          mv $oldDb ${defaultDbLocation}
-          chown ${user}:${group} ${defaultDbLocation}
-        fi
-      '';
+          # Move previous database file if it exists
+          oldDb="/var/db/firefox-sync-server.db"
+          if test -f $oldDb; then
+            mv $oldDb ${defaultDbLocation}
+            chown ${user}:${group} ${defaultDbLocation}
+          fi
+        '';
 
       script = ''
         gunicorn --paste ${syncServerIni}
@@ -183,7 +183,7 @@ in
       isSystemUser = true;
     };
 
-    users.groups.${group} = { };
+    users.groups.${group} = {};
 
     services = {
       firefox.syncserver = {
@@ -205,6 +205,5 @@ in
         };
       };
     };
-
   };
 }

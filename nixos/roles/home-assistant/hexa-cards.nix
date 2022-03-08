@@ -1,13 +1,11 @@
-{ pkgs, ... }:
-let
-  nur = import pkgs.sources.hexa-nur-packages { };
+{pkgs, ...}: let
+  nur = import pkgs.sources.hexa-nur-packages {};
 
   mkLovelaceModule = name: {
     url = "custom/${name}.js?${nur.hassLovelaceModules."${name}".version}";
     type = "module";
   };
-in
-{
+in {
   systemd.tmpfiles.rules = [
     # Lovelace Cards
     "d /run/hass 0700 nginx nginx"
@@ -32,4 +30,3 @@ in
     ];
   };
 }
-

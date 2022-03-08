@@ -1,17 +1,15 @@
-{ pkgs, ... }:
-let
+{pkgs, ...}: let
   fork = cmd: "fork ${cmd}";
-in
-[
+in [
   {
     Orga = [
-      { Kassandra = fork "planning"; }
-      { Kalendar = "calendar"; }
-      { Habitica = fork "firefox https://habitica.com"; }
-      { Tasks = "tasksh"; }
-      { Meditate = "meditate"; }
-      { Pythia = "pythia"; }
-      { Notes = "codium ~/git/notes"; }
+      {Kassandra = fork "planning";}
+      {Kalendar = "calendar";}
+      {Habitica = fork "firefox https://habitica.com";}
+      {Tasks = "tasksh";}
+      {Meditate = "meditate";}
+      {Pythia = "pythia";}
+      {Notes = "codium ~/git/notes";}
     ];
   }
   {
@@ -31,24 +29,22 @@ in
     };
   }
   {
-    SSH =
-      let
-        ssh = host: "ssh ${host}";
-      in
-      [
-        { "hera via vpn" = ssh "hera.vpn.m-0.eu"; }
-        { "fluffy via vpn" = ssh "fluffy.vpn.m-0.eu"; }
-        { remote-builder = ssh "phoibe.cased.de -i /etc/nixos/private/id_ed25519-nix-builder"; }
-        { ag = ssh "ag-forward"; }
-        { gwres1 = ssh "gw"; }
-        { backup-server = ssh "borg.cysec.de"; }
-        { shells = ssh "shells"; }
-        { "bach (ved)" = ssh "bach.vocalensemble-darmstadt.de"; }
-        { "nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net -i /etc/nixos/private/id_ed25519-nix-builder shell"; }
-        { "fluffy via local network" = ssh "fluffy.lo.m-0.eu"; }
-        { "hera via public v4" = ssh "hera-v4"; }
-        { "TU Tunnel" = "sshuttle --python python3.8 -r gw 130.83.0.0/16"; }
-      ];
+    SSH = let
+      ssh = host: "ssh ${host}";
+    in [
+      {"hera via vpn" = ssh "hera.vpn.m-0.eu";}
+      {"fluffy via vpn" = ssh "fluffy.vpn.m-0.eu";}
+      {remote-builder = ssh "phoibe.cased.de -i /etc/nixos/private/id_ed25519-nix-builder";}
+      {ag = ssh "ag-forward";}
+      {gwres1 = ssh "gw";}
+      {backup-server = ssh "borg.cysec.de";}
+      {shells = ssh "shells";}
+      {"bach (ved)" = ssh "bach.vocalensemble-darmstadt.de";}
+      {"nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net -i /etc/nixos/private/id_ed25519-nix-builder shell";}
+      {"fluffy via local network" = ssh "fluffy.lo.m-0.eu";}
+      {"hera via public v4" = ssh "hera-v4";}
+      {"TU Tunnel" = "sshuttle --python python3.8 -r gw 130.83.0.0/16";}
+    ];
   }
   {
     Sound = {
@@ -85,11 +81,11 @@ in
       VoxMachina = fork "mpv https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_";
     };
   }
-  { Passmenu = "pass clip -f"; }
-  { "Select Mode" = "select-mode"; }
+  {Passmenu = "pass clip -f";}
+  {"Select Mode" = "select-mode";}
   {
     Communication = [
-      { Matrix = fork "element-desktop"; }
+      {Matrix = fork "element-desktop";}
       {
         Mail = {
           Open = "neomutt";
@@ -103,15 +99,15 @@ in
           Nixos = fork "mumble mumble://maralorn@lassul.us/nixos";
         };
       }
-      { Weechat = "weechat"; }
-      { Signal = fork "signal-desktop"; }
-      { Zoom = fork "zoom"; }
-      { Telegram = fork "telegram-desktop"; }
-      { Discord = fork "Discord"; }
-      { Tmate = "tmate"; }
+      {Weechat = "weechat";}
+      {Signal = fork "signal-desktop";}
+      {Zoom = fork "zoom";}
+      {Telegram = fork "telegram-desktop";}
+      {Discord = fork "Discord";}
+      {Tmate = "tmate";}
     ];
   }
-  { "Monitor (htop)" = "htop"; }
+  {"Monitor (htop)" = "htop";}
   {
     "W17" = {
       Summer = "ssh door@burbon.w17.io buzzer";

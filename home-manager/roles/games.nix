@@ -1,5 +1,9 @@
-{ pkgs, lib, config, ... }:
-let
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
   gw2dir = "${config.home.homeDirectory}/volatile/GW2";
   wine = pkgs.wineWowPackages.staging;
   gw2env = ''
@@ -45,9 +49,7 @@ let
     cd "${gw2dir}/data/drive_c/Guild Wars 2"
     ${wine}/bin/wine64 ./Gw2-64.exe $@ -autologin
   '';
-in
-{
-
+in {
   #dconf.settings."org/gnome/settings-daemon/plugins/media-keys" = {
   #mic-mute = lib.mkForce [ ];
   #next = lib.mkForce [ ];

@@ -1,5 +1,9 @@
-{ pkgs, lib, config, ... }:
-let
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
   name = "foundryvtt";
   stateDir = "/var/lib/${name}";
   dataDir = "${stateDir}/data";
@@ -15,11 +19,10 @@ let
     updateChannel = "release";
   };
   declarativeConfigFile = builtins.toFile "foundry-options.json" (builtins.toJSON config);
-in
-{
+in {
   config = {
     systemd.services.${name} = {
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
       description = "Foundryvtt server";
       preStart = ''
         mkdir -p ${dataDir}
@@ -55,7 +58,7 @@ in
             enableACME = true;
             locations = {
               "/rules/" = {
-                alias = "${pkgs.fetchzip (import ./5etools-url.nix // { stripRoot = false;})}/";
+                alias = "${pkgs.fetchzip (import ./5etools-url.nix // {stripRoot = false;})}/";
                 index = "index.html";
               };
               "/" = {

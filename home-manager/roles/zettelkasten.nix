@@ -1,9 +1,11 @@
-{ config, pkgs, ... }:
-let
-  emanote = import (import ../../nix/sources.nix).emanote;
-in
 {
-  imports = [ emanote.homeManagerModule ];
+  config,
+  pkgs,
+  ...
+}: let
+  emanote = import (import ../../nix/sources.nix).emanote;
+in {
+  imports = [emanote.homeManagerModule];
   services.emanote = {
     enable = true;
     # host = "127.0.0.1"; # default listen address is 127.0.0.1

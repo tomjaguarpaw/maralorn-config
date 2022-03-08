@@ -1,18 +1,22 @@
-{ pkgs, lib, config, ... }:
-let
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
   inherit (lib) types mkOption;
   stateDir = "/var/lib/laminar";
   cfgDir = "${stateDir}/cfg";
   cfg = config.services.laminar;
-in
-{
+in {
   options = {
     services.laminar = {
       cfgFiles = mkOption {
-        type =
-          let valueType = with types; oneOf [ path (attrsOf valueType) ];
-          in valueType;
-        default = { };
+        type = let
+          valueType = with types; oneOf [path (attrsOf valueType)];
+        in
+          valueType;
+        default = {};
         description = ''
           Every entry will be copied to /var/lib/laminar/cfg/<name>
 
@@ -21,7 +25,7 @@ in
       };
     };
   };
-  imports = [ ./kassandra.nix ./test-config.nix ./projects.nix ];
+  imports = [./kassandra.nix ./test-config.nix ./projects.nix];
   config = {
     services.laminar.cfgFiles = {
       env = builtins.toFile "laminar-env" ''
@@ -47,16 +51,16 @@ in
       };
     };
     users = {
-      groups.laminar = { };
+      groups.laminar = {};
       users.laminar = {
         group = "laminar";
         home = stateDir;
         isSystemUser = true;
       };
     };
-    environment.systemPackages = [ pkgs.laminar ];
+    environment.systemPackages = [pkgs.laminar];
     systemd.services.laminar = {
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
       description = "Laminar continuous integration service";
       serviceConfig = {
         WorkingDirectory = stateDir;
@@ -65,7 +69,7 @@ in
         StateDirectory = "laminar";
         LimitNOFILE = "1024000";
       };
-      after = [ "network.target" ];
+      after = ["network.target"];
       preStart = "ln -sfT ${pkgs.setToDirectories cfg.cfgFiles} ${cfgDir}";
     };
     services = {

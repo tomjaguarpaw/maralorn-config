@@ -1,4 +1,4 @@
-startpage: { pkgs, ... }: {
+startpage: {pkgs, ...}: {
   programs.firefox = {
     profiles.maralorn-default = {
       extraConfig = ""; # user.js
@@ -21,7 +21,7 @@ startpage: { pkgs, ... }: {
   };
 
   programs.browserpass = {
-    browsers = [ "firefox" ];
+    browsers = ["firefox"];
     enable = true;
   };
   home.sessionVariables = {

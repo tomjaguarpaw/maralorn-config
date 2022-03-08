@@ -1,18 +1,21 @@
-{ lib, pkgs, config, ... }:
-with lib;
-let
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
+with lib; let
   weechat = pkgs.wrapWeechat pkgs.weechat-unwrapped {
-    configure = { availablePlugins, ... }: {
-      plugins = builtins.attrValues (availablePlugins // {
+    configure = {availablePlugins, ...}: {
+      plugins = builtins.attrValues (availablePlugins
+      // {
         python = (availablePlugins.python.withPackages
-          (ps: [ pkgs.weechatScripts.weechat-matrix ]));
+        (ps: [pkgs.weechatScripts.weechat-matrix]));
       });
-      scripts = [ pkgs.weechatScripts.weechat-matrix ];
+      scripts = [pkgs.weechatScripts.weechat-matrix];
     };
   };
-in
-{
-
+in {
   home.file = {
     python_plugins = {
       target = ".weechat/python";
@@ -68,13 +71,15 @@ in
         [look]
         human_buffer_names = on
         [server]
-        ${lib.concatStringsSep "\n" (lib.mapAttrsToList
+        ${
+          lib.concatStringsSep "\n" (lib.mapAttrsToList
           (server: serverConfig: ''
             ${server}.address = "${serverConfig.address}"
             ${server}.autoconnect = on
             ${server}.username = "${serverConfig.user}"
             ${server}.password = "${serverConfig.password}"
-          '') (pkgs.privateValue { } "weechat/matrix"))}
+          '') (pkgs.privateValue {} "weechat/matrix"))
+        }
       '';
     };
   };
@@ -82,14 +87,13 @@ in
   systemd.user = {
     timers.log2rss = {
       Timer.OnCalendar = "19:55";
-      Install.WantedBy = [ "timers.target" ];
+      Install.WantedBy = ["timers.target"];
     };
     services = {
       log2rss = {
         Unit.Description = "log2rss";
         Service = {
-          ExecStart =
-            "${pkgs.logfeed}/bin/log2rss /var/www/rss/chats.xml";
+          ExecStart = "${pkgs.logfeed}/bin/log2rss /var/www/rss/chats.xml";
           Type = "oneshot";
         };
       };
@@ -97,13 +101,11 @@ in
         Unit.Description = "Weechat Tmux Session";
         Service = {
           Type = "forking";
-          ExecStart =
-            "${pkgs.tmux}/bin/tmux -L weechat -2 new-session -d -s irc -n weechat '${weechat}/bin/weechat'";
+          ExecStart = "${pkgs.tmux}/bin/tmux -L weechat -2 new-session -d -s irc -n weechat '${weechat}/bin/weechat'";
           Restart = "always";
         };
-        Install.WantedBy = [ "default.target" ];
+        Install.WantedBy = ["default.target"];
       };
     };
   };
-
 }

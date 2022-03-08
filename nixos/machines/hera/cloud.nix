@@ -1,23 +1,25 @@
-{ pkgs, config, lib, ... }:
-with lib;
-let
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+with lib; let
   adminCreds = pkgs.privateValue
-    {
-      adminpass = "";
-      dbpass = "";
-      adminuser = "";
-    } "nextcloud-admin";
+  {
+    adminpass = "";
+    dbpass = "";
+    adminuser = "";
+  } "nextcloud-admin";
   inherit (config.m-0) hosts;
   certPath = "/var/lib/acme";
   nextcloudServices = hostname: {
     nextcloud-pg-backup = {
-      script =
-        let
-          name = "nextcloud-psql-${hostname}";
-        in
-        ''
-          ${config.services.postgresql.package}/bin/pg_dump nextcloud > /var/lib/db-backup-dumps/${name}
-        '';
+      script = let
+        name = "nextcloud-psql-${hostname}";
+      in ''
+        ${config.services.postgresql.package}/bin/pg_dump nextcloud > /var/lib/db-backup-dumps/${name}
+      '';
       serviceConfig = {
         User = "nextcloud";
         Type = "oneshot";
@@ -25,37 +27,40 @@ let
     };
     prometheus-nginx-exporter.serviceConfig.RestartSec = 10;
     nextcloud-setup = {
-      requires = [ "postgresql.service" "redis.service" ];
-      after = [ "postgresql.service" "redis.service" ];
+      requires = ["postgresql.service" "redis.service"];
+      after = ["postgresql.service" "redis.service"];
     };
   };
-  nextcloudConf = hostname:
-    {
-      enable = true;
-      hostName = hostname;
-      package = pkgs.nextcloud22;
-      maxUploadSize = "10g";
-      caching = {
-        redis = true;
-        apcu = false;
-        memcached = false;
-      };
-      config = {
-        dbtype = "pgsql";
-        dbname = "nextcloud";
-        dbuser = "nextcloud";
-        dbhost = "localhost";
-        defaultPhoneRegion = "DE";
-        adminuser = "maralorn";
-        dbpassFile = builtins.toFile "nextcloud-dbpass" adminCreds.dbpass;
-        adminpassFile = builtins.toFile "nextcloud-adminpass" adminCreds.adminpass;
-      };
-      autoUpdateApps = {
-        enable = true;
-        startAt = "20:30";
-      };
+  nextcloudConf = hostname: {
+    enable = true;
+    hostName = hostname;
+    package = pkgs.nextcloud22;
+    maxUploadSize = "10g";
+    caching = {
+      redis = true;
+      apcu = false;
+      memcached = false;
     };
-  nextcloud-container = { v6, v4, hostname }: {
+    config = {
+      dbtype = "pgsql";
+      dbname = "nextcloud";
+      dbuser = "nextcloud";
+      dbhost = "localhost";
+      defaultPhoneRegion = "DE";
+      adminuser = "maralorn";
+      dbpassFile = builtins.toFile "nextcloud-dbpass" adminCreds.dbpass;
+      adminpassFile = builtins.toFile "nextcloud-adminpass" adminCreds.adminpass;
+    };
+    autoUpdateApps = {
+      enable = true;
+      startAt = "20:30";
+    };
+  };
+  nextcloud-container = {
+    v6,
+    v4,
+    hostname,
+  }: {
     bindMounts = {
       "${certPath}" = {
         hostPath = certPath;
@@ -70,8 +75,8 @@ let
     autoStart = true;
     privateNetwork = true;
     hostBridge = "bridge";
-    config = { pkgs, ... }: {
-      imports = [ ../../roles ];
+    config = {pkgs, ...}: {
+      imports = [../../roles];
 
       networking = {
         interfaces.eth0 = {
@@ -97,7 +102,7 @@ let
           address = hosts.hera-intern-v4;
           interface = "eth0";
         };
-        firewall.allowedTCPPorts = [ 80 443 ];
+        firewall.allowedTCPPorts = [80 443];
       };
 
       systemd.services = nextcloudServices hostname;
@@ -113,35 +118,36 @@ let
         postgresql = {
           enable = true;
           package = pkgs.postgresql_14;
-          ensureDatabases = [ "nextcloud" ];
+          ensureDatabases = ["nextcloud"];
         };
       };
     };
   };
   mainHostName = "cloud.maralorn.de";
-in
-{
+in {
   systemd = {
-    services = {
-      "container@chor-cloud" = {
-        #serviceConfig.RestartSec = 10;
-        unitConfig = {
-          #StartLimitIntervalSec = 30;
-          #StartLimitBurst = 2;
+    services =
+      {
+        "container@chor-cloud" = {
+          #serviceConfig.RestartSec = 10;
+          unitConfig = {
+            #StartLimitIntervalSec = 30;
+            #StartLimitBurst = 2;
+          };
         };
-      };
-      rss-server = {
-        serviceConfig = {
-          WorkingDirectory = "/var/www/rss";
-          ExecStart = "${pkgs.python3}/bin/python -m http.server 8842";
+        rss-server = {
+          serviceConfig = {
+            WorkingDirectory = "/var/www/rss";
+            ExecStart = "${pkgs.python3}/bin/python -m http.server 8842";
+          };
+          wantedBy = ["multi-user.target"];
         };
-        wantedBy = [ "multi-user.target" ];
-      };
-    } // nextcloudServices mainHostName;
+      }
+      // nextcloudServices mainHostName;
   };
   services = {
     nextcloud = nextcloudConf mainHostName;
-    postgresql.ensureDatabases = [ "nextcloud" ];
+    postgresql.ensureDatabases = ["nextcloud"];
     nginx = {
       enable = true;
       virtualHosts."cloud.maralorn.de" = {
@@ -197,5 +203,5 @@ in
       v4 = hosts.chor-cloud-intern-v4;
     };
   };
-  users.users.nextcloud.extraGroups = [ "nginx" ];
+  users.users.nextcloud.extraGroups = ["nginx"];
 }

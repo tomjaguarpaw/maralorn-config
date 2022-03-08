@@ -1,5 +1,4 @@
-{ lib }:
-let
+{lib}: let
   overlayPath = ./.;
   candidates = lib.attrNames (builtins.readDir overlayPath);
   pathToOverlay = n: overlayPath + ("/" + n);
@@ -10,4 +9,4 @@ let
   overlays = builtins.filter isOverlay candidates;
   importOverlay = n: import (pathToOverlay n);
 in
-map importOverlay overlays
+  map importOverlay overlays

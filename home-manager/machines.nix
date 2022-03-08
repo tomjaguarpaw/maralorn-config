@@ -1,19 +1,21 @@
 let
-  restrictedPages = [
-    "reddit.com"
-    "github.com"
-    "*.ccc.de"
-    "haskell.org"
-    "*.haskell.org"
-    "*.nixos.org"
-    "nixos.org"
-    "matrix.org"
-    "element.io"
-    "youtube.*"
-    "*.element.io"
-    "chaos.social"
-    "twitter.com"
-  ] ++ newsPages;
+  restrictedPages =
+    [
+      "reddit.com"
+      "github.com"
+      "*.ccc.de"
+      "haskell.org"
+      "*.haskell.org"
+      "*.nixos.org"
+      "nixos.org"
+      "matrix.org"
+      "element.io"
+      "youtube.*"
+      "*.element.io"
+      "chaos.social"
+      "twitter.com"
+    ]
+    ++ newsPages;
   newsPages = [
     "zeit.de"
     "heise.de"
@@ -30,17 +32,14 @@ let
     "zdf.de"
   ];
 
-  makeConfig = hostName: imports:
-    { ... }: {
-      imports = imports ++ [ ./roles/default.nix ];
-      m-0.hostName = hostName;
-      nixpkgs.overlays = [ (_: _: (import ../channels.nix).${hostName}) ];
-    };
-  makeAutostart = name:
-    { config, ... }: {
-      config.xdg.configFile."autostart/${name}.desktop".source =
-        "${config.home.path}/share/applications/${name}.desktop";
-    };
+  makeConfig = hostName: imports: {...}: {
+    imports = imports ++ [./roles/default.nix];
+    m-0.hostName = hostName;
+    nixpkgs.overlays = [(_: _: (import ../channels.nix).${hostName})];
+  };
+  makeAutostart = name: {config, ...}: {
+    config.xdg.configFile."autostart/${name}.desktop".source = "${config.home.path}/share/applications/${name}.desktop";
+  };
   on-my-machines = [
     ./roles/on-my-machine.nix
     ./roles/accounting.nix
@@ -53,9 +52,11 @@ let
     ./roles/mode-switching.nix
     ./roles/systemd-exporter.nix
   ];
-  daily-driver = name: extra:
-    let
-      all = extra ++ on-my-machines ++ [
+  daily-driver = name: extra: let
+    all =
+      extra
+      ++ on-my-machines
+      ++ [
         (import ./roles/firefox.nix "http://localhost:7000")
         (makeAutostart "planning")
         (makeAutostart "unlock-ssh")
@@ -76,56 +77,65 @@ let
         ./roles/wallpaper.nix
         ./roles/zettelkasten.nix
       ];
-      orgaExtra = [
-        ./roles/accounting.nix
-        ./roles/mail-client.nix
-        ./roles/pythia.nix
-        ./roles/tinkering.nix
-      ];
-      blockServer = import ./roles/block-server.nix;
-    in
-    {
-      klausur = makeConfig name (
-        all ++ [
-          (blockServer restrictedPages)
-        ]
-      );
-      orga = makeConfig name (
-        all ++ orgaExtra ++ [
-          (blockServer restrictedPages)
-        ]
-      );
-      communication = makeConfig name (
-        all ++ orgaExtra ++ [
-          ./roles/chat.nix
-          (blockServer restrictedPages)
-        ]
-      );
-      code = makeConfig name (
-        all ++ orgaExtra ++ [
-          ./roles/chat.nix
-          (blockServer newsPages)
-        ]
-      );
-      leisure = makeConfig name (
-        all ++ orgaExtra ++ [
-          ./roles/games.nix
-          ./roles/chat.nix
-          ./roles/leisure.nix
-          (blockServer newsPages)
-        ]
-      );
-      unrestricted = makeConfig name (
-        all ++ orgaExtra ++ [
-          ./roles/games.nix
-          ./roles/chat.nix
-          ./roles/leisure.nix
-          (blockServer [ ])
-        ]
-      );
-    };
-in
-{
+    orgaExtra = [
+      ./roles/accounting.nix
+      ./roles/mail-client.nix
+      ./roles/pythia.nix
+      ./roles/tinkering.nix
+    ];
+    blockServer = import ./roles/block-server.nix;
+  in {
+    klausur = makeConfig name (
+      all
+      ++ [
+        (blockServer restrictedPages)
+      ]
+    );
+    orga = makeConfig name (
+      all
+      ++ orgaExtra
+      ++ [
+        (blockServer restrictedPages)
+      ]
+    );
+    communication = makeConfig name (
+      all
+      ++ orgaExtra
+      ++ [
+        ./roles/chat.nix
+        (blockServer restrictedPages)
+      ]
+    );
+    code = makeConfig name (
+      all
+      ++ orgaExtra
+      ++ [
+        ./roles/chat.nix
+        (blockServer newsPages)
+      ]
+    );
+    leisure = makeConfig name (
+      all
+      ++ orgaExtra
+      ++ [
+        ./roles/games.nix
+        ./roles/chat.nix
+        ./roles/leisure.nix
+        (blockServer newsPages)
+      ]
+    );
+    unrestricted = makeConfig name (
+      all
+      ++ orgaExtra
+      ++ [
+        ./roles/games.nix
+        ./roles/chat.nix
+        ./roles/leisure.nix
+        (blockServer [])
+      ]
+    );
+  };
+in {
   apollo = daily-driver "apollo" [
     ./roles/battery.nix
     ./roles/untrusted-env.nix
@@ -143,7 +153,8 @@ in
     ./roles/headless.nix
     (import ./roles/state.nix "default")
   ];
-  hera.default = makeConfig "hera" (on-my-machines ++ [
+  hera.default = makeConfig "hera" (on-my-machines
+  ++ [
     ./roles/fetch-banking-timer.nix
     ./roles/weechat
     ./roles/mail-sort.nix

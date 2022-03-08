@@ -1,10 +1,13 @@
-{ pkgs, config, lib, ... }:
-let
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}: let
   server_name = "maralorn.de";
   hostName = "matrix.${server_name}";
-in
-{
-  environment.systemPackages = [ pkgs.matrix-synapse-tools.rust-synapse-compress-state ];
+in {
+  environment.systemPackages = [pkgs.matrix-synapse-tools.rust-synapse-compress-state];
   systemd.services = {
     # use jemalloc to improve the memory situation with synapse
     matrix-synapse.environment = {
@@ -15,20 +18,22 @@ in
     synapse-cleanup = {
       serviceConfig = {
         ExecStart = pkgs.writeHaskell "synapse-cleanup"
-          {
-            libraries = builtins.attrValues pkgs.myHaskellScriptPackages ++ [
+        {
+          libraries =
+            builtins.attrValues pkgs.myHaskellScriptPackages
+            ++ [
               pkgs.haskellPackages.postgresql-simple
               pkgs.haskellPackages.HTTP
             ];
-            ghcEnv.PATH = "${lib.makeBinPath [ pkgs.matrix-synapse-tools.rust-synapse-compress-state config.services.postgresql.package ]}:$PATH";
-            ghcArgs = [ "-threaded" ];
-          }
-          (builtins.readFile ./synapse-cleanup.hs);
+          ghcEnv.PATH = "${lib.makeBinPath [pkgs.matrix-synapse-tools.rust-synapse-compress-state config.services.postgresql.package]}:$PATH";
+          ghcArgs = ["-threaded"];
+        }
+        (builtins.readFile ./synapse-cleanup.hs);
         User = "matrix-synapse";
         Type = "oneshot";
       };
     };
-    synapse-worker-1 = { };
+    synapse-worker-1 = {};
   };
   services = {
     nginx = {
@@ -37,23 +42,19 @@ in
         enableACME = true;
         forceSSL = true;
         locations = {
-          "/.well-known/matrix/server".extraConfig =
-            let
-              server."m.server" = "${hostName}:443";
-            in
-            ''
-              add_header Content-Type application/json;
-              return 200 '${builtins.toJSON server}';
-            '';
-          "/.well-known/matrix/client".extraConfig =
-            let
-              client."m.homeserver".base_url = "https://${hostName}";
-            in
-            ''
-              add_header Content-Type application/json;
-              add_header Access-Control-Allow-Origin *;
-              return 200 '${builtins.toJSON client}';
-            '';
+          "/.well-known/matrix/server".extraConfig = let
+            server."m.server" = "${hostName}:443";
+          in ''
+            add_header Content-Type application/json;
+            return 200 '${builtins.toJSON server}';
+          '';
+          "/.well-known/matrix/client".extraConfig = let
+            client."m.homeserver".base_url = "https://${hostName}";
+          in ''
+            add_header Content-Type application/json;
+            add_header Access-Control-Allow-Origin *;
+            return 200 '${builtins.toJSON client}';
+          '';
         };
       };
       virtualHosts."${hostName}" = {
@@ -72,19 +73,19 @@ in
     postgresql = {
       enable = true;
       settings = import ./postgres-tuning.nix;
-      ensureDatabases = [ "matrix-synapse" ];
+      ensureDatabases = ["matrix-synapse"];
     };
 
     # Synapse
-    matrix-synapse =
-      let
-        server-secrets = pkgs.privateValue
-          {
-            registration_shared_secret = "";
-            macaroon_secret_key = "";
-          } "matrix/server-secrets";
-      in
-      server-secrets // {
+    matrix-synapse = let
+      server-secrets = pkgs.privateValue
+      {
+        registration_shared_secret = "";
+        macaroon_secret_key = "";
+      } "matrix/server-secrets";
+    in
+      server-secrets
+      // {
         enable = true;
         package = pkgs.matrix-synapse;
         enable_metrics = true;
@@ -98,21 +99,19 @@ in
         extraConfig = ''
           serve_server_wellknown: true
         '';
-        turn_uris =
-          let
-            turns = "turns:${config.services.coturn.realm}:${
-              toString config.services.coturn.tls-listening-port
-              }";
-            turn = "turn:${config.services.coturn.realm}:${
-              toString config.services.coturn.listening-port
-              }";
-          in
-          [
-            "${turns}?transport=udp"
-            "${turns}?transport=tcp"
-            "${turn}?transport=udp"
-            "${turn}?transport=tcp"
-          ];
+        turn_uris = let
+          turns = "turns:${config.services.coturn.realm}:${
+            toString config.services.coturn.tls-listening-port
+          }";
+          turn = "turn:${config.services.coturn.realm}:${
+            toString config.services.coturn.listening-port
+          }";
+        in [
+          "${turns}?transport=udp"
+          "${turns}?transport=tcp"
+          "${turn}?transport=udp"
+          "${turn}?transport=tcp"
+        ];
         turn_user_lifetime = "24h";
         allow_guest_access = true;
         logConfig = ''
@@ -158,7 +157,7 @@ in
             type = "metrics";
             port = 9148;
             bind_address = "127.0.0.1";
-            resources = [ ];
+            resources = [];
             tls = false;
           }
           {
@@ -167,11 +166,11 @@ in
             resources = [
               {
                 compress = false;
-                names = [ "client" ];
+                names = ["client"];
               }
               {
                 compress = false;
-                names = [ "federation" ];
+                names = ["federation"];
               }
             ];
             x_forwarded = true;

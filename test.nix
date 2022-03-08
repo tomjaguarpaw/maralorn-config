@@ -1,13 +1,16 @@
 let
   nix-pre-commit-hooks = import (import ./nix/sources.nix)."pre-commit-hooks.nix";
-in
-{
+in {
   pre-commit-check = nix-pre-commit-hooks.run {
     src = ./.;
     hooks = {
       hlint.enable = true;
-      nixpkgs-fmt.enable = true;
+      alejandra.enable = true;
+      #nix-linter.enable = true;
+      #statix.enable = true;
       fourmolu.enable = true;
+      cabal-fmt.enable = true;
+      shellcheck.enable = true;
     };
   };
 }

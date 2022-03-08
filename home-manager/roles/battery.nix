@@ -1,19 +1,23 @@
-{ lib, pkgs, config, ... }:
-let
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}: let
   battery-watch = pkgs.writeHaskellScript
-    {
-      name = "battery-watch";
-      bins = [ pkgs.acpi ];
-      imports = [
-        "DBus.Notify"
-        "Control.Concurrent"
-        "Text.Megaparsec"
-        "Text.Megaparsec.Char"
-        "Text.Megaparsec.Char.Lexer"
-        "Replace.Megaparsec"
-        "Data.Maybe"
-      ];
-    } ''
+  {
+    name = "battery-watch";
+    bins = [pkgs.acpi];
+    imports = [
+      "DBus.Notify"
+      "Control.Concurrent"
+      "Text.Megaparsec"
+      "Text.Megaparsec.Char"
+      "Text.Megaparsec.Char.Lexer"
+      "Replace.Megaparsec"
+      "Data.Maybe"
+    ];
+  } ''
     moderateLevel = 50 -- percent
     lowLevel = 20 -- percent
     criticalLevel = 8 -- percent
@@ -59,9 +63,7 @@ let
      where
       myNote = blankNote { body = Just $ Text [i|#{currentLevel}% remaining.|]}
   '';
-in
-{
-
+in {
   systemd.user = {
     services.battery = {
       Unit.Description = "Watch battery state and warn user";
@@ -70,8 +72,7 @@ in
         Restart = "always";
         RestartSec = 60;
       };
-      Install.WantedBy = [ "default.target" ];
+      Install.WantedBy = ["default.target"];
     };
   };
-
 }

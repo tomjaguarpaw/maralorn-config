@@ -1,13 +1,16 @@
-{ pkgs, lib, config, ... }:
-let
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
   inherit (config.m-0) hostName;
   modes = pkgs.lib.attrNames (import ../machines.nix).${hostName};
   modeFile = "${config.home.homeDirectory}/.mode";
   modeDir = "${config.home.homeDirectory}/.volatile/modes";
   configPath = "${config.home.homeDirectory}/git/config";
   configGit = "${pkgs.git}/bin/git -C ${configPath}";
-in
-{
+in {
   home.packages = builtins.attrValues rec {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
@@ -16,7 +19,7 @@ in
       ${updateModes}/bin/update-modes
       /run/wrappers/bin/sudo -A /run/current-system/sw/bin/update-system
     '';
-    activateMode = pkgs.writeHaskellScript { name = "activate-mode"; } ''
+    activateMode = pkgs.writeHaskellScript {name = "activate-mode";} ''
       getMode :: IO Text
       getMode = decodeUtf8 <$> (cat "${modeFile}" |> captureTrim)
 
@@ -29,10 +32,10 @@ in
         whenM (elem wallpaperCmd <$> pathBins) $ exe wallpaperCmd
     '';
     updateModes = pkgs.writeHaskellScript
-      {
-        name = "update-modes";
-        bins = [ activateMode pkgs.git pkgs.nix-output-monitor ];
-      } ''
+    {
+      name = "update-modes";
+      bins = [activateMode pkgs.git pkgs.nix-output-monitor];
+    } ''
       params = ["${configPath}/home-manager/target.nix", "-A", "${hostName}", "-o", "${modeDir}"]
 
       main = do
@@ -45,10 +48,10 @@ in
         activate_mode
     '';
     quickUpdateMode = pkgs.writeHaskellScript
-      {
-        name = "quick-update-mode";
-        bins = [ updateModes pkgs.git pkgs.home-manager pkgs.nix-output-monitor ];
-      } ''
+    {
+      name = "quick-update-mode";
+      bins = [updateModes pkgs.git pkgs.home-manager pkgs.nix-output-monitor];
+    } ''
       getMode :: IO Text
       getMode = decodeUtf8 <$> (cat "${modeFile}" |> captureTrim)
 
@@ -60,19 +63,19 @@ in
         update_modes
     '';
     selectMode = pkgs.writeHaskellScript
-      {
-        name = "select-mode";
-        bins = [
-          pkgs.dialog
-          activateMode
-          pkgs.ncurses
-          pkgs.psmisc
-        ];
-      } ''
+    {
+      name = "select-mode";
+      bins = [
+        pkgs.dialog
+        activateMode
+        pkgs.ncurses
+        pkgs.psmisc
+      ];
+    } ''
       main = do
         mode <- decodeUtf8 <$> (dialog "--menu" "Select Mode" "20" "80" "5" ${
-          lib.concatStrings (map (mode: ''"${mode}" "" '') modes)
-        } |!> captureTrim)
+        lib.concatStrings (map (mode: ''"${mode}" "" '') modes)
+      } |!> captureTrim)
         clear
         writeFile "${modeFile}" mode
         activate_mode

@@ -1,9 +1,10 @@
-{ config, pkgs, lib, ... }:
-
-with lib;
-
 {
-
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; {
   config = {
     m-0.monitoring = [
       {
@@ -52,7 +53,7 @@ with lib;
 
   options = {
     m-0.private = mkOption {
-      default = { };
+      default = {};
       type = types.attrs;
     };
     m-0.prefix = mkOption {
@@ -62,8 +63,8 @@ with lib;
     m-0.monitoring = mkOption {
       type = types.listOf (types.submodule {
         options = {
-          name = mkOption { type = types.str; };
-          host = mkOption { type = types.str; };
+          name = mkOption {type = types.str;};
+          host = mkOption {type = types.str;};
           container = mkOption {
             type = types.bool;
             default = false;
@@ -74,46 +75,43 @@ with lib;
           };
         };
       });
-      default = [ ];
+      default = [];
     };
     m-0.hosts = mkOption {
       type = types.attrs;
-      default =
-        let
-          p = config.m-0.prefix;
-          hera-p = "${p}::3";
-          apollo-p = "${p}::1";
-          wg-p = "${p}::100";
-          v4-p = "10.0.0";
-        in
-        rec {
-          hera = "${p}::1";
-          vpn = rec {
-            prefix = "fdc0:7";
-            hera = "${prefix}::1";
-            fluffy = "${prefix}::2";
-            apollo = "${prefix}::5";
-            zeus = "${prefix}::4";
-            pegasus = "${prefix}::6";
-          };
-          hera-wg-host = "${p}::100:0:1";
-
-          hera-v4 = "213.136.94.190";
-
-          hera-wg = "${wg-p}:1";
-          apollo-wg = "${wg-p}:2";
-          zeus-wg = "${wg-p}:3";
-
-          hera-intern = "${hera-p}:1";
-          chor-cloud = "${hera-p}:b";
-
-          apollo = apollo-wg;
-          zeus = zeus-wg;
-
-          hera-intern-v4 = "${v4-p}.1";
-          chor-cloud-intern-v4 = "${v4-p}.3";
+      default = let
+        p = config.m-0.prefix;
+        hera-p = "${p}::3";
+        apollo-p = "${p}::1";
+        wg-p = "${p}::100";
+        v4-p = "10.0.0";
+      in rec {
+        hera = "${p}::1";
+        vpn = rec {
+          prefix = "fdc0:7";
+          hera = "${prefix}::1";
+          fluffy = "${prefix}::2";
+          apollo = "${prefix}::5";
+          zeus = "${prefix}::4";
+          pegasus = "${prefix}::6";
         };
+        hera-wg-host = "${p}::100:0:1";
+
+        hera-v4 = "213.136.94.190";
+
+        hera-wg = "${wg-p}:1";
+        apollo-wg = "${wg-p}:2";
+        zeus-wg = "${wg-p}:3";
+
+        hera-intern = "${hera-p}:1";
+        chor-cloud = "${hera-p}:b";
+
+        apollo = apollo-wg;
+        zeus = zeus-wg;
+
+        hera-intern-v4 = "${v4-p}.1";
+        chor-cloud-intern-v4 = "${v4-p}.3";
+      };
     };
   };
-
 }

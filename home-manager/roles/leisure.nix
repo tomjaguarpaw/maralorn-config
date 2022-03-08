@@ -1,5 +1,9 @@
-{ pkgs, lib, config, ... }:
-let
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
   serien = pkgs.writeShellScript "serien.rss" ''
     cat <<EOF
     <?xml version="1.0"?>
@@ -39,10 +43,9 @@ let
     urls-source "ocnews"
     ocnews-url "https://cloud.maralorn.de"
     ocnews-login "maralorn"
-    ocnews-password "${(pkgs.privateValue { adminpass =""; } "nextcloud-admin").adminpass}"
+    ocnews-password "${(pkgs.privateValue {adminpass = "";} "nextcloud-admin").adminpass}"
   '';
-in
-{
+in {
   xdg.configFile."newsboat/urls".text = lib.concatStringsSep "\n" watchfeeds;
   home = {
     packages = builtins.attrValues {

@@ -1,12 +1,15 @@
-{ pkgs, lib, utils, ... }:
-let
+{
+  pkgs,
+  lib,
+  utils,
+  ...
+}: let
   heading = name: link: ''<h2><a href=\"${link}\">${name}</a></h2>'';
   badge = src: link: ''<a href=\"${link}\">\n  <img src=\"${src}\">\n</a>'';
   job = name:
     badge "https://ci.maralorn.de/badge/${name}.svg"
-      "https://ci.maralorn.de/jobs/${name}";
+    "https://ci.maralorn.de/jobs/${name}";
   badges = lib.concatStringsSep "\\n" [
-
     (heading "ci.maralorn.de" "https://ci.maralorn.de")
     (job "kassandra")
     (job "test-config")
@@ -21,14 +24,12 @@ let
     (heading "nix-output-monitor" "https://github.com/maralorn/nix-output-monitor")
     (badge "https://repology.org/badge/vertical-allrepos/nix-output-monitor.svg?columns=3&header=" "https://repology.org/project/nix-output-monitor/versions")
   ];
-  dashboards = pkgs.runCommand "dashboards" { } ''
+  dashboards = pkgs.runCommand "dashboards" {} ''
     mkdir -p $out
     cp ${./grafana-dashboards}/* $out
     substituteInPlace $out/health-status.json --replace '@BADGES@' '${badges}'
   '';
-in
-{
-
+in {
   services = {
     grafana = {
       enable = true;

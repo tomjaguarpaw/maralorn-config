@@ -1,15 +1,19 @@
-{ config, pkgs, lib, ... }:
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
   gitoliteCfg = config.services.gitolite;
   post-update = pkgs.writeHaskellScript
-    {
-      name = "post-update";
-      bins = [ pkgs.git pkgs.laminar ];
-      imports = [
-        "System.Environment (lookupEnv)"
-        "System.Directory (withCurrentDirectory)"
-      ];
-    } ''
+  {
+    name = "post-update";
+    bins = [pkgs.git pkgs.laminar];
+    imports = [
+      "System.Environment (lookupEnv)"
+      "System.Directory (withCurrentDirectory)"
+    ];
+  } ''
     checkout :: String -> IO FilePath
     checkout path = do
       (decodeUtf8 -> repoDir) <-  mktemp "-d" |> captureTrim
@@ -88,14 +92,13 @@ let
     project-list=/var/lib/gitolite/projects.list
     scan-path=/var/lib/gitolite/repositories
   '';
-in
-{
+in {
   systemd.tmpfiles.rules =
     lib.mkAfter
-      [
-        "z ${gitoliteCfg.dataDir}/.ssh/id_ed25519 0600 ${gitoliteCfg.user} ${gitoliteCfg.group} - -"
-        "v /var/cache/cgit 0700 cgit ${gitoliteCfg.group} - -"
-      ];
+    [
+      "z ${gitoliteCfg.dataDir}/.ssh/id_ed25519 0600 ${gitoliteCfg.user} ${gitoliteCfg.group} - -"
+      "v /var/cache/cgit 0700 cgit ${gitoliteCfg.group} - -"
+    ];
   users.users.cgit = {
     isSystemUser = true;
     group = gitoliteCfg.group;
@@ -119,8 +122,8 @@ in
     gitolite = {
       enable = true;
       user = "git";
-      adminPubkey = builtins.elemAt (pkgs.privateValue [ "" ] "ssh-keys") 0;
-      commonHooks = [ "${post-update}/bin/post-update" ];
+      adminPubkey = builtins.elemAt (pkgs.privateValue [""] "ssh-keys") 0;
+      commonHooks = ["${post-update}/bin/post-update"];
       extraGitoliteRc = ''
         $RC{UMASK} = 0027;
         $RC{GIT_CONFIG_KEYS} = 'gitweb\..*';
@@ -157,5 +160,4 @@ in
       };
     };
   };
-
 }

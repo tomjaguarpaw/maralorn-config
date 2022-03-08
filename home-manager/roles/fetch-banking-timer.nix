@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   systemd.user = {
     services.fetch-banking = {
       Unit.Description = "Fetch banking";
@@ -23,7 +23,7 @@
     timers.fetch-banking = {
       Unit.Description = "Fetch banking";
       Timer.OnCalendar = "2/6:00"; # Every 6 hours from 2:00
-      Install.WantedBy = [ "timers.target" ];
+      Install.WantedBy = ["timers.target"];
     };
   };
 }

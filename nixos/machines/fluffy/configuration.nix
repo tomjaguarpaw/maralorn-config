@@ -1,12 +1,13 @@
-{ config, pkgs, lib, ... }:
-
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
   wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts prefix;
   localAddress = "fdc0:1::2";
-in
-{
-
+in {
   imports = [
     ./hardware-configuration.nix
     ../../roles
@@ -17,14 +18,12 @@ in
     ../../roles/home-assistant
   ];
 
-  fileSystems =
-    let
-      btrfsOptions = { options = [ "compress=zstd" "autodefrag" "noatime" ]; };
-    in
-    {
-      "/disk" = { neededForBoot = true; } // btrfsOptions;
-      "/nix" = btrfsOptions;
-    };
+  fileSystems = let
+    btrfsOptions = {options = ["compress=zstd" "autodefrag" "noatime"];};
+  in {
+    "/disk" = {neededForBoot = true;} // btrfsOptions;
+    "/nix" = btrfsOptions;
+  };
 
   environment.etc = {
     nixos.source = "/disk/persist/maralorn/git/config";
@@ -34,7 +33,7 @@ in
   systemd.services = {
     ensure-printers.serviceConfig.SuccessExitStatus = "0 1";
     activate-home-manager = {
-      path = [ pkgs.nix pkgs.dbus ];
+      path = [pkgs.nix pkgs.dbus];
       script = ''
         if [[ -e /home/maralorn/.mode ]]; then
           MODE="$(cat /home/maralorn/.mode)"
@@ -47,9 +46,9 @@ in
         Type = "oneshot";
         User = "maralorn";
       };
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
       # Try to avoid race conditions, when the user get’s logged in before activation was completed.
-      before = [ "display-manager.service" ];
+      before = ["display-manager.service"];
     };
   };
 
@@ -91,22 +90,32 @@ in
     hostName = "fluffy";
     domain = "lo.m-0.eu";
     firewall = {
-      allowedUDPPorts = [ 631 ];
-      allowedTCPPorts = [ 21 80 631 ];
-      allowedTCPPortRanges = [{ from = 51000; to = 51999; }];
+      allowedUDPPorts = [631];
+      allowedTCPPorts = [21 80 631];
+      allowedTCPPortRanges = [
+        {
+          from = 51000;
+          to = 51999;
+        }
+      ];
     };
     interfaces.enp1s0 = {
-      ipv6.addresses = [{ address = localAddress; prefixLength = 64; }];
+      ipv6.addresses = [
+        {
+          address = localAddress;
+          prefixLength = 64;
+        }
+      ];
       useDHCP = true;
     };
     wireguard.interfaces = {
       m0wire = {
-        ips = [ "${hosts.vpn.fluffy}/64" ];
+        ips = ["${hosts.vpn.fluffy}/64"];
         privateKeyFile = "/disk/persist/wireguard-private-key";
         peers = [
           {
             publicKey = wireguard.pub.hera;
-            allowedIPs = [ "${hosts.vpn.prefix}::/64" ];
+            allowedIPs = ["${hosts.vpn.prefix}::/64"];
             endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
             presharedKeyFile = pkgs.privatePath "wireguard/psk";
             persistentKeepalive = 25;
@@ -139,8 +148,8 @@ in
     fwupd.enable = true;
     printing = {
       enable = true;
-      allowFrom = [ "all" ];
-      listenAddresses = [ "[${localAddress}]:631" ];
+      allowFrom = ["all"];
+      listenAddresses = ["[${localAddress}]:631"];
       extraConf = "ServerAlias *";
       defaultShared = true;
     };
@@ -190,5 +199,4 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "21.11"; # Did you read the comment?
-
 }

@@ -1,27 +1,33 @@
-{ config, pkgs, ... }: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   services = {
     prometheus = {
-      alertmanagers =
-        [{ static_configs = [{ targets = [ "localhost:9093" ]; }]; }];
+      alertmanagers = [{static_configs = [{targets = ["localhost:9093"];}];}];
       alertmanager = {
         enable = true;
         listenAddress = "0.0.0.0";
-        extraFlags = [ "--data.retention 170h" ];
+        extraFlags = ["--data.retention 170h"];
         configuration = {
           route = {
-            group_by = [ "alert_type" ];
+            group_by = ["alert_type"];
             group_wait = "60s";
             group_interval = "5m";
             repeat_interval = "168h";
             receiver = "alerts";
           };
-          receivers = [{
-            name = "alerts";
-            webhook_configs = [{
-              url =
-                "${config.services.go-neb.baseUrl}:4050/services/hooks/YWxlcnRtYW5hZ2VyX3NlcnZpY2U";
-            }];
-          }];
+          receivers = [
+            {
+              name = "alerts";
+              webhook_configs = [
+                {
+                  url = "${config.services.go-neb.baseUrl}:4050/services/hooks/YWxlcnRtYW5hZ2VyX3NlcnZpY2U";
+                }
+              ];
+            }
+          ];
         };
       };
     };

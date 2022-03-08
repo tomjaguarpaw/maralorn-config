@@ -1,5 +1,9 @@
-{ pkgs, config, lib, ... }:
 {
+  pkgs,
+  config,
+  lib,
+  ...
+}: {
   imports = [
     ./mautrix-signal-module.nix
   ];
@@ -9,7 +13,6 @@
     user = "mautrix-signal";
     group = "mautrix-signal";
   };
-
 
   services.mautrix-signal = {
     enable = true;

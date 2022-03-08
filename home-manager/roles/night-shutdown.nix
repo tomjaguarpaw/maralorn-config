@@ -1,17 +1,16 @@
-{ pkgs, ... }:
-let
+{pkgs, ...}: let
   night-shutdown = pkgs.writeHaskellScript
-    {
-      name = "night-shutdown";
-      imports = [
-        "Data.Time.LocalTime"
-        "Data.Time.Format"
-        "Data.Time.Clock"
-        "Control.Concurrent"
-        "Data.Functor"
-      ];
-      bins = [ pkgs.libnotify pkgs.systemd ];
-    } ''
+  {
+    name = "night-shutdown";
+    imports = [
+      "Data.Time.LocalTime"
+      "Data.Time.Format"
+      "Data.Time.Clock"
+      "Control.Concurrent"
+      "Data.Functor"
+    ];
+    bins = [pkgs.libnotify pkgs.systemd];
+  } ''
     interval = 5
 
     main = forever $ do
@@ -28,11 +27,10 @@ let
        action
        threadDelay $ (interval - (minute `mod` interval)) * 60 * 1000000
   '';
-in
-{
+in {
   systemd.user.services.night-shutdown = {
     Unit.Description = "Night Shutdown";
     Service.ExecStart = "${night-shutdown}/bin/night-shutdown";
-    Install.WantedBy = [ "graphical-session.target" ];
+    Install.WantedBy = ["graphical-session.target"];
   };
 }

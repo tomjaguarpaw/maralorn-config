@@ -1,7 +1,10 @@
-{ lib, config, ... }:
-let secretsFile = "/var/lib/luks-secret/key";
-in
 {
+  lib,
+  config,
+  ...
+}: let
+  secretsFile = "/var/lib/luks-secret/key";
+in {
   boot = {
     initrd = {
       luks.devices."nixos" = {

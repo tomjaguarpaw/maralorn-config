@@ -1,9 +1,16 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   home.packages = builtins.attrValues {
     inherit (pkgs.xorg) xev;
-    inherit (pkgs)
-      meld icedtea8_web octave filezilla nix-review gparted
-      grafana-devel;
+    inherit
+      (pkgs)
+      meld
+      icedtea8_web
+      octave
+      filezilla
+      nix-review
+      gparted
+      grafana-devel
+      ;
   };
   home.file = {
     ".config/VSCodium/User/tasks.json".text = builtins.toJSON {
@@ -13,7 +20,7 @@
       "tasks" = [
         {
           "label" = "lazygit";
-          "problemMatcher" = [ ];
+          "problemMatcher" = [];
           "type" = "shell";
           "command" = "lazygit";
         }
@@ -62,7 +69,7 @@
       "extensions.autoUpdate" = false;
       "extensions.autoCheckUpdates" = false;
       "local-history.path" = "~/.volatile/vscode-local-history/";
-      "projectManager.git.baseFolders" = [ "~/git/" ];
+      "projectManager.git.baseFolders" = ["~/git/"];
       "ltex.enabled" = false;
       "memo.links.rules" = [
         {

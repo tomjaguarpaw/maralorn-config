@@ -1,4 +1,9 @@
-{ pkgs, config, lib, ... }: {
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}: {
   services = {
     mpd = {
       enable = true;

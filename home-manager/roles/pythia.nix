@@ -1,5 +1,8 @@
-{ pkgs, config, ... }:
-let
+{
+  pkgs,
+  config,
+  ...
+}: let
   pythia-path = "${config.home.homeDirectory}/documents/pythia";
   pythia = pkgs.writeShellScriptBin "pythia" ''
     today=$(date +%Y-%m-%d)
@@ -101,5 +104,4 @@ let
     ${hold}
     exit
   '';
-in
-{ home.packages = [ pythia meditate ]; }
+in {home.packages = [pythia meditate];}

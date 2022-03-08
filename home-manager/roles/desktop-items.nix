@@ -1,5 +1,8 @@
-{ pkgs, config, ... }:
-let
+{
+  pkgs,
+  config,
+  ...
+}: let
   simpleDesktopItem = name: command:
     pkgs.makeDesktopItem {
       name = name;
@@ -15,8 +18,6 @@ let
     };
   superSimpleDesktopItem = name: simpleDesktopItem name name;
   terminalDesktopItem = name: namedTerminalDesktopItem name name;
-
-in
-{
-  home.packages = map superSimpleDesktopItem [ "kassandra2" ] ++ map terminalDesktopItem [ "unlock-ssh" ];
+in {
+  home.packages = map superSimpleDesktopItem ["kassandra2"] ++ map terminalDesktopItem ["unlock-ssh"];
 }

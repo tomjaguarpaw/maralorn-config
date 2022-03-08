@@ -1,15 +1,16 @@
-{ config, pkgs, lib, ... }:
-
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
   wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts prefix;
   nixos-hardware = (import ../../../nix/sources.nix).nixos-hardware;
   nixos-unstable = (import ../../../nix/sources.nix).nixos-unstable;
-  inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
-  vpn = (import ../../../private.nix).privateValue (_: _: { }) "vpn";
-in
-{
-
+  inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
+  vpn = (import ../../../private.nix).privateValue (_: _: {}) "vpn";
+in {
   imports = [
     "${nixos-hardware}/common/gpu/amd/sea-islands"
     ./hardware-configuration.nix
@@ -22,20 +23,18 @@ in
     (vpn "zeus")
   ];
 
-  fileSystems =
-    let
-      btrfsOptions = { options = [ "compress=zstd" "autodefrag" "noatime" ]; };
-    in
-    {
-      "/disk" = { neededForBoot = true; } // btrfsOptions;
-      "/boot" = btrfsOptions;
-      "/nix" = btrfsOptions;
-      "/home/maralorn/.config/pulse" = {
-        mountPoint = "/home/maralorn/.config/pulse";
-        device = "/disk/persist/maralorn/.config/pulse";
-        options = [ "bind" ];
-      };
+  fileSystems = let
+    btrfsOptions = {options = ["compress=zstd" "autodefrag" "noatime"];};
+  in {
+    "/disk" = {neededForBoot = true;} // btrfsOptions;
+    "/boot" = btrfsOptions;
+    "/nix" = btrfsOptions;
+    "/home/maralorn/.config/pulse" = {
+      mountPoint = "/home/maralorn/.config/pulse";
+      device = "/disk/persist/maralorn/.config/pulse";
+      options = ["bind"];
     };
+  };
 
   environment.etc = {
     nixos.source = "/disk/persist/maralorn/git/config";
@@ -43,7 +42,7 @@ in
   };
 
   systemd.services."activate-home-manager" = {
-    path = [ pkgs.nix pkgs.dbus ];
+    path = [pkgs.nix pkgs.dbus];
     script = ''
       if [[ -e /home/maralorn/.mode ]]; then
         MODE="$(cat /home/maralorn/.mode)"
@@ -56,9 +55,9 @@ in
       Type = "oneshot";
       User = "maralorn";
     };
-    wantedBy = [ "multi-user.target" ];
+    wantedBy = ["multi-user.target"];
     # Try to avoid race conditions, when the user get’s logged in before activation was completed.
-    before = [ "display-manager.service" ];
+    before = ["display-manager.service"];
   };
 
   systemd.tmpfiles.rules = [
@@ -90,7 +89,7 @@ in
         backgroundColor = "#000000";
       };
     };
-    kernelParams = [ "amdgpu.cik_support=1" ];
+    kernelParams = ["amdgpu.cik_support=1"];
     initrd = {
       luks.devices."crypted-nixos" = {
         # device defined in hardware-configuration.nix
@@ -112,24 +111,28 @@ in
     networkmanager.enable = false;
     interfaces.enp34s0 = {
       useDHCP = true;
-      ipv6.addresses = [{ address = "fdc0:1::4"; prefixLength = 64; }];
+      ipv6.addresses = [
+        {
+          address = "fdc0:1::4";
+          prefixLength = 64;
+        }
+      ];
     };
     wireguard.interfaces = {
       m0wire = {
         allowedIPsAsRoutes = false;
-        ips = [ "${hosts.zeus-wg}/112" "${hosts.vpn.zeus}/64" ];
+        ips = ["${hosts.zeus-wg}/112" "${hosts.vpn.zeus}/64"];
         privateKeyFile = "/disk/persist/wireguard-private-key";
         peers = [
           {
             publicKey = wireguard.pub.hera;
-            allowedIPs = [ "::/0" ];
+            allowedIPs = ["::/0"];
             endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
             presharedKeyFile = pkgs.privatePath "wireguard/psk";
             persistentKeepalive = 25;
           }
         ];
-        postSetup =
-          [ "${pkgs.iproute}/bin/ip route add ${prefix}::/96 dev m0wire" ];
+        postSetup = ["${pkgs.iproute}/bin/ip route add ${prefix}::/96 dev m0wire"];
       };
     };
   };
@@ -153,7 +156,10 @@ in
   services = {
     pipewire.enable = lib.mkForce false;
     fwupd.enable = true;
-    printing = { enable = true; clientConf = "ServerName fluffy.lo.m-0.eu"; };
+    printing = {
+      enable = true;
+      clientConf = "ServerName fluffy.lo.m-0.eu";
+    };
     fstrim.enable = true;
     snapper = {
       configs.persist = {
@@ -174,13 +180,15 @@ in
       firewallFilter = "-i m0wire -p tcp -m tcp -m multiport --dports 9100,9558";
       openFirewall = true;
     };
-    syncthing = {
-      enable = true;
-      group = "users";
-      user = "maralorn";
-      openDefaultPorts = true;
-      configDir = "/disk/persist/syncthing";
-    } // syncthing.declarativeWith [ "hera" "apollo" ] "/disk/persist/maralorn/media";
+    syncthing =
+      {
+        enable = true;
+        group = "users";
+        user = "maralorn";
+        openDefaultPorts = true;
+        configDir = "/disk/persist/syncthing";
+      }
+      // syncthing.declarativeWith ["hera" "apollo"] "/disk/persist/maralorn/media";
     xserver = {
       enable = true;
       displayManager = {
@@ -222,7 +230,7 @@ in
       support32Bit = true;
       tcp = {
         enable = true;
-        anonymousClients.allowedIpRanges = [ "127.0.0.1" "::1" ];
+        anonymousClients.allowedIpRanges = ["127.0.0.1" "::1"];
       };
     };
   };

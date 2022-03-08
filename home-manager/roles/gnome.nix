@@ -1,16 +1,19 @@
-{ pkgs, lib, ... }@args:
-let
+{
+  pkgs,
+  lib,
+  ...
+} @ args: let
   hotkeys = import ./hotkeys.nix args;
   mkTuple = lib.hm.gvariant.mkTuple;
   statusScript = pkgs.writeHaskellScript
-    {
-      name = "status-script";
-      bins = [ pkgs.notmuch pkgs.coreutils pkgs.git pkgs.playerctl pkgs.khal ];
-      imports = [
-        "Control.Exception"
-        "System.Directory"
-      ];
-    } ''
+  {
+    name = "status-script";
+    bins = [pkgs.notmuch pkgs.coreutils pkgs.git pkgs.playerctl pkgs.khal];
+    imports = [
+      "Control.Exception"
+      "System.Directory"
+    ];
+  } ''
     data Mode = Klausur | Orga | Communication | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
     modes = enumFrom Klausur
     getMode = do
@@ -46,17 +49,16 @@ let
         memptyIfFalse (length unpushed /= 0) (one [i|<span foreground='\#d2691e'>Unpushed: #{Text.intercalate " " unpushed}</span>|]) ++
         memptyIfFalse (length dirty /= 0) (one [i|<span foreground='\#ff7f50'>Dirty: #{Text.intercalate " " dirty}</span>|])
   '';
-in
-{
+in {
   services.gpg-agent.pinentryFlavor = "gnome3";
   dconf.settings = {
     "org/gnome/desktop/wm/keybindings" = {
-      switch-input-source = [ ];
-      switch-input-source-backward = [ ];
-      switch-applications = [ ];
-      switch-applications-backward = [ ];
-      cycle-windows = [ "<Super>Tab" ];
-      cycle-windows-backward = [ "<Shift><Super>Tab" ];
+      switch-input-source = [];
+      switch-input-source-backward = [];
+      switch-applications = [];
+      switch-applications-backward = [];
+      cycle-windows = ["<Super>Tab"];
+      cycle-windows-backward = ["<Shift><Super>Tab"];
     };
 
     "org/gnome/settings-daemon/plugins/color" = {
@@ -71,39 +73,37 @@ in
     };
 
     "org/gnome/desktop/wm/keybindings" = {
-      close = [ "<Super>q" ];
+      close = ["<Super>q"];
     };
 
-    "org/gnome/shell/extensions/gtile" =
-      let
-        left = r: "0:${r} 1:${r},0:${r} 2:${r},0:${r} 3:${r},0:${r} 0:${r}, 1:${r} 1:${r}";
-        right = r: "4:${r} 5:${r},3:${r} 5:${r},2:${r} 5:${r},5:${r} 5:${r}, 4:${r} 4:${r}";
-        middle = r: "2:${r} 3:${r}, 1:${r} 4:${r}, 0:${r} 5:${r}, 1:${r} 3:${r}, 2:${r} 4:${r}, 2:${r} 2:${r}, 3:${r} 3:${r}";
-      in
-      {
-        global-presets = true;
-        grid-sizes = "6x2";
-        preset-resize-1 = [ "<Control><Super>m" ];
-        preset-resize-2 = [ "<Control><Super>comma" ];
-        preset-resize-3 = [ "<Control><Super>period" ];
-        preset-resize-4 = [ "<Control><Super>n" ];
-        preset-resize-5 = [ "<Control><Super>r" ];
-        preset-resize-6 = [ "<Control><Super>t" ];
-        preset-resize-7 = [ "<Control><Super>h" ];
-        preset-resize-8 = [ "<Control><Super>g" ];
-        preset-resize-9 = [ "<Control><Super>f" ];
-        resize1 = "6x2 ${left "1"}";
-        resize2 = "6x2 ${middle "1"}";
-        resize3 = "6x2 ${right "1"}";
-        resize4 = "6x1 ${left "0"}";
-        resize5 = "6x1 ${middle "0"}";
-        resize6 = "6x1 ${right "0"}";
-        resize7 = "6x2 ${left "0"}";
-        resize8 = "6x2 ${middle "0"}";
-        resize9 = "6x2 ${right "0"}";
-        show-toggle-tiling-alt = [ "<Super>t" ];
-        show-icon = false;
-      };
+    "org/gnome/shell/extensions/gtile" = let
+      left = r: "0:${r} 1:${r},0:${r} 2:${r},0:${r} 3:${r},0:${r} 0:${r}, 1:${r} 1:${r}";
+      right = r: "4:${r} 5:${r},3:${r} 5:${r},2:${r} 5:${r},5:${r} 5:${r}, 4:${r} 4:${r}";
+      middle = r: "2:${r} 3:${r}, 1:${r} 4:${r}, 0:${r} 5:${r}, 1:${r} 3:${r}, 2:${r} 4:${r}, 2:${r} 2:${r}, 3:${r} 3:${r}";
+    in {
+      global-presets = true;
+      grid-sizes = "6x2";
+      preset-resize-1 = ["<Control><Super>m"];
+      preset-resize-2 = ["<Control><Super>comma"];
+      preset-resize-3 = ["<Control><Super>period"];
+      preset-resize-4 = ["<Control><Super>n"];
+      preset-resize-5 = ["<Control><Super>r"];
+      preset-resize-6 = ["<Control><Super>t"];
+      preset-resize-7 = ["<Control><Super>h"];
+      preset-resize-8 = ["<Control><Super>g"];
+      preset-resize-9 = ["<Control><Super>f"];
+      resize1 = "6x2 ${left "1"}";
+      resize2 = "6x2 ${middle "1"}";
+      resize3 = "6x2 ${right "1"}";
+      resize4 = "6x1 ${left "0"}";
+      resize5 = "6x1 ${middle "0"}";
+      resize6 = "6x1 ${right "0"}";
+      resize7 = "6x2 ${left "0"}";
+      resize8 = "6x2 ${middle "0"}";
+      resize9 = "6x2 ${right "0"}";
+      show-toggle-tiling-alt = ["<Super>t"];
+      show-icon = false;
+    };
     # Generated via dconf2nix: https://github.com/gvolpe/dconf2nix
     "org/gnome/desktop/a11y/keyboard" = {
       mousekeys-accel-time = 2000;
@@ -218,24 +218,22 @@ in
     };
 
     "org/gnome/desktop/input-sources" = {
-      sources = [ (mkTuple [ "xkb" "de+neo" ]) ]; # use neo
+      sources = [(mkTuple ["xkb" "de+neo"])]; # use neo
       xkb-options = [
         "altwin:swap_lalt_lwin" # swap alt and win
         "lv3:menu_switch" # So that gnome-settings does not set it to ralt
       ];
     };
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal" =
-      {
-        binding = "<Super>Return";
-        command = "foot";
-        name = "Terminal";
-      };
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" =
-      {
-        binding = "<Super>space";
-        command = "foot ${pkgs.haskell-dialog}/bin/hotkeys ${pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)}";
-        name = "Hotkeys";
-      };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal" = {
+      binding = "<Super>Return";
+      command = "foot";
+      name = "Terminal";
+    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" = {
+      binding = "<Super>space";
+      command = "foot ${pkgs.haskell-dialog}/bin/hotkeys ${pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)}";
+      name = "Hotkeys";
+    };
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby" = {
       binding = "<Super>F5";
       command = "systemctl suspend";
@@ -244,7 +242,7 @@ in
 
     "org/gnome/shell/extensions/nothing-to-say" = {
       icon-visibility = "always";
-      keybinding-toggle-mute = [ "<Primary><Shift>U+2113" ]; # Mouse key side middle
+      keybinding-toggle-mute = ["<Primary><Shift>U+2113"]; # Mouse key side middle
     };
     "org/gnome/settings-daemon/plugins/media-keys" = {
       custom-keybindings = [
@@ -252,14 +250,14 @@ in
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby/"
       ];
-      next = [ "<Primary><Shift>dollar" ];
-      play = [ "<Primary><Shift>guillemotleft" ];
-      previous = [ "<Primary><Shift>EuroSign" ];
-      screensaver = [ "<Primary>Escape" ];
-      volume-down = [ "<Primary><Shift>section" ];
-      volume-up = [ "<Primary><Shift>degree" ];
-      area-screenshot-clip = [ "Print" ];
-      screenshot = [ ];
+      next = ["<Primary><Shift>dollar"];
+      play = ["<Primary><Shift>guillemotleft"];
+      previous = ["<Primary><Shift>EuroSign"];
+      screensaver = ["<Primary>Escape"];
+      volume-down = ["<Primary><Shift>section"];
+      volume-up = ["<Primary><Shift>degree"];
+      area-screenshot-clip = ["Print"];
+      screenshot = [];
     };
   };
 }

@@ -1,13 +1,18 @@
-{ config, pkgs, lib, ... }:
-let
-  locations."/".extraConfig = "return 301 https://blog.maralorn.de$request_uri;";
-in
 {
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
-  m-0.monitoring = [{
-    name = "hera-nginx";
-    host = "hera-intern:9113";
-  }];
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  locations."/".extraConfig = "return 301 https://blog.maralorn.de$request_uri;";
+in {
+  networking.firewall.allowedTCPPorts = [80 443];
+  m-0.monitoring = [
+    {
+      name = "hera-nginx";
+      host = "hera-intern:9113";
+    }
+  ];
   security.acme.certs."hera.m-0.eu".keyType = "rsa4096";
   services = {
     nginx = {
@@ -16,8 +21,7 @@ in
         "stream.maralorn.de" = {
           forceSSL = true;
           enableACME = true;
-          locations."/".proxyPass =
-            "http://[${config.m-0.hosts.apollo-wg}]:8123";
+          locations."/".proxyPass = "http://[${config.m-0.hosts.apollo-wg}]:8123";
         };
         "tasks.maralorn.de" = {
           forceSSL = true;
@@ -28,7 +32,7 @@ in
           };
         };
         "hera.m-0.eu" = {
-          serverAliases = [ "malte-und-clai.re" ];
+          serverAliases = ["malte-und-clai.re"];
           default = true;
           forceSSL = true;
           enableACME = true;
@@ -51,5 +55,4 @@ in
       };
     };
   };
-
 }

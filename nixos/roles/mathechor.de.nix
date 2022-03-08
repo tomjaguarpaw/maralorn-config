@@ -1,18 +1,21 @@
-{ config, pkgs, lib, ... }:
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   services = {
     nginx = {
       enable = true;
       virtualHosts."mathechor.de" = {
-        serverAliases = [ "www.mathechor.de" ];
+        serverAliases = ["www.mathechor.de"];
         forceSSL = true;
         enableACME = true;
         locations = {
           "/" = {
             root = "/var/www/mathechor/public";
             index = "index.html";
-            extraConfig =
-              "location ~* .(otf)$ {add_header Access-Control-Allow-Origin *;}";
+            extraConfig = "location ~* .(otf)$ {add_header Access-Control-Allow-Origin *;}";
           };
         };
       };
@@ -37,5 +40,4 @@
       };
     };
   };
-
 }

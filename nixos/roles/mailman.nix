@@ -1,26 +1,29 @@
-{ pkgs, lib, config, ... }:
-let
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
   hostname = "lists.maralorn.de";
   admin = "malte.brandy@maralorn.de";
   cfg = config.services.mailman;
-  lists = pkgs.privateValue { } "mail/lists";
-in
-{
+  lists = pkgs.privateValue {} "mail/lists";
+in {
   systemd.services.mailman.postStart = lib.concatStringsSep "\n" (
     map
-      (
-        x: ''
-          ${cfg.package}/bin/mailman syncmembers -W -G - "${x}" << EOF
-          ${lib.concatStringsSep "\n" lists.${x}}
-          EOF
-        ''
-      )
-      (builtins.attrNames lists)
+    (
+      x: ''
+        ${cfg.package}/bin/mailman syncmembers -W -G - "${x}" << EOF
+        ${lib.concatStringsSep "\n" lists.${x}}
+        EOF
+      ''
+    )
+    (builtins.attrNames lists)
   );
   services = {
     mailman = {
       enable = true;
-      webHosts = [ hostname ];
+      webHosts = [hostname];
       serve.enable = true;
       enablePostfix = true;
       siteOwner = admin;
@@ -30,7 +33,8 @@ in
       };
       settings = {
         mailman.default_language = "de";
-        "paths.fhs".template_dir = lib.mkForce (
+        "paths.fhs".template_dir = lib.mkForce
+        (
           pkgs.setToDirectories {
             site.de = {
               "list:user:notice:goodbye.txt" = builtins.toFile "goodbye" ''
@@ -51,24 +55,22 @@ in
               '';
             };
           }
-        ).outPath;
+        )
+        .outPath;
       };
     };
     postfix = {
-      relayDomains = [ "hash:/var/lib/mailman/data/postfix_domains" ];
-      config =
-        let
-          lmtp = [ "hash:/var/lib/mailman/data/postfix_lmtp" ];
-        in
-        {
-          transport_maps = lmtp;
-          local_recipient_maps = lmtp;
-        };
+      relayDomains = ["hash:/var/lib/mailman/data/postfix_domains"];
+      config = let
+        lmtp = ["hash:/var/lib/mailman/data/postfix_lmtp"];
+      in {
+        transport_maps = lmtp;
+        local_recipient_maps = lmtp;
+      };
     };
     nginx.virtualHosts.${hostname} = {
       enableACME = true;
       forceSSL = true;
     };
   };
-
 }

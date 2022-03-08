@@ -1,11 +1,13 @@
-{ config, pkgs, lib, ... }:
-let
-  inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
-  backupJobs = pkgs.privateValue { } "borgbackup";
-  backupJobNames = map (name: "borgbackup-job-${name}") (lib.attrNames backupJobs);
-in
 {
-
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
+  backupJobs = pkgs.privateValue {} "borgbackup";
+  backupJobNames = map (name: "borgbackup-job-${name}") (lib.attrNames backupJobs);
+in {
   imports = [
     ./hardware-configuration.nix
     ../../roles
@@ -51,24 +53,22 @@ in
     java.enable = true;
   };
   nixpkgs.config.android_sdk.accept_license = true;
-  systemd.services = {
-    pg_backup =
-      {
+  systemd.services =
+    {
+      pg_backup = {
         script = lib.concatMapStringsSep "\n"
-          (name: "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}")
-          config.services.postgresql.ensureDatabases;
+        (name: "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}")
+        config.services.postgresql.ensureDatabases;
         serviceConfig = {
           User = "postgres";
           Type = "oneshot";
         };
       };
-    night-routines = {
-      script =
-        let
+      night-routines = {
+        script = let
           start = "${pkgs.systemd}/bin/systemctl start";
           container = "${pkgs.nixos-container}/bin/nixos-container run";
-        in
-        ''
+        in ''
           set -x
           set +e
           ${start} pg_backup
@@ -82,12 +82,17 @@ in
           ${start} synapse-cleanup
           ${pkgs.laminar}/bin/laminarc queue bump-config
         '';
-      serviceConfig = {
-        Type = "oneshot";
+        serviceConfig = {
+          Type = "oneshot";
+        };
+        startAt = "03:00";
       };
-      startAt = "03:00";
-    };
-  } // lib.listToAttrs (map (name: { name = name; value = { serviceConfig.Type = "oneshot"; }; }) backupJobNames);
+    }
+    // lib.listToAttrs (map (name: {
+      name = name;
+      value = {serviceConfig.Type = "oneshot";};
+    })
+    backupJobNames);
   services = {
     postgresql = {
       enable = true;
@@ -98,23 +103,25 @@ in
       enable = true;
       fqdn = "hera.m-0.eu";
       listenHost = "::";
-      organisations."maralorn.de".users = [ "maralorn" ];
+      organisations."maralorn.de".users = ["maralorn"];
     };
-    syncthing = {
-      enable = true;
-      group = "nginx";
-      user = "maralorn";
-      openDefaultPorts = true;
-      cert = pkgs.privatePath "syncthing/hera/cert.pem";
-      key = pkgs.privatePath "syncthing/hera/key.pem";
-    } // syncthing.declarativeWith [ "apollo" "zeus" ] "/media";
+    syncthing =
+      {
+        enable = true;
+        group = "nginx";
+        user = "maralorn";
+        openDefaultPorts = true;
+        cert = pkgs.privatePath "syncthing/hera/cert.pem";
+        key = pkgs.privatePath "syncthing/hera/key.pem";
+      }
+      // syncthing.declarativeWith ["apollo" "zeus"] "/media";
   };
-  boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 204800; };
-  systemd.tmpfiles.rules = [ "Z /media 0770 maralorn nginx - -" ];
+  boot.kernel.sysctl = {"fs.inotify.max_user_watches" = 204800;};
+  systemd.tmpfiles.rules = ["Z /media 0770 maralorn nginx - -"];
   nix.sshServe = {
     protocol = "ssh-ng";
     enable = true;
-    keys = pkgs.privateValue [ ] "root-ssh-keys";
+    keys = pkgs.privateValue [] "root-ssh-keys";
   };
 
   users.users = {
@@ -122,12 +129,12 @@ in
       description = "choreutes";
       isNormalUser = true;
       uid = 1001;
-      extraGroups = [ "wheel" "systemd-journal" ];
+      extraGroups = ["wheel" "systemd-journal"];
       passwordFile = pkgs.privatePath "pam-login-password-choreutes";
     };
     ved-backup = {
       isNormalUser = true;
-      openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDSldCn4LJcIos8PVI7PJZSM5aQ8FoDPUzMTwSHm6NUl root@bach" ];
+      openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDSldCn4LJcIos8PVI7PJZSM5aQ8FoDPUzMTwSHm6NUl root@bach"];
     };
   };
 
@@ -136,5 +143,4 @@ in
   # servers. You should change this only after NixOS release notes say you
   # should.
   system.stateVersion = "18.03"; # Did you read the comment?
-
 }

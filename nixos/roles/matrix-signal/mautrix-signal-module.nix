@@ -1,17 +1,17 @@
-{ config, pkgs, lib, ... }:
-
-with lib;
-
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; let
   dataDir = "/var/lib/mautrix-signal";
   registrationFile = "${dataDir}/signal-registration.yaml";
   cfg = config.services.mautrix-signal;
-  settingsFormat = pkgs.formats.json { };
+  settingsFormat = pkgs.formats.json {};
   settingsFileUnsubstituted = settingsFormat.generate "mautrix-signal-config-unsubstituted.json" cfg.settings;
   settingsFile = "${dataDir}/config.json";
-
-in
-{
+in {
   options = {
     services.mautrix-signal = {
       enable = mkEnableOption "Mautrix-Signal, a Matrix-Signal hybrid puppeting bridge";
@@ -22,16 +22,16 @@ in
         default = {
           appservice = rec {
             database = "postgresql:///mautrix-signal?host=/run/postgresql";
-            database_opts = { };
+            database_opts = {};
             hostname = "0.0.0.0";
             port = 29328;
             address = "http://localhost:${toString port}";
           };
 
           bridge = {
-            permissions = { };
-            double_puppet_server_map = { };
-            login_shared_secret_map = { };
+            permissions = {};
+            double_puppet_server_map = {};
+            login_shared_secret_map = {};
           };
           signal = {
             socket_path = "/run/signald/signald.sock";
@@ -60,7 +60,7 @@ in
             # log to console/systemd instead of file
             root = {
               level = "INFO";
-              handlers = [ "console" ];
+              handlers = ["console"];
             };
           };
         };
@@ -101,25 +101,24 @@ in
   };
 
   config = mkIf cfg.enable {
-    services.postgresql =
-      {
-        ensureDatabases = [ "mautrix-signal" ];
-        ensureUsers = [
-          {
-            name = "mautrix-signal";
-            ensurePermissions = {
-              "DATABASE \"mautrix-signal\"" = "ALL PRIVILEGES";
-            };
-          }
-        ];
-      };
-    services.matrix-synapse.app_service_config_files = [ registrationFile ];
+    services.postgresql = {
+      ensureDatabases = ["mautrix-signal"];
+      ensureUsers = [
+        {
+          name = "mautrix-signal";
+          ensurePermissions = {
+            "DATABASE \"mautrix-signal\"" = "ALL PRIVILEGES";
+          };
+        }
+      ];
+    };
+    services.matrix-synapse.app_service_config_files = [registrationFile];
     systemd.services.mautrix-signal = {
       description = "Mautrix-Signal, a Matrix-Signal hybrid puppeting/relaybot bridge.";
 
-      wantedBy = [ "multi-user.target" ];
-      wants = [ "network-online.target" "signald.service" ];
-      after = [ "network-online.target" "signald.service" ];
+      wantedBy = ["multi-user.target"];
+      wants = ["network-online.target" "signald.service"];
+      after = ["network-online.target" "signald.service"];
 
       preStart = ''
         old_umask=$(umask)
@@ -169,14 +168,14 @@ in
         ProtectControlGroups = true;
         User = "mautrix-signal";
 
-        CapabilityBoundingSet = [ "CAP_CHOWN" ];
+        CapabilityBoundingSet = ["CAP_CHOWN"];
         AmbientCapabilities = CapabilityBoundingSet;
         NoNewPrivileges = true;
 
         LockPersonality = true;
         RestrictRealtime = true;
 
-        ReadWritePaths = [ "/var/lib/signald" ];
+        ReadWritePaths = ["/var/lib/signald"];
 
         BindPaths = "/var/lib/signald";
         StateDirectory = baseNameOf dataDir;
@@ -189,15 +188,15 @@ in
         '';
       };
 
-      restartTriggers = [ settingsFileUnsubstituted ];
+      restartTriggers = [settingsFileUnsubstituted];
     };
     users.users.mautrix-signal = {
       description = "Service user for the Matrix-Signal bridge";
       isSystemUser = true;
       group = "mautrix-signal";
     };
-    users.groups.mautrix-signal = { };
+    users.groups.mautrix-signal = {};
   };
 
-  meta.maintainers = with maintainers; [ expipiplus1 ];
+  meta.maintainers = with maintainers; [expipiplus1];
 }

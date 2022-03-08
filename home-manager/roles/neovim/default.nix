@@ -1,5 +1,8 @@
-{ pkgs, config, ... }:
-let
+{
+  pkgs,
+  config,
+  ...
+}: let
   list = builtins.attrValues;
   cocSettings = {
     "diagnostic.maxWindowHeight" = 60;
@@ -9,68 +12,70 @@ let
     languageserver = {
       nix = {
         command = "rnix-lsp";
-        filetypes = [ "nix" ];
+        filetypes = ["nix"];
       };
       haskell = {
         command = "haskell-language-server";
-        args = [ "--lsp" "-d" "-l" "/tmp/LanguageServer.log" ];
-        rootPatterns = [ ".hie-bios" "cabal.project" ];
-        filetypes = [ "hs" "lhs" "haskell" ];
+        args = ["--lsp" "-d" "-l" "/tmp/LanguageServer.log"];
+        rootPatterns = [".hie-bios" "cabal.project"];
+        filetypes = ["hs" "lhs" "haskell"];
         settings.languageServerHaskell.formattingProvider = "fourmolu";
       };
     };
     explorer.icon.enableNerdfont = true;
-    explorer.file.child.template =
-      "[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][diagnosticWarning & 1][filename omitCenter 1][modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5][size]";
+    explorer.file.child.template = "[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][diagnosticWarning & 1][filename omitCenter 1][modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5][size]";
   };
-in
-{
-  imports = [ ./spelling.nix ];
+in {
+  imports = [./spelling.nix];
   programs.neovim = {
     enable = true;
     vimAlias = true;
     vimdiffAlias = true;
     extraConfig = builtins.readFile ./vimrc;
     plugins = list {
-      inherit (pkgs.vimPlugins)
+      inherit
+        (pkgs.vimPlugins)
         # coc-tabnine (TODO: Why doesn‘t it work?)
         # TODO: tabnine config in home-manager
         # TODO: tabnine lsp: nix, rust, pandoc/latex lsp? was noch?
-
         # ===
         # Basic IDE plugins
-        coc-nvim airline
+        coc-nvim
+        airline
         # same word highlighting when not supported by language
-        coc-highlight coc-explorer
+        coc-highlight
+        coc-explorer
         # searches
-        coc-fzf fzf-vim
-
+        coc-fzf
+        fzf-vim
         # general whitespace
-        vim-trailing-whitespace vim-autoformat
-
+        vim-trailing-whitespace
+        vim-autoformat
         # Git
-        coc-git# statusline, numberline and explorer infos
-        fugitive# various git commands
-
+        coc-git
+        # statusline, numberline and explorer infos
+        fugitive
+        # various git commands
         # Commenting and Uncommenting
         nerdcommenter
-
         # Theme
-        papercolor-theme vim-airline-themes
+        papercolor-theme
+        vim-airline-themes
         LanguageTool-nvim
-
         vim-css-color
-
         vista-vim
-
         # ===
         # Languages
         # haskell syntax highlighting
-        haskell-vim vim-hoogle
+        haskell-vim
+        vim-hoogle
         # nix syntax highlighting
-        vim-nix vim-markdown
+        vim-nix
+        vim-markdown
         # latex
-        vimtex coc-vimtex# not sure if I need two
+        vimtex
+        coc-vimtex
+        # not sure if I need two
         # ledger
         vim-ledger
         # rust
@@ -92,7 +97,7 @@ in
   };
   xdg.configFile."nvim/coc-settings.json".text = builtins.toJSON cocSettings;
   home = {
-    packages = [ pkgs.languagetool ];
+    packages = [pkgs.languagetool];
     sessionVariables = {
       EDITOR = "nvim";
       VISUAL = "nvim";

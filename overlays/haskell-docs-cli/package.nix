@@ -1,34 +1,35 @@
-{ mkDerivation
-, aeson
-, ansi-wl-pprint
-, async
-, base
-, bytestring
-, containers
-, directory
-, exceptions
-, extra
-, fetchzip
-, filepath
-, hashable
-, haskeline
-, hoogle
-, hpack
-, html-conduit
-, http-client
-, http-client-tls
-, http-types
-, lib
-, mtl
-, network-uri
-, optparse-applicative
-, process
-, temporary
-, terminal-size
-, text
-, time
-, transformers
-, xml-conduit
+{
+  mkDerivation,
+  aeson,
+  ansi-wl-pprint,
+  async,
+  base,
+  bytestring,
+  containers,
+  directory,
+  exceptions,
+  extra,
+  fetchzip,
+  filepath,
+  hashable,
+  haskeline,
+  hoogle,
+  hpack,
+  html-conduit,
+  http-client,
+  http-client-tls,
+  http-types,
+  lib,
+  mtl,
+  network-uri,
+  optparse-applicative,
+  process,
+  temporary,
+  terminal-size,
+  text,
+  time,
+  transformers,
+  xml-conduit,
 }:
 mkDerivation {
   pname = "haskell-docs-cli";
@@ -68,7 +69,7 @@ mkDerivation {
     transformers
     xml-conduit
   ];
-  libraryToolDepends = [ hpack ];
+  libraryToolDepends = [hpack];
   executableHaskellDepends = [
     aeson
     ansi-wl-pprint

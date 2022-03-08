@@ -1,8 +1,6 @@
-self: super:
-let
-  path = "PATH : ${super.lib.makeBinPath [ super.imagemagick super.pdftk ]}";
-in
-{
+self: super: let
+  path = "PATH : ${super.lib.makeBinPath [super.imagemagick super.pdftk]}";
+in {
   falsisign = super.stdenvNoCC.mkDerivation rec {
     pname = "falsisign";
     version = "8e7114b";
@@ -12,7 +10,7 @@ in
       rev = version;
       hash = "sha256-UJH8m1kWbW6m+6CyTfoF+oDO36c82kECHIUFaF9cT4U=";
     };
-    buildInputs = [ super.makeWrapper ];
+    buildInputs = [super.makeWrapper];
     dontBuild = true;
     installPhase = ''
       patchShebangs *.sh

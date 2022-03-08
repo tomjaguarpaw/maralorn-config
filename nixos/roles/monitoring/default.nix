@@ -1,5 +1,8 @@
-{ config, pkgs, ... }:
-let
+{
+  config,
+  pkgs,
+  ...
+}: let
   commonOptions = {
     enableACME = true;
     forceSSL = true;
@@ -10,8 +13,7 @@ let
     '';
     basicAuthFile = pkgs.privateFile "basic-auth/monitoring";
   };
-in
-{
+in {
   imports = [
     ./alertmanager.nix
     ./grafana.nix
@@ -22,18 +24,21 @@ in
   services = {
     nginx = {
       enable = true;
-      virtualHosts."alerts.maralorn.de" = {
-        locations."/".proxyPass = "http://localhost:9093";
-      } // commonOptions;
+      virtualHosts."alerts.maralorn.de" =
+        {
+          locations."/".proxyPass = "http://localhost:9093";
+        }
+        // commonOptions;
       virtualHosts."stats.maralorn.de" = {
         enableACME = true;
         forceSSL = true;
         locations."/".proxyPass = "http://localhost:3000/";
       };
-      virtualHosts."monitoring.maralorn.de" = {
-        locations."/".proxyPass = "http://localhost:9090";
-      } // commonOptions;
+      virtualHosts."monitoring.maralorn.de" =
+        {
+          locations."/".proxyPass = "http://localhost:9090";
+        }
+        // commonOptions;
     };
   };
-
 }

@@ -2,19 +2,72 @@ self: super: {
   # pkgs assumed to be present on a non nixos host
   nixFlakes = self.writeShellScriptBin "flix" ''exec ${self.nix}/bin/nix --log-format bar-with-logs "$@"'';
   core-system-pkgs = {
-    inherit (self)
-      gitFull gnumake mkpasswd file wget curl wireguard gnupg mutt bind liboping
-      psmisc unzip rename whois lsof parted python3 binutils ntfsprogs neovim
+    inherit
+      (self)
+      gitFull
+      gnumake
+      mkpasswd
+      file
+      wget
+      curl
+      wireguard
+      gnupg
+      mutt
+      bind
+      liboping
+      psmisc
+      unzip
+      rename
+      whois
+      lsof
+      parted
+      python3
+      binutils
+      ntfsprogs
+      neovim
       ;
   };
 
   extra-system-pkgs = {
     inherit (self.python3Packages) qrcode;
-    inherit (self)
-      htop tree pwgen borgbackup inotifyTools direnv socat nmap ncdu
-      tcpdump tmux tig exa fzf ag fd bat ripgrep ranger pass sshuttle vnstat
-      entr libargon2 mblaze niv compsize mediainfo asciinema gomuks nix-output-monitor fdroidserver jq cachix
-      nixFlakes nix-du
+    inherit
+      (self)
+      htop
+      tree
+      pwgen
+      borgbackup
+      inotifyTools
+      direnv
+      socat
+      nmap
+      ncdu
+      tcpdump
+      tmux
+      tig
+      exa
+      fzf
+      ag
+      fd
+      bat
+      ripgrep
+      ranger
+      pass
+      sshuttle
+      vnstat
+      entr
+      libargon2
+      mblaze
+      niv
+      compsize
+      mediainfo
+      asciinema
+      gomuks
+      nix-output-monitor
+      fdroidserver
+      jq
+      cachix
+      nixFlakes
+      nix-du
       ;
   };
 
@@ -37,37 +90,94 @@ self: super: {
     '';
   };
   desktop-pkgs = {
-    inherit (self) lm_sensors xwayland xdg_utils libnotify kassandra shotcut mlt audacity paprefs wl-clipboard
-      nheko dconf2nix haskell-docs-cli falsisign;
-    inherit (self.gnomeExtensions) appindicator system-monitor
-      clipboard-indicator emoji-selector
-      window-is-ready-remover nothing-to-say notification-banner-position gtile
-      caffeine dash-to-panel;
+    inherit
+      (self)
+      lm_sensors
+      xwayland
+      xdg_utils
+      libnotify
+      kassandra
+      shotcut
+      mlt
+      audacity
+      paprefs
+      wl-clipboard
+      nheko
+      dconf2nix
+      haskell-docs-cli
+      falsisign
+      ;
+    inherit
+      (self.gnomeExtensions)
+      appindicator
+      system-monitor
+      clipboard-indicator
+      emoji-selector
+      window-is-ready-remover
+      nothing-to-say
+      notification-banner-position
+      gtile
+      caffeine
+      dash-to-panel
+      ;
     executor = self.gnomeExtensions.executor.overrideAttrs (old: {
-      postInstall = (old.postInstall or "") + ''
-        substituteInPlace $out/share/gnome-shell/extensions/executor@raujonas.github.io/extension.js --replace "'/bin/bash'" "'bash'"
-      '';
+      postInstall =
+        (old.postInstall or "")
+        + ''
+          substituteInPlace $out/share/gnome-shell/extensions/executor@raujonas.github.io/extension.js --replace "'/bin/bash'" "'bash'"
+        '';
     });
-    inherit (self.gnome)
-      dconf dconf-editor gnome-tweaks gnome-shell-extensions adwaita-icon-theme
-      gnome-session;
+    inherit
+      (self.gnome)
+      dconf
+      dconf-editor
+      gnome-tweaks
+      gnome-shell-extensions
+      adwaita-icon-theme
+      gnome-session
+      ;
   };
   home-pkgs = {
     inherit (self.pythonPackages) yapf jsbeautifier;
-    inherit (self)
-      go gdb mpc_cli ncmpcpp shfmt htmlTidy astyle nodejs tasksh magic-wormhole
-      nixfmt nixpkgs-fmt rnix-lsp tmate rustup foot kitty nix-top ghcWithPackages ghcid matrix-commander upterm
-      lazygit gh
+    inherit
+      (self)
+      go
+      gdb
+      mpc_cli
+      ncmpcpp
+      shfmt
+      htmlTidy
+      astyle
+      nodejs
+      tasksh
+      magic-wormhole
+      nixfmt
+      nixpkgs-fmt
+      rnix-lsp
+      tmate
+      rustup
+      foot
+      kitty
+      nix-top
+      ghcWithPackages
+      ghcid
+      matrix-commander
+      upterm
+      lazygit
+      gh
       ;
-    obelisk = (import self.sources.obelisk { }).command;
+    obelisk = (import self.sources.obelisk {}).command;
   };
   accounting-pkgs = {
     inherit (self.haskellPackages) hledger hledger-ui hledger-web hledger-iadd;
     inherit (self) ledger jali aqbanking;
   };
-  system-pkgs = self.core-system-pkgs // self.extra-system-pkgs // {
-    home-manager =
-      self.callPackage "${self.sources.${self.home-manager-channel}}/home-manager" { };
-  };
+  system-pkgs =
+    self.core-system-pkgs
+    // self.extra-system-pkgs
+    // {
+      home-manager =
+        self.callPackage "${self.sources.${self.home-manager-channel}}/home-manager" {};
+    };
   foreign-home-pkgs = self.extra-system-pkgs;
 }

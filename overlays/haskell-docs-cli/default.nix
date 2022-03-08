@@ -1,3 +1,3 @@
 self: super: {
-  haskell-docs-cli = self.haskellPackages.callPackage ./package.nix { };
+  haskell-docs-cli = self.haskellPackages.callPackage ./package.nix {};
 }

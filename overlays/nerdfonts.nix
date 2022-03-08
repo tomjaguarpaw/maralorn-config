@@ -1,3 +1,3 @@
 self: super: {
-  nerdfonts = super.nerdfonts.override { fonts = [ "JetBrainsMono" ]; };
+  nerdfonts = super.nerdfonts.override {fonts = ["JetBrainsMono"];};
 }

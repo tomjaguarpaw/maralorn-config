@@ -1,10 +1,9 @@
-{ pkgs, ... }:
-let script = pkgs.runCommand "autosave.lua" { passthru.scriptName = "autosave.lua"; } ''
-  mkdir -p $out/share/mpv/scripts/
-  ln -s ${./autosave.lua} $out/share/mpv/scripts/autosave.lua
-'';
-in
-{
+{pkgs, ...}: let
+  script = pkgs.runCommand "autosave.lua" {passthru.scriptName = "autosave.lua";} ''
+    mkdir -p $out/share/mpv/scripts/
+    ln -s ${./autosave.lua} $out/share/mpv/scripts/autosave.lua
+  '';
+in {
   programs.mpv = {
     enable = true;
     config = {

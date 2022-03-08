@@ -1,1 +1,1 @@
-self: super: { jali = self.callPackage ./package.nix { }; }
+self: super: {jali = self.callPackage ./package.nix {};}
