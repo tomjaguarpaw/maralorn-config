@@ -10,7 +10,7 @@ with lib; let
       plugins = builtins.attrValues (availablePlugins
       // {
         python = availablePlugins.python.withPackages
-        (ps: [pkgs.weechatScripts.weechat-matrix]);
+        (_: [pkgs.weechatScripts.weechat-matrix]);
       });
       scripts = [pkgs.weechatScripts.weechat-matrix];
     };

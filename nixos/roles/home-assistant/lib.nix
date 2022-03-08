@@ -43,35 +43,36 @@ rec {
     modeBinarySensorEntity = mode: option: "binary_sensor.${modeBinarySensorName mode option}";
   };
   triggers = rec {
-    stateTrigger = entity: {
+    stateTrigger = entity_id: {
       platform = "state";
-      entity_id = entity;
+      inherit entity_id;
     };
     modeSwitchTrigger = mode: stateTrigger (util.modeSelectEntity mode);
   };
   conditions = {
-    modeIs = mode: option: {
+    modeIs = mode: state: {
       condition = "state";
       entity_id = util.modeSelectEntity mode;
-      state = option;
+      inherit state;
     };
   };
   modules = rec {
     mkHAConfig = attrs: {
       services.home-assistant.config = attrs;
     };
-    mkModeSwitcher = mode: attrs: _: let
+    mkModeSwitcher = mode: let
       options = builtins.attrNames mode.options;
     in
-      mkHAConfig {
-        input_select."${util.modeSelectName mode}" =
-          {
-            inherit options;
-            name = mode.title;
-          }
-          // attrs;
-        template = builtins.map (templates.binarySensorForMode mode) options;
-      };
+      attrs: _:
+        mkHAConfig {
+          input_select."${util.modeSelectName mode}" =
+            {
+              inherit options;
+              name = mode.title;
+            }
+            // attrs;
+          template = builtins.map (templates.binarySensorForMode mode) options;
+        };
   };
   cards = {
     modeSwitcher = mode: let

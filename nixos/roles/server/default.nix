@@ -1,8 +1,3 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}: {
+_: {
   imports = [./init_ssh.nix];
 }

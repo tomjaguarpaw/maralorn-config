@@ -105,7 +105,6 @@ self: super: {
       nheko
       dconf2nix
       haskell-docs-cli
-      falsisign
       ;
     inherit
       (self.gnomeExtensions)
@@ -165,7 +164,7 @@ self: super: {
   };
   accounting-pkgs = {
     inherit (self.haskellPackages) hledger hledger-ui hledger-web;
-    inherit (self) ledger jali aqbanking;
+    inherit (self) ledger aqbanking;
   };
   system-pkgs =
     self.core-system-pkgs

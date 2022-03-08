@@ -1,9 +1,4 @@
-{
-  pkgs,
-  lib,
-  config,
-  ...
-}: let
+{pkgs, ...}: let
   inherit (import ../../lib) colors;
 in {
   m-0.colors = colors;

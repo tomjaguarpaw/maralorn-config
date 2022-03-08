@@ -1,8 +1,4 @@
-{
-  pkgs,
-  config,
-  ...
-}: let
+{pkgs, ...}: let
   default_mailbox = {
     MailboxName = "<missing>";
     MatrixRoomId = "<missing>";

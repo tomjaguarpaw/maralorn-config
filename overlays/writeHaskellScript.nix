@@ -1,5 +1,5 @@
-self: super: let
-  inherit (self) lib pkgs;
+final: _: let
+  inherit (final) lib pkgs;
 in {
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
   # writeHaskell takes a name, an attrset with libraries and haskell version (both optional)

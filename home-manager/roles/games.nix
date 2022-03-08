@@ -1,6 +1,5 @@
 {
   pkgs,
-  lib,
   config,
   ...
 }: let
@@ -50,21 +49,7 @@
     ${wine}/bin/wine64 ./Gw2-64.exe $@ -autologin
   '';
 in {
-  #dconf.settings."org/gnome/settings-daemon/plugins/media-keys" = {
-  #mic-mute = lib.mkForce [ ];
-  #next = lib.mkForce [ ];
-  #play = lib.mkForce [ ];
-  #previous = lib.mkForce [ ];
-  #screensaver = lib.mkForce [ ];
-  #volume-down = lib.mkForce [ ];
-  #volume-up = lib.mkForce [ ];
-  #};
-
   home.packages = builtins.attrValues {
-    #factorio = pkgs.factorio.override {
-    #  username = "maralorn";
-    #  token = pkgs.privateValue "" "factorio";
-    #};
     inherit (pkgs) steam minecraft;
     inherit gw2run gw2setup wine gw2installdxvk;
   };

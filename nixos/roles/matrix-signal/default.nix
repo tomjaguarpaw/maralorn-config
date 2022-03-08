@@ -1,9 +1,4 @@
-{
-  pkgs,
-  config,
-  lib,
-  ...
-}: {
+_: {
   imports = [
     ./mautrix-signal-module.nix
   ];

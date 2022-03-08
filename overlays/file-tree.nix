@@ -1,7 +1,7 @@
-final: prev: let
+_: prev: let
   inherit (prev) lib;
   linkToPath = path: fileOrDir: (
-    if lib.types.path.check fileOrDir
+    if prev.lib.types.path.check fileOrDir
     then ["ln -sT ${fileOrDir} ${path}"]
     else
       ["mkdir -p ${path}"]
