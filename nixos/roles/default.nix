@@ -1,17 +1,16 @@
-{
-  pkgs,
-  config,
-  lib,
-  ...
+{ pkgs
+, config
+, lib
+, ...
 }: {
-  imports = [../../common ./admin.nix ../../cachix.nix];
+  imports = [ ../../common ./admin.nix ../../cachix.nix ];
 
   i18n.defaultLocale = "en_US.UTF-8";
 
   # For nixos-rebuild
   nixpkgs.overlays =
-    [(_: _: (import ../../channels.nix)."${config.networking.hostName}")]
-    ++ import ../../overlays {inherit lib;};
+    [ (_: _: (import ../../channels.nix)."${config.networking.hostName}") ]
+    ++ import ../../overlays { inherit lib; };
 
   time.timeZone = "Europe/Berlin";
 
@@ -19,13 +18,14 @@
     firewall.allowPing = true;
     useDHCP = false;
     hosts = lib.zipAttrs
-    (
-      lib.mapAttrsToList (host: ip:
-        if builtins.typeOf ip == "set"
-        then {}
-        else {"${ip}" = "${host} ${host}.m-0.eu";})
-      config.m-0.hosts
-    );
+      (
+        lib.mapAttrsToList
+          (host: ip:
+            if builtins.typeOf ip == "set"
+            then { }
+            else { "${ip}" = "${host} ${host}.m-0.eu"; })
+          config.m-0.hosts
+      );
   };
 
   security.acme = {
@@ -41,8 +41,8 @@
   environment = {
     etc =
       lib.mapAttrs'
-      (name: value: lib.nameValuePair "nix-path/${name}" {source = value;})
-      (lib.filterAttrs (name: value: name != "__functor") pkgs.sources)
+        (name: value: lib.nameValuePair "nix-path/${name}" { source = value; })
+        (lib.filterAttrs (name: value: name != "__functor") pkgs.sources)
       // {
         "nix-path/nixos".source = pkgs.sources."${pkgs.nixpkgs-channel}";
         "nix-path/nixpkgs".source = pkgs.sources."${pkgs.nixpkgs-channel}";
@@ -50,16 +50,16 @@
           pkgs.sources."${pkgs.home-manager-channel}";
       };
     variables =
-      lib.genAttrs ["CURL_CA_BUNDLE" "GIT_SSL_CAINFO" "SSL_CERT_FILE"]
-      (_: "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt");
+      lib.genAttrs [ "CURL_CA_BUNDLE" "GIT_SSL_CAINFO" "SSL_CERT_FILE" ]
+        (_: "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt");
   };
 
   system.activationScripts =
-    lib.mkIf (!pkgs.withSecrets) {text = "echo No secrets loaded!; exit 1;";};
+    lib.mkIf (!pkgs.withSecrets) { text = "echo No secrets loaded!; exit 1;"; };
 
   nix = {
     binaryCaches = lib.mkAfter (
-      pkgs.privateValue [] "binary-caches"
+      pkgs.privateValue [ ] "binary-caches"
       # ++ (
       #   if config.networking.hostName != "hera" then [ "ssh-ng://nix-ssh@hera.m-0.eu?trusted=true&priority=100" ] else [ ]
       # )
@@ -69,9 +69,9 @@
       "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
       "nixbuild.net/maralorn-1:cpqv21sJgRL+ROaKY1Gr0k7AKolAKaP3S3iemGxK/30="
     ];
-    nixPath = ["/etc/nix-path"];
-    trustedUsers = ["maralorn" "laminar"];
-    buildMachines = pkgs.privateValue [] "remote-builders";
+    nixPath = [ "/etc/nix-path" ];
+    trustedUsers = [ "maralorn" "laminar" ];
+    buildMachines = pkgs.privateValue [ ] "remote-builders";
     extraOptions = ''
       experimental-features = nix-command flakes
       fallback = true
@@ -79,28 +79,29 @@
       builders-use-substitutes = true
     '';
     optimise = {
-      dates = [];
+      dates = [ ];
       automatic = true;
     };
   };
 
-  systemd.services = let
-    hosts = builtins.attrNames config.services.nginx.virtualHosts;
-    makeConfig = host: {
-      name = "acme-${host}";
-      value = {
-        serviceConfig = {
-          Restart = "on-failure";
-          RestartSec = 600;
-        };
-        unitConfig = {
-          StartLimitIntervalSec = 2400;
-          StartLimitBurst = 3;
+  systemd.services =
+    let
+      hosts = builtins.attrNames config.services.nginx.virtualHosts;
+      makeConfig = host: {
+        name = "acme-${host}";
+        value = {
+          serviceConfig = {
+            Restart = "on-failure";
+            RestartSec = 600;
+          };
+          unitConfig = {
+            StartLimitIntervalSec = 2400;
+            StartLimitBurst = 3;
+          };
         };
       };
-    };
-  in
-    {nix-optimise.serviceConfig.Type = "oneshot";} // builtins.listToAttrs (map makeConfig hosts);
+    in
+    { nix-optimise.serviceConfig.Type = "oneshot"; } // builtins.listToAttrs (map makeConfig hosts);
 
   services = {
     logind.killUserProcesses = false;
@@ -108,8 +109,8 @@
     prometheus.exporters = {
       node = {
         enable = true;
-        enabledCollectors = ["systemd" "logind"];
-        disabledCollectors = ["timex"];
+        enabledCollectors = [ "systemd" "logind" ];
+        disabledCollectors = [ "timex" ];
       };
       nginx = {
         inherit (config.services.nginx) enable;
@@ -130,6 +131,10 @@
         url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
       }
     }/programs.sqlite";
+    ssh = {
+      extraConfig = pkgs.privateValue "" "ssh-config";
+      startAgent = true;
+    };
     zsh = {
       enable = true;
       autosuggestions.enable = true;

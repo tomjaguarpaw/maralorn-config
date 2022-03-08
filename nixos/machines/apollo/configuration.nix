@@ -1,15 +1,16 @@
-{
-  lib,
-  config,
-  pkgs,
-  ...
-}: let
+{ lib
+, config
+, pkgs
+, ...
+}:
+let
   wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts prefix;
   inherit ((import ../../../nix/sources.nix)) nixos-hardware;
-  inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
-  vpn = (import ../../../private.nix).privateValue (_: _: {}) "vpn";
-in {
+  inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
+  vpn = (import ../../../private.nix).privateValue (_: _: { }) "vpn";
+in
+{
   imports = [
     "${nixos-hardware}/lenovo/thinkpad/t480s"
     ./hardware-configuration.nix
@@ -20,7 +21,7 @@ in {
     ../../roles/standalone
     (vpn "apollo")
   ];
-  systemd.services.lenovo_fix.path = [pkgs.kmod];
+  systemd.services.lenovo_fix.path = [ pkgs.kmod ];
 
   networking = {
     hostName = "apollo";
@@ -37,12 +38,12 @@ in {
     wireguard.interfaces = {
       m0wire = {
         allowedIPsAsRoutes = false;
-        ips = ["${hosts.apollo-wg}/112" "${hosts.vpn.apollo}/64"];
+        ips = [ "${hosts.apollo-wg}/112" "${hosts.vpn.apollo}/64" ];
         privateKeyFile = pkgs.privatePath "wireguard/apollo-private";
         peers = [
           {
             publicKey = wireguard.pub.hera;
-            allowedIPs = ["::/0"];
+            allowedIPs = [ "::/0" ];
             # endpoint =
             #  "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
             endpoint = "[${hosts.hera-v4}]:${builtins.toString wireguard.port}";
@@ -50,7 +51,7 @@ in {
             persistentKeepalive = 25;
           }
         ];
-        postSetup = ["${pkgs.iproute}/bin/ip route add ${prefix}::/96 dev m0wire"];
+        postSetup = [ "${pkgs.iproute}/bin/ip route add ${prefix}::/96 dev m0wire" ];
       };
     };
   };
@@ -58,13 +59,6 @@ in {
   programs = {
     adb.enable = true;
     sway.enable = true;
-    ssh = {
-      extraConfig = ''
-        Host fb04*.mathematik.tu-darmstadt.de
-          ProxyJump brandy@gwres1.mathematik.tu-darmstadt.de
-      '';
-      startAgent = true;
-    };
     seahorse.enable = lib.mkForce false;
     dconf.enable = true;
   };
@@ -85,7 +79,7 @@ in {
     upower.enable = true;
     printing = {
       enable = true;
-      drivers = [pkgs.gutenprint pkgs.hplip];
+      drivers = [ pkgs.gutenprint pkgs.hplip ];
     };
     udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness"
@@ -121,7 +115,7 @@ in {
         cert = pkgs.privatePath "syncthing/apollo/cert.pem";
         key = pkgs.privatePath "syncthing/apollo/key.pem";
       }
-      // syncthing.declarativeWith ["hera" "zeus"] "/home/maralorn/media";
+      // syncthing.declarativeWith [ "hera" "zeus" ] "/home/maralorn/media";
     xserver = {
       enable = true;
       displayManager = {
