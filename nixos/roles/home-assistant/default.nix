@@ -386,7 +386,7 @@ in {
                 {
                   service = "input_number.set_value";
                   target.entity_id = "input_number.target_temperature_wohnzimmer";
-                  data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "empty") "18" "26";
+                  data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "empty") "18" "23";
                 }
               ];
             }
@@ -397,7 +397,7 @@ in {
                 {
                   service = "input_number.set_value";
                   target.entity_id = "input_number.target_temperature_schlafzimmer";
-                  data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "empty") "18" "21";
+                  data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "empty") "18" "20.5";
                 }
               ];
             }
@@ -446,11 +446,7 @@ in {
               trigger = [
                 {
                   platform = "time";
-                  at = "19:00:00";
-                }
-                {
-                  platform = "time";
-                  at = "04:00:00";
+                  at = "22:00:00";
                 }
               ];
               condition = [
@@ -464,7 +460,7 @@ in {
               trigger = [
                 {
                   platform = "time";
-                  at = "01:00:00";
+                  at = "00:00:00";
                 }
               ];
               condition = [
@@ -511,7 +507,8 @@ in {
           ++ (map
           (minutes: {
             alias = "Warnung bei ${minutes} Minuten offenem Fenster oder offener Tür";
-            trigger = map (name:
+            trigger = map
+            (name:
               triggers.stateTrigger name
               // {
                 to = "on";
