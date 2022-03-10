@@ -6,6 +6,10 @@
   haLib = import ./lib.nix lib;
   inherit (haLib) modules util cards conditions triggers jinja actions tap_actions;
   modes = let
+    only_lights = {
+      icon = util.mkIcon "candelabra-fire";
+      title = "Nur Lichter";
+    };
     empty = {
       icon = util.mkIcon "account-off";
       title = "Leer";
@@ -30,12 +34,12 @@
     flat = {
       title = "Wohnungsmodus";
       name = "flat";
-      options = {inherit active vacation;};
+      options = {inherit active vacation only_lights;};
     };
     wohnzimmer = {
       title = "Wohnzimmermodus";
       name = "wohnzimmer";
-      options = {inherit empty heat active force_active;};
+      options = {inherit empty heat active force_active only_lights;};
     };
     kueche = {
       title = "Küchenmodus";
