@@ -36,7 +36,7 @@ in [
       {"fluffy via vpn" = ssh "fluffy.vpn.m-0.eu";}
       {remote-builder = ssh "phoibe.cased.de -i /etc/nixos/private/id_ed25519-nix-builder";}
       {ag = ssh "ag-forward";}
-      {gwres1 = ssh "gw";}
+      {mathe-gateway = ssh "gw";}
       {backup-server = ssh "borg.cysec.de";}
       {shells = ssh "shells";}
       {"bach (ved)" = ssh "bach.vocalensemble-darmstadt.de";}

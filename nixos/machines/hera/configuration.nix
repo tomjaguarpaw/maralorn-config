@@ -43,13 +43,6 @@ in {
   ];
 
   programs = {
-    ssh = {
-      extraConfig = ''
-        Host fb04*.mathematik.tu-darmstadt.de
-          ProxyJump brandy@gwres1.mathematik.tu-darmstadt.de
-      '';
-      startAgent = true;
-    };
     java.enable = true;
   };
   nixpkgs.config.android_sdk.accept_license = true;
