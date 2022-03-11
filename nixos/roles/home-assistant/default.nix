@@ -34,7 +34,7 @@
     flat = {
       title = "Wohnungsmodus";
       name = "flat";
-      options = {inherit active vacation only_lights;};
+      options = {inherit active vacation;};
     };
     wohnzimmer = {
       title = "Wohnzimmermodus";
@@ -49,7 +49,7 @@
     schlafzimmer = {
       title = "Schlafzimmermodus";
       name = "schlafzimmer";
-      options = {inherit empty heat active force_active;};
+      options = {inherit empty heat active force_active only_lights;};
     };
   };
   fenster = map (name: "binary_sensor.${name}")
@@ -398,7 +398,7 @@ in {
                 {
                   service = "input_number.set_value";
                   target.entity_id = "input_number.target_temperature_wohnzimmer";
-                  data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "empty") "18" "23";
+                  data.value = jinja.if' (jinja.isStates (util.modeSelectEntity modes.wohnzimmer) ["empty" "only_lights"]) "18" "23";
                 }
               ];
             }
@@ -409,7 +409,7 @@ in {
                 {
                   service = "input_number.set_value";
                   target.entity_id = "input_number.target_temperature_schlafzimmer";
-                  data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "empty") "18" "20.5";
+                  data.value = jinja.if' (jinja.isStates (util.modeSelectEntity modes.schlafzimmer) ["empty" "only_lights"]) "18" "20.5";
                 }
               ];
             }
@@ -423,7 +423,7 @@ in {
                 {
                   service = jinja.if'
                   (jinja.or
-                  (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "force_active")
+                  (jinja.isStates (util.modeSelectEntity modes.wohnzimmer) ["force_active" "only_lights"])
                   (jinja.and
                   (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "active")
                   "state_attr('sun.sun', 'elevation') < 6"))
@@ -443,7 +443,7 @@ in {
                 {
                   service = jinja.if'
                   (jinja.or
-                  (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "force_active")
+                  (jinja.isStates (util.modeSelectEntity modes.schlafzimmer) ["force_active" "only_lights"])
                   (jinja.and
                   (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "active")
                   "state_attr('sun.sun', 'elevation') < 6"))
