@@ -7,10 +7,16 @@
   }
   "plans";
   planning = pkgs.writeShellScriptBin "planning" ''
-    create-plans; kassandra2
+    vdirsyncer nextcloud_calendar/planung
+    create-plans
+    vdirsyncer nextcloud_calendar/planung
+    kassandra2
   '';
   ui = pkgs.writeShellScriptBin "calendar" ''
-    create-plans; ikhal -d Serien
+    vdirsyncer nextcloud_calendar/planung
+    create-plans
+    vdirsyncer nextcloud_calendar/planung
+    ikhal -d Serien
   '';
   createPlans = pkgs.writeHaskellScript
   {
