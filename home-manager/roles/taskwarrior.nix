@@ -2,8 +2,13 @@
   pkgs,
   config,
   ...
-}: {
-  home.packages = [pkgs.taskwarrior-git];
+}: let
+  fix-tasks = pkgs.writeShellScriptBin "fix-tasks" ''
+    sed 's/depends.*open.*\([0-9a-f]\{8\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{12\}\).*close[^ ]* /depends:"\1" /' -i ~/.task/*.data
+    sed 's/dep_\[[^ ]* //' -i ~/.task/*.data
+  '';
+in {
+  home.packages = [pkgs.taskwarrior-git fix-tasks];
   services.taskwarrior-sync = {
     enable = true;
     frequency = "*:0/1";
