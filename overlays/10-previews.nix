@@ -6,8 +6,8 @@ in {
   unstableHaskellPackages = unstable.haskellPackages;
   unstableGhc = unstable.ghc;
   inherit (unstable) home-assistant vscode-extensions vscode mumble cachix cabal2nix;
-  nix-output-monitor = unstable.nix-output-monitor.overrideAttrs (old: {
-    src = super.sources.nix-output-monitor;
-    buildInputs = old.buildInputs ++ (with unstable.haskellPackages; [streamly optics generic-optics extra safe MemoTrie]);
-  });
+  nix-output-monitor = unstable.haskell.lib.overrideCabal (unstable.haskellPackages.callCabal2nix "nix-output-monitor" super.sources.nix-output-monitor {}) {
+    inherit (super.nix-output-monitor) postInstall;
+    doCheck = false;
+  };
 }
