@@ -23,10 +23,10 @@
         "homepage": "",
         "owner": "mweinelt",
         "repo": "nur-packages",
-        "rev": "afda8e3b70c532c0f3d389790288962e98d8a81f",
-        "sha256": "0629ipppnp60r7hvw07l4rsn3kydnshb2zsanxm3fsz8g849fj0h",
+        "rev": "542b2e11fc9e6effdd51ab35cc800f127732c828",
+        "sha256": "11f4b5jf4dlwq8wy62v7mnrw5zfn6krq2n6sql2705cwwzg05srz",
         "type": "tarball",
-        "url": "https://github.com/mweinelt/nur-packages/archive/afda8e3b70c532c0f3d389790288962e98d8a81f.tar.gz",
+        "url": "https://github.com/mweinelt/nur-packages/archive/542b2e11fc9e6effdd51ab35cc800f127732c828.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager-21.11": {
@@ -58,7 +58,7 @@
     "nix-output-monitor": {
         "branch": "master",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "ae6f1b79dda2a488ca380862244309a46d74262c",
+        "rev": "df8c964ca6371dfaddaae72766cfd14f290d7769",
         "type": "git"
     },
     "nixos-19.09": {
@@ -79,10 +79,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "2ebb6c1e5ae402ba35cca5eec58385e5f1adea04",
-        "sha256": "0ipqlxhkd7srq1hqhlr4lms5sj20gbyg2cs3kg9dkmvdv6c66yb4",
+        "rev": "bacbfd713b4781a4a82c1f390f8fe21ae3b8b95b",
+        "sha256": "1nlrizg1bxzihrhy4yfdjigpcg808imp7m1rg7wivq18vln6g4j5",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/2ebb6c1e5ae402ba35cca5eec58385e5f1adea04.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/bacbfd713b4781a4a82c1f390f8fe21ae3b8b95b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
@@ -122,10 +122,10 @@
         "homepage": "",
         "owner": "obsidiansystems",
         "repo": "obelisk",
-        "rev": "e7ccc91806b94b424b086bf75087a0a5fd3ff0b5",
-        "sha256": "1xmfz5ck3bg7daxmalvzr4a58zmfrsp1h6y5zcii9ccxqmf3xl6g",
+        "rev": "e3ec75f6988eed47189dd20f8c8514748b33ea81",
+        "sha256": "0sdlcyzdx9nyql5vmpjydhzsakixc8y050v8m2rz87l2rmhkqnw9",
         "type": "tarball",
-        "url": "https://github.com/obsidiansystems/obelisk/archive/e7ccc91806b94b424b086bf75087a0a5fd3ff0b5.tar.gz",
+        "url": "https://github.com/obsidiansystems/obelisk/archive/e3ec75f6988eed47189dd20f8c8514748b33ea81.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "pre-commit-hooks.nix": {
