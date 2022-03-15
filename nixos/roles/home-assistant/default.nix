@@ -249,6 +249,22 @@ in {
               ];
             }
             {
+              alias = "Backup Lüftungssteuerung Bad";
+              trigger = [
+                (triggers.stateTrigger "switch.lueftung_bad"
+                // {
+                  to = "on";
+                  for = "02:00:00";
+                })
+              ];
+              action = [
+                {
+                  service = "switch.turn_off";
+                  target.entity_id = "switch.lueftung_bad";
+                }
+              ];
+            }
+            {
               alias = "Thermostatsteuerung Schlafzimmer";
               trigger = with triggers; [
                 (stateTrigger "input_number.target_temperature_schlafzimmer")
