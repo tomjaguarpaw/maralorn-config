@@ -25,7 +25,6 @@
       upower
       speedtest-cli
       acpi
-      anki
       # tools & office
       feh
       gimp
