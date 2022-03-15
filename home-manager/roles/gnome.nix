@@ -34,6 +34,7 @@
       unread <- notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
       inbox <- notmuch "count" "folder:hera/Inbox" |> captureTrim
       codeMails <- notmuch "count" "folder:hera/Code" |> captureTrim
+      codeUpdates <- fromMaybe 0 . readMaybe . toString . Text.replace " unread articles" "" . decodeUtf8 <$> tryCmd (exe "software-updates" "-x" "print-unread")
       dirs <- listDirectory "/home/maralorn/git"
       dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/"<>)) dirs
       unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/"<>)) dirs
@@ -45,7 +46,8 @@
         ] ++
         memptyIfFalse ((unread /= "0") && mode >= Orga) (one [i|<span foreground='\#DC143C'>Unread: #{unread}</span>|]) ++
         memptyIfFalse ((inbox /= "0") && mode == Leisure) (one [i|<span foreground='\#7fff00'>Inbox: #{inbox}</span>|]) ++
-        memptyIfFalse ((codeMails /= "0") && mode == Code) (one [i|<span foreground='\#006400'>Code: #{codeMails}</span>|]) ++
+        memptyIfFalse ((codeMails /= "0") && mode == Code) (one [i|<span foreground='\#006400'>Code Mails: #{codeMails}</span>|]) ++
+        memptyIfFalse ((codeUpdates /= 0) && mode == Code) (one [i|<span foreground='\#006400'>Code Updates: #{codeUpdates}</span>|]) ++
         memptyIfFalse (length unpushed /= 0) (one [i|<span foreground='\#d2691e'>Unpushed: #{Text.intercalate " " unpushed}</span>|]) ++
         memptyIfFalse (length dirty /= 0) (one [i|<span foreground='\#ff7f50'>Dirty: #{Text.intercalate " " dirty}</span>|])
   '';

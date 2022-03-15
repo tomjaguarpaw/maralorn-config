@@ -34,7 +34,7 @@ in {
       '';
       urlFile = pkgs.writeText "${name}-urls" (lib.concatStringsSep "\n" feeds);
     in
-      pkgs.writeShellScriptBin name "${pkgs.newsboat}/bin/newsboat -r -C ${configFile} -u ${urlFile} \"$@\"") {
+      pkgs.writeShellScriptBin name "${pkgs.newsboat}/bin/newsboat -r -C ${configFile} -u ${urlFile} -c ~/.local/share/newsboat/${name}-cache.db \"$@\"") {
       watchfeeds = {
         config = ''browser "mpv %u"'';
         feeds = [

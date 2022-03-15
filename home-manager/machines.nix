@@ -111,6 +111,7 @@ let
       ++ orgaExtra
       ++ [
         ./roles/chat.nix
+        ./roles/leisure.nix
         (blockServer newsPages)
       ]
     );
