@@ -152,6 +152,7 @@ self: super: {
       tasksh
       magic-wormhole
       rnix-lsp
+      alejandra
       rustup
       nix-top
       ghcWithPackages
