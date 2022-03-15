@@ -75,6 +75,7 @@ in [
       Browser = fork "firefox";
       "Private Browser" = fork "firefox --private-window";
       Chromium = fork "chromium";
+      "Software-Updates" = "software-updates";
       Watchfeeds = "watchfeeds";
       News = "news";
       Deluge = fork "deluge";
