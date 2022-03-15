@@ -29,7 +29,6 @@ in {
         show-read-feeds no
         show-read-articles no
         datetime-format "%Y-%m-%d"
-        cleanup-on-quit no
         ${config}
       '';
       urlFile = pkgs.writeText "${name}-urls" (lib.concatStringsSep "\n" feeds);
