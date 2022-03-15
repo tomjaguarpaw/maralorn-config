@@ -33,6 +33,7 @@ self: super: {
     inherit
       (self)
       htop
+      btop
       tree
       pwgen
       borgbackup

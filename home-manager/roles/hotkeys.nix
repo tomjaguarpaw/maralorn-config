@@ -107,7 +107,7 @@ in [
       {Tmate = "tmate";}
     ];
   }
-  {"Monitor (htop)" = "htop";}
+  {"Monitor (btop)" = "btop";}
   {
     "W17" = {
       Summer = "ssh door@burbon.w17.io buzzer";
