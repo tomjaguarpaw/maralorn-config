@@ -25,6 +25,7 @@
     };
     lazygit = {
       settings = {
+        gui.skipUnstageLineWarning = true;
         customCommands = [
           {
             key = "s";
