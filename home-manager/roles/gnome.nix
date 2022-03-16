@@ -31,10 +31,22 @@
       playing <- Text.replace "Stopped -" "⏹" . Text.replace "Playing -" "▶" . Text.replace "Paused -" "⏸" . Text.intercalate " - " . fmap decodeUtf8 . filter (/= "") <$> mapM tryCmd [playerctl "status", playerctl "metadata" "title", playerctl "metadata" "artist"]
       appointments <- Text.intercalate "; ". lines . decodeUtf8 <$> (tryCmd $ khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
       mode <- getMode
-      unread <- notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
-      inbox <- notmuch "count" "folder:hera/Inbox" |> captureTrim
-      codeMails <- notmuch "count" "folder:hera/Code" |> captureTrim
-      codeUpdates <- fromMaybe 0 . readMaybe . toString . Text.replace " unread articles" "" . decodeUtf8 <$> tryCmd (exe "software-updates" "-x" "print-unread")
+      unread <- if mode >= Orga then
+             notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
+           else
+             pure "0"
+      inbox <- if mode == Leisure then
+             notmuch "count" "folder:hera/Inbox" |> captureTrim
+           else
+             pure "0"
+      codeMails <- if mode == Code then
+             notmuch "count" "folder:hera/Code" |> captureTrim
+           else
+             pure "0"
+      codeUpdates <- if mode == Code then
+             fromMaybe 0 . readMaybe . toString . Text.replace " unread articles" "" . decodeUtf8 <$> tryCmd (exe "software-updates" "-x" "print-unread")
+           else
+             pure 0
       dirs <- listDirectory "/home/maralorn/git"
       dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/"<>)) dirs
       unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/"<>)) dirs
@@ -44,10 +56,10 @@
           playing,
           [i|<span foreground='\#0000aa'>#{show mode}</span>|]
         ] ++
-        memptyIfFalse ((unread /= "0") && mode >= Orga) (one [i|<span foreground='\#DC143C'>Unread: #{unread}</span>|]) ++
-        memptyIfFalse ((inbox /= "0") && mode == Leisure) (one [i|<span foreground='\#7fff00'>Inbox: #{inbox}</span>|]) ++
-        memptyIfFalse ((codeMails /= "0") && mode == Code) (one [i|<span foreground='\#006400'>Code Mails: #{codeMails}</span>|]) ++
-        memptyIfFalse ((codeUpdates /= 0) && mode == Code) (one [i|<span foreground='\#006400'>Code Updates: #{codeUpdates}</span>|]) ++
+        memptyIfFalse (unread /= "0") (one [i|<span foreground='\#DC143C'>Unread: #{unread}</span>|]) ++
+        memptyIfFalse (inbox /= "0") (one [i|<span foreground='\#7fff00'>Inbox: #{inbox}</span>|]) ++
+        memptyIfFalse (codeMails /= "0") (one [i|<span foreground='\#006400'>Code Mails: #{codeMails}</span>|]) ++
+        memptyIfFalse (codeUpdates /= 0) (one [i|<span foreground='\#006400'>Code Updates: #{codeUpdates}</span>|]) ++
         memptyIfFalse (length unpushed /= 0) (one [i|<span foreground='\#d2691e'>Unpushed: #{Text.intercalate " " unpushed}</span>|]) ++
         memptyIfFalse (length dirty /= 0) (one [i|<span foreground='\#ff7f50'>Dirty: #{Text.intercalate " " dirty}</span>|])
   '';
