@@ -58,7 +58,7 @@
     "nix-output-monitor": {
         "branch": "master",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "a2e6935d1c8c6d7f669ec8325adb72dcff105769",
+        "rev": "cfaad8540fc3e57b54727e66f0917281f08ded7e",
         "type": "git"
     },
     "nixos-19.09": {
@@ -91,10 +91,10 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "816a935bf5aa5f77cb1f03ebfe20ab13b112d0f1",
-        "sha256": "1dldbr0ikwb28ramzncriylfr8v6chf5wsadm844wx3487hx4sxr",
+        "rev": "32f61571b486efc987baca553fb35df22532ba63",
+        "sha256": "0sf34kb40gf73zrhcy2j0jijgbzd571rfq1wzan4qa6hg04xjbhf",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/816a935bf5aa5f77cb1f03ebfe20ab13b112d0f1.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/32f61571b486efc987baca553fb35df22532ba63.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
