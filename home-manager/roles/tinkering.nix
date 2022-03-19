@@ -12,6 +12,18 @@
       grafana-devel
       ;
   };
+  home.file.".editorconfig".text = ''
+    # Top-most EditorConfig file
+    root = true
+
+    # Unix-style newlines with a newline ending every file, utf-8 charset
+    [*]
+    indent_size = 3
+    end_of_line = lf
+    insert_final_newline = true
+    trim_trailing_whitespace = true
+    charset = utf-8
+  '';
   home.file = {
     ".config/VSCodium/User/tasks.json".text = builtins.toJSON {
       # See https://go.microsoft.com/fwlink/?LinkId=733558
@@ -56,6 +68,10 @@
       valentjn.vscode-ltex
       xyz.local-history
       alefragnani.project-manager
+      editorconfig.editorconfig
+      bierner.emojisense
+      kamadorueda.alejandra
+      mikestead.dotenv
     ];
     userSettings = {
       "editor.fontFamily" = "JetBrainsMono Nerd Font, monospace";
