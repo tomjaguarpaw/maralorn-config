@@ -19,14 +19,16 @@
     fonts = builtins.attrValues {
       inherit
         (pkgs)
-        nerdfonts
         # For all my terminal needs.
-        libertinus
+        nerdfonts
         # nice text font
-        material-icons
+        libertinus
         # icons in my app
+        material-icons
+        # sans font, very good for displays
         b612
-        ; # sans font, very good for displays
+        google-fonts
+        ;
     };
   };
 

@@ -18,11 +18,6 @@ in {
     nginx = {
       enable = lib.mkForce pkgs.withSecrets;
       virtualHosts = {
-        "stream.maralorn.de" = {
-          forceSSL = true;
-          enableACME = true;
-          locations."/".proxyPass = "http://[${config.m-0.hosts.apollo-wg}]:8123";
-        };
         "tasks.maralorn.de" = {
           forceSSL = true;
           enableACME = true;
@@ -32,7 +27,6 @@ in {
           };
         };
         "hera.m-0.eu" = {
-          serverAliases = ["malte-und-clai.re"];
           default = true;
           forceSSL = true;
           enableACME = true;
@@ -43,15 +37,17 @@ in {
           forceSSL = true;
           inherit locations;
         };
-        "fdroid.maralorn.de" = {
-          forceSSL = true;
-          enableACME = true;
-          locations = {
-            "/" = {
-              root = "/var/www/fdroid/repo";
+        "fdroid.maralorn.de" =
+          {
+            forceSSL = true;
+            enableACME = true;
+            locations = {
+              "/" = {
+                root = "/var/www/fdroid/repo";
+              };
             };
-          };
-        };
+          }
+          // pkgs.privateValue {} "extra-sites";
       };
     };
   };
