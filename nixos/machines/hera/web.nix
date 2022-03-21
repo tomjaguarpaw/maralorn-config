@@ -17,28 +17,28 @@ in {
   services = {
     nginx = {
       enable = lib.mkForce pkgs.withSecrets;
-      virtualHosts = {
-        "tasks.maralorn.de" = {
-          forceSSL = true;
-          enableACME = true;
-          locations."/" = {
-            proxyPass = "http://[::1]:8000";
-            proxyWebsockets = true;
+      virtualHosts =
+        {
+          "tasks.maralorn.de" = {
+            forceSSL = true;
+            enableACME = true;
+            locations."/" = {
+              proxyPass = "http://[::1]:8000";
+              proxyWebsockets = true;
+            };
           };
-        };
-        "hera.m-0.eu" = {
-          default = true;
-          forceSSL = true;
-          enableACME = true;
-          inherit locations;
-        };
-        "maralorn.de" = {
-          enableACME = true;
-          forceSSL = true;
-          inherit locations;
-        };
-        "fdroid.maralorn.de" =
-          {
+          "hera.m-0.eu" = {
+            default = true;
+            forceSSL = true;
+            enableACME = true;
+            inherit locations;
+          };
+          "maralorn.de" = {
+            enableACME = true;
+            forceSSL = true;
+            inherit locations;
+          };
+          "fdroid.maralorn.de" = {
             forceSSL = true;
             enableACME = true;
             locations = {
@@ -46,9 +46,9 @@ in {
                 root = "/var/www/fdroid/repo";
               };
             };
-          }
-          // pkgs.privateValue {} "extra-sites";
-      };
+          };
+        }
+        // pkgs.privateValue {} "extra-sites";
     };
   };
 }
