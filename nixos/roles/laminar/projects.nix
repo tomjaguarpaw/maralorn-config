@@ -17,7 +17,7 @@
         echo "Running 'flake check'"
         ${pkgs.nixFlakes}/bin/flix flake check
         echo "Building 'defaultPackage' from 'flake.nix'"
-        ${pkgs.nixFlakes}/bin/flix build .#defaultPackage.x86_64-linux $FLAGS
+        ${pkgs.nixFlakes}/bin/flix build $FLAGS
       else
         echo "Building default.nix"
         nix-build $FLAGS
