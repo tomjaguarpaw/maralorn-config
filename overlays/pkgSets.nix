@@ -68,7 +68,6 @@ self: super: {
       jq
       cachix
       nixFlakes
-      nix-du
       ;
   };
 
