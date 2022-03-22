@@ -13,21 +13,13 @@
       "genre:soundtrack" = "Soundtrack/$album/%if{$multidisc,Disc $disc/}$track. $title";
       "genre:classical" = "$genre/%the{$composer}/$album/%if{$multidisc,Disc $disc/}$track. $title";
     };
-    plugins = "convert web mpdstats mpdupdate fromfilename the duplicates missing inline";
+    plugins = "convert web fromfilename the duplicates missing inline";
     item_fields.multidisc = "1 if disctotal > 1 else 0";
     convert = {
       auto = true;
       command = "${pkgs.ffmpeg}/bin/ffmpeg -i $source -y -vn -acodec libopus -ab 192k $dest";
       extension = "opus";
       never_convert_lossy_files = true;
-    };
-  };
-  systemd.user.services.beets-mpdstats = {
-    Unit.Description = "beets.io mpdstats recorder";
-    Install.WantedBy = ["default.target"];
-    Service = {
-      ExecStart = "${pkgs.beets}/bin/beet mpdstats";
-      Restart = "always";
     };
   };
 }
