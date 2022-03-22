@@ -7,13 +7,14 @@
     directory = config.services.mpd.musicDirectory;
     import.move = true;
     paths = {
-      default = "$genre/%the{$albumartist}/$album%aunique{}/$track. $title";
+      default = "$genre/%the{$albumartist}/$album/%if{$multidisc,Disc $disc/}$track. $title";
       singleton = "$genre/%the{$artist}/singles/$title";
-      comp = "$genre/%the{$artist}/$album%aunique{}/$track. $title";
-      "genre:soundtrack" = "Soundtrack/$album%aunique{}/$track. $title";
-      "genre::classical" = "$genre/%the{$composer}/$album%aunique{}/$track. $title";
+      comp = "$genre/%the{$artist}/$album%/%if{$multidisc,Disc $disc/}$track. $title";
+      "genre:soundtrack" = "Soundtrack/$album/%if{$multidisc,Disc $disc/}$track. $title";
+      "genre:classical" = "$genre/%the{$composer}/$album/%if{$multidisc,Disc $disc/}$track. $title";
     };
-    plugins = "convert web mpdstats mpdupdate fromfilename the duplicates missing";
+    plugins = "convert web mpdstats mpdupdate fromfilename the duplicates missing inline";
+    item_fields.multidisc = "1 if disctotal > 1 else 0";
     convert = {
       auto = true;
       command = "${pkgs.ffmpeg}/bin/ffmpeg -i $source -y -vn -acodec libopus -ab 192k $dest";
