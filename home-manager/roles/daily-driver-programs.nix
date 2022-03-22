@@ -45,6 +45,7 @@
       vlc
       youtubeDL
       spotdl
+      ffmpeg
       syncplay
       ;
   };
