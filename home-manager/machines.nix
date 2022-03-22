@@ -58,7 +58,7 @@ let
       ++ on-my-machines
       ++ [
         (import ./roles/firefox.nix "http://localhost:7000")
-        (makeAutostart "planning")
+        (makeAutostart "kassandra2")
         (makeAutostart "unlock-ssh")
         ./roles/beets.nix
         ./roles/daily-driver-programs.nix

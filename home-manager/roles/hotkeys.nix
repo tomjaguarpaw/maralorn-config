@@ -3,7 +3,7 @@
 in [
   {
     Orga = [
-      {Kassandra = fork "planning";}
+      {Kassandra = fork "kassandra2";}
       {Kalendar = "calendar";}
       {Habitica = fork "firefox https://habitica.com";}
       {Tasks = "tasksh";}

@@ -39,7 +39,7 @@ defaultMode: {
   ];
   persistentStateFiles = [".chpwd-recent-dirs" ".zsh_history"];
   volatileStateFiles = [];
-  volatileStateDirs = [".steam" ".local/share/Steam"];
+  volatileStateDirs = [".steam" ".local/share/Steam" ".cache/kassandra"];
   mkLine = type: to: from: "${type} ${to} - - - - ${from}";
   mkEntry = type: persistence: name: let
     target = "/disk/${persistence}/maralorn/${name}";

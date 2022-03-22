@@ -6,20 +6,6 @@
     "weekend" = "pass";
   }
   "plans";
-  planning = pkgs.writeShellScriptBin "planning" ''
-    set -e
-    vdirsyncer sync nextcloud_calendar/planung
-    create-plans
-    vdirsyncer sync nextcloud_calendar/planung
-    kassandra2
-  '';
-  ui = pkgs.writeShellScriptBin "calendar" ''
-    set -e
-    vdirsyncer sync nextcloud_calendar/planung
-    create-plans
-    vdirsyncer sync nextcloud_calendar/planung
-    ikhal -d Serien
-  '';
   createPlans = pkgs.writeHaskellScript
   {
     name = "create-plans";
@@ -39,8 +25,11 @@
           else do
             ${plans.workDay}
   '';
+  ui = pkgs.writeShellScriptBin "calendar" ''
+    ikhal -d Serien
+  '';
 in {
-  home.packages = [pkgs.khal createPlans planning ui];
+  home.packages = [pkgs.khal ui];
   xdg.configFile."khal/config".text = ''
     [locale]
     dateformat = "%Y-%m-%d"
@@ -68,4 +57,23 @@ in {
       calendars
     }
   '';
+  systemd.user = {
+    services.create-plans = {
+      Unit.Description = "Create planning appointments in calendar";
+      Service = {
+        Type = "oneshot";
+        ExecStart = toString (pkgs.writeShellScript "update-plans" ''
+          set -e
+          ${pkgs.vdirsyncer}/bin/vdirsyncer sync nextcloud_calendar/planung
+          ${createPlans}/bin/create-plans
+          ${pkgs.vdirsyncer}/bin/vdirsyncer sync nextcloud_calendar/planung
+        '');
+      };
+    };
+    timers.create-plans = {
+      Unit.Description = "Create planning appointments in calendar";
+      Timer.OnCalendar = "hourly";
+      Install.WantedBy = ["timers.target"];
+    };
+  };
 }
