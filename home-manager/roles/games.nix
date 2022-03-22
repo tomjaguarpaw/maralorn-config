@@ -3,7 +3,7 @@
   config,
   ...
 }: let
-  gw2dir = "${config.home.homeDirectory}/volatile/GW2";
+  gw2dir = "${config.home.homeDirectory}/.volatile/GW2";
   wine = pkgs.wineWowPackages.staging;
   gw2env = ''
     cd ${gw2dir}
@@ -45,7 +45,7 @@
   '';
   gw2run = pkgs.writeShellScriptBin "gw2" ''
     ${gw2env}
-    cd "${gw2dir}/data/drive_c/Guild Wars 2"
+    cd "${gw2dir}/data/drive_c/Program Files/Guild Wars 2"
     ${wine}/bin/wine64 ./Gw2-64.exe $@ -autologin
   '';
 in {
