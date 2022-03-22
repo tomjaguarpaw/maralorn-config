@@ -45,6 +45,7 @@
       vlc
       youtubeDL
       spotdl
+      id3v2
       ffmpeg
       syncplay
       ;
