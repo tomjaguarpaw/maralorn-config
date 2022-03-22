@@ -65,6 +65,7 @@ in [
       Files = fork "nautilus";
       DarkTerminal = fork "foot -o 'color.background=000000' -o 'foreground=ffffff'";
       Games = {
+        GW2 = fork "gw2";
         Steam = fork "steam";
         Minecraft = fork "minecraft-launcher";
       };
