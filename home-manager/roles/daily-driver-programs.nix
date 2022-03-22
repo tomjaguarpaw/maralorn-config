@@ -44,6 +44,7 @@
       gmpc
       vlc
       youtubeDL
+      spotdl
       syncplay
       ;
   };
