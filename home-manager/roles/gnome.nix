@@ -28,7 +28,7 @@
     tryCmd x = ignoreFailure x |> captureTrim
 
     main = do
-      playing <- Text.replace "Stopped -" "⏹" . Text.replace "Playing -" "▶" . Text.replace "Paused -" "⏸" . Text.intercalate " - " . fmap decodeUtf8 . filter (/= "") <$> mapM tryCmd [playerctl "status", playerctl "metadata" "title", playerctl "metadata" "artist"]
+      playing <- Text.replace "Stopped -" "⏹" . Text.replace "Playing -" "▶" . Text.replace "Paused -" "⏸" . Text.intercalate " - " . fmap decodeUtf8 . filter (/= "") <$> mapM tryCmd [playerctl "status", playerctl "metadata" "title", playerctl "metadata" "album", playerctl "metadata" "artist"]
       appointments <- Text.intercalate "; ". lines . decodeUtf8 <$> (tryCmd $ khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
       mode <- getMode
       unread <- if mode >= Orga then
