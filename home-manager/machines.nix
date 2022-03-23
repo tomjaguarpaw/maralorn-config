@@ -162,5 +162,6 @@ in {
     ./roles/mail2rss.nix
     ./roles/headless-mpd.nix
     ./roles/headless.nix
+    ./roles/create-plans.nix
   ]);
 }
