@@ -52,21 +52,22 @@ in {
             forceSSL = true;
             enableACME = true;
             locations = {
-              "/rules/" = {
-                alias = "${pkgs.fetchzip (import ./5etools-url.nix // {stripRoot = false;})}/";
-                index = "index.html";
-              };
+              #"/rules/" = {
+              #  alias = "${pkgs.fetchzip (import ./5etools-url.nix // {stripRoot = false;})}/";
+              #  index = "index.html";
+              #};
               "/" = {
                 proxyPass = "http://[::1]:${toString config.port}";
                 proxyWebsockets = true;
-                extraConfig = ''
-                  if ($request_uri ~ ^/rules$) {
-                     return 301 /rules/;
-                  }
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
-                '';
+                extraConfig =
+                  #if ($request_uri ~ ^/rules$) {
+                  #   return 301 /rules/;
+                  #}
+                  ''
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                  '';
               };
             };
           };
