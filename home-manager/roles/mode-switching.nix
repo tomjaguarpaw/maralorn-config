@@ -36,15 +36,15 @@ in {
       name = "update-modes";
       bins = [activateMode pkgs.git pkgs.nix-output-monitor];
     } ''
-      params = ["${configPath}/home-manager/target.nix", "-A", "${hostName}", "-o", "${modeDir}"]
+      params = ["${configPath}/home-manager/target.nix", "-A", "${hostName}"]
 
       main = do
         say "Building ~/.modes for ${hostName}"
         nixPath <- myNixPath "${configPath}"
         setEnv "WITH_SECRETS" "false"
-        nom_build nixPath (params ++ remoteBuildParams)
+        nom_build nixPath (params ++ remoteBuildParams ++ ["--no-out-link"])
         setEnv "WITH_SECRETS" "true"
-        nom_build nixPath params
+        nom_build nixPath (params ++ ["-o", "${modeDir}"])
         activate_mode
     '';
     quickUpdateMode = pkgs.writeHaskellScript
