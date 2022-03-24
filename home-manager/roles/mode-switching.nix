@@ -59,7 +59,7 @@ in {
         nixPath <- myNixPath "${configPath}"
         mode <- getMode
         say [i|Quick switching to mode #{mode} ...|]
-        home_manager (nixPath <> ["switch", "-A", [i|${hostName}-#{mode}|]]) &!> StdOut |> nom
+        ignoreFailure (home_manager (nixPath <> ["switch", "-A", [i|${hostName}-#{mode}|]])) &!> StdOut |> nom
         update_modes
     '';
     selectMode = pkgs.writeHaskellScript
