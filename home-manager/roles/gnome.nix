@@ -22,8 +22,8 @@
 
     isDirty gitDir = ((/= "") <$> (git "--no-optional-locks" "-C" gitDir "status" "--porcelain" |> captureTrim)) `catch` (\(_ :: SomeException) -> pure True)
     isUnpushed gitDir = do
-      revs <- LBS.split 10 <$> tryCmd (git "--no-optional-locks" "-C" gitDir "rev-parse" "@{u}" "HEAD")
-      pure $ length revs /= 2 || (revs !!? 0 /= revs !!? 1)
+      revs <- tryCmd (git "--no-optional-locks" "-C" gitDir "branch" "-r" "--contains" "HEAD")
+      pure $ LBS.null revs
 
     tryCmd x = ignoreFailure x |> captureTrim
 
