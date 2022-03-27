@@ -131,6 +131,7 @@
         url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
       }
     }/programs.sqlite";
+    git.config.init.defaultBranch = "main";
     ssh = {
       extraConfig = pkgs.privateValue "" "ssh-config";
       startAgent = true;
