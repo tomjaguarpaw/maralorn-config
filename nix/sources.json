@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "cce3558d2d142a95ea39099e7b3b2e930b2f3a61",
-        "sha256": "092487bc32v2h6cqnnvjnazl546fa3y7c1faiwwp60l0k0i0sd38",
+        "rev": "f872abcdc60aec4784e189d010b1c54387e24226",
+        "sha256": "1q174c51i0wpn6hcl8s626n96x25rqr6w4p99h4y97z2rlya9agd",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/cce3558d2d142a95ea39099e7b3b2e930b2f3a61.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/f872abcdc60aec4784e189d010b1c54387e24226.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "haskell-dialog": {
@@ -58,7 +58,7 @@
     "nix-output-monitor": {
         "branch": "master",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "30b6e73e0e23b281fd8cd075d56ef2cd2604ae9c",
+        "rev": "42544c63502b6126fece595ec76e487011340793",
         "type": "git"
     },
     "nixos-19.09": {
