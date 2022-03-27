@@ -15,6 +15,7 @@ defaultMode: {
     ".config/Signal"
     ".config/discord"
     ".config/gh"
+    ".config/VSCodium/User"
     ".contacts"
     ".gnupg"
     ".config/mpv/watch_later"
@@ -39,7 +40,12 @@ defaultMode: {
   ];
   persistentStateFiles = [".chpwd-recent-dirs" ".zsh_history"];
   volatileStateFiles = [];
-  volatileStateDirs = [".steam" ".local/share/Steam" ".cache/kassandra"];
+  volatileStateDirs = [
+    ".steam"
+    ".local/share/Steam"
+    ".cache/kassandra"
+    ".cache/nix-output-monitor"
+  ];
   mkLine = type: to: from: "${type} ${to} - - - - ${from}";
   mkEntry = type: persistence: name: let
     target = "/disk/${persistence}/maralorn/${name}";
