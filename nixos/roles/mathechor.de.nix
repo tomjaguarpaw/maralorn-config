@@ -28,7 +28,7 @@
             index = "index.html";
             extraConfig = ''
               if ($query_string ~ "pw=([A-Za-z]*)") {
-                 add_header Set-Cookie "password=$1; path=/; Expires=${toString (365 * 24 * 60 * 60)}; Secure";
+                 add_header Set-Cookie "password=$1; path=/; Max-Age=${toString (365 * 24 * 60 * 60)}; Secure";
                  return 303 /;
               }
               if ($http_cookie !~ "password=${pkgs.privateValue "" "mathechor.de-pw"}") {
