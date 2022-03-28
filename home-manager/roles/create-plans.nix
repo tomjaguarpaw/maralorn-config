@@ -36,7 +36,7 @@ in {
           ${createPlans}/bin/create-plans
           ${pkgs.vdirsyncer}/bin/vdirsyncer sync nextcloud_calendar/planung
         '');
-        Restart = "always";
+        Restart = "on-failure";
         RestartSec = 60;
       };
     };
