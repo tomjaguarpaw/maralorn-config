@@ -80,7 +80,7 @@ in {
       fiveetoolsmirror = {
         Unit.Description = "local 5etools mirror";
         Service = {
-          ExecStart = "${pkgs.python3}/bin/python -m http.server 5454 -d ${config.home.homeDirectory}/git/5etools-mirror-1.github.io
+          ExecStart = "${pkgs.python3}/bin/python -m http.server --bind :: 5454 -d ${config.home.homeDirectory}/git/5etools-mirror-1.github.io
 ";
           Restart = "always";
         };

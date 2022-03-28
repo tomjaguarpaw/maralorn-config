@@ -117,6 +117,10 @@ in {
         }
       ];
     };
+    firewall.allowedTCPPorts = [
+      6600 # mpd
+      5454 # 5etools
+    ];
     wireguard.interfaces = {
       m0wire = {
         allowedIPsAsRoutes = false;
@@ -137,8 +141,6 @@ in {
   };
 
   programs = {
-    #adb.enable = true;
-    sway.enable = true;
     seahorse.enable = lib.mkForce false;
     dconf.enable = true;
   };

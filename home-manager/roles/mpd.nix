@@ -24,6 +24,7 @@ in {
       enable = true;
       musicDirectory = audio_dir;
       playlistDirectory = playlist_dir;
+      network.listenAddress = "::";
       extraConfig = ''
         audio_output {
           type "pulse"
