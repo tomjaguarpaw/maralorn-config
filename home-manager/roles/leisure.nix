@@ -76,13 +76,24 @@
   };
 in {
   systemd.user = {
-    services.update-software-feeds = {
-      Unit.Description = "Update software feeds";
-      Service = {
-        Type = "oneshot";
-        ExecStart = toString (pkgs.writeShellScript "update-plans" ''
-          ${commands.software-updates}/bin/software-updates -x reload
-        '');
+    services = {
+      fiveetoolsmirror = {
+        Unit.Description = "local 5etools mirror";
+        Service = {
+          ExecStart = "${pkgs.python3}/bin/python -m http.server 5454 -d ${config.home.homeDirectory}/git/5etools-mirror-1.github.io
+";
+          Restart = "always";
+        };
+        Install.WantedBy = ["default.target"];
+      };
+      update-software-feeds = {
+        Unit.Description = "Update software feeds";
+        Service = {
+          Type = "oneshot";
+          ExecStart = toString (pkgs.writeShellScript "update-plans" ''
+            ${commands.software-updates}/bin/software-updates -x reload
+          '');
+        };
       };
     };
     timers.update-software-feeds = {
