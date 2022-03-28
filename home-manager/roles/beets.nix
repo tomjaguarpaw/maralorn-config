@@ -11,7 +11,6 @@
       singleton = "$genre/%the{$artist}/singles/$title";
       comp = "$genre/%the{$artist}/$album%/%if{$multidisc,Disc $disc/}$track. $title";
       "genre:soundtrack" = "Soundtrack/$album/%if{$multidisc,Disc $disc/}$track. $title";
-      "genre:classical" = "$genre/%the{$composer}/$album/%if{$multidisc,Disc $disc/}$track. $title";
     };
     plugins = "convert web fromfilename the duplicates missing inline";
     item_fields.multidisc = "1 if disctotal > 1 else 0";
