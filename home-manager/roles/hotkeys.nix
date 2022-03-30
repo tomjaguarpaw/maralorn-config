@@ -80,7 +80,7 @@ in [
       Watchfeeds = "watchfeeds";
       News = "news";
       Deluge = fork "deluge";
-      VoxMachina = fork "mpv https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_";
+      VoxMachina = "mpv https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_";
     };
   }
   {Passmenu = "pass clip -f";}
