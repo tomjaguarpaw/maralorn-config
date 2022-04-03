@@ -42,21 +42,21 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "kassandra": {
-        "branch": "master",
-        "ref": "master",
+        "branch": "main",
+        "ref": "main",
         "repo": "git@hera.m-0.eu:kassandra2",
         "rev": "309ad547dce6a41d8cfb433b27de9edcc4f55980",
         "type": "git"
     },
     "logfeed": {
-        "branch": "master",
-        "ref": "master",
+        "branch": "main",
+        "ref": "main",
         "repo": "git@hera.m-0.eu:logfeed",
         "rev": "e232c0b64ee2bb8baf87d3e541948f8c40dc2f29",
         "type": "git"
     },
     "nix-output-monitor": {
-        "branch": "master",
+        "branch": "main",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
         "rev": "b461715bcee14eeef27d89fbf30d8aaf820102a6",
         "type": "git"
@@ -141,7 +141,7 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "taskwarrior-git-backend": {
-        "branch": "master",
+        "branch": "main",
         "description": "An experimental task-sync alternative via git written in Haskell",
         "homepage": null,
         "owner": "maralorn",

@@ -8,7 +8,7 @@
   script = pkgs.writeShellScript "hourly-maintenance" ''
     set -e
     ${configGit} fetch
-    if [[ "$(${configGit} rev-parse master)" == "$(${configGit} rev-parse origin/master)" ]]; then
+    if [[ "$(${configGit} rev-parse main)" == "$(${configGit} rev-parse origin/main)" ]]; then
       echo "Git repo up-to-date, not doing anything."
       exit 0;
     else

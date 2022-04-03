@@ -43,7 +43,7 @@ deployCommand :: String
 deployCommand = $$(liftTyped =<< runIO (getEnv "DEPLOY"))
 
 main = do
-  let process = fromMaybe "master" . (stripPrefix "refs/heads/" . toText =<<)
+  let process = fromMaybe "main" . (stripPrefix "refs/heads/" . toText =<<)
   branch <- process <$> lookupEnv "BRANCH"
   jobId <- getEnv "JOB"
   runId <- getEnv "RUN"
@@ -53,11 +53,11 @@ main = do
   say [i|Starting builds of branch #{branch} for all systems.|]
   concurrently_ (mapConcurrently_ (\x -> laminarc ["run", x, [i|BRANCH=#{branch}|]]) jobs) $ nix_build "test.nix"
   say [i|Builds succeeded.|]
-  when (branch == "master") $ do
+  when (branch == "main") $ do
     say [i|Deploying new config to localhost.|]
     exe "/run/wrappers/bin/sudo" deployCommand
   when (branch == "niv-bump") $ do
-    say [i|Merging branch niv-bump into master.|]
-    git "checkout" "master"
+    say [i|Merging branch niv-bump into main.|]
+    git "checkout" "main"
     git "merge" "origin/niv-bump"
     git "push"
