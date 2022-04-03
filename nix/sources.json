@@ -52,13 +52,13 @@
         "branch": "main",
         "ref": "main",
         "repo": "git@hera.m-0.eu:logfeed",
-        "rev": "e232c0b64ee2bb8baf87d3e541948f8c40dc2f29",
+        "rev": "546d9afefb5c98c43dac572b94bef24b44dac6b5",
         "type": "git"
     },
     "nix-output-monitor": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "b461715bcee14eeef27d89fbf30d8aaf820102a6",
+        "rev": "8e6e1a377b07fb7d7214a1c3cf51bb3d0a44c72c",
         "type": "git"
     },
     "nixos-19.09": {
@@ -79,10 +79,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "efea022d6fe0da84aa6613d4ddeafb80de713457",
-        "sha256": "0f7v00i03iglxf18nk1dh7844zbpp37hl4s53v8vqgzcdgy2lw54",
+        "rev": "6f88260faaaa3cda8f4e478be72be6c0861c47ad",
+        "sha256": "1adj9k7fgysggcgixrab8i0fv2szyc8608qh97bspy1dzci82xmx",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/efea022d6fe0da84aa6613d4ddeafb80de713457.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/6f88260faaaa3cda8f4e478be72be6c0861c47ad.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
