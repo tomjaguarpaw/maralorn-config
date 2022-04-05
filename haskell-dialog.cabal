@@ -26,7 +26,7 @@ executable hotkeys
   other-modules:    Dialog
   -- other-extensions:
   build-depends:
-      base       >=4.13 && <4.15
+      base       >=4.13
     , aeson      >= 2.0.1.0
     , haskeline
     , daemons
