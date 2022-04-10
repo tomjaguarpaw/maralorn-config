@@ -16,8 +16,9 @@
   time.timeZone = "Europe/Berlin";
 
   networking = {
+    resolvconf.dnsExtensionMechanism = false; # this breaks dnssec but is necessary for certain bad-behaved hotspots
     firewall.allowPing = true;
-    useDHCP = false;
+    useDHCP = false; # enabled per interface
     hosts = lib.zipAttrs
     (
       lib.mapAttrsToList
