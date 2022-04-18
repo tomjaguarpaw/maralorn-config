@@ -1,32 +1,49 @@
-From 92f85569b2ec8beabfb7ea6aea462fba5e5af39d Mon Sep 17 00:00:00 2001
+From c2e93f4e099a7171c65e8a73f70688fe91893774 Mon Sep 17 00:00:00 2001
 From: Martin Weinelt <hexa@darmstadt.ccc.de>
-Date: Sat, 20 Mar 2021 17:33:14 +0100
+Date: Wed, 13 Apr 2022 18:06:42 +0200
 Subject: [PATCH] warnwetter: init
 
 ---
- CODEOWNERS                                    |   1 +
+ homeassistant/components/warnwetter/README.md |  22 ++
  .../components/warnwetter/__init__.py         |   1 +
- .../components/warnwetter/manifest.json       |   7 +
- homeassistant/components/warnwetter/sensor.py | 302 ++++++++++++++++++
+ .../components/warnwetter/manifest.json       |   8 +
+ homeassistant/components/warnwetter/sensor.py | 304 ++++++++++++++++++
  .../components/warnwetter/weather.py          | 115 +++++++
- 5 files changed, 426 insertions(+)
+ 5 files changed, 450 insertions(+)
+ create mode 100644 homeassistant/components/warnwetter/README.md
  create mode 100644 homeassistant/components/warnwetter/__init__.py
  create mode 100644 homeassistant/components/warnwetter/manifest.json
  create mode 100644 homeassistant/components/warnwetter/sensor.py
  create mode 100644 homeassistant/components/warnwetter/weather.py
 
-diff --git a/CODEOWNERS b/CODEOWNERS
-index 0e069f94e7..596beebec8 100644
---- a/CODEOWNERS
-+++ b/CODEOWNERS
-@@ -525,6 +525,7 @@ homeassistant/components/vlc_telnet/* @rodripf @dmcc
- homeassistant/components/volkszaehler/* @fabaff
- homeassistant/components/volumio/* @OnFreund
- homeassistant/components/waqi/* @andrey-git
-+homeassistant/components/warnwetter/* @mtdcr
- homeassistant/components/watson_tts/* @rutkai
- homeassistant/components/weather/* @fabaff
- homeassistant/components/webostv/* @bendavid
+diff --git a/homeassistant/components/warnwetter/README.md b/homeassistant/components/warnwetter/README.md
+new file mode 100644
+index 0000000000..f39dd03946
+--- /dev/null
++++ b/homeassistant/components/warnwetter/README.md
+@@ -0,0 +1,22 @@
++```yaml
++sensor:
++  - platform: warnwetter
++    station_id: L886
++    name: 'DWD Darmstadt'
++    monitored_conditions:
++      - dewpoint
++      - humidity
++      - precipitation
++      - temperature
++
++weather:
++  - platform: warnwetter
++    name: DWD Darmstadt
++    station_id: L886
++  - platform: warnwetter
++    name: DWD Frankfurt
++    station_id: 10637
++  - platform: warnwetter
++    name: DWD Offenbach
++    station_id: 10641
++```
 diff --git a/homeassistant/components/warnwetter/__init__.py b/homeassistant/components/warnwetter/__init__.py
 new file mode 100644
 index 0000000000..538fc5a2dc
@@ -36,23 +53,24 @@ index 0000000000..538fc5a2dc
 +"""The warnwetter component."""
 diff --git a/homeassistant/components/warnwetter/manifest.json b/homeassistant/components/warnwetter/manifest.json
 new file mode 100644
-index 0000000000..cf37e4824e
+index 0000000000..aeeb4cd28b
 --- /dev/null
 +++ b/homeassistant/components/warnwetter/manifest.json
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,8 @@
 +{
 +  "domain": "warnwetter",
 +  "name": "DWD WarnWetter API",
 +  "documentation": "https://www.home-assistant.io/integrations/warnwetter",
 +  "dependencies": ["weather"],
-+  "codeowners": ["@mtdcr"]
++  "codeowners": ["@mtdcr"],
++  "version": "0.0.1"
 +}
 diff --git a/homeassistant/components/warnwetter/sensor.py b/homeassistant/components/warnwetter/sensor.py
 new file mode 100644
-index 0000000000..65bbe2bdce
+index 0000000000..bd3c3dc796
 --- /dev/null
 +++ b/homeassistant/components/warnwetter/sensor.py
-@@ -0,0 +1,302 @@
+@@ -0,0 +1,304 @@
 +"""Sensor platform for data from WarnWetter."""
 +from datetime import datetime, timedelta
 +import json
@@ -205,13 +223,15 @@ index 0000000000..65bbe2bdce
 +        return self.probe.data.get(self.variable)
 +
 +    @property
-+    def device_state_attributes(self) -> Optional[Dict[str, Any]]:
++    def extra_state_attributes(self) -> Optional[Dict[str, Any]]:
 +        """Return device specific state attributes."""
-+        return {
++        attrs = {
 +            ATTR_ATTRIBUTION: ATTRIBUTION,
 +            ATTR_STATION: self.probe.station_id,
-+            ATTR_UPDATED: self.probe.last_update.isoformat(),
 +        }
++        if self.probe.last_update is not None:
++            attrs[ATTR_UPDATED] = self.probe.last_update.isoformat()
++        return attrs
 +
 +    @property
 +    def device_class(self) -> Optional[str]:
@@ -477,5 +497,5 @@ index 0000000000..f00155c2bf
 +        self.mprobe.update()
 +        self.fprobe.update()
 -- 
-2.30.1
+2.35.1
 
