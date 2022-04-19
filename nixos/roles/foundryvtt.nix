@@ -69,7 +69,7 @@ in {
                 '';
               };
               "/login".extraConfig = ''
-                add_header Content-Type text/html;
+                more_set_headers 'Content-Type: text/html';
                 return 200 '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><form style="text-align: center; margin: 250px auto; width: 500px;" action="/" method="get"><label for="pw">Passwort: </label><input type="password" name="pw"><input type="submit" value="login"></form></html></body>';
               '';
               "/logout".extraConfig = ''
