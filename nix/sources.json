@@ -35,10 +35,10 @@
         "homepage": "",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "d14adb99f3fb562ec74ad18c032efc154b438034",
-        "sha256": "0p3hr0hgg86vg4796kdnm38s7ammk5f6mixj9n4z9l4nv8r00i1n",
+        "rev": "d93d56ab8c1c6aa575854a79b9d2f69d491db7d0",
+        "sha256": "1fi27zabvqlyc2ggg7wr01j813gs46rswg1i897h9hqkbgqsjkny",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/d14adb99f3fb562ec74ad18c032efc154b438034.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/d93d56ab8c1c6aa575854a79b9d2f69d491db7d0.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "kassandra": {
