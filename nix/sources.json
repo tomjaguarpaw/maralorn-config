@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "2b6558fde2999ec22f645cb95322995b780f09f1",
-        "sha256": "10iklygc3lb6nlh4lwlww99y8292c08azgp9f55zxkiidja23v3z",
+        "rev": "c981e7a49865533be5221aec606855f3f7dfdd0d",
+        "sha256": "18d65ksh3lbff0k30468ga8nyibksy9q3ryw4l6i75iz47vjg4kq",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/2b6558fde2999ec22f645cb95322995b780f09f1.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/c981e7a49865533be5221aec606855f3f7dfdd0d.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "haskell-dialog": {
@@ -110,10 +110,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "43ff6cb1c027d13dc938b88eb099462210fea52f",
-        "sha256": "042z7dc1xk22l3mk290rns2faywl6kbrbdjpjldksfn1jl3jnjsh",
+        "rev": "1d7db1b9e4cf1ee075a9f52e5c36f7b9f4207502",
+        "sha256": "1w7nrdq5pgmyc5p8lb86ljb3by02dhcmrc008hvaa4s45mf6p8qn",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/43ff6cb1c027d13dc938b88eb099462210fea52f.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/1d7db1b9e4cf1ee075a9f52e5c36f7b9f4207502.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
@@ -134,10 +134,10 @@
         "homepage": "",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "e5e7b3b542e7f4f96967966a943d7e1c07558042",
-        "sha256": "0gc3alsav9fb6c2nr3yc82rh3rm82dizadl8bqw43a9bp8gh0gy3",
+        "rev": "521a524771a8e93caddaa0ac1d67d03766a8b0b3",
+        "sha256": "16qfrylk41r7gc7g4352hxz7b3vk9w7bc6893apmmr6yy08ra0m9",
         "type": "tarball",
-        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/e5e7b3b542e7f4f96967966a943d7e1c07558042.tar.gz",
+        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/521a524771a8e93caddaa0ac1d67d03766a8b0b3.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "taskwarrior-git-backend": {
