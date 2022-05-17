@@ -43,7 +43,7 @@ in [
       {"nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net -i /etc/nixos/private/id_ed25519-nix-builder shell";}
       {"fluffy via local network" = ssh "fluffy.lo.m-0.eu";}
       {"hera via public v4" = ssh "hera-v4";}
-      {"TU Tunnel" = "sshuttle --python python3.8 -r gw 130.83.0.0/16";}
+      {"TU Tunnel" = "sshuttle --python python3.9 -r gw 130.83.0.0/16";}
     ];
   }
   {
