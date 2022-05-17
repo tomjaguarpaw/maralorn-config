@@ -81,6 +81,7 @@
     "schlafzimmerfenster_battery"
     "wohnungstuer_battery"
   ];
+  flaky_remotes = ["lichterkette_schrank" "wohnzimmerfenster_battery"];
   inherit (import ../../../nix/sources.nix) nixos-unstable;
   homeAssistantDir = "/disk/persist/home-assistant";
 in {
@@ -173,7 +174,7 @@ in {
                             {
                               condition = "numeric_state";
                               entity_id = "sensor.schlafzimmer_humidity";
-                              below = 63;
+                              below = 70;
                             }
                             {
                               condition = "state";
@@ -195,7 +196,7 @@ in {
                         {
                           condition = "numeric_state";
                           entity_id = "sensor.schlafzimmer_humidity";
-                          above = 65;
+                          above = 75;
                         }
                       ];
                       sequence = {
@@ -517,7 +518,7 @@ in {
                 platform = "numeric_state";
                 below = toString limit;
                 entity_id = batteries;
-              }) [25 20 15 10 5 4 3 2 1];
+              }) [25 20 15 10 5 4 3 2 1 0];
               action = [(actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%.")];
             }
             {
@@ -539,7 +540,7 @@ in {
                   to = "unavailable";
                   for = "00:30:00";
                 })
-              (batteries ++ switches);
+              (filter (name: !(builtins.elem name flaky_remotes)) (batteries ++ switches));
               action = [(actions.notify "{{ trigger.to_state.name }} ist nicht erreichbar.")];
             }
           ]
