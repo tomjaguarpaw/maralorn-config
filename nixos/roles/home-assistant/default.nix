@@ -540,7 +540,7 @@ in {
                   to = "unavailable";
                   for = "00:30:00";
                 })
-              (filter (name: !(builtins.elem name flaky_remotes)) (batteries ++ switches));
+              (builtins.filter (name: !(builtins.elem name flaky_remotes)) (batteries ++ switches));
               action = [(actions.notify "{{ trigger.to_state.name }} ist nicht erreichbar.")];
             }
           ]
