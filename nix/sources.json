@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "c981e7a49865533be5221aec606855f3f7dfdd0d",
-        "sha256": "18d65ksh3lbff0k30468ga8nyibksy9q3ryw4l6i75iz47vjg4kq",
+        "rev": "c2dea0117c4e9e5e48789258d800ce9fef9e6b57",
+        "sha256": "02ds3bw4k1bvgvq8pa5cna9xpjfxfq9zdbvlw0645qispaypvz59",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/c981e7a49865533be5221aec606855f3f7dfdd0d.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/c2dea0117c4e9e5e48789258d800ce9fef9e6b57.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "haskell-dialog": {
