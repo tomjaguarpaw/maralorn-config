@@ -81,7 +81,7 @@
     "schlafzimmerfenster_battery"
     "wohnungstuer_battery"
   ];
-  flaky_remotes = ["lichterkette_schrank" "wohnzimmerfenster_battery"];
+  flaky_remotes = ["switch.lichterkette_schrank" "sensor.wohnzimmerfenster_battery"];
   inherit (import ../../../nix/sources.nix) nixos-unstable;
   homeAssistantDir = "/disk/persist/home-assistant";
 in {
