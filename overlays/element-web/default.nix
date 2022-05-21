@@ -6,8 +6,10 @@ final: prev: let
 in {
   element-web = prev.element-web.overrideAttrs (old: {
     preInstall = ''
-      bundle=$(find . -name 'bundle.css')
-      cat ${./user.css} >> $bundle
+      bundlecss=$(find . -name 'bundle.css')
+      cat ${./user.css} >> $bundlecss
+      bundlejs=$(find . -name 'vendors~init.js')
+      sed -i 's/return n.room.roomId===e||n.isUnread}/return n.room.roomId===e||n.hasUnreadCount}/' $bundlejs
       cp ${chime} media/message.ogg
     '';
   });
