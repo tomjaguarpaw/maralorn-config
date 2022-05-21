@@ -45,6 +45,7 @@
     };
     direnv = {
       enable = true;
+      config.global.warn_timeout = "1h";
       enableZshIntegration = true;
       nix-direnv = {
         enable = true;
