@@ -14,9 +14,8 @@ in {
     wantedBy = ["multi-user.target"];
 
     serviceConfig = {
-      DynamicUser = true;
       Type = "simple";
-      ExecStart = "${pkgs.prometheus-folder-size-exporter}/bin/prometheus-folder-size-exporter -b 60 -i ${builtins.toJSON config} -p 9974";
+      ExecStart = "${pkgs.prometheus-folder-size-exporter}/bin/prometheus_folder_size_exporter -b 21600 -i ${builtins.toFile "prometheus-folder-size-exporter-config.json" (builtins.toJSON config)} -p 9974";
     };
   };
 }
