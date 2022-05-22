@@ -8,10 +8,6 @@ with lib; {
   config = {
     m-0.monitoring = [
       {
-        host = "hera:9974";
-        name = "hera-folder-sizes";
-      }
-      {
         host = "apollo:9100";
         name = "apollo";
         flaky = true;

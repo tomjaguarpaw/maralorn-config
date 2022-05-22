@@ -39,7 +39,6 @@ in {
     nixos.source = "/disk/persist/maralorn/git/config";
     machine-id.source = "/disk/persist/machine-id";
   };
-  environment.systemPackages = [pkgs.prometheus-folder-size-exporter];
 
   systemd.services."activate-home-manager" = {
     path = [pkgs.nix pkgs.dbus];

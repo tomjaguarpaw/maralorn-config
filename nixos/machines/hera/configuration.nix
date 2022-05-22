@@ -29,7 +29,6 @@ in {
     ../../roles/mailman.nix
     ../../roles/firefox-sync.nix
     ../../roles/goatcounter.nix
-    ../../roles/prometheus-folder-size-exporter.nix
     ./web.nix
     ./mail.nix
     ./boot.nix
