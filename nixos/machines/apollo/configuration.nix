@@ -18,6 +18,10 @@ in {
     ../../roles/earlyoom.nix
     ../../roles/boot-key.nix
     ../../roles/standalone
+    (../../roles/monitoring/folder-size-exporter.nix {
+      folders = ["/nix"];
+      subfolders = ["/home/maralorn/git"];
+    })
     (vpn "apollo")
   ];
   systemd.services.lenovo_fix.path = [pkgs.kmod];

@@ -29,6 +29,10 @@ in {
     ../../roles/mailman.nix
     ../../roles/firefox-sync.nix
     ../../roles/goatcounter.nix
+    (../../roles/monitoring/folder-size-exporter.nix {
+       folders = ["/nix", "/root"];
+       subfolders = ["/var/log", "/var/lib", "/media", "/home"];
+    })
     ./web.nix
     ./mail.nix
     ./boot.nix
