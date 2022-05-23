@@ -103,6 +103,18 @@
            "interval": "",
            "legendFormat": "unaccounted",
            "refId": "B"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
+           },
+           "exemplar": true,
+           "expr": "node_filesystem_avail_bytes{mountpoint=\"/\",job=\"$host\"}",
+           "hide": false,
+           "interval": "",
+           "legendFormat": "free",
+           "refId": "C"
          }
        ],
        "title": "Current Folder Sizes",
@@ -210,6 +222,18 @@
            "interval": "",
            "legendFormat": "unaccounted",
            "refId": "B"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
+           },
+           "exemplar": true,
+           "expr": "node_filesystem_avail_bytes{mountpoint=\"/\",job=\"$host\"}",
+           "hide": false,
+           "interval": "",
+           "legendFormat": "free",
+           "refId": "C"
          }
        ],
        "title": "Folder Sizes over Time",
