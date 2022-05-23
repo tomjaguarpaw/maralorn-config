@@ -32,14 +32,16 @@ in {
     (import ../../roles/monitoring/folder-size-exporter.nix {
       folders = [
         "/"
-        "/var"
-        "/var/log"
-        "/var/lib"
-        "/media"
         "/home"
         "/home/maralorn"
+        "/media"
+        "/var"
+        "/var/lib"
         "/var/lib/containers"
         "/var/lib/nextcloud"
+        "/var/lib/nextcloud/data"
+        "/var/log"
+        "/var/vmail"
       ];
     })
     ./web.nix
