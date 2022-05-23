@@ -1,286 +1,286 @@
 {
-   "annotations": {
-     "list": [
-       {
-         "builtIn": 1,
-         "datasource": "-- Grafana --",
-         "enable": true,
-         "hide": true,
-         "iconColor": "rgba(0, 211, 255, 1)",
-         "name": "Annotations & Alerts",
-         "target": {
-           "limit": 100,
-           "matchAny": false,
-           "tags": [],
-           "type": "dashboard"
-         },
-         "type": "dashboard"
-       }
-     ]
-   },
-   "description": "",
-   "editable": true,
-   "fiscalYearStartMonth": 0,
-   "graphTooltip": 0,
-   "id": 4,
-   "iteration": 1653268246013,
-   "links": [],
-   "liveNow": false,
-   "panels": [
-     {
-       "description": "",
-       "fieldConfig": {
-         "defaults": {
-           "color": {
-             "mode": "palette-classic"
-           },
-           "custom": {
-             "hideFrom": {
-               "legend": false,
-               "tooltip": false,
-               "viz": false
-             }
-           },
-           "mappings": [],
-           "unit": "bytes"
-         },
-         "overrides": []
-       },
-       "gridPos": {
-         "h": 31,
-         "w": 12,
-         "x": 0,
-         "y": 0
-       },
-       "id": 2,
-       "options": {
-         "displayLabels": [
-           "name",
-           "value"
-         ],
-         "legend": {
-           "displayMode": "table",
-           "placement": "right",
-           "values": [
-             "value"
-           ]
-         },
-         "pieType": "pie",
-         "reduceOptions": {
-           "calcs": [
-             "lastNotNull"
-           ],
-           "fields": "",
-           "values": false
-         },
-         "tooltip": {
-           "mode": "single",
-           "sort": "none"
-         }
-       },
-       "targets": [
-         {
-           "datasource": {
-             "type": "prometheus",
-             "uid": "P1809F7CD0C75ACF3"
-           },
-           "exemplar": true,
-           "expr": "folder_size{job=\"$host\"}*1024",
-           "format": "time_series",
-           "instant": false,
-           "interval": "",
-           "legendFormat": "{{folder}}",
-           "refId": "A"
-         },
-         {
-           "datasource": {
-             "type": "prometheus",
-             "uid": "P1809F7CD0C75ACF3"
-           },
-           "exemplar": true,
-           "expr": "node_filesystem_size_bytes{mountpoint=\"/\",job=\"$host\"} - node_filesystem_avail_bytes{mountpoint=\"/\",job=\"$host\"} - on() sum(folder_size{job=\"$host\"}*1024)",
-           "hide": false,
-           "interval": "",
-           "legendFormat": "unaccounted",
-           "refId": "B"
-         },
-         {
-           "datasource": {
-             "type": "prometheus",
-             "uid": "P1809F7CD0C75ACF3"
-           },
-           "exemplar": true,
-           "expr": "node_filesystem_avail_bytes{mountpoint=\"/\",job=\"$host\"}",
-           "hide": false,
-           "interval": "",
-           "legendFormat": "free",
-           "refId": "C"
-         }
-       ],
-       "title": "Current Folder Sizes",
-       "transformations": [],
-       "transparent": true,
-       "type": "piechart"
-     },
-     {
-       "description": "",
-       "fieldConfig": {
-         "defaults": {
-           "color": {
-             "mode": "palette-classic"
-           },
-           "custom": {
-             "axisLabel": "",
-             "axisPlacement": "auto",
-             "barAlignment": 0,
-             "drawStyle": "line",
-             "fillOpacity": 100,
-             "gradientMode": "none",
-             "hideFrom": {
-               "legend": false,
-               "tooltip": false,
-               "viz": false
-             },
-             "lineInterpolation": "linear",
-             "lineWidth": 0,
-             "pointSize": 5,
-             "scaleDistribution": {
-               "type": "linear"
-             },
-             "showPoints": "auto",
-             "spanNulls": false,
-             "stacking": {
-               "group": "A",
-               "mode": "normal"
-             },
-             "thresholdsStyle": {
-               "mode": "off"
-             }
-           },
-           "mappings": [],
-           "thresholds": {
-             "mode": "absolute",
-             "steps": [
-               {
-                 "color": "green",
-                 "value": null
-               },
-               {
-                 "color": "red",
-                 "value": 80
-               }
-             ]
-           },
-           "unit": "bytes"
-         },
-         "overrides": []
-       },
-       "gridPos": {
-         "h": 31,
-         "w": 12,
-         "x": 12,
-         "y": 0
-       },
-       "id": 3,
-       "options": {
-         "legend": {
-           "calcs": [
-             "lastNotNull"
-           ],
-           "displayMode": "hidden",
-           "placement": "right",
-           "sortBy": "Last *",
-           "sortDesc": true
-         },
-         "tooltip": {
-           "mode": "multi",
-           "sort": "desc"
-         }
-       },
-       "targets": [
-         {
-           "datasource": {
-             "type": "prometheus",
-             "uid": "P1809F7CD0C75ACF3"
-           },
-           "exemplar": true,
-           "expr": "folder_size{job=\"$host\"}*1024",
-           "format": "time_series",
-           "instant": false,
-           "interval": "",
-           "legendFormat": "{{folder}}",
-           "refId": "A"
-         },
-         {
-           "datasource": {
-             "type": "prometheus",
-             "uid": "P1809F7CD0C75ACF3"
-           },
-           "exemplar": true,
-           "expr": "node_filesystem_size_bytes{mountpoint=\"/\",job=\"$host\"} - node_filesystem_avail_bytes{mountpoint=\"/\",job=\"$host\"} - on() sum(folder_size{job=\"$host\"}*1024)",
-           "hide": false,
-           "interval": "",
-           "legendFormat": "unaccounted",
-           "refId": "B"
-         },
-         {
-           "datasource": {
-             "type": "prometheus",
-             "uid": "P1809F7CD0C75ACF3"
-           },
-           "exemplar": true,
-           "expr": "node_filesystem_avail_bytes{mountpoint=\"/\",job=\"$host\"}",
-           "hide": false,
-           "interval": "",
-           "legendFormat": "free",
-           "refId": "C"
-         }
-       ],
-       "title": "Folder Sizes over Time",
-       "transformations": [],
-       "transparent": true,
-       "type": "timeseries"
-     }
-   ],
-   "refresh": false,
-   "schemaVersion": 35,
-   "style": "dark",
-   "tags": [],
-   "templating": {
-     "list": [
-       {
-         "current": {
-           "selected": false,
-           "text": "hera",
-           "value": "hera"
-         },
-         "definition": "label_values(folder_size, job)",
-         "hide": 0,
-         "includeAll": false,
-         "label": "Host",
-         "multi": false,
-         "name": "host",
-         "options": [],
-         "query": {
-           "query": "label_values(folder_size, job)",
-           "refId": "StandardVariableQuery"
-         },
-         "refresh": 1,
-         "regex": "",
-         "skipUrlSync": false,
-         "sort": 0,
-         "type": "query"
-       }
-     ]
-   },
-   "time": {
-     "from": "now-30d",
-     "to": "now"
-   },
-   "timepicker": {},
-   "timezone": "",
-   "title": "Folder Sizes",
-   "uid": "folder-sizes",
-   "version": 1,
-   "weekStart": ""
- }
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 4,
+  "iteration": 1653273923330,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 31,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "displayLabels": [
+          "name",
+          "value"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P1809F7CD0C75ACF3"
+          },
+          "exemplar": true,
+          "expr": "folder_size{job=\"$host\"}*1024",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{folder}}",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P1809F7CD0C75ACF3"
+          },
+          "exemplar": true,
+          "expr": "node_filesystem_size_bytes{mountpoint=\"/\",job=\"$host\"} - node_filesystem_avail_bytes{mountpoint=\"/\",job=\"$host\"} - on() sum(folder_size{job=\"$host\"}*1024)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "unaccounted",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P1809F7CD0C75ACF3"
+          },
+          "exemplar": true,
+          "expr": "node_filesystem_avail_bytes{mountpoint=\"/\",job=\"$host\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "free",
+          "refId": "C"
+        }
+      ],
+      "title": "Current Folder Sizes",
+      "transformations": [],
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 0,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "percent"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 31,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "hidden",
+          "placement": "right",
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P1809F7CD0C75ACF3"
+          },
+          "exemplar": true,
+          "expr": "folder_size{job=\"$host\"}*1024",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{folder}}",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P1809F7CD0C75ACF3"
+          },
+          "exemplar": true,
+          "expr": "node_filesystem_size_bytes{mountpoint=\"/\",job=\"$host\"} - node_filesystem_avail_bytes{mountpoint=\"/\",job=\"$host\"} - on() sum(folder_size{job=\"$host\"}*1024)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "unaccounted",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P1809F7CD0C75ACF3"
+          },
+          "exemplar": true,
+          "expr": "node_filesystem_avail_bytes{mountpoint=\"/\",job=\"$host\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "free",
+          "refId": "C"
+        }
+      ],
+      "title": "Folder Sizes over Time",
+      "transformations": [],
+      "transparent": true,
+      "type": "timeseries"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 35,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "hera",
+          "value": "hera"
+        },
+        "definition": "label_values(folder_size, job)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Host",
+        "multi": false,
+        "name": "host",
+        "options": [],
+        "query": {
+          "query": "label_values(folder_size, job)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Folder Sizes",
+  "uid": "folder-sizes",
+  "version": 1,
+  "weekStart": ""
+}
