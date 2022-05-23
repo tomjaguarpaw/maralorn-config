@@ -30,8 +30,17 @@ in {
     ../../roles/firefox-sync.nix
     ../../roles/goatcounter.nix
     (import ../../roles/monitoring/folder-size-exporter.nix {
-      folders = ["/nix" "/root"];
-      subfolders = ["/var/log" "/var/lib" "/media" "/home"];
+      folders = [
+        "/"
+        "/var"
+        "/var/log"
+        "/var/lib"
+        "/media"
+        "/home"
+        "/home/maralorn"
+        "/var/lib/containers"
+        "/var/lib/nextcloud"
+      ];
     })
     ./web.nix
     ./mail.nix

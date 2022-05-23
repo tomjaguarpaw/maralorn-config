@@ -19,8 +19,13 @@ in {
     ../../roles/boot-key.nix
     ../../roles/standalone
     (import ../../roles/monitoring/folder-size-exporter.nix {
-      folders = ["/nix"];
-      subfolders = ["/home/maralorn/git"];
+      folders = [
+        "/"
+        "/home"
+        "/home/maralorn"
+        "/home/maralorn/media"
+        "/home/maralorn/git"
+      ];
     })
     (vpn "apollo")
   ];

@@ -1,13 +1,8 @@
-{
-  folders ? [],
-  subfolders ? [],
-}: {
+{folders ? ["/"]}: {
   pkgs,
   lib,
   ...
 }: let
-  printFolderSizes = pkgs.writeShellScript "print-folder-sizes" ''
-  '';
   textfilesDir = "/var/cache/prometheus-textfiles";
 in {
   services.prometheus.exporters.node.extraFlags = ["--collector.textfile.directory /var/cache/prometheus-textfiles"];
@@ -17,9 +12,10 @@ in {
       serviceConfig.Type = "oneshot";
       script = ''
         mkdir -p ${textfilesDir}
-        du -xd0 \
-          ${lib.concatStringsSep " " folders} \
-          ${lib.concatMapStringsSep " " (x: "${x}/*") subfolders} \
+        find ${lib.concatStringsSep " " folders} -maxdepth 1 \
+          | grep -v "^\(${lib.concatStringsSep "\\|" folders}\)$" \
+          | tr '\n' '\0' \
+          | du --threshold=100M --summarize --files0-from=- --one-file-system \
           | sed 's/^\([[:digit:]]\+\)[[:blank:]]\+\(.*\)$/folder_size{folder="\2"} \1/' \
           > ${textfilesDir}/folder-sizes.prom.new
         mv ${textfilesDir}/folder-sizes.prom.new ${textfilesDir}/folder-sizes.prom
