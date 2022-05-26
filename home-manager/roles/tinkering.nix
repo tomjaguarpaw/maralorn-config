@@ -69,7 +69,6 @@
       xyz.local-history
       alefragnani.project-manager
       editorconfig.editorconfig
-      bierner.emojisense
       kamadorueda.alejandra
       mikestead.dotenv
     ];
