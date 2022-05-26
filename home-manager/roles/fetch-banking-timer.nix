@@ -14,7 +14,7 @@
     };
     timers.fetch-banking = {
       Unit.Description = "Fetch banking";
-      Timer.OnCalendar = "23:00";
+      Timer.OnCalendar = "22:00";
       Install.WantedBy = ["timers.target"];
     };
   };
