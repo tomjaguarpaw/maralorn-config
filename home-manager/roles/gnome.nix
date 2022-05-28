@@ -245,7 +245,7 @@ in {
     };
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" = {
       binding = "<Super>space";
-      command = "foot ${pkgs.haskell-dialog}/bin/hotkeys ${pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)}";
+      command = "foot ${pkgs.wizards-dialog}/bin/hotkeys ${pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)}";
       name = "Hotkeys";
     };
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby" = {

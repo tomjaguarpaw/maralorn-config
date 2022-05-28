@@ -11,9 +11,9 @@
         "url": "https://github.com/srid/emanote/archive/0375bfe35d53b10c8b8449b077ac54c0a841c23a.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "haskell-dialog": {
+    "wizards-dialog": {
         "branch": "main",
-        "repo": "git@hera.m-0.eu:haskell-dialog",
+        "repo": "git@hera.m-0.eu:wizards-dialog",
         "rev": "a80acf600bc7d7c2400e6b3aa0f39f96d1b5c4db",
         "type": "git"
     },
