@@ -47,10 +47,7 @@
       enable = true;
       config.global.warn_timeout = "1h";
       enableZshIntegration = true;
-      nix-direnv = {
-        enable = true;
-        enableFlakes = true;
-      };
+      nix-direnv.enable = true;
     };
 
     tmux = {
