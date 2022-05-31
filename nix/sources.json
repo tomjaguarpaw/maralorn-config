@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "ab5155ef400ce83a744362a4b953315d7ee6a8c3",
-        "sha256": "14yw948240zp570n1j2hq6mpqs31472hn73l8314jkxz1s84r0fq",
+        "rev": "6f83b857741fb6607716cf97cee3382c7f029180",
+        "sha256": "0k9gnq482gnw1mf5f7pc1nqm5zmc50c1sf84b0d24mmhaqbsh3al",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/ab5155ef400ce83a744362a4b953315d7ee6a8c3.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/6f83b857741fb6607716cf97cee3382c7f029180.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hexa-nur-packages": {
@@ -33,6 +33,18 @@
         "sha256": "1fi27zabvqlyc2ggg7wr01j813gs46rswg1i897h9hqkbgqsjkny",
         "type": "tarball",
         "url": "https://github.com/nix-community/home-manager/archive/d93d56ab8c1c6aa575854a79b9d2f69d491db7d0.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "home-manager-22.05": {
+        "branch": "release-22.05",
+        "description": "Manage a user environment using Nix",
+        "homepage": "",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "bda2c80b4c1a8d85c84c343a25ac7303fbc7999d",
+        "sha256": "1jhly1xkmclwdnhn59v9kjizn1b68aay2fanqbacsf0ayryz09hz",
+        "type": "tarball",
+        "url": "https://github.com/nix-community/home-manager/archive/bda2c80b4c1a8d85c84c343a25ac7303fbc7999d.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "kassandra": {
@@ -73,10 +85,22 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "9bc0e974545d5bc4c24e1ed047be0dc4e30e494b",
-        "sha256": "09srdp53k3jc6qj66g85618xg4x2y705ljfn486g437icdp7mln5",
+        "rev": "ec6eaba9dfcfdd11547d75a193e91e26701bf7e3",
+        "sha256": "018658ypakpg9yxbyzd06vaxzs5956lr30jkfvw0fzn33pp01xdg",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/9bc0e974545d5bc4c24e1ed047be0dc4e30e494b.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/ec6eaba9dfcfdd11547d75a193e91e26701bf7e3.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixos-22.05": {
+        "branch": "nixos-22.05",
+        "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
+        "homepage": null,
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "a634c8f6c1fbf9b9730e01764999666f3436f10a",
+        "sha256": "1d40v43x972li5fg7jadxkj341li41mf2cl6vv7xi6j80rkq45q4",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/a634c8f6c1fbf9b9730e01764999666f3436f10a.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
@@ -85,10 +109,10 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "39a7bfc496d2ddfce73fe9542af1f2029ba4fe39",
-        "sha256": "02z72j7v4qn6skc6rv85m2jvnnd3rv0rflri7ypjv4k1ls34lk3d",
+        "rev": "8252035d61aabffe05f49f7e05a6381bd5e4b40f",
+        "sha256": "1jha9m2w5dra5wipiksay1lnnp1wdy625m74rc9v567gdgv2ffcd",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/39a7bfc496d2ddfce73fe9542af1f2029ba4fe39.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/8252035d61aabffe05f49f7e05a6381bd5e4b40f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
@@ -104,10 +128,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "83658b28fe638a170a19b8933aa008b30640fbd1",
-        "sha256": "11knahk5j90aaxskh204dbg4px5mgrp7pbgm77g6ck2cbv8imyaj",
+        "rev": "f1c167688a6f81f4a51ab542e5f476c8c595e457",
+        "sha256": "00ac3axj7jdfcajj3macdydf9w9bvqqvgrqkh1xxr3rfi9q2fz1v",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/83658b28fe638a170a19b8933aa008b30640fbd1.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/f1c167688a6f81f4a51ab542e5f476c8c595e457.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
