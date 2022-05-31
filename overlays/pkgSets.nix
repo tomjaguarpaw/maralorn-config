@@ -10,7 +10,7 @@ self: super: {
       file
       wget
       curl
-      wireguard
+      wireguard-tools
       gnupg
       mutt
       bind
@@ -47,7 +47,6 @@ self: super: {
       tig
       exa
       fzf
-      ag
       fd
       bat
       ripgrep

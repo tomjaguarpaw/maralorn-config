@@ -30,7 +30,7 @@
     );
   };
 
-  security.acme = {
+  security.acme.defaults = {
     email = "security@maralorn.de";
     acceptTerms = true;
   };
