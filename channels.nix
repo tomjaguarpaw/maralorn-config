@@ -10,7 +10,7 @@ let
 in rec {
   hera = nixos-21-11;
   apollo = nixos-22-05;
-  zeus = nixos-21-11;
+  zeus = nixos-22-05;
   fluffy = nixos-21-11;
   chor-cloud = hera;
 }
