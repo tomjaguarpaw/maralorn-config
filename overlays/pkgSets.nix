@@ -104,7 +104,6 @@ self: super: {
       wl-clipboard
       nheko
       dconf2nix
-      haskell-docs-cli
       ;
     inherit
       (self.gnomeExtensions)
