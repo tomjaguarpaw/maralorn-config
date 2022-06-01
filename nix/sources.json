@@ -70,7 +70,7 @@
         "branch": "main",
         "ref": "main",
         "repo": "git@hera.m-0.eu:logfeed",
-        "rev": "546d9afefb5c98c43dac572b94bef24b44dac6b5",
+        "rev": "5efd50132edb72365d30347092371ab11d9355dd",
         "type": "git"
     },
     "nix-output-monitor": {
