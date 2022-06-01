@@ -188,10 +188,10 @@
         "homepage": null,
         "owner": "maralorn",
         "repo": "taskwarrior-git-backend",
-        "rev": "a2cc4629f158608d89014aee0e134d8d519d3344",
-        "sha256": "1pai42da31428nh8qrl2x3yhk4fa23fmn8i12wdsy9ng6qwkg8k3",
+        "rev": "9d0863a7043ec03296d22a2ea2989dddcef3b5ae",
+        "sha256": "0acxx80ddgf7lak39znd81a7xq9xzb8jhi2yv8452wz8ljz0fcfv",
         "type": "tarball",
-        "url": "https://github.com/maralorn/taskwarrior-git-backend/archive/a2cc4629f158608d89014aee0e134d8d519d3344.tar.gz",
+        "url": "https://github.com/maralorn/taskwarrior-git-backend/archive/9d0863a7043ec03296d22a2ea2989dddcef3b5ae.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "wizards-dialog": {
