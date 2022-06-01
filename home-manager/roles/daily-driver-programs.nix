@@ -43,7 +43,7 @@
       deluge
       gmpc
       vlc
-      youtubeDL
+      youtube-dl
       spotdl
       ffmpeg
       syncplay

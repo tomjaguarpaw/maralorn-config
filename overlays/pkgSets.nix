@@ -91,6 +91,7 @@ self: super: {
   desktop-pkgs = {
     inherit
       (self)
+      dconf
       lm_sensors
       xwayland
       xdg_utils
@@ -127,7 +128,6 @@ self: super: {
     });
     inherit
       (self.gnome)
-      dconf
       dconf-editor
       gnome-tweaks
       gnome-shell-extensions
@@ -136,7 +136,6 @@ self: super: {
       ;
   };
   home-pkgs = {
-    inherit (self.pythonPackages) yapf jsbeautifier;
     inherit
       (self)
       go
@@ -144,7 +143,6 @@ self: super: {
       mpc_cli
       ncmpcpp
       shfmt
-      htmlTidy
       astyle
       nodejs
       tasksh

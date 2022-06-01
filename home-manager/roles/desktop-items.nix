@@ -14,7 +14,7 @@
       inherit name;
       desktopName = name;
       exec = command;
-      terminal = "true";
+      terminal = true;
     };
   superSimpleDesktopItem = name: simpleDesktopItem name name;
   terminalDesktopItem = name: namedTerminalDesktopItem name name;
