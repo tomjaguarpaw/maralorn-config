@@ -33,6 +33,11 @@ in {
       device = "/disk/persist/maralorn/.config/pulse";
       options = ["bind"];
     };
+    "/var/lib/bluetooth" = {
+      mountPoint = "/var/lib/bluetooth";
+      device = "/disk/persist/bluetooth";
+      options = ["bind"];
+    };
   };
 
   environment.etc = {
@@ -67,10 +72,9 @@ in {
     "d /home/maralorn/.config 700 maralorn users - -"
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
-    "d /disk/persist/var/lib/bluetooth - - - - -"
+    "d /disk/persist/bluetooth - - - - -"
     "d /disk/persist/minecraft 700 minecraft minecraft - -"
     "d /var/lib/misc 755 - - - -"
-    "L+ /var/lib/bluetooth - - - - /disk/persist/var/lib/bluetooth"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
 
