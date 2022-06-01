@@ -16,7 +16,7 @@ import qualified Data.Time.Format              as T
 import           Relude                  hiding ( intercalate
                                                 , zip
                                                 )
-import           System.Environment             ( getArgs )
+import           System.Environment ()
 import           System.FilePattern.Directory   ( getDirectoryFiles )
 import           Text.Atom.Feed
 import           Text.Atom.Feed.Export          ( textFeed )
@@ -101,8 +101,7 @@ logFolder = "/home/maralorn/logs/"
 main :: IO ()
 main = do
   now <- T.getCurrentTime
-  let getFiles = \t p ->
-        L.groupSortOn (\x -> (channel x, server x))
+  let getFiles t p = L.groupSortOn (\x -> (channel x, server x))
           .   mapMaybe ((\x -> MP.parseMaybe (p x) x) . toText)
           <$> getDirectoryFiles
                 (toString logFolder)
