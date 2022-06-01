@@ -86,7 +86,7 @@
   homeAssistantDir = "/disk/persist/home-assistant";
 in {
   disabledModules = [
-    "services/misc/home-assistant.nix"
+    "services/home-automation/home-assistant.nix"
   ];
 
   imports = [
