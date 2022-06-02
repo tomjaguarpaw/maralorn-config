@@ -52,16 +52,16 @@
       unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/"<>)) dirs
       say . Text.replace "&" "&amp;" . Text.unwords $ [
           "<executor.markup.true>",
-          [i|<span foreground='\#8b008b'>#{appointments}</span>|],
+          [i|<span foreground='\#bbb0fb'>#{appointments}</span>|],
           playing,
-          [i|<span foreground='\#0000aa'>#{show mode}</span>|]
+          [i|<span foreground='\#a0a0ff'>#{show mode}</span>|]
         ] ++
         memptyIfFalse (unread /= "0") (one [i|<span foreground='\#DC143C'>Unread: #{unread}</span>|]) ++
         memptyIfFalse (inbox /= "0") (one [i|<span foreground='\#7fff00'>Inbox: #{inbox}</span>|]) ++
-        memptyIfFalse (codeMails /= "0") (one [i|<span foreground='\#006400'>Code Mails: #{codeMails}</span>|]) ++
-        memptyIfFalse (codeUpdates /= 0) (one [i|<span foreground='\#006400'>Code Updates: #{codeUpdates}</span>|]) ++
-        memptyIfFalse (length unpushed /= 0) (one [i|<span foreground='\#d2691e'>Unpushed: #{Text.intercalate " " unpushed}</span>|]) ++
-        memptyIfFalse (length dirty /= 0) (one [i|<span foreground='\#ff7f50'>Dirty: #{Text.intercalate " " dirty}</span>|])
+        memptyIfFalse (codeMails /= "0") (one [i|<span foreground='\#20c420'>Code Mails: #{codeMails}</span>|]) ++
+        memptyIfFalse (codeUpdates /= 0) (one [i|<span foreground='\#20c420'>Code Updates: #{codeUpdates}</span>|]) ++
+        memptyIfFalse (length unpushed /= 0) (one [i|<span foreground='\#f2995e'>Unpushed: #{Text.intercalate " " unpushed}</span>|]) ++
+        memptyIfFalse (length dirty /= 0) (one [i|<span foreground='\#ff9f50'>Dirty: #{Text.intercalate " " dirty}</span>|])
   '';
 in {
   services.gpg-agent.pinentryFlavor = "gnome3";
