@@ -6,7 +6,7 @@
 with lib; let
   pkgs = import (import ../../nix/sources.nix)."nixos-19.09" {};
 
-  cfg = config.services.firefox.syncserver;
+  cfg = config.services.firefox-syncserver;
 
   defaultDbLocation = "/var/db/firefox-sync-server/firefox-sync-server.db";
   defaultSqlUri = "sqlite:///${defaultDbLocation}";
@@ -42,7 +42,7 @@ in {
   meta.maintainers = with lib.maintainers; [nadrieril];
 
   options = {
-    services.firefox.syncserver = {
+    services.firefox-syncserver = {
       enable = mkOption {
         type = types.bool;
         default = false;
@@ -186,7 +186,7 @@ in {
     users.groups."${group}" = {};
 
     services = {
-      firefox.syncserver = {
+      firefox-syncserver = {
         allowNewUsers = false;
         listen.address = "[::1]";
         publicUrl = "https://firefox-sync.maralorn.de";
