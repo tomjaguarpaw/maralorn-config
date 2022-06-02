@@ -83,11 +83,9 @@ in {
           ${container} chor-cloud -- ${start} nextcloud-pg-backup
           ${lib.concatMapStringsSep "\n" (name: "${start} ${name}") backupJobNames}
           ${pkgs.coreutils}/bin/rm -rf /var/lib/db-backup-dumps/*
-          ${start} nix-optimise
-          if [[ "$(date '+%A')" == "Monday" ]]; then
-            ${start} nix-gc
-          fi
           ${start} synapse-cleanup
+          ${start} nix-gc
+          ${start} nix-optimise
           ${pkgs.laminar}/bin/laminarc queue bump-config
         '';
         serviceConfig = {
