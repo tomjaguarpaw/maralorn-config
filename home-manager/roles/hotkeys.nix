@@ -64,6 +64,10 @@ in [
       Config = "codium ~/git/config";
       Files = fork "nautilus";
       DarkTerminal = fork "foot -o 'color.background=000000' -o 'foreground=ffffff'";
+      Accounting = {
+        Update = "nix run ./git/buchhaltung#update";
+        Display = "hledger -f ~/git/buchhaltung/buchhaltung.journal ui -- --watch --theme=terminal -X€ -t -E";
+      };
       Games = {
         GW2 = fork "gw2";
         Steam = fork "steam";
