@@ -6,14 +6,13 @@
 }: let
   hostname = "lists.maralorn.de";
   admin = "malte.brandy@maralorn.de";
-  cfg = config.services.mailman;
   lists = pkgs.privateValue {} "mail/lists";
 in {
   systemd.services.mailman.postStart = lib.concatStringsSep "\n" (
     map
     (
       x: ''
-        ${cfg.package}/bin/mailman syncmembers -W -G - "${x}" << EOF
+        ${pkgs.mailman}/bin/mailman syncmembers -W -G - "${x}" << EOF
         ${lib.concatStringsSep "\n" lists."${x}"}
         EOF
       ''
