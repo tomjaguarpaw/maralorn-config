@@ -199,7 +199,7 @@ in {
     };
 
     "org/gnome/shell/extensions/user-theme" = {
-      name = "Arc-Lighter";
+      name = "Arc";
     };
 
     "system/locale" = {
