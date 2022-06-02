@@ -77,7 +77,7 @@ in {
     };
 
     # Synapse
-    matrix-synapse = let
+    matrix-synapse.settings = let
       server-secrets = pkgs.privateValue
       {
         registration_shared_secret = "";
@@ -156,13 +156,13 @@ in {
           {
             type = "metrics";
             port = 9148;
-            bind_address = "127.0.0.1";
+            bind_addresses = "127.0.0.1";
             resources = [];
             tls = false;
           }
           {
             port = 8008;
-            bind_address = "::1";
+            bind_addresses = "::1";
             resources = [
               {
                 compress = false;
