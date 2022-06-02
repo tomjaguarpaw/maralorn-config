@@ -91,9 +91,9 @@ in {
     };
 
     "org/gnome/shell/extensions/gtile" = let
-      left = r: "0:${r} 1:${r},0:${r} 2:${r},0:${r} 3:${r},0:${r} 0:${r}, 1:${r} 1:${r}";
-      right = r: "4:${r} 5:${r},3:${r} 5:${r},2:${r} 5:${r},5:${r} 5:${r}, 4:${r} 4:${r}";
-      middle = r: "2:${r} 3:${r}, 1:${r} 4:${r}, 0:${r} 5:${r}, 1:${r} 3:${r}, 2:${r} 4:${r}, 2:${r} 2:${r}, 3:${r} 3:${r}";
+      left = r: "1:${r} 2:${r},1:${r} 3:${r},1:${r} 4:${r},1:${r} 1:${r}, 2:${r} 2:${r}";
+      right = r: "5:${r} 6:${r},4:${r} 6:${r},3:${r} 6:${r},6:${r} 6:${r}, 5:${r} 5:${r}";
+      middle = r: "3:${r} 4:${r}, 2:${r} 5:${r}, 1:${r} 6:${r}, 2:${r} 4:${r}, 3:${r} 5:${r}, 3:${r} 3:${r}, 4:${r} 4:${r}";
     in {
       global-presets = true;
       grid-sizes = "6x2";
@@ -106,15 +106,15 @@ in {
       preset-resize-7 = ["<Control><Super>h"];
       preset-resize-8 = ["<Control><Super>g"];
       preset-resize-9 = ["<Control><Super>f"];
-      resize1 = "6x2 ${left "1"}";
-      resize2 = "6x2 ${middle "1"}";
-      resize3 = "6x2 ${right "1"}";
-      resize4 = "6x1 ${left "0"}";
-      resize5 = "6x1 ${middle "0"}";
-      resize6 = "6x1 ${right "0"}";
-      resize7 = "6x2 ${left "0"}";
-      resize8 = "6x2 ${middle "0"}";
-      resize9 = "6x2 ${right "0"}";
+      resize1 = "6x2 ${left "2"}";
+      resize2 = "6x2 ${middle "2"}";
+      resize3 = "6x2 ${right "2"}";
+      resize4 = "6x1 ${left "1"}";
+      resize5 = "6x1 ${middle "1"}";
+      resize6 = "6x1 ${right "1"}";
+      resize7 = "6x2 ${left "1"}";
+      resize8 = "6x2 ${middle "1"}";
+      resize9 = "6x2 ${right "1"}";
       show-toggle-tiling-alt = ["<Super>t"];
       show-icon = false;
     };
