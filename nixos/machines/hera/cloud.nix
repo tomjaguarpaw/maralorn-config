@@ -34,7 +34,7 @@ with lib; let
   nextcloudConf = hostname: {
     enable = true;
     hostName = hostname;
-    package = pkgs.nextcloud22;
+    package = pkgs.nextcloud23;
     maxUploadSize = "10g";
     caching = {
       redis = true;
@@ -113,7 +113,7 @@ with lib; let
           nginx.openFirewall = true;
         };
         nginx.appendHttpConfig = "access_log off;";
-        redis.enable = true;
+        redis.servers."nextcloud-redis".enable = true;
 
         postgresql = {
           enable = true;
@@ -121,6 +121,7 @@ with lib; let
           ensureDatabases = ["nextcloud"];
         };
       };
+      system.stateVersion = "21.05";
     };
   };
   mainHostName = "cloud.maralorn.de";
