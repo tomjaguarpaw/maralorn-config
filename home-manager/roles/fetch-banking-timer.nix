@@ -7,7 +7,7 @@
         ExecStart = toString (
           pkgs.writeShellScript "fetch-banking" ''
             cd ~/git/buchhaltung
-            exec ${pkgs.nix}/bin/nix run ".#autoupdate"
+            exec ${pkgs.nix}/bin/nix develop -c ${pkgs.nix}/bin/nix run ".#autoupdate"
           ''
         );
       };
