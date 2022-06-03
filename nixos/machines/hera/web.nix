@@ -20,6 +20,7 @@ in {
     nginx = {
       enable = lib.mkForce pkgs.withSecrets;
       virtualHosts =
+        lib.mkIf pkgs.withSecrets
         {
           "tasks.maralorn.de" = {
             forceSSL = true;
