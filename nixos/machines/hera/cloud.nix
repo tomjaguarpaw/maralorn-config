@@ -93,7 +93,7 @@ with lib; let
             }
           ];
         };
-        inherit (config.networking) nameservers;
+        nameservers = ["213.136.95.10" "2a02:c207::1:53" "2a02:c207::2:53"];
         defaultGateway6 = {
           address = hosts.hera-intern;
           interface = "eth0";
