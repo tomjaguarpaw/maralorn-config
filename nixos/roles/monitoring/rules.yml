@@ -22,7 +22,7 @@ groups:
              severity: critical
           annotations:
              description: 'service {{$labels.exported_name}} on {{$labels.name}} failed.'
-        - alert: systemd_service_failed
+        - alert: systemd_user_service_failed
           expr: systemd_unit_state{state="failed"} == 1
           for: 5m
           labels:
