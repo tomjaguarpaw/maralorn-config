@@ -12,7 +12,7 @@ in {
     map
     (
       x: ''
-        ${pkgs.mailman}/bin/mailman syncmembers -W -G - "${x}" << EOF
+        ${(pkgs.mailmanPackages.buildEnvs {}).mailmanEnv}/bin/mailman syncmembers -W -G - "${x}" << EOF
         ${lib.concatStringsSep "\n" lists."${x}"}
         EOF
       ''
