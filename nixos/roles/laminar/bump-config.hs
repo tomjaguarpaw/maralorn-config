@@ -1,9 +1,11 @@
+{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# OPTIONS_GHC -Wall -Werror -Wno-missing-signatures -Wno-type-defaults -Wno-orphans #-}
 
@@ -19,7 +21,10 @@ import System.Environment
 load Absolute ["git", "niv"]
 paths :: [Text]
 paths =
-  $$(liftTyped . mapMaybe (\x -> foldr (<|>) Nothing $ (\bin -> Text.stripSuffix [i|/#{bin}|] $ toText x) <$> ["git", "tar", "nix-prefetch-url", "gzip"]) =<< runIO pathBinsAbs)
+  $$( bindCode (runIO pathBinsAbs) \rawPaths ->
+        let wantedPaths :: [Text] = mapMaybe (\x -> foldr (<|>) Nothing $ (\bin -> Text.stripSuffix [i|/#{bin}|] $ toText x) <$> ["git", "tar", "nix-prefetch-url", "gzip"]) rawPaths
+         in liftTyped wantedPaths
+    )
 
 repo = "git@hera.m-0.eu:nixos-config"
 

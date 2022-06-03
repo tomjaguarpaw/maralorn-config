@@ -18,7 +18,7 @@ import Language.Haskell.TH.Syntax
 import Relude
 import Say
 import Shh
-import System.Environment
+import System.Environment (getEnv, setEnv)
 
 load Absolute ["laminarc", "git", "nix-build"]
 
@@ -26,21 +26,21 @@ repo = "git@hera.m-0.eu:nixos-config"
 
 jobs :: [String]
 jobs =
-  $$( liftTyped
-        =<< runIO
-          ( do
-              homes <- getEnv "HOMES"
-              systems <- getEnv "SYSTEMS"
-              let ret =
-                    ((\x -> [i|system-config-#{x}|]) <$> (words . toText) systems)
-                      <> ((\x -> [i|home-config-#{x}|]) <$> (words . toText) homes)
-              say [i|Found jobs #{ret}|]
-              pure ret
-          )
+  $$( bindCode
+        ( runIO $ do
+            homes <- getEnv "HOMES"
+            systems <- getEnv "SYSTEMS"
+            let ret =
+                  ((\x -> [i|system-config-#{x}|]) <$> (words . toText) systems)
+                    <> ((\x -> [i|home-config-#{x}|]) <$> (words . toText) homes)
+            say [i|Found jobs #{ret}|]
+            pure ret
+        )
+        liftTyped
     )
 
 deployCommand :: String
-deployCommand = $$(liftTyped =<< runIO (getEnv "DEPLOY"))
+deployCommand = $$(bindCode (runIO $ getEnv "DEPLOY") liftTyped)
 
 main = do
   let process = fromMaybe "main" . (stripPrefix "refs/heads/" . toText =<<)

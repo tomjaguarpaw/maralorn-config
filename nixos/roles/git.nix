@@ -10,7 +10,6 @@
     name = "post-update";
     bins = [pkgs.git pkgs.laminar];
     imports = [
-      "System.Environment (lookupEnv)"
       "System.Directory (withCurrentDirectory)"
     ];
   } ''

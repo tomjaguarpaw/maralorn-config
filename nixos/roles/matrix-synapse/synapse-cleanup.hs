@@ -42,10 +42,10 @@ import Network.HTTP (
 import Relude
 import Say (say, sayErr)
 import Shh (ExecReference (Absolute), load, (|>))
-import System.IO (BufferMode (LineBuffering), hSetBuffering)
+import System.IO (BufferMode (LineBuffering))
 
 -- Executables used.
-load Absolute ["synapse-compress-state", "cat", "psql", "rm"]
+load Absolute ["synapse_compress_state", "cat", "psql", "rm"]
 
 newtype PurgeResult = PurgeResult {purge_id :: Text} deriving (Generic, FromJSON)
 newtype Status = Status {status :: Text} deriving (Generic, FromJSON)
@@ -127,7 +127,7 @@ processRoom :: Text -> PSQL.Connection -> UTCTime -> Text -> IO ()
 processRoom token conn upToTime roomId = do
   whenJustM (queryLastKeptEvent conn roomId) (purgeUpToEvent token roomId upToTime)
   say [i|Compressing state in room #{roomId} ...|]
-  synapse_compress_state "-o" filename "-p" "host=/run/postgresql user=matrix-synapse dbname=matrix-synapse" "-r" (toString roomId)
+  synapse'_compress'_state "-o" filename "-p" "host=/run/postgresql user=matrix-synapse dbname=matrix-synapse" "-r" (toString roomId)
   cat filename |> psql "matrix-synapse"
   rm filename
 
