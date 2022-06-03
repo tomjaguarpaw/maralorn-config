@@ -77,106 +77,107 @@ in {
     };
 
     # Synapse
-    matrix-synapse.settings = let
-      server-secrets = pkgs.privateValue
-      {
-        registration_shared_secret = "";
-        macaroon_secret_key = "";
-      } "matrix/server-secrets";
-    in
-      server-secrets
-      // {
-        enable = true;
-        package = pkgs.matrix-synapse;
-        enable_metrics = true;
-        inherit server_name;
-        public_baseurl = "https://${hostName}";
-        url_preview_enabled = true;
-        database_type = "psycopg2";
-        max_upload_size = "30M";
-        dynamic_thumbnails = true;
-        turn_shared_secret = config.services.coturn.static-auth-secret;
-        extraConfig = ''
-          serve_server_wellknown: true
-        '';
-        turn_uris = let
-          turns = "turns:${config.services.coturn.realm}:${
-            toString config.services.coturn.tls-listening-port
-          }";
-          turn = "turn:${config.services.coturn.realm}:${
-            toString config.services.coturn.listening-port
-          }";
-        in [
-          "${turns}?transport=udp"
-          "${turns}?transport=tcp"
-          "${turn}?transport=udp"
-          "${turn}?transport=tcp"
-        ];
-        turn_user_lifetime = "24h";
-        allow_guest_access = true;
-        logConfig = ''
-          version: 1
+    matrix-synapse = {
+      enable = true;
+      extraConfig = ''
+        serve_server_wellknown: true
+      '';
+      settings = let
+        server-secrets = pkgs.privateValue
+        {
+          registration_shared_secret = "";
+          macaroon_secret_key = "";
+        } "matrix/server-secrets";
+      in
+        server-secrets
+        // {
+          enable_metrics = true;
+          inherit server_name;
+          public_baseurl = "https://${hostName}";
+          url_preview_enabled = true;
+          database_type = "psycopg2";
+          max_upload_size = "30M";
+          dynamic_thumbnails = true;
+          turn_shared_secret = config.services.coturn.static-auth-secret;
+          turn_uris = let
+            turns = "turns:${config.services.coturn.realm}:${
+              toString config.services.coturn.tls-listening-port
+            }";
+            turn = "turn:${config.services.coturn.realm}:${
+              toString config.services.coturn.listening-port
+            }";
+          in [
+            "${turns}?transport=udp"
+            "${turns}?transport=tcp"
+            "${turn}?transport=udp"
+            "${turn}?transport=tcp"
+          ];
+          turn_user_lifetime = "24h";
+          allow_guest_access = true;
+          logConfig = ''
+            version: 1
 
-          formatters:
-            journal_fmt:
-              format: '%(name)s: [%(request)s] %(message)s'
+            formatters:
+              journal_fmt:
+                format: '%(name)s: [%(request)s] %(message)s'
 
-          filters:
-            context:
-              (): synapse.util.logcontext.LoggingContextFilter
-              request: ""
+            filters:
+              context:
+                (): synapse.util.logcontext.LoggingContextFilter
+                request: ""
 
-          handlers:
-            journal:
-              class: systemd.journal.JournalHandler
-              formatter: journal_fmt
-              filters: [context]
-              SYSLOG_IDENTIFIER: synapse
+            handlers:
+              journal:
+                class: systemd.journal.JournalHandler
+                formatter: journal_fmt
+                filters: [context]
+                SYSLOG_IDENTIFIER: synapse
 
-          disable_existing_loggers: True
+            disable_existing_loggers: True
 
-          loggers:
-            synapse:
+            loggers:
+              synapse:
+                level: WARN
+              synapse.storage.SQL:
+                level: WARN
+
+            root:
               level: WARN
-            synapse.storage.SQL:
-              level: WARN
-
-          root:
-            level: WARN
-            handlers: [journal]
-        '';
-        database_args = {
-          user = "matrix-synapse";
-          database = "matrix-synapse";
-          cp_min = 5;
-          cp_max = 10;
+              handlers: [journal]
+          '';
+          database_args = {
+            user = "matrix-synapse";
+            database = "matrix-synapse";
+            cp_min = 5;
+            cp_max = 10;
+          };
+          report_stats = true;
+          listeners = [
+            {
+              type = "metrics";
+              port = 9148;
+              bind_addresses = "127.0.0.1";
+              resources = [];
+              tls = false;
+            }
+            {
+              port = 8008;
+              bind_addresses = "::1";
+              resources = [
+                {
+                  compress = false;
+                  names = ["client"];
+                }
+                {
+                  compress = false;
+                  names = ["federation"];
+                }
+              ];
+              x_forwarded = true;
+              tls = false;
+            }
+          ];
         };
-        report_stats = true;
-        listeners = [
-          {
-            type = "metrics";
-            port = 9148;
-            bind_addresses = "127.0.0.1";
-            resources = [];
-            tls = false;
-          }
-          {
-            port = 8008;
-            bind_addresses = "::1";
-            resources = [
-              {
-                compress = false;
-                names = ["client"];
-              }
-              {
-                compress = false;
-                names = ["federation"];
-              }
-            ];
-            x_forwarded = true;
-            tls = false;
-          }
-        ];
-      };
+    };
   };
 }
