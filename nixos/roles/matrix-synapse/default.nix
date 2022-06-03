@@ -79,9 +79,6 @@ in {
     # Synapse
     matrix-synapse = {
       enable = true;
-      extraConfig = ''
-        serve_server_wellknown: true
-      '';
       settings = let
         server-secrets = pkgs.privateValue
         {
@@ -92,6 +89,7 @@ in {
         server-secrets
         // {
           enable_metrics = true;
+          serve_server_wellknown = true;
           inherit server_name;
           public_baseurl = "https://${hostName}";
           url_preview_enabled = true;
@@ -156,13 +154,13 @@ in {
             {
               type = "metrics";
               port = 9148;
-              bind_addresses = "127.0.0.1";
+              bind_addresses = ["127.0.0.1"];
               resources = [];
               tls = false;
             }
             {
               port = 8008;
-              bind_addresses = "::1";
+              bind_addresses = ["::1"];
               resources = [
                 {
                   compress = false;
