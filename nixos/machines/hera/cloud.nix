@@ -147,6 +147,7 @@ in {
       // nextcloudServices mainHostName;
   };
   services = {
+    redis.servers."nextcloud".enable = true;
     nextcloud = nextcloudConf mainHostName;
     postgresql.ensureDatabases = ["nextcloud"];
     nginx = {
