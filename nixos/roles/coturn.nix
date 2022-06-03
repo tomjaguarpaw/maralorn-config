@@ -1,10 +1,14 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }: let
   fqdn = "${config.networking.hostName}.${config.networking.domain}";
-  key_dir = config.security.acme.certs."${fqdn}".directory;
+  key_dir =
+    if pkgs.withSecrets
+    then config.security.acme.certs."${fqdn}".directory
+    else "/dummy-dir/";
 in {
   users.users.turnserver.extraGroups = ["nginx"]; # For read access to certs;
   networking.firewall = let
@@ -26,8 +30,8 @@ in {
     allowedTCPPorts = ports;
     allowedUDPPorts = ports;
   };
-  security.acme.certs."${fqdn}" = {
-    postRun = "systemctl restart coturn.service";
+  security.acme.certs = lib.mkIf pkgs.withSecrets {
+    "${fqdn}".postRun = "systemctl restart coturn.service";
   };
   services = {
     coturn = {
