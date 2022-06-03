@@ -113,7 +113,7 @@ with lib; let
           nginx.openFirewall = true;
         };
         nginx.appendHttpConfig = "access_log off;";
-        redis.servers."nextcloud-redis".enable = true;
+        redis.servers."".enable = true;
 
         postgresql = {
           enable = true;
@@ -147,7 +147,7 @@ in {
       // nextcloudServices mainHostName;
   };
   services = {
-    redis.servers."nextcloud".enable = true;
+    redis.servers."".enable = true;
     nextcloud = nextcloudConf mainHostName;
     postgresql.ensureDatabases = ["nextcloud"];
     nginx = {
