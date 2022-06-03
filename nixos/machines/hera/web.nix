@@ -13,7 +13,9 @@ in {
       host = "hera-intern:9113";
     }
   ];
-  security.acme.certs."hera.m-0.eu".keyType = "rsa4096";
+  security.acme.certs = lib.mkIf pkgs.withSecrets {
+    "hera.m-0.eu".keyType = "rsa4096";
+  };
   services = {
     nginx = {
       enable = lib.mkForce pkgs.withSecrets;
