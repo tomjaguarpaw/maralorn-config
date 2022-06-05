@@ -224,6 +224,7 @@ in {
       driSupport32Bit = true; # for gw2
     };
     pulseaudio = {
+      package = pkgs.pulseaudioFull;
       enable = true;
       support32Bit = true;
       tcp = {
