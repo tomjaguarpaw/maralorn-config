@@ -98,13 +98,18 @@ in {
         pkgs.writeShellScript "test-config" ''
           FLAGS="" PATH=${standardPath}:$PATH ${test-config}
         '';
-      "bump-config.run" = pkgs.writeHaskell "bump-config"
-      {
-        libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
-        ghcEnv.PATH = "${standardPath}:$PATH";
-        ghcArgs = ["-threaded"];
-      }
-      (builtins.readFile ./bump-config.hs);
+      "bump-config.run" = let
+        bump-config = pkgs.writeHaskell "bump-config"
+        {
+          libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
+          ghcEnv.PATH = "${standardPath}:$PATH";
+          ghcArgs = ["-threaded"];
+        }
+        (builtins.readFile ./bump-config.hs);
+      in
+        pkgs.writeShellScript "bump-config" ''
+          PATH=${standardPath}:$PATH ${bump-config}
+        '';
     }
     // lib.listToAttrs (map mkHomeJob homes)
     // lib.listToAttrs (map mkSystemJob homes);
