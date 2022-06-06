@@ -184,11 +184,14 @@ in {
       panel-element-positions = ''{"0":[{"element":"showAppsButton","visible":false,"position":"stackedTL"},{"element":"taskbar","visible":false,"position":"stackedTL"},{"element":"dateMenu","visible":true,"position":"stackedTL"},{"element":"leftBox","visible":true,"position":"stackedTL"},{"element":"activitiesButton","visible":false,"position":"stackedTL"},{"element":"centerBox","visible":true,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"},{"element":"desktopButton","visible":false,"position":"stackedBR"}]," 0 ":[{" element ":" showAppsButton "," visible ":false," position ":" stackedTL "},{" element ":" activitiesButton "," visible ":false," position ":" stackedTL "},{" element ":" dateMenu "," visible ":true," position ":" stackedTL "},{" element ":" leftBox "," visible ":true," position ":" stackedTL "},{" element ":" taskbar "," visible ":true," position ":" stackedTL "},{" element ":" rightBox "," visible ":true," position ":" stackedBR "},{" element ":" centerBox "," visible ":true," position ":" stackedTL "},{" element ":" systemMenu "," visible ":true," position ":" stackedBR "},{" element ":" desktopButton "," visible ":true," position ":" stackedBR "}]}'';
       panel-positions = ''{"0":"TOP"}'';
       panel-sizes = ''{"0":32}'';
-      show-appmenu = true;
+      show-appmenu = false;
       show-favorites = false;
       show-running-apps = true;
       status-icon-padding = -1;
       tray-padding = -1;
+      trans-panel-opacity = 0.0;
+      tray-size = 12;
+      leftbox-size = 12;
     };
 
     "org/gnome/shell/extensions/user-theme" = {
