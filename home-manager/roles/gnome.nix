@@ -192,6 +192,7 @@ in {
       trans-panel-opacity = 0.0;
       tray-size = 12;
       leftbox-size = 12;
+      trans-use-custom-opacity = true;
     };
 
     "org/gnome/shell/extensions/user-theme" = {
