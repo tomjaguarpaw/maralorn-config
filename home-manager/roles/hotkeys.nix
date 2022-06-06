@@ -116,7 +116,8 @@ in [
   {"Monitor (btop)" = "btop";}
   {
     "W17" = {
-      MPD = "ncmpcpp -h whisky.w17.io";
+      "MPD Whisky" = "ncmpcpp -h whisky.w17.io";
+      "MPD Burbon" = "ncmpcpp -h burbon.w17.io";
       Summer = "ssh door@burbon.w17.io buzzer";
       Open = "ssh door@burbon.w17.io open";
       Close = "ssh door@burbon.w17.io close";
