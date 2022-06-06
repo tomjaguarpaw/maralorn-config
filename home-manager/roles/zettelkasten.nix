@@ -3,7 +3,8 @@
   pkgs,
   ...
 }: let
-  emanote = import (import ../../nix/sources.nix).emanote;
+  emanote_commit = (builtins.fromJSON (builtins.readFile ../../nix/sources.json)).emanote.rev;
+  emanote = builtins.getFlake "github:srid/emanote/${emanote_commit}";
 in {
   imports = [emanote.homeManagerModule];
   services.emanote = {
