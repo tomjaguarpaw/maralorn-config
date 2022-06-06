@@ -124,8 +124,8 @@ in {
     };
 
     "org/gnome/desktop/interface" = {
-      gtk-theme = "Flat-Remix-GTK-Blue-Light-Solid";
-      icon-theme = "Flat-Remix-Blue-Light";
+      gtk-theme = "Arc";
+      icon-theme = "Arc";
       document-font-name = "B612 9";
       font-antialiasing = "rgba";
       font-hinting = "slight";
@@ -192,7 +192,7 @@ in {
     };
 
     "org/gnome/shell/extensions/user-theme" = {
-      name = "Flat-Remix-Blue-Light-fullPanel";
+      name = "Arc";
     };
 
     "system/locale" = {

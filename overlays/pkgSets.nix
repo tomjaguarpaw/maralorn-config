@@ -104,9 +104,6 @@ self: super: {
       wl-clipboard
       nheko
       dconf2nix
-      flat-remix-gtk
-      flat-remix-gnome
-      flat-remix-icon-theme
       ;
     inherit
       (self.gnomeExtensions)

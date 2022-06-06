@@ -9,12 +9,12 @@ in {
   gtk = {
     enable = true;
     iconTheme = {
-      name = "Flat-Remix-Blue-Light";
-      package = pkgs.flat-remix-icon-theme;
+      name = "Arc";
+      package = pkgs.arc-icon-theme;
     };
     theme = {
-      name = "Flat-Remix-GTK-Blue-Light-Solid";
-      package = pkgs.flat-remix-gtk;
+      name = "Arc";
+      package = pkgs.arc-theme;
     };
     gtk3.bookmarks = [
       "ftp://fluffy.lo.m-0.eu"
