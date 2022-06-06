@@ -102,7 +102,6 @@ self: super: {
       audacity
       paprefs
       wl-clipboard
-      nheko
       dconf2nix
       ;
     inherit
