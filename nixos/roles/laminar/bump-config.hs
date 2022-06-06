@@ -22,7 +22,7 @@ load Absolute ["git", "niv"]
 paths :: [Text]
 paths =
   $$( bindCode (runIO pathBinsAbs) \rawPaths ->
-        let wantedPaths :: [Text] = mapMaybe (\x -> foldr (<|>) Nothing $ (\bin -> Text.stripSuffix [i|/#{bin}|] $ toText x) <$> ["git", "tar", "nix-prefetch-url", "gzip"]) rawPaths
+        let wantedPaths :: [Text] = mapMaybe (\x -> foldr (<|>) Nothing $ (\bin -> Text.stripSuffix [i|/#{bin}|] $ toText x) <$> ["git", "tar", "nix-prefetch-url", "gzip", "ssh"]) rawPaths
          in liftTyped wantedPaths
     )
 
