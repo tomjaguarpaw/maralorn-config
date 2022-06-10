@@ -66,6 +66,7 @@ in {
         "https://rpg.maralorn.de"
         "https://stats.maralorn.de"
         "https://tasks.maralorn.de"
+        "https://hochzeit.malte-und-clai.re"
 
         "https://wiki.vocalensemble-darmstadt.de"
         "https://lists.vocalensemble-darmstadt.de"
