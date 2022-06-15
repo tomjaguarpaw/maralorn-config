@@ -17,7 +17,7 @@
       today <- localDay . zonedTimeToLocalTime <$> getZonedTime
       [0..7] & fmap (`addDays` today) & mapM_ \day -> do
         planned <- khal ["list", "-a", "Planung", show day, "06:00", "24h", "--notstarted"] |> captureTrim
-        when (planned == "No events") $ do
+        when (LBS.null planned) $ do
           say $ "Creating events for " <> show day
           if (dayOfWeek day `elem` [Saturday, Sunday]) then do
             ${plans.weekend}
