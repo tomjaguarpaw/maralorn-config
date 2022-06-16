@@ -17,6 +17,7 @@ in {
     ../../roles/admin.nix
     ../../roles/fonts.nix
     ../../roles/earlyoom.nix
+    ../../roles/metal.nix
     #../../roles/boot-key.nix
     ../../roles/standalone
     (vpn "zeus")

@@ -16,6 +16,7 @@ in {
     ../../roles/earlyoom.nix
     ../../roles/standalone
     ../../roles/home-assistant
+    ../../roles/metal.nix
   ];
 
   fileSystems = let
