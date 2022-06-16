@@ -1,3 +1,3 @@
 _: {
-  boot.kernalParams = ["mitigations=off"];
+  boot.kernelParams = ["mitigations=off"];
 }
