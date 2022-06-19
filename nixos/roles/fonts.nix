@@ -27,7 +27,6 @@
         material-icons
         # sans font, very good for displays
         b612
-        google-fonts
         ;
     };
   };
