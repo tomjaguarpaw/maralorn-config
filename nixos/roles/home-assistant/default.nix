@@ -512,6 +512,19 @@ in {
               action = [(actions.setMode modes.wohnzimmer "active")];
             }
             {
+              alias = "Abends Licht aus";
+              trigger = [
+                {
+                  platform = "time";
+                  at = "00:00:00";
+                }
+              ];
+              condition = [
+                (conditions.modeIs modes.flat "active")
+              ];
+              action = [(actions.setMode modes.wohnzimmer "empty")];
+            }
+            {
               alias = "Warnung bei niedrigem Akkustand";
               trigger = map
               (limit: {
