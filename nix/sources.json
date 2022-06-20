@@ -86,15 +86,15 @@
         "type": "git"
     },
     "nixos-stable": {
-        "branch": "release-22.05",
+        "branch": "nixos-22.05",
         "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "f0bb7af8ad7ded96fdaa04fd3f628acbae30594a",
-        "sha256": "0c4j2si968x4jr1d5k5a5660781wxmh0kv76zdy5pgigcqi9196v",
+        "rev": "d17a56d90ecbd1b8fc908d49598fb854ef188461",
+        "sha256": "04a9ry0kk4qzy622mk3izh4azdp7plf1847mfp3zkn9gk0innswg",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/f0bb7af8ad7ded96fdaa04fd3f628acbae30594a.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/d17a56d90ecbd1b8fc908d49598fb854ef188461.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-unstable": {
