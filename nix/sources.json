@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "093a0fe02299f55e38357ff1bf3443e2d6d838e2",
-        "sha256": "0c4dxm9vcm185nhf160pjhqk59gd1i7sqnmk4wrkl2mb9d3qm91l",
+        "rev": "05af2fcf4b0c5fbce413d24074004ad4d277d7c9",
+        "sha256": "1gidskdhbd84003piiw23gjz7z9hd83251vbpbnhzaygzyppx8g9",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/093a0fe02299f55e38357ff1bf3443e2d6d838e2.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/05af2fcf4b0c5fbce413d24074004ad4d277d7c9.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hexa-nur-packages": {
@@ -21,30 +21,6 @@
         "sha256": "0h8h5nqfz25ffzg6wwnyfsgqmrw6nlb0h4idjb3mnpl1rrj60zyn",
         "type": "tarball",
         "url": "https://github.com/mweinelt/nur-packages/archive/904841eee3ca84ceb67688fe84c388a7b5e27d80.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "home-manager-21.11": {
-        "branch": "release-22.05",
-        "description": "Manage a user environment using Nix",
-        "homepage": "",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "ac2287df5a2d6f0a44bbcbd11701dbbf6ec43675",
-        "sha256": "1bn5m4qlzxc5c264hwyy9n8f7m1pzc79fd0xh18n46wn0v8vx4jn",
-        "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/ac2287df5a2d6f0a44bbcbd11701dbbf6ec43675.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "home-manager-22.05": {
-        "branch": "release-22.05",
-        "description": "Manage a user environment using Nix",
-        "homepage": "",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "ac2287df5a2d6f0a44bbcbd11701dbbf6ec43675",
-        "sha256": "1bn5m4qlzxc5c264hwyy9n8f7m1pzc79fd0xh18n46wn0v8vx4jn",
-        "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/ac2287df5a2d6f0a44bbcbd11701dbbf6ec43675.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager-stable": {
@@ -76,7 +52,7 @@
     "nix-output-monitor": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "96f81939d75161c292298c156f443dc798c1c6c3",
+        "rev": "3835debd19062b6ec4b4abae45500c649932e93a",
         "type": "git"
     },
     "nixos-19.09": {
@@ -89,30 +65,6 @@
         "sha256": "157c64220lf825ll4c0cxsdwg7cxqdx4z559fdp7kpz0g6p8fhhr",
         "type": "tarball",
         "url": "https://github.com/NixOS/nixpkgs/archive/75f4ba05c63be3f147bcc2f7bd4ba1f029cedcb1.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "nixos-21.11": {
-        "branch": "nixos-22.05",
-        "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
-        "homepage": null,
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "d17a56d90ecbd1b8fc908d49598fb854ef188461",
-        "sha256": "04a9ry0kk4qzy622mk3izh4azdp7plf1847mfp3zkn9gk0innswg",
-        "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/d17a56d90ecbd1b8fc908d49598fb854ef188461.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "nixos-22.05": {
-        "branch": "nixos-22.05",
-        "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
-        "homepage": null,
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "d17a56d90ecbd1b8fc908d49598fb854ef188461",
-        "sha256": "04a9ry0kk4qzy622mk3izh4azdp7plf1847mfp3zkn9gk0innswg",
-        "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/d17a56d90ecbd1b8fc908d49598fb854ef188461.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-hardware": {
@@ -134,15 +86,15 @@
         "type": "git"
     },
     "nixos-stable": {
-        "branch": "nixos-22.05",
+        "branch": "release-22.05",
         "description": "Nixpkgs/NixOS branches that track the Nixpkgs/NixOS channels",
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "d17a56d90ecbd1b8fc908d49598fb854ef188461",
-        "sha256": "04a9ry0kk4qzy622mk3izh4azdp7plf1847mfp3zkn9gk0innswg",
+        "rev": "f0bb7af8ad7ded96fdaa04fd3f628acbae30594a",
+        "sha256": "0c4j2si968x4jr1d5k5a5660781wxmh0kv76zdy5pgigcqi9196v",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/d17a56d90ecbd1b8fc908d49598fb854ef188461.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/f0bb7af8ad7ded96fdaa04fd3f628acbae30594a.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-unstable": {
