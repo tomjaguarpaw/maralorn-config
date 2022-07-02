@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "ab833b907d9d73450b50d61d70c4644088708d20",
-        "sha256": "0hli8zl7rzcdciizimaa5m3idhi88phf8kgnqhfhxbq9m0145ygl",
+        "rev": "c515425075b60e217a4dd7db83cd9b932ffd70aa",
+        "sha256": "019aq7n953zldb55sa2xwcrjyxcdqdhcszkw7m3b188pi9b1733v",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/ab833b907d9d73450b50d61d70c4644088708d20.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/c515425075b60e217a4dd7db83cd9b932ffd70aa.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hexa-nur-packages": {
@@ -73,10 +73,10 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "a50513f8a6c470208d7c494439775e62c3f47ce1",
-        "sha256": "1ysrkdgchag87275skk83b1kvxyd24vn5qj7c8w7kd7rlf5nxqqj",
+        "rev": "c5308381432cdbf14d5b1128747a2845f5c6871e",
+        "sha256": "07ds9ddvxgiff16p4mv5ln8ys1h27qwrziwa44g006p8lb3mvm85",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/a50513f8a6c470208d7c494439775e62c3f47ce1.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/c5308381432cdbf14d5b1128747a2845f5c6871e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
