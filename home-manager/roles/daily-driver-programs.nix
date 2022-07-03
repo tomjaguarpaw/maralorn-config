@@ -40,6 +40,7 @@
       # media
       ncpamixer
       pavucontrol
+      playerctl
       deluge
       gmpc
       vlc
