@@ -5,64 +5,6 @@
 } @ args: let
   hotkeys = import ./hotkeys.nix args;
   inherit (lib.hm.gvariant) mkTuple;
-  statusScript = pkgs.writeHaskellScript
-  {
-    name = "status-script";
-    bins = [pkgs.notmuch pkgs.coreutils pkgs.git pkgs.playerctl pkgs.khal];
-    imports = [
-      "Control.Exception"
-      "System.Directory"
-    ];
-  } ''
-    data Mode = Klausur | Orga | Communication | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
-    modes = enumFrom Klausur
-    getMode = do
-      name <- Text.strip <$> readFileText "/home/maralorn/.mode" `onException` say "File /home/maralorn/.mode not found."
-      maybe (say [i|Unknown mode #{name}|] >> error [i|Unknown mode #{name}|]) pure $ find (\mode -> name == (Text.toLower $ show mode)) $ modes
-
-    isDirty gitDir = ((/= "") <$> (git "--no-optional-locks" "-C" gitDir "status" "--porcelain" |> captureTrim)) `catch` (\(_ :: SomeException) -> pure True)
-    isUnpushed gitDir = do
-      revs <- tryCmd (git "--no-optional-locks" "-C" gitDir "branch" "-r" "--contains" "HEAD")
-      pure $ LBS.null revs
-
-    tryCmd x = ignoreFailure x |> captureTrim
-
-    main = do
-      playing <- Text.replace "Stopped -" "⏹" . Text.replace "Playing -" "▶" . Text.replace "Paused -" "⏸" . Text.intercalate " - " . fmap decodeUtf8 . filter (/= "") <$> mapM tryCmd [playerctl "status", playerctl "metadata" "title", playerctl "metadata" "album", playerctl "metadata" "artist"]
-      appointments <- Text.intercalate "; ". lines . decodeUtf8 <$> (tryCmd $ khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
-      mode <- getMode
-      unread <- if mode >= Orga then
-             notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
-           else
-             pure "0"
-      inbox <- if mode == Leisure then
-             notmuch "count" "folder:hera/Inbox" |> captureTrim
-           else
-             pure "0"
-      codeMails <- if mode == Code then
-             notmuch "count" "folder:hera/Code" |> captureTrim
-           else
-             pure "0"
-      codeUpdates <- if mode == Code then
-             fromMaybe 0 . readMaybe . toString . Text.replace " unread articles" "" . decodeUtf8 <$> tryCmd (exe "software-updates" "-x" "print-unread")
-           else
-             pure 0
-      dirs <- listDirectory "/home/maralorn/git"
-      dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/"<>)) dirs
-      unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/"<>)) dirs
-      say . Text.replace "&" "&amp;" . Text.unwords $ [
-          "<executor.markup.true>",
-          [i|<span foreground='\#bbb0fb'>#{appointments}</span>|],
-          playing,
-          [i|<span foreground='\#a0a0ff'>#{show mode}</span>|]
-        ] ++
-        memptyIfFalse (unread /= "0") (one [i|<span foreground='\#DC143C'>Unread: #{unread}</span>|]) ++
-        memptyIfFalse (inbox /= "0") (one [i|<span foreground='\#7fff00'>Inbox: #{inbox}</span>|]) ++
-        memptyIfFalse (codeMails /= "0") (one [i|<span foreground='\#20c420'>Code Mails: #{codeMails}</span>|]) ++
-        memptyIfFalse (codeUpdates /= 0) (one [i|<span foreground='\#20c420'>Code Updates: #{codeUpdates}</span>|]) ++
-        memptyIfFalse (length unpushed /= 0) (one [i|<span foreground='\#f2995e'>Unpushed: #{Text.intercalate " " unpushed}</span>|]) ++
-        memptyIfFalse (length dirty /= 0) (one [i|<span foreground='\#ff9f50'>Dirty: #{Text.intercalate " " dirty}</span>|])
-  '';
 in {
   services.gpg-agent.pinentryFlavor = "gnome3";
   dconf.settings = {
@@ -145,7 +87,7 @@ in {
 
     "org/gnome/shell/extensions/executor" = {
       center-active = true;
-      center-commands-json = ''{"commands":[{"command":"${statusScript}/bin/status-script","interval":1,"uuid":"d20a15a4-aea9-48e1-955f-4bd9f55b08bc"}]}'';
+      center-commands-json = ''{"commands":[{"command":"cat /run/user/1000/status-bar","interval":1,"uuid":"d20a15a4-aea9-48e1-955f-4bd9f55b08bc"}]}'';
       center-index = 0;
       left-active = false;
       location = 1;
