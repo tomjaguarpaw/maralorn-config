@@ -8,6 +8,7 @@ _: {
     user = "mautrix-signal";
     group = "mautrix-signal";
   };
+  systemd.services.signald.serviceConfig.Environment = "SIGNALD_TRUST_NEW_KEYS=true SIGNALD_TRUST_ALL_KEYS=true";
 
   services.mautrix-signal = {
     enable = true;
