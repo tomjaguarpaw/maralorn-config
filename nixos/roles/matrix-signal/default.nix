@@ -17,6 +17,7 @@ _: {
         address = "https://matrix.maralorn.de";
         domain = "maralorn.de";
       };
+      signal.delete_unknown_accounts_on_start = true;
       bridge = {
         public_portals = false;
         federate_rooms = false;
@@ -24,6 +25,11 @@ _: {
         contact_list_names = "allow";
         autocreate_contact_portal = false;
         autocreate_group_portal = true;
+        sync_direct_chat_list = true;
+        encryption = {
+          allow = true;
+          default = true;
+        };
       };
     };
   };
