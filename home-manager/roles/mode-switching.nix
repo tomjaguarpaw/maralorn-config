@@ -16,8 +16,11 @@ in {
       set -e
       ${configGit} pull --ff-only
       ${configGit} submodule update
+      echo "Running update-modes …"
       ${updateModes}/bin/update-modes
+      echo "Running update-system …"
       /run/wrappers/bin/sudo -A /run/current-system/sw/bin/update-system
+      echo "Maintenance finished."
     '';
     activateMode = pkgs.writeHaskellScript {name = "activate-mode";} ''
       getMode :: IO Text
