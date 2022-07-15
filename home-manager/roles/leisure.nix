@@ -49,6 +49,11 @@
         "https://www.youtube.com/feeds/videos.xml?channel_id=UC2C_jShtL725hvbm1arSV9w" # GCP Grey
 
         "https://www.youtube.com/feeds/videos.xml?channel_id=UCpXBGqwsBkpvcYjsJBQ7LEQ" # Critical Role
+
+        "https://www.youtube.com/feeds/videos.xml?channel_id=UCNL8SCfixpPsU5shwmv9Kuw" # Philosophy Tube
+
+        "https://www.youtube.com/feeds/videos.xml?channel_id=UCwRH985XgMYXQ6NxXDo8npw" # Kurzgesagt
+
         "exec:${serien}"
       ];
     };
