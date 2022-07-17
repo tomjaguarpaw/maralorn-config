@@ -544,18 +544,19 @@ in {
               ];
               action = [(actions.notify "Es ist 23 Uhr.")];
             }
-            {
-              alias = "Warnung bei nicht erreichbaren Gerät";
-              trigger = map
-              (name:
-                triggers.stateTrigger name
-                // {
-                  to = "unavailable";
-                  for = "00:30:00";
-                })
-              (builtins.filter (name: !(builtins.elem name flaky_remotes)) (batteries ++ switches));
-              action = [(actions.notify "{{ trigger.to_state.name }} ist nicht erreichbar.")];
-            }
+            # Triggered zu häufig, nervt nur noch.
+            #{
+            #  alias = "Warnung bei nicht erreichbaren Gerät";
+            #  trigger = map
+            #  (name:
+            #    triggers.stateTrigger name
+            #    // {
+            #      to = "unavailable";
+            #      for = "00:30:00";
+            #    })
+            #  (builtins.filter (name: !(builtins.elem name flaky_remotes)) (batteries ++ switches));
+            #  action = [(actions.notify "{{ trigger.to_state.name }} ist nicht erreichbar.")];
+            #}
           ]
           ++ (map
           (minutes: {
