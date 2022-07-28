@@ -145,7 +145,6 @@ self: super: {
       nodejs
       tasksh
       magic-wormhole
-      rnix-lsp
       alejandra
       rustup
       nix-top

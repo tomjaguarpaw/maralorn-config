@@ -10,10 +10,6 @@
     "diagnostic.virtualTextCurrentLineOnly" = false;
     "codeLens.enable" = true;
     languageserver = {
-      nix = {
-        command = "rnix-lsp";
-        filetypes = ["nix"];
-      };
       haskell = {
         command = "haskell-language-server";
         args = ["--lsp" "-d" "-l" "/tmp/LanguageServer.log"];
