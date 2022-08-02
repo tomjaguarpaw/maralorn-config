@@ -111,6 +111,7 @@ in {
         }
       );
       configDir = homeAssistantDir;
+      extraComponents = [];
       config = {
         shopping_list = {};
         matrix = {
