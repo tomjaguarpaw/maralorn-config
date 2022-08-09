@@ -25,6 +25,7 @@ self: super: {
       binutils
       ntfsprogs
       neovim
+      ventoy-bin
       ;
   };
 
