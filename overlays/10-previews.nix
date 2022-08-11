@@ -6,6 +6,6 @@ in {
   inherit unstable;
   unstableHaskellPackages = unstable.haskellPackages;
   unstableGhc = unstable.ghc;
-  inherit (unstable) nix home-assistant vscode-extensions vscodium mumble cachix cabal2nix alejandra;
+  inherit (unstable) nix home-assistant vscode-extensions vscodium cachix cabal2nix;
   nix-output-monitor = nom.packages.x86_64-linux.default;
 }
