@@ -20,12 +20,14 @@
     inherit
       (pkgs)
       # web
+      
       chromium
       mumble
       upower
       speedtest-cli
       acpi
       # tools & office
+      
       feh
       gimp
       imagemagick
@@ -38,6 +40,7 @@
       beets
       zbar
       # media
+      
       ncpamixer
       pavucontrol
       playerctl

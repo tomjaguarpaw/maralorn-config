@@ -40,77 +40,78 @@
     builtins.map filter.simpleSortList lists.sortLists
     ++ builtins.map filter.stupidList lists.stupidLists
     ++ builtins.map filter.notifications lists.notifications;
-  sortMail = pkgs.writeHaskellScript
-  {
-    name = "sort-mail-archive";
-    bins = [pkgs.notmuch pkgs.coreutils pkgs.mblaze pkgs.findutils];
-    imports = [
-      "Text.Megaparsec"
-      "Text.Megaparsec.Char"
-      "Text.Megaparsec.Char.Lexer"
-      "qualified Data.List.NonEmpty as NE"
-      "qualified Data.Text as T"
-      "System.Environment (setEnv)"
-    ];
-  } ''
-    reScan = notmuch "new" "--quiet"
+  sortMail =
+    pkgs.writeHaskellScript
+    {
+      name = "sort-mail-archive";
+      bins = [pkgs.notmuch pkgs.coreutils pkgs.mblaze pkgs.findutils];
+      imports = [
+        "Text.Megaparsec"
+        "Text.Megaparsec.Char"
+        "Text.Megaparsec.Char.Lexer"
+        "qualified Data.List.NonEmpty as NE"
+        "qualified Data.Text as T"
+        "System.Environment (setEnv)"
+      ];
+    } ''
+      reScan = notmuch "new" "--quiet"
 
-    findFilterMail :: (Text,Text) -> IO (Maybe (LByteString, Text, Text))
-    findFilterMail (filter_, target) = do
-       files <- notmuch "search" "--output" "files" (toString filter_) "folder:${unsortedSuffix}" |> capture
-       pure $ if (LBS.length files > 0) then Just (files, filter_, target) else Nothing
+      findFilterMail :: (Text,Text) -> IO (Maybe (LByteString, Text, Text))
+      findFilterMail (filter_, target) = do
+         files <- notmuch "search" "--output" "files" (toString filter_) "folder:${unsortedSuffix}" |> capture
+         pure $ if (LBS.length files > 0) then Just (files, filter_, target) else Nothing
 
-    executeFilterMail :: (LByteString, Text, Text) -> IO ()
-    executeFilterMail (files, filter_, target) = do
-       say [i|Sorting "#{filter_}" into #{target}|]
-       writeOutput files |> mscan
-       mmkdir ([i|${archive}/#{target}|] :: String)
-       writeOutput files |> mrefile ([i|${archive}/#{target}|] :: String)
+      executeFilterMail :: (LByteString, Text, Text) -> IO ()
+      executeFilterMail (files, filter_, target) = do
+         say [i|Sorting "#{filter_}" into #{target}|]
+         writeOutput files |> mscan
+         mmkdir ([i|${archive}/#{target}|] :: String)
+         writeOutput files |> mrefile ([i|${archive}/#{target}|] :: String)
 
-    myFilters :: [(Text,Text)]
-    myFilters = [${
-      lib.concatStringsSep ","
-      (
-        builtins.map ({
-          filter,
-          target,
-        }: ''("${filter}","${target}")'')
-        myFilters
-      )
-    }]
+      myFilters :: [(Text,Text)]
+      myFilters = [${
+        lib.concatStringsSep ","
+        (
+          builtins.map ({
+            filter,
+            target,
+          }: ''("${filter}","${target}")'')
+          myFilters
+        )
+      }]
 
-    filtersFromTo :: Text -> Maybe (Text,Text)
-    filtersFromTo = filtersFromField "to" [toToName]
-    toToName :: Text -> Maybe Text
-    toToName (T.splitOn "@" -> [name, "maralorn.de"])
-          | not (T.isInfixOf "randy" name) = Just . ("to/" <>) . T.intercalate "_" . T.splitOn "." $ name
-    toToName _ = Nothing
-    filtersFromField :: Text -> [Text-> Maybe Text] -> Text -> Maybe (Text,Text)
-    filtersFromField field filters text = fmap ([i|#{field}:#{text}|],) . viaNonEmpty Relude.head . mapMaybe ($ text) $ filters
-    filtersFromListIDs :: Text -> Maybe (Text,Text)
-    filtersFromListIDs = filtersFromField "List" [githubNameFolderFromId, gitlabNameFolderFromId]
-    githubNameFolderFromId :: Text -> Maybe Text
-    githubNameFolderFromId (reverse . T.splitOn "." -> ("com":"github":org:name)) = Just [i|github/#{org}/#{T.intercalate "_" $ reverse name}|]
-    githubNameFolderFromId _ = Nothing
-    gitlabNameFolderFromId :: Text -> Maybe Text
-    gitlabNameFolderFromId (reverse . T.splitOn "." -> ("de":"ccc":"darmstadt":"git":org:name1:name)) = Just [i|cda-gitlab/#{org}/#{T.intercalate "_" . toList . Relude.tail $ NE.reverse (name1:|name)}|]
-    gitlabNameFolderFromId _ = Nothing
+      filtersFromTo :: Text -> Maybe (Text,Text)
+      filtersFromTo = filtersFromField "to" [toToName]
+      toToName :: Text -> Maybe Text
+      toToName (T.splitOn "@" -> [name, "maralorn.de"])
+            | not (T.isInfixOf "randy" name) = Just . ("to/" <>) . T.intercalate "_" . T.splitOn "." $ name
+      toToName _ = Nothing
+      filtersFromField :: Text -> [Text-> Maybe Text] -> Text -> Maybe (Text,Text)
+      filtersFromField field filters text = fmap ([i|#{field}:#{text}|],) . viaNonEmpty Relude.head . mapMaybe ($ text) $ filters
+      filtersFromListIDs :: Text -> Maybe (Text,Text)
+      filtersFromListIDs = filtersFromField "List" [githubNameFolderFromId, gitlabNameFolderFromId]
+      githubNameFolderFromId :: Text -> Maybe Text
+      githubNameFolderFromId (reverse . T.splitOn "." -> ("com":"github":org:name)) = Just [i|github/#{org}/#{T.intercalate "_" $ reverse name}|]
+      githubNameFolderFromId _ = Nothing
+      gitlabNameFolderFromId :: Text -> Maybe Text
+      gitlabNameFolderFromId (reverse . T.splitOn "." -> ("de":"ccc":"darmstadt":"git":org:name1:name)) = Just [i|cda-gitlab/#{org}/#{T.intercalate "_" . toList . Relude.tail $ NE.reverse (name1:|name)}|]
+      gitlabNameFolderFromId _ = Nothing
 
-    type Parser = Parsec Text Text
-    listId :: Parser Text
-    listId = manyTill anySingle (char '<') *> (toText <$> manyTill anySingle (char '>'))
+      type Parser = Parsec Text Text
+      listId :: Parser Text
+      listId = manyTill anySingle (char '<') *> (toText <$> manyTill anySingle (char '>'))
 
-    main = do
-       setEnv "MBLAZE_PAGER" "cat"
-       setEnv "NOTMUCH_CONFIG" "${config.home.sessionVariables.NOTMUCH_CONFIG or ""}"
-       reScan
-       (listIDs,tos) <- concurrently (mhdr "-h" "List-ID" "-d" "${unsorted}" |> capture) (mhdr "-h" "To" "-d" "${unsorted}" "-A" |> capture)
-       let listFilters = mapMaybe filtersFromListIDs . sortNub . mapMaybe (parseMaybe listId) . lines . decodeUtf8 $ listIDs
-           toFilters = mapMaybe filtersFromTo . sortNub . fmap (\x -> maybe x Relude.id $ parseMaybe listId x) . lines . decodeUtf8 $ tos
-       applicableFilters <- catMaybes <$> forConcurrently (listFilters <> myFilters <> toFilters) findFilterMail
-       for_ applicableFilters executeFilterMail
-       reScan
-  '';
+      main = do
+         setEnv "MBLAZE_PAGER" "cat"
+         setEnv "NOTMUCH_CONFIG" "${config.home.sessionVariables.NOTMUCH_CONFIG or ""}"
+         reScan
+         (listIDs,tos) <- concurrently (mhdr "-h" "List-ID" "-d" "${unsorted}" |> capture) (mhdr "-h" "To" "-d" "${unsorted}" "-A" |> capture)
+         let listFilters = mapMaybe filtersFromListIDs . sortNub . mapMaybe (parseMaybe listId) . lines . decodeUtf8 $ listIDs
+             toFilters = mapMaybe filtersFromTo . sortNub . fmap (\x -> maybe x Relude.id $ parseMaybe listId x) . lines . decodeUtf8 $ tos
+         applicableFilters <- catMaybes <$> forConcurrently (listFilters <> myFilters <> toFilters) findFilterMail
+         for_ applicableFilters executeFilterMail
+         reScan
+    '';
 in {
   services.mbsync.postExec = "${sortMail}/bin/sort-mail-archive";
   accounts.email.accounts = lib.mkIf pkgs.withSecrets {

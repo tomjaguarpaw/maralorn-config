@@ -20,27 +20,29 @@
       nix_build $ ["--show-trace", "-o", [i|/var/cache/gc-links/${name}-config-#{hostname}|]] ++ flags ++ ${drv}
       say [i|Build of ${name} config for #{hostname} was successful.|]
   '';
-  test-system-config = pkgs.writeHaskellScript
-  {
-    name = "test-system-config";
-    inherit bins;
-    inherit imports;
-  }
-  (
-    haskellBody "system" ''
-      buildSystemParams ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|]]''
-  );
+  test-system-config =
+    pkgs.writeHaskellScript
+    {
+      name = "test-system-config";
+      inherit bins;
+      inherit imports;
+    }
+    (
+      haskellBody "system" ''
+        buildSystemParams ++ paths ++ ["-I", [i|nixos-config=#{configDir}/nixos/machines/#{hostname}/configuration.nix|]]''
+    );
 
-  test-home-config = pkgs.writeHaskellScript
-  {
-    name = "test-home-config";
-    inherit bins;
-    inherit imports;
-  }
-  (
-    haskellBody "home"
-    ''paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname]''
-  );
+  test-home-config =
+    pkgs.writeHaskellScript
+    {
+      name = "test-home-config";
+      inherit bins;
+      inherit imports;
+    }
+    (
+      haskellBody "home"
+      ''paths ++ [[i|#{configDir}/home-manager/target.nix|], "-A", hostname]''
+    );
   common = ''
     set -e
     export PATH=${standardPath}:$PATH
@@ -82,30 +84,32 @@ in {
   services.laminar.cfgFiles.jobs =
     {
       "test-config.run" = let
-        test-config = pkgs.writeHaskell "test-config"
-        {
-          libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
-          ghcEnv = {
-            HOMES = lib.concatStringsSep " " homes;
-            SYSTEMS = lib.concatStringsSep " " systems;
-            DEPLOY = deployCommand;
-            PATH = "${standardPath}:$PATH";
-          };
-          ghcArgs = ["-threaded"];
-        }
-        (builtins.readFile ./test-config.hs);
+        test-config =
+          pkgs.writeHaskell "test-config"
+          {
+            libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
+            ghcEnv = {
+              HOMES = lib.concatStringsSep " " homes;
+              SYSTEMS = lib.concatStringsSep " " systems;
+              DEPLOY = deployCommand;
+              PATH = "${standardPath}:$PATH";
+            };
+            ghcArgs = ["-threaded"];
+          }
+          (builtins.readFile ./test-config.hs);
       in
         pkgs.writeShellScript "test-config" ''
           FLAGS="" PATH=${standardPath}:$PATH ${test-config}
         '';
       "bump-config.run" = let
-        bump-config = pkgs.writeHaskell "bump-config"
-        {
-          libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
-          ghcEnv.PATH = "${standardPath}:$PATH";
-          ghcArgs = ["-threaded"];
-        }
-        (builtins.readFile ./bump-config.hs);
+        bump-config =
+          pkgs.writeHaskell "bump-config"
+          {
+            libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
+            ghcEnv.PATH = "${standardPath}:$PATH";
+            ghcArgs = ["-threaded"];
+          }
+          (builtins.readFile ./bump-config.hs);
       in
         pkgs.writeShellScript "bump-config" ''
           PATH=${standardPath}:$PATH ${bump-config}
@@ -117,14 +121,15 @@ in {
     allowedCommands = [deployCommand];
   in [
     {
-      commands = map
-      (
-        command: {
-          inherit command;
-          options = ["NOPASSWD"];
-        }
-      )
-      allowedCommands;
+      commands =
+        map
+        (
+          command: {
+            inherit command;
+            options = ["NOPASSWD"];
+          }
+        )
+        allowedCommands;
       users = ["laminar"];
     }
   ];

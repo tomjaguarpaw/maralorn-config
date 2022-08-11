@@ -52,13 +52,14 @@
       options = {inherit empty heat active force_active only_lights;};
     };
   };
-  fenster = map (name: "binary_sensor.${name}")
-  [
-    "kuechenfenster"
-    "wohnzimmerfenster"
-    "schlafzimmerfenster"
-    "wohnungstuer"
-  ];
+  fenster =
+    map (name: "binary_sensor.${name}")
+    [
+      "kuechenfenster"
+      "wohnzimmerfenster"
+      "schlafzimmerfenster"
+      "wohnungstuer"
+    ];
   switches = map (name: "switch.${name}") [
     "weihnachtsstern_schlafzimmer"
     "luftentfeuchter"
@@ -254,10 +255,10 @@ in {
               alias = "Backup Lüftungssteuerung Bad";
               trigger = [
                 (triggers.stateTrigger "switch.lueftung_bad"
-                // {
-                  to = "on";
-                  for = "02:00:00";
-                })
+                  // {
+                    to = "on";
+                    for = "02:00:00";
+                  })
               ];
               action = [
                 {
@@ -439,14 +440,15 @@ in {
               ];
               action = [
                 {
-                  service = jinja.if'
-                  (jinja.or
-                  (jinja.isStates (util.modeSelectEntity modes.wohnzimmer) ["force_active" "only_lights"])
-                  (jinja.and
-                  (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "active")
-                  "state_attr('sun.sun', 'elevation') < 6"))
-                  "homeassistant.turn_on"
-                  "homeassistant.turn_off";
+                  service =
+                    jinja.if'
+                    (jinja.or
+                      (jinja.isStates (util.modeSelectEntity modes.wohnzimmer) ["force_active" "only_lights"])
+                      (jinja.and
+                        (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "active")
+                        "state_attr('sun.sun', 'elevation') < 6"))
+                    "homeassistant.turn_on"
+                    "homeassistant.turn_off";
                   target.entity_id = "group.wohnzimmer_lights";
                 }
               ];
@@ -459,14 +461,15 @@ in {
               ];
               action = [
                 {
-                  service = jinja.if'
-                  (jinja.or
-                  (jinja.isStates (util.modeSelectEntity modes.schlafzimmer) ["force_active" "only_lights"])
-                  (jinja.and
-                  (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "active")
-                  "state_attr('sun.sun', 'elevation') < 6"))
-                  "homeassistant.turn_on"
-                  "homeassistant.turn_off";
+                  service =
+                    jinja.if'
+                    (jinja.or
+                      (jinja.isStates (util.modeSelectEntity modes.schlafzimmer) ["force_active" "only_lights"])
+                      (jinja.and
+                        (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "active")
+                        "state_attr('sun.sun', 'elevation') < 6"))
+                    "homeassistant.turn_on"
+                    "homeassistant.turn_off";
                   target.entity_id = "group.schlafzimmer_lights";
                 }
               ];
@@ -527,12 +530,13 @@ in {
             }
             {
               alias = "Warnung bei niedrigem Akkustand";
-              trigger = map
-              (limit: {
-                platform = "numeric_state";
-                below = toString limit;
-                entity_id = batteries;
-              }) [25 20 15 10 5 4 3 2 1 0];
+              trigger =
+                map
+                (limit: {
+                  platform = "numeric_state";
+                  below = toString limit;
+                  entity_id = batteries;
+                }) [25 20 15 10 5 4 3 2 1 0];
               action = [(actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%.")];
             }
             {
@@ -560,25 +564,26 @@ in {
             #}
           ]
           ++ (map
-          (minutes: {
-            alias = "Warnung bei ${minutes} Minuten offenem Fenster oder offener Tür";
-            trigger = map
-            (name:
-              triggers.stateTrigger name
-              // {
-                to = "on";
-                for = "00:${minutes}:00";
-              })
-            fenster;
-            condition = {
-              condition = "numeric_state";
-              entity_id = "weather.dwd_darmstadt";
-              attribute = "temperature";
-              below = 15;
-            };
-            action = [(actions.notify "{{ trigger.to_state.name }} ist seit mehr als ${minutes} Minuten offen.")];
-          })
-          (map toString [10 20 30 40 50 60]));
+            (minutes: {
+              alias = "Warnung bei ${minutes} Minuten offenem Fenster oder offener Tür";
+              trigger =
+                map
+                (name:
+                  triggers.stateTrigger name
+                  // {
+                    to = "on";
+                    for = "00:${minutes}:00";
+                  })
+                fenster;
+              condition = {
+                condition = "numeric_state";
+                entity_id = "weather.dwd_darmstadt";
+                attribute = "temperature";
+                below = 15;
+              };
+              action = [(actions.notify "{{ trigger.to_state.name }} ist seit mehr als ${minutes} Minuten offen.")];
+            })
+            (map toString [10 20 30 40 50 60]));
         history = {};
         image = {};
         sun = {};

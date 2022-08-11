@@ -85,14 +85,15 @@
     };
   };
 in {
-  xdg.configFile."vdirsyncer/config".source = mkConfig
-  (
-    pkgs.lib.fold (a: b: a // b)
-    {
-      general.status_path = "~/.vdirsyncer/status";
-    }
-    (map mkCalendar calendars ++ map mkAddressbook addressbooks)
-  );
+  xdg.configFile."vdirsyncer/config".source =
+    mkConfig
+    (
+      pkgs.lib.fold (a: b: a // b)
+      {
+        general.status_path = "~/.vdirsyncer/status";
+      }
+      (map mkCalendar calendars ++ map mkAddressbook addressbooks)
+    );
   home.packages = [pkgs.vdirsyncer];
 
   systemd.user = {

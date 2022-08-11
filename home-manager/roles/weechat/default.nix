@@ -8,10 +8,11 @@ with lib; let
   weechat = pkgs.wrapWeechat pkgs.weechat-unwrapped {
     configure = {availablePlugins, ...}: {
       plugins = builtins.attrValues (availablePlugins
-      // {
-        python = availablePlugins.python.withPackages
-        (_: [pkgs.weechatScripts.weechat-matrix]);
-      });
+        // {
+          python =
+            availablePlugins.python.withPackages
+            (_: [pkgs.weechatScripts.weechat-matrix]);
+        });
       scripts = [pkgs.weechatScripts.weechat-matrix];
     };
   };
@@ -73,12 +74,12 @@ in {
         [server]
         ${
           lib.concatStringsSep "\n" (lib.mapAttrsToList
-          (server: serverConfig: ''
-            ${server}.address = "${serverConfig.address}"
-            ${server}.autoconnect = on
-            ${server}.username = "${serverConfig.user}"
-            ${server}.password = "${serverConfig.password}"
-          '') (pkgs.privateValue {} "weechat/matrix"))
+            (server: serverConfig: ''
+              ${server}.address = "${serverConfig.address}"
+              ${server}.autoconnect = on
+              ${server}.username = "${serverConfig.user}"
+              ${server}.password = "${serverConfig.password}"
+            '') (pkgs.privateValue {} "weechat/matrix"))
         }
       '';
     };

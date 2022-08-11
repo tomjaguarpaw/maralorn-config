@@ -29,8 +29,9 @@ in {
     };
     rspamd.locals = {
       "multimap.conf".text = let
-        allow-ip = builtins.toFile "allow-ip.map" ''
-        '';
+        allow-ip =
+          builtins.toFile "allow-ip.map" ''
+          '';
         allow-host = builtins.toFile "allow-host.map" ''
           gmx.de
           web.de

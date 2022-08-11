@@ -19,15 +19,16 @@
     resolvconf.dnsExtensionMechanism = false; # this breaks dnssec but is necessary for certain bad-behaved hotspots
     firewall.allowPing = true;
     useDHCP = false; # enabled per interface
-    hosts = lib.zipAttrs
-    (
-      lib.mapAttrsToList
-      (host: ip:
-        if builtins.typeOf ip == "set"
-        then {}
-        else {"${ip}" = "${host} ${host}.m-0.eu";})
-      config.m-0.hosts
-    );
+    hosts =
+      lib.zipAttrs
+      (
+        lib.mapAttrsToList
+        (host: ip:
+          if builtins.typeOf ip == "set"
+          then {}
+          else {"${ip}" = "${host} ${host}.m-0.eu";})
+        config.m-0.hosts
+      );
   };
 
   security.acme = {

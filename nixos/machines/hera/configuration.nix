@@ -64,9 +64,10 @@ in {
   systemd.services =
     {
       pg_backup = {
-        script = lib.concatMapStringsSep "\n"
-        (name: "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}")
-        config.services.postgresql.ensureDatabases;
+        script =
+          lib.concatMapStringsSep "\n"
+          (name: "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}")
+          config.services.postgresql.ensureDatabases;
         serviceConfig = {
           User = "postgres";
           Type = "oneshot";
@@ -95,10 +96,10 @@ in {
       };
     }
     // lib.listToAttrs (map (name: {
-      inherit name;
-      value = {serviceConfig.Type = "oneshot";};
-    })
-    backupJobNames);
+        inherit name;
+        value = {serviceConfig.Type = "oneshot";};
+      })
+      backupJobNames);
   services = {
     postgresql = {
       enable = true;

@@ -45,7 +45,7 @@ in {
       cert = "${key_dir}/fullchain.pem";
       static-auth-secret =
         (pkgs.privateValue {turn_shared_secret = "";}
-        "matrix/server-secrets")
+          "matrix/server-secrets")
         .turn_shared_secret;
       realm = fqdn;
       listening-ips = [config.m-0.hosts.hera config.m-0.hosts.hera-v4];

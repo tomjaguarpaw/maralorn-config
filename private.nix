@@ -6,11 +6,14 @@ let
   explicitUsePrivate = builtins.getEnv var == "true";
   explicitNotUsePrivate = builtins.getEnv var == "false";
   usePrivate = !explicitNotUsePrivate && (explicitUsePrivate || privateExists);
-  withSecrets = builtins.trace
-  (if usePrivate
-  then assert privateExists; "Building _with_ secrets!"
-  else "Building _without_ secrets!")
-  usePrivate;
+  withSecrets =
+    builtins.trace
+    (
+      if usePrivate
+      then assert privateExists; "Building _with_ secrets!"
+      else "Building _without_ secrets!"
+    )
+    usePrivate;
 in {
   inherit withSecrets;
   privatePath = name: let

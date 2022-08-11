@@ -5,39 +5,40 @@
   ...
 }: let
   gitoliteCfg = config.services.gitolite;
-  post-update = pkgs.writeHaskellScript
-  {
-    name = "post-update";
-    bins = [pkgs.git pkgs.laminar];
-    imports = [
-      "System.Directory (withCurrentDirectory)"
-    ];
-  } ''
-    checkout :: String -> IO FilePath
-    checkout path = do
-      (decodeUtf8 -> repoDir) <-  mktemp "-d" |> captureTrim
-      git "clone" path repoDir
-      pure repoDir
+  post-update =
+    pkgs.writeHaskellScript
+    {
+      name = "post-update";
+      bins = [pkgs.git pkgs.laminar];
+      imports = [
+        "System.Directory (withCurrentDirectory)"
+      ];
+    } ''
+      checkout :: String -> IO FilePath
+      checkout path = do
+        (decodeUtf8 -> repoDir) <-  mktemp "-d" |> captureTrim
+        git "clone" path repoDir
+        pure repoDir
 
-    main = do
-      jobMay <- lookupEnv "GL_OPTION_CI_JOB"
-      whenJust jobMay $ \job -> do
-        args <- toString . Text.intercalate " " . fmap toText <$> getArgs
-        setEnv "LAMINAR_REASON" [i|Build triggered by push to branch #{args}|]
-        jobName <- decodeUtf8 <$> (laminarc ["queue", job, [i|BRANCH=#{args}|]] |> captureTrim)
-        say [i|Queued job #{jobName}.\nSee https://ci.maralorn.de/jobs/#{Text.replace ":" "/" jobName}|]
-      mirrorMay <- lookupEnv "GL_OPTION_MIRROR"
-      whenJust mirrorMay $ \mirror -> do
-        say [i|Force pushing all branches to #{mirror}|]
-        git "push" "--all" "-f" mirror
-      deployMay <- lookupEnv "GL_OPTION_WEB_DEPLOY"
-      whenJust deployMay $ \deploy -> do
-        (maybe [] (\x -> ["-A", x]) -> target) <- lookupEnv "GL_OPTION_WEB_DEPLOY_NIX_TARGET"
-        (decodeUtf8 -> path) <- pwd |> captureTrim
-        say [i|Building default.nix #{show target} to /var/www/#{deploy}|]
-        bracket (checkout path) (rm "-rf") $ \repoDir -> withCurrentDirectory repoDir $ nix_build "-o" ([i|/var/www/#{deploy}|] :: String) target
-        say "Done"
-  '';
+      main = do
+        jobMay <- lookupEnv "GL_OPTION_CI_JOB"
+        whenJust jobMay $ \job -> do
+          args <- toString . Text.intercalate " " . fmap toText <$> getArgs
+          setEnv "LAMINAR_REASON" [i|Build triggered by push to branch #{args}|]
+          jobName <- decodeUtf8 <$> (laminarc ["queue", job, [i|BRANCH=#{args}|]] |> captureTrim)
+          say [i|Queued job #{jobName}.\nSee https://ci.maralorn.de/jobs/#{Text.replace ":" "/" jobName}|]
+        mirrorMay <- lookupEnv "GL_OPTION_MIRROR"
+        whenJust mirrorMay $ \mirror -> do
+          say [i|Force pushing all branches to #{mirror}|]
+          git "push" "--all" "-f" mirror
+        deployMay <- lookupEnv "GL_OPTION_WEB_DEPLOY"
+        whenJust deployMay $ \deploy -> do
+          (maybe [] (\x -> ["-A", x]) -> target) <- lookupEnv "GL_OPTION_WEB_DEPLOY_NIX_TARGET"
+          (decodeUtf8 -> path) <- pwd |> captureTrim
+          say [i|Building default.nix #{show target} to /var/www/#{deploy}|]
+          bracket (checkout path) (rm "-rf") $ \repoDir -> withCurrentDirectory repoDir $ nix_build "-o" ([i|/var/www/#{deploy}|] :: String) target
+          say "Done"
+    '';
   cgitrc = ''
     enable-git-config=1
     remove-suffix=1

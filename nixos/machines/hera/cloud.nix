@@ -5,12 +5,13 @@
   ...
 }:
 with lib; let
-  adminCreds = pkgs.privateValue
-  {
-    adminpass = "";
-    dbpass = "";
-    adminuser = "";
-  } "nextcloud-admin";
+  adminCreds =
+    pkgs.privateValue
+    {
+      adminpass = "";
+      dbpass = "";
+      adminuser = "";
+    } "nextcloud-admin";
   inherit (config.m-0) hosts;
   certPath = "/var/lib/acme";
   nextcloudServices = hostname: {
