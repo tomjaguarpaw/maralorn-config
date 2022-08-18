@@ -4,8 +4,12 @@
     enableAutosuggestions = true;
     enableCompletion = true;
     history = {
-      save = 1000000;
-      size = 1000000;
+      path = ".persist/.zsh_history";
+      extended = true;
+      ignoreDups = true;
+      share = true;
+      save = 10000000;
+      size = 10000000;
     };
     # Workaround for the limitation that gnome unsets some variables for following sessions (like EDITOR) but __HM_SESS_VARS_SOURCED apparently not.
     initExtraFirst = ''
@@ -15,6 +19,7 @@
       ${builtins.readFile ./zshrc}
       source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
       source ${./p10k.zsh}
+      set inc_append_history
     '';
     oh-my-zsh = {
       enable = true;

@@ -38,7 +38,7 @@ defaultMode: {
     "git"
     "media"
   ];
-  persistentStateFiles = [".chpwd-recent-dirs" ".zsh_history"];
+  persistentStateFiles = [".chpwd-recent-dirs"];
   volatileStateFiles = [];
   volatileStateDirs = [
     ".steam"
