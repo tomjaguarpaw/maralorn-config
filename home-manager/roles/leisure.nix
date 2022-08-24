@@ -52,8 +52,6 @@
 
         "https://www.youtube.com/feeds/videos.xml?channel_id=UC2PA-AKmVpU6NKCGtZq_rKQ" # Philosophy Tube
 
-        "https://www.youtube.com/feeds/videos.xml?channel_id=UCUyu6aCBNcyi9jsz_p1hHpA" # Living Philosophy
-
         "https://www.youtube.com/feeds/videos.xml?channel_id=UCwRH985XgMYXQ6NxXDo8npw" # Kurzgesagt
 
         "exec:${serien}"
