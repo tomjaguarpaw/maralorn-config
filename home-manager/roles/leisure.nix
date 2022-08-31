@@ -69,7 +69,7 @@
       feeds =
         [
           "http://packdeps.haskellers.com/feed/maralorn"
-          "https://repology.org/maintainer/malte.brandy%40maralorn.de/feed-for-repo/nix_unstable/atom"
+          "https://repology.org/maintainer/mail%40maralorn.de/feed-for-repo/nix_unstable/atom"
         ]
         # GitHub releases of things I need to manually update
         ++ map (name: "https://github.com/${name}/releases.atom") [
