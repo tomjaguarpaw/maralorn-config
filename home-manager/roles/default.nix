@@ -104,8 +104,8 @@
         ".hledger-web_client_session_key.aes"
         ".nix-gc-roots"
       ];
-      userEmail = "malte.brandy@maralorn.de";
-      userName = "Malte Brandy";
+      userEmail = "mail@maralorn.de";
+      userName = "maralorn";
     };
     htop = {
       enable = true;
@@ -154,7 +154,6 @@
     sessionVariables = {
       PATH = "$HOME/.nix-profile/bin:$PATH";
       BROWSER = "firefox";
-      EMAIL = "malte.brandy@maralorn.de";
       SUDO_ASKPASS = toString (
         pkgs.writeShellScript "print-sudo-pw"
         "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/${config.home.username}"

@@ -4,10 +4,18 @@
   pkgs,
   ...
 }: let
-  gpg = "6C3D12CD88CDF46C5EAF4D12226A2D41EF5378C9";
-  name = "Malte Brandy";
-  mail = "malte.brandy@maralorn.de";
-  alternates = pkgs.privateValue [] "mail/alternates";
+  inherit
+    (pkgs.privateValue {
+      gpg = "";
+      name = "";
+      mail = "";
+      alternates = [];
+    } "mail/me")
+    gpg
+    name
+    mail
+    alternates
+    ;
   quick-mail-sync = pkgs.writeShellScriptBin "quick-mail-sync" ''
     ${pkgs.isync}/bin/mbsync hera:INBOX,Code
     ${pkgs.notmuch}/bin/notmuch new
