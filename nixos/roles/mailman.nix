@@ -6,6 +6,8 @@
 }: let
   hostname = "lists.maralorn.de";
   lists = pkgs.privateValue {} "mail/lists";
+  me = pkgs.privateValue {mail = "";} "mail/me";
+  admin = me.mail;
 in {
   systemd.services.mailman.postStart = lib.concatStringsSep "\n" (
     map
