@@ -10,6 +10,7 @@ defaultMode: {
   persistentStateDirs = [
     ".aqbanking"
     ".calendars"
+    ".config/Whalebird"
     ".config/Element"
     ".config/Mumble"
     ".config/Signal"
