@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "fcac63448b13c6c8c95aabc1d45fd659e5197f87",
-        "sha256": "1prgfgyvvll0dylpn71b9cgzb4x9hjlj7dz1ks9q39zbf0ajfi5p",
+        "rev": "40c4791f9fda5ef77061e255b6182c9611808c45",
+        "sha256": "04g01rsg12slqbgfhd07njrgwq4nblgz37i883jp5lddskjh74lv",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/fcac63448b13c6c8c95aabc1d45fd659e5197f87.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/40c4791f9fda5ef77061e255b6182c9611808c45.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hexa-nur-packages": {
@@ -17,10 +17,10 @@
         "homepage": "",
         "owner": "mweinelt",
         "repo": "nur-packages",
-        "rev": "2a8588ebeae94b99e4962fc5d4f6d3ff45b9c814",
-        "sha256": "0drd8s3gizl75bwcnydm5lqqj1dfzq3rf7vl8fhrvqycds5vb9im",
+        "rev": "beb78600f521bb19cac1c4ae89ac023dfc7080c9",
+        "sha256": "0rz8hwc7x51l25khjr34kgr69yn4z8xn2kfdmcag0cr5fj2bgira",
         "type": "tarball",
-        "url": "https://github.com/mweinelt/nur-packages/archive/2a8588ebeae94b99e4962fc5d4f6d3ff45b9c814.tar.gz",
+        "url": "https://github.com/mweinelt/nur-packages/archive/beb78600f521bb19cac1c4ae89ac023dfc7080c9.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager-stable": {
@@ -73,10 +73,10 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "504b32caf83986b7e6b9c79c1c13008f83290f19",
-        "sha256": "0kbhd7w1wc9y9mpjym6b2f25cihi956l5vxx29vclr0pbd3g1h45",
+        "rev": "1fec8fda86dac5701146c77d5f8a414b14ed1ff6",
+        "sha256": "18z2v5id3sad22f4nk8yjpablk9c693nwl5vix2n06h6s3kfmr10",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/504b32caf83986b7e6b9c79c1c13008f83290f19.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/1fec8fda86dac5701146c77d5f8a414b14ed1ff6.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
