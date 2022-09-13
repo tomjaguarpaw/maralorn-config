@@ -432,48 +432,48 @@ in {
                 }
               ];
             }
-            {
-              alias = "Wohnzimmerlichter";
-              trigger = with triggers; [
-                (modeSwitchTrigger modes.wohnzimmer)
-                (stateTrigger "sun.sun")
-              ];
-              action = [
-                {
-                  service =
-                    jinja.if'
-                    (jinja.or
-                      (jinja.isStates (util.modeSelectEntity modes.wohnzimmer) ["force_active" "only_lights"])
-                      (jinja.and
-                        (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "active")
-                        "state_attr('sun.sun', 'elevation') < 6"))
-                    "homeassistant.turn_on"
-                    "homeassistant.turn_off";
-                  target.entity_id = "group.wohnzimmer_lights";
-                }
-              ];
-            }
-            {
-              alias = "Schlafzimmerlichter";
-              trigger = with triggers; [
-                (modeSwitchTrigger modes.schlafzimmer)
-                (stateTrigger "sun.sun")
-              ];
-              action = [
-                {
-                  service =
-                    jinja.if'
-                    (jinja.or
-                      (jinja.isStates (util.modeSelectEntity modes.schlafzimmer) ["force_active" "only_lights"])
-                      (jinja.and
-                        (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "active")
-                        "state_attr('sun.sun', 'elevation') < 6"))
-                    "homeassistant.turn_on"
-                    "homeassistant.turn_off";
-                  target.entity_id = "group.schlafzimmer_lights";
-                }
-              ];
-            }
+            # {
+            #   alias = "Wohnzimmerlichter";
+            #   trigger = with triggers; [
+            #     (modeSwitchTrigger modes.wohnzimmer)
+            #     (stateTrigger "sun.sun")
+            #   ];
+            #   action = [
+            #     {
+            #       service =
+            #         jinja.if'
+            #         (jinja.or
+            #           (jinja.isStates (util.modeSelectEntity modes.wohnzimmer) ["force_active" "only_lights"])
+            #           (jinja.and
+            #             (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "active")
+            #             "state_attr('sun.sun', 'elevation') < 6"))
+            #         "homeassistant.turn_on"
+            #         "homeassistant.turn_off";
+            #       target.entity_id = "group.wohnzimmer_lights";
+            #     }
+            #   ];
+            # }
+            # {
+            #   alias = "Schlafzimmerlichter";
+            #   trigger = with triggers; [
+            #     (modeSwitchTrigger modes.schlafzimmer)
+            #     (stateTrigger "sun.sun")
+            #   ];
+            #   action = [
+            #     {
+            #       service =
+            #         jinja.if'
+            #         (jinja.or
+            #           (jinja.isStates (util.modeSelectEntity modes.schlafzimmer) ["force_active" "only_lights"])
+            #           (jinja.and
+            #             (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "active")
+            #             "state_attr('sun.sun', 'elevation') < 6"))
+            #         "homeassistant.turn_on"
+            #         "homeassistant.turn_off";
+            #       target.entity_id = "group.schlafzimmer_lights";
+            #     }
+            #   ];
+            # }
             {
               alias = "Schlafzimmer vorheizen";
               trigger = [
