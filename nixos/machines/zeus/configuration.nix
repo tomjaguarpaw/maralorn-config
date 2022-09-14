@@ -148,6 +148,7 @@ in {
   programs = {
     seahorse.enable = lib.mkForce false;
     dconf.enable = true;
+    adb.enable = true;
   };
 
   security.rtkit.enable = true;
