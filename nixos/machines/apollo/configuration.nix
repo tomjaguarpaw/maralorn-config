@@ -123,7 +123,7 @@ in {
         cert = pkgs.privatePath "syncthing/apollo/cert.pem";
         key = pkgs.privatePath "syncthing/apollo/key.pem";
       }
-      // syncthing.declarativeWith ["hera" "zeus"] "/home/maralorn/media";
+      // syncthing.declarativeWith ["hera" "zeus" "pegasus"] "/home/maralorn/media";
     xserver = {
       enable = true;
       displayManager = {

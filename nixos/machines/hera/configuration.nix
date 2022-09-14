@@ -121,7 +121,7 @@ in {
         cert = pkgs.privatePath "syncthing/hera/cert.pem";
         key = pkgs.privatePath "syncthing/hera/key.pem";
       }
-      // syncthing.declarativeWith ["apollo" "zeus"] "/media";
+      // syncthing.declarativeWith ["apollo" "zeus" "pegasus"] "/media";
   };
   boot.kernel.sysctl = {"fs.inotify.max_user_watches" = 204800;};
   systemd.tmpfiles.rules = ["Z /media 0770 maralorn nginx - -"];

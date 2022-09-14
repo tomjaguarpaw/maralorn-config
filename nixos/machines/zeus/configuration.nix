@@ -188,7 +188,7 @@ in {
         openDefaultPorts = true;
         configDir = "/disk/persist/syncthing";
       }
-      // syncthing.declarativeWith ["hera" "apollo"] "/disk/persist/maralorn/media";
+      // syncthing.declarativeWith ["hera" "apollo" "pegasus"] "/disk/persist/maralorn/media";
     xserver = {
       enable = true;
       displayManager = {
