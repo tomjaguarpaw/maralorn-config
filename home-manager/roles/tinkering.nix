@@ -97,6 +97,7 @@
       "tabnine.experimentalAutoImports" = true;
       "haskell.formattingProvider" = "fourmolu";
       "haskell.updateBehavior" = "never-check";
+      "haskell.manageHLS" = "PATH";
     };
   };
 }
