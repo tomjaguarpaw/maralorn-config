@@ -110,6 +110,8 @@ in {
         video/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
         audio/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
       '';
+      # See: https://unix.stackexchange.com/questions/44358/mutt-mark-as-read-and-delete
+      move-message-macro = key: dir: name: ''macro index,pager ${key} ":set confirmappend=no resolve=no\n<clear-flag>N<save-message>=hera/${dir}\n:set confirmappend=yes resolve=yes\n<next-undeleted>" "move message to ${name}"'';
     in {
       ".neomuttrc".text = ''
         set editor = "vim"
@@ -119,10 +121,10 @@ in {
         unset wait_key
         color normal default default
 
-        macro index,pager a ":set confirmappend=no\n<save-message>=hera/Archiv/unsortiert\n:set confirmappend=yes\n" "move message to archive"
-        macro index,pager s ":set confirmappend=no\n<save-message>=hera/Junk\n:set confirmappend=yes\n" "move message to spam"
-        macro index,pager t ":set confirmappend=no\n<save-message>=hera/Move/todo\n:set confirmappend=yes\n" "move message to todo list"
-        macro index,pager l ":set confirmappend=no\n<save-message>=hera/Move/readlater\n:set confirmappend=yes\n" "move message to readlater list"
+        ${move-message-macro "a" "Archiv/unsortiert" "archive"}
+        ${move-message-macro "s" "Junk" "spam"}
+        ${move-message-macro "t" "Move/todo" "todo list"}
+        ${move-message-macro "l" "Move/readlater" "readlater list"}
         macro attach 'V' "<pipe-entry>iconv -c --to-code=UTF8 > ~/.cache/mutt/mail.html<enter><shell-escape>firefox ~/.cache/mutt/mail.html<enter>"
 
         macro index,pager <F6> "<shell-escape>${pkgs.zsh}/bin/zsh -c '${pkgs.sieve-connect}/bin/sieve-connect -s ${config.accounts.email.accounts.hera.imap.host or ""} -u ${config.accounts.email.accounts.hera.userName or ""} --passwordfd 3 --edit --remotesieve filter 3<<(pass eu/m-0/hera/mail.hera.m-0.eu/maralorn)'\n"
