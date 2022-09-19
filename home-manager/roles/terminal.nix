@@ -2,21 +2,24 @@
   my-lib = import ../../lib;
   theme = my-lib.themes.default;
 in {
-  home.sessionVariables.TERMINAL = "${pkgs.foot}/bin/foot";
+  home.sessionVariables.TERMINAL = "${pkgs.foot}/bin/footclient";
   home.packages = [
     (pkgs.runCommandLocal "fake-gnome-terminal" {} ''
       mkdir -p $out/bin
-      ln -s ${pkgs.foot}/bin/foot $out/bin/gnome-terminal
+      ln -s ${pkgs.foot}/bin/footclient $out/bin/gnome-terminal
     '')
   ];
   programs.foot = {
     enable = true;
+    server.enable = true;
     settings = {
       csd = {
-        preferred = "none";
+        preferred = "client";
+        size = "0";
+        border-width = "1";
+        color = "af0000aa";
       };
       main = {
-        term = "xterm-256color";
         font = "monospace:size=10.5";
         dpi-aware = "no";
         include = "${pkgs.foot.themes}/share/foot/themes/selenized-white";

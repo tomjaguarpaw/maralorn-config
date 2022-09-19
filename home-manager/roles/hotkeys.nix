@@ -17,7 +17,7 @@ in [
       Zotero = fork "zotero";
       Open = fork "evince ~/git/promotion/out/print.pdf";
       Build = "sh -c 'cd ~/git/promotion; flix develop -c flix run'";
-      Directory = fork "foot -d ~/git/promotion";
+      Directory = fork "footclient -d ~/git/promotion";
       Edit = "codium ~/git/promotion";
     };
   }
@@ -63,7 +63,7 @@ in [
       Editor = fork "codium";
       Config = "codium ~/git/config";
       Files = fork "nautilus";
-      DarkTerminal = fork "foot -o 'color.background=000000' -o 'foreground=ffffff'";
+      DarkTerminal = fork "footclient -o 'color.background=000000' -o 'foreground=ffffff'";
       Accounting = {
         Update = "nix run ./git/buchhaltung#update";
         Display = "hledger -f ~/git/buchhaltung/buchhaltung.journal ui -- --watch --theme=terminal -X€ -t -E";
