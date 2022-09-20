@@ -27,42 +27,46 @@ in {
         user = "postfix";
       };
     };
-    rspamd.locals = {
-      "multimap.conf".text = let
-        allow-ip =
-          builtins.toFile "allow-ip.map" ''
+    rspamd = {
+      workers = {
+        controller = {
+          includes = ["$CONFDIR/worker-controller.inc"];
+          bindSockets = ["[fdc0:7::1]:11334"];
+        };
+        normal = {};
+      };
+      locals = {
+        "multimap.conf".text = let
+          allow-ip =
+            builtins.toFile "allow-ip.map" ''
+            '';
+          allow-host = builtins.toFile "allow-host.map" ''
+            ccc.de
+            discourse.cloud
+            haskell.org
+            github.com
+            vocalensemble-darmstadt.de
+            sit-mainz.info # Bistum Mainz
           '';
-        allow-host = builtins.toFile "allow-host.map" ''
-          gmx.de
-          web.de
-          google.com
-          meteosafe.com # Wetterwarnungen
-          # tu-darmstadt.de # Not safe because of spam via cda
-          ccc.de
-          discourse.cloud
-          haskell.org
-          github.com
-          vocalensemble-darmstadt.de
-          sit-mainz.info # Bistum Mainz
+        in ''
+          # local.d/multimap.conf
+          # allow lists
+          LOCAL_AL_IP {
+            type = "ip"; # matches IP of the host that performed message handoff (against radix map)
+            map = "${allow-ip}";
+            group = "local_al_ip";
+            score = -15;
+            description = "Submitting IP listed in local allow list";
+          }
+          LOCAL_AL_HOST {
+            type = "hostname"; # matches reverse DNS name of the host that performed message handoff
+            filter = "tld" ; # matches eSLD (effective second level domain - a second-level domain or something that’s effectively so like example.com or example.za.org)
+            score = -15;
+            map = "${allow-host}";
+            description = "Submitting host RDNS listed in local allow list";
+          }
         '';
-      in ''
-        # local.d/multimap.conf
-        # allow lists
-        LOCAL_AL_IP {
-          type = "ip"; # matches IP of the host that performed message handoff (against radix map)
-          map = "${allow-ip}";
-          group = "local_al_ip";
-          score = -15;
-          description = "Submitting IP listed in local allow list";
-        }
-        LOCAL_AL_HOST {
-          type = "hostname"; # matches reverse DNS name of the host that performed message handoff
-          filter = "tld" ; # matches eSLD (effective second level domain - a second-level domain or something that’s effectively so like example.com or example.za.org)
-          score = -15;
-          map = "${allow-host}";
-          description = "Submitting host RDNS listed in local allow list";
-        }
-      '';
+      };
     };
     postfix = {
       networks = ["[::1]/128" "127.0.0.1/32" "[${config.m-0.prefix}::]/64" "[${hosts.vpn.prefix}::]/64" "10.0.0.0/24"];
