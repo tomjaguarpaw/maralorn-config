@@ -30,8 +30,10 @@ in {
     rspamd = {
       workers = {
         controller = {
-          includes = ["$CONFDIR/worker-controller.inc"];
           bindSockets = ["[fdc0:7::1]:11334"];
+          extraConfig = ''
+            secure_ip = "fdc0:7::/64 ::1 127.0.0.1";
+          '';
         };
         normal = {};
       };
@@ -45,7 +47,6 @@ in {
             discourse.cloud
             haskell.org
             github.com
-            vocalensemble-darmstadt.de
             sit-mainz.info # Bistum Mainz
           '';
         in ''
