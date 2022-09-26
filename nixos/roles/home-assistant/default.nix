@@ -406,7 +406,7 @@ in {
                 {
                   service = "input_number.set_value";
                   target.entity_id = "input_number.target_temperature_kueche";
-                  data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.kueche) "empty") "18" "20.5";
+                  data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.kueche) "empty") "18" "18";
                 }
               ];
             }
@@ -417,7 +417,7 @@ in {
                 {
                   service = "input_number.set_value";
                   target.entity_id = "input_number.target_temperature_wohnzimmer";
-                  data.value = jinja.if' (jinja.isStates (util.modeSelectEntity modes.wohnzimmer) ["empty" "only_lights"]) "18" "23";
+                  data.value = jinja.if' (jinja.isStates (util.modeSelectEntity modes.wohnzimmer) ["empty" "only_lights"]) "18" "18";
                 }
               ];
             }
@@ -428,7 +428,7 @@ in {
                 {
                   service = "input_number.set_value";
                   target.entity_id = "input_number.target_temperature_schlafzimmer";
-                  data.value = jinja.if' (jinja.isStates (util.modeSelectEntity modes.schlafzimmer) ["empty" "only_lights"]) "18" "20.5";
+                  data.value = jinja.if' (jinja.isStates (util.modeSelectEntity modes.schlafzimmer) ["empty" "only_lights"]) "18" "18";
                 }
               ];
             }
