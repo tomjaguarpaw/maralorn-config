@@ -56,13 +56,13 @@ in {
             type = "ip"; # matches IP of the host that performed message handoff (against radix map)
             map = "${allow-ip}";
             group = "local_al_ip";
-            score = -15;
+            score = -4;
             description = "Submitting IP listed in local allow list";
           }
           LOCAL_AL_HOST {
             type = "hostname"; # matches reverse DNS name of the host that performed message handoff
             filter = "tld" ; # matches eSLD (effective second level domain - a second-level domain or something that’s effectively so like example.com or example.za.org)
-            score = -15;
+            score = -4;
             map = "${allow-host}";
             description = "Submitting host RDNS listed in local allow list";
           }
