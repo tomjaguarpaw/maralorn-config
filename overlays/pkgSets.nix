@@ -104,6 +104,7 @@ self: super: {
       paprefs
       wl-clipboard
       dconf2nix
+      chrysalis
       ;
     inherit
       (self.gnomeExtensions)
