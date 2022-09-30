@@ -20,7 +20,6 @@ in {
     ../../roles/blog.nix
     ../../roles/email2matrix.nix
     ../../roles/matrix-synapse
-    ../../roles/matrix-signal
     ../../roles/coturn.nix
     ../../roles/go-neb.nix
     ../../roles/laminar
