@@ -41,8 +41,8 @@ function title {
 setopt prompt_subst
 autoload -U colors && colors # Enable colors in prompt
 
-alias nom-build-remote="nom-build --builders '@/etc/nix/machines'"
-alias nix-build-remote="nix-build --builders '@/etc/nix/machines'"
+alias nom-build-remote="nom build --builders '@/etc/nix/machines'"
+alias nix-build-remote="nix build --builders '@/etc/nix/machines'"
 alias nixpkgs-review-pr-remote='nixpkgs-review pr --build-args "--builders @/etc/nix/machines"'
 alias nixpkgs-review-rev-remote='nixpkgs-review rev --build-args "--builders @/etc/nix/machines"'
 alias accounting='f() { if [[ "$1" == "" ]]; then year="buchhaltung" else year="$1" fi; hledger -f ~/git/buchhaltung/$year.journal ui -- --watch --theme=terminal -X€ -t -E}; f'
