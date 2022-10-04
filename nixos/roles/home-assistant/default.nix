@@ -847,8 +847,11 @@ in {
               ];
             }
             {
-              type = "entity";
-              entity = "input_number.target_temperature_wohnzimmer";
+              type = "entities";
+              entities = [
+                "input_number.target_temperature_wohnzimmer"
+                "group.wohnzimmer_lights"
+              ];
             }
             {
               type = "logbook";
@@ -965,8 +968,8 @@ in {
               ];
             }
             {
-              type = "entity";
-              entity = "input_number.target_temperature_kueche";
+              type = "entities";
+              entities = ["input_number.target_temperature_kueche"];
             }
             {
               type = "logbook";
@@ -1093,8 +1096,11 @@ in {
               ];
             }
             {
-              type = "entity";
-              entity = "input_number.target_temperature_schlafzimmer";
+              type = "entities";
+              entities = [
+                "input_number.target_temperature_schlafzimmer"
+                "group.schlafzimmer_lights"
+              ];
             }
             {
               type = "logbook";
@@ -1284,11 +1290,11 @@ in {
             inherit badges;
             cards = [badstack];
           }
-          {
-            icon = "mdi:door-closed";
-            inherit badges;
-            cards = [flurstack];
-          }
+          #{
+          #  icon = "mdi:door-closed";
+          #  inherit badges;
+          #  cards = [flurstack];
+          #}
           {
             icon = "mdi:city";
             inherit badges;
