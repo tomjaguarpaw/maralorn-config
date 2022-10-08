@@ -28,10 +28,11 @@ in {
       enablePostfix = true;
       siteOwner = admin;
       webSettings = {
-        #Try this option again with django_mailman3 1.3.6 on nixos-21.11
-        #ACCOUNT_ADAPTER = "django_mailman3.views.user_adapter.DisableSignupAdapter";
+        ACCOUNT_ADAPTER = "django_mailman3.views.user_adapter.DisableSignupAdapter";
       };
-      hyperkitty.enable = false;
+      hyperkitty.enable = true; # Annoyingly mailman crashes when it can‘t find
+      # a hyperkitty. This is stupid, but I have no patience to find a fix for
+      # this.
       settings = {
         mailman.default_language = "de";
         "paths.fhs".template_dir =
