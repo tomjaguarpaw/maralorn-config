@@ -8,29 +8,26 @@
     fontconfig = {
       enable = true;
       cache32Bit = true;
-      defaultFonts = {
-        monospace = ["JetBrainsMono Nerd Font" "DejaVu Sans Mono"];
-        sansSerif = ["B612" "DejaVu Sans"];
-        serif = ["Libertinus" "DejaVu Serif"];
+      defaultFonts = let
+        unicode-fallback = ["Noto Sans Symbols" "Noto Sans Symbols2"];
+      in {
+        monospace = ["JetBrainsMono Nerd Font" "Noto Sans Mono"] ++ unicode-fallback;
+        sansSerif = ["B612" "Noto Sans"] ++ unicode-fallback;
+        serif = ["Libertinus Serif" "Noto Serif"] ++ unicode-fallback;
       };
     };
-    enableDefaultFonts = true;
-    #fontDir.enable = true;
     fonts = builtins.attrValues {
       inherit
         (pkgs)
-        # For all my terminal needs.
+        nerdfonts # For all my terminal needs.
         
-        nerdfonts
-        # nice text font
+        libertinus # nice text font
         
-        libertinus
-        # icons in my app
+        material-icons # icons in my app
         
-        material-icons
-        # sans font, very good for displays
+        b612 # sans font, very good for displays
         
-        b612
+        noto-fonts # for unicode fallback
         ;
     };
   };
