@@ -73,9 +73,8 @@
         ]
         # GitHub releases of things I need to manually update
         ++ map (name: "https://github.com/${name}/releases.atom") [
-          "5etools-mirror-1/5etools-mirror-1.github.io"
           "devture/email2matrix"
-          "unisonweb/unison"
+          "keyboardio/Chrysalis"
         ];
     };
   };
