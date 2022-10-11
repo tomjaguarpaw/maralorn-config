@@ -22,12 +22,6 @@ in [
     };
   }
   {
-    Passmenu = {
-      Password = "pass-fzf";
-      OTP = "pass-fzf otp";
-    };
-  }
-  {
     Power = {
       Shutdown = "systemctl poweroff";
       Suspend = "systemctl suspend";
@@ -92,6 +86,12 @@ in [
       News = "news";
       Deluge = fork "deluge";
       VoxMachina = "mpv https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_";
+    };
+  }
+  {
+    Passmenu = {
+      Password = "pass-fzf";
+      OTP = "pass-fzf otp";
     };
   }
   {"Select Mode" = "select-mode";}
