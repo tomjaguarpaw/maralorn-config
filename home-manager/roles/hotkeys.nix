@@ -22,6 +22,12 @@ in [
     };
   }
   {
+    Passmenu = {
+      Password = "pass-fzf";
+      OTP = "pass-fzf otp";
+    };
+  }
+  {
     Power = {
       Shutdown = "systemctl poweroff";
       Suspend = "systemctl suspend";
@@ -88,7 +94,6 @@ in [
       VoxMachina = "mpv https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_";
     };
   }
-  {Passmenu = "pass clip -f";}
   {"Select Mode" = "select-mode";}
   {
     Communication = [

@@ -158,6 +158,7 @@ self: super: {
       gh
       ;
     obelisk = (import self.sources.obelisk {}).command;
+    pass-fzf = self.writeShellScriptBin "pass-fzf" (builtins.readFile ./pass-fzf.sh);
   };
   accounting-pkgs = {
     inherit (self.haskellPackages) hledger hledger-ui hledger-web;

@@ -63,7 +63,7 @@
       '';
     };
     password-store = {
-      package = pkgs.pass-wayland.withExtensions (exts: [exts.pass-update pkgs.pass-clip exts.pass-otp]);
+      package = pkgs.pass-wayland.withExtensions (exts: [exts.pass-update exts.pass-otp]);
       enable = true;
       settings.PASSWORD_STORE_DIR = "${config.home.homeDirectory}/git/password-store";
     };
