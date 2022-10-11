@@ -52,7 +52,7 @@
     "nix-output-monitor": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "907ed5e468b19eeb49e4862aa8825fb4593d6c0a",
+        "rev": "9ef66a94d95ea08744e08be25bbef3184bb2d798",
         "type": "git"
     },
     "nixos-19.09": {
@@ -127,10 +127,10 @@
         "homepage": "",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "2e4a708918e14fdbd534cc94aaa9470cd19b2464",
-        "sha256": "1k5rlrpvvyf65vzplh4haf0gs8ykpz5bcrilcdkvwqcd858zq838",
+        "rev": "11aff801aa0ea1fb02ae43e61f7cdf610f5fe2e5",
+        "sha256": "0m4gmpafgyhasfzqanipy8gz6gmwc1m67dwak55cqn69y20pjicj",
         "type": "tarball",
-        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/2e4a708918e14fdbd534cc94aaa9470cd19b2464.tar.gz",
+        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/11aff801aa0ea1fb02ae43e61f7cdf610f5fe2e5.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "taskwarrior-git-backend": {
