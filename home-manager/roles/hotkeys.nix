@@ -9,7 +9,7 @@ in [
       {Tasks = "tasksh";}
       {Meditate = "meditate";}
       {Pythia = "pythia";}
-      {Notes = "codium ~/git/notes";}
+      {Notes = "vim ~/git/notes";}
     ];
   }
   {
@@ -18,7 +18,7 @@ in [
       Open = fork "evince ~/git/promotion/out/print.pdf";
       Build = "sh -c 'cd ~/git/promotion; flix develop -c flix run'";
       Directory = fork "footclient -d ~/git/promotion";
-      Edit = "codium ~/git/promotion";
+      Edit = "vim ~/git/promotion";
     };
   }
   {
@@ -61,7 +61,7 @@ in [
   {
     Apps = {
       Editor = fork "codium";
-      Config = "codium ~/git/config";
+      Config = "vim ~/git/config";
       Files = fork "nautilus";
       DarkTerminal = fork "footclient -o 'color.background=000000' -o 'foreground=ffffff'";
       Accounting = {
