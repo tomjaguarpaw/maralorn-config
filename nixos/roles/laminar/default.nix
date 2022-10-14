@@ -71,6 +71,7 @@ in {
         ExecStart = "${pkgs.laminar}/bin/laminard";
         User = "laminar";
         StateDirectory = "laminar";
+        Restart = "always";
         LimitNOFILE = "1024000";
       };
       after = ["network.target"];

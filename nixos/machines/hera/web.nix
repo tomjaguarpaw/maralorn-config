@@ -53,4 +53,5 @@ in {
         // pkgs.privateValue {} "extra-sites";
     };
   };
+  systemd.services.nginx.serviceConfig.Restart = "always";
 }
