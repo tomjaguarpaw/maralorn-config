@@ -40,7 +40,6 @@ rec {
         password
         optics
         shh-extras
-        neuron
         hmatrix
         postgresql-simple
         nix-derivation
