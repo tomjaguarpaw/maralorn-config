@@ -53,8 +53,14 @@ in [
       "Lautstärke" = "ncpamixer";
       Pavucontrol = fork "pavucontrol";
       Headset = {
-        connect = "bluetoothctl connect 00:00:AB:BD:7D:68";
-        disconnect = "bluetoothctl disconnect 00:00:AB:BD:7D:68";
+        Earplugs = {
+          connect = "bluetoothctl connect 00:00:AB:BD:7D:68";
+          disconnect = "bluetoothctl disconnect 00:00:AB:BD:7D:68";
+        };
+        Overears = {
+          connect = "bluetoothctl connect E8:EE:CC:25:66:C3";
+          disconnect = "bluetoothctl disconnect E8:EE:CC:25:66:C3";
+        };
       };
     };
   }
