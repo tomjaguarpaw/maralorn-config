@@ -32,6 +32,10 @@ in {
   ];
   systemd.services.lenovo_fix.path = [pkgs.kmod];
 
+  environment.systemPackages = [
+    pkgs.networkmanagerapplet # For when the gnome dialog sucks in asking for a wifi password.
+  ];
+
   networking = {
     hostName = "apollo";
     domain = "m-0.eu";
@@ -74,15 +78,8 @@ in {
 
   security.rtkit.enable = true;
   services = {
-    #teamviewer.enable = true;
     pipewire = {
       enable = lib.mkForce false;
-      #alsa = {
-      #enable = true;
-      #support32Bit = true;
-      #};
-      #pulse.enable = true;
-      #media-session.enable = true;
     };
     fwupd.enable = true;
     upower.enable = true;
@@ -149,22 +146,6 @@ in {
   console.keyMap = "neo";
 
   sound.enable = true;
-  #hardware = {
-  #opengl = {
-  #enable = true;
-  #driSupport32Bit = true; # for gw2
-  #};
-  #pulseaudio = {
-  #enable = true;
-  #support32Bit = true;
-  #tcp = {
-  #enable = true;
-  #anonymousClients.allowedIpRanges = [ "127.0.0.1" "::1" "192.168.178.0/24" ];
-  #};
-  #};
-  #};
-
-  # virtualisation.docker.enable = true;
 
   system.stateVersion = "19.09";
 }
