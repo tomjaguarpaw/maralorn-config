@@ -176,7 +176,7 @@ in {
                             {
                               condition = "numeric_state";
                               entity_id = "sensor.schlafzimmer_humidity";
-                              below = 70;
+                              below = 74;
                             }
                             {
                               condition = "state";
