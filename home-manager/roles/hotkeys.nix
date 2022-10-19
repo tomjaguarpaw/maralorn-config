@@ -1,5 +1,6 @@
 {pkgs, ...}: let
   fork = cmd: "fork ${cmd}";
+  edit_dir = dir: "sh -c 'cd ${dir}; vim ${dir}'";
 in [
   {
     Orga = [
@@ -9,7 +10,7 @@ in [
       {Tasks = "tasksh";}
       {Meditate = "meditate";}
       {Pythia = "pythia";}
-      {Notes = "vim ~/git/notes";}
+      {Notes = edit_dir "~/git/notes";}
     ];
   }
   {
@@ -18,7 +19,7 @@ in [
       Open = fork "evince ~/git/promotion/out/print.pdf";
       Build = "sh -c 'cd ~/git/promotion; flix develop -c flix run'";
       Directory = fork "footclient -d ~/git/promotion";
-      Edit = "vim ~/git/promotion";
+      Edit = edit_dir "~/git/promotion";
     };
   }
   {
@@ -67,7 +68,7 @@ in [
   {
     Apps = {
       Editor = fork "codium";
-      Config = "vim ~/git/config";
+      Config = edit_dir "~/git/config";
       Files = fork "nautilus";
       DarkTerminal = fork "footclient -o 'color.background=000000' -o 'foreground=ffffff'";
       Accounting = {

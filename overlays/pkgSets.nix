@@ -115,6 +115,9 @@ self: super: {
       window-is-ready-remover
       nothing-to-say
       notification-banner-position
+      windownavigator
+      user-themes
+      removable-drive-menu
       gtile
       caffeine
       dash-to-panel
@@ -130,7 +133,6 @@ self: super: {
       (self.gnome)
       dconf-editor
       gnome-tweaks
-      gnome-shell-extensions
       adwaita-icon-theme
       gnome-session
       ;
