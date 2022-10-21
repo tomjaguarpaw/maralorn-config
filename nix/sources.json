@@ -91,10 +91,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "47edaa313fc3767ce3026037a5b62352f22f3602",
-        "sha256": "020bgh1nac5yi2qqaq8avcyhya78w4hjaz9a5g6rwkmwiqhj9cbv",
+        "rev": "44fc3cb097324c9f9f93313dd3f103e78d722968",
+        "sha256": "0hxzigajiqjwxbk9bcbvgxq28drq1k2hgmzihs0c441i1wsbqchb",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/47edaa313fc3767ce3026037a5b62352f22f3602.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/44fc3cb097324c9f9f93313dd3f103e78d722968.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-unstable": {
@@ -103,10 +103,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "104e8082de1b20f9d0e1f05b1028795ed0e0e4bc",
-        "sha256": "1y7j4bgk6wcipy9vmfmdgy8pv1wp3mq76sdjc4yib7xdn0bvgxvh",
+        "rev": "db25c4da285c5989b39e4ce13dea651a88b7a9d4",
+        "sha256": "03dfnz5gzn8wi65h9pm61cidksrfprgkyyrflrvciqsvq07xcfjm",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/104e8082de1b20f9d0e1f05b1028795ed0e0e4bc.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/db25c4da285c5989b39e4ce13dea651a88b7a9d4.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
@@ -127,10 +127,10 @@
         "homepage": "",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "94b0f300dd9a23d4e851aa2a947a1511d3410e2d",
-        "sha256": "1mm9c71smmd3khz6rhd0gdljh2w4ga6kzhbdyd7vm36lingp7ks1",
+        "rev": "e6c8efee1c108bb27522b9fd25b1cd0eb3288681",
+        "sha256": "0kj05b4kbhi0vkgw73vk2ikblhw6yxdhpxv99cr3acv8mbxjxd7i",
         "type": "tarball",
-        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/94b0f300dd9a23d4e851aa2a947a1511d3410e2d.tar.gz",
+        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/e6c8efee1c108bb27522b9fd25b1cd0eb3288681.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "taskwarrior-git-backend": {
