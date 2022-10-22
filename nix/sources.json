@@ -52,7 +52,7 @@
     "nix-output-monitor": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "bdcb25b903491eb74eced3ba08623a0a92e5b1d8",
+        "rev": "c64c189db4c7473173ea369c4423f847308d733b",
         "type": "git"
     },
     "nixos-19.09": {
@@ -91,10 +91,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "44fc3cb097324c9f9f93313dd3f103e78d722968",
-        "sha256": "0hxzigajiqjwxbk9bcbvgxq28drq1k2hgmzihs0c441i1wsbqchb",
+        "rev": "ac20a8605b0f79be2d65d995cd347251cd5b984b",
+        "sha256": "184asc3j4vg0qys10yqlla5h05wfb3jm062lwzsrlnjw2yq7nll3",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/44fc3cb097324c9f9f93313dd3f103e78d722968.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/ac20a8605b0f79be2d65d995cd347251cd5b984b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-unstable": {
@@ -103,10 +103,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "db25c4da285c5989b39e4ce13dea651a88b7a9d4",
-        "sha256": "03dfnz5gzn8wi65h9pm61cidksrfprgkyyrflrvciqsvq07xcfjm",
+        "rev": "b7d8c687782c8f9a1d425a7e486eb989654f6468",
+        "sha256": "1yzb7y13f52wxw1s888jhw5xwzbyq4rrlkpp5n1v4i60c8fgcm1v",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/db25c4da285c5989b39e4ce13dea651a88b7a9d4.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/b7d8c687782c8f9a1d425a7e486eb989654f6468.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "obelisk": {
