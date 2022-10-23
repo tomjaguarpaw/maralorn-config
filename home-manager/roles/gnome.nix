@@ -12,7 +12,6 @@
       clipboard-indicator
       window-is-ready-remover
       nothing-to-say
-      notification-banner-position
       windownavigator
       user-themes
       removable-drive-menu
