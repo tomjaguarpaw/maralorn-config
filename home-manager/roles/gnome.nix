@@ -4,8 +4,27 @@
   ...
 } @ args: let
   hotkeys = import ./hotkeys.nix args;
+  extensions = builtins.attrValues {
+    inherit
+      (pkgs.gnomeExtensions)
+      appindicator
+      system-monitor
+      clipboard-indicator
+      window-is-ready-remover
+      nothing-to-say
+      notification-banner-position
+      windownavigator
+      user-themes
+      removable-drive-menu
+      executor
+      focus-changer
+      gtile
+      caffeine
+      ;
+  };
   inherit (lib.hm.gvariant) mkTuple;
 in {
+  home.packages = extensions;
   services.gpg-agent.pinentryFlavor = "gnome3";
   dconf.settings = {
     "org/gnome/desktop/wm/keybindings" = {
@@ -97,19 +116,8 @@ in {
     "org/gnome/shell" = {
       disable-extension-version-validation = true;
       disable-user-extensions = false;
-      enabled-extensions = [
-        "gTile@vibou"
-        "clipboard-indicator@tudmotu.com"
-        "appindicatorsupport@rgcjonas.gmail.com"
-        "nothing-to-say@extensions.gnome.wouter.bolsterl.ee"
-        "drive-menu@gnome-shell-extensions.gcampax.github.com"
-        "user-theme@gnome-shell-extensions.gcampax.github.com"
-        "caffeine@patapon.info"
-        "system-monitor@paradoxxx.zero.gmail.com"
-        "windowsNavigator@gnome-shell-extensions.gcampax.github.com"
-        "executor@raujonas.github.io"
-      ];
-      welcome-dialog-last-shown-version = "40.1";
+      enabled-extensions = map (x: x.extensionUuid) extensions;
+      welcome-dialog-last-shown-version = pkgs.gnome.gnome-shell.version;
     };
 
     "org/gnome/shell/extensions/user-theme" = {

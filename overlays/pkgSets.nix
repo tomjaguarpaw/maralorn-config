@@ -106,20 +106,6 @@ self: super: {
       dconf2nix
       chrysalis
       ;
-    inherit
-      (self.gnomeExtensions)
-      appindicator
-      system-monitor
-      clipboard-indicator
-      window-is-ready-remover
-      nothing-to-say
-      notification-banner-position
-      windownavigator
-      user-themes
-      removable-drive-menu
-      gtile
-      caffeine
-      ;
     executor = self.gnomeExtensions.executor.overrideAttrs (old: {
       postInstall =
         (old.postInstall or "")
