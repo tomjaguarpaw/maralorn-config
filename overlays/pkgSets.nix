@@ -34,6 +34,7 @@ self: super: {
     inherit
       (self)
       htop
+      helix
       btop
       tree
       pwgen
