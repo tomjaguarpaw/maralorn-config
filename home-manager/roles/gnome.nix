@@ -86,11 +86,11 @@ in {
     };
 
     "org/gnome/shell/extensions/executor" = {
-      center-active = true;
-      center-commands-json = ''{"commands":[{"command":"cat /run/user/1000/status-bar","interval":1,"uuid":"d20a15a4-aea9-48e1-955f-4bd9f55b08bc"}]}'';
-      center-index = 0;
-      left-active = false;
       location = 1;
+      left-active = true;
+      left-commands-json = ''{"commands":[{"command":"cat /run/user/1000/status-bar","interval":1,"uuid":"d20a15a4-aea9-48e1-955f-4bd9f55b08bc"}]}'';
+      left-index = 0;
+      center-active = false;
       right-active = false;
     };
 
@@ -105,36 +105,11 @@ in {
         "drive-menu@gnome-shell-extensions.gcampax.github.com"
         "user-theme@gnome-shell-extensions.gcampax.github.com"
         "caffeine@patapon.info"
-        "dash-to-panel@jderose9.github.com"
         "system-monitor@paradoxxx.zero.gmail.com"
         "windowsNavigator@gnome-shell-extensions.gcampax.github.com"
         "executor@raujonas.github.io"
       ];
       welcome-dialog-last-shown-version = "40.1";
-    };
-
-    "org/gnome/shell/extensions/dash-to-panel" = {
-      animate-app-switch = false;
-      animate-window-launch = false;
-      appicon-margin = 0;
-      appicon-padding = 4;
-      group-apps = false;
-      isolate-monitors = false;
-      isolate-workspaces = true;
-      leftbox-padding = -1;
-      overview-click-to-exit = false;
-      panel-element-positions = ''{"0":[{"element":"showAppsButton","visible":false,"position":"stackedTL"},{"element":"taskbar","visible":false,"position":"stackedTL"},{"element":"dateMenu","visible":true,"position":"stackedTL"},{"element":"leftBox","visible":true,"position":"stackedTL"},{"element":"activitiesButton","visible":false,"position":"stackedTL"},{"element":"centerBox","visible":true,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"},{"element":"desktopButton","visible":false,"position":"stackedBR"}]," 0 ":[{" element ":" showAppsButton "," visible ":false," position ":" stackedTL "},{" element ":" activitiesButton "," visible ":false," position ":" stackedTL "},{" element ":" dateMenu "," visible ":true," position ":" stackedTL "},{" element ":" leftBox "," visible ":true," position ":" stackedTL "},{" element ":" taskbar "," visible ":true," position ":" stackedTL "},{" element ":" rightBox "," visible ":true," position ":" stackedBR "},{" element ":" centerBox "," visible ":true," position ":" stackedTL "},{" element ":" systemMenu "," visible ":true," position ":" stackedBR "},{" element ":" desktopButton "," visible ":true," position ":" stackedBR "}]}'';
-      panel-positions = ''{"0":"TOP"}'';
-      panel-sizes = ''{"0":32}'';
-      show-appmenu = false;
-      show-favorites = false;
-      show-running-apps = true;
-      status-icon-padding = -1;
-      tray-padding = -1;
-      trans-panel-opacity = 0.0;
-      tray-size = 12;
-      leftbox-size = 12;
-      trans-use-custom-opacity = true;
     };
 
     "org/gnome/shell/extensions/user-theme" = {

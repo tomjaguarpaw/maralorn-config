@@ -111,7 +111,6 @@ self: super: {
       appindicator
       system-monitor
       clipboard-indicator
-      emoji-selector
       window-is-ready-remover
       nothing-to-say
       notification-banner-position
@@ -120,7 +119,6 @@ self: super: {
       removable-drive-menu
       gtile
       caffeine
-      dash-to-panel
       ;
     executor = self.gnomeExtensions.executor.overrideAttrs (old: {
       postInstall =
