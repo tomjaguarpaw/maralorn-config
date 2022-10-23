@@ -16,8 +16,9 @@
       windownavigator
       user-themes
       removable-drive-menu
+      highlight-focus
+      mouse-follows-focus
       executor
-      focus-changer
       gtile
       caffeine
       ;
@@ -34,6 +35,7 @@ in {
       switch-applications-backward = [];
       cycle-windows = ["<Super>Tab"];
       cycle-windows-backward = ["<Shift><Super>Tab"];
+      close = ["<Super>q"];
     };
 
     "org/gnome/settings-daemon/plugins/color" = {
@@ -45,10 +47,6 @@ in {
     "org/gnome/settings-daemon/plugins/power" = {
       sleep-inactive-ac-timeout = 900;
       sleep-inactive-ac-type = "suspend";
-    };
-
-    "org/gnome/desktop/wm/keybindings" = {
-      close = ["<Super>q"];
     };
 
     "org/gnome/shell/extensions/gtile" = let
@@ -101,6 +99,7 @@ in {
     };
 
     "org/gnome/desktop/wm/preferences" = {
+      focus-mode = "sloppy";
       titlebar-font = "B612 9";
     };
 

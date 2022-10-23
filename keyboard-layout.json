@@ -119,10 +119,11 @@
       {"code": 25, "label": {"base": "v", "shifted": "V"}},
       {"code": 5, "label": {"base": "b", "shifted": "B"}},
       {
-        "code": 230,
-        "label": {"base": {"full": "AltGr", "1u": "AGr"}},
-        "location": "right",
-        "categories": ["modifier"]
+        "code": 17453,
+        "label": {"hint": "ShiftTo", "base": "#3"},
+        "target": 3,
+        "rangeStart": 17450,
+        "categories": ["layer", "shifttolayer"]
       },
       {"code": 41, "label": {"base": "Esc"}},
       {"code": 43, "label": {"base": "Tab"}},
@@ -700,9 +701,12 @@
         "categories": ["blanks"]
       },
       {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
+        "code": 20546,
+        "label": {
+          "hint": {"full": "Mouse Button", "1u": "M.Btn"},
+          "base": "Right"
+        },
+        "categories": ["mousekeys"]
       },
       {
         "code": 65535,
@@ -750,9 +754,123 @@
         "categories": ["blanks"]
       },
       {
+        "code": 20517,
+        "label": {
+          "hint": {"full": "Mouse Warp", "1u": "Warp"},
+          "base": {"full": "North-West", "1u": "NW"}
+        },
+        "categories": ["mousekeys"]
+      },
+      {
+        "code": 20513,
+        "label": {
+          "hint": {"full": "Mouse Warp", "1u": "Warp"},
+          "base": {"full": "North", "1u": "North"}
+        },
+        "categories": ["mousekeys"]
+      },
+      {
+        "code": 20521,
+        "label": {
+          "hint": {"full": "Mouse Warp", "1u": "Warp"},
+          "base": {"full": "North-East", "1u": "NE"}
+        },
+        "categories": ["mousekeys"]
+      },
+      {
         "code": 65535,
         "label": {"base": {"full": "Transparent", "1u": " "}},
         "categories": ["blanks"]
+      },
+      {
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
+      },
+      {
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
+      },
+      {
+        "code": 20545,
+        "label": {
+          "hint": {"full": "Mouse Button", "1u": "M.Btn"},
+          "base": "Left"
+        },
+        "categories": ["mousekeys"]
+      },
+      {
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
+      },
+      {
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
+      },
+      {
+        "code": 53602,
+        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#6"},
+        "rangeStart": 53596,
+        "categories": ["dynmacros"]
+      },
+      {
+        "code": 53603,
+        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#7"},
+        "rangeStart": 53596,
+        "categories": ["dynmacros"]
+      },
+      {
+        "code": 53604,
+        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#8"},
+        "rangeStart": 53596,
+        "categories": ["dynmacros"]
+      },
+      {
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
+      },
+      {
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
+      },
+      {
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
+      },
+      {
+        "code": 20576,
+        "label": {"hint": {"full": "Mouse Warp", "1u": "Warp"}, "base": "End"},
+        "categories": ["mousekeys"]
+      },
+      {
+        "code": 20516,
+        "label": {
+          "hint": {"full": "Mouse Warp", "1u": "Warp"},
+          "base": {"full": "West", "1u": "West"}
+        },
+        "categories": ["mousekeys"]
+      },
+      {
+        "code": 20515,
+        "label": {
+          "hint": {"full": "Mouse Warp", "1u": "Warp"},
+          "base": {"full": "Zoom", "1u": "Zoom"}
+        },
+        "categories": ["mousekeys"]
+      },
+      {
+        "code": 20520,
+        "label": {
+          "hint": {"full": "Mouse Warp", "1u": "Warp"},
+          "base": {"full": "East", "1u": "East"}
+        },
+        "categories": ["mousekeys"]
       },
       {
         "code": 65535,
@@ -785,9 +903,66 @@
         "categories": ["blanks"]
       },
       {
+        "code": 53599,
+        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#3"},
+        "rangeStart": 53596,
+        "categories": ["dynmacros"]
+      },
+      {
+        "code": 53600,
+        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#4"},
+        "rangeStart": 53596,
+        "categories": ["dynmacros"]
+      },
+      {
+        "code": 53601,
+        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#5"},
+        "rangeStart": 53596,
+        "categories": ["dynmacros"]
+      },
+      {
         "code": 65535,
         "label": {"base": {"full": "Transparent", "1u": " "}},
         "categories": ["blanks"]
+      },
+      {
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
+      },
+      {
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
+      },
+      {
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
+      },
+      {
+        "code": 20518,
+        "label": {
+          "hint": {"full": "Mouse Warp", "1u": "Warp"},
+          "base": {"full": "South-West", "1u": "SW"}
+        },
+        "categories": ["mousekeys"]
+      },
+      {
+        "code": 20514,
+        "label": {
+          "hint": {"full": "Mouse Warp", "1u": "Warp"},
+          "base": {"full": "South", "1u": "South"}
+        },
+        "categories": ["mousekeys"]
+      },
+      {
+        "code": 20522,
+        "label": {
+          "hint": {"full": "Mouse Warp", "1u": "Warp"},
+          "base": {"full": "South-East", "1u": "SE"}
+        },
+        "categories": ["mousekeys"]
       },
       {
         "code": 65535,
@@ -820,150 +995,22 @@
         "categories": ["blanks"]
       },
       {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
+        "code": 53596,
+        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#0"},
+        "rangeStart": 53596,
+        "categories": ["dynmacros"]
       },
       {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
+        "code": 53597,
+        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#1"},
+        "rangeStart": 53596,
+        "categories": ["dynmacros"]
       },
       {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {"code": 57, "label": {"base": {"full": "Caps Lock", "1u": "CpLK"}}},
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
+        "code": 53598,
+        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#2"},
+        "rangeStart": 53596,
+        "categories": ["dynmacros"]
       },
       {
         "code": 65535,
@@ -2267,204 +2314,6 @@
   ],
   "colormaps": [
     [
-      9,
-      2,
-      0,
-      0,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      0,
-      0,
-      0,
-      0,
-      13,
-      0,
-      0,
-      9,
-      9,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      2,
-      9
-    ],
-    [
-      15,
-      2,
-      15,
-      15,
-      15,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      15,
-      15,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      15,
-      15,
-      3,
-      3,
-      3,
-      15,
-      15,
-      15,
-      15,
-      12,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      15,
-      3,
-      3,
-      3,
-      15,
-      15,
-      3,
-      3,
-      3,
-      15,
-      3,
-      3,
-      15,
-      15,
-      3,
-      3,
-      15,
-      15,
-      3,
-      3,
-      15,
-      15,
-      15,
-      2,
-      15
-    ],
-    [
-      9,
-      2,
-      0,
-      0,
-      12,
-      9,
-      9,
-      15,
-      9,
-      9,
-      9,
-      12,
-      12,
-      9,
-      9,
-      9,
-      9,
-      9,
-      9,
-      12,
-      12,
-      9,
-      9,
-      15,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      12,
-      15,
-      9,
-      9,
-      9,
-      9,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      12,
-      12,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      12,
-      12,
-      3,
-      3,
-      3,
-      15,
-      15,
-      15,
-      12,
-      12,
-      12,
-      2,
-      9
-    ],
-    [
       15,
       15,
       15,
@@ -2559,10 +2408,142 @@
       15,
       15,
       15,
+      3,
+      15,
+      15,
+      3,
       15,
       15,
       15,
       15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15
+    ],
+    [
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      3,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15
+    ],
+    [
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      3,
       15,
       15,
       15,
@@ -2781,8 +2762,74 @@
       15,
       15,
       15,
-      0,
-      0,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15
+    ],
+    [
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
       15,
       15,
       15,
