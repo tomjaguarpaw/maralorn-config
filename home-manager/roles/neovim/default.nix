@@ -23,6 +23,12 @@
   };
 in {
   imports = [./spelling.nix];
+  programs.helix = {
+    enable = true;
+    settings = {
+      theme = "papercolor-light";
+    };
+  };
   programs.neovim = {
     enable = true;
     vimAlias = true;
