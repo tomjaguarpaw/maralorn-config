@@ -26,7 +26,13 @@ in {
   programs.helix = {
     enable = true;
     settings = {
-      theme = "papercolor-light";
+      theme = "catppuccin_latte";
+      editor = {
+        lsp.display-messages = true;
+        indent-guides.render = true;
+        cursorline = true;
+        color-modes = true;
+      };
     };
   };
   programs.neovim = {
