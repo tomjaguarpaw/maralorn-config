@@ -93,6 +93,7 @@ self: super: {
   desktop-pkgs = {
     inherit
       (self)
+      esphome
       dconf
       lm_sensors
       xwayland
