@@ -28,6 +28,10 @@ in {
     settings = {
       theme = "catppuccin_latte";
       editor = {
+        whitespace.render = {
+          space = "all";
+          tab = "all";
+        };
         lsp.display-messages = true;
         indent-guides.render = true;
         cursorline = true;
