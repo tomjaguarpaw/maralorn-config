@@ -52,8 +52,8 @@ alias s='sudo -A systemctl'
 alias g='lazygit'
 alias u='systemctl --user'
 alias m=man
-alias v="nvim"
-alias vim="nvim"
+alias v="hx"
+alias vim="hx"
 
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
@@ -84,7 +84,7 @@ zle -N fzf-directory-search
 bindkey '^S' fzf-directory-search
 
 fzf-vim-search() {
- LBUFFER=$( fd -t f | fzf |  sed -E 's/\\/\\\\/g;s/^/vim /')
+ LBUFFER=$( fd -t f | fzf |  sed -E 's/\\/\\\\/g;s/^/hx /')
  zle redisplay
 }
 zle -N fzf-vim-search

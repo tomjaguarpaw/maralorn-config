@@ -76,7 +76,7 @@
       extraConfig = {
         merge.conflictStyle = "diff3";
         pull.ff = "only";
-        core.editor = "vim";
+        core.editor = "hx";
         init.defaultBranch = "main";
       };
       enable = true;

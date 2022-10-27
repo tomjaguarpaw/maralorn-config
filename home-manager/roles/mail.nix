@@ -114,7 +114,7 @@ in {
       move-message-macro = key: dir: name: ''macro index,pager ${key} ":set confirmappend=no resolve=no\n<clear-flag>N<save-message>=hera/${dir}\n:set confirmappend=yes resolve=yes\n<next-undeleted>" "move message to ${name}"'';
     in {
       ".neomuttrc".text = ''
-        set editor = "vim"
+        set editor = "hx"
         alternative_order text/plain text/html
         auto_view text/*
         auto_view message/*

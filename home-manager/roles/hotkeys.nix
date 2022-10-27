@@ -1,6 +1,6 @@
 {pkgs, ...}: let
   fork = cmd: "fork ${cmd}";
-  edit_dir = dir: "sh -c 'cd ${dir}; vim ${dir}'";
+  edit_dir = dir: "sh -c 'cd ${dir}; hx ${dir}'";
 in [
   {
     Orga = [

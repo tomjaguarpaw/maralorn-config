@@ -11,7 +11,7 @@
       neuron new --id pythia-$today Tagebucheintrag
       sed -i 's/date:/tags:\n - Pythia\ndate:/' $datei
     fi
-    vim $datei
+    hx $datei
     grep TODO: $datei | sed 's/TODO: //' | while read -r line; do task add "$line"; done && sed -i 's/TODO: /Notiert: /' $datei
   '';
   printslow = pkgs.writeScriptBin "printslow" ''
