@@ -114,6 +114,7 @@ in {
       configDir = homeAssistantDir;
       extraComponents = [];
       config = {
+        esphome = {};
         shopping_list = {};
         matrix = {
           homeserver = "https://matrix.maralorn.de";
