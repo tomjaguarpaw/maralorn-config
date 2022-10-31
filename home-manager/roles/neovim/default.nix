@@ -27,6 +27,14 @@ in {
     enable = true;
     settings = {
       theme = "catppuccin_latte";
+      keys = let
+        common_keys = {
+          "C-s" = ":w";
+        };
+      in {
+        normal = common_keys;
+        insert = common_keys;
+      };
       editor = {
         whitespace.render = {
           space = "all";
