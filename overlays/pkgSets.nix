@@ -93,7 +93,8 @@ self: super: {
   desktop-pkgs = {
     inherit
       (self)
-      esphome
+      esphome # To flash devices
+      esptool # provides esptool.py
       dconf
       lm_sensors
       xwayland
