@@ -1,0 +1,8 @@
+platform: mhz19
+co2:
+  name: ${macsuffix}_co2
+  id: co2
+temperature:
+  name: ${macsuffix}_co2_temperature
+update_interval: 60s
+automatic_baseline_calibration: false

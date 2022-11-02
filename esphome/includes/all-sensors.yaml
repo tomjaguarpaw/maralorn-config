@@ -1,0 +1,4 @@
+sensor:
+  - !include sensor/bme280-dewpoint.yaml
+  - !include sensor/bme280.yaml
+  - !include sensor/mhz19b.yaml

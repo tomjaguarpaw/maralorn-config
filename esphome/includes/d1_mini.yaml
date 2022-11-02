@@ -1,0 +1,25 @@
+esp8266:
+  board: d1_mini
+
+i2c:
+  # default: sda: GPIO4
+  # default: scl: GPIO5
+  # default: scan: true
+
+uart:
+  tx_pin: GPIO1
+  rx_pin: GPIO3
+  baud_rate: 9600
+
+light:
+  - platform: binary
+    name: ${macsuffix}_status_led
+    id: status_led
+    output: light_output
+
+output:
+  - id: light_output
+    platform: gpio
+    pin:
+      number: GPIO2
+      inverted: true

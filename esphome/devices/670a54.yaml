@@ -1,0 +1,6 @@
+substitutions:
+  macsuffix: 670a54
+
+<<: !include ../includes/d1_mini.yaml
+<<: !include ../includes/all-sensors.yaml
+<<: !include ../includes/base.yaml

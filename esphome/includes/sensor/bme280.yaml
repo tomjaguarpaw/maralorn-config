@@ -1,0 +1,12 @@
+platform: bme280
+temperature:
+  name: ${macsuffix}_temperature
+  id: bme280_temperature
+pressure:
+  name: ${macsuffix}_pressure
+  id: bme280_pressure
+humidity:
+  name: ${macsuffix}_relative_humidity
+  id: bme280_humidity
+address: 0x76
+update_interval: 15s
