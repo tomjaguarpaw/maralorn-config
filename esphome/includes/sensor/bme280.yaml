@@ -2,11 +2,14 @@ platform: bme280
 temperature:
   name: ${macsuffix}_bme280_temperature
   id: bme280_temperature
+  <<: !include timings.yaml
 pressure:
   name: ${macsuffix}_bme280_pressure
   id: bme280_pressure
+  <<: !include timings.yaml
 humidity:
   name: ${macsuffix}_bme280_relative_humidity
   id: bme280_humidity
+  <<: !include timings.yaml
 address: 0x76
-update_interval: 15s
+update_interval: 5s

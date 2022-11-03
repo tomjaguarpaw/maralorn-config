@@ -1,9 +1,11 @@
 platform: mhz19
 co2:
   name: ${macsuffix}_mhz19b_co2
+  <<: !include timings.yaml
 temperature:
   name: ${macsuffix}_mhz19b_temperature
-update_interval: 60s
+  <<: !include timings.yaml
+update_interval: 5s
 # Although recommended by the docs to disable abc indoors.
 # I think abc works fine if we let fresh air in at least once a day.
 # automatic_baseline_calibration: false

@@ -1,0 +1,6 @@
+substitutions:
+  macsuffix: 670dcb
+
+<<: !include ../includes/d1_mini.yaml
+<<: !include ../includes/only-bme280.yaml
+<<: !include ../includes/base.yaml
