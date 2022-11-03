@@ -1,8 +1,9 @@
 platform: mhz19
 co2:
   name: ${macsuffix}_mhz19b_co2
-  id: co2
 temperature:
   name: ${macsuffix}_mhz19b_temperature
 update_interval: 60s
-automatic_baseline_calibration: false
+# Although recommended by the docs to disable abc indoors.
+# I think abc works fine if we let fresh air in at least once a day.
+# automatic_baseline_calibration: false

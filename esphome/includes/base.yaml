@@ -4,6 +4,7 @@ esphome:
 
 # https://esphome.io/components/logger.html
 logger:
+  baud_rate: 0
 
 # https://esphome.io/components/api.html
 api:

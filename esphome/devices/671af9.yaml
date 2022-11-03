@@ -1,0 +1,6 @@
+substitutions:
+  macsuffix: 671af9
+
+<<: !include ../includes/d1_mini.yaml
+<<: !include ../includes/all-sensors.yaml
+<<: !include ../includes/base.yaml
