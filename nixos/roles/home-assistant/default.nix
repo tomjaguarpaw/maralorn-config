@@ -5,60 +5,12 @@
 }: let
   haLib = import ./lib.nix lib;
   inherit (haLib) modules util cards conditions triggers jinja actions tap_actions;
-  modes = let
-    only_lights = {
-      icon = util.mkIcon "candelabra-fire";
-      title = "Nur Lichter";
-    };
-    empty = {
-      icon = util.mkIcon "account-off";
-      title = "Leer";
-    };
-    heat = {
-      icon = util.mkIcon "radiator";
-      title = "Heizen";
-    };
-    active = {
-      icon = util.mkIcon "account";
-      title = "Aktiv";
-    };
-    force_active = {
-      icon = util.mkIcon "lightbulb-on";
-      title = "Alles An";
-    };
-    vacation = {
-      icon = util.mkIcon "airplane";
-      title = "Urlaub";
-    };
-  in {
-    flat = {
-      title = "Wohnungsmodus";
-      name = "flat";
-      options = {inherit active vacation;};
-    };
-    wohnzimmer = {
-      title = "Wohnzimmermodus";
-      name = "wohnzimmer";
-      options = {inherit empty heat active force_active only_lights;};
-    };
-    kueche = {
-      title = "Küchenmodus";
-      name = "kueche";
-      options = {inherit empty active;};
-    };
-    schlafzimmer = {
-      title = "Schlafzimmermodus";
-      name = "schlafzimmer";
-      options = {inherit empty heat active force_active only_lights;};
-    };
-  };
   fenster =
     map (name: "binary_sensor.${name}")
     [
       "kuechenfenster"
       "wohnzimmerfenster"
       "schlafzimmerfenster"
-      "wohnungstuer"
     ];
   switches = map (name: "switch.${name}") [
     "weihnachtsstern_schlafzimmer"
@@ -73,16 +25,19 @@
     "thermostat_kueche_battery"
     "thermostat_schlafzimmer_battery"
     "thermostat_wohnzimmer_battery"
-    "klimasensor_bad_battery"
-    "klimasensor_kueche_battery"
     "klimasensor_schlafzimmer_battery"
     "kuechenfenster_battery"
     "pegasus_battery_level"
     "kalliope_battery_level"
     "schlafzimmerfenster_battery"
-    "wohnungstuer_battery"
   ];
-  flaky_remotes = ["switch.lichterkette_schrank" "sensor.wohnzimmerfenster_battery"];
+  flaky_remotes = [
+    "wohnzimmerfenster_battery"
+    "switch.lichterkette_schrank"
+    "kuechenfenster_battery"
+    "schlafzimmerfenster_battery"
+    "sensor.wohnzimmerfenster_battery"
+  ];
   inherit (import ../../../nix/sources.nix) nixos-unstable;
   homeAssistantDir = "/disk/persist/home-assistant";
 in {
@@ -91,10 +46,6 @@ in {
   ];
 
   imports = [
-    (modules.mkModeSwitcher modes.wohnzimmer {})
-    (modules.mkModeSwitcher modes.kueche {})
-    (modules.mkModeSwitcher modes.schlafzimmer {})
-    (modules.mkModeSwitcher modes.flat {})
     "${nixos-unstable}/nixos/modules/services/home-automation/home-assistant.nix"
     ./hexa-cards.nix
   ];
@@ -208,7 +159,7 @@ in {
             }
             {
               alias = "Lüftungssteuerung Bad";
-              trigger = [(triggers.stateTrigger "sensor.bad_humidity")];
+              trigger = [(triggers.stateTrigger "sensor.670dbe_bme280_dew_point")];
               action = [
                 {
                   choose = [
@@ -216,8 +167,8 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.bad_humidity";
-                          above = 66;
+                          entity_id = "sensor.670dbe_bme280_dew_point";
+                          above = 15;
                         }
                       ];
                       sequence = {
@@ -229,8 +180,8 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.bad_humidity";
-                          below = 64;
+                          entity_id = "sensor.670dbe_bme280_dew_point";
+                          below = 14.5;
                         }
                       ];
                       sequence = {
@@ -248,7 +199,7 @@ in {
                 (triggers.stateTrigger "switch.lueftung_bad"
                   // {
                     to = "on";
-                    for = "02:00:00";
+                    for = "03:00:00";
                   })
               ];
               action = [
@@ -265,7 +216,6 @@ in {
                 (stateTrigger "sensor.670dcb_bme280_temperature")
                 (stateTrigger "binary_sensor.schlafzimmerfenster")
                 (stateTrigger "climate.schlafzimmer")
-                (modeSwitchTrigger modes.flat)
               ];
               action = [
                 {
@@ -310,7 +260,6 @@ in {
                 (stateTrigger "sensor.kueche_temperature")
                 (stateTrigger "binary_sensor.kuechenfenster")
                 (stateTrigger "climate.kueche")
-                (modeSwitchTrigger modes.flat)
               ];
               action = [
                 {
@@ -330,7 +279,6 @@ in {
                             "unavailable"
                           ];
                         }
-                        (conditions.modeIs modes.flat "active")
                       ];
                       sequence = {
                         service = "climate.set_temperature";
@@ -356,7 +304,6 @@ in {
                 (stateTrigger "sensor.671af9_bme280_temperature")
                 (stateTrigger "binary_sensor.wohnzimmerfenster")
                 (stateTrigger "climate.wohnzimmer")
-                (modeSwitchTrigger modes.flat)
               ];
               action = [
                 {
@@ -710,7 +657,6 @@ in {
             {
               type = "logbook";
               entities = [
-                (util.modeSelectEntity modes.wohnzimmer)
                 "binary_sensor.wohnzimmerfenster"
                 "switch.lichterkette_fernseher"
                 "switch.lichterkette_schrank"
@@ -832,7 +778,10 @@ in {
             }
             {
               type = "logbook";
-              entities = [(util.modeSelectEntity modes.kueche) "climate.kueche" "binary_sensor.kuechenfenster"];
+              entities = [
+                "climate.kueche"
+                "binary_sensor.kuechenfenster"
+              ];
             }
           ];
         };
@@ -978,7 +927,12 @@ in {
             }
             {
               type = "logbook";
-              entities = [(util.modeSelectEntity modes.schlafzimmer) "switch.weihnachtsstern_schlafzimmer" "switch.luftentfeuchter" "climate.schlafzimmer" "binary_sensor.schlafzimmerfenster"];
+              entities = [
+                "switch.weihnachtsstern_schlafzimmer"
+                "switch.luftentfeuchter"
+                "climate.schlafzimmer"
+                "binary_sensor.schlafzimmerfenster"
+              ];
             }
           ];
         };
@@ -996,7 +950,7 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.bad_humidity";
+                  entity = "sensor.670dbe_bme280_relative_humidity";
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
                   state_adaptive_color = true;
@@ -1054,8 +1008,13 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.bad_temperature";
+                  entity = "sensor.670dbe_bme280_temperature";
                   name = "Temperatur";
+                  show_fill = false;
+                }
+                {
+                  entity = "sensor.670dbe_bme280_dew_point";
+                  name = "Taupunkt";
                   show_fill = false;
                 }
               ];
@@ -1091,7 +1050,6 @@ in {
         flurstack = {
           type = "vertical-stack";
           cards = [
-            #(cards.modeSwitcher modes.flat)
             {
               type = "custom:mini-graph-card";
               entities = [
@@ -1134,16 +1092,6 @@ in {
         };
       in {
         views = [
-          #  {
-          #    icon = "mdi:switch";
-          #    badges = alertbadges;
-          #    cards = [
-          #      (cards.modeSwitcher modes.wohnzimmer)
-          #      (cards.modeSwitcher modes.kueche)
-          #      (cards.modeSwitcher modes.schlafzimmer)
-          #      (cards.modeSwitcher modes.flat)
-          #    ];
-          #  }
           {
             icon = "mdi:sofa";
             inherit badges;
@@ -1164,11 +1112,6 @@ in {
             inherit badges;
             cards = [badstack];
           }
-          #{
-          #  icon = "mdi:door-closed";
-          #  inherit badges;
-          #  cards = [flurstack];
-          #}
           {
             icon = "mdi:city";
             inherit badges;
