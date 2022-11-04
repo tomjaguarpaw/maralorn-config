@@ -103,6 +103,7 @@ in {
   ];
 
   services = {
+    avahi.enable = true;
     home-assistant = {
       enable = true;
       package = pkgs.home-assistant.overrideAttrs (
@@ -115,6 +116,8 @@ in {
       extraComponents = [];
       config = {
         esphome = {};
+        zeroconf = {};
+        dhcp = {};
         shopping_list = {};
         matrix = {
           homeserver = "https://matrix.maralorn.de";
@@ -157,14 +160,8 @@ in {
             {
               alias = "Entfeuchtersteuerung Schlafzimmer";
               trigger = [
-                {
-                  platform = "state";
-                  entity_id = "sensor.schlafzimmer_humidity";
-                }
-                {
-                  platform = "state";
-                  entity_id = "binary_sensor.schlafzimmerfenster";
-                }
+                (triggers.stateTrigger "sensor.670dcb_bme280_dew_point")
+                (triggers.stateTrigger "binary_sensor.schlafzimmerfenster")
               ];
               action = [
                 {
@@ -176,15 +173,13 @@ in {
                           conditions = [
                             {
                               condition = "numeric_state";
-                              entity_id = "sensor.schlafzimmer_humidity";
-                              below = 74;
+                              entity_id = "sensor.670dcb_bme280_dew_point";
+                              above = 14.5;
                             }
                             {
                               condition = "state";
                               entity_id = "binary_sensor.schlafzimmerfenster";
-                              state = [
-                                "on"
-                              ];
+                              state = ["on"];
                             }
                           ];
                         }
@@ -198,8 +193,8 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.schlafzimmer_humidity";
-                          above = 75;
+                          entity_id = "sensor.670dcb_bme280_dew_point";
+                          below = 14;
                         }
                       ];
                       sequence = {
@@ -213,12 +208,7 @@ in {
             }
             {
               alias = "Lüftungssteuerung Bad";
-              trigger = [
-                {
-                  platform = "state";
-                  entity_id = "sensor.bad_humidity";
-                }
-              ];
+              trigger = [(triggers.stateTrigger "sensor.bad_humidity")];
               action = [
                 {
                   choose = [
@@ -272,7 +262,7 @@ in {
               alias = "Thermostatsteuerung Schlafzimmer";
               trigger = with triggers; [
                 (stateTrigger "input_number.target_temperature_schlafzimmer")
-                (stateTrigger "sensor.schlafzimmer_temperature")
+                (stateTrigger "sensor.670dcb_bme280_temperature")
                 (stateTrigger "binary_sensor.schlafzimmerfenster")
                 (stateTrigger "climate.schlafzimmer")
                 (modeSwitchTrigger modes.flat)
@@ -284,7 +274,7 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.schlafzimmer_temperature";
+                          entity_id = "sensor.670dcb_bme280_temperature";
                           below = "input_number.target_temperature_schlafzimmer";
                         }
                         {
@@ -295,7 +285,6 @@ in {
                             "unavailable"
                           ];
                         }
-                        (conditions.modeIs modes.flat "active")
                       ];
                       sequence = {
                         service = "climate.set_temperature";
@@ -360,175 +349,51 @@ in {
                 }
               ];
             }
-            # {
-            #   alias = "Thermostatsteuerung Wohnzimmer";
-            #   trigger = with triggers; [
-            #     (stateTrigger "input_number.target_temperature_wohnzimmer")
-            #     (stateTrigger "binary_sensor.wohnzimmerfenster")
-            #     (stateTrigger "climate.wohnzimmer")
-            #     (modeSwitchTrigger modes.flat)
-            #   ];
-            #   action = [
-            #     {
-            #       choose = [
-            #         {
-            #           conditions = [
-            #             {
-            #               condition = "state";
-            #               entity_id = "binary_sensor.wohnzimmerfenster";
-            #               state = [
-            #                 "off"
-            #                 "unavailable"
-            #               ];
-            #             }
-            #             (conditions.modeIs modes.flat "active")
-            #           ];
-            #           sequence = {
-            #             service = "climate.set_temperature";
-            #             target.area_id = "wohnzimmer";
-            #             data = {
-            #               temperature = "{{ states('input_number.target_temperature_wohnzimmer') | int }}";
-            #               hvac_mode = "heat";
-            #             };
-            #           };
-            #         }
-            #       ];
-            #       default = {
-            #         service = "climate.turn_off";
-            #         target.area_id = "wohnzimmer";
-            #       };
-            #     }
-            #   ];
-            # }
-            # {
-            #   alias = "Küchentemperatur";
-            #   trigger = [(triggers.modeSwitchTrigger modes.kueche)];
-            #   action = [
-            #     {
-            #       service = "input_number.set_value";
-            #       target.entity_id = "input_number.target_temperature_kueche";
-            #       data.value = jinja.if' (jinja.isState (util.modeSelectEntity modes.kueche) "empty") "18" "18";
-            #     }
-            #   ];
-            # }
-            # {
-            #   alias = "Wohnzimmertemperatur";
-            #   trigger = [(triggers.modeSwitchTrigger modes.wohnzimmer)];
-            #   action = [
-            #     {
-            #       service = "input_number.set_value";
-            #       target.entity_id = "input_number.target_temperature_wohnzimmer";
-            #       data.value = jinja.if' (jinja.isStates (util.modeSelectEntity modes.wohnzimmer) ["empty" "only_lights"]) "18" "18";
-            #     }
-            #   ];
-            # }
-            # {
-            #   alias = "Schlafzimmertemperatur";
-            #   trigger = [(triggers.modeSwitchTrigger modes.schlafzimmer)];
-            #   action = [
-            #     {
-            #       service = "input_number.set_value";
-            #       target.entity_id = "input_number.target_temperature_schlafzimmer";
-            #       data.value = jinja.if' (jinja.isStates (util.modeSelectEntity modes.schlafzimmer) ["empty" "only_lights"]) "18" "18";
-            #     }
-            #   ];
-            # }
-            # {
-            #   alias = "Wohnzimmerlichter";
-            #   trigger = with triggers; [
-            #     (modeSwitchTrigger modes.wohnzimmer)
-            #     (stateTrigger "sun.sun")
-            #   ];
-            #   action = [
-            #     {
-            #       service =
-            #         jinja.if'
-            #         (jinja.or
-            #           (jinja.isStates (util.modeSelectEntity modes.wohnzimmer) ["force_active" "only_lights"])
-            #           (jinja.and
-            #             (jinja.isState (util.modeSelectEntity modes.wohnzimmer) "active")
-            #             "state_attr('sun.sun', 'elevation') < 6"))
-            #         "homeassistant.turn_on"
-            #         "homeassistant.turn_off";
-            #       target.entity_id = "group.wohnzimmer_lights";
-            #     }
-            #   ];
-            # }
-            # {
-            #   alias = "Schlafzimmerlichter";
-            #   trigger = with triggers; [
-            #     (modeSwitchTrigger modes.schlafzimmer)
-            #     (stateTrigger "sun.sun")
-            #   ];
-            #   action = [
-            #     {
-            #       service =
-            #         jinja.if'
-            #         (jinja.or
-            #           (jinja.isStates (util.modeSelectEntity modes.schlafzimmer) ["force_active" "only_lights"])
-            #           (jinja.and
-            #             (jinja.isState (util.modeSelectEntity modes.schlafzimmer) "active")
-            #             "state_attr('sun.sun', 'elevation') < 6"))
-            #         "homeassistant.turn_on"
-            #         "homeassistant.turn_off";
-            #       target.entity_id = "group.schlafzimmer_lights";
-            #     }
-            #   ];
-            # }
-            # {
-            #   alias = "Schlafzimmer vorheizen";
-            #   trigger = [
-            #     {
-            #       platform = "time";
-            #       at = "22:00:00";
-            #     }
-            #   ];
-            #   condition = [
-            #     (conditions.modeIs modes.schlafzimmer "empty")
-            #     (conditions.modeIs modes.flat "active")
-            #   ];
-            #   action = [(actions.setMode modes.schlafzimmer "heat")];
-            # }
-            # {
-            #   alias = "Schlafzimmer nachts kühl";
-            #   trigger = [
-            #     {
-            #       platform = "time";
-            #       at = "00:00:00";
-            #     }
-            #   ];
-            #   condition = [
-            #     (conditions.modeIs modes.schlafzimmer "heat")
-            #     (conditions.modeIs modes.flat "active")
-            #   ];
-            #   action = [(actions.setMode modes.schlafzimmer "empty")];
-            # }
-            # {
-            #   alias = "Morgens Licht an";
-            #   trigger = [
-            #     {
-            #       platform = "time";
-            #       at = "07:00:00";
-            #     }
-            #   ];
-            #   condition = [
-            #     (conditions.modeIs modes.flat "active")
-            #   ];
-            #   action = [(actions.setMode modes.wohnzimmer "active")];
-            # }
-            # {
-            #   alias = "Abends Licht aus";
-            #   trigger = [
-            #     {
-            #       platform = "time";
-            #       at = "00:00:00";
-            #     }
-            #   ];
-            #   condition = [
-            #     (conditions.modeIs modes.flat "active")
-            #   ];
-            #   action = [(actions.setMode modes.wohnzimmer "empty")];
-            # }
+            {
+              alias = "Thermostatsteuerung Wohnzimmer";
+              trigger = with triggers; [
+                (stateTrigger "input_number.target_temperature_wohnzimmer")
+                (stateTrigger "sensor.671af9_bme280_temperature")
+                (stateTrigger "binary_sensor.wohnzimmerfenster")
+                (stateTrigger "climate.wohnzimmer")
+                (modeSwitchTrigger modes.flat)
+              ];
+              action = [
+                {
+                  choose = [
+                    {
+                      conditions = [
+                        {
+                          condition = "numeric_state";
+                          entity_id = "sensor.671af9_bme280_temperature";
+                          below = "input_number.target_temperature_wohnzimmer";
+                        }
+                        {
+                          condition = "state";
+                          entity_id = "binary_sensor.wohnzimmerfenster";
+                          state = [
+                            "off"
+                            "unavailable"
+                          ];
+                        }
+                      ];
+                      sequence = {
+                        service = "climate.set_temperature";
+                        target.area_id = "wohnzimmer";
+                        data = {
+                          temperature = 30;
+                          hvac_mode = "heat";
+                        };
+                      };
+                    }
+                  ];
+                  default = {
+                    service = "climate.turn_off";
+                    target.area_id = "wohnzimmer";
+                  };
+                }
+              ];
+            }
             {
               alias = "Warnung bei niedrigem Akkustand";
               trigger =
@@ -540,29 +405,6 @@ in {
                 }) [25 20 15 10 5 4 3 2 1 0];
               action = [(actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%.")];
             }
-            # {
-            #   alias = "Abend";
-            #   trigger = [
-            #     {
-            #       platform = "time";
-            #       at = "23:00:00";
-            #     }
-            #   ];
-            #   action = [(actions.notify "Es ist 23 Uhr.")];
-            # }
-            # Triggered zu häufig, nervt nur noch.
-            #{
-            #  alias = "Warnung bei nicht erreichbaren Gerät";
-            #  trigger = map
-            #  (name:
-            #    triggers.stateTrigger name
-            #    // {
-            #      to = "unavailable";
-            #      for = "00:30:00";
-            #    })
-            #  (builtins.filter (name: !(builtins.elem name flaky_remotes)) (batteries ++ switches));
-            #  action = [(actions.notify "{{ trigger.to_state.name }} ist nicht erreichbar.")];
-            #}
           ]
           ++ (map
             (minutes: {
@@ -679,22 +521,22 @@ in {
           target_temperature_schlafzimmer = {
             name = "Zieltemperatur Schlafzimmer";
             unit_of_measurement = "°C";
-            min = "17";
-            max = "25";
+            min = "16";
+            max = "23";
             step = "0.25";
           };
           target_temperature_wohnzimmer = {
             name = "Zieltemperatur Wohnzimmer";
             unit_of_measurement = "°C";
-            min = "17";
-            max = "26";
+            min = "16";
+            max = "23";
             step = "0.25";
           };
           target_temperature_kueche = {
             name = "Zieltemperatur Küche";
             unit_of_measurement = "°C";
-            min = "17";
-            max = "25";
+            min = "16";
+            max = "23";
             step = "0.25";
           };
         };
@@ -763,20 +605,7 @@ in {
             ];
           }
         ];
-        badges = let
-          badge = mode: {
-            type = "state-label";
-            entity = util.modeSelectEntity mode;
-            name = mode.title;
-            tap_action = tap_actions.cycleMode mode;
-          };
-        in
-          [
-            # (badge modes.wohnzimmer)
-            # (badge modes.kueche)
-            # (badge modes.schlafzimmer)
-          ]
-          ++ alertbadges;
+        badges = alertbadges;
         envstack = {
           type = "vertical-stack";
           cards = [
@@ -800,13 +629,17 @@ in {
         wohnzimmerstack = {
           type = "vertical-stack";
           cards = [
-            #(cards.modeSwitcher modes.wohnzimmer)
             {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.temperatur_wohnzimmer";
+                  entity = "sensor.671af9_bme280_temperature";
                   name = "Temperatur";
+                  show_fill = false;
+                }
+                {
+                  entity = "sensor.671af9_bme280_dew_point";
+                  name = "Taupunkt";
                   show_fill = false;
                 }
                 {
@@ -848,6 +681,26 @@ in {
               ];
             }
             {
+              type = "custom:mini-graph-card";
+              entities = [
+                {
+                  entity = "sensor.671af9_mhz19b_co2";
+                  name = "CO2";
+                  show_fill = false;
+                }
+              ];
+              show = {
+                labels = true;
+                labels_secondary = "hover";
+              };
+              hours_to_show = 24;
+              update_interval = 30;
+              line_width = 2;
+              hour24 = true;
+              decimals = 1;
+              points_per_hour = 3;
+            }
+            {
               type = "entities";
               entities = [
                 "input_number.target_temperature_wohnzimmer"
@@ -856,14 +709,19 @@ in {
             }
             {
               type = "logbook";
-              entities = [(util.modeSelectEntity modes.wohnzimmer) "binary_sensor.wohnzimmerfenster" "switch.lichterkette_fernseher" "switch.lichterkette_schrank" "switch.blaue_lichterkette"];
+              entities = [
+                (util.modeSelectEntity modes.wohnzimmer)
+                "binary_sensor.wohnzimmerfenster"
+                "switch.lichterkette_fernseher"
+                "switch.lichterkette_schrank"
+                "switch.blaue_lichterkette"
+              ];
             }
           ];
         };
         kuechenstack = {
           type = "vertical-stack";
           cards = [
-            #(cards.modeSwitcher modes.kueche)
             {
               type = "custom:mini-graph-card";
               entities = [
@@ -981,13 +839,18 @@ in {
         schlafzimmerstack = {
           type = "vertical-stack";
           cards = [
-            #(cards.modeSwitcher modes.schlafzimmer)
             {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.schlafzimmer_humidity";
+                  entity = "sensor.670dcb_bme280_relative_humidity";
                   name = "Luftfeuchtigkeit";
+                  show_fill = false;
+                  state_adaptive_color = true;
+                }
+                {
+                  entity = "sensor.schlafzimmer_humidity";
+                  name = "Luftfeuchtigkeit (alt)";
                   show_fill = false;
                   state_adaptive_color = true;
                 }
@@ -1054,8 +917,18 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.schlafzimmer_temperature";
+                  entity = "sensor.670dcb_bme280_temperature";
                   name = "Temperatur";
+                  show_fill = false;
+                }
+                {
+                  entity = "sensor.670dcb_bme280_dew_point";
+                  name = "Taupunkt";
+                  show_fill = false;
+                }
+                {
+                  entity = "sensor.schlafzimmer_temperature";
+                  name = "Temperatur (alt)";
                   show_fill = false;
                 }
                 {
