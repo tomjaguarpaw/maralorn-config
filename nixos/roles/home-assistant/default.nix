@@ -31,13 +31,6 @@
     "kalliope_battery_level"
     "schlafzimmerfenster_battery"
   ];
-  flaky_remotes = [
-    "wohnzimmerfenster_battery"
-    "switch.lichterkette_schrank"
-    "kuechenfenster_battery"
-    "schlafzimmerfenster_battery"
-    "sensor.wohnzimmerfenster_battery"
-  ];
   inherit (import ../../../nix/sources.nix) nixos-unstable;
   homeAssistantDir = "/disk/persist/home-assistant";
 in {
@@ -530,10 +523,12 @@ in {
         alertbadges = [
           {
             type = "entity-filter";
-            entities = map (entity: {
-              inherit entity;
-              icon = "mdi:broadcast-off";
-            }) (batteries ++ switches);
+            entities =
+              map (entity: {
+                inherit entity;
+                icon = "mdi:broadcast-off";
+              })
+              switches;
             state_filter = ["unavailable"];
           }
           {
