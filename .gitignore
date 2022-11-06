@@ -1,0 +1,8 @@
+.direnv
+.pre-commit-config.yaml
+nixpkgs
+config.yaml
+dist-newstyle
+result
+.envrc
+state.sqlite
