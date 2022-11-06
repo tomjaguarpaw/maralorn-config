@@ -37,6 +37,7 @@ common common-config
   build-depends:
     , aeson
     , base               >=4.15 && <5
+    , containers
     , matrix-client
     , persistent
     , persistent-sqlite

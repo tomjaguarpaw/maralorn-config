@@ -1,5 +1,6 @@
 module Main where
 
+import qualified Data.Map.Strict as Map
 import qualified Data.Text as Text
 import Data.Yaml (FromJSON)
 import qualified Data.Yaml as Yaml
@@ -25,7 +26,7 @@ data Config = Config
   { matrix :: MatrixConfig
   , database :: Text
   , repo :: FilePath
-  , branches :: [Text]
+  , branches :: Map Text [Text]
   }
   deriving stock (Generic)
   deriving anyclass (FromJSON)
@@ -67,9 +68,9 @@ unwrapMatrixError action = do
 git :: Config -> [String] -> Process.ProcessConfig () () ()
 git config command = Process.proc "git" ("-C" : repo config : command)
 
-gitShow :: Config -> String -> IO [Commit]
+gitShow :: Config -> [String] -> IO [Commit]
 gitShow config reference = do
-  raw_commits <- Process.readProcessStdout_ $ git config $ "show" : "-s" : "--format=format:%H %s" : [reference]
+  raw_commits <- Process.readProcessStdout_ $ git config $ "show" : "-s" : "--format=format:%H %s" : reference
   pure $ uncurry Commit . second (Text.drop 1) . Text.breakOn " " <$> lines (decodeUtf8 raw_commits)
 
 commitIsPR :: Commit -> Maybe Int
@@ -113,18 +114,18 @@ main :: IO ()
 main = do
   [config_path] <- getArgs
   config :: Config <- Yaml.decodeFileThrow config_path
-  Process.runProcess_ (git config $ "fetch" : "-q" : "origin" : fmap toString (branches config))
+  Process.runProcess_ (git config $ "fetch" : "-q" : "origin" : fmap toString (Map.keys $ branches config))
   messages <-
     catMaybes <$> runSqlite (database config) do
       runMigration migrateAll
-      forM (branches config) \branch -> do
-        [commit] <- lift $ lift $ lift $ gitShow config (originBranch branch)
+      forM (Map.toList $ branches config) \(branch, ignores) -> do
+        [commit] <- lift $ lift $ lift $ gitShow config [originBranch branch]
         let key = BranchKey branch
         branchState :: Maybe Branch <- Persist.get key
         Persist.repsert key $ Branch branch (commitId commit)
         case branchState of
           Just (Branch{branchCommit}) -> do
-            changes <- lift $ lift $ lift $ gitShow config (toString $ branchCommit <> "..." <> commitId commit)
+            changes <- lift $ lift $ lift $ gitShow config $ [toString $ branchCommit <> "..." <> commitId commit, "--not"] <> fmap originBranch ignores
             let prs = mapMaybe commitIsPR changes
             pure $
               if null changes
@@ -138,7 +139,7 @@ main = do
                           <> m " to "
                           <> commitHTML commit
                       ) :
-                        [m "Including the PRs: " <> intercalateMsgPlain ", " (fmap prHTML prs) | not $ null prs]
+                        [m ("Including the " <> show (length prs) <> " PRs: ") <> intercalateMsgPlain ", " (fmap prHTML prs) | not $ null prs]
           Nothing -> do
             putTextLn $ "Initiated database for branch " <> branch <> " at " <> fst (commitHTML commit)
             pure Nothing
