@@ -1,10 +1,13 @@
 module Main where
 
+import Control.Concurrent (threadDelay)
+import qualified Control.Concurrent.Async as Async
+import qualified Data.List as List
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as Text
 import Data.Yaml (FromJSON)
 import qualified Data.Yaml as Yaml
-import Database.Persist ()
+import Database.Persist ((==.))
 import qualified Database.Persist as Persist
 import Database.Persist.Sqlite (runMigration, runSqlite)
 import qualified Database.Persist.TH as Persist
@@ -93,8 +96,8 @@ link url label = (label, "<a href=\"" <> baseUrl <> url <> "\">" <> label <> "</
 branchHTML :: Text -> MessageText
 branchHTML branch = link ("tree/" <> branch) branch
 
-prHTML :: Int -> MessageText
-prHTML pr = link ("pull/" <> show pr) ("#" <> show pr)
+prHTML :: (Int, [Text]) -> MessageText
+prHTML (pr, subscribers) = link ("pull/" <> show pr) ("#" <> show pr <> if null subscribers then "" else "(" <> Text.intercalate ", " subscribers <> ")")
 
 type MessageText = (Text, Text)
 
@@ -110,14 +113,11 @@ intercalateMsgPlain x = intercalateMsg x x
 m :: Text -> (Text, Text)
 m x = (x, x)
 
-main :: IO ()
-main = do
-  [config_path] <- getArgs
-  config :: Config <- Yaml.decodeFileThrow config_path
+watchRepo :: Config -> Matrix.ClientSession -> IO ()
+watchRepo config matrix_session = do
   Process.runProcess_ (git config $ "fetch" : "-q" : "origin" : fmap toString (Map.keys $ branches config))
   messages <-
     catMaybes <$> runSqlite (database config) do
-      runMigration migrateAll
       forM (Map.toList $ branches config) \(branch, ignores) -> do
         [commit] <- lift $ lift $ lift $ gitShow config [originBranch branch]
         let key = BranchKey branch
@@ -126,7 +126,9 @@ main = do
         case branchState of
           Just (Branch{branchCommit}) -> do
             changes <- lift $ lift $ lift $ gitShow config $ [toString $ branchCommit <> "..." <> commitId commit, "--not"] <> fmap originBranch ignores
-            let prs = mapMaybe commitIsPR changes
+            prs <- forM (mapMaybe commitIsPR changes) \pr -> do
+              subscriptions <- Persist.selectList [PrSubscriptionPullRequest ==. pr] []
+              pure (pr, fmap (prSubscriptionUser . Persist.entityVal) subscriptions)
             pure $
               if null changes
                 then Nothing
@@ -144,19 +146,49 @@ main = do
             putTextLn $ "Initiated database for branch " <> branch <> " at " <> fst (commitHTML commit)
             pure Nothing
   let message = unlinesMsg messages
-  when (null messages) do
-    putTextLn "No advances!"
-    exitSuccess
-  putTextLn $ "Sending: " <> fst message
+  if null messages
+    then putTextLn "No advances!"
+    else do
+      putTextLn $ "Sending: " <> fst message
+      txnId <- TxnID . show <$> randomRIO (1000000 :: Int, 9999999)
+      let roomId = RoomID . room $ matrix config
+      void $
+        unwrapMatrixError $
+          sendMessage
+            matrix_session
+            roomId
+            (EventRoomMessage $ RoomMessageText $ Matrix.MessageText (fst message) NoticeType (Just "org.matrix.custom.html") (Just (snd message)))
+            txnId
+
+getCommand :: Matrix.RoomEvent -> Maybe (Text, Int)
+getCommand Matrix.RoomEvent{Matrix.reSender = Matrix.Author author, Matrix.reContent = EventRoomMessage (RoomMessageText (Matrix.MessageText{Matrix.mtBody, Matrix.mtType = Matrix.TextType}))} =
+  do
+    subscription <- Text.stripPrefix "!subscribe " mtBody
+    prId :: Int <- readMaybe (toString . Text.strip $ subscription)
+    pure (author, prId)
+getCommand _ = Nothing
+
+main :: IO ()
+main = do
+  [config_path] <- getArgs
+  config :: Config <- Yaml.decodeFileThrow config_path
+  runSqlite (database config) (runMigration migrateAll)
   matrix_session <- createSession (server $ matrix config) (MatrixToken . token $ matrix config)
-  txnId <- TxnID . show <$> randomRIO (1000000 :: Int, 9999999)
+  userId <- unwrapMatrixError $ Matrix.getTokenOwner matrix_session
+  filterId <- unwrapMatrixError $ Matrix.createFilter matrix_session userId Matrix.messageFilter
   let roomId = RoomID . room $ matrix config
   ensureJoin matrix_session roomId
-  _ <-
-    unwrapMatrixError $
-      sendMessage
-        matrix_session
-        roomId
-        (EventRoomMessage $ RoomMessageText $ Matrix.MessageText (fst message) NoticeType (Just "org.matrix.custom.html") (Just (snd message)))
-        txnId
-  putStrLn "Finished"
+  let keepWatching = watchRepo config matrix_session >> threadDelay 60000000 >> keepWatching
+      keepListening = Matrix.syncPoll matrix_session (Just filterId) Nothing (Just Matrix.Online) \syncResult -> do
+        let events = toList . snd =<< Matrix.getTimelines syncResult
+            subscriptions = nonEmpty $ events & mapMaybe getCommand
+        forM_ subscriptions $
+          runSqlite (database config) . mapM_ \(author, prId) -> do
+            existingSubscription <- Persist.selectList [PrSubscriptionUser ==. author, PrSubscriptionPullRequest ==. prId] []
+            if null existingSubscription
+              then do
+                Persist.insert_ $ PrSubscription author prId
+                putTextLn $ "Subscribing " <> author <> " to " <> show prId
+              else putTextLn $ author <> " is already subscribed to " <> show prId
+
+  Async.concurrently_ keepWatching keepListening

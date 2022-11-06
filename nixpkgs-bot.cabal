@@ -31,11 +31,13 @@ common common-config
     ScopedTypeVariables
     StandaloneDeriving
     TemplateHaskell
+    TupleSections
     TypeFamilies
     UndecidableInstances
 
   build-depends:
     , aeson
+    , async
     , base               >=4.15 && <5
     , containers
     , matrix-client
@@ -57,3 +59,4 @@ executable nixpkgs-bot
   import:         common-config
   main-is:        Main.hs
   hs-source-dirs: exe
+  ghc-options:    -threaded
