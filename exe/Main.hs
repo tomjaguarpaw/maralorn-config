@@ -69,7 +69,7 @@ git config command = Process.proc "git" ("-C" : repo config : command)
 
 gitShow :: Config -> String -> IO [Commit]
 gitShow config reference = do
-  raw_commits <- Process.readProcessStdout_ $ git config $ "show" : "--format=format:%H %s" : [reference]
+  raw_commits <- Process.readProcessStdout_ $ git config $ "show" : "-s" : "--format=format:%H %s" : [reference]
   pure $ uncurry Commit . Text.breakOn " " <$> lines (decodeUtf8 raw_commits)
 
 commitIsPR :: Commit -> Maybe Int
@@ -124,7 +124,7 @@ main = do
         Persist.repsert key $ Branch branch (commitId commit)
         case branchState of
           Just (Branch{branchCommit}) -> do
-            changes <- lift $ lift $ lift $ gitShow config (toString $ branchCommit <> ".." <> commitId commit)
+            changes <- lift $ lift $ lift $ gitShow config (toString $ branchCommit <> "..." <> commitId commit)
             let prs = mapMaybe commitIsPR changes
             pure $
               if null changes
