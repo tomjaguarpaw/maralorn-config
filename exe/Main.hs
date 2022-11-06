@@ -53,7 +53,7 @@ data Commit = Commit
 ensureJoin :: ClientSession -> RoomID -> IO ()
 ensureJoin session roomId = do
   rooms <- unwrapMatrixError $ getJoinedRooms session
-  unless (roomId `elem` rooms) $ void $ unwrapMatrixError $ joinRoom session (coerce roomId)
+  unless (roomId `elem` rooms) $ void . unwrapMatrixError $ joinRoom session (coerce roomId)
 
 unwrapMatrixError :: MatrixIO a -> IO a
 unwrapMatrixError action = do
@@ -70,11 +70,11 @@ git config command = Process.proc "git" ("-C" : repo config : command)
 gitShow :: Config -> String -> IO [Commit]
 gitShow config reference = do
   raw_commits <- Process.readProcessStdout_ $ git config $ "show" : "-s" : "--format=format:%H %s" : [reference]
-  pure $ uncurry Commit . Text.breakOn " " <$> lines (decodeUtf8 raw_commits)
+  pure $ uncurry Commit . second (Text.drop 1) . Text.breakOn " " <$> lines (decodeUtf8 raw_commits)
 
 commitIsPR :: Commit -> Maybe Int
 commitIsPR commit = do
-  (githubId, _) <- Text.breakOn " " <$> Text.stripPrefix "Merge pull request #" (commitTitle commit)
+  (githubId, _) <- second (Text.drop 1) . Text.breakOn " " <$> Text.stripPrefix "Merge pull request #" (commitTitle commit)
   readMaybe (toString githubId)
 
 originBranch :: Text -> String
