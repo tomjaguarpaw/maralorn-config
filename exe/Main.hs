@@ -2,7 +2,6 @@ module Main where
 
 import Control.Concurrent (threadDelay)
 import qualified Control.Concurrent.Async as Async
-import qualified Data.List as List
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as Text
 import Data.Yaml (FromJSON)
@@ -97,7 +96,7 @@ branchHTML :: Text -> MessageText
 branchHTML branch = link ("tree/" <> branch) branch
 
 prHTML :: (Int, [Text]) -> MessageText
-prHTML (pr, subscribers) = link ("pull/" <> show pr) ("#" <> show pr <> if null subscribers then "" else "(" <> Text.intercalate ", " subscribers <> ")")
+prHTML (pr, subscribers) = link ("pull/" <> show pr) ("#" <> show pr) <> m if null subscribers then "" else " (" <> Text.intercalate ", " subscribers <> ")"
 
 type MessageText = (Text, Text)
 
