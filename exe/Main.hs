@@ -137,8 +137,8 @@ main = do
                           <> link ("compare/" <> branchCommit <> "..." <> commitId commit) (show (length changes) <> " commits")
                           <> m " to "
                           <> commitHTML commit
-                      )
-                        : [m "Including the PRs: " <> intercalateMsgPlain ", " (fmap prHTML prs) | not $ null prs]
+                      ) :
+                        [m "Including the PRs: " <> intercalateMsgPlain ", " (fmap prHTML prs) | not $ null prs]
           Nothing -> do
             putTextLn $ "Initiated database for branch " <> branch <> " at " <> fst (commitHTML commit)
             pure Nothing

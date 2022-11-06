@@ -51,6 +51,7 @@
               statix.enable = true;
               cabal-fmt.enable = true;
               shellcheck.enable = true;
+              fourmolu.enable = true;
             };
           };
         };
