@@ -118,7 +118,7 @@ in {
                             {
                               condition = "numeric_state";
                               entity_id = "sensor.670dcb_bme280_dew_point";
-                              below = 14.5;
+                              below = 14;
                             }
                             {
                               condition = "state";
@@ -138,7 +138,7 @@ in {
                         {
                           condition = "numeric_state";
                           entity_id = "sensor.670dcb_bme280_dew_point";
-                          above = 15;
+                          above = 14.5;
                         }
                       ];
                       sequence = {
@@ -161,7 +161,7 @@ in {
                         {
                           condition = "numeric_state";
                           entity_id = "sensor.670dbe_bme280_dew_point";
-                          above = 15;
+                          above = 15.5;
                         }
                       ];
                       sequence = {
@@ -174,7 +174,7 @@ in {
                         {
                           condition = "numeric_state";
                           entity_id = "sensor.670dbe_bme280_dew_point";
-                          below = 14.5;
+                          below = 15;
                         }
                       ];
                       sequence = {
@@ -186,22 +186,22 @@ in {
                 }
               ];
             }
-            {
-              alias = "Backup Lüftungssteuerung Bad";
-              trigger = [
-                (triggers.stateTrigger "switch.lueftung_bad"
-                  // {
-                    to = "on";
-                    for = "03:00:00";
-                  })
-              ];
-              action = [
-                {
-                  service = "switch.turn_off";
-                  target.entity_id = "switch.lueftung_bad";
-                }
-              ];
-            }
+            #{
+            #  alias = "Backup Lüftungssteuerung Bad";
+            #  trigger = [
+            #    (triggers.stateTrigger "switch.lueftung_bad"
+            #      // {
+            #        to = "on";
+            #        for = "03:00:00";
+            #      })
+            #  ];
+            #  action = [
+            #    {
+            #      service = "switch.turn_off";
+            #      target.entity_id = "switch.lueftung_bad";
+            #    }
+            #  ];
+            #}
             {
               alias = "Thermostatsteuerung Schlafzimmer";
               trigger = with triggers; [
