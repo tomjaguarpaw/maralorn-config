@@ -140,7 +140,8 @@ main = do
                       )
                         : [m "Including the PRs: " <> intercalateMsgPlain ", " (fmap prHTML prs) | not $ null prs]
           Nothing -> do
-            pure $ Just $ m "Initiated database for branch " <> branchHTML branch <> m " at " <> commitHTML commit
+            putTextLn $ "Initiated database for branch " <> branch <> " at " <> fst (commitHTML commit)
+            pure Nothing
   let message = unlinesMsg messages
   when (null messages) do
     putTextLn "No advances!"
