@@ -87,16 +87,22 @@ baseUrl :: Text
 baseUrl = "https://github.com/NixOS/nixpkgs/"
 
 commitHTML :: Commit -> MessageText
-commitHTML Commit{commitId, commitTitle} = link ("commit/" <> commitId) (Text.take 7 commitId <> " " <> commitTitle)
+commitHTML Commit{commitId, commitTitle} = repoLink ("commit/" <> commitId) (Text.take 7 commitId <> " " <> commitTitle)
+
+mention :: Text -> MessageText
+mention user = link ("https://matrix.to/#/" <> user) user
 
 link :: Text -> Text -> MessageText
 link url label = (label, "<a href=\"" <> baseUrl <> url <> "\">" <> label <> "</a>")
 
+repoLink :: Text -> Text -> MessageText
+repoLink url = link (baseUrl <> url)
+
 branchHTML :: Text -> MessageText
-branchHTML branch = link ("tree/" <> branch) branch
+branchHTML branch = repoLink ("tree/" <> branch) branch
 
 prHTML :: (Int, [Text]) -> MessageText
-prHTML (pr, subscribers) = link ("pull/" <> show pr) ("#" <> show pr) <> m if null subscribers then "" else " (" <> Text.intercalate ", " subscribers <> ")"
+prHTML (pr, subscribers) = repoLink ("pull/" <> show pr) ("#" <> show pr) <> if null subscribers then m "" else m " (" <> intercalateMsgPlain ", " (fmap mention subscribers) <> m ")"
 
 type MessageText = (Text, Text)
 
@@ -136,7 +142,7 @@ watchRepo config matrix_session = do
                     unlinesMsg $
                       ( branchHTML branch
                           <> m " advanced by "
-                          <> link ("compare/" <> branchCommit <> "..." <> commitId commit) (show (length changes) <> " commits")
+                          <> repoLink ("compare/" <> branchCommit <> "..." <> commitId commit) (show (length changes) <> " commits")
                           <> m " to "
                           <> commitHTML commit
                       ) :
