@@ -93,7 +93,7 @@ mention :: Text -> MessageText
 mention user = link ("https://matrix.to/#/" <> user) user
 
 link :: Text -> Text -> MessageText
-link url label = (label, "<a href=\"" <> baseUrl <> url <> "\">" <> label <> "</a>")
+link url label = (label, "<a href=\"" <> url <> "\">" <> label <> "</a>")
 
 repoLink :: Text -> Text -> MessageText
 repoLink url = link (baseUrl <> url)
