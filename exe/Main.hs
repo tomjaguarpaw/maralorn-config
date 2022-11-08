@@ -10,7 +10,7 @@ import Database.Persist ((==.))
 import qualified Database.Persist as Persist
 import Database.Persist.Sqlite (runMigration, runSqlite)
 import qualified Database.Persist.TH as Persist
-import Network.Matrix.Client (ClientSession, Event (..), MatrixIO, MatrixToken (MatrixToken), MessageTextType (..), RoomID (RoomID), RoomMessage (..), TxnID (..), createSession, getJoinedRooms, joinRoom, sendMessage)
+import Network.Matrix.Client (ClientSession, Event (..), MatrixIO, MatrixToken (MatrixToken), MessageTextType (..), RoomID (RoomID), RoomMessage (..), TxnID (..), createSession, getJoinedRooms, joinRoom)
 import qualified Network.Matrix.Client as Matrix
 import Relude
 import qualified System.Process.Typed as Process
@@ -44,7 +44,17 @@ Persist.share
   PrSubscription
     user Text
     pullRequest Int
+    Primary user pullRequest
     deriving Eq Show
+  UserQuery
+    user Text
+    query Text
+    deriving Eq Show
+    Primary user
+  SessionState
+    key Text
+    value Text
+    Primary key
 |]
 
 data Commit = Commit
@@ -106,13 +116,13 @@ prHTML (pr, subscribers) = repoLink ("pull/" <> show pr) ("#" <> show pr) <> if 
 
 type MessageText = (Text, Text)
 
-intercalateMsg :: Text -> Text -> [(Text, Text)] -> (Text, Text)
+intercalateMsg :: Text -> Text -> [MessageText] -> MessageText
 intercalateMsg plain html msgs = (Text.intercalate plain (fmap fst msgs), Text.intercalate html (fmap snd msgs))
 
-unlinesMsg :: [(Text, Text)] -> (Text, Text)
+unlinesMsg :: [MessageText] -> MessageText
 unlinesMsg = intercalateMsg "\n" "<br>"
 
-intercalateMsgPlain :: Text -> [(Text, Text)] -> (Text, Text)
+intercalateMsgPlain :: Text -> [MessageText] -> MessageText
 intercalateMsgPlain x = intercalateMsg x x
 
 m :: Text -> (Text, Text)
@@ -153,47 +163,118 @@ watchRepo config matrix_session = do
   let message = unlinesMsg messages
   if null messages
     then putTextLn "No advances!"
-    else do
-      putTextLn $ "Sending: " <> fst message
-      txnId <- TxnID . show <$> randomRIO (1000000 :: Int, 9999999)
-      let roomId = RoomID . room $ matrix config
-      void $
-        unwrapMatrixError $
-          sendMessage
-            matrix_session
-            roomId
-            (EventRoomMessage $ RoomMessageText $ Matrix.MessageText (fst message) NoticeType (Just "org.matrix.custom.html") (Just (snd message)))
-            txnId
+    else sendMessage matrix_session (RoomID . room $ matrix config) message
 
-getCommand :: Matrix.RoomEvent -> Maybe (Text, Int)
-getCommand Matrix.RoomEvent{Matrix.reSender = Matrix.Author author, Matrix.reContent = EventRoomMessage (RoomMessageText (Matrix.MessageText{Matrix.mtBody, Matrix.mtType = Matrix.TextType}))} =
-  do
-    subscription <- Text.stripPrefix "!subscribe " mtBody
-    prId :: Int <- readMaybe (toString . Text.strip $ subscription)
-    pure (author, prId)
-getCommand _ = Nothing
+sendMessage :: ClientSession -> Matrix.RoomID -> MessageText -> IO ()
+sendMessage session roomId@(RoomID roomIdText) message = do
+  putTextLn $ "Sending to " <> roomIdText <> ": " <> fst message
+  txnId <- TxnID . show <$> randomRIO (1000000 :: Int, 9999999)
+  void $
+    unwrapMatrixError $
+      Matrix.sendMessage
+        session
+        roomId
+        (EventRoomMessage $ RoomMessageText $ Matrix.MessageText (fst message) NoticeType (Just "org.matrix.custom.html") (Just (snd message)))
+        txnId
+
+sendMessageToUser :: Config -> ClientSession -> Text -> MessageText -> IO ()
+sendMessageToUser config session user message = runSqlite (database config) do
+  userQuery <- Persist.get (UserQueryKey user)
+  case userQuery of
+    Just queryPair -> lift . lift . lift $ sendMessage session (RoomID $ userQueryQuery queryPair) message
+    Nothing -> putTextLn $ "Not finding a query for " <> user <> " can‘t send message: " <> fst message
+
+data Command = MkCommand
+  { roomId :: Matrix.RoomID
+  , command :: Text
+  , args :: Text
+  , author :: Text
+  , isQuery :: Bool
+  }
+
+getCommands :: ClientSession -> Matrix.RoomID -> NonEmpty Matrix.RoomEvent -> IO [Command]
+getCommands session roomId events = do
+  maybe [] toList <$> forM (nonEmpty $ mapMaybe getCommand $ toList events) \messages -> do
+    members <- unwrapMatrixError $ Matrix.getRoomMembers session roomId
+    let isQuery = Map.size members <= 2
+    forM (toList messages) \(author, message) -> do
+      let (command, args) = second (Text.drop 1) $ Text.breakOn " " message
+      pure $ MkCommand{command, args, author, isQuery, roomId}
+ where
+  getCommand Matrix.RoomEvent{Matrix.reSender = Matrix.Author author, Matrix.reContent = EventRoomMessage (RoomMessageText (Matrix.MessageText{Matrix.mtBody, Matrix.mtType = Matrix.TextType}))} = Just (author, mtBody)
+  getCommand _ = Nothing
+
+joinInvites :: ClientSession -> Maybe Matrix.SyncResultRoom -> IO ()
+joinInvites session (Just (Matrix.SyncResultRoom{Matrix.srrInvite = Just invites})) =
+  forM_ (Map.keys invites) (unwrapMatrixError . Matrix.joinRoom session)
+joinInvites _ _ = pass
+
+saveNextBatch :: Config -> Text -> IO ()
+saveNextBatch config next_batch = runSqlite (database config) $ Persist.repsert (SessionStateKey' "next_batch") (SessionState "next_batch" next_batch)
+
+setQueries :: Config -> [Command] -> IO ()
+setQueries config commands = runSqlite (database config) do
+  Persist.repsertMany . fmap (\command -> (UserQueryKey (author command), UserQuery (author command) (coerce $ roomId command))) . filter isQuery $ commands
+
+resultHandler :: Config -> ClientSession -> Matrix.SyncResult -> IO ()
+resultHandler config session syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} = do
+  saveNextBatch config srNextBatch
+  joinInvites session srRooms
+  commands <- join <$> mapM (uncurry (getCommands session)) (Matrix.getTimelines syncResult)
+  setQueries config commands
+  forM_ (filter isQuery commands) \case
+    MkCommand{command = "subscribe", author, args} ->
+      case readMaybe (toString args) :: Maybe Int of
+        Nothing -> sendMessageToUser config session author $ m $ "Could not parse \"" <> args <> "\" as a pr number."
+        Just number -> runSqlite (database config) do
+          existingSubscription <- Persist.selectList [PrSubscriptionUser ==. author, PrSubscriptionPullRequest ==. number] []
+          if null existingSubscription
+            then do
+              Persist.delete $ PrSubscriptionKey author number
+              lift . lift . lift $ sendMessageToUser config session author $ m "You are now subscribed to pr " <> prHTML (number, mempty)
+            else lift . lift . lift $ sendMessageToUser config session author $ m "You were already subscribed to pr " <> prHTML (number, mempty)
+    MkCommand{command = "unsubscribe", author, args} ->
+      case readMaybe (toString args) :: Maybe Int of
+        Nothing -> sendMessageToUser config session author $ m $ "Could not parse \"" <> args <> "\" as a pr number."
+        Just number -> runSqlite (database config) do
+          existingSubscription <- Persist.selectList [PrSubscriptionUser ==. author, PrSubscriptionPullRequest ==. number] []
+          if null existingSubscription
+            then do
+              Persist.insert_ $ PrSubscription author number
+              lift . lift . lift $ sendMessageToUser config session author $ m "You are now unsubscribed from pr " <> prHTML (number, mempty)
+            else lift . lift . lift $ sendMessageToUser config session author $ m "You were already unsubscribed from pr " <> prHTML (number, mempty)
+    MkCommand{command = "subscriptions", author} -> runSqlite (database config) do
+      existingSubscriptions <- Persist.selectList [PrSubscriptionUser ==. author] []
+      if null existingSubscriptions
+        then do
+          lift . lift . lift $ sendMessageToUser config session author $ m "You are not subscribed to any prs."
+        else lift . lift . lift $ sendMessageToUser config session author $ unlinesMsg (m ("You are subscribed to these " <> show (length existingSubscriptions) <> " prs:") : fmap (prHTML . (,mempty) . prSubscriptionPullRequest . Persist.entityVal) existingSubscriptions)
+    MkCommand{command = "help", author} ->
+      sendMessageToUser config session author $
+        unlinesMsg
+          [ m "Available commands:"
+          , m "help: This command"
+          , m "subscribe <pr-number>: Subscribe to a PR."
+          , m "unsubscribe <pr-number>: Unsubscribe from a PR."
+          , m "subscriptions: List PRs you are subscribed to."
+          ]
+    MkCommand{command, author} -> sendMessageToUser config session author (unlinesMsg [m $ "Unknown command: " <> command, m "Try the \"help\" command."])
+
+-- forM_ subscriptions $
+--  runSqlite (database config) . mapM_ \(author, prId) ->
 
 main :: IO ()
 main = do
   [config_path] <- getArgs
   config :: Config <- Yaml.decodeFileThrow config_path
-  runSqlite (database config) (runMigration migrateAll)
+  first_next_batch <- runSqlite (database config) do
+    runMigration migrateAll
+    fmap sessionStateValue <$> Persist.get (SessionStateKey' "next_batch")
   matrix_session <- createSession (server $ matrix config) (MatrixToken . token $ matrix config)
   userId <- unwrapMatrixError $ Matrix.getTokenOwner matrix_session
   filterId <- unwrapMatrixError $ Matrix.createFilter matrix_session userId Matrix.messageFilter
   let roomId = RoomID . room $ matrix config
   ensureJoin matrix_session roomId
   let keepWatching = watchRepo config matrix_session >> threadDelay 60000000 >> keepWatching
-      keepListening = Matrix.syncPoll matrix_session (Just filterId) Nothing (Just Matrix.Online) \syncResult -> do
-        let events = toList . snd =<< Matrix.getTimelines syncResult
-            subscriptions = nonEmpty $ events & mapMaybe getCommand
-        forM_ subscriptions $
-          runSqlite (database config) . mapM_ \(author, prId) -> do
-            existingSubscription <- Persist.selectList [PrSubscriptionUser ==. author, PrSubscriptionPullRequest ==. prId] []
-            if null existingSubscription
-              then do
-                Persist.insert_ $ PrSubscription author prId
-                putTextLn $ "Subscribing " <> author <> " to " <> show prId
-              else putTextLn $ author <> " is already subscribed to " <> show prId
-
+      keepListening = Matrix.syncPoll matrix_session (Just filterId) first_next_batch (Just Matrix.Online) (resultHandler config matrix_session)
   Async.concurrently_ keepWatching keepListening

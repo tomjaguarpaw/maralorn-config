@@ -24,6 +24,7 @@ common common-config
     FlexibleInstances
     GADTs
     GeneralizedNewtypeDeriving
+    LambdaCase
     MultiParamTypeClasses
     NamedFieldPuns
     OverloadedStrings
