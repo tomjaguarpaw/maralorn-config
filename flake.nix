@@ -62,6 +62,7 @@
             haskellPackages.haskell-language-server
             haskellPackages.weeder
             pkgs.haskellPackages.cabal-install
+            pkgs.sqlite
           ];
           withHoogle = true;
           inherit (self.checks.${system}.pre-commit-check) shellHook;
