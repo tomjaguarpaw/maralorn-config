@@ -11,6 +11,18 @@
         "url": "https://github.com/srid/emanote/archive/d1d54a3e1842192af10d9069668932b7acf00b12.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "helix": {
+        "branch": "master",
+        "description": "A post-modern modal text editor.",
+        "homepage": "https://helix-editor.com",
+        "owner": "helix-editor",
+        "repo": "helix",
+        "rev": "64359f8b484062e8c17b02fd2b2d690bb5bdfbd7",
+        "sha256": "1f9ydx7z5ihqpz6iw8jrwlaxmz3kggymjwbw3kv3w0f6q0wabrq5",
+        "type": "tarball",
+        "url": "https://github.com/helix-editor/helix/archive/64359f8b484062e8c17b02fd2b2d690bb5bdfbd7.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "hexa-nur-packages": {
         "branch": "master",
         "description": "My personal NUR repository: [maintainer=@mweinelt] ",
