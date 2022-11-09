@@ -1,0 +1,22 @@
+query MergingPullRequest($commit: GitObjectID!, $owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
+    object(oid: $commit) {
+      ... on Commit {
+        associatedPullRequests(first: 10) {
+          nodes {
+            number
+            title
+            mergeCommit {
+              oid
+            }
+            baseRefName
+          }
+        }
+      }
+    }
+  }
+  rateLimit {
+    remaining
+    resetAt
+  }
+}

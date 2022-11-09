@@ -21,6 +21,7 @@ common common-config
     DeriveAnyClass
     DeriveGeneric
     DerivingStrategies
+    DuplicateRecordFields
     FlexibleInstances
     GADTs
     GeneralizedNewtypeDeriving
@@ -46,6 +47,7 @@ common common-config
     , http-client
     , matrix-client
     , monad-logger
+    , mtl
     , persistent
     , persistent-sqlite
     , random
