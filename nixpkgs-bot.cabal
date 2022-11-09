@@ -37,27 +37,37 @@ common common-config
     UndecidableInstances
 
   build-depends:
-    , aeson
+    , aeson-schemas
     , async
     , base               >=4.15 && <5
+    , clock
     , containers
+    , graphql-client
+    , http-client
     , matrix-client
+    , monad-logger
     , persistent
     , persistent-sqlite
     , random
     , relude
+    , resourcet
+    , time
     , typed-process
     , yaml
 
   default-language:   Haskell2010
 
---library
---  import:          common-config
---  exposed-modules: NixpkgsBot
---  hs-source-dirs:  lib
+library
+  import:          common-config
+  exposed-modules:
+    NixpkgsBot.GraphQL.API
+    NixpkgsBot.GraphQL.Scalars
+
+  hs-source-dirs:  lib
 
 executable nixpkgs-bot
   import:         common-config
   main-is:        Main.hs
   hs-source-dirs: exe
   ghc-options:    -threaded
+  build-depends:  nixpkgs-bot

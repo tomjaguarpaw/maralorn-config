@@ -1,0 +1,18 @@
+query PullRequest($number: Int!) {
+  repository(owner: "NixOS", name: "nixpkgs") {
+    pullRequest(number: $number) {
+      title
+      author {
+        login
+      }
+      mergedAt
+      mergedBy {
+        login
+      }
+      mergeCommit {
+        oid
+      }
+      baseRefName
+    }
+  }
+}

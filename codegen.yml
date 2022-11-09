@@ -1,0 +1,7 @@
+schema: vendor/github-schema.graphql
+documents: graphql/*.graphql
+
+hsSourceDir: lib/
+apiModule: NixpkgsBot.GraphQL.API
+enumsModule: NixpkgsBot.GraphQL.Enums
+scalarsModule: NixpkgsBot.GraphQL.Scalars

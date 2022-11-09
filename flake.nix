@@ -24,9 +24,11 @@
       system: let
         ghc-version = "90";
         inherit (nixpkgs.legacyPackages.${system}) lib haskell pkgs;
-        haskellPackages = haskell.packages."ghc${ghc-version}";
         hlib = haskell.lib.compose;
-        inherit (hlib) doJailbreak dontCheck;
+        inherit (hlib) doJailbreak dontCheck markUnbroken;
+        haskellPackages = haskell.packages."ghc${ghc-version}".override {
+          overrides = final: prev: {aeson-schemas = markUnbroken (dontCheck prev.aeson-schemas);};
+        };
         cleanSelf = lib.sourceFilesBySuffices self [
           ".hs"
           ".cabal"
