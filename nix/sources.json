@@ -121,6 +121,12 @@
         "url": "https://github.com/NixOS/nixpkgs/archive/301aada7a64812853f2e2634a530ef5d34505048.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "nixpkgs-bot": {
+        "branch": "main",
+        "repo": "git@hera.m-0.eu:nixpkgs-bot",
+        "rev": "c8363dd353bb40357339b760258d36d07b4b7b91",
+        "type": "git"
+    },
     "obelisk": {
         "branch": "master",
         "description": "Obelisk provides an easy way to develop and deploy your Reflex project for web and mobile",
