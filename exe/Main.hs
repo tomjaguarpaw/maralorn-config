@@ -527,7 +527,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           , m "If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
           , mempty
           , codeHTML "subscribe [pr-number]" <> m ": I will subscribe you to the given pull request."
-          , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull requestBody."
+          , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull request."
           , codeHTML "list" <> m ": I will show you all the pull requests, I am watching for you."
           , codeHTML "help" <> m ": So I can tell you all of this again."
           , mempty
