@@ -484,7 +484,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
   setQueries commands
   forM_ (filter isQuery commands) \case
     MkCommand{command, author, args} | Text.isPrefixOf command "subscribe" ->
-      case readMaybe (toString args) of
+      case readMaybe (toString . Text.dropWhile (== '#') . Text.strip $ args) of
         Nothing -> sendMessageToUser author $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
         Just number -> do
           let pr_key = PullRequestKey number
@@ -496,7 +496,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
               sendMessageToUser author $ m "I will now track for you the pull request " <> prMsg
             else sendMessageToUser author $ m "Okay, but you were already subscribed to pull request " <> prMsg
     MkCommand{command, author, args} | Text.isPrefixOf command "unsubscribe" ->
-      case readMaybe (toString args) of
+      case readMaybe (toString . Text.dropWhile (== '#') . Text.strip $ args) of
         Nothing -> sendMessageToUser author $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
         Just number -> do
           let pr_key = PullRequestKey number
@@ -523,15 +523,18 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
           , m "I am continously watching the " <> repoLink "" "nixpkgs git repository on github."
           , m "You can see a feed with all merges in the matrix room " <> mention "#nixpkgs-updates:maralorn.de" <> m "."
+          , mempty
           , m "If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
           , codeHTML "subscribe [pr-number]" <> m ": I will subscribe you to the given pull request."
           , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull requestBody."
           , codeHTML "list" <> m ": I will show you all the pull requests, I am watching for you."
           , codeHTML "help" <> m ": So I can tell you all of this again."
           , m "By the way, you don‘t need to type the whole command, any prefix will work."
+          , mempty
           , m $ "I will inform you, when one of the pull requests you subscribed to reaches one of these branches: " <> branchList
+          , mempty
           , m "I have been programmed and am being hosted by" <> mention "@maralorn:maralorn.de" <> m ". Feel free to reach out to him, if you have any problems or suggestions."
-          , m "My code is written in Haskell, is opensource under the AGPL license and can be found at " <> link "https//git.maralorn.de/nixpkgs-bot" "git.maralorn.de/nixpkgs-bot" <> m "."
+          , m "My code is written in Haskell, is opensource under the AGPL license and can be found at " <> link "https://git.maralorn.de/nixpkgs-bot" "git.maralorn.de/nixpkgs-bot" <> m "."
           ]
     MkCommand{command, author} -> sendMessageToUser author (unlinesMsg [m $ "Sorry, I don‘t know what you want from me, when your command starts with: " <> command, m "I‘ll tell you all commands I know, when you use the " <> codeHTML "help" <> m " command."])
   last_watch_ref <- getEnv lastWatch
