@@ -551,6 +551,8 @@ codeHTML label = (label, "<code>" <> label <> "</code>")
 
 main :: IO ()
 main = do
+  hSetBuffering stdout LineBuffering
+  hSetBuffering stderr LineBuffering
   [config_path] <- getArgs
   config <- Yaml.decodeFileThrow config_path
   matrix_session <- Matrix.createSession (server $ matrix config) (Matrix.MatrixToken . token $ matrix config)
