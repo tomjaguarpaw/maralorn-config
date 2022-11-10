@@ -535,8 +535,8 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           , mempty
           , m "I will inform you, when one of the pull requests you subscribed to reaches one of these branches: " <> branchList
           , mempty
-          , m "I have been programmed and am being hosted by" <> mention "@maralorn:maralorn.de" <> m ". Feel free to reach out to him, if you have any problems or suggestions."
-          , m "My code is written in Haskell, is opensource under the AGPL license and can be found at " <> link "https://git.maralorn.de/nixpkgs-bot" "git.maralorn.de/nixpkgs-bot" <> m "."
+          , m "I have been programmed and am being hosted by " <> mention "@maralorn:maralorn.de" <> m ". Feel free to reach out to him, if you have any problems or suggestions."
+          , m "My code is written in Haskell, is open source under the AGPL license and can be found at " <> link "https://git.maralorn.de/nixpkgs-bot" "git.maralorn.de/nixpkgs-bot" <> m "."
           ]
     MkCommand{command, author} -> sendMessageToUser author (unlinesMsg [m $ "Sorry, I don‘t know what you want from me, when your command starts with: " <> command, m "I‘ll tell you all commands I know, when you use the " <> codeHTML "help" <> m " command."])
   last_watch_ref <- getEnv lastWatch
