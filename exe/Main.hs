@@ -1,5 +1,8 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 module Main (main) where
 
+import qualified Control.Exception as Exception
 import qualified Control.Monad.Except as Except
 import qualified Control.Monad.Logger as MonadLogger
 import qualified Control.Monad.Trans.Resource as ResourceT
@@ -10,6 +13,8 @@ import qualified Data.Map.Strict as Map
 import qualified Data.Text as Text
 import Data.Yaml (FromJSON)
 import qualified Data.Yaml as Yaml
+import Database.Esqueleto.Experimental (notIn, (^.))
+import qualified Database.Esqueleto.Experimental as SQL
 import Database.Persist ((==.))
 import qualified Database.Persist as Persist
 import qualified Database.Persist.Sqlite as Persist.Sqlite
@@ -25,14 +30,6 @@ import qualified System.Random as Random
 owner, name :: Text
 owner = "NixOS"
 name = "nixpkgs"
-
--- TODO:
--- detect non-merge-commit merges
--- only query those, if necessary
--- notify about changed query
--- drop finished prs
--- be smart about detecting commit progress
--- leave empty rooms
 
 data MatrixConfig = MatrixConfig
   { token :: Text
@@ -107,13 +104,14 @@ ensureJoin roomId = do
 getEnv :: (Environment -> a) -> App a
 getEnv getter = lift $ lift $ lift $ asks getter
 
+instance Exception Matrix.MatrixError
+
 unwrapMatrixErrorT :: MonadIO m => Matrix.MatrixM m a -> m a
 unwrapMatrixErrorT action = do
   message_response <- action
   case message_response of
     Left matrix_error -> do
-      print matrix_error
-      exitFailure
+      liftIO $ Exception.throwIO matrix_error
     Right response -> pure response
 
 unwrapMatrixError :: MonadIO m => Matrix.MatrixIO a -> m a
@@ -173,6 +171,9 @@ unlinesMsg = intercalateMsg "\n" "<br>"
 m :: Text -> MessageText
 m x = (x, x)
 
+mention :: Text -> MessageText
+mention user = link ("https://matrix.to/#/" <> user) user
+
 data Environment = MkEnvironment
   { config :: Config
   , matrixSession :: Matrix.ClientSession
@@ -209,7 +210,7 @@ discoverReachedBranches pr merge = do
       set_arrived branch
       check_arrived_in_next branch
 
-queryGraphQL :: GraphQL.GraphQLQuery a => a -> App (GraphQL.Object (GraphQL.ResultSchema a))
+queryGraphQL :: (GraphQL.GraphQLQuery a) => a -> App (GraphQL.Object (GraphQL.ResultSchema a))
 queryGraphQL query = do
   github_token <- getEnv (githubToken . config)
   GraphQL.runGraphQLQueryT
@@ -245,6 +246,7 @@ extractPR pr =
 queryPR :: Persist.Key PullRequest -> App (PullRequest, Maybe Merge)
 queryPR (PullRequestKey number) = do
   result <- queryGraphQL GraphQL.API.PullRequestQuery{GraphQL.API._number = number, _owner = owner, _name = name}
+  putTextLn $ show [get|result.rateLimit!|]
   pure $ extractPR [get|result.repository!.pullRequest!|]
 
 getPRInfo :: Persist.Key PullRequest -> App PRInfo
@@ -298,7 +300,14 @@ detectPRsOnAdvance branch =
               Nothing -> Except.throwError []
           Nothing -> pass
         when (Text.isPrefixOf "nix" branch) $ Except.throwError [] -- Branches which beginn with "nix" are channel branches and we don‘t scan those for new merge_commits.
+        unmergedPullRequests <- lift $
+          SQL.select $ do
+            pr <- (^. PullRequestId) <$> SQL.from (SQL.table @PullRequest)
+            SQL.where_ (pr `SQL.notIn` SQL.subList_select ((^. MergeNumber) <$> SQL.from (SQL.table @Merge)))
+            pure pr
+        when (null unmergedPullRequests) $ Except.throwError []
         result <- lift $ queryGraphQL GraphQL.API.MergingPullRequestQuery{GraphQL.API._commit = commitId change, _owner = owner, _name = name}
+        putTextLn $ show [get|result.rateLimit!|]
         let prs = extractPR <$> catMaybes [get|result.repository!.object!.__fragment!.associatedPullRequests!.nodes!|]
         flip mapMaybeM prs \(pr, merge) ->
           case merge of
@@ -360,6 +369,45 @@ watchRepo = do
             prs = toList $ subscriptionPullRequest <$> subscriptionsByUser
         prMsgs <- mapM (fmap prHTML . getPRInfo) prs
         sendMessageToUser author $ unlinesMsg $ msg : m ("Including these " <> show (length prMsgs) <> " pull requests you subscribed to:") : prMsgs
+  maintenance
+
+maintenance :: App ()
+maintenance = do
+  unsubscribeFromFinishedPRs
+  dropUnsubscribedPRs
+  dropOldBranches
+
+dropOldBranches :: App ()
+dropOldBranches = do
+  branches <- getEnv (Map.keys . branches . config)
+  SQL.delete do
+    branch <- SQL.from $ SQL.table @Branch
+    SQL.where_ (branch ^. BranchName `notIn` SQL.valList branches)
+
+dropUnsubscribedPRs :: App ()
+dropUnsubscribedPRs = do
+  SQL.delete do
+    pr <- SQL.from $ SQL.table @PullRequest
+    SQL.where_ $
+      (pr ^. PullRequestId) `notIn` SQL.subList_select do
+        sub <- SQL.from $ SQL.table @Subscription
+        pure (sub ^. SubscriptionPullRequest)
+
+unsubscribeFromFinishedPRs :: App ()
+unsubscribeFromFinishedPRs = do
+  prs <- SQL.select $ SQL.from $ SQL.table @PullRequest
+  forM_ prs $ \pr -> do
+    all_reached <- all fst <$> reachedBranches (SQL.entityVal pr)
+    when all_reached do
+      subs <- SQL.select do
+        sub <- SQL.from $ SQL.table @Subscription
+        SQL.where_ (sub ^. SubscriptionPullRequest SQL.==. SQL.val (SQL.entityKey pr))
+        pure sub
+      forM_ subs \sub ->
+        sendMessageToUser (subscriptionUser (Persist.entityVal sub)) $ m "Your subscription of pr " <> prHTML (SQL.entityVal pr, []) <> m " has ended, because it reached all relevant branches."
+      SQL.delete do
+        pr_ <- SQL.from $ SQL.table @PullRequest
+        SQL.where_ (pr_ ^. PullRequestId SQL.==. SQL.val (SQL.entityKey pr))
 
 sendMessage :: Matrix.RoomID -> MessageText -> App ()
 sendMessage roomId@(Matrix.RoomID roomIdText) message = do
@@ -379,7 +427,7 @@ sendMessageToUser user message = do
   userQuery <- Persist.get (QueryKey user)
   case userQuery of
     Just queryPair -> do
-      putTextLn $ "Sending message to user " <> user
+      putTextLn $ "Sending to user " <> user <> ":"
       sendMessage (Matrix.RoomID $ queryRoom queryPair) message
     Nothing -> putTextLn $ "Not finding a query for " <> user <> " can‘t send message: " <> fst message
 
@@ -395,7 +443,6 @@ getCommands :: Matrix.RoomID -> NonEmpty Matrix.RoomEvent -> App [Command]
 getCommands roomId events = do
   maybe [] toList <$> forM (nonEmpty $ mapMaybe getCommand $ toList events) \messages -> do
     session <- getEnv matrixSession
-
     members <- unwrapMatrixError $ Matrix.getRoomMembers session roomId
     let isQuery = Map.size members <= 2
     forM (toList messages) \(author, message) -> do
@@ -418,11 +465,16 @@ setQueries :: [Command] -> App ()
 setQueries commands = do
   forM_ (filter isQuery commands) \command -> do
     current_query <- Persist.get (QueryKey (author command))
+    let set_room = void $ Persist.repsert (QueryKey (author command)) (Query (author command) (coerce $ roomId command))
     case current_query of
-      Just query | queryRoom query == coerce (roomId command) -> pass
+      Just query
+        | queryRoom query == coerce (roomId command) -> pass
+        | otherwise -> do
+          sendMessageToUser (author command) $ m "Because you sent your most recent message to this room, I will use this room for direct messages to you from now on."
+          set_room
       _ -> do
-        putTextLn $ "Setting Query for user " <> author command <> " from " <> show current_query <> " to " <> coerce (roomId command)
-        void $ Persist.repsert (QueryKey (author command)) (Query (author command) (coerce $ roomId command))
+        putTextLn $ "Setting Query for user " <> author command <> " to " <> coerce (roomId command)
+        set_room
 
 resultHandler :: Matrix.SyncResult -> App ()
 resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} = do
@@ -431,9 +483,9 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
   commands <- join <$> mapM (uncurry getCommands) (Matrix.getTimelines syncResult)
   setQueries commands
   forM_ (filter isQuery commands) \case
-    MkCommand{command = "add", author, args} ->
-      case readMaybe (toString args) :: Maybe Int of
-        Nothing -> sendMessageToUser author $ m $ "Could not parse \"" <> args <> "\" as a pr number."
+    MkCommand{command, author, args} | Text.isPrefixOf command "subscribe" ->
+      case readMaybe (toString args) of
+        Nothing -> sendMessageToUser author $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
         Just number -> do
           let pr_key = PullRequestKey number
           existingSubscription <- Persist.selectList [SubscriptionUser ==. author, SubscriptionPullRequest ==. pr_key] []
@@ -441,39 +493,47 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           if null existingSubscription
             then do
               Persist.insert_ $ Subscription author (PullRequestKey number)
-              sendMessageToUser author $ m "You are now subscribed to pr " <> prMsg
-            else sendMessageToUser author $ m "You were already subscribed to pr " <> prMsg
-    MkCommand{command = "delete", author, args} ->
-      case readMaybe (toString args) :: Maybe Int of
-        Nothing -> sendMessageToUser author $ m $ "Could not parse \"" <> args <> "\" as a pr number."
+              sendMessageToUser author $ m "I will now track for you the pull request " <> prMsg
+            else sendMessageToUser author $ m "Okay, but you were already subscribed to pull request " <> prMsg
+    MkCommand{command, author, args} | Text.isPrefixOf command "unsubscribe" ->
+      case readMaybe (toString args) of
+        Nothing -> sendMessageToUser author $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
         Just number -> do
           let pr_key = PullRequestKey number
           existingSubscription <- Persist.selectList [SubscriptionUser ==. author, SubscriptionPullRequest ==. pr_key] []
           prMsg <- prHTML <$> getPRInfo pr_key
           if null existingSubscription
             then do
-              sendMessageToUser author $ m "You were already unsubscribed from pr " <> prMsg
+              sendMessageToUser author $ m "Well, you were already unsubscribed from pull request " <> prMsg
             else do
               Persist.delete $ SubscriptionKey author (PullRequestKey number)
-              sendMessageToUser author $ m "You are now unsubscribed from pr " <> prMsg
-    MkCommand{command = "list", author} -> do
+              sendMessageToUser author $ m "Okay, I will not send you updates about pull request " <> prMsg
+    MkCommand{command, author} | Text.isPrefixOf command "list" -> do
       existingSubscriptions <- Persist.selectList [SubscriptionUser ==. author] []
       if null existingSubscriptions
         then do
-          sendMessageToUser author $ m "You are not subscribed to any prs."
+          sendMessageToUser author $ m "I am currently not tracking any pull requests for you. Use " <> codeHTML "subscribe" <> m " to change that."
         else do
           prMsgs <- mapM (fmap prHTML . getPRInfo . subscriptionPullRequest . Persist.entityVal) existingSubscriptions
-          sendMessageToUser author $ unlinesMsg (m ("You are subscribed to these " <> show (length existingSubscriptions) <> " prs:") : prMsgs)
-    MkCommand{command = "help", author} ->
+          sendMessageToUser author $ unlinesMsg (m ("I am currently watching the following " <> show (length existingSubscriptions) <> " pull requests for you:") : prMsgs)
+    MkCommand{command, author} | Text.isPrefixOf command "help" -> do
+      branchList <- getEnv (Text.intercalate ", " . Map.keys . branches . config)
       sendMessageToUser author $
         unlinesMsg
-          [ m "Available commands:"
-          , codeHTML "help" <> m ": This command"
-          , codeHTML "add [pr-number]" <> m ": Subscribe to a PR."
-          , codeHTML "delete [pr-number]" <> m ": Unsubscribe from a PR."
-          , codeHTML "list" <> m ": List PRs you are subscribed to."
+          [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when PRs are being merged."
+          , m "I am continously watching the " <> repoLink "" "nixpkgs git repository on github."
+          , m "You can see a feed with all merges in the matrix room " <> mention "#nixpkgs-updates:maralorn.de" <> m "."
+          , m "If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
+          , codeHTML "subscribe [pr-number]" <> m ": I will subscribe you to the given pull request."
+          , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull requestBody."
+          , codeHTML "list" <> m ": I will show you all the pull requests, I am watching for you."
+          , codeHTML "help" <> m ": So I can tell you all of this again."
+          , m "By the way, you don‘t need to type the whole command, any prefix will work."
+          , m $ "I will inform you, when one of the pull requests you subscribed to reaches one of these branches: " <> branchList
+          , m "I have been programmed and am being hosted by" <> mention "@maralorn:maralorn.de" <> m ". Feel free to reach out to him, if you have any problems or suggestions."
+          , m "My code is written in Haskell, is opensource under the AGPL license and can be found at " <> link "https//git.maralorn.de/nixpkgs-bot" "git.maralorn.de/nixpkgs-bot" <> m "."
           ]
-    MkCommand{command, author} -> sendMessageToUser author (unlinesMsg [m $ "Unknown command: " <> command, m "Try the " <> codeHTML "help" <> m " command."])
+    MkCommand{command, author} -> sendMessageToUser author (unlinesMsg [m $ "Sorry, I don‘t know what you want from me, when your command starts with: " <> command, m "I‘ll tell you all commands I know, when you use the " <> codeHTML "help" <> m " command."])
   last_watch_ref <- getEnv lastWatch
   last_watch <- readIORef last_watch_ref
   now <- liftIO $ Clock.getTime Clock.Monotonic
@@ -489,14 +549,19 @@ main = do
   [config_path] <- getArgs
   config <- Yaml.decodeFileThrow config_path
   matrix_session <- Matrix.createSession (server $ matrix config) (Matrix.MatrixToken . token $ matrix config)
-  last_watch <- newIORef minBound
+  now <- liftIO $ Clock.getTime Clock.Monotonic
+  last_watch <- newIORef now
   let runApp :: App a -> IO a
       runApp = flip runReaderT (MkEnvironment config matrix_session last_watch) . Persist.Sqlite.runSqlite (database config) . Persist.Sqlite.retryOnBusy
   first_next_batch <- runApp do
     let roomId = Matrix.RoomID . room $ matrix config
     ensureJoin roomId
     Persist.Sqlite.runMigration migrateAll
+    watchRepo
     fmap sessionStateValue <$> Persist.get (SessionStateKey' "next_batch")
   userId <- unwrapMatrixError $ Matrix.getTokenOwner matrix_session
   filterId <- unwrapMatrixError $ Matrix.createFilter matrix_session userId Matrix.messageFilter
-  unwrapMatrixError $ Matrix.syncPoll matrix_session (Just filterId) first_next_batch (Just Matrix.Online) (runApp . resultHandler)
+  unwrapMatrixError $ Matrix.syncPoll matrix_session (Just filterId) first_next_batch (Just Matrix.Online) (catchAll . runApp . resultHandler)
+
+catchAll :: IO () -> IO ()
+catchAll action = Exception.catch action (\(e :: SomeException) -> putStrLn (displayException e))

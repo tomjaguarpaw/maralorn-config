@@ -22,6 +22,7 @@ common common-config
     DeriveGeneric
     DerivingStrategies
     DuplicateRecordFields
+    FlexibleContexts
     FlexibleInstances
     GADTs
     GeneralizedNewtypeDeriving
@@ -34,6 +35,7 @@ common common-config
     StandaloneDeriving
     TemplateHaskell
     TupleSections
+    TypeApplications
     TypeFamilies
     UndecidableInstances
 
@@ -43,6 +45,7 @@ common common-config
     , base               >=4.15 && <5
     , clock
     , containers
+    , esqueleto
     , graphql-client
     , http-client
     , matrix-client
