@@ -25,9 +25,18 @@
         ghc-version = "90";
         inherit (nixpkgs.legacyPackages.${system}) lib haskell pkgs;
         hlib = haskell.lib.compose;
-        inherit (hlib) doJailbreak dontCheck markUnbroken;
+        inherit (hlib) doJailbreak dontCheck markUnbroken appendPatch;
         haskellPackages = haskell.packages."ghc${ghc-version}".override {
-          overrides = final: prev: {aeson-schemas = markUnbroken (dontCheck prev.aeson-schemas);};
+          overrides = final: prev: {
+            matrix-client =
+              appendPatch (pkgs.fetchpatch {
+                url = "https://github.com/softwarefactory-project/matrix-client-haskell/commit/97cb1918fcdf9b0249c6c8e70c7bfc664d718022.patch";
+                sha256 = "sha256-YyxgfNO5RtqpKJ9UOYPlRple0FuNmjAB1iy9vYy0HOE=";
+                relative = "matrix-client";
+              })
+              prev.matrix-client;
+            aeson-schemas = markUnbroken (dontCheck prev.aeson-schemas);
+          };
         };
         cleanSelf = lib.sourceFilesBySuffices self [
           ".hs"
