@@ -520,7 +520,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
       branchList <- getEnv (Text.intercalate ", " . Map.keys . branches . config)
       sendMessageToUser author $
         unlinesMsg
-          [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when PRs are being merged."
+          [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
           , m "I am continously watching the " <> repoLink "" "nixpkgs git repository on github."
           , m "You can see a feed with all merges in the matrix room " <> mention "#nixpkgs-updates:maralorn.de" <> m "."
           , m "If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
