@@ -517,7 +517,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           prMsgs <- mapM (fmap prHTML . getPRInfo . subscriptionPullRequest . Persist.entityVal) existingSubscriptions
           sendMessageToUser author $ unlinesMsg (m ("I am currently watching the following " <> show (length existingSubscriptions) <> " pull requests for you:") : prMsgs)
     MkCommand{command, author} | Text.isPrefixOf command "help" -> do
-      branchList <- getEnv (Text.intercalate ", " . Map.keys . branches . config)
+      branchList <- getEnv (intercalateMsgPlain ", " . fmap branchHTML . Map.keys . branches . config)
       sendMessageToUser author $
         unlinesMsg
           [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
@@ -525,13 +525,15 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           , m "You can see a feed with all merges in the matrix room " <> mention "#nixpkgs-updates:maralorn.de" <> m "."
           , mempty
           , m "If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
+          , mempty
           , codeHTML "subscribe [pr-number]" <> m ": I will subscribe you to the given pull request."
           , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull requestBody."
           , codeHTML "list" <> m ": I will show you all the pull requests, I am watching for you."
           , codeHTML "help" <> m ": So I can tell you all of this again."
+          , mempty
           , m "By the way, you don‘t need to type the whole command, any prefix will work."
           , mempty
-          , m $ "I will inform you, when one of the pull requests you subscribed to reaches one of these branches: " <> branchList
+          , m "I will inform you, when one of the pull requests you subscribed to reaches one of these branches: " <> branchList
           , mempty
           , m "I have been programmed and am being hosted by" <> mention "@maralorn:maralorn.de" <> m ". Feel free to reach out to him, if you have any problems or suggestions."
           , m "My code is written in Haskell, is opensource under the AGPL license and can be found at " <> link "https://git.maralorn.de/nixpkgs-bot" "git.maralorn.de/nixpkgs-bot" <> m "."
