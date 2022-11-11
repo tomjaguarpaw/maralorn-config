@@ -503,8 +503,8 @@ setQueries commands = do
       Just query
         | queryRoom query == coerce (roomId command) -> pass
         | otherwise -> do
-          sendMessageToUser (author command) $ m "Because you sent your most recent message to this room, I will use this room for direct messages to you from now on."
           set_room
+          sendMessageToUser (author command) $ m "Because you sent your most recent message to this room, I will use this room for direct messages to you from now on."
       _ -> do
         putTextLn $ "Setting Query for user " <> author command <> " to " <> coerce (roomId command)
         set_room
@@ -559,7 +559,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           unlinesMsg
             [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
             , mempty
-            , m "I am continously watching the " <> repoLink "" "nixpkgs git repository on github." <> m "If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
+            , m "I am continously watching the " <> repoLink "" "nixpkgs git repository on github" <> m ". If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
             , mempty
             , codeHTML "subscribe [pr-number]" <> m ": I will subscribe you to the given pull request."
             , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull request."
