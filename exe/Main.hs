@@ -173,6 +173,7 @@ data Environment = MkEnvironment
   { config :: Config
   , matrixSession :: Matrix.ClientSession
   , lastWatch :: IORef Clock.TimeSpec
+  , lastMaintenance :: IORef Clock.TimeSpec
   }
 
 type App = ReaderT Persist.Sqlite.SqlBackend (MonadLogger.NoLoggingT (ResourceT.ResourceT (ReaderT Environment IO)))
@@ -379,14 +380,16 @@ watchRepo = do
         prs = toList $ subscriptionPullRequest <$> subscriptionsByUser
     prMsgs <- mapMaybeM (fmap (fmap prHTML) . getPRInfo) prs
     sendMessageToUser author $ unlinesMsg $ msg : m ("Including these " <> show (length prMsgs) <> " pull requests you subscribed to:") : prMsgs
-  maintenance
+  unsubscribeFromFinishedPRs
+  -- Run some maintenance daily
+  whenTimeIsUp lastMaintenance (60 * 60 * 24) maintenance
 
 maintenance :: App ()
 maintenance = do
-  unsubscribeFromFinishedPRs
   dropUnsubscribedPRs
   dropOldBranches
   deleteUnusedQueries
+  leaveEmptyRooms
 
 dropOldBranches :: App ()
 dropOldBranches = do
@@ -427,6 +430,13 @@ deleteUnusedQueries = SQL.delete do
     (query ^. QueryUser) `notIn` SQL.subList_select do
       sub <- SQL.from $ SQL.table @Subscription
       pure (sub ^. SubscriptionUser)
+
+leaveEmptyRooms :: App ()
+leaveEmptyRooms = do
+  session <- getEnv matrixSession
+  rooms <- unwrapMatrixError (Matrix.getJoinedRooms session)
+  forM_ rooms \room ->
+    whenM ((== 1) . length <$> unwrapMatrixError (Matrix.getRoomMembers session room)) $ unwrapMatrixError $ Matrix.leaveRoomById session room
 
 sendMessage :: Matrix.RoomID -> MessageText -> App ()
 sendMessage roomId@(Matrix.RoomID roomIdText) message = do
@@ -561,12 +571,16 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
             ]
       MkCommand{command} -> pure (unlinesMsg [m "Sorry, I don‘t know what you want from me, when your command starts with: " <> codeHTML command, m "I‘ll tell you all commands I know, when you use the " <> codeHTML "help" <> m " command."])
   forM_ responses $ uncurry \MkCommand{author} -> sendMessageToUser author . fromMaybe (m "Your command triggered an internal error in the bot. Sorry about that.")
-  last_watch_ref <- getEnv lastWatch
-  last_watch <- readIORef last_watch_ref
+  whenTimeIsUp lastWatch 60 watchRepo
+
+whenTimeIsUp :: (Environment -> IORef Clock.TimeSpec) -> Int64 -> App () -> App ()
+whenTimeIsUp get_ref interval action = do
+  last_run_ref <- getEnv get_ref
+  last_run <- readIORef last_run_ref
   now <- liftIO $ Clock.getTime Clock.Monotonic
-  when (Clock.sec (Clock.diffTimeSpec now last_watch) > 60) do
-    writeIORef last_watch_ref now
-    watchRepo
+  when (Clock.sec (Clock.diffTimeSpec now last_run) > interval) do
+    writeIORef last_run_ref now
+    action
 
 codeHTML :: (Semigroup b, IsString b) => b -> (b, b)
 codeHTML label = (label, "<code>" <> label <> "</code>")
@@ -580,8 +594,9 @@ main = do
   matrix_session <- Matrix.createSession (server $ matrix config) (Matrix.MatrixToken . token $ matrix config)
   now <- liftIO $ Clock.getTime Clock.Monotonic
   last_watch <- newIORef now
+  last_maintenance <- newIORef minBound
   let runApp :: App a -> IO a
-      runApp = flip runReaderT (MkEnvironment config matrix_session last_watch) . Persist.Sqlite.runSqlite (database config) . Persist.Sqlite.retryOnBusy
+      runApp = flip runReaderT (MkEnvironment config matrix_session last_watch last_maintenance) . Persist.Sqlite.runSqlite (database config) . Persist.Sqlite.retryOnBusy
   first_next_batch <- runApp do
     Persist.Sqlite.runMigration migrateAll
     watchRepo
