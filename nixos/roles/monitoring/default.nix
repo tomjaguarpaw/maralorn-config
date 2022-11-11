@@ -11,7 +11,7 @@
       allow ${config.m-0.prefix}::/64;
       deny all;
     '';
-    basicAuthFile = pkgs.privateFile "basic-auth/monitoring";
+    basicAuthFile = pkgs.privatePath "basic-auth/monitoring";
   };
 in {
   imports = [

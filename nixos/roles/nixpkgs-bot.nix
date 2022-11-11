@@ -29,7 +29,7 @@ in {
     description = "nixpkgs-bot";
     path = [pkgs.git];
     serviceConfig = {
-      LoadCredential = ["matrix_token:${pkgs.privateFile "nixpkgs-bot/matrix_token"}" "github_token:${pkgs.privateFile "nixpkgs-bot/github_token"}"];
+      LoadCredential = ["matrix_token:${pkgs.privatePath "nixpkgs-bot/matrix_token"}" "github_token:${pkgs.privatePath "nixpkgs-bot/github_token"}"];
       WorkingDirectory = "/var/lib/nixpkgs-bot";
       ExecStart = "${pkgs.nixpkgs-bot}/bin/nixpkgs-bot ${builtins.toFile "config.yaml" (builtins.toJSON config)}";
       DynamicUser = true;
