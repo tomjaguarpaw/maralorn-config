@@ -51,7 +51,7 @@ data Config = MkConfig
 loadCredential :: String -> IO Text
 loadCredential name = do
   credentials_directory <- System.getEnv "CREDENTIALS_DIRECTORY"
-  toText <$> readFile (credentials_directory <> "/" <> name)
+  Text.strip . toText <$> readFile (credentials_directory <> "/" <> name)
 
 Persist.share
   [Persist.mkPersist Persist.sqlSettings, Persist.mkMigrate "migrateAll"]
