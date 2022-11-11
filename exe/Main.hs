@@ -95,7 +95,7 @@ data Commit = Commit
   { commitId :: Text
   , commitTitle :: Text
   }
-  deriving stock (Show)
+  deriving stock (Show, Eq)
 
 getEnv :: (Environment -> a) -> App a
 getEnv getter = lift $ lift $ lift $ asks getter
@@ -286,8 +286,8 @@ getPRInfo pr_key = do
  | 3. Asks github, if we are currently looking for unmerged PRs and the commit doesn‘t seem to belong to any known PRs, then it marks as arrived, if known
  | 4. If any of the before happened for a subscribed PR, return the subscriptions.
 -}
-findSubscribedPRsInCommitList :: Text -> [Commit] -> App [Persist.Key PullRequest]
-findSubscribedPRsInCommitList branch =
+findSubscribedPRsInCommitList :: Text -> [Commit] -> [Commit] -> App [Persist.Key PullRequest]
+findSubscribedPRsInCommitList branch possible_new_merge_commits =
   fmap join . mapM \change ->
     either id id <$> runExceptT do
       found_by_merge_commit <- lift $ fmap (unMergeKey . Persist.entityKey) <$> Persist.selectList [MergeCommit ==. commitId change] []
@@ -317,6 +317,7 @@ findSubscribedPRsInCommitList branch =
           SQL.where_ (pr `SQL.notIn` SQL.subList_select ((^. MergeNumber) <$> SQL.from (SQL.table @Merge)))
           pure pr
       when (null unmerged_watched_pull_requests) $ Except.throwError []
+      unless (change `elem` possible_new_merge_commits) $ Except.throwError []
       lift do
         result <- queryGraphQL GraphQL.API.MergingPullRequestQuery{GraphQL.API._commit = commitId change, _owner = owner, _name = name}
         putText $ "MergingQuery: " <> show change <> " "
@@ -357,11 +358,11 @@ watchRepo = do
           Just (Branch{branchCommit = old_commit}) -> do
             let diffQuery = [toString $ old_commit <> "..." <> commitId new_commit, "--not"] <> fmap originBranch next
             -- This is number of new commits the github UI will show and the user will expect to see.
-            numChanges <- length <$> gitShow diffQuery
+            changes <- gitShow diffQuery
             -- These are the commits, that are actually direct successors of
             -- the previous branch head and therefor the only ones that can be merge commits.
-            changes <- gitShow $ "--ancestry-path" : diffQuery
-            prs <- notifySubscribers branch =<< findSubscribedPRsInCommitList branch changes
+            possible_new_merge_requests <- gitShow $ "--ancestry-path" : diffQuery
+            prs <- notifySubscribers branch =<< findSubscribedPRsInCommitList branch possible_new_merge_requests changes
             pure $
               if null changes
                 then Nothing
@@ -369,7 +370,7 @@ watchRepo = do
                   Just
                     ( branchHTML branch
                         <> m " advanced by "
-                        <> repoLink ("compare/" <> old_commit <> "..." <> commitId new_commit) (show numChanges <> " commits")
+                        <> repoLink ("compare/" <> old_commit <> "..." <> commitId new_commit) (show (length changes) <> " commits")
                         <> m " to "
                         <> commitHTML new_commit
                     , prs
