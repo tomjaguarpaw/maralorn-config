@@ -33,5 +33,5 @@ in {
   privateFile = name:
     if withSecrets
     then ./private + "/${name}"
-    else builtins.toFile "missing-secret-file-${name}" "";
+    else builtins.toFile "missing-secret-file-${builtins.replaceStrings ["/"] [""] name}" "";
 }
