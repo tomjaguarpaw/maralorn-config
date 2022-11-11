@@ -238,7 +238,7 @@ extractPR pr =
   )
 
 checkRateLimit :: RateLimitSchema -> App ()
-checkRateLimit rateLimit = when ([get|rateLimit.remaining|] < warn_threshold) $ putTextLn $ show [get|rateLimit.remaining|]
+checkRateLimit rateLimit = when ([get|rateLimit.remaining|] < warn_threshold) $ putTextLn $ show rateLimit
  where
   -- Currently github grants 5000 queries per hour
   -- The threshold should probably be lower, but for debugging purposes, I currently want to see everytime a graphql Query happens.
@@ -247,6 +247,7 @@ checkRateLimit rateLimit = when ([get|rateLimit.remaining|] < warn_threshold) $ 
 queryPR :: Persist.Key PullRequest -> App (PullRequest, Maybe Merge)
 queryPR (PullRequestKey number) = do
   result <- queryGraphQL GraphQL.API.PullRequestQuery{GraphQL.API._number = number, _owner = owner, _name = name}
+  putText $ "PRQuery: " <> show number <> " "
   checkRateLimit [get|result.rateLimit!|]
   pure $ extractPR [get|result.repository!.pullRequest!|]
 
@@ -310,6 +311,7 @@ findSubscribedPRsInCommitList branch =
       when (null unmerged_watched_pull_requests) $ Except.throwError []
       lift do
         result <- queryGraphQL GraphQL.API.MergingPullRequestQuery{GraphQL.API._commit = commitId change, _owner = owner, _name = name}
+        putText $ "MergingQuery: " <> show change <> " "
         checkRateLimit [get|result.rateLimit!|]
         let prs = extractPR <$> catMaybes [get|result.repository!.object!.__fragment!.associatedPullRequests!.nodes!|]
         flip mapMaybeM prs \(pr, merge) ->
