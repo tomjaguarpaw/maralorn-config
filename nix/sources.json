@@ -124,7 +124,7 @@
     "nixpkgs-bot": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:nixpkgs-bot",
-        "rev": "e907a49a88459ec21b7b80bbeb812a12838ecd70",
+        "rev": "c624431ba04b7747498dc792c7ee4b0b796309d4",
         "type": "git"
     },
     "obelisk": {
