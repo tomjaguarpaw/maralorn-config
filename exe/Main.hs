@@ -477,8 +477,8 @@ getCommands roomId events = do
     members <- unwrapMatrixError $ Matrix.getRoomMembers session roomId
     let isQuery = Map.size members <= 2
     forM (toList messages) \(author, message) -> do
-      let (command, args) = second (Text.drop 1) $ Text.breakOn " " message
-      pure $ MkCommand{command, args, author, isQuery, roomId}
+      let (cmd, args) = second (Text.drop 1) $ Text.breakOn " " $ Text.strip message
+      pure $ MkCommand{command = Text.toLower cmd, args, author, isQuery, roomId}
  where
   getCommand Matrix.RoomEvent{Matrix.reSender = Matrix.Author author, Matrix.reContent = Matrix.EventRoomMessage (Matrix.RoomMessageText (Matrix.MessageText{Matrix.mtBody, Matrix.mtType = Matrix.TextType}))} = Just (author, mtBody)
   getCommand _ = Nothing
