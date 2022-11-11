@@ -27,29 +27,31 @@ import qualified Network.Matrix.Client as Matrix
 import qualified NixpkgsBot.GraphQL.API as GraphQL.API
 import Relude hiding (get)
 import qualified System.Clock as Clock
+import qualified System.Environment as System
 import qualified System.Process.Typed as Process
 import qualified System.Random as Random
 
-owner, name :: Text
-owner = "NixOS"
-name = "nixpkgs"
-
-data MatrixConfig = MatrixConfig
-  { token :: Text
-  , server :: Text
+data Repo = MkRepo
+  { localPath :: FilePath
+  , owner :: Text
+  , name :: Text
   }
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
-data Config = Config
-  { matrix :: MatrixConfig
-  , githubToken :: Text
+data Config = MkConfig
+  { server :: Text
   , database :: Text
-  , repo :: FilePath
+  , repo :: Repo
   , branches :: Map Text [Text]
   }
   deriving stock (Generic)
   deriving anyclass (FromJSON)
+
+loadCredential :: String -> IO Text
+loadCredential name = do
+  credentials_directory <- System.getEnv "CREDENTIALS_DIRECTORY"
+  toText <$> readFile (credentials_directory <> "/" <> name)
 
 Persist.share
   [Persist.mkPersist Persist.sqlSettings, Persist.mkMigrate "migrateAll"]
@@ -115,7 +117,7 @@ unwrapMatrixError :: MonadIO m => Matrix.MatrixIO a -> m a
 unwrapMatrixError = liftIO . unwrapMatrixErrorT
 
 git :: Config -> [String] -> Process.ProcessConfig () () ()
-git config command = Process.proc "git" ("-C" : repo config : command)
+git config command = Process.proc "git" ("-C" : localPath (repo config) : command)
 
 gitShow :: [String] -> App [Commit]
 gitShow reference = do
@@ -131,28 +133,35 @@ commitIsPR commit = do
 originBranch :: Text -> String
 originBranch = ("origin/" <>) . toString
 
-baseUrl :: Text
-baseUrl = "https://github.com/" <> owner <> "/" <> name <> "/"
+baseUrl :: App Text
+baseUrl = do
+  owner_ <- getEnv (owner . repo . config)
+  name_ <- getEnv (name . repo . config)
+  pure $ "https://github.com/" <> owner_ <> "/" <> name_ <> "/"
 
-commitHTML :: Commit -> MessageText
+commitHTML :: Commit -> App MessageText
 commitHTML Commit{commitId, commitTitle} = repoLink ("commit/" <> commitId) (Text.take 7 commitId <> " " <> commitTitle)
 
 link :: Text -> Text -> MessageText
 link url label = (label, "<a href=\"" <> url <> "\">" <> label <> "</a>")
 
-repoLink :: Text -> Text -> MessageText
-repoLink url = link (baseUrl <> url)
+repoLink :: Text -> Text -> App MessageText
+repoLink url label = do
+  prefix <- baseUrl
+  pure $ link (prefix <> url) label
 
-branchHTML :: Text -> MessageText
+branchHTML :: Text -> App MessageText
 branchHTML branch = repoLink ("tree/" <> branch) branch
 
-prHTML :: PRInfo -> MessageText
+prHTML :: PRInfo -> App MessageText
 prHTML
-  (PullRequest{pullRequestNumber, pullRequestTitle}, branches) =
-    repoLink
-      ("pull/" <> show pullRequestNumber)
-      ("#" <> show pullRequestNumber <> " " <> pullRequestTitle)
-      <> if null branches then m "" else m " " <> intercalateMsgPlain " " (branches <&> \(arrived, branch) -> m (if arrived then "✔ " else "⏳") <> branchHTML branch)
+  (PullRequest{pullRequestNumber, pullRequestTitle}, branches) = do
+    branch_info <- forM branches \(arrived, branch) -> (m (if arrived then "✔ " else "⏳") <>) <$> branchHTML branch
+    link_ <-
+      repoLink
+        ("pull/" <> show pullRequestNumber)
+        ("#" <> show pullRequestNumber <> " " <> pullRequestTitle)
+    pure $ link_ <> if null branches then m "" else m " " <> intercalateMsgPlain " " branch_info
 
 type MessageText = (Text, Text)
 
@@ -174,6 +183,7 @@ mention user = link ("https://matrix.to/#/" <> user) user
 data Environment = MkEnvironment
   { config :: Config
   , matrixSession :: Matrix.ClientSession
+  , githubToken :: Text
   , lastWatch :: IORef Clock.TimeSpec
   , lastMaintenance :: IORef Clock.TimeSpec
   }
@@ -210,7 +220,7 @@ discoverReachedBranches pr merge = do
 
 queryGraphQL :: (GraphQL.GraphQLQuery a) => a -> App (GraphQL.Object (GraphQL.ResultSchema a))
 queryGraphQL query = do
-  github_token <- getEnv (githubToken . config)
+  github_token <- getEnv githubToken
   GraphQL.runGraphQLQueryT
     GraphQL.defaultGraphQLSettings
       { GraphQL.url = "https://api.github.com/graphql"
@@ -253,6 +263,8 @@ checkRateLimit rateLimit = when ([get|rateLimit.remaining|] < warn_threshold) $ 
 
 queryPR :: Persist.Key PullRequest -> App (PullRequest, Maybe Merge)
 queryPR (PullRequestKey number) = do
+  owner <- getEnv (owner . repo . config)
+  name <- getEnv (name . repo . config)
   result <- queryGraphQL GraphQL.API.PullRequestQuery{GraphQL.API._number = number, _owner = owner, _name = name}
   putText $ "PRQuery: " <> show number <> " "
   checkRateLimit [get|result.rateLimit!|]
@@ -319,6 +331,8 @@ findSubscribedPRsInCommitList branch possible_new_merge_commits =
       when (null unmerged_watched_pull_requests) $ Except.throwError []
       unless (change `elem` possible_new_merge_commits) $ Except.throwError []
       lift do
+        owner <- getEnv (owner . repo . config)
+        name <- getEnv (name . repo . config)
         result <- queryGraphQL GraphQL.API.MergingPullRequestQuery{GraphQL.API._commit = commitId change, _owner = owner, _name = name}
         putText $ "MergingQuery: " <> show change <> " "
         checkRateLimit [get|result.rateLimit!|]
@@ -363,25 +377,24 @@ watchRepo = do
             -- the previous branch head and therefor the only ones that can be merge commits.
             possible_new_merge_requests <- gitShow $ "--ancestry-path" : diffQuery
             prs <- notifySubscribers branch =<< findSubscribedPRsInCommitList branch possible_new_merge_requests changes
-            pure $
-              if null changes
-                then Nothing
-                else
-                  Just
-                    ( branchHTML branch
-                        <> m " advanced by "
-                        <> repoLink ("compare/" <> old_commit <> "..." <> commitId new_commit) (show (length changes) <> " commits")
-                        <> m " to "
-                        <> commitHTML new_commit
-                    , prs
-                    )
+            if null changes
+              then pure Nothing
+              else
+                Just . (,prs) . fold
+                  <$> sequence
+                    [ branchHTML branch
+                    , pure $ m " advanced by "
+                    , repoLink ("compare/" <> old_commit <> "..." <> commitId new_commit) (show (length changes) <> " commits")
+                    , pure $ m " to "
+                    , commitHTML new_commit
+                    ]
           Nothing -> do
-            putTextLn $ "Initiated database for branch " <> branch <> " at " <> fst (commitHTML new_commit)
+            putTextLn . (("Initiated database for branch " <> branch <> " at ") <>) . fst =<< commitHTML new_commit
             pure Nothing
   forM_ messages $ \(msg, subscriptions) -> forM_ (NonEmpty.groupAllWith subscriptionUser subscriptions) \subscriptionsByUser -> do
     let author = subscriptionUser $ head subscriptionsByUser
         prs = toList $ subscriptionPullRequest <$> subscriptionsByUser
-    prMsgs <- mapMaybeM (fmap (fmap prHTML) . getPRInfo) prs
+    prMsgs <- sequence =<< mapMaybeM (fmap (fmap prHTML) . getPRInfo) prs
     sendMessageToUser author $ unlinesMsg $ msg : m ("Including these " <> show (length prMsgs) <> " pull requests you subscribed to:") : prMsgs
   unsubscribeFromFinishedPRs
   -- Run some maintenance daily
@@ -420,8 +433,9 @@ unsubscribeFromFinishedPRs = do
         sub <- SQL.from $ SQL.table @Subscription
         SQL.where_ (sub ^. SubscriptionPullRequest SQL.==. SQL.val (SQL.entityKey pr))
         pure sub
-      forM_ subs \sub ->
-        sendMessageToUser (subscriptionUser (Persist.entityVal sub)) $ m "Your subscription of pr " <> prHTML (SQL.entityVal pr, []) <> m " has ended, because it reached all relevant branches."
+      forM_ subs \sub -> do
+        pr_html <- prHTML (SQL.entityVal pr, [])
+        sendMessageToUser (subscriptionUser (Persist.entityVal sub)) $ m "Your subscription of pr " <> pr_html <> m " has ended, because it reached all relevant branches."
       SQL.delete do
         pr_ <- SQL.from $ SQL.table @PullRequest
         SQL.where_ (pr_ ^. PullRequestId SQL.==. SQL.val (SQL.entityKey pr))
@@ -524,7 +538,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           Just number -> do
             let pr_key = PullRequestKey number
             existingSubscription <- Persist.selectList [SubscriptionUser ==. author, SubscriptionPullRequest ==. pr_key] []
-            pr_msg_may <- fmap prHTML <$> getPRInfo pr_key
+            pr_msg_may <- mapM prHTML =<< getPRInfo pr_key
             case pr_msg_may of
               Just prMsg | null existingSubscription -> do
                 Persist.insert_ $ Subscription author (PullRequestKey number)
@@ -537,7 +551,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           Just number -> do
             let pr_key = PullRequestKey number
             existingSubscription <- Persist.selectList [SubscriptionUser ==. author, SubscriptionPullRequest ==. pr_key] []
-            pr_msg_may <- fmap prHTML <$> getPRInfo pr_key
+            pr_msg_may <- mapM prHTML =<< getPRInfo pr_key
             case pr_msg_may of
               Just prMsg
                 | null existingSubscription ->
@@ -552,15 +566,16 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           then do
             pure $ m "I am currently not tracking any pull requests for you. Use " <> codeHTML "subscribe" <> m " to change that."
           else do
-            prMsgs <- mapMaybeM (fmap (fmap prHTML) . getPRInfo . subscriptionPullRequest . Persist.entityVal) existingSubscriptions
+            prMsgs <- sequence =<< mapMaybeM (fmap (fmap prHTML) . getPRInfo . subscriptionPullRequest . Persist.entityVal) existingSubscriptions
             pure $ unlinesMsg (m ("I am currently watching the following " <> show (length existingSubscriptions) <> " pull requests for you:") : prMsgs)
       MkCommand{command} | Text.isPrefixOf command "help" -> do
-        branchList <- getEnv (intercalateMsgPlain ", " . fmap branchHTML . Map.keys . branches . config)
+        branchList <- join $ getEnv (fmap (intercalateMsgPlain ", ") . mapM branchHTML . Map.keys . branches . config)
+        repo_link <- repoLink "" "nixpkgs git repository on github"
         pure $
           unlinesMsg
             [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
             , mempty
-            , m "I am continously watching the " <> repoLink "" "nixpkgs git repository on github" <> m ". If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
+            , m "I am continously watching the " <> repo_link <> m ". If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
             , mempty
             , codeHTML "subscribe [pr-number]" <> m ": I will subscribe you to the given pull request."
             , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull request."
@@ -596,12 +611,14 @@ main = do
   hSetBuffering stderr LineBuffering
   [config_path] <- getArgs
   config <- Yaml.decodeFileThrow config_path
-  matrix_session <- Matrix.createSession (server $ matrix config) (Matrix.MatrixToken . token $ matrix config)
+  matrix_token <- loadCredential "matrix_token"
+  matrix_session <- Matrix.createSession (server config) (Matrix.MatrixToken matrix_token)
+  github_token <- loadCredential "github_token"
   now <- liftIO $ Clock.getTime Clock.Monotonic
   last_watch <- newIORef now
   last_maintenance <- newIORef minBound
   let runApp :: App a -> IO a
-      runApp = flip runReaderT (MkEnvironment config matrix_session last_watch last_maintenance) . Persist.Sqlite.runSqlite (database config) . Persist.Sqlite.retryOnBusy
+      runApp = flip runReaderT (MkEnvironment config matrix_session github_token last_watch last_maintenance) . Persist.Sqlite.runSqlite (database config) . Persist.Sqlite.retryOnBusy
   first_next_batch <- runApp do
     Persist.Sqlite.runMigration migrateAll
     watchRepo
