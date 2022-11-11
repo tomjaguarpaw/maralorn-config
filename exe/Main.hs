@@ -34,7 +34,6 @@ name = "nixpkgs"
 data MatrixConfig = MatrixConfig
   { token :: Text
   , server :: Text
-  , room :: Text
   }
   deriving stock (Generic)
   deriving anyclass (FromJSON)
@@ -94,12 +93,6 @@ data Commit = Commit
   , commitTitle :: Text
   }
   deriving stock (Show)
-
-ensureJoin :: Matrix.RoomID -> App ()
-ensureJoin roomId = do
-  session <- getEnv matrixSession
-  rooms <- unwrapMatrixError $ Matrix.getJoinedRooms session
-  unless (roomId `elem` rooms) $ void . unwrapMatrixError $ Matrix.joinRoom session (coerce roomId)
 
 getEnv :: (Environment -> a) -> App a
 getEnv getter = lift $ lift $ lift $ asks getter
@@ -227,7 +220,8 @@ queryGraphQL query = do
       }
     $ GraphQL.runQuery query
 
-type PRSchema = [GraphQL.unwrap| (GraphQL.API.PullRequestSchema).repository!.pullRequest!|]
+type PRSchema = [GraphQL.unwrap| (GraphQL.API.PullRequestSchema).repository!.pullRequest! |]
+type RateLimitSchema = [GraphQL.unwrap| (GraphQL.API.PullRequestSchema).rateLimit! |]
 
 extractPR :: PRSchema -> (PullRequest, Maybe Merge)
 extractPR pr =
@@ -243,10 +237,17 @@ extractPR pr =
         }
   )
 
+checkRateLimit :: RateLimitSchema -> App ()
+checkRateLimit rateLimit = when ([get|rateLimit.remaining|] < warn_threshold) $ putTextLn $ show [get|rateLimit.remaining|]
+ where
+  -- Currently github grants 5000 queries per hour
+  -- The threshold should probably be lower, but for debugging purposes, I currently want to see everytime a graphql Query happens.
+  warn_threshold = 5000
+
 queryPR :: Persist.Key PullRequest -> App (PullRequest, Maybe Merge)
 queryPR (PullRequestKey number) = do
   result <- queryGraphQL GraphQL.API.PullRequestQuery{GraphQL.API._number = number, _owner = owner, _name = name}
-  putTextLn $ show [get|result.rateLimit!|]
+  checkRateLimit [get|result.rateLimit!|]
   pure $ extractPR [get|result.repository!.pullRequest!|]
 
 getPRInfo :: Persist.Key PullRequest -> App PRInfo
@@ -307,21 +308,22 @@ findSubscribedPRsInCommitList branch =
           SQL.where_ (pr `SQL.notIn` SQL.subList_select ((^. MergeNumber) <$> SQL.from (SQL.table @Merge)))
           pure pr
       when (null unmerged_watched_pull_requests) $ Except.throwError []
-      result <- lift $ queryGraphQL GraphQL.API.MergingPullRequestQuery{GraphQL.API._commit = commitId change, _owner = owner, _name = name}
-      putTextLn $ show [get|result.rateLimit!|]
-      let prs = extractPR <$> catMaybes [get|result.repository!.object!.__fragment!.associatedPullRequests!.nodes!|]
-      flip mapMaybeM prs \(pr, merge) ->
-        case merge of
-          Just mergeProof | mergeCommit mergeProof == commitId change -> lift do
-            let pr_key = mergeNumber mergeProof
-            pr_is_watched <- isJust <$> Persist.get (mergeNumber mergeProof)
-            if pr_is_watched
-              then do
-                Persist.repsert pr_key pr
-                Persist.repsert (MergeKey pr_key) mergeProof
-                pure $ Just pr_key
-              else pure Nothing
-          _ -> pure Nothing
+      lift do
+        result <- queryGraphQL GraphQL.API.MergingPullRequestQuery{GraphQL.API._commit = commitId change, _owner = owner, _name = name}
+        checkRateLimit [get|result.rateLimit!|]
+        let prs = extractPR <$> catMaybes [get|result.repository!.object!.__fragment!.associatedPullRequests!.nodes!|]
+        flip mapMaybeM prs \(pr, merge) ->
+          case merge of
+            Just mergeProof | mergeCommit mergeProof == commitId change -> do
+              let pr_key = mergeNumber mergeProof
+              pr_is_watched <- isJust <$> Persist.get (mergeNumber mergeProof)
+              if pr_is_watched
+                then do
+                  Persist.repsert pr_key pr
+                  Persist.repsert (MergeKey pr_key) mergeProof
+                  pure $ Just pr_key
+                else pure Nothing
+            _ -> pure Nothing
 
 notifySubscribers :: Text -> [Persist.Key PullRequest] -> App [Subscription]
 notifySubscribers branch =
@@ -365,16 +367,11 @@ watchRepo = do
           Nothing -> do
             putTextLn $ "Initiated database for branch " <> branch <> " at " <> fst (commitHTML new_commit)
             pure Nothing
-  if null messages
-    then putTextLn "No advances!"
-    else do
-      let message = unlinesMsg (fst <$> messages)
-      sendMessage (Matrix.RoomID . room $ matrix conf) message
-      forM_ messages $ \(msg, subscriptions) -> forM_ (NonEmpty.groupAllWith subscriptionUser subscriptions) \subscriptionsByUser -> do
-        let author = subscriptionUser $ head subscriptionsByUser
-            prs = toList $ subscriptionPullRequest <$> subscriptionsByUser
-        prMsgs <- mapM (fmap prHTML . getPRInfo) prs
-        sendMessageToUser author $ unlinesMsg $ msg : m ("Including these " <> show (length prMsgs) <> " pull requests you subscribed to:") : prMsgs
+  forM_ messages $ \(msg, subscriptions) -> forM_ (NonEmpty.groupAllWith subscriptionUser subscriptions) \subscriptionsByUser -> do
+    let author = subscriptionUser $ head subscriptionsByUser
+        prs = toList $ subscriptionPullRequest <$> subscriptionsByUser
+    prMsgs <- mapM (fmap prHTML . getPRInfo) prs
+    sendMessageToUser author $ unlinesMsg $ msg : m ("Including these " <> show (length prMsgs) <> " pull requests you subscribed to:") : prMsgs
   maintenance
 
 maintenance :: App ()
@@ -417,7 +414,7 @@ unsubscribeFromFinishedPRs = do
 
 sendMessage :: Matrix.RoomID -> MessageText -> App ()
 sendMessage roomId@(Matrix.RoomID roomIdText) message = do
-  putTextLn $ "Sending to Room" <> roomIdText <> ":\n" <> fst message
+  putTextLn $ "in room" <> roomIdText <> ":\n" <> fst message
   txnId <- Matrix.TxnID . show <$> Random.randomRIO (1000000 :: Int, 9999999)
   session <- getEnv matrixSession
   void $
@@ -433,7 +430,7 @@ sendMessageToUser user message = do
   userQuery <- Persist.get (QueryKey user)
   case userQuery of
     Just queryPair -> do
-      putTextLn $ "Sending to user " <> user <> ":"
+      putText $ "To user " <> user <> " "
       sendMessage (Matrix.RoomID $ queryRoom queryPair) message
     Nothing -> putTextLn $ "Not finding a query for " <> user <> " can‘t send message: " <> fst message
 
@@ -527,10 +524,8 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
       sendMessageToUser author $
         unlinesMsg
           [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
-          , m "I am continously watching the " <> repoLink "" "nixpkgs git repository on github."
-          , m "You can see a feed with all merges in the matrix room " <> mention "#nixpkgs-updates:maralorn.de" <> m "."
           , mempty
-          , m "If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
+          , m "I am continously watching the " <> repoLink "" "nixpkgs git repository on github." <> m "If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
           , mempty
           , codeHTML "subscribe [pr-number]" <> m ": I will subscribe you to the given pull request."
           , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull request."
@@ -567,8 +562,6 @@ main = do
   let runApp :: App a -> IO a
       runApp = flip runReaderT (MkEnvironment config matrix_session last_watch) . Persist.Sqlite.runSqlite (database config) . Persist.Sqlite.retryOnBusy
   first_next_batch <- runApp do
-    let roomId = Matrix.RoomID . room $ matrix config
-    ensureJoin roomId
     Persist.Sqlite.runMigration migrateAll
     watchRepo
     fmap sessionStateValue <$> Persist.get (SessionStateKey' "next_batch")
