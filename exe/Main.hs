@@ -386,6 +386,7 @@ maintenance = do
   unsubscribeFromFinishedPRs
   dropUnsubscribedPRs
   dropOldBranches
+  deleteUnusedQueries
 
 dropOldBranches :: App ()
 dropOldBranches = do
@@ -418,6 +419,14 @@ unsubscribeFromFinishedPRs = do
       SQL.delete do
         pr_ <- SQL.from $ SQL.table @PullRequest
         SQL.where_ (pr_ ^. PullRequestId SQL.==. SQL.val (SQL.entityKey pr))
+
+deleteUnusedQueries :: App ()
+deleteUnusedQueries = SQL.delete do
+  query <- SQL.from $ SQL.table @Query
+  SQL.where_ $
+    (query ^. QueryUser) `notIn` SQL.subList_select do
+      sub <- SQL.from $ SQL.table @Subscription
+      pure (sub ^. SubscriptionUser)
 
 sendMessage :: Matrix.RoomID -> MessageText -> App ()
 sendMessage roomId@(Matrix.RoomID roomIdText) message = do
