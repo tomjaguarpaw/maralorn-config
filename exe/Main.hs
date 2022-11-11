@@ -2,7 +2,9 @@
 
 module Main (main) where
 
+import qualified Control.Concurrent as Concurrent
 import qualified Control.Exception as Exception
+import Control.Monad.Catch (MonadMask)
 import qualified Control.Monad.Catch as MonadCatch
 import qualified Control.Monad.Except as Except
 import qualified Control.Monad.Logger as MonadLogger
@@ -101,9 +103,9 @@ getEnv getter = lift $ lift $ lift $ asks getter
 instance Exception Matrix.MatrixError
 instance Exception Text
 
-unwrapMatrixErrorT :: MonadIO m => Matrix.MatrixM m a -> m a
+unwrapMatrixErrorT :: (MonadMask m, MonadIO m) => Matrix.MatrixM m a -> m a
 unwrapMatrixErrorT action = do
-  message_response <- action
+  message_response <- Matrix.retry action
   case message_response of
     Left matrix_error -> do
       liftIO $ Exception.throwIO matrix_error
@@ -484,6 +486,8 @@ getCommands roomId events = do
 joinInvites :: Maybe Matrix.SyncResultRoom -> App ()
 joinInvites (Just (Matrix.SyncResultRoom{Matrix.srrInvite = Just invites})) = do
   session <- getEnv matrixSession
+  -- There seems to be a race condition in joining rooms we are invited for. Try to be a bit patient here.
+  unless (Map.null invites) (liftIO $ Concurrent.threadDelay 1000000)
   forM_ (Map.keys invites) (unwrapMatrixError . Matrix.joinRoom session)
 joinInvites _ = pass
 
