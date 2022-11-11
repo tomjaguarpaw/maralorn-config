@@ -99,6 +99,7 @@ getEnv :: (Environment -> a) -> App a
 getEnv getter = lift $ lift $ lift $ asks getter
 
 instance Exception Matrix.MatrixError
+instance Exception Text
 
 unwrapMatrixErrorT :: MonadIO m => Matrix.MatrixM m a -> m a
 unwrapMatrixErrorT action = do
@@ -224,19 +225,21 @@ queryGraphQL query = do
 type PRSchema = [GraphQL.unwrap| (GraphQL.API.PullRequestSchema).repository!.pullRequest! |]
 type RateLimitSchema = [GraphQL.unwrap| (GraphQL.API.PullRequestSchema).rateLimit! |]
 
-extractPR :: PRSchema -> (PullRequest, Maybe Merge)
-extractPR pr =
-  ( PullRequest
-      { pullRequestNumber = [get|pr.number|]
-      , pullRequestTitle = [get|pr.title|]
-      , pullRequestBase = [get|pr.baseRefName|]
-      }
-  , [get|pr.mergeCommit|] <&> \commit ->
-      Merge
-        { mergeNumber = PullRequestKey [get|pr.number|]
-        , mergeCommit = [get|commit.oid|]
+extractPR :: PRSchema -> App (PullRequest, Maybe Merge)
+extractPR pr = do
+  when (isNothing [get|pr.mergeCommit|] && [get|pr.merged|]) $ MonadCatch.throwM ("PR is merged but has no merge commit:" <> show pr :: Text)
+  pure
+    ( PullRequest
+        { pullRequestNumber = [get|pr.number|]
+        , pullRequestTitle = [get|pr.title|]
+        , pullRequestBase = [get|pr.baseRefName|]
         }
-  )
+    , [get|pr.mergeCommit|] <&> \commit ->
+        Merge
+          { mergeNumber = PullRequestKey [get|pr.number|]
+          , mergeCommit = [get|commit.oid|]
+          }
+    )
 
 checkRateLimit :: RateLimitSchema -> App ()
 checkRateLimit rateLimit = when ([get|rateLimit.remaining|] < warn_threshold) $ putTextLn $ show rateLimit
@@ -250,7 +253,7 @@ queryPR (PullRequestKey number) = do
   result <- queryGraphQL GraphQL.API.PullRequestQuery{GraphQL.API._number = number, _owner = owner, _name = name}
   putText $ "PRQuery: " <> show number <> " "
   checkRateLimit [get|result.rateLimit!|]
-  pure $ extractPR [get|result.repository!.pullRequest!|]
+  extractPR [get|result.repository!.pullRequest!|]
 
 getPRInfo :: Persist.Key PullRequest -> App (Maybe PRInfo)
 getPRInfo pr_key = do
@@ -315,7 +318,7 @@ findSubscribedPRsInCommitList branch =
         result <- queryGraphQL GraphQL.API.MergingPullRequestQuery{GraphQL.API._commit = commitId change, _owner = owner, _name = name}
         putText $ "MergingQuery: " <> show change <> " "
         checkRateLimit [get|result.rateLimit!|]
-        let prs = extractPR <$> catMaybes [get|result.repository!.object!.__fragment!.associatedPullRequests!.nodes!|]
+        prs <- mapM extractPR $ catMaybes [get|result.repository!.object!.__fragment!.associatedPullRequests!.nodes!|]
         flip mapMaybeM prs \(pr, merge) ->
           case merge of
             Just mergeProof | mergeCommit mergeProof == commitId change -> do
@@ -579,4 +582,4 @@ main = do
   unwrapMatrixError $ Matrix.syncPoll matrix_session (Just filterId) first_next_batch (Just Matrix.Online) (void . catchAll . runApp . resultHandler)
 
 catchAll :: (MonadIO m, MonadCatch.MonadCatch m) => m a -> m (Maybe a)
-catchAll action = MonadCatch.catch (Just <$> action) (\(e :: SomeException) -> putStrLn ("### ERRROR: ###" <> displayException e) >> pure Nothing)
+catchAll action = MonadCatch.catch (Just <$> action) (\(e :: SomeException) -> putStrLn ("### ERROR ###: " <> displayException e) >> pure Nothing)
