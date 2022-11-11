@@ -276,58 +276,59 @@ getPRInfo pr_key = do
  | 3. Asks github, if we are currently looking for unmerged PRs and the commit doesn‘t seem to belong to any known PRs, then it marks as arrived, if known
  | 4. If any of the before happened for a subscribed PR, return the subscriptions.
 -}
-detectPRsOnAdvance :: Text -> [Commit] -> App [Subscription]
-detectPRsOnAdvance branch =
-  withPrs
-    <=< fmap join . mapM \change ->
-      either id id <$> runExceptT do
-        found_by_merge_commit <- lift $ fmap (unMergeKey . Persist.entityKey) <$> Persist.selectList [MergeCommit ==. commitId change] []
-        unless (null found_by_merge_commit) (Except.throwError found_by_merge_commit)
-        case commitIsPR change of
-          Just number -> do
-            let pr_key = PullRequestKey number
-            prMay <- lift $ Persist.get pr_key -- Are we watching this PR?
-            case prMay of
-              Just pr -> do
-                lift $
-                  if pullRequestBase pr /= branch
-                    then do
-                      (new_pr, merge) <- queryPR pr_key
-                      Persist.repsert pr_key new_pr
-                      whenJust merge $ Persist.repsert (MergeKey pr_key)
-                    else Persist.insert_ $ Merge pr_key (commitId change)
-                Except.throwError [pr_key]
-              Nothing -> Except.throwError []
-          Nothing -> pass
-        when (Text.isPrefixOf "nix" branch) $ Except.throwError [] -- Branches which beginn with "nix" are channel branches and we don‘t scan those for new merge_commits.
-        unmergedPullRequests <- lift $
-          SQL.select $ do
-            pr <- (^. PullRequestId) <$> SQL.from (SQL.table @PullRequest)
-            SQL.where_ (pr `SQL.notIn` SQL.subList_select ((^. MergeNumber) <$> SQL.from (SQL.table @Merge)))
-            pure pr
-        when (null unmergedPullRequests) $ Except.throwError []
-        result <- lift $ queryGraphQL GraphQL.API.MergingPullRequestQuery{GraphQL.API._commit = commitId change, _owner = owner, _name = name}
-        putTextLn $ show [get|result.rateLimit!|]
-        let prs = extractPR <$> catMaybes [get|result.repository!.object!.__fragment!.associatedPullRequests!.nodes!|]
-        flip mapMaybeM prs \(pr, merge) ->
-          case merge of
-            Just mergeProof | mergeCommit mergeProof == commitId change -> lift do
-              let pr_key = mergeNumber mergeProof
-              pr_is_watched <- isJust <$> Persist.get (mergeNumber mergeProof)
-              if pr_is_watched
-                then do
-                  Persist.repsert pr_key pr
-                  Persist.repsert (MergeKey pr_key) mergeProof
-                  pure $ Just pr_key
-                else pure Nothing
-            _ -> pure Nothing
- where
-  withPrs :: [Persist.Key PullRequest] -> App [Subscription]
-  withPrs =
-    fmap join . mapM \pr -> do
-      subscriptions <- fmap Persist.entityVal <$> Persist.selectList [SubscriptionPullRequest ==. pr] []
-      unless (null subscriptions) $ Persist.insert_ (Arrival pr (BranchKey branch))
-      pure subscriptions
+findSubscribedPRsInCommitList :: Text -> [Commit] -> App [Persist.Key PullRequest]
+findSubscribedPRsInCommitList branch =
+  fmap join . mapM \change ->
+    either id id <$> runExceptT do
+      found_by_merge_commit <- lift $ fmap (unMergeKey . Persist.entityKey) <$> Persist.selectList [MergeCommit ==. commitId change] []
+      unless (null found_by_merge_commit) (Except.throwError found_by_merge_commit)
+      case commitIsPR change of
+        Just number -> do
+          let pr_key = PullRequestKey number
+          -- Are we watching this PR?
+          prMay <- lift $ Persist.get pr_key
+          case prMay of
+            Just pr -> do
+              lift $
+                if pullRequestBase pr /= branch
+                  then do
+                    (new_pr, merge) <- queryPR pr_key
+                    Persist.repsert pr_key new_pr
+                    whenJust merge $ Persist.repsert (MergeKey pr_key)
+                  else Persist.insert_ $ Merge pr_key (commitId change)
+              Except.throwError [pr_key]
+            Nothing -> Except.throwError []
+        Nothing -> pass
+      -- Branches which beginn with "nix" are channel branches and we don‘t scan those for new merge_commits.
+      when (Text.isPrefixOf "nix" branch) $ Except.throwError []
+      unmerged_watched_pull_requests <- lift $
+        SQL.select $ do
+          pr <- (^. PullRequestId) <$> SQL.from (SQL.table @PullRequest)
+          SQL.where_ (pr `SQL.notIn` SQL.subList_select ((^. MergeNumber) <$> SQL.from (SQL.table @Merge)))
+          pure pr
+      when (null unmerged_watched_pull_requests) $ Except.throwError []
+      result <- lift $ queryGraphQL GraphQL.API.MergingPullRequestQuery{GraphQL.API._commit = commitId change, _owner = owner, _name = name}
+      putTextLn $ show [get|result.rateLimit!|]
+      let prs = extractPR <$> catMaybes [get|result.repository!.object!.__fragment!.associatedPullRequests!.nodes!|]
+      flip mapMaybeM prs \(pr, merge) ->
+        case merge of
+          Just mergeProof | mergeCommit mergeProof == commitId change -> lift do
+            let pr_key = mergeNumber mergeProof
+            pr_is_watched <- isJust <$> Persist.get (mergeNumber mergeProof)
+            if pr_is_watched
+              then do
+                Persist.repsert pr_key pr
+                Persist.repsert (MergeKey pr_key) mergeProof
+                pure $ Just pr_key
+              else pure Nothing
+          _ -> pure Nothing
+
+notifySubscribers :: Text -> [Persist.Key PullRequest] -> App [Subscription]
+notifySubscribers branch =
+  fmap join . mapM \pr -> do
+    subscriptions <- fmap Persist.entityVal <$> Persist.selectList [SubscriptionPullRequest ==. pr] []
+    unless (null subscriptions) $ Persist.insert_ (Arrival pr (BranchKey branch))
+    pure subscriptions
 
 watchRepo :: App ()
 watchRepo = do
@@ -336,14 +337,19 @@ watchRepo = do
   messages <-
     catMaybes <$> do
       forM (Map.toList $ branches conf) \(branch, next) -> do
-        [commit] <- gitShow [originBranch branch]
+        [new_commit] <- gitShow [originBranch branch]
         let key = BranchKey branch
-        branchState :: Maybe Branch <- Persist.get key
-        Persist.repsert key $ Branch branch (commitId commit)
-        case branchState of
-          Just (Branch{branchCommit}) -> do
-            changes <- gitShow $ [toString $ branchCommit <> "..." <> commitId commit, "--not"] <> fmap originBranch next
-            prs <- detectPRsOnAdvance branch changes
+        old_branch_state :: Maybe Branch <- Persist.get key
+        Persist.repsert key $ Branch branch (commitId new_commit)
+        case old_branch_state of
+          Just (Branch{branchCommit = old_commit}) -> do
+            let diffQuery = [toString $ old_commit <> "..." <> commitId new_commit, "--not"] <> fmap originBranch next
+            -- This is number of new commits the github UI will show and the user will expect to see.
+            numChanges <- length <$> gitShow diffQuery
+            -- These are the commits, that are actually direct successors of
+            -- the previous branch head and therefor the only ones that can be merge commits.
+            changes <- gitShow $ "--ancestry-path" : diffQuery
+            prs <- notifySubscribers branch =<< findSubscribedPRsInCommitList branch changes
             pure $
               if null changes
                 then Nothing
@@ -351,13 +357,13 @@ watchRepo = do
                   Just
                     ( branchHTML branch
                         <> m " advanced by "
-                        <> repoLink ("compare/" <> branchCommit <> "..." <> commitId commit) (show (length changes) <> " commits")
+                        <> repoLink ("compare/" <> old_commit <> "..." <> commitId new_commit) (show numChanges <> " commits")
                         <> m " to "
-                        <> commitHTML commit
+                        <> commitHTML new_commit
                     , prs
                     )
           Nothing -> do
-            putTextLn $ "Initiated database for branch " <> branch <> " at " <> fst (commitHTML commit)
+            putTextLn $ "Initiated database for branch " <> branch <> " at " <> fst (commitHTML new_commit)
             pure Nothing
   if null messages
     then putTextLn "No advances!"
