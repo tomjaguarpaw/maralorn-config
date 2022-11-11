@@ -3,6 +3,7 @@
 module Main (main) where
 
 import qualified Control.Exception as Exception
+import qualified Control.Monad.Catch as MonadCatch
 import qualified Control.Monad.Except as Except
 import qualified Control.Monad.Logger as MonadLogger
 import qualified Control.Monad.Trans.Resource as ResourceT
@@ -251,26 +252,27 @@ queryPR (PullRequestKey number) = do
   checkRateLimit [get|result.rateLimit!|]
   pure $ extractPR [get|result.repository!.pullRequest!|]
 
-getPRInfo :: Persist.Key PullRequest -> App PRInfo
+getPRInfo :: Persist.Key PullRequest -> App (Maybe PRInfo)
 getPRInfo pr_key = do
   savedPRInfoMaybe <- Persist.get pr_key
   case savedPRInfoMaybe of
     Just savedPRInfo -> do
       branches <- reachedBranches savedPRInfo
-      pure (savedPRInfo, branches)
+      pure $ Just (savedPRInfo, branches)
     Nothing -> do
-      (pull_request, pull_request_merge) <- queryPR pr_key
-      Persist.insert_ pull_request
-      case pull_request_merge of
-        Just merge_info -> do
-          Persist.insert_ merge_info
-          discoverReachedBranches pull_request merge_info
-        Nothing -> pass
-      branches <- reachedBranches pull_request
-      pure
-        ( pull_request
-        , branches
-        )
+      prInfo <- catchAll $ queryPR pr_key
+      forM prInfo \(pull_request, pull_request_merge) -> do
+        Persist.insert_ pull_request
+        case pull_request_merge of
+          Just merge_info -> do
+            Persist.insert_ merge_info
+            discoverReachedBranches pull_request merge_info
+          Nothing -> pass
+        branches <- reachedBranches pull_request
+        pure
+          ( pull_request
+          , branches
+          )
 
 {- | This function
  | 1. Looks if a commit is a known merge commit, and marks as arrived.
@@ -372,7 +374,7 @@ watchRepo = do
   forM_ messages $ \(msg, subscriptions) -> forM_ (NonEmpty.groupAllWith subscriptionUser subscriptions) \subscriptionsByUser -> do
     let author = subscriptionUser $ head subscriptionsByUser
         prs = toList $ subscriptionPullRequest <$> subscriptionsByUser
-    prMsgs <- mapM (fmap prHTML . getPRInfo) prs
+    prMsgs <- mapMaybeM (fmap (fmap prHTML) . getPRInfo) prs
     sendMessageToUser author $ unlinesMsg $ msg : m ("Including these " <> show (length prMsgs) <> " pull requests you subscribed to:") : prMsgs
   maintenance
 
@@ -487,61 +489,66 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
   joinInvites srRooms
   commands <- join <$> mapM (uncurry getCommands) (Matrix.getTimelines syncResult)
   setQueries commands
-  forM_ (filter isQuery commands) \case
-    MkCommand{command, author, args} | Text.isPrefixOf command "subscribe" ->
-      case readMaybe (toString . Text.dropWhile (== '#') . Text.strip $ args) of
-        Nothing -> sendMessageToUser author $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
-        Just number -> do
-          let pr_key = PullRequestKey number
-          existingSubscription <- Persist.selectList [SubscriptionUser ==. author, SubscriptionPullRequest ==. pr_key] []
-          prMsg <- prHTML <$> getPRInfo pr_key
-          if null existingSubscription
-            then do
-              Persist.insert_ $ Subscription author (PullRequestKey number)
-              sendMessageToUser author $ m "I will now track for you the pull request " <> prMsg
-            else sendMessageToUser author $ m "Okay, but you were already subscribed to pull request " <> prMsg
-    MkCommand{command, author, args} | Text.isPrefixOf command "unsubscribe" ->
-      case readMaybe (toString . Text.dropWhile (== '#') . Text.strip $ args) of
-        Nothing -> sendMessageToUser author $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
-        Just number -> do
-          let pr_key = PullRequestKey number
-          existingSubscription <- Persist.selectList [SubscriptionUser ==. author, SubscriptionPullRequest ==. pr_key] []
-          prMsg <- prHTML <$> getPRInfo pr_key
-          if null existingSubscription
-            then do
-              sendMessageToUser author $ m "Well, you were already unsubscribed from pull request " <> prMsg
-            else do
-              Persist.delete $ SubscriptionKey author (PullRequestKey number)
-              sendMessageToUser author $ m "Okay, I will not send you updates about pull request " <> prMsg
-    MkCommand{command, author} | Text.isPrefixOf command "list" -> do
-      existingSubscriptions <- Persist.selectList [SubscriptionUser ==. author] []
-      if null existingSubscriptions
-        then do
-          sendMessageToUser author $ m "I am currently not tracking any pull requests for you. Use " <> codeHTML "subscribe" <> m " to change that."
-        else do
-          prMsgs <- mapM (fmap prHTML . getPRInfo . subscriptionPullRequest . Persist.entityVal) existingSubscriptions
-          sendMessageToUser author $ unlinesMsg (m ("I am currently watching the following " <> show (length existingSubscriptions) <> " pull requests for you:") : prMsgs)
-    MkCommand{command, author} | Text.isPrefixOf command "help" -> do
-      branchList <- getEnv (intercalateMsgPlain ", " . fmap branchHTML . Map.keys . branches . config)
-      sendMessageToUser author $
-        unlinesMsg
-          [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
-          , mempty
-          , m "I am continously watching the " <> repoLink "" "nixpkgs git repository on github." <> m "If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
-          , mempty
-          , codeHTML "subscribe [pr-number]" <> m ": I will subscribe you to the given pull request."
-          , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull request."
-          , codeHTML "list" <> m ": I will show you all the pull requests, I am watching for you."
-          , codeHTML "help" <> m ": So I can tell you all of this again."
-          , mempty
-          , m "By the way, you don‘t need to type the whole command, any prefix will work."
-          , mempty
-          , m "I will inform you, when one of the pull requests you subscribed to reaches one of these branches: " <> branchList
-          , mempty
-          , m "I have been programmed and am being hosted by " <> mention "@maralorn:maralorn.de" <> m ". Feel free to reach out to him, if you have any problems or suggestions."
-          , m "My code is written in Haskell, is open source under the AGPL license and can be found at " <> link "https://git.maralorn.de/nixpkgs-bot" "git.maralorn.de/nixpkgs-bot" <> m "."
-          ]
-    MkCommand{command, author} -> sendMessageToUser author (unlinesMsg [m "Sorry, I don‘t know what you want from me, when your command starts with: " <> codeHTML command, m "I‘ll tell you all commands I know, when you use the " <> codeHTML "help" <> m " command."])
+  responses <- forM (filter isQuery commands) \cmd ->
+    (cmd,) <$> catchAll case cmd of
+      MkCommand{command, author, args} | Text.isPrefixOf command "subscribe" ->
+        case readMaybe (toString . Text.dropWhile (== '#') . Text.strip $ args) of
+          Nothing -> pure $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
+          Just number -> do
+            let pr_key = PullRequestKey number
+            existingSubscription <- Persist.selectList [SubscriptionUser ==. author, SubscriptionPullRequest ==. pr_key] []
+            pr_msg_may <- fmap prHTML <$> getPRInfo pr_key
+            case pr_msg_may of
+              Just prMsg | null existingSubscription -> do
+                Persist.insert_ $ Subscription author (PullRequestKey number)
+                pure $ m "I will now track for you the pull request " <> prMsg
+              Just prMsg -> pure $ m "Okay, but you were already subscribed to pull request " <> prMsg
+              Nothing -> pure $ m $ "Can‘t find information about a pull request with number #" <> show number <> "."
+      MkCommand{command, author, args} | Text.isPrefixOf command "unsubscribe" ->
+        case readMaybe (toString . Text.dropWhile (== '#') . Text.strip $ args) of
+          Nothing -> pure $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
+          Just number -> do
+            let pr_key = PullRequestKey number
+            existingSubscription <- Persist.selectList [SubscriptionUser ==. author, SubscriptionPullRequest ==. pr_key] []
+            pr_msg_may <- fmap prHTML <$> getPRInfo pr_key
+            case pr_msg_may of
+              Just prMsg
+                | null existingSubscription ->
+                  pure $ m "Well, you were not subscribed to pull request " <> prMsg
+              Just prMsg -> do
+                Persist.delete $ SubscriptionKey author (PullRequestKey number)
+                pure $ m "Okay, I will not send you updates about pull request " <> prMsg
+              Nothing -> pure $ m $ "Can‘t find information about a pull request with number #" <> show number <> "."
+      MkCommand{command, author} | Text.isPrefixOf command "list" -> do
+        existingSubscriptions <- Persist.selectList [SubscriptionUser ==. author] []
+        if null existingSubscriptions
+          then do
+            pure $ m "I am currently not tracking any pull requests for you. Use " <> codeHTML "subscribe" <> m " to change that."
+          else do
+            prMsgs <- mapMaybeM (fmap (fmap prHTML) . getPRInfo . subscriptionPullRequest . Persist.entityVal) existingSubscriptions
+            pure $ unlinesMsg (m ("I am currently watching the following " <> show (length existingSubscriptions) <> " pull requests for you:") : prMsgs)
+      MkCommand{command} | Text.isPrefixOf command "help" -> do
+        branchList <- getEnv (intercalateMsgPlain ", " . fmap branchHTML . Map.keys . branches . config)
+        pure $
+          unlinesMsg
+            [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
+            , mempty
+            , m "I am continously watching the " <> repoLink "" "nixpkgs git repository on github." <> m "If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
+            , mempty
+            , codeHTML "subscribe [pr-number]" <> m ": I will subscribe you to the given pull request."
+            , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull request."
+            , codeHTML "list" <> m ": I will show you all the pull requests, I am watching for you."
+            , codeHTML "help" <> m ": So I can tell you all of this again."
+            , mempty
+            , m "By the way, you don‘t need to type the whole command, any prefix will work."
+            , mempty
+            , m "I will inform you, when one of the pull requests you subscribed to reaches one of these branches: " <> branchList
+            , mempty
+            , m "I have been programmed and am being hosted by " <> mention "@maralorn:maralorn.de" <> m ". Feel free to reach out to him, if you have any problems or suggestions."
+            , m "My code is written in Haskell, is open source under the AGPL license and can be found at " <> link "https://git.maralorn.de/nixpkgs-bot" "git.maralorn.de/nixpkgs-bot" <> m "."
+            ]
+      MkCommand{command} -> pure (unlinesMsg [m "Sorry, I don‘t know what you want from me, when your command starts with: " <> codeHTML command, m "I‘ll tell you all commands I know, when you use the " <> codeHTML "help" <> m " command."])
+  forM_ responses $ uncurry \MkCommand{author} -> sendMessageToUser author . fromMaybe (m "Your command triggered an internal error in the bot. Sorry about that.")
   last_watch_ref <- getEnv lastWatch
   last_watch <- readIORef last_watch_ref
   now <- liftIO $ Clock.getTime Clock.Monotonic
@@ -569,7 +576,7 @@ main = do
     fmap sessionStateValue <$> Persist.get (SessionStateKey' "next_batch")
   userId <- unwrapMatrixError $ Matrix.getTokenOwner matrix_session
   filterId <- unwrapMatrixError $ Matrix.createFilter matrix_session userId Matrix.messageFilter
-  unwrapMatrixError $ Matrix.syncPoll matrix_session (Just filterId) first_next_batch (Just Matrix.Online) (catchAll . runApp . resultHandler)
+  unwrapMatrixError $ Matrix.syncPoll matrix_session (Just filterId) first_next_batch (Just Matrix.Online) (void . catchAll . runApp . resultHandler)
 
-catchAll :: IO () -> IO ()
-catchAll action = Exception.catch action (\(e :: SomeException) -> putStrLn (displayException e))
+catchAll :: (MonadIO m, MonadCatch.MonadCatch m) => m a -> m (Maybe a)
+catchAll action = MonadCatch.catch (Just <$> action) (\(e :: SomeException) -> putStrLn ("### ERRROR: ###" <> displayException e) >> pure Nothing)

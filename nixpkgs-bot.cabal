@@ -46,6 +46,7 @@ common common-config
     , clock
     , containers
     , esqueleto
+    , exceptions
     , graphql-client
     , http-client
     , matrix-client
