@@ -4,6 +4,17 @@
   ...
 }: let
   haLib = import ./lib.nix lib;
+  colors = rec {
+    okay = "#009933";
+    warn = "#ffbf00";
+    alert = "#ff0000";
+    dehumidifier = humidity;
+    heating = "#ffc300";
+    temperature = "#7100ff";
+    humidity = "#00bfff";
+    window = warn;
+    primary = "#858EFF";
+  };
   dew_point_threshold = {
     schlafzimmer = {
       upper = 13.4; # 66% at 20 C
@@ -96,7 +107,7 @@ in {
         };
         homeassistant = pkgs.privateValue {} "homeassistant-home";
         frontend.themes.ourdefault = {
-          primary-color = "#858EFF";
+          primary-color = colors.primary;
         };
         automation =
           [
@@ -588,16 +599,19 @@ in {
                   entity = "sensor.671af9_bme280_temperature";
                   name = "Temperatur";
                   show_fill = false;
+                  color = colors.temperature;
                 }
                 {
                   entity = "sensor.671af9_bme280_dew_point";
                   name = "Taupunkt";
                   show_fill = false;
+                  color = colors.humidity;
                 }
                 {
                   entity = "input_number.target_temperature_wohnzimmer";
                   name = "Zieltemperatur";
                   show_fill = false;
+                  color = colors.heating;
                 }
                 {
                   entity = "sensor.wohnzimmerheizung";
@@ -607,6 +621,7 @@ in {
                   show_points = false;
                   show_line = false;
                   smoothing = false;
+                  color = colors.heating;
                 }
               ];
               show = {
@@ -653,6 +668,39 @@ in {
               points_per_hour = 3;
             }
             {
+              type = "custom:mini-graph-card";
+              entities = [
+                {
+                  entity = "sensor.671af9_bme280_relative_humidity";
+                  name = "Luftfeuchtigkeit";
+                  show_fill = false;
+                  color = colors.humidity;
+                }
+              ];
+              show = {
+                labels = true;
+                labels_secondary = "hover";
+              };
+              lower_bound_secondary = 0;
+              upper_bound_secondary = 1;
+              hour24 = true;
+              decimals = 1;
+              points_per_hour = 3;
+              hours_to_show = 24;
+              update_interval = 30;
+              line_width = 2;
+              state_map = [
+                {
+                  value = 0;
+                  label = "Aus/Zu";
+                }
+                {
+                  value = 1;
+                  label = "An/Auf";
+                }
+              ];
+            }
+            {
               type = "entities";
               entities = [
                 "input_number.target_temperature_wohnzimmer"
@@ -684,7 +732,7 @@ in {
                 {
                   entity = "sensor.kuchenfenster";
                   name = "Fenster";
-                  color = "#ff0000";
+                  color = colors.window;
                   y_axis = "secondary";
                   show_fill = true;
                   show_points = false;
@@ -695,15 +743,15 @@ in {
               color_thresholds = [
                 {
                   value = 0;
-                  color = "#009933";
+                  color = colors.okay;
                 }
                 {
                   value = 64;
-                  color = "#ffbf00";
+                  color = colors.warn;
                 }
                 {
                   value = 66;
-                  color = "#ff0000";
+                  color = colors.alert;
                 }
               ];
               color_thresholds_transition = "hard";
@@ -799,7 +847,7 @@ in {
                   entity = "sensor.670dcb_bme280_temperature";
                   name = "Temperatur";
                   show_fill = false;
-                  color = "#7100ff";
+                  color = colors.temperature;
                 }
                 {
                   entity = "sensor.670dcb_bme280_dew_point";
@@ -811,12 +859,12 @@ in {
                   entity = "input_number.target_temperature_schlafzimmer";
                   name = "Zieltemperatur";
                   show_fill = false;
-                  color = "#00bfff";
+                  color = colors.heating;
                 }
                 {
                   entity = "sensor.luftentfeuchter";
                   name = "Entfeuchter";
-                  color = "#0000ff";
+                  color = colors.dehumidifier;
                   y_axis = "secondary";
                   show_fill = true;
                   show_points = false;
@@ -831,21 +879,21 @@ in {
                   show_points = false;
                   show_line = false;
                   smoothing = false;
-                  color = "ffc300";
+                  color = colors.heating;
                 }
               ];
               color_thresholds = [
                 {
                   value = 0;
-                  color = "#009933";
+                  color = colors.okay;
                 }
                 {
                   value = dew_point_threshold.schlafzimmer.lower;
-                  color = "#ffbf00";
+                  color = colors.warn;
                 }
                 {
                   value = dew_point_threshold.schlafzimmer.upper;
-                  color = "#ff0000";
+                  color = colors.alert;
                 }
               ];
               color_thresholds_transition = "hard";
@@ -879,6 +927,7 @@ in {
                   entity = "sensor.670dcb_bme280_relative_humidity";
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
+                  color = colors.humidity;
                 }
                 #{
                 #  entity = "sensor.schlafzimmerfenster";
@@ -942,7 +991,7 @@ in {
                   entity = "sensor.670dbe_bme280_temperature";
                   name = "Temperatur";
                   show_fill = false;
-                  color = "#7100ff";
+                  color = colors.temperature;
                 }
                 {
                   entity = "sensor.670dbe_bme280_dew_point";
@@ -953,7 +1002,7 @@ in {
                 {
                   entity = "sensor.luftung";
                   name = "Lüftung";
-                  color = "#0000ff";
+                  color = colors.dehumidifier;
                   y_axis = "secondary";
                   show_fill = true;
                   show_points = false;
@@ -968,15 +1017,15 @@ in {
               color_thresholds = [
                 {
                   value = 0;
-                  color = "#009933";
+                  color = colors.okay;
                 }
                 {
                   value = dew_point_threshold.bad.lower;
-                  color = "#ffbf00";
+                  color = colors.warn;
                 }
                 {
                   value = dew_point_threshold.bad.upper;
-                  color = "#ff0000";
+                  color = colors.alert;
                 }
               ];
               color_thresholds_transition = "hard";
@@ -1006,6 +1055,7 @@ in {
                   entity = "sensor.670dbe_bme280_relative_humidity";
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
+                  color = colors.humidity;
                 }
               ];
               show = {
@@ -1046,7 +1096,7 @@ in {
                 {
                   entity = "sensor.wohnungstur";
                   name = "Wohnungstür";
-                  color = "#ff0000";
+                  color = colors.window;
                   show_fill = true;
                   aggregate_func = "max";
                   smoothing = false;
