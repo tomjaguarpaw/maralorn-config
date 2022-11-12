@@ -4,6 +4,16 @@
   ...
 }: let
   haLib = import ./lib.nix lib;
+  dew_point_threshold = {
+    schlafzimmer = {
+      upper = 13.4; # 66% at 20 C
+      lower = 12.9; # 64% at 20 C
+    };
+    bad = {
+      upper = 14.4; # 66% at 21 C
+      lower = 13.9; # 64% at 21 C
+    };
+  };
   inherit (haLib) modules util cards conditions triggers jinja actions tap_actions;
   fenster =
     map (name: "binary_sensor.${name}")
@@ -118,7 +128,7 @@ in {
                             {
                               condition = "numeric_state";
                               entity_id = "sensor.670dcb_bme280_dew_point";
-                              below = 12.5;
+                              below = dew_point_threshold.schlafzimmer.lower;
                             }
                             {
                               condition = "state";
@@ -138,7 +148,7 @@ in {
                         {
                           condition = "numeric_state";
                           entity_id = "sensor.670dcb_bme280_dew_point";
-                          above = 13;
+                          above = dew_point_threshold.schlafzimmer.upper;
                         }
                       ];
                       sequence = {
@@ -161,7 +171,7 @@ in {
                         {
                           condition = "numeric_state";
                           entity_id = "sensor.670dbe_bme280_dew_point";
-                          above = 14;
+                          above = dew_point_threshold.bad.upper;
                         }
                       ];
                       sequence = {
@@ -174,7 +184,7 @@ in {
                         {
                           condition = "numeric_state";
                           entity_id = "sensor.670dbe_bme280_dew_point";
-                          below = 13;
+                          below = dew_point_threshold.bad.lower;
                         }
                       ];
                       sequence = {
@@ -670,7 +680,6 @@ in {
                   entity = "sensor.kueche_humidity";
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
-                  state_adaptive_color = true;
                 }
                 {
                   entity = "sensor.kuchenfenster";
@@ -787,16 +796,22 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.670dcb_bme280_relative_humidity";
-                  name = "Luftfeuchtigkeit";
+                  entity = "sensor.670dcb_bme280_temperature";
+                  name = "Temperatur";
+                  show_fill = false;
+                  color = "#7100ff";
+                }
+                {
+                  entity = "sensor.670dcb_bme280_dew_point";
+                  name = "Taupunkt";
                   show_fill = false;
                   state_adaptive_color = true;
                 }
                 {
-                  entity = "sensor.schlafzimmer_humidity";
-                  name = "Luftfeuchtigkeit (alt)";
+                  entity = "input_number.target_temperature_schlafzimmer";
+                  name = "Zieltemperatur";
                   show_fill = false;
-                  state_adaptive_color = true;
+                  color = "#00bfff";
                 }
                 {
                   entity = "sensor.luftentfeuchter";
@@ -809,14 +824,14 @@ in {
                   smoothing = false;
                 }
                 {
-                  entity = "sensor.schlafzimmerfenster";
-                  name = "Fenster";
-                  color = "#ff0000";
+                  entity = "sensor.schlafzimmerheizung";
+                  name = "Heizung";
                   y_axis = "secondary";
                   show_fill = true;
                   show_points = false;
                   show_line = false;
                   smoothing = false;
+                  color = "ffc300";
                 }
               ];
               color_thresholds = [
@@ -825,71 +840,15 @@ in {
                   color = "#009933";
                 }
                 {
-                  value = 64;
+                  value = dew_point_threshold.schlafzimmer.lower;
                   color = "#ffbf00";
                 }
                 {
-                  value = 66;
+                  value = dew_point_threshold.schlafzimmer.upper;
                   color = "#ff0000";
                 }
               ];
               color_thresholds_transition = "hard";
-              show = {
-                labels = true;
-                labels_secondary = "hover";
-              };
-              lower_bound_secondary = 0;
-              upper_bound_secondary = 1;
-              hour24 = true;
-              decimals = 1;
-              points_per_hour = 3;
-              hours_to_show = 24;
-              update_interval = 30;
-              line_width = 2;
-              state_map = [
-                {
-                  value = 0;
-                  label = "Aus/Zu";
-                }
-                {
-                  value = 1;
-                  label = "An/Auf";
-                }
-              ];
-            }
-            {
-              type = "custom:mini-graph-card";
-              entities = [
-                {
-                  entity = "sensor.670dcb_bme280_temperature";
-                  name = "Temperatur";
-                  show_fill = false;
-                }
-                {
-                  entity = "sensor.670dcb_bme280_dew_point";
-                  name = "Taupunkt";
-                  show_fill = false;
-                }
-                {
-                  entity = "sensor.schlafzimmer_temperature";
-                  name = "Temperatur (alt)";
-                  show_fill = false;
-                }
-                {
-                  entity = "input_number.target_temperature_schlafzimmer";
-                  name = "Zieltemperatur";
-                  show_fill = false;
-                }
-                {
-                  entity = "sensor.schlafzimmerheizung";
-                  name = "Heizung";
-                  y_axis = "secondary";
-                  show_fill = true;
-                  show_points = false;
-                  show_line = false;
-                  smoothing = false;
-                }
-              ];
               show = {
                 labels = true;
                 labels_secondary = "hover";
@@ -910,6 +869,48 @@ in {
                 {
                   value = 1;
                   label = "An";
+                }
+              ];
+            }
+            {
+              type = "custom:mini-graph-card";
+              entities = [
+                {
+                  entity = "sensor.670dcb_bme280_relative_humidity";
+                  name = "Luftfeuchtigkeit";
+                  show_fill = false;
+                }
+                #{
+                #  entity = "sensor.schlafzimmerfenster";
+                #  name = "Fenster";
+                #  color = "#ff0000";
+                #  y_axis = "secondary";
+                #  show_fill = true;
+                #  show_points = false;
+                #  show_line = false;
+                #  smoothing = false;
+                #}
+              ];
+              show = {
+                labels = true;
+                labels_secondary = "hover";
+              };
+              lower_bound_secondary = 0;
+              upper_bound_secondary = 1;
+              hour24 = true;
+              decimals = 1;
+              points_per_hour = 3;
+              hours_to_show = 24;
+              update_interval = 30;
+              line_width = 2;
+              state_map = [
+                {
+                  value = 0;
+                  label = "Aus/Zu";
+                }
+                {
+                  value = 1;
+                  label = "An/Auf";
                 }
               ];
             }
@@ -935,18 +936,17 @@ in {
           type = "vertical-stack";
           cards = [
             {
-              type = "glance";
-              title = "Bad";
-              columns = 4;
-              show_state = false;
-              entities = [];
-            }
-            {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.670dbe_bme280_relative_humidity";
-                  name = "Luftfeuchtigkeit";
+                  entity = "sensor.670dbe_bme280_temperature";
+                  name = "Temperatur";
+                  show_fill = false;
+                  color = "#7100ff";
+                }
+                {
+                  entity = "sensor.670dbe_bme280_dew_point";
+                  name = "Taupunkt";
                   show_fill = false;
                   state_adaptive_color = true;
                 }
@@ -961,33 +961,33 @@ in {
                   smoothing = false;
                 }
               ];
+              show = {
+                labels = true;
+                labels_secondary = "hover";
+              };
               color_thresholds = [
                 {
                   value = 0;
                   color = "#009933";
                 }
                 {
-                  value = 64;
+                  value = dew_point_threshold.bad.lower;
                   color = "#ffbf00";
                 }
                 {
-                  value = 66;
+                  value = dew_point_threshold.bad.upper;
                   color = "#ff0000";
                 }
               ];
               color_thresholds_transition = "hard";
-              show = {
-                labels = true;
-                labels_secondary = "hover";
-              };
               lower_bound_secondary = 0;
               upper_bound_secondary = 1;
-              hour24 = true;
-              decimals = 1;
-              points_per_hour = 3;
               hours_to_show = 24;
               update_interval = 30;
               line_width = 2;
+              hour24 = true;
+              decimals = 1;
+              points_per_hour = 3;
               state_map = [
                 {
                   value = 0;
@@ -1003,13 +1003,8 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.670dbe_bme280_temperature";
-                  name = "Temperatur";
-                  show_fill = false;
-                }
-                {
-                  entity = "sensor.670dbe_bme280_dew_point";
-                  name = "Taupunkt";
+                  entity = "sensor.670dbe_bme280_relative_humidity";
+                  name = "Luftfeuchtigkeit";
                   show_fill = false;
                 }
               ];
@@ -1019,12 +1014,12 @@ in {
               };
               lower_bound_secondary = 0;
               upper_bound_secondary = 1;
-              hours_to_show = 24;
-              update_interval = 30;
-              line_width = 2;
               hour24 = true;
               decimals = 1;
               points_per_hour = 3;
+              hours_to_show = 24;
+              update_interval = 30;
+              line_width = 2;
               state_map = [
                 {
                   value = 0;
@@ -1092,11 +1087,11 @@ in {
             inherit badges;
             cards = [wohnzimmerstack];
           }
-          {
-            icon = "mdi:countertop";
-            inherit badges;
-            cards = [kuechenstack];
-          }
+          #{
+          #  icon = "mdi:countertop";
+          #  inherit badges;
+          #  cards = [kuechenstack];
+          #}
           {
             icon = "mdi:bed-king";
             inherit badges;
@@ -1115,7 +1110,7 @@ in {
           {
             icon = "mdi:floor-plan";
             badges = alertbadges;
-            cards = [wohnzimmerstack kuechenstack schlafzimmerstack badstack];
+            cards = [wohnzimmerstack schlafzimmerstack badstack];
           }
         ];
       };
