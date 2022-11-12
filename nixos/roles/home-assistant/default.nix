@@ -118,7 +118,7 @@ in {
                             {
                               condition = "numeric_state";
                               entity_id = "sensor.670dcb_bme280_dew_point";
-                              below = 12;
+                              below = 12.5;
                             }
                             {
                               condition = "state";
@@ -138,7 +138,7 @@ in {
                         {
                           condition = "numeric_state";
                           entity_id = "sensor.670dcb_bme280_dew_point";
-                          above = 12.5;
+                          above = 13;
                         }
                       ];
                       sequence = {
@@ -174,7 +174,7 @@ in {
                         {
                           condition = "numeric_state";
                           entity_id = "sensor.670dbe_bme280_dew_point";
-                          below = 13.5;
+                          below = 13;
                         }
                       ];
                       sequence = {
