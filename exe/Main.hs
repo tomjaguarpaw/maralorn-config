@@ -31,6 +31,12 @@ import qualified System.Environment as System
 import qualified System.Process.Typed as Process
 import qualified System.Random as Random
 
+-- TODO:
+--  help on invite
+--  retry invites
+--  subscribe to user
+--  use fragments
+
 data Repo = MkRepo
   { localPath :: FilePath
   , owner :: Text
