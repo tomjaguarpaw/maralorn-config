@@ -14,6 +14,7 @@ import qualified Data.GraphQL as GraphQL
 import qualified Data.List.NonEmpty as NonEmpty
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as Text
+import qualified Data.Time as Time
 import Data.Yaml (FromJSON)
 import qualified Data.Yaml as Yaml
 import Database.Esqueleto.Experimental (notIn, (^.))
@@ -97,7 +98,12 @@ Persist.share
     number PullRequestId OnDeleteCascade
     branch BranchId OnDeleteCascade
     Primary number branch
-|]
+  Invite
+    room Text
+    at Time.UTCTime
+    deriving Eq Show
+    Primary room
+  |]
 
 data Commit = Commit
   { commitId :: Text
