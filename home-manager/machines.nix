@@ -12,11 +12,11 @@ let
       "element.io"
       "youtube.*"
       "*.element.io"
-      "chaos.social"
       "twitter.com"
     ]
     ++ newsPages;
   newsPages = [
+    "chaos.social"
     "zeit.de"
     "heise.de"
     "spiegel.de"
@@ -123,6 +123,7 @@ let
         ./roles/games.nix
         ./roles/chat.nix
         ./roles/leisure.nix
+        ({pkgs, ...}: {home.packages = [pkgs.whalebird];})
         (blockServer newsPages)
       ]
     );

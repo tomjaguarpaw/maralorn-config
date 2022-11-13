@@ -26,7 +26,6 @@
       upower
       speedtest-cli
       acpi
-      whalebird
       # tools & office
       
       feh
