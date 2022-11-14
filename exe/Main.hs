@@ -33,7 +33,6 @@ import qualified System.Process.Typed as Process
 import qualified System.Random as Random
 
 -- TODO:
---  help on invite
 --  subscribe to user
 --  print time of commit
 --  accept PR url
@@ -521,7 +520,6 @@ recordInvites _ = pass
 joinInvites :: App ()
 joinInvites = do
   session <- getEnv matrixSession
-  -- There seems to be a race condition in joining rooms we are invited for. Try to be a bit patient here.
   now <- liftIO Time.getCurrentTime
   dueInvites <-
     fmap SQL.entityVal <$> SQL.select do
@@ -534,7 +532,12 @@ joinInvites = do
         retry_in = toEnum (2 ^ inviteTries)
         num_retries = 16
     case joinAttempt of
-      Right _ -> delete
+      Right _ -> do
+        delete
+        let roomId = Matrix.RoomID inviteRoom
+        members <- unwrapMatrixError $ Matrix.getRoomMembers session roomId
+        let isQuery = Map.size members <= 2
+        when isQuery $ sendMessage roomId =<< helpMessage
       -- less than roughly a day
       Left _ | inviteTries < num_retries -> do
         putTextLn $ "Failed to join room " <> inviteRoom <> " retrying in " <> show retry_in <> " seconds."
@@ -606,30 +609,33 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           else do
             prMsgs <- sequence =<< mapMaybeM (fmap (fmap prHTML) . getPRInfo . subscriptionPullRequest . Persist.entityVal) existingSubscriptions
             pure $ unlinesMsg (m ("I am currently watching the following " <> show (length existingSubscriptions) <> " pull requests for you:") : prMsgs)
-      MkCommand{command} | Text.isPrefixOf command "help" -> do
-        branchList <- join $ getEnv (fmap (intercalateMsgPlain ", ") . mapM branchHTML . Map.keys . branches . config)
-        repo_link <- repoLink "" "nixpkgs git repository on github"
-        pure $
-          unlinesMsg
-            [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
-            , mempty
-            , m "I am continously watching the " <> repo_link <> m ". If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
-            , mempty
-            , codeHTML "subscribe [pr-number]" <> m ": I will subscribe you to the given pull request."
-            , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull request."
-            , codeHTML "list" <> m ": I will show you all the pull requests, I am watching for you."
-            , codeHTML "help" <> m ": So I can tell you all of this again."
-            , mempty
-            , m "By the way, you don‘t need to type the whole command, any prefix will work."
-            , mempty
-            , m "I will inform you, when one of the pull requests you subscribed to reaches one of these branches: " <> branchList
-            , mempty
-            , m "I have been programmed and am being hosted by " <> mention "@maralorn:maralorn.de" <> m ". Feel free to reach out to him, if you have any problems or suggestions."
-            , m "My code is written in Haskell, is open source under the AGPL license and can be found at " <> link "https://git.maralorn.de/nixpkgs-bot" "git.maralorn.de/nixpkgs-bot" <> m "."
-            ]
+      MkCommand{command} | Text.isPrefixOf command "help" -> helpMessage
       MkCommand{command} -> pure (unlinesMsg [m "Sorry, I don‘t know what you want from me, when your command starts with: " <> codeHTML command, m "I‘ll tell you all commands I know, when you use the " <> codeHTML "help" <> m " command."])
   forM_ responses $ uncurry \MkCommand{author} -> sendMessageToUser author . fromMaybe (m "Your command triggered an internal error in the bot. Sorry about that.")
   whenTimeIsUp lastWatch 60 watchRepo
+
+helpMessage :: App MessageText
+helpMessage = do
+  branchList <- join $ getEnv (fmap (intercalateMsgPlain ", ") . mapM branchHTML . Map.keys . branches . config)
+  repo_link <- repoLink "" "nixpkgs git repository on github"
+  pure $
+    unlinesMsg
+      [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
+      , mempty
+      , m "I am continously watching the " <> repo_link <> m ". If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
+      , mempty
+      , codeHTML "subscribe [pr-number]" <> m ": I will subscribe you to the given pull request."
+      , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull request."
+      , codeHTML "list" <> m ": I will show you all the pull requests, I am watching for you."
+      , codeHTML "help" <> m ": So I can tell you all of this again."
+      , mempty
+      , m "By the way, you don‘t need to type the whole command, any prefix will work."
+      , mempty
+      , m "I will inform you, when one of the pull requests you subscribed to reaches one of these branches: " <> branchList
+      , mempty
+      , m "I have been programmed and am being hosted by " <> mention "@maralorn:maralorn.de" <> m ". Feel free to reach out to him, if you have any problems or suggestions."
+      , m "My code is written in Haskell, is open source under the AGPL license and can be found at " <> link "https://git.maralorn.de/nixpkgs-bot" "git.maralorn.de/nixpkgs-bot" <> m "."
+      ]
 
 whenTimeIsUp :: (Environment -> IORef Clock.TimeSpec) -> Int64 -> App () -> App ()
 whenTimeIsUp get_ref interval action = do
