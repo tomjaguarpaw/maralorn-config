@@ -12,7 +12,7 @@
     heating = "#ffc300";
     temperature = "#7100ff";
     humidity = "#00bfff";
-    window = warn;
+    window = primary;
     primary = "#858EFF";
   };
   dew_point_threshold = {
@@ -624,7 +624,7 @@ in {
                   color = colors.heating;
                 }
                 {
-                  entity = "sensor.wohnzimmerfenster";
+                  entity = "sensor.balkontur";
                   name = "Fenster";
                   color = colors.window;
                   y_axis = "secondary";
