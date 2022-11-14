@@ -623,6 +623,16 @@ in {
                   smoothing = false;
                   color = colors.heating;
                 }
+                {
+                  entity = "sensor.wohnzimmerfenster";
+                  name = "Fenster";
+                  color = colors.window;
+                  y_axis = "secondary";
+                  show_fill = true;
+                  show_points = false;
+                  show_line = false;
+                  smoothing = false;
+                }
               ];
               show = {
                 labels = true;
@@ -881,6 +891,16 @@ in {
                   smoothing = false;
                   color = colors.heating;
                 }
+                {
+                  entity = "sensor.schlafzimmerfenster";
+                  name = "Fenster";
+                  color = colors.window;
+                  y_axis = "secondary";
+                  show_fill = true;
+                  show_points = false;
+                  show_line = false;
+                  smoothing = false;
+                }
               ];
               color_thresholds = [
                 {
@@ -929,16 +949,6 @@ in {
                   show_fill = false;
                   color = colors.humidity;
                 }
-                #{
-                #  entity = "sensor.schlafzimmerfenster";
-                #  name = "Fenster";
-                #  color = "#ff0000";
-                #  y_axis = "secondary";
-                #  show_fill = true;
-                #  show_points = false;
-                #  show_line = false;
-                #  smoothing = false;
-                #}
               ];
               show = {
                 labels = true;
