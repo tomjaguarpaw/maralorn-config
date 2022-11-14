@@ -2,7 +2,6 @@
 
 module Main (main) where
 
-import qualified Control.Concurrent as Concurrent
 import qualified Control.Exception as Exception
 import Control.Monad.Catch (MonadMask)
 import qualified Control.Monad.Catch as MonadCatch
@@ -35,7 +34,6 @@ import qualified System.Random as Random
 -- TODO:
 --  subscribe to user
 --  print time of commit
---  accept PR url
 --  use fragments
 
 data Repo = MkRepo
@@ -564,6 +562,9 @@ setQueries commands = do
         putTextLn $ "Setting Query for user " <> author command <> " to " <> coerce (roomId command)
         set_room
 
+parsePRNumber :: Text -> Maybe Int
+parsePRNumber = readMaybe . toString . Text.dropWhile (`notElem` ['0' .. '9'])
+
 resultHandler :: Matrix.SyncResult -> App ()
 resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} = do
   saveNextBatch srNextBatch
@@ -574,7 +575,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
   responses <- forM (filter isQuery commands) \cmd ->
     (cmd,) <$> catchAll case cmd of
       MkCommand{command, author, args} | Text.isPrefixOf command "subscribe" ->
-        case readMaybe (toString . Text.dropWhile (== '#') . Text.strip $ args) of
+        case parsePRNumber args of
           Nothing -> pure $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
           Just number -> do
             let pr_key = PullRequestKey number
@@ -582,12 +583,12 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
             pr_msg_may <- mapM prHTML =<< getPRInfo pr_key
             case pr_msg_may of
               Just prMsg | null existingSubscription -> do
-                Persist.insert_ $ Subscription author (PullRequestKey number)
+                Persist.insert_ $ Subscription author pr_key
                 pure $ m "I will now track for you the pull request " <> prMsg
               Just prMsg -> pure $ m "Okay, but you were already subscribed to pull request " <> prMsg
               Nothing -> pure $ m $ "Can‘t find information about a pull request with number #" <> show number <> "."
       MkCommand{command, author, args} | Text.isPrefixOf command "unsubscribe" ->
-        case readMaybe (toString . Text.dropWhile (== '#') . Text.strip $ args) of
+        case parsePRNumber args of
           Nothing -> pure $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
           Just number -> do
             let pr_key = PullRequestKey number
@@ -598,7 +599,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
                 | null existingSubscription ->
                   pure $ m "Well, you were not subscribed to pull request " <> prMsg
               Just prMsg -> do
-                Persist.delete $ SubscriptionKey author (PullRequestKey number)
+                Persist.delete $ SubscriptionKey author pr_key
                 pure $ m "Okay, I will not send you updates about pull request " <> prMsg
               Nothing -> pure $ m $ "Can‘t find information about a pull request with number #" <> show number <> "."
       MkCommand{command, author} | Text.isPrefixOf command "list" -> do
