@@ -34,8 +34,9 @@ import qualified System.Random as Random
 
 -- TODO:
 --  help on invite
---  retry invites
 --  subscribe to user
+--  print time of commit
+--  accept PR url
 --  use fragments
 
 data Repo = MkRepo
@@ -101,6 +102,7 @@ Persist.share
   Invite
     room Text
     at Time.UTCTime
+    tries Int
     deriving Eq Show
     Primary room
   |]
@@ -510,13 +512,36 @@ getCommands roomId events = do
   getCommand Matrix.RoomEvent{Matrix.reSender = Matrix.Author author, Matrix.reContent = Matrix.EventRoomMessage (Matrix.RoomMessageText (Matrix.MessageText{Matrix.mtBody, Matrix.mtType = Matrix.TextType}))} = Just (author, mtBody)
   getCommand _ = Nothing
 
-joinInvites :: Maybe Matrix.SyncResultRoom -> App ()
-joinInvites (Just (Matrix.SyncResultRoom{Matrix.srrInvite = Just invites})) = do
+recordInvites :: Maybe Matrix.SyncResultRoom -> App ()
+recordInvites (Just (Matrix.SyncResultRoom{Matrix.srrInvite = Just invites})) = do
+  now <- liftIO Time.getCurrentTime
+  forM_ (Map.keys invites) \room -> SQL.insert $ Invite room now 0
+recordInvites _ = pass
+
+joinInvites :: App ()
+joinInvites = do
   session <- getEnv matrixSession
   -- There seems to be a race condition in joining rooms we are invited for. Try to be a bit patient here.
-  unless (Map.null invites) (liftIO $ Concurrent.threadDelay 1000000)
-  forM_ (Map.keys invites) (unwrapMatrixError . Matrix.joinRoom session)
-joinInvites _ = pass
+  now <- liftIO Time.getCurrentTime
+  dueInvites <-
+    fmap SQL.entityVal <$> SQL.select do
+      invite <- SQL.from $ SQL.table @Invite
+      SQL.where_ (invite ^. InviteAt SQL.>. SQL.val now)
+      pure invite
+  forM_ dueInvites \Invite{inviteRoom, inviteAt, inviteTries} -> do
+    joinAttempt <- liftIO $ Matrix.joinRoom session inviteRoom
+    let delete = Persist.delete (InviteKey inviteRoom)
+        retry_in = toEnum (2 ^ inviteTries)
+        num_retries = 16
+    case joinAttempt of
+      Right _ -> delete
+      -- less than roughly a day
+      Left _ | inviteTries < num_retries -> do
+        putTextLn $ "Failed to join room " <> inviteRoom <> " retrying in " <> show retry_in <> " seconds."
+        Persist.repsert (InviteKey inviteRoom) (Invite inviteRoom (Time.addUTCTime retry_in inviteAt) (inviteTries + 1))
+      Left _ -> do
+        putTextLn $ "Failed to join room " <> inviteRoom <> " " <> show num_retries <> " times. Giving up."
+        delete
 
 saveNextBatch :: Text -> App ()
 saveNextBatch next_batch = Persist.repsert (SessionStateKey' "next_batch") (SessionState "next_batch" next_batch)
@@ -539,7 +564,8 @@ setQueries commands = do
 resultHandler :: Matrix.SyncResult -> App ()
 resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} = do
   saveNextBatch srNextBatch
-  joinInvites srRooms
+  recordInvites srRooms
+  joinInvites
   commands <- join <$> mapM (uncurry getCommands) (Matrix.getTimelines syncResult)
   setQueries commands
   responses <- forM (filter isQuery commands) \cmd ->
