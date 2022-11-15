@@ -104,7 +104,7 @@ Persist.share
     user Text
     githubLogin Text
     deriving Eq Show
-    Primary user
+    Primary user githubLogin
   |]
 
 data Commit = Commit
@@ -468,6 +468,9 @@ deleteUnusedQueries = SQL.delete do
     (query ^. QueryUser) `notIn` SQL.subList_select do
       sub <- SQL.from $ SQL.table @Subscription
       pure (sub ^. SubscriptionUser)
+      &&. (query ^. QueryUser) `notIn` SQL.subList_select do
+        sub <- SQL.from $ SQL.table @AuthorSubscription
+        pure (sub ^. AuthorSubscriptionUser)
 
 leaveEmptyRooms :: App ()
 leaveEmptyRooms = do
