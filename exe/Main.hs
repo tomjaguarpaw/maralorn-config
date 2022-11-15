@@ -16,7 +16,7 @@ import qualified Data.Text as Text
 import qualified Data.Time as Time
 import Data.Yaml (FromJSON)
 import qualified Data.Yaml as Yaml
-import Database.Esqueleto.Experimental (notIn, (&&.), (==.), (>.), (^.))
+import Database.Esqueleto.Experimental (notIn, (&&.), (<.), (==.), (^.))
 import qualified Database.Esqueleto.Experimental as SQL
 import qualified Database.Persist as Persist
 import qualified Database.Persist.Sqlite as Persist.Sqlite
@@ -535,7 +535,7 @@ joinInvites = do
   dueInvites <-
     fmap SQL.entityVal <$> SQL.select do
       invite <- SQL.from $ SQL.table @Invite
-      SQL.where_ (invite ^. InviteAt >. SQL.val now)
+      SQL.where_ (invite ^. InviteAt <. SQL.val now)
       pure invite
   forM_ dueInvites \Invite{inviteRoom, inviteAt, inviteTries} -> do
     joinAttempt <- liftIO $ Matrix.joinRoom session inviteRoom
