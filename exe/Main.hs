@@ -686,10 +686,12 @@ helpMessage = do
       , mempty
       , codeHTML "subscribe [pr-number]" <> m ": I will subscribe you to the given pull request."
       , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull request."
+      , codeHTML "subscribe user [github-login-name]" <> m ": I will subscribe you to all newly merged pull requests created by the given github handle."
+      , codeHTML "unsubscribe user [github-login-name]" <> m ": I will not subscribe you to newly merged pull requests from the given user anymore."
       , codeHTML "list" <> m ": I will show you all the pull requests, I am watching for you."
       , codeHTML "help" <> m ": So I can tell you all of this again."
       , mempty
-      , m "By the way, you don‘t need to type the whole command, any prefix will work."
+      , m "By the way, you don‘t need to type the whole command, for every keyword in the command any prefix will work. e.g. " <> codeHTML "s u" <> m " for " <> codeHTML "subscribe user"
       , mempty
       , m "I will inform you, when one of the pull requests you subscribed to reaches one of these branches: " <> branchList
       , mempty
