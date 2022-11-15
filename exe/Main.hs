@@ -619,8 +619,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
             Just user -> do
               notSubbed <- hasAuthorSub author user
               if notSubbed
-                then do
-                  pure $ m $ "I haven‘t been tracking pull requests by " <> user <> " for you."
+                then pure $ m $ "I haven‘t been tracking pull requests by " <> user <> " for you."
                 else do
                   SQL.delete $ do
                     author_sub <- SQL.from $ SQL.table @AuthorSubscription
@@ -631,8 +630,8 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           Nothing -> pure $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
           Just number -> do
             let pr_key = PullRequestKey number
-            notSubbed <- hasSub author pr_key
             pr_msg_may <- mapM prHTML =<< getPRInfo pr_key
+            notSubbed <- hasSub author pr_key
             case pr_msg_may of
               Just prMsg | notSubbed -> do
                 Persist.insert_ $ Subscription author pr_key
@@ -644,8 +643,8 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           Nothing -> pure $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
           Just number -> do
             let pr_key = PullRequestKey number
-            notSubbed <- hasSub author pr_key
             pr_msg_may <- mapM prHTML =<< getPRInfo pr_key
+            notSubbed <- hasSub author pr_key
             case pr_msg_may of
               Just prMsg
                 | notSubbed ->
