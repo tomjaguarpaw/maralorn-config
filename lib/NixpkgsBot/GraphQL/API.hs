@@ -14,7 +14,7 @@ import Data.GraphQL.Bootstrap
 import NixpkgsBot.GraphQL.Scalars
 
 {-----------------------------------------------------------------------------
-\* MergingPullRequest
+* MergingPullRequest
 
 -- result :: Object MergingPullRequestSchema; throws a GraphQL exception on errors
 result <- runQuery MergingPullRequestQuery
@@ -52,6 +52,9 @@ type MergingPullRequestSchema =
                 mergeCommit: Maybe {
                   oid: GitObjectID,
                 },
+                author: Maybe {
+                  login: Text,
+                },
                 merged: Bool,
                 baseRefName: Text,
               },
@@ -85,6 +88,9 @@ instance GraphQLQuery MergingPullRequestQuery where
                 mergeCommit {
                   oid
                 }
+                author {
+                  login
+                }
                 merged
                 baseRefName
               }
@@ -107,7 +113,7 @@ instance GraphQLQuery MergingPullRequestQuery where
       ]
 
 {-----------------------------------------------------------------------------
-\* PullRequest
+* PullRequest
 
 -- result :: Object PullRequestSchema; throws a GraphQL exception on errors
 result <- runQuery PullRequestQuery
@@ -141,6 +147,9 @@ type PullRequestSchema =
         mergeCommit: Maybe {
           oid: GitObjectID,
         },
+        author: Maybe {
+          login: Text,
+        },
         merged: Bool,
         baseRefName: Text,
       },
@@ -166,6 +175,9 @@ instance GraphQLQuery PullRequestQuery where
           title
           mergeCommit {
             oid
+          }
+          author {
+            login
           }
           merged
           baseRefName

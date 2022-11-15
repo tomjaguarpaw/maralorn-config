@@ -6,6 +6,9 @@ query PullRequest($number: Int!, $owner: String!, $name: String!) {
       mergeCommit {
         oid
       }
+      author {
+        login
+      }
       merged
       baseRefName
     }

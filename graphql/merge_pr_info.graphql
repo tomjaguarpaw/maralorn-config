@@ -9,6 +9,9 @@ query MergingPullRequest($commit: GitObjectID!, $owner: String!, $name: String!)
             mergeCommit {
               oid
             }
+            author {
+              login
+            }
             merged
             baseRefName
           }

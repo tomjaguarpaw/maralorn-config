@@ -16,9 +16,8 @@ import qualified Data.Text as Text
 import qualified Data.Time as Time
 import Data.Yaml (FromJSON)
 import qualified Data.Yaml as Yaml
-import Database.Esqueleto.Experimental (notIn, (^.))
+import Database.Esqueleto.Experimental (notIn, (&&.), (==.), (>.), (^.))
 import qualified Database.Esqueleto.Experimental as SQL
-import Database.Persist ((==.))
 import qualified Database.Persist as Persist
 import qualified Database.Persist.Sqlite as Persist.Sqlite
 import qualified Database.Persist.TH as Persist
@@ -33,7 +32,6 @@ import qualified System.Random as Random
 
 -- TODO:
 --  subscribe to user
---  print time of commit
 --  use fragments
 
 data Repo = MkRepo
@@ -102,6 +100,11 @@ Persist.share
     tries Int
     deriving Eq Show
     Primary room
+  AuthorSubscription
+    user Text
+    githubLogin Text
+    deriving Eq Show
+    Primary user
   |]
 
 data Commit = Commit
@@ -135,11 +138,6 @@ gitShow reference = do
   conf <- getEnv config
   raw_commits <- Process.readProcessStdout_ $ git conf $ "show" : "-s" : "--format=format:%H %s" : reference
   pure $ uncurry Commit . second (Text.drop 1) . Text.breakOn " " <$> lines (decodeUtf8 raw_commits)
-
-commitIsPR :: Commit -> Maybe Int
-commitIsPR commit = do
-  (githubId, _) <- second (Text.drop 1) . Text.breakOn " " <$> Text.stripPrefix "Merge pull request #" (commitTitle commit)
-  readMaybe (toString githubId)
 
 originBranch :: Text -> String
 originBranch = ("origin/" <>) . toString
@@ -249,7 +247,7 @@ queryGraphQL query = do
 type PRSchema = [GraphQL.unwrap| (GraphQL.API.PullRequestSchema).repository!.pullRequest! |]
 type RateLimitSchema = [GraphQL.unwrap| (GraphQL.API.PullRequestSchema).rateLimit! |]
 
-extractPR :: PRSchema -> App (PullRequest, Maybe Merge)
+extractPR :: PRSchema -> App (PullRequest, Maybe Merge, Text)
 extractPR pr = do
   when (isNothing [get|pr.mergeCommit|] && [get|pr.merged|]) $ MonadCatch.throwM ("PR is merged but has no merge commit:" <> show pr :: Text)
   pure
@@ -263,7 +261,23 @@ extractPR pr = do
           { mergeNumber = PullRequestKey [get|pr.number|]
           , mergeCommit = [get|commit.oid|]
           }
+    , [get|pr.author!.login|]
     )
+
+getMissingAuthorSubscriptions :: Persist.Key PullRequest -> Text -> App [Text]
+getMissingAuthorSubscriptions pr_key author = do
+  let users_subscribed_to_this_pr = do
+        sub <- SQL.from $ SQL.table @Subscription
+        SQL.where_ (sub ^. SubscriptionPullRequest ==. SQL.val pr_key)
+        pure (sub ^. SubscriptionUser)
+  author_subs <- SQL.select $ do
+    author_sub <- SQL.from $ SQL.table @AuthorSubscription
+    SQL.where_
+      ( author_sub ^. AuthorSubscriptionGithubLogin ==. SQL.val author
+          SQL.&&. author_sub ^. AuthorSubscriptionUser `notIn` SQL.subSelectList users_subscribed_to_this_pr
+      )
+    pure author_sub
+  pure $ fmap (authorSubscriptionUser . Persist.entityVal) author_subs
 
 checkRateLimit :: RateLimitSchema -> App ()
 checkRateLimit rateLimit = when ([get|rateLimit.remaining|] < warn_threshold) $ putTextLn $ show rateLimit
@@ -272,7 +286,7 @@ checkRateLimit rateLimit = when ([get|rateLimit.remaining|] < warn_threshold) $ 
   -- The threshold should probably be lower, but for debugging purposes, I currently want to see everytime a graphql Query happens.
   warn_threshold = 5000
 
-queryPR :: Persist.Key PullRequest -> App (PullRequest, Maybe Merge)
+queryPR :: Persist.Key PullRequest -> App (PullRequest, Maybe Merge, Text)
 queryPR (PullRequestKey number) = do
   owner <- getEnv (owner . repo . config)
   name <- getEnv (name . repo . config)
@@ -290,8 +304,9 @@ getPRInfo pr_key = do
       pure $ Just (savedPRInfo, branches)
     Nothing -> do
       prInfo <- catchAll $ queryPR pr_key
-      forM prInfo \(pull_request, pull_request_merge) -> do
+      forM prInfo \(pull_request, pull_request_merge, author) -> do
         Persist.insert_ pull_request
+        ensureSubscriptions pr_key author =<< getMissingAuthorSubscriptions pr_key author
         case pull_request_merge of
           Just merge_info -> do
             Persist.insert_ merge_info
@@ -303,6 +318,13 @@ getPRInfo pr_key = do
           , branches
           )
 
+ensureSubscriptions :: Persist.Key PullRequest -> Text -> [Text] -> App ()
+ensureSubscriptions pr_key author missing_subscriptions = do
+  forM_ missing_subscriptions \user -> SQL.insert_ (Subscription user pr_key)
+  pr_msg <- mapM prHTML =<< getPRInfo pr_key
+  forM_ pr_msg \msg -> forM_ missing_subscriptions \user ->
+    sendMessageToUser user $ m ("Because you are following user " <> author <> " I subscribed you to the pull request ") <> msg
+
 {- | This function
  | 1. Looks if a commit is a known merge commit, and marks as arrived.
  | 2. Sees if the commit itself looks like a merge commit for a known PR, creates a merge entry, marks as arrived and asks github if bases don‘t match.
@@ -313,33 +335,15 @@ findSubscribedPRsInCommitList :: Text -> [Commit] -> [Commit] -> App [Persist.Ke
 findSubscribedPRsInCommitList branch possible_new_merge_commits =
   fmap join . mapM \change ->
     either id id <$> runExceptT do
-      found_by_merge_commit <- lift $ fmap (unMergeKey . Persist.entityKey) <$> Persist.selectList [MergeCommit ==. commitId change] []
+      found_by_merge_commit <-
+        lift $
+          fmap (unMergeKey . Persist.entityKey) <$> SQL.select do
+            merge <- SQL.from $ SQL.table @Merge
+            SQL.where_ (merge ^. MergeCommit ==. SQL.val (commitId change))
+            pure merge
       unless (null found_by_merge_commit) (Except.throwError found_by_merge_commit)
-      case commitIsPR change of
-        Just number -> do
-          let pr_key = PullRequestKey number
-          -- Are we watching this PR?
-          prMay <- lift $ Persist.get pr_key
-          case prMay of
-            Just pr -> do
-              lift $
-                if pullRequestBase pr /= branch
-                  then do
-                    (new_pr, merge) <- queryPR pr_key
-                    Persist.repsert pr_key new_pr
-                    whenJust merge $ Persist.repsert (MergeKey pr_key)
-                  else Persist.insert_ $ Merge pr_key (commitId change)
-              Except.throwError [pr_key]
-            Nothing -> Except.throwError []
-        Nothing -> pass
       -- Branches which beginn with "nix" are channel branches and we don‘t scan those for new merge_commits.
       when (Text.isPrefixOf "nix" branch) $ Except.throwError []
-      unmerged_watched_pull_requests <- lift $
-        SQL.select $ do
-          pr <- (^. PullRequestId) <$> SQL.from (SQL.table @PullRequest)
-          SQL.where_ (pr `SQL.notIn` SQL.subList_select ((^. MergeNumber) <$> SQL.from (SQL.table @Merge)))
-          pure pr
-      when (null unmerged_watched_pull_requests) $ Except.throwError []
       unless (change `elem` possible_new_merge_commits) $ Except.throwError []
       lift do
         owner <- getEnv (owner . repo . config)
@@ -348,15 +352,17 @@ findSubscribedPRsInCommitList branch possible_new_merge_commits =
         putText $ "MergingQuery: " <> show change <> " "
         checkRateLimit [get|result.rateLimit!|]
         prs <- mapM extractPR $ catMaybes [get|result.repository!.object!.__fragment!.associatedPullRequests!.nodes!|]
-        flip mapMaybeM prs \(pr, merge) ->
+        flip mapMaybeM prs \(pr, merge, author) ->
           case merge of
             Just mergeProof | mergeCommit mergeProof == commitId change -> do
               let pr_key = mergeNumber mergeProof
+              missing_subs <- getMissingAuthorSubscriptions pr_key author
               pr_is_watched <- isJust <$> Persist.get (mergeNumber mergeProof)
-              if pr_is_watched
+              if pr_is_watched || not (null missing_subs)
                 then do
                   Persist.repsert pr_key pr
                   Persist.repsert (MergeKey pr_key) mergeProof
+                  ensureSubscriptions pr_key author missing_subs
                   pure $ Just pr_key
                 else pure Nothing
             _ -> pure Nothing
@@ -364,7 +370,11 @@ findSubscribedPRsInCommitList branch possible_new_merge_commits =
 notifySubscribers :: Text -> [Persist.Key PullRequest] -> App [Subscription]
 notifySubscribers branch =
   fmap join . mapM \pr -> do
-    subscriptions <- fmap Persist.entityVal <$> Persist.selectList [SubscriptionPullRequest ==. pr] []
+    subscriptions <-
+      fmap Persist.entityVal <$> SQL.select do
+        sub <- SQL.from $ SQL.table @Subscription
+        SQL.where_ (sub ^. SubscriptionPullRequest ==. SQL.val pr)
+        pure sub
     unless (null subscriptions) $ Persist.insert_ (Arrival pr (BranchKey branch))
     pure subscriptions
 
@@ -442,14 +452,14 @@ unsubscribeFromFinishedPRs = do
     when all_reached do
       subs <- SQL.select do
         sub <- SQL.from $ SQL.table @Subscription
-        SQL.where_ (sub ^. SubscriptionPullRequest SQL.==. SQL.val (SQL.entityKey pr))
+        SQL.where_ (sub ^. SubscriptionPullRequest ==. SQL.val (SQL.entityKey pr))
         pure sub
       forM_ subs \sub -> do
         pr_html <- prHTML (SQL.entityVal pr, [])
         sendMessageToUser (subscriptionUser (Persist.entityVal sub)) $ m "Your subscription of pr " <> pr_html <> m " has ended, because it reached all relevant branches."
       SQL.delete do
         pr_ <- SQL.from $ SQL.table @PullRequest
-        SQL.where_ (pr_ ^. PullRequestId SQL.==. SQL.val (SQL.entityKey pr))
+        SQL.where_ (pr_ ^. PullRequestId ==. SQL.val (SQL.entityKey pr))
 
 deleteUnusedQueries :: App ()
 deleteUnusedQueries = SQL.delete do
@@ -522,7 +532,7 @@ joinInvites = do
   dueInvites <-
     fmap SQL.entityVal <$> SQL.select do
       invite <- SQL.from $ SQL.table @Invite
-      SQL.where_ (invite ^. InviteAt SQL.>. SQL.val now)
+      SQL.where_ (invite ^. InviteAt >. SQL.val now)
       pure invite
   forM_ dueInvites \Invite{inviteRoom, inviteAt, inviteTries} -> do
     joinAttempt <- liftIO $ Matrix.joinRoom session inviteRoom
@@ -572,17 +582,56 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
   joinInvites
   commands <- join <$> mapM (uncurry getCommands) (Matrix.getTimelines syncResult)
   setQueries commands
+  let hasSub author pr_key =
+        null <$> SQL.select do
+          sub <- SQL.from $ SQL.table @Subscription
+          SQL.where_ (sub ^. SubscriptionUser ==. SQL.val author &&. sub ^. SubscriptionPullRequest ==. SQL.val pr_key)
+          pure sub
+      hasAuthorSub user author =
+        null <$> SQL.select do
+          sub <- SQL.from $ SQL.table @AuthorSubscription
+          SQL.where_ (sub ^. AuthorSubscriptionUser ==. SQL.val user &&. sub ^. AuthorSubscriptionGithubLogin ==. SQL.val author)
+          pure sub
   responses <- forM (filter isQuery commands) \cmd ->
     (cmd,) <$> catchAll case cmd of
+      MkCommand{command, author, args}
+        | Text.isPrefixOf command "subscribe"
+          , split_args <- Text.words args
+          , fromMaybe False (viaNonEmpty (flip Text.isPrefixOf "user" . head) split_args) -> do
+          case maybeAt 1 split_args of
+            Nothing -> pure $ m "Please tell me a user to subscribe to."
+            Just user -> do
+              notSubbed <- hasAuthorSub author user
+              if notSubbed
+                then do
+                  Persist.insert_ $ AuthorSubscription author user
+                  pure $ m $ "I will now track for you all pull requests by " <> user
+                else pure $ m $ "Okay, but you were already subscribed to pull requests by user " <> user
+      MkCommand{command, author, args}
+        | Text.isPrefixOf command "unsubscribe"
+          , split_args <- Text.words args
+          , fromMaybe False (viaNonEmpty (flip Text.isPrefixOf "user" . head) split_args) -> do
+          case maybeAt 1 split_args of
+            Nothing -> pure $ m "Please tell me a user to unsubscribe from."
+            Just user -> do
+              notSubbed <- hasAuthorSub author user
+              if notSubbed
+                then do
+                  pure $ m $ "I haven‘t been tracking pull requests by " <> user <> " for you."
+                else do
+                  SQL.delete $ do
+                    author_sub <- SQL.from $ SQL.table @AuthorSubscription
+                    SQL.where_ (author_sub ^. AuthorSubscriptionUser ==. SQL.val author &&. author_sub ^. AuthorSubscriptionGithubLogin ==. SQL.val user)
+                  pure $ m $ "I will not subscribe you automatically to new pull requests by user " <> user <> " anymore."
       MkCommand{command, author, args} | Text.isPrefixOf command "subscribe" ->
         case parsePRNumber args of
           Nothing -> pure $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
           Just number -> do
             let pr_key = PullRequestKey number
-            existingSubscription <- Persist.selectList [SubscriptionUser ==. author, SubscriptionPullRequest ==. pr_key] []
+            notSubbed <- hasSub author pr_key
             pr_msg_may <- mapM prHTML =<< getPRInfo pr_key
             case pr_msg_may of
-              Just prMsg | null existingSubscription -> do
+              Just prMsg | notSubbed -> do
                 Persist.insert_ $ Subscription author pr_key
                 pure $ m "I will now track for you the pull request " <> prMsg
               Just prMsg -> pure $ m "Okay, but you were already subscribed to pull request " <> prMsg
@@ -592,24 +641,31 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           Nothing -> pure $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
           Just number -> do
             let pr_key = PullRequestKey number
-            existingSubscription <- Persist.selectList [SubscriptionUser ==. author, SubscriptionPullRequest ==. pr_key] []
+            notSubbed <- hasSub author pr_key
             pr_msg_may <- mapM prHTML =<< getPRInfo pr_key
             case pr_msg_may of
               Just prMsg
-                | null existingSubscription ->
+                | notSubbed ->
                   pure $ m "Well, you were not subscribed to pull request " <> prMsg
               Just prMsg -> do
                 Persist.delete $ SubscriptionKey author pr_key
                 pure $ m "Okay, I will not send you updates about pull request " <> prMsg
               Nothing -> pure $ m $ "Can‘t find information about a pull request with number #" <> show number <> "."
       MkCommand{command, author} | Text.isPrefixOf command "list" -> do
-        existingSubscriptions <- Persist.selectList [SubscriptionUser ==. author] []
-        if null existingSubscriptions
+        existingSubscriptions <- SQL.select $ do
+          sub <- SQL.from $ SQL.table @Subscription
+          SQL.where_ (sub ^. SubscriptionUser ==. SQL.val author)
+          pure sub
+        existingAuthorSubscriptions <- SQL.select $ do
+          sub <- SQL.from $ SQL.table @AuthorSubscription
+          SQL.where_ (sub ^. AuthorSubscriptionUser ==. SQL.val author)
+          pure sub
+        if null existingSubscriptions && null existingAuthorSubscriptions
           then do
-            pure $ m "I am currently not tracking any pull requests for you. Use " <> codeHTML "subscribe" <> m " to change that."
+            pure $ m "I am currently not tracking any pull requests or users for you. Use " <> codeHTML "subscribe" <> m " to change that."
           else do
             prMsgs <- sequence =<< mapMaybeM (fmap (fmap prHTML) . getPRInfo . subscriptionPullRequest . Persist.entityVal) existingSubscriptions
-            pure $ unlinesMsg (m ("I am currently watching the following " <> show (length existingSubscriptions) <> " pull requests for you:") : prMsgs)
+            pure $ unlinesMsg (m ("I am currently watching the following " <> show (length existingSubscriptions) <> " pull requests for you:") : prMsgs <> [m ("Also I am subscribing you to new pull requests by the users: " <> Text.intercalate ", " (fmap (authorSubscriptionGithubLogin . Persist.entityVal) existingAuthorSubscriptions))])
       MkCommand{command} | Text.isPrefixOf command "help" -> helpMessage
       MkCommand{command} -> pure (unlinesMsg [m "Sorry, I don‘t know what you want from me, when your command starts with: " <> codeHTML command, m "I‘ll tell you all commands I know, when you use the " <> codeHTML "help" <> m " command."])
   forM_ responses $ uncurry \MkCommand{author} -> sendMessageToUser author . fromMaybe (m "Your command triggered an internal error in the bot. Sorry about that.")
