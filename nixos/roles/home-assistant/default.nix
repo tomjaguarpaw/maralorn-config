@@ -12,7 +12,7 @@
     heating = "#ff9021";
     temperature = "#7100ff";
     humidity = "#00bfff";
-    window = "99046c";
+    window = "#99046c";
     primary = "#858EFF";
   };
   dew_point_threshold = {
@@ -625,7 +625,7 @@ in {
                 }
                 {
                   entity = "sensor.balkontur";
-                  name = "Fenster";
+                  name = "Balkontür";
                   color = colors.window;
                   y_axis = "secondary";
                   show_fill = true;
