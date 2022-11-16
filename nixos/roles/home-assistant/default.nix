@@ -9,10 +9,10 @@
     warn = "#ffbf00";
     alert = "#ff0000";
     dehumidifier = humidity;
-    heating = "#ffc300";
+    heating = "#ff9021";
     temperature = "#7100ff";
     humidity = "#00bfff";
-    window = primary;
+    window = "99046c";
     primary = "#858EFF";
   };
   dew_point_threshold = {
@@ -715,6 +715,7 @@ in {
               entities = [
                 "input_number.target_temperature_wohnzimmer"
                 "group.wohnzimmer_lights"
+                "button.restart_671af9"
               ];
             }
             {
@@ -978,6 +979,7 @@ in {
               entities = [
                 "input_number.target_temperature_schlafzimmer"
                 "group.schlafzimmer_lights"
+                "button.restart_670dcb"
               ];
             }
             {
@@ -1089,6 +1091,12 @@ in {
                   value = 1;
                   label = "An";
                 }
+              ];
+            }
+            {
+              type = "entities";
+              entities = [
+                "button.restart_670dbe"
               ];
             }
             {
