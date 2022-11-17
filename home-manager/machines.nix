@@ -123,7 +123,6 @@ let
         ./roles/games.nix
         ./roles/chat.nix
         ./roles/leisure.nix
-        ({pkgs, ...}: {home.packages = [pkgs.whalebird];})
         (blockServer newsPages)
       ]
     );
