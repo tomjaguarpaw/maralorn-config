@@ -2,6 +2,11 @@
 esphome:
   name: esphome-${macsuffix}
 
+# https://esphome.io/components/button/restart.html
+button:
+  - platform: restart
+    name: restart-${macsuffix}
+
 # https://esphome.io/components/logger.html
 logger:
   baud_rate: 0
