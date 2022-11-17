@@ -85,7 +85,6 @@ in [
   {
     Web = {
       Browser = fork "firefox";
-      Mastodon = fork "whalebird";
       "Private Browser" = fork "firefox --private-window";
       Chromium = fork "chromium";
       "Software-Updates" = "software-updates";
