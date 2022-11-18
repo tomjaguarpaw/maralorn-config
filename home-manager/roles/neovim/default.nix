@@ -21,6 +21,25 @@
     explorer.icon.enableNerdfont = true;
     explorer.file.child.template = "[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][diagnosticWarning & 1][filename omitCenter 1][modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5][size]";
   };
+  language-servers = {
+    inherit
+      (pkgs.nodePackages)
+      typescript-language-server
+      vscode-json-languageserver-bin
+      vscode-html-languageserver-bin
+      vscode-css-languageserver-bin
+      ;
+    inherit (pkgs.python3Packages) python-lsp-server;
+    inherit
+      (pkgs)
+      rust-analyzer
+      taplo # toml
+      nil # nix
+      texlab # latex
+      lean
+      yaml-language-server
+      ;
+  };
 in {
   imports = [./spelling.nix];
   programs.helix = {
@@ -30,6 +49,8 @@ in {
       keys = let
         common_keys = {
           "C-s" = ":w";
+          "C-f" = ":format";
+          "C-r" = ":reflow";
         };
       in {
         normal = common_keys;
@@ -53,6 +74,19 @@ in {
         color-modes = true;
       };
     };
+    languages = [
+      {
+        name = "haskell";
+        config.languageServerHaskell.formattingProvider = "fourmolu";
+      }
+      {
+        name = "nix";
+        formatter = {
+          command = "alejandra";
+          args = ["-q"];
+        };
+      }
+    ];
   };
   programs.neovim = {
     enable = true;
@@ -151,7 +185,7 @@ in {
   };
   xdg.configFile."nvim/coc-settings.json".text = builtins.toJSON cocSettings;
   home = {
-    packages = [pkgs.languagetool];
+    packages = [pkgs.languagetool] ++ builtins.attrValues language-servers;
     sessionVariables = {
       EDITOR = "nvim";
       VISUAL = "nvim";

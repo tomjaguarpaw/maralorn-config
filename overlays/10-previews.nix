@@ -10,7 +10,7 @@ in {
   inherit unstable;
   unstableHaskellPackages = unstable.haskellPackages;
   unstableGhc = unstable.ghc;
-  inherit (unstable) nix home-assistant vscode-extensions vscodium cachix cabal2nix chrysalis;
+  inherit (unstable) nix home-assistant vscode-extensions vscodium cachix cabal2nix chrysalis nil taplo;
   nix-output-monitor = nom.packages.x86_64-linux.default;
   helix = hx.packages.x86_64-linux.default;
   nixpkgs-bot = bot.packages.x86_64-linux.default;
