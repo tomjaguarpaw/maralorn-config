@@ -366,6 +366,16 @@ in {
                 }) [25 20 15 10 5 4 3 2 1 0];
               action = [(actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%.")];
             }
+            {
+              alias = "Abend";
+              trigger = [
+                {
+                  platform = "time";
+                  at = "22:50:00";
+                }
+              ];
+              action = [(actions.notify "Es ist 22:50 Uhr.")];
+            }
           ]
           ++ (map
             (minutes: {
