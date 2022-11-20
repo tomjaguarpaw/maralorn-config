@@ -77,6 +77,7 @@ let
         ./roles/tinkering.nix
         ./roles/wallpaper.nix
         ./roles/zettelkasten.nix
+        ./roles/kitty.nix
       ];
     orgaExtra = [
       ./roles/accounting.nix
