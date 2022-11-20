@@ -16,6 +16,7 @@ defaultMode: {
     ".config/Signal"
     ".config/discord"
     ".config/gh"
+    ".config/tut"
     ".config/VSCodium/User"
     ".contacts"
     ".gnupg"

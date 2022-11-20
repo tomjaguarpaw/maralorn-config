@@ -107,6 +107,6 @@ in {
     };
   };
   home = {
-    packages = builtins.attrValues commands;
+    packages = builtins.attrValues (commands // {inherit (pkgs) tut;});
   };
 }
