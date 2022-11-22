@@ -8,7 +8,7 @@
     sed 's/dep_\[[^ ]* //' -i ~/.task/*.data
   '';
 in {
-  home.packages = [pkgs.taskwarrior-git fix-tasks];
+  home.packages = [fix-tasks];
   services.taskwarrior-sync = {
     enable = true;
     frequency = "*:0/1";

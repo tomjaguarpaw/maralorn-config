@@ -1,6 +1,5 @@
 self: super: {
   # pkgs assumed to be present on a non nixos host
-  nixFlakes = self.writeShellScriptBin "flix" ''exec ${self.nix}/bin/nix --log-format bar-with-logs "$@"'';
   core-system-pkgs = {
     inherit
       (self)
@@ -148,7 +147,6 @@ self: super: {
       lazygit
       gh
       ;
-    obelisk = (import self.sources.obelisk {}).command;
     pass-fzf = self.writeShellScriptBin "pass-fzf" (builtins.readFile ./pass-fzf.sh);
   };
   accounting-pkgs = {
