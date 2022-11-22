@@ -1,4 +1,16 @@
 {
+    "emanote": {
+        "branch": "master",
+        "description": "Spiritual successor to neuron, based on Ema.",
+        "homepage": "https://emanote.srid.ca",
+        "owner": "srid",
+        "repo": "emanote",
+        "rev": "3300092d40c9092e33a6b22e53a30a2a82796138",
+        "sha256": "0zfr6lcab9cy5qrympyrqga2z1v2fs7dqcfb2jfr5vmm3mlfywdj",
+        "type": "tarball",
+        "url": "https://github.com/srid/emanote/archive/3300092d40c9092e33a6b22e53a30a2a82796138.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "hexa-nur-packages": {
         "branch": "master",
         "description": "My personal NUR repository: [maintainer=@mweinelt] ",

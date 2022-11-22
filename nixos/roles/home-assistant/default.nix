@@ -378,26 +378,26 @@ in {
             }
           ]
           ++ (map
-            (minutes: {
-              alias = "Warnung bei ${minutes} Minuten offenem Fenster oder offener Tür";
-              trigger =
-                map
-                (name:
-                  triggers.stateTrigger name
-                  // {
-                    to = "on";
-                    for = "00:${minutes}:00";
-                  })
-                fenster;
-              #condition = {
-              #  condition = "numeric_state";
-              #  entity_id = "weather.dwd_darmstadt";
-              #  attribute = "temperature";
-              #  below = 15;
-              #};
-              action = [(actions.notify "{{ trigger.to_state.name }} ist seit mehr als ${minutes} Minuten offen.")];
-            })
-            (map toString [10 20 30 40 50 60]));
+          (minutes: {
+            alias = "Warnung bei ${minutes} Minuten offenem Fenster oder offener Tür";
+            trigger =
+              map
+              (name:
+                triggers.stateTrigger name
+                // {
+                  to = "on";
+                  for = "00:${minutes}:00";
+                })
+              fenster;
+            #condition = {
+            #  condition = "numeric_state";
+            #  entity_id = "weather.dwd_darmstadt";
+            #  attribute = "temperature";
+            #  below = 15;
+            #};
+            action = [(actions.notify "{{ trigger.to_state.name }} ist seit mehr als ${minutes} Minuten offen.")];
+          })
+          (map toString [10 20 30 40 50 60]));
         history = {};
         image = {};
         sun = {};

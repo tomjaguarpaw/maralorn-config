@@ -96,10 +96,10 @@ in {
       };
     }
     // lib.listToAttrs (map (name: {
-        inherit name;
-        value = {serviceConfig.Type = "oneshot";};
-      })
-      backupJobNames);
+      inherit name;
+      value = {serviceConfig.Type = "oneshot";};
+    })
+    backupJobNames);
   services = {
     postgresql = {
       enable = true;

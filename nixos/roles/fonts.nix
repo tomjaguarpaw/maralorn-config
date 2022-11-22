@@ -19,15 +19,16 @@
     fonts = builtins.attrValues {
       inherit
         (pkgs)
-        nerdfonts # For all my terminal needs.
-        
-        libertinus # nice text font
-        
-        material-icons # icons in my app
-        
-        b612 # sans font, very good for displays
-        
-        noto-fonts # for unicode fallback
+        nerdfonts
+        # For all my terminal needs.
+        libertinus
+        # nice text font
+        material-icons
+        # icons in my app
+        b612
+        # sans font, very good for displays
+        noto-fonts
+        # for unicode fallback
         ;
     };
   };
@@ -39,9 +40,9 @@
     font_sources = map (v: v.src) (lib.filter (v: v ? src) config.fonts.fonts);
   in
     builtins.listToAttrs (lib.imap0
-      (n: source:
-        lib.nameValuePair "src-cache/fonts/${toString n}" {
-          inherit source;
-        })
-      font_sources);
+    (n: source:
+      lib.nameValuePair "src-cache/fonts/${toString n}" {
+        inherit source;
+      })
+    font_sources);
 }

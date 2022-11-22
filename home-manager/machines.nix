@@ -157,13 +157,13 @@ in {
     (import ./roles/state.nix "default")
   ];
   hera.default = makeConfig "hera" (on-my-machines
-    ++ [
-      ./roles/fetch-banking-timer.nix
-      ./roles/weechat
-      ./roles/mail-sort.nix
-      ./roles/mail2rss.nix
-      ./roles/headless-mpd.nix
-      ./roles/headless.nix
-      ./roles/create-plans.nix
-    ]);
+  ++ [
+    ./roles/fetch-banking-timer.nix
+    ./roles/weechat
+    ./roles/mail-sort.nix
+    ./roles/mail2rss.nix
+    ./roles/headless-mpd.nix
+    ./roles/headless.nix
+    ./roles/create-plans.nix
+  ]);
 }
