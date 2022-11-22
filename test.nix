@@ -1,6 +1,6 @@
 let
   sources = import ./nix/sources.nix;
-  nix-pre-commit-hooks = import "${sources."pre-commit-hooks.nix"}/nix" {nixpkgs = sources.nixos-stable;};
+  nix-pre-commit-hooks = import "${sources."pre-commit-hooks.nix"}/nix" {nixpkgs = sources.nixos-unstable;};
 in {
   pre-commit-check = nix-pre-commit-hooks.run {
     src = ./.;
