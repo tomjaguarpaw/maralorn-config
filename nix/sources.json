@@ -1,28 +1,4 @@
 {
-    "emanote": {
-        "branch": "master",
-        "description": "Spiritual successor to neuron, based on Ema.",
-        "homepage": "https://emanote.srid.ca",
-        "owner": "srid",
-        "repo": "emanote",
-        "rev": "3300092d40c9092e33a6b22e53a30a2a82796138",
-        "sha256": "0zfr6lcab9cy5qrympyrqga2z1v2fs7dqcfb2jfr5vmm3mlfywdj",
-        "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/3300092d40c9092e33a6b22e53a30a2a82796138.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "helix": {
-        "branch": "master",
-        "description": "A post-modern modal text editor.",
-        "homepage": "https://helix-editor.com",
-        "owner": "helix-editor",
-        "repo": "helix",
-        "rev": "5ad3befe9a802fc1b219355fb2cfd495aa5964d8",
-        "sha256": "0qn7xyfz8237wj1bsw5sg7xm2kvjkv6ryl5am0hmv8726ny0x9qy",
-        "type": "tarball",
-        "url": "https://github.com/helix-editor/helix/archive/5ad3befe9a802fc1b219355fb2cfd495aa5964d8.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "hexa-nur-packages": {
         "branch": "master",
         "description": "My personal NUR repository: [maintainer=@mweinelt] ",
@@ -59,12 +35,6 @@
         "ref": "main",
         "repo": "git@hera.m-0.eu:logfeed",
         "rev": "5efd50132edb72365d30347092371ab11d9355dd",
-        "type": "git"
-    },
-    "nix-output-monitor": {
-        "branch": "main",
-        "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "21c9b3a8eb377a260635160019f44d03695d8f46",
         "type": "git"
     },
     "nixos-19.09": {
@@ -127,18 +97,6 @@
         "rev": "6d4c2970895fbab9f05674484cedd62f3f322284",
         "type": "git"
     },
-    "obelisk": {
-        "branch": "master",
-        "description": "Obelisk provides an easy way to develop and deploy your Reflex project for web and mobile",
-        "homepage": "",
-        "owner": "obsidiansystems",
-        "repo": "obelisk",
-        "rev": "41f97410cfa2e22a4ed9e9344abcd58bbe0f3287",
-        "sha256": "04bpzji7y3nz573ib3g6icb56s5zbj4zxpakhqaql33v2v77hi9g",
-        "type": "tarball",
-        "url": "https://github.com/obsidiansystems/obelisk/archive/41f97410cfa2e22a4ed9e9344abcd58bbe0f3287.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "pre-commit-hooks.nix": {
         "branch": "master",
         "description": "Seamless integration of https://pre-commit.com git hooks with Nix.",
@@ -149,18 +107,6 @@
         "sha256": "0kj05b4kbhi0vkgw73vk2ikblhw6yxdhpxv99cr3acv8mbxjxd7i",
         "type": "tarball",
         "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/e6c8efee1c108bb27522b9fd25b1cd0eb3288681.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "taskwarrior-git-backend": {
-        "branch": "main",
-        "description": "An experimental task-sync alternative via git written in Haskell",
-        "homepage": null,
-        "owner": "maralorn",
-        "repo": "taskwarrior-git-backend",
-        "rev": "9d0863a7043ec03296d22a2ea2989dddcef3b5ae",
-        "sha256": "0acxx80ddgf7lak39znd81a7xq9xzb8jhi2yv8452wz8ljz0fcfv",
-        "type": "tarball",
-        "url": "https://github.com/maralorn/taskwarrior-git-backend/archive/9d0863a7043ec03296d22a2ea2989dddcef3b5ae.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "wizards-dialog": {
