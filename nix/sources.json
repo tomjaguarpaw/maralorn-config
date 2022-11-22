@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "d1d54a3e1842192af10d9069668932b7acf00b12",
-        "sha256": "0n4smrv6knkhsg4gyf01n07yxyc1lkqrz09idgz3az4h5ydjcdb7",
+        "rev": "3300092d40c9092e33a6b22e53a30a2a82796138",
+        "sha256": "0zfr6lcab9cy5qrympyrqga2z1v2fs7dqcfb2jfr5vmm3mlfywdj",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/d1d54a3e1842192af10d9069668932b7acf00b12.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/3300092d40c9092e33a6b22e53a30a2a82796138.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "helix": {
@@ -17,10 +17,10 @@
         "homepage": "https://helix-editor.com",
         "owner": "helix-editor",
         "repo": "helix",
-        "rev": "64359f8b484062e8c17b02fd2b2d690bb5bdfbd7",
-        "sha256": "1f9ydx7z5ihqpz6iw8jrwlaxmz3kggymjwbw3kv3w0f6q0wabrq5",
+        "rev": "5ad3befe9a802fc1b219355fb2cfd495aa5964d8",
+        "sha256": "0qn7xyfz8237wj1bsw5sg7xm2kvjkv6ryl5am0hmv8726ny0x9qy",
         "type": "tarball",
-        "url": "https://github.com/helix-editor/helix/archive/64359f8b484062e8c17b02fd2b2d690bb5bdfbd7.tar.gz",
+        "url": "https://github.com/helix-editor/helix/archive/5ad3befe9a802fc1b219355fb2cfd495aa5964d8.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hexa-nur-packages": {
@@ -29,10 +29,10 @@
         "homepage": "",
         "owner": "mweinelt",
         "repo": "nur-packages",
-        "rev": "b54375ac17ebfa37d8dff94ced69a18deaf17cf4",
-        "sha256": "03whlzkhav5p6q3asga3pajs64yy19xqy9a7hqwvzpdqgvkj3vpr",
+        "rev": "0c7c061cc1d9965dbe5a4a667532de048f095d2c",
+        "sha256": "1a0sj0sx896q22iqh3zzbvh2lgfcgz9vz0z67xdiijajj763g29x",
         "type": "tarball",
-        "url": "https://github.com/mweinelt/nur-packages/archive/b54375ac17ebfa37d8dff94ced69a18deaf17cf4.tar.gz",
+        "url": "https://github.com/mweinelt/nur-packages/archive/0c7c061cc1d9965dbe5a4a667532de048f095d2c.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager-stable": {
@@ -41,10 +41,10 @@
         "homepage": "",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "b81e128fc053ab3159d7b464d9b7dedc9d6a6891",
-        "sha256": "09l89q6b1q89lax9jpq2r6br8s3iln82gvgzz49hq1f3la1nhkzy",
+        "rev": "6639e3a837fc5deb6f99554072789724997bc8e5",
+        "sha256": "0vg6x7cw2bpiga9k6nlj2n1vrm4qw84721gmlhp3j1i58v100ybc",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/b81e128fc053ab3159d7b464d9b7dedc9d6a6891.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/6639e3a837fc5deb6f99554072789724997bc8e5.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "kassandra": {
@@ -64,7 +64,7 @@
     "nix-output-monitor": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "c64c189db4c7473173ea369c4423f847308d733b",
+        "rev": "21c9b3a8eb377a260635160019f44d03695d8f46",
         "type": "git"
     },
     "nixos-19.09": {
@@ -85,10 +85,10 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "0e6593630071440eb89cd97a52921497482b22c6",
-        "sha256": "01rnzb4qv53q7rf0vw2mxybryl5xgad26ww73fgsg2nihhhmmy9j",
+        "rev": "1108c1b8614017c8b52005054fd27a00e4feb51b",
+        "sha256": "05xdslgfbk6s1szswdl9iqdkc738xi2vvvhs10n1h8clvd2ynx0f",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/0e6593630071440eb89cd97a52921497482b22c6.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/1108c1b8614017c8b52005054fd27a00e4feb51b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
@@ -103,10 +103,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "3933d8bb9120573c0d8d49dc5e890cb211681490",
-        "sha256": "1n0nn74rcxch78sgxx33wnchvvjslrydmjgq93shqnywi2hcqv80",
+        "rev": "cf63ade6f74bbc9d2a017290f1b2e33e8fbfa70a",
+        "sha256": "1aw4avc6mp3v1gwjlax6yn8984c92y56s4h7qrygxagpchkwq06j",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/3933d8bb9120573c0d8d49dc5e890cb211681490.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/cf63ade6f74bbc9d2a017290f1b2e33e8fbfa70a.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-unstable": {
@@ -115,16 +115,16 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "301aada7a64812853f2e2634a530ef5d34505048",
-        "sha256": "07y10kplajgysb6491hmksq4gqsiyibia83m3blcxicwyld455km",
+        "rev": "af50806f7c6ab40df3e6b239099e8f8385f6c78b",
+        "sha256": "19sgfjdzqkigajbns6jiyqr6yvacqjx5xqbz6p6aghzjfblb2nnn",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/301aada7a64812853f2e2634a530ef5d34505048.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/af50806f7c6ab40df3e6b239099e8f8385f6c78b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-bot": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:nixpkgs-bot",
-        "rev": "12cda7e0ec675d4e428930e34ca932f092c03a44",
+        "rev": "6d4c2970895fbab9f05674484cedd62f3f322284",
         "type": "git"
     },
     "obelisk": {
@@ -133,10 +133,10 @@
         "homepage": "",
         "owner": "obsidiansystems",
         "repo": "obelisk",
-        "rev": "e3ec75f6988eed47189dd20f8c8514748b33ea81",
-        "sha256": "0sdlcyzdx9nyql5vmpjydhzsakixc8y050v8m2rz87l2rmhkqnw9",
+        "rev": "41f97410cfa2e22a4ed9e9344abcd58bbe0f3287",
+        "sha256": "04bpzji7y3nz573ib3g6icb56s5zbj4zxpakhqaql33v2v77hi9g",
         "type": "tarball",
-        "url": "https://github.com/obsidiansystems/obelisk/archive/e3ec75f6988eed47189dd20f8c8514748b33ea81.tar.gz",
+        "url": "https://github.com/obsidiansystems/obelisk/archive/41f97410cfa2e22a4ed9e9344abcd58bbe0f3287.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "pre-commit-hooks.nix": {
