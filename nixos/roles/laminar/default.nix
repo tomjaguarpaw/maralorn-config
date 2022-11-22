@@ -9,7 +9,7 @@
   cfgDir = "${stateDir}/cfg";
   cfg = config.services.laminar;
   mkTimeoutConf = run_name: {"${lib.removeSuffix ".run" run_name}.conf" = builtins.toFile "timeout.conf" "TIMEOUT=10800";};
-  addTimeouts = cfg_files: builtins.zipAttrsWith (throw "Job has config file and we attempted to set a TIMEOUT.") ([cfg_files] ++ map mkTimeoutConf (filter (lib.hasSuffix ".run") (lib.attrNames cfg_files)));
+  addTimeouts = cfg_files: builtins.zipAttrsWith (throw "Job has config file and we attempted to set a TIMEOUT.") ([cfg_files] ++ map mkTimeoutConf (builtins.filter (lib.hasSuffix ".run") (lib.attrNames cfg_files)));
 in {
   options = {
     services.laminar = {
