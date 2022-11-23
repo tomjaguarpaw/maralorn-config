@@ -26,6 +26,11 @@
     fsType = "btrfs";
   };
 
+  fileSystems."/backup" = {
+    device = "/dev/disk/by-uuid/41840034-81fe-4955-828d-8d3d4a7306f7";
+    fsType = "ext4";
+  };
+
   boot.initrd.luks.devices."crypted-nixos".device = "/dev/disk/by-uuid/020fde09-f651-45a2-9c6a-9b060edf967d";
 
   fileSystems."/nix" = {

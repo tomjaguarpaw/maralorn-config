@@ -146,6 +146,10 @@ in {
     ];
   };
   services = {
+    borgbackup.repos.hera = {
+      path = "/backup/hera-borg-repo";
+      authorizedKeys = pkgs.privateValue [] "backup-ssh-keys";
+    };
     fwupd.enable = true;
     printing = {
       enable = true;
