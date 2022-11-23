@@ -20,6 +20,7 @@ in {
     tut
     emanote
     nix-output-monitor
+    helix
     ;
   nixpkgs-bot = bot.packages.x86_64-linux.default;
 }
