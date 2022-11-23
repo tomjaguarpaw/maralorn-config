@@ -74,7 +74,7 @@ in {
         lsp.display-messages = true;
         indent-guides.render = true;
         cursorline = true;
-        color-modes = true;
+        # color-modes = true; # Not in released helix
       };
     };
     languages = [

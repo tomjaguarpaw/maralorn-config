@@ -6,6 +6,20 @@ in {
   inherit unstable;
   unstableHaskellPackages = unstable.haskellPackages;
   unstableGhc = unstable.ghc;
-  inherit (unstable) nix home-assistant vscode-extensions vscodium cachix cabal2nix chrysalis nil taplo tut emanote;
+  inherit
+    (unstable)
+    nix
+    home-assistant
+    vscode-extensions
+    vscodium
+    cachix
+    cabal2nix
+    chrysalis
+    nil
+    taplo
+    tut
+    emanote
+    nix-output-monitor
+    ;
   nixpkgs-bot = bot.packages.x86_64-linux.default;
 }
