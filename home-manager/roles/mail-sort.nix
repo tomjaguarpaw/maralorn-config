@@ -7,7 +7,7 @@
   mail2task = pkgs.writeShellScript "mail2task" ''
     set -euo pipefail
     ${pkgs.isync}/bin/mbsync hera:Move/todo
-    ${pkgs.fd}/bin/fd -tf . ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mscan -f "E-Mail from %f: %S" | ${pkgs.findutils}/bin/xargs -I '{}' ${pkgs.taskwarrior}/bin/task add '"{}"'
+    ${pkgs.fd}/bin/fd -tf . ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mscan -f "E-Mail from %f: %S" | ${pkgs.findutils}/bin/xargs '-d\n' -I '{}' ${pkgs.taskwarrior}/bin/task add '"{}"'
     ${pkgs.mblaze}/bin/mlist ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mflag -S
     ${pkgs.mblaze}/bin/mlist ${maildir}/hera/Move/todo | ${pkgs.mblaze}/bin/mrefile ${unsorted}
     ${pkgs.notmuch}/bin/notmuch new
@@ -113,10 +113,13 @@
          reScan
     '';
 in {
-  services.mbsync.postExec = "${sortMail}/bin/sort-mail-archive";
+  services.mbsync = {
+    postExec = "${sortMail}/bin/sort-mail-archive";
+    preExec = toString mail2task;
+  };
   accounts.email.accounts = lib.mkIf pkgs.withSecrets {
     hera.imapnotify = {
-      onNotifyPost = "${mail2task}";
+      onNotifyPost = toString mail2task;
       boxes = ["Move/todo"];
     };
   };
