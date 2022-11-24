@@ -17,7 +17,7 @@ in [
     Research = {
       Zotero = fork "zotero";
       Open = fork "evince ~/git/promotion/out/print.pdf";
-      Build = "sh -c 'cd ~/git/promotion; flix develop -c flix run'";
+      Build = "sh -c 'cd ~/git/promotion; nix develop -c nix run'";
       Directory = fork "footclient -d ~/git/promotion";
       Edit = edit_dir "~/git/promotion";
     };

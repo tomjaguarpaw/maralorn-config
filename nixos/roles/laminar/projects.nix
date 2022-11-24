@@ -15,9 +15,9 @@
       if [[ -e "flake.nix" ]]; then
         echo "Flake detected."
         echo "Running 'flake check'"
-        ${pkgs.nixFlakes}/bin/flix flake check
+        ${pkgs.nix}/bin/nix flake check
         echo "Running 'nix build'"
-        ${pkgs.nixFlakes}/bin/flix build $FLAGS
+        ${pkgs.nix}/bin/nix build $FLAGS
       else
         echo "Building default.nix"
         nix-build $FLAGS

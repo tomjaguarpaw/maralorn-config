@@ -67,7 +67,6 @@ self: super: {
       fdroidserver
       jq
       cachix
-      nixFlakes
       ;
   };
 
