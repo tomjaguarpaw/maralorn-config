@@ -49,6 +49,12 @@
         "rev": "5efd50132edb72365d30347092371ab11d9355dd",
         "type": "git"
     },
+    "nix-output-monitor": {
+        "branch": "main",
+        "repo": "git@hera.m-0.eu:nix-output-monitor",
+        "rev": "9ef64ac85311f3ad6d84bcdc60594968ce04eb24",
+        "type": "git"
+    },
     "nixos-19.09": {
         "branch": "nixos-19.09",
         "description": "Nix Packages collection",
