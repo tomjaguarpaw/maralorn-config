@@ -35,10 +35,13 @@
       rust-analyzer
       taplo
       # toml
+      
       nil
       # nix
+      
       texlab
       # latex
+      
       lean
       yaml-language-server
       ;
@@ -100,61 +103,88 @@ in {
       inherit
         (pkgs.vimPlugins)
         # coc-tabnine (TODO: Why doesn‘t it work?)
+        
         # TODO: tabnine config in home-manager
+        
         # TODO: tabnine lsp: nix, rust, pandoc/latex lsp? was noch?
+        
         # ===
+        
         # Basic IDE plugins
+        
         coc-nvim
         airline
         # same word highlighting when not supported by language
+        
         coc-highlight
         coc-explorer
         # searches
+        
         coc-fzf
         fzf-vim
         # general whitespace
+        
         vim-trailing-whitespace
         vim-autoformat
         # Git
+        
         coc-git
         # statusline, numberline and explorer infos
+        
         fugitive
         # various git commands
+        
         # Commenting and Uncommenting
+        
         nerdcommenter
         # Theme
+        
         papercolor-theme
         vim-airline-themes
         LanguageTool-nvim
         vim-css-color
         vista-vim
         # ===
+        
         # Languages
+        
         # haskell syntax highlighting
+        
         haskell-vim
         vim-hoogle
         # nix syntax highlighting
+        
         vim-nix
         vim-markdown
         # latex
+        
         vimtex
         coc-vimtex
         # not sure if I need two
+        
         # ledger
+        
         vim-ledger
         # rust
+        
         coc-rls
         # python
+        
         coc-python
         # css
+        
         coc-css
         # yaml
+        
         coc-yaml
         # json
+        
         coc-json
         # html
+        
         coc-html
         # dhall
+        
         dhall-vim
         ;
     };

@@ -93,8 +93,10 @@ self: super: {
       (self)
       esphome
       # To flash devices
+      
       esptool
       # provides esptool.py
+      
       dconf
       lm_sensors
       xwayland
