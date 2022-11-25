@@ -14,6 +14,15 @@
           wrapProgram $out/bin/zoom --unset XDG_SESSION_TYPE
         '';
     });
+    mic-check = pkgs.writeShellScriptBin "mic-check" ''
+      echo "Activating loopback!"
+      ${pkgs.pulseaudio}/bin/pactl load-module module-loopback
+      echo "Can your hear yourself? Fix audio setup! Then press enter …"
+      read
+      echo "Deactivating loopback!"
+      ${pkgs.pulseaudio}/bin/pactl unload-module module-loopback
+      echo "Continuing …"
+    '';
 
     inherit (pkgs.gnome) nautilus;
     inherit (pkgs.xorg) xbacklight;

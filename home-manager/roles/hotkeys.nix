@@ -1,6 +1,7 @@
 {pkgs, ...}: let
   fork = cmd: "fork ${cmd}";
   edit_dir = dir: "sh -c 'cd ${dir}; hx ${dir}'";
+  with-mic-check = cmd: fork "sh -c 'footclient mic-check; ${cmd}'";
 in [
   {
     Orga = [
@@ -67,7 +68,7 @@ in [
   }
   {
     Apps = {
-      Editor = fork "codium";
+      Editor = fork "kitty";
       Config = edit_dir "~/git/config";
       Files = fork "nautilus";
       DarkTerminal = fork "footclient -o 'color.background=000000' -o 'foreground=ffffff'";
@@ -113,15 +114,15 @@ in [
       }
       {
         Mumble = {
-          CDA = fork "mumble mumble://maralorn@mumble.hax404.de";
-          Nixos = fork "mumble mumble://maralorn@lassul.us/nixos";
+          CDA = with-mic-check "mumble mumble://maralorn@mumble.hax404.de";
+          Nixos = with-mic-check "mumble mumble://maralorn@lassul.us/nixos";
         };
       }
       {Weechat = "weechat";}
       {Signal = fork "signal-desktop";}
-      {Zoom = fork "zoom";}
+      {Zoom = with-mic-check "zoom";}
       {Telegram = fork "telegram-desktop";}
-      {Discord = fork "Discord";}
+      {Discord = with-mic-check "Discord";}
       {Tmate = "tmate";}
     ];
   }
