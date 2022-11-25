@@ -21,6 +21,11 @@
       "release-22.05" = ["nixos-22.05-small"];
       "nixos-22.05-small" = ["nixos-22.05"];
       "nixos-22.05" = [];
+      "staging-22.11" = ["staging-next-22.11"];
+      "staging-next-22.11" = ["release-22.11"];
+      "release-22.11" = ["nixos-22.11-small"];
+      "nixos-22.11-small" = ["nixos-22.11"];
+      "nixos-22.11" = [];
     };
   };
 in {
