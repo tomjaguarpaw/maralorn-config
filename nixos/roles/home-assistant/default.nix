@@ -125,7 +125,7 @@ in {
             {
               alias = "Entfeuchtersteuerung Schlafzimmer";
               trigger = [
-                (triggers.stateTrigger "sensor.670dcb_bme280_humidity")
+                (triggers.stateTrigger "sensor.670dcb_bme280_relative_humidity")
                 (triggers.stateTrigger "binary_sensor.schlafzimmerfenster")
               ];
               action = [
@@ -138,7 +138,7 @@ in {
                           conditions = [
                             {
                               condition = "numeric_state";
-                              entity_id = "sensor.670dcb_bme280_humidity";
+                              entity_id = "sensor.670dcb_bme280_relative_humidity";
                               below = humidity_threshold.schlafzimmer.lower;
                             }
                             {
@@ -158,7 +158,7 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.670dcb_bme280_humidity";
+                          entity_id = "sensor.670dcb_bme280_relative_humidity";
                           above = humidity_threshold.schlafzimmer.upper;
                         }
                       ];
@@ -173,7 +173,7 @@ in {
             }
             {
               alias = "Lüftungssteuerung Bad";
-              trigger = [(triggers.stateTrigger "sensor.670dbe_bme280_humidity")];
+              trigger = [(triggers.stateTrigger "sensor.670dbe_bme280_relative_humidity")];
               action = [
                 {
                   choose = [
@@ -181,7 +181,7 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.670dbe_bme280_humidity";
+                          entity_id = "sensor.670dbe_bme280_relative_humidity";
                           above = humidity_threshold.bad.upper;
                         }
                       ];
@@ -194,7 +194,7 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.670dbe_bme280_humidity";
+                          entity_id = "sensor.670dbe_bme280_relative_humidity";
                           below = humidity_threshold.bad.lower;
                         }
                       ];
@@ -378,26 +378,26 @@ in {
             }
           ]
           ++ (map
-          (minutes: {
-            alias = "Warnung bei ${minutes} Minuten offenem Fenster oder offener Tür";
-            trigger =
-              map
-              (name:
-                triggers.stateTrigger name
-                // {
-                  to = "on";
-                  for = "00:${minutes}:00";
-                })
-              fenster;
-            #condition = {
-            #  condition = "numeric_state";
-            #  entity_id = "weather.dwd_darmstadt";
-            #  attribute = "temperature";
-            #  below = 15;
-            #};
-            action = [(actions.notify "{{ trigger.to_state.name }} ist seit mehr als ${minutes} Minuten offen.")];
-          })
-          (map toString [10 20 30 40 50 60]));
+            (minutes: {
+              alias = "Warnung bei ${minutes} Minuten offenem Fenster oder offener Tür";
+              trigger =
+                map
+                (name:
+                  triggers.stateTrigger name
+                  // {
+                    to = "on";
+                    for = "00:${minutes}:00";
+                  })
+                fenster;
+              #condition = {
+              #  condition = "numeric_state";
+              #  entity_id = "weather.dwd_darmstadt";
+              #  attribute = "temperature";
+              #  below = 15;
+              #};
+              action = [(actions.notify "{{ trigger.to_state.name }} ist seit mehr als ${minutes} Minuten offen.")];
+            })
+            (map toString [10 20 30 40 50 60]));
         history = {};
         image = {};
         sun = {};
