@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "3300092d40c9092e33a6b22e53a30a2a82796138",
-        "sha256": "0zfr6lcab9cy5qrympyrqga2z1v2fs7dqcfb2jfr5vmm3mlfywdj",
+        "rev": "24ca8d95ac2aec8a02a128382081ac076451d018",
+        "sha256": "02ql6hs8mpg3iijfbjrvack3fl3cj9nlh3r3533j95gac86q0jsr",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/3300092d40c9092e33a6b22e53a30a2a82796138.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/24ca8d95ac2aec8a02a128382081ac076451d018.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hexa-nur-packages": {
@@ -52,7 +52,7 @@
     "nix-output-monitor": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "b29729f14621d13f9c8fa2b54ae00b052fbc30d9",
+        "rev": "4a9c484292e412980eb1a3f5da855b4df502d3b5",
         "type": "git"
     },
     "nixos-19.09": {
