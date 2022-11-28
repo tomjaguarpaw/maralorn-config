@@ -15,14 +15,14 @@
     window = "#99046c";
     primary = "#858EFF";
   };
-  dew_point_threshold = {
+  humidity_threshold = {
     schlafzimmer = {
-      upper = 13.4; # 66% at 20 C
-      lower = 12.9; # 64% at 20 C
+      upper = 65;
+      lower = 63;
     };
     bad = {
-      upper = 14.4; # 66% at 21 C
-      lower = 13.9; # 64% at 21 C
+      upper = 63;
+      lower = 65;
     };
   };
   inherit (haLib) modules util cards conditions triggers jinja actions tap_actions;
@@ -125,7 +125,7 @@ in {
             {
               alias = "Entfeuchtersteuerung Schlafzimmer";
               trigger = [
-                (triggers.stateTrigger "sensor.670dcb_bme280_dew_point")
+                (triggers.stateTrigger "sensor.670dcb_bme280_humidity")
                 (triggers.stateTrigger "binary_sensor.schlafzimmerfenster")
               ];
               action = [
@@ -138,8 +138,8 @@ in {
                           conditions = [
                             {
                               condition = "numeric_state";
-                              entity_id = "sensor.670dcb_bme280_dew_point";
-                              below = dew_point_threshold.schlafzimmer.lower;
+                              entity_id = "sensor.670dcb_bme280_humidity";
+                              below = humidity_threshold.schlafzimmer.lower;
                             }
                             {
                               condition = "state";
@@ -158,8 +158,8 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.670dcb_bme280_dew_point";
-                          above = dew_point_threshold.schlafzimmer.upper;
+                          entity_id = "sensor.670dcb_bme280_humidity";
+                          above = humidity_threshold.schlafzimmer.upper;
                         }
                       ];
                       sequence = {
@@ -173,7 +173,7 @@ in {
             }
             {
               alias = "Lüftungssteuerung Bad";
-              trigger = [(triggers.stateTrigger "sensor.670dbe_bme280_dew_point")];
+              trigger = [(triggers.stateTrigger "sensor.670dbe_bme280_humidity")];
               action = [
                 {
                   choose = [
@@ -181,8 +181,8 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.670dbe_bme280_dew_point";
-                          above = dew_point_threshold.bad.upper;
+                          entity_id = "sensor.670dbe_bme280_humidity";
+                          above = humidity_threshold.bad.upper;
                         }
                       ];
                       sequence = {
@@ -194,8 +194,8 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.670dbe_bme280_dew_point";
-                          below = dew_point_threshold.bad.lower;
+                          entity_id = "sensor.670dbe_bme280_humidity";
+                          below = humidity_threshold.bad.lower;
                         }
                       ];
                       sequence = {
@@ -378,26 +378,26 @@ in {
             }
           ]
           ++ (map
-            (minutes: {
-              alias = "Warnung bei ${minutes} Minuten offenem Fenster oder offener Tür";
-              trigger =
-                map
-                (name:
-                  triggers.stateTrigger name
-                  // {
-                    to = "on";
-                    for = "00:${minutes}:00";
-                  })
-                fenster;
-              #condition = {
-              #  condition = "numeric_state";
-              #  entity_id = "weather.dwd_darmstadt";
-              #  attribute = "temperature";
-              #  below = 15;
-              #};
-              action = [(actions.notify "{{ trigger.to_state.name }} ist seit mehr als ${minutes} Minuten offen.")];
-            })
-            (map toString [10 20 30 40 50 60]));
+          (minutes: {
+            alias = "Warnung bei ${minutes} Minuten offenem Fenster oder offener Tür";
+            trigger =
+              map
+              (name:
+                triggers.stateTrigger name
+                // {
+                  to = "on";
+                  for = "00:${minutes}:00";
+                })
+              fenster;
+            #condition = {
+            #  condition = "numeric_state";
+            #  entity_id = "weather.dwd_darmstadt";
+            #  attribute = "temperature";
+            #  below = 15;
+            #};
+            action = [(actions.notify "{{ trigger.to_state.name }} ist seit mehr als ${minutes} Minuten offen.")];
+          })
+          (map toString [10 20 30 40 50 60]));
         history = {};
         image = {};
         sun = {};
@@ -874,23 +874,13 @@ in {
                   entity = "sensor.670dcb_bme280_dew_point";
                   name = "Taupunkt";
                   show_fill = false;
-                  state_adaptive_color = true;
+                  color = colors.humidity;
                 }
                 {
                   entity = "input_number.target_temperature_schlafzimmer";
                   name = "Zieltemperatur";
                   show_fill = false;
                   color = colors.heating;
-                }
-                {
-                  entity = "sensor.luftentfeuchter";
-                  name = "Entfeuchter";
-                  color = colors.dehumidifier;
-                  y_axis = "secondary";
-                  show_fill = true;
-                  show_points = false;
-                  show_line = false;
-                  smoothing = false;
                 }
                 {
                   entity = "sensor.schlafzimmerheizung";
@@ -913,21 +903,6 @@ in {
                   smoothing = false;
                 }
               ];
-              color_thresholds = [
-                {
-                  value = 0;
-                  color = colors.okay;
-                }
-                {
-                  value = dew_point_threshold.schlafzimmer.lower;
-                  color = colors.warn;
-                }
-                {
-                  value = dew_point_threshold.schlafzimmer.upper;
-                  color = colors.alert;
-                }
-              ];
-              color_thresholds_transition = "hard";
               show = {
                 labels = true;
                 labels_secondary = "hover";
@@ -958,9 +933,34 @@ in {
                   entity = "sensor.670dcb_bme280_relative_humidity";
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
-                  color = colors.humidity;
+                  state_adaptive_color = true;
+                }
+                {
+                  entity = "sensor.luftentfeuchter";
+                  name = "Entfeuchter";
+                  color = colors.dehumidifier;
+                  y_axis = "secondary";
+                  show_fill = true;
+                  show_points = false;
+                  show_line = false;
+                  smoothing = false;
                 }
               ];
+              color_thresholds = [
+                {
+                  value = 0;
+                  color = colors.okay;
+                }
+                {
+                  value = humidity_threshold.schlafzimmer.lower;
+                  color = colors.warn;
+                }
+                {
+                  value = humidity_threshold.schlafzimmer.upper;
+                  color = colors.alert;
+                }
+              ];
+              color_thresholds_transition = "hard";
               show = {
                 labels = true;
                 labels_secondary = "hover";
@@ -1019,38 +1019,13 @@ in {
                   entity = "sensor.670dbe_bme280_dew_point";
                   name = "Taupunkt";
                   show_fill = false;
-                  state_adaptive_color = true;
-                }
-                {
-                  entity = "sensor.luftung";
-                  name = "Lüftung";
-                  color = colors.dehumidifier;
-                  y_axis = "secondary";
-                  show_fill = true;
-                  show_points = false;
-                  show_line = false;
-                  smoothing = false;
+                  color = colors.humidity;
                 }
               ];
               show = {
                 labels = true;
                 labels_secondary = "hover";
               };
-              color_thresholds = [
-                {
-                  value = 0;
-                  color = colors.okay;
-                }
-                {
-                  value = dew_point_threshold.bad.lower;
-                  color = colors.warn;
-                }
-                {
-                  value = dew_point_threshold.bad.upper;
-                  color = colors.alert;
-                }
-              ];
-              color_thresholds_transition = "hard";
               lower_bound_secondary = 0;
               upper_bound_secondary = 1;
               hours_to_show = 24;
@@ -1077,13 +1052,38 @@ in {
                   entity = "sensor.670dbe_bme280_relative_humidity";
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
-                  color = colors.humidity;
+                  state_adaptive_color = true;
+                }
+                {
+                  entity = "sensor.luftung";
+                  name = "Lüftung";
+                  color = colors.dehumidifier;
+                  y_axis = "secondary";
+                  show_fill = true;
+                  show_points = false;
+                  show_line = false;
+                  smoothing = false;
                 }
               ];
               show = {
                 labels = true;
                 labels_secondary = "hover";
               };
+              color_thresholds = [
+                {
+                  value = 0;
+                  color = colors.okay;
+                }
+                {
+                  value = humidity_threshold.bad.lower;
+                  color = colors.warn;
+                }
+                {
+                  value = humidity_threshold.bad.upper;
+                  color = colors.alert;
+                }
+              ];
+              color_thresholds_transition = "hard";
               lower_bound_secondary = 0;
               upper_bound_secondary = 1;
               hour24 = true;
