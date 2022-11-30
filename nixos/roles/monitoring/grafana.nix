@@ -34,8 +34,8 @@ in {
     grafana = {
       enable = true;
       settings = {
-        "auth.anonymous".enable = true;
-        secrutiy.allow_embedding = true;
+        "auth.anonymous".enabled = true;
+        security.allow_embedding = true;
         users.default_theme = "light";
         "auth.basic".enabled = false;
         dashboards.default_home_dashboard_path = "${dashboards}/health-status.json";
