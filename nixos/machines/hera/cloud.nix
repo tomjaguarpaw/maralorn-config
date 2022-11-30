@@ -35,7 +35,8 @@ with lib; let
   nextcloudConf = hostname: {
     enable = true;
     hostName = hostname;
-    package = pkgs.nextcloud24;
+    package = pkgs.nextcloud25;
+    enableBrokenCiphersForSSE = false;
     maxUploadSize = "10g";
     caching = {
       redis = true;

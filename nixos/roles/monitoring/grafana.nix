@@ -33,11 +33,11 @@ in {
   services = {
     grafana = {
       enable = true;
-      auth.anonymous.enable = true;
       settings = {
-        secrutiy.allow_embedding = "true";
+        "auth.anonymous".enable = true;
+        secrutiy.allow_embedding = true;
         users.default_theme = "light";
-        "auth.basic".enabled = "false";
+        "auth.basic".enabled = false;
         dashboards.default_home_dashboard_path = "${dashboards}/health-status.json";
       };
       provision = {
