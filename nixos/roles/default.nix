@@ -6,7 +6,10 @@
 }: {
   imports = [../../common ./admin.nix ../../cachix.nix];
 
-  i18n.defaultLocale = "en_US.UTF-8";
+  i18n = {
+    defaultLocale = "en_DK.UTF-8";
+    supportedLocales = ["en_DK.UTF-8/UTF-8" "de_DE.UTF-8/UTF-8" "en_US.UTF-8/UTF-8"];
+  };
 
   # For nixos-rebuild
   nixpkgs.overlays =
@@ -61,19 +64,19 @@
     lib.mkIf (!pkgs.withSecrets) {text = "echo No secrets loaded!; exit 1;";};
 
   nix = {
-    binaryCaches = lib.mkAfter (
+    settings.substituters = lib.mkAfter (
       pkgs.privateValue [] "binary-caches"
       # ++ (
       #   if config.networking.hostName != "hera" then [ "ssh-ng://nix-ssh@hera.m-0.eu?trusted=true&priority=100" ] else [ ]
       # )
     );
-    binaryCachePublicKeys = [
+    settings.trusted-public-keys = [
       "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI="
       "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
       "nixbuild.net/maralorn-1:cpqv21sJgRL+ROaKY1Gr0k7AKolAKaP3S3iemGxK/30="
     ];
     nixPath = ["/etc/nix-path"];
-    trustedUsers = ["maralorn" "laminar"];
+    settings.trusted-users = ["maralorn" "laminar"];
     buildMachines = pkgs.privateValue [] "remote-builders";
     extraOptions = ''
       experimental-features = nix-command flakes

@@ -12,14 +12,9 @@ in {
     (unstable)
     nix
     home-assistant
-    vscode-extensions
-    vscodium
     cachix
     cabal2nix
     chrysalis
-    nil
-    taplo
-    tut
     emanote
     helix
     ;
