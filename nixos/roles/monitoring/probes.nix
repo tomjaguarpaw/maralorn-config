@@ -58,7 +58,6 @@ in {
         "https://blog.maralorn.de"
         "https://ci.maralorn.de"
         "https://cloud.maralorn.de"
-        "https://element.maralorn.de"
         "https://firefox-sync.maralorn.de"
         "https://fdroid.maralorn.de/index-v1.json"
         "https://matrix.maralorn.de"
