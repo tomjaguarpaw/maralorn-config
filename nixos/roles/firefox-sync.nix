@@ -37,7 +37,7 @@ with lib; let
   user = "syncserver";
   group = "syncserver";
 in {
-  disabledModules = ["services/networking/firefox/sync-server.nix"];
+  disabledModules = ["services/networking/firefox-syncserver.nix"];
 
   meta.maintainers = with lib.maintainers; [nadrieril];
 

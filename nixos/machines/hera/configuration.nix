@@ -14,7 +14,6 @@ in {
     ../../roles/standalone
     ../../roles/server
     ../../roles/git.nix
-    ../../roles/element.nix
     ../../roles/mathechor.de.nix
     ../../roles/monitoring
     ../../roles/blog.nix
@@ -60,7 +59,6 @@ in {
   programs = {
     java.enable = true;
   };
-  nixpkgs.config.android_sdk.accept_license = true;
   systemd.services =
     {
       pg_backup = {

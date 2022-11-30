@@ -34,15 +34,15 @@ in {
     grafana = {
       enable = true;
       auth.anonymous.enable = true;
-      extraOptions = {
-        SECURITY_ALLOW_EMBEDDING = "true";
-        USERS_DEFAULT_THEME = "light";
-        AUTH_BASIC_ENABLED = "false";
-        DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH = "${dashboards}/health-status.json";
+      settings = {
+        secrutiy.allow_embedding = "true";
+        users.default_theme = "light";
+        "auth.basic".enabled = "false";
+        dashboards.default_home_dashboard_path = "${dashboards}/health-status.json";
       };
       provision = {
         enable = true;
-        datasources = [
+        datasources.settings.datasources = [
           {
             access = "proxy";
             name = "prometheus";
@@ -50,7 +50,7 @@ in {
             url = "http://localhost:9090";
           }
         ];
-        dashboards = [
+        dashboards.settings.providers = [
           {
             name = "Static dashboards";
             options.path = dashboards;
