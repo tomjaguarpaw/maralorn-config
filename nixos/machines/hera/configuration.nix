@@ -79,6 +79,7 @@ in {
           set -x
           set +e
           ${start} pg_backup
+          ${start} mysql-backup
           ${container} chor-cloud -- ${start} nextcloud-pg-backup
           ${lib.concatMapStringsSep "\n" (name: "${start} ${name}") backupJobNames}
           ${pkgs.coreutils}/bin/rm -rf /var/lib/db-backup-dumps/*
