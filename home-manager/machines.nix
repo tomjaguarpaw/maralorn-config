@@ -57,7 +57,6 @@ let
       extra
       ++ on-my-machines
       ++ [
-        (import ./roles/firefox.nix "http://localhost:7000")
         (makeAutostart "kassandra2")
         (makeAutostart "unlock-ssh")
         ./roles/beets.nix
@@ -73,7 +72,7 @@ let
         ./roles/mpd.nix
         ./roles/pythia.nix
         ./roles/research.nix
-        ./roles/night-shutdown.nix
+        #./roles/night-shutdown.nix
         ./roles/tinkering.nix
         ./roles/wallpaper.nix
         ./roles/zettelkasten.nix

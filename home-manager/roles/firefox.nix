@@ -1,25 +1,4 @@
-startpage: {pkgs, ...}: {
-  programs.firefox = {
-    profiles.maralorn-default = {
-      extraConfig = ""; # user.js
-      userChrome = ""; # css
-      userContent = ""; # css
-      settings = {
-        "browser.search.region" = "DE";
-        "distribution.searchplugins.defaultLocale" = "de-DE";
-        "general.useragent.locale" = "de-DE";
-        "identity.sync.tokenserver.uri" = "https://firefox-sync.maralorn.de/1.0/sync/1.5";
-        "browser.download.useDownloadDir" = "false";
-        "browser.newtab.extensionControlled" = "true";
-        "browser.newtab.privateAllowed" = "true";
-        "font.name.serif.x-western" = "B612";
-        "services.sync.username" = "firefox@maralorn.de";
-        "browser.startup.homepage" = startpage;
-      };
-    };
-    enable = true;
-  };
-
+{pkgs, ...}: {
   programs.browserpass = {
     browsers = ["firefox"];
     enable = true;
