@@ -1,0 +1,5 @@
+substitutions:
+  macsuffix: b27a0c
+
+<<: !include ../includes/wt32-eth01.yaml
+<<: !include ../includes/base.yaml

@@ -22,9 +22,6 @@ ota:
 web_server:
   port: 80
 
-# https://esphome.io/components/captive_portal.html
-captive_portal:
-
 # https://esphome.io/components/time.html
 time:
   - platform: sntp
@@ -37,5 +34,3 @@ text_sensor:
   # https://esphome.io/components/text_sensor/version.html
   - platform: version
     name: "${macsuffix}_version"
-
-wifi: !include ../../private/esphome-wifi.yaml

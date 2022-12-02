@@ -1,6 +1,9 @@
 esp8266:
   board: d1_mini
 
+# https://esphome.io/components/captive_portal.html
+captive_portal:
+
 i2c:
   # default: sda: GPIO4
   # default: scl: GPIO5
@@ -23,3 +26,5 @@ output:
     pin:
       number: GPIO2
       inverted: true
+
+wifi: !include ../../private/esphome-wifi.yaml
