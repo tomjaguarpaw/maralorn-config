@@ -12,7 +12,6 @@ in {
     (unstable)
     nix
     home-assistant
-    cachix
     cabal2nix
     chrysalis
     emanote

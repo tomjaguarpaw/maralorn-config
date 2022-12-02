@@ -66,7 +66,6 @@ self: super: {
       nix-output-monitor
       fdroidserver
       jq
-      cachix
       ;
   };
 

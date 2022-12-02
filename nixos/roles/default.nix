@@ -4,7 +4,10 @@
   lib,
   ...
 }: {
-  imports = [../../common ./admin.nix ../../cachix.nix];
+  imports = [
+    ../../common
+    ./admin.nix
+  ];
 
   i18n = {
     defaultLocale = "en_DK.UTF-8";
@@ -71,8 +74,6 @@
       # )
     );
     settings.trusted-public-keys = [
-      "ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI="
-      "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
       "nixbuild.net/maralorn-1:cpqv21sJgRL+ROaKY1Gr0k7AKolAKaP3S3iemGxK/30="
     ];
     nixPath = ["/etc/nix-path"];
