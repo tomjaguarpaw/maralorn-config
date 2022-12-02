@@ -44,6 +44,7 @@ let
     ./roles/on-my-machine.nix
     ./roles/accounting.nix
     ./roles/mail.nix
+    ./roles/firefox.nix
     ./roles/kassandra.nix
     ./roles/taskwarrior.nix
     ./roles/vdirsyncer.nix
