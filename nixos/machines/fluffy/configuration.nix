@@ -125,14 +125,11 @@ in {
       };
     };
   };
-
   programs = {
     ssh = {
       startAgent = true;
     };
   };
-
-  security.rtkit.enable = true;
   hardware.printers = {
     ensureDefaultPrinter = "Klio";
     ensurePrinters = [
@@ -150,7 +147,6 @@ in {
       path = "/backup/hera-borg-repo";
       authorizedKeys = pkgs.privateValue ["dummy-key"] "backup-ssh-keys";
     };
-    fwupd.enable = true;
     printing = {
       enable = true;
       allowFrom = ["all"];
@@ -193,9 +189,6 @@ in {
       openFirewall = true;
     };
   };
-
-  #boot.kernel.sysctl."fs.inotify.max_user_watches" = 204800;
-  console.keyMap = "neo";
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

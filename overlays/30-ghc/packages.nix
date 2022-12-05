@@ -23,27 +23,13 @@ rec {
         cabal-fmt
         stack
         ghcid
-        ghcide
-        iCalendar
-        pretty-simple
-        stm-containers
-        streamly
         haskell-language-server
         cabal-install
         dhall
-        taskwarrior
         pandoc
         hlint
         cabal2nix
-        weeder
-        reflex-dom
-        password
-        optics
-        shh-extras
-        hmatrix
-        postgresql-simple
         nix-derivation
-        req
         witch
         ;
     }

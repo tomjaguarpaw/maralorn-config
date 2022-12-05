@@ -20,8 +20,8 @@
       cd ${repo}
       export PATH=/run/current-system/sw/bin:$PATH
       export ANDROID_HOME=${pkgs.androidsdk_9_0}/libexec/android-sdk
-      fdroid publish
-      fdroid update
+      ${pkgs.fdroidserver}/bin/fdroid publish
+      ${pkgs.fdroidserver}/bin/fdroid update
     ''
   }";
   target = name: ''

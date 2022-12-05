@@ -19,6 +19,7 @@ in {
     ../../roles/boot-key.nix
     ../../roles/standalone
     ../../roles/metal.nix
+    ../../roles/display-server.nix
     (import ../../roles/monitoring/folder-size-exporter.nix {
       folders = [
         "/"
@@ -69,29 +70,11 @@ in {
     };
   };
 
-  programs = {
-    adb.enable = true;
-    sway.enable = true;
-    seahorse.enable = lib.mkForce false;
-    dconf.enable = true;
-  };
-
-  security.rtkit.enable = true;
   services = {
-    pipewire = {
-      enable = lib.mkForce false;
-    };
-    fwupd.enable = true;
-    upower.enable = true;
-    printing = {
-      enable = true;
-      drivers = [pkgs.gutenprint pkgs.hplip];
-    };
     udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness"
       ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/backlight/%k/brightness"
     '';
-    fstrim.enable = true;
     snapper = {
       configs.home = {
         subvolume = "/home";
@@ -121,31 +104,6 @@ in {
         key = pkgs.privatePath "syncthing/apollo/key.pem";
       }
       // syncthing.declarativeWith ["hera" "zeus" "pegasus"] "/home/maralorn/media";
-    xserver = {
-      enable = true;
-      displayManager = {
-        autoLogin = {
-          enable = true;
-          user = "maralorn";
-        };
-        gdm.enable = true;
-      };
-      desktopManager.gnome.enable = true;
-    };
-    gnome = {
-      evolution-data-server.enable = lib.mkForce false;
-      gnome-keyring.enable = lib.mkForce false;
-      at-spi2-core.enable = lib.mkForce false;
-      tracker.enable = false;
-      tracker-miners.enable = false;
-      gnome-online-miners.enable = lib.mkForce false;
-    };
   };
-
-  boot.kernel.sysctl."fs.inotify.max_user_watches" = 204800;
-  console.keyMap = "neo";
-
-  sound.enable = true;
-
   system.stateVersion = "19.09";
 }

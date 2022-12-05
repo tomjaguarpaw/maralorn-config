@@ -42,7 +42,6 @@ let
   };
   on-my-machines = [
     ./roles/on-my-machine.nix
-    ./roles/accounting.nix
     ./roles/mail.nix
     ./roles/firefox.nix
     ./roles/kassandra.nix
@@ -61,7 +60,6 @@ let
         (makeAutostart "kassandra2")
         (makeAutostart "unlock-ssh")
         ./roles/beets.nix
-        ./roles/daily-driver-programs.nix
         ./roles/desktop-items.nix
         ./roles/desktop.nix
         ./roles/git-sign.nix
@@ -73,14 +71,13 @@ let
         ./roles/mpd.nix
         ./roles/pythia.nix
         ./roles/research.nix
-        #./roles/night-shutdown.nix
+        ./roles/night-shutdown.nix
         ./roles/tinkering.nix
         ./roles/wallpaper.nix
         ./roles/zettelkasten.nix
         ./roles/kitty.nix
       ];
     orgaExtra = [
-      ./roles/accounting.nix
       ./roles/mail-client.nix
       ./roles/pythia.nix
       ./roles/tinkering.nix

@@ -56,7 +56,6 @@
       enable = true;
       escapeTime = 1;
       historyLimit = 50000;
-      terminal = "screen-256color";
       extraConfig = ''
         set -g set-titles on
         set -g status off
@@ -134,16 +133,46 @@
 
   home = {
     packages =
-      builtins.attrValues pkgs.home-pkgs
+      builtins.attrValues {
+        inherit
+          (pkgs)
+          go
+          gdb
+          mpc_cli
+          ncmpcpp
+          shfmt
+          astyle
+          nodejs
+          tasksh
+          magic-wormhole
+          alejandra
+          rustup
+          nix-top
+          ghcWithPackages
+          ghcid
+          matrix-commander
+          upterm
+          lazygit
+          gh
+          ledger
+          aqbanking
+          ;
+        inherit (pkgs.haskellPackages) hledger hledger-ui hledger-web;
+        pass-fzf = pkgs.writeShellScriptBin "pass-fzf" (builtins.readFile ./pass-fzf.sh);
+        mytmux = pkgs.writeShellScriptBin "mytmux" ''
+          session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
+          if [[ -n $session ]]; then
+             exec ${pkgs.tmux}/bin/tmux attach -t $session;
+          else
+             exec ${pkgs.tmux}/bin/tmux;
+          fi
+        '';
+      }
       ++ [
         (
           pkgs.writeShellScriptBin "unlock-ssh" ''
             SSH_ASKPASS="print-ssh-pw" DISPLAY="a" ssh-add < /dev/null
           ''
-        )
-        (
-          pkgs.writeShellScriptBin "print-radicle-pw"
-          "pass show etc/radicle/${config.m-0.hostName}"
         )
         (
           pkgs.writeShellScriptBin "print-ssh-pw"

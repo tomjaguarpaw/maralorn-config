@@ -18,6 +18,7 @@ in {
     ../../roles/fonts.nix
     ../../roles/earlyoom.nix
     ../../roles/metal.nix
+    ../../roles/display-server.nix
     #../../roles/boot-key.nix
     ../../roles/standalone
     (vpn "zeus")
@@ -74,7 +75,7 @@ in {
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /disk/persist/bluetooth - - - - -"
-    "d /disk/persist/minecraft 700 minecraft minecraft - -"
+    # "d /disk/persist/minecraft 700 minecraft minecraft - -"
     "d /var/lib/misc 755 - - - -"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
@@ -144,23 +145,7 @@ in {
       };
     };
   };
-
-  programs = {
-    seahorse.enable = lib.mkForce false;
-    dconf.enable = true;
-    adb.enable = true;
-  };
-
-  security.rtkit.enable = true;
-  boot.kernelPackages = pkgs.linuxPackages_testing;
   services = {
-    pipewire.enable = lib.mkForce false;
-    fwupd.enable = true;
-    printing = {
-      enable = true;
-      clientConf = "ServerName fluffy.lo.m-0.eu";
-    };
-    fstrim.enable = true;
     snapper = {
       configs.persist = {
         subvolume = "/disk/persist";
@@ -189,45 +174,19 @@ in {
         configDir = "/disk/persist/syncthing";
       }
       // syncthing.declarativeWith ["hera" "apollo" "pegasus"] "/disk/persist/maralorn/media";
-    xserver = {
-      enable = true;
-      displayManager = {
-        autoLogin = {
-          enable = true;
-          user = "maralorn";
-        };
-        gdm.enable = true;
-      };
-      desktopManager.gnome.enable = true;
-    };
-    gnome = {
-      evolution-data-server.enable = lib.mkForce false;
-      gnome-keyring.enable = lib.mkForce false;
-      at-spi2-core.enable = lib.mkForce false;
-      tracker.enable = false;
-      tracker-miners.enable = false;
-      gnome-online-miners.enable = lib.mkForce false;
-    };
-    minecraft-server = {
-      enable = true;
-      openFirewall = true;
-      eula = true;
-      dataDir = "/disk/persist/minecraft";
-    };
+    #minecraft-server = {
+    #  enable = true;
+    #  openFirewall = true;
+    #  eula = true;
+    #  dataDir = "/disk/persist/minecraft";
+    #};
   };
-
-  boot.kernel.sysctl."fs.inotify.max_user_watches" = 204800;
-  console.keyMap = "neo";
-
-  sound.enable = true;
   hardware = {
     opengl = {
       enable = true;
       driSupport32Bit = true; # for gw2
     };
     pulseaudio = {
-      package = pkgs.pulseaudioFull;
-      enable = true;
       support32Bit = true;
       tcp = {
         enable = true;
@@ -235,6 +194,5 @@ in {
       };
     };
   };
-
   system.stateVersion = "21.05";
 }

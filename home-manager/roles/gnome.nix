@@ -17,10 +17,16 @@
       removable-drive-menu
       highlight-focus
       mouse-follows-focus
-      executor
       gtile
       caffeine
       ;
+    executor = pkgs.gnomeExtensions.executor.overrideAttrs (old: {
+      postInstall =
+        (old.postInstall or "")
+        + ''
+          substituteInPlace $out/share/gnome-shell/extensions/executor@raujonas.github.io/extension.js --replace "'/bin/bash'" "'bash'"
+        '';
+    });
   };
   inherit (lib.hm.gvariant) mkTuple;
 in {

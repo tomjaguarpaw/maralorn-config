@@ -122,7 +122,6 @@ in {
       }
       // syncthing.declarativeWith ["apollo" "zeus" "pegasus"] "/media";
   };
-  boot.kernel.sysctl = {"fs.inotify.max_user_watches" = 204800;};
   systemd.tmpfiles.rules = ["Z /media 0770 maralorn nginx - -"];
   nix.sshServe = {
     protocol = "ssh-ng";

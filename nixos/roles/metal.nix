@@ -1,4 +1,10 @@
 {pkgs, ...}: {
   boot.kernelParams = ["mitigations=off"];
-  services.udev.packages = [pkgs.chrysalis];
+  console.keyMap = "neo";
+  security.rtkit.enable = true;
+  services = {
+    fwupd.enable = true;
+    upower.enable = true;
+    fstrim.enable = true;
+  };
 }
