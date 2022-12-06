@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "57a95cd208377c04efdb4e615f3f0d049ba32598",
-        "sha256": "0lrn47cvmz780pkjh4gi1nfi0ck0jwkvhibnlyasic4991yybc87",
+        "rev": "9deff5c4f890eb84494420b486e9498d1c001359",
+        "sha256": "04f1wzhg7l2pqbrcvjmihz9qs6k8v1myv70wskhpk1krnaqxp2cy",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/57a95cd208377c04efdb4e615f3f0d049ba32598.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/9deff5c4f890eb84494420b486e9498d1c001359.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hexa-nur-packages": {
@@ -29,10 +29,10 @@
         "homepage": "",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "e704ef9ec7a8ccf8711bb11ff68da06f1917a26d",
-        "sha256": "1m4lfjxg679mvznjhb56w1cric5gh7nlp1hgj709vbk9wwnllq9g",
+        "rev": "0e8125916b420e41bf0d23a0aa33fadd0328beb3",
+        "sha256": "1pcdmkw9azg2w3jxpw8xw6qak7bilaf8mdasn8rc8vl5iz5lilpy",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/e704ef9ec7a8ccf8711bb11ff68da06f1917a26d.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/0e8125916b420e41bf0d23a0aa33fadd0328beb3.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "kassandra": {
@@ -109,10 +109,10 @@
         "homepage": "",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "2597510df32efafda4d05f5122efe612a7a5da66",
-        "sha256": "1cnniydmyvyqzf6nvp2b2hwsynf57h5iraplzkgm2jzyfqlgybd1",
+        "rev": "32dcd71912ca8f925f8f0715a554e8490d556883",
+        "sha256": "1jq2rqkhb1lb8ax8v4aqk3rn2hq5rswbjnqxl5q86wra0zcqrmf4",
         "type": "tarball",
-        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/2597510df32efafda4d05f5122efe612a7a5da66.tar.gz",
+        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/32dcd71912ca8f925f8f0715a554e8490d556883.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "wizards-dialog": {
