@@ -3,7 +3,6 @@
   config,
   ...
 }: let
-  list = builtins.attrValues;
   cocSettings = {
     "diagnostic.maxWindowHeight" = 60;
     "diagnostic.virtualText" = true;
@@ -21,85 +20,14 @@
     explorer.icon.enableNerdfont = true;
     explorer.file.child.template = "[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][diagnosticWarning & 1][filename omitCenter 1][modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5][size]";
   };
-  language-servers = {
-    inherit
-      (pkgs.nodePackages)
-      typescript-language-server
-      vscode-json-languageserver-bin
-      vscode-html-languageserver-bin
-      vscode-css-languageserver-bin
-      ;
-    inherit (pkgs.python3Packages) python-lsp-server;
-    inherit
-      (pkgs)
-      rust-analyzer
-      taplo
-      # toml
-      
-      nil
-      # nix
-      
-      texlab
-      # latex
-      
-      lean
-      yaml-language-server
-      ;
-  };
 in {
   imports = [./spelling.nix];
-  programs.helix = {
-    enable = true;
-    settings = {
-      theme = "catppuccin_latte";
-      keys = let
-        common_keys = {
-          "C-s" = ":w";
-          "C-f" = ":format";
-          "C-r" = ":reflow";
-        };
-      in {
-        normal = common_keys;
-        insert =
-          common_keys
-          // {
-            up = ["normal_mode" "move_line_up"];
-            down = ["normal_mode" "move_line_down"];
-            left = ["normal_mode" "move_char_left"];
-            right = ["normal_mode" "move_char_right"];
-          };
-      };
-      editor = {
-        whitespace.render = {
-          space = "all";
-          tab = "all";
-        };
-        lsp.display-messages = true;
-        indent-guides.render = true;
-        cursorline = true; # Not in released helix
-        color-modes = true; # Not in released helix
-      };
-    };
-    languages = [
-      {
-        name = "haskell";
-        config.languageServerHaskell.formattingProvider = "fourmolu";
-      }
-      {
-        name = "nix";
-        formatter = {
-          command = "alejandra";
-          args = ["-q"];
-        };
-      }
-    ];
-  };
   programs.neovim = {
     enable = true;
     vimAlias = true;
     vimdiffAlias = true;
     extraConfig = builtins.readFile ./vimrc;
-    plugins = list {
+    plugins = builtins.attrValues {
       inherit
         (pkgs.vimPlugins)
         # coc-tabnine (TODO: Why doesn‘t it work?)
@@ -190,11 +118,4 @@ in {
     };
   };
   xdg.configFile."nvim/coc-settings.json".text = builtins.toJSON cocSettings;
-  home = {
-    packages = [pkgs.languagetool] ++ builtins.attrValues language-servers;
-    sessionVariables = {
-      EDITOR = "nvim";
-      VISUAL = "nvim";
-    };
-  };
 }
