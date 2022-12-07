@@ -67,6 +67,8 @@ in {
         indent-guides.render = true;
         cursorline = true;
         color-modes = true;
+        bufferline = "multiple";
+        auto-save = true;
       };
     };
     languages = [

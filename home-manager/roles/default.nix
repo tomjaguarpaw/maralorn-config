@@ -10,7 +10,6 @@
     ../../common
     ./unlock.nix
     ./mpclient.nix
-    ./neovim
     ./helix.nix
     ./nvd.nix
   ];
