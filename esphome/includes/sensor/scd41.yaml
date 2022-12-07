@@ -1,0 +1,15 @@
+platform: scd4x
+temperature:
+  name: ${macsuffix}_scd41_temperature
+  id: scd41_temperature
+  <<: !include timings.yaml
+co2:
+  name: ${macsuffix}_scd41_co2
+  id: scd41_co2
+  <<: !include timings.yaml
+humidity:
+  name: ${macsuffix}_scd41_humidity
+  id: scd41_humidity
+  <<: !include timings.yaml
+address: 0x62
+update_interval: 5s

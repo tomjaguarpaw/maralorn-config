@@ -1,0 +1,8 @@
+platform: template
+name: ${macsuffix}_scd41_dew_point
+lambda: |-
+  return (243.5*(log(id(scd41_humidity).state/100)+((17.67*id(scd41_temperature).state)/
+  (243.5+id(scd41_temperature).state)))/(17.67-log(id(scd41_humidity).state/100)-
+  ((17.67*id(scd41_temperature).state)/(243.5+id(scd41_temperature).state))));
+unit_of_measurement: °C
+icon: 'mdi:thermometer-alert'
