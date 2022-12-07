@@ -4,7 +4,7 @@ in {
   imports = [./mpv];
   m-0.colors = colors;
   home = {
-    packages = builtins.attrValues rec {
+    packages = builtins.attrValues {
       zoom = pkgs.zoom-us.overrideAttrs (old: {
         postFixup =
           old.postFixup
