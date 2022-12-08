@@ -54,6 +54,7 @@ in {
   };
 
   systemd.tmpfiles.rules = [
+    "d /backup 700 borg borg - -"
     "d /disk/persist/root 700 root root - -"
     "d /disk/persist/root/.ssh 700 root root - -"
     "d /disk/persist/etc/ssh 755 root root - -"
