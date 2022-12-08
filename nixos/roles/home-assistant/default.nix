@@ -15,6 +15,18 @@
     window = "#99046c";
     primary = "#858EFF";
   };
+  esp = {
+    schlafzimmer = "671af9";
+    wohnzimmer = "670a54";
+    bad = "670dbe";
+    kueche = "670dcb";
+  };
+  sensor = {
+    schlafzimmer = "${esp.schlafzimmer}_scd41";
+    wohnzimmer = "${esp.wohnzimmer}_scd41";
+    bad = "${esp.bad}_bme280";
+    kueche = "${esp.kueche}_bme280";
+  };
   humidity_threshold = {
     schlafzimmer = {
       upper = 65;
@@ -125,7 +137,7 @@ in {
             {
               alias = "Entfeuchtersteuerung Schlafzimmer";
               trigger = [
-                (triggers.stateTrigger "sensor.670dcb_bme280_relative_humidity")
+                (triggers.stateTrigger "sensor.${sensor.schlafzimmer}_humidity")
                 (triggers.stateTrigger "binary_sensor.schlafzimmerfenster")
               ];
               action = [
@@ -138,7 +150,7 @@ in {
                           conditions = [
                             {
                               condition = "numeric_state";
-                              entity_id = "sensor.670dcb_bme280_relative_humidity";
+                              entity_id = "sensor.${sensor.schlafzimmer}_humidity";
                               below = humidity_threshold.schlafzimmer.lower;
                             }
                             {
@@ -158,7 +170,7 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.670dcb_bme280_relative_humidity";
+                          entity_id = "sensor.${sensor.schlafzimmer}_humidity";
                           above = humidity_threshold.schlafzimmer.upper;
                         }
                       ];
@@ -173,7 +185,7 @@ in {
             }
             {
               alias = "Lüftungssteuerung Bad";
-              trigger = [(triggers.stateTrigger "sensor.670dbe_bme280_relative_humidity")];
+              trigger = [(triggers.stateTrigger "sensor.${sensor.bad}_humidity")];
               action = [
                 {
                   choose = [
@@ -181,7 +193,7 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.670dbe_bme280_relative_humidity";
+                          entity_id = "sensor.${sensor.bad}_humidity";
                           above = humidity_threshold.bad.upper;
                         }
                       ];
@@ -194,7 +206,7 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.670dbe_bme280_relative_humidity";
+                          entity_id = "sensor.${sensor.bad}_humidity";
                           below = humidity_threshold.bad.lower;
                         }
                       ];
@@ -227,7 +239,7 @@ in {
               alias = "Thermostatsteuerung Schlafzimmer";
               trigger = with triggers; [
                 (stateTrigger "input_number.target_temperature_schlafzimmer")
-                (stateTrigger "sensor.670dcb_bme280_temperature")
+                (stateTrigger "sensor.${sensor.schlafzimmer}_temperature")
                 (stateTrigger "binary_sensor.schlafzimmerfenster")
                 (stateTrigger "climate.schlafzimmer")
               ];
@@ -238,7 +250,7 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.670dcb_bme280_temperature";
+                          entity_id = "sensor.${sensor.schlafzimmer}_temperature";
                           below = "input_number.target_temperature_schlafzimmer";
                         }
                         {
@@ -271,7 +283,7 @@ in {
               alias = "Thermostatsteuerung Küche";
               trigger = with triggers; [
                 (stateTrigger "input_number.target_temperature_kueche")
-                (stateTrigger "sensor.kueche_temperature")
+                (stateTrigger "sensor.${sensor.kueche}_temperature")
                 (stateTrigger "binary_sensor.kuechenfenster")
                 (stateTrigger "climate.kueche")
               ];
@@ -282,7 +294,7 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.kueche_temperature";
+                          entity_id = "sensor.${sensor.kueche}_temperature";
                           below = "input_number.target_temperature_kueche";
                         }
                         {
@@ -315,7 +327,7 @@ in {
               alias = "Thermostatsteuerung Wohnzimmer";
               trigger = with triggers; [
                 (stateTrigger "input_number.target_temperature_wohnzimmer")
-                (stateTrigger "sensor.671af9_bme280_temperature")
+                (stateTrigger "sensor.${sensor.wohnzimmer}_temperature")
                 (stateTrigger "binary_sensor.wohnzimmerfenster")
                 (stateTrigger "climate.wohnzimmer")
               ];
@@ -326,7 +338,7 @@ in {
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.671af9_bme280_temperature";
+                          entity_id = "sensor.${sensor.wohnzimmer}_temperature";
                           below = "input_number.target_temperature_wohnzimmer";
                         }
                         {
@@ -606,13 +618,13 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.671af9_bme280_temperature";
+                  entity = "sensor.${sensor.wohnzimmer}_temperature";
                   name = "Temperatur";
                   show_fill = false;
                   color = colors.temperature;
                 }
                 {
-                  entity = "sensor.671af9_bme280_dew_point";
+                  entity = "sensor.${sensor.wohnzimmer}_dew_point";
                   name = "Taupunkt";
                   show_fill = false;
                   color = colors.humidity;
@@ -671,7 +683,7 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.671af9_mhz19b_co2";
+                  entity = "sensor.${sensor.wohnzimmer}_co2";
                   name = "CO2";
                   show_fill = false;
                 }
@@ -691,7 +703,7 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.671af9_bme280_relative_humidity";
+                  entity = "sensor.${sensor.wohnzimmer}_humidity";
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
                   color = colors.humidity;
@@ -725,7 +737,7 @@ in {
               entities = [
                 "input_number.target_temperature_wohnzimmer"
                 "group.wohnzimmer_lights"
-                "button.restart_671af9"
+                "button.restart_${esp.wohnzimmer}"
               ];
             }
             {
@@ -746,9 +758,10 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.kueche_humidity";
+                  entity = "sensor.${sensor.kueche}_humidity";
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
+                  color = colors.humidity;
                 }
                 {
                   entity = "sensor.kuchenfenster";
@@ -761,21 +774,6 @@ in {
                   smoothing = false;
                 }
               ];
-              color_thresholds = [
-                {
-                  value = 0;
-                  color = colors.okay;
-                }
-                {
-                  value = 64;
-                  color = colors.warn;
-                }
-                {
-                  value = 66;
-                  color = colors.alert;
-                }
-              ];
-              color_thresholds_transition = "hard";
               show = {
                 labels = true;
                 labels_secondary = "hover";
@@ -803,14 +801,22 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.kueche_temperature";
+                  entity = "sensor.${sensor.kueche}_temperature";
                   name = "Temperatur";
                   show_fill = false;
+                  color = colors.temperature;
+                }
+                {
+                  entity = "sensor.${sensor.kueche}_dew_point";
+                  name = "Temperatur";
+                  show_fill = false;
+                  color = colors.humidity;
                 }
                 {
                   entity = "input_number.target_temperature_kueche";
                   name = "Zieltemperatur";
                   show_fill = false;
+                  color = colors.heating;
                 }
                 {
                   entity = "sensor.kuchenheizung";
@@ -820,6 +826,7 @@ in {
                   show_points = false;
                   show_line = false;
                   smoothing = false;
+                  color = colors.heating;
                 }
               ];
               show = {
@@ -854,6 +861,7 @@ in {
               entities = [
                 "climate.kueche"
                 "binary_sensor.kuechenfenster"
+                "button.restart_${esp.kueche}"
               ];
             }
           ];
@@ -865,13 +873,13 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.670dcb_bme280_temperature";
+                  entity = "sensor.${sensor.schlafzimmer}_temperature";
                   name = "Temperatur";
                   show_fill = false;
                   color = colors.temperature;
                 }
                 {
-                  entity = "sensor.670dcb_bme280_dew_point";
+                  entity = "sensor.${sensor.schlafzimmer}_dew_point";
                   name = "Taupunkt";
                   show_fill = false;
                   color = colors.humidity;
@@ -930,7 +938,7 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.670dcb_bme280_relative_humidity";
+                  entity = "sensor.${sensor.schlafzimmer}_humidity";
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
                   state_adaptive_color = true;
@@ -985,11 +993,31 @@ in {
               ];
             }
             {
+              type = "custom:mini-graph-card";
+              entities = [
+                {
+                  entity = "sensor.${sensor.schlafzimmer}_co2";
+                  name = "CO2";
+                  show_fill = false;
+                }
+              ];
+              show = {
+                labels = true;
+                labels_secondary = "hover";
+              };
+              hours_to_show = 24;
+              update_interval = 30;
+              line_width = 2;
+              hour24 = true;
+              decimals = 1;
+              points_per_hour = 3;
+            }
+            {
               type = "entities";
               entities = [
                 "input_number.target_temperature_schlafzimmer"
                 "group.schlafzimmer_lights"
-                "button.restart_670dcb"
+                "button.restart_${esp.schlafzimmer}"
               ];
             }
             {
@@ -1010,13 +1038,13 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.670dbe_bme280_temperature";
+                  entity = "sensor.${sensor.bad}_temperature";
                   name = "Temperatur";
                   show_fill = false;
                   color = colors.temperature;
                 }
                 {
-                  entity = "sensor.670dbe_bme280_dew_point";
+                  entity = "sensor.${sensor.bad}_dew_point";
                   name = "Taupunkt";
                   show_fill = false;
                   color = colors.humidity;
@@ -1049,7 +1077,7 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.670dbe_bme280_relative_humidity";
+                  entity = "sensor.${sensor.schlafzimmer}_humidity";
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
                   state_adaptive_color = true;
@@ -1106,7 +1134,7 @@ in {
             {
               type = "entities";
               entities = [
-                "button.restart_670dbe"
+                "button.restart_${esp.bad}"
               ];
             }
             {
@@ -1165,11 +1193,11 @@ in {
             inherit badges;
             cards = [wohnzimmerstack];
           }
-          #{
-          #  icon = "mdi:countertop";
-          #  inherit badges;
-          #  cards = [kuechenstack];
-          #}
+          {
+            icon = "mdi:countertop";
+            inherit badges;
+            cards = [kuechenstack];
+          }
           {
             icon = "mdi:bed-king";
             inherit badges;
@@ -1188,7 +1216,7 @@ in {
           {
             icon = "mdi:floor-plan";
             badges = alertbadges;
-            cards = [wohnzimmerstack schlafzimmerstack badstack];
+            cards = [wohnzimmerstack schlafzimmerstack badstack kuechenstack];
           }
         ];
       };
