@@ -8,7 +8,7 @@ pressure:
   id: bme280_pressure
   <<: !include timings.yaml
 humidity:
-  name: ${macsuffix}_bme280_relative_humidity
+  name: ${macsuffix}_bme280_humidity
   id: bme280_humidity
   <<: !include timings.yaml
 address: 0x76
