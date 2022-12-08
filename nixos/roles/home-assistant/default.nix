@@ -37,7 +37,7 @@
       lower = 65;
     };
   };
-  inherit (haLib) modules util cards conditions triggers jinja actions tap_actions;
+  inherit (haLib) triggers actions;
   fenster =
     map (name: "binary_sensor.${name}")
     [
@@ -366,6 +366,17 @@ in {
                   };
                 }
               ];
+            }
+            {
+              alias = "Warnung bei hohem CO2";
+              trigger =
+                map
+                (limit: {
+                  platform = "numeric_state";
+                  above = toString limit;
+                  entity_id = ["sensor.${sensor.schlafzimmer}_co2" "sensor.${sensor.wohnzimmer}_co2"];
+                }) [1500 2000 2500 3000];
+              action = [(actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%.")];
             }
             {
               alias = "Warnung bei niedrigem Akkustand";
@@ -854,14 +865,16 @@ in {
             }
             {
               type = "entities";
-              entities = ["input_number.target_temperature_kueche"];
+              entities = [
+                "input_number.target_temperature_kueche"
+                "button.restart_${esp.kueche}"
+              ];
             }
             {
               type = "logbook";
               entities = [
                 "climate.kueche"
                 "binary_sensor.kuechenfenster"
-                "button.restart_${esp.kueche}"
               ];
             }
           ];
@@ -1077,7 +1090,7 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
-                  entity = "sensor.${sensor.schlafzimmer}_humidity";
+                  entity = "sensor.${sensor.bad}_humidity";
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
                   state_adaptive_color = true;
@@ -1216,7 +1229,7 @@ in {
           {
             icon = "mdi:floor-plan";
             badges = alertbadges;
-            cards = [wohnzimmerstack schlafzimmerstack badstack kuechenstack];
+            cards = [wohnzimmerstack schlafzimmerstack kuechenstack badstack];
           }
         ];
       };
