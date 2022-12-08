@@ -104,6 +104,7 @@ in {
     };
 
     "org/gnome/desktop/wm/preferences" = {
+      auto-raise = true;
       focus-mode = "sloppy";
       titlebar-font = "B612 9";
     };
