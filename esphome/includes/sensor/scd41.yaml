@@ -11,5 +11,6 @@ humidity:
   name: ${macsuffix}_scd41_humidity
   id: scd41_humidity
   <<: !include timings.yaml
+id: scd41
 address: 0x62
 update_interval: 5s
