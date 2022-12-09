@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "5693a0ecdf2cca5790873ca3d85b4a39e1d11f54",
-        "sha256": "158nvwlvci8awdf20as7hlg3rf6nh6fl0bfisbp70iqj47n908rr",
+        "rev": "d2a64234fa327b782fcf7e49097226bea90248fe",
+        "sha256": "1s0a7psvzgr08pr2gl62h2p33nbjgz5wxxxf7kjvgkqkvg12kgnc",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/5693a0ecdf2cca5790873ca3d85b4a39e1d11f54.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/d2a64234fa327b782fcf7e49097226bea90248fe.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hexa-nur-packages": {
@@ -52,7 +52,7 @@
     "nix-output-monitor": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "4a9c484292e412980eb1a3f5da855b4df502d3b5",
+        "rev": "49e74c5895214495e0c2b6dbcd38c208694aacd6",
         "type": "git"
     },
     "nixos-hardware": {
@@ -79,10 +79,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "5528350186a9e826588cee1329640899ca44a0cf",
-        "sha256": "1y6jk4bki6k7ca5r83pwqv41hmi0ygscafg17x1sx0ma9d98wf04",
+        "rev": "04a75b2eecc0acf6239acf9dd04485ff8d14f425",
+        "sha256": "0gyh0n5sh9sql9jbkz7lc8244k8d9dacrq35224s2c6fq43lnbcg",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/5528350186a9e826588cee1329640899ca44a0cf.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/04a75b2eecc0acf6239acf9dd04485ff8d14f425.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-unstable": {
