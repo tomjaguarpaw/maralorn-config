@@ -58,6 +58,7 @@ in {
     "d /disk/persist/root 700 root root - -"
     "d /disk/persist/root/.ssh 700 root root - -"
     "d /disk/persist/etc/ssh 755 root root - -"
+    "d /disk/persist/var/lib/nixos 755 root root - -"
     "d /disk/persist/maralorn 700 maralorn users - -"
     "d /home/maralorn/.config 700 maralorn users - -"
     "z / 755 - - - -"
@@ -66,6 +67,7 @@ in {
     "d /tmp/scans/scans 777 ftp ftp - -"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
     "L+ /etc/ssh - - - - /disk/persist/etc/ssh"
+    "L+ /var/lib/nixos - - - - /disk/persist/var/lib/nixos"
   ];
 
   boot = {
