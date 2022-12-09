@@ -626,6 +626,22 @@ in {
           type = "vertical-stack";
           cards = [
             {
+              type = "entities";
+              title = "Wohnzimmer";
+              entities = [
+                "input_number.target_temperature_wohnzimmer"
+                "group.wohnzimmer_lights"
+                {
+                  entity = "button.restart_${esp.wohnzimmer}";
+                  name = "Klimasensor Neustarten";
+                }
+                {
+                  entity = "button.${sensor.wohnzimmer}_force_calibration";
+                  name = "CO2 Kalibrieren";
+                }
+              ];
+            }
+            {
               type = "custom:mini-graph-card";
               entities = [
                 {
@@ -744,14 +760,6 @@ in {
               ];
             }
             {
-              type = "entities";
-              entities = [
-                "input_number.target_temperature_wohnzimmer"
-                "group.wohnzimmer_lights"
-                "button.restart_${esp.wohnzimmer}"
-              ];
-            }
-            {
               type = "logbook";
               entities = [
                 "binary_sensor.wohnzimmerfenster"
@@ -765,6 +773,17 @@ in {
         kuechenstack = {
           type = "vertical-stack";
           cards = [
+            {
+              type = "entities";
+              title = "Küche";
+              entities = [
+                "input_number.target_temperature_kueche"
+                {
+                  entity = "button.restart_${esp.kueche}";
+                  name = "Klimasensor Neustarten";
+                }
+              ];
+            }
             {
               type = "custom:mini-graph-card";
               entities = [
@@ -864,13 +883,6 @@ in {
               ];
             }
             {
-              type = "entities";
-              entities = [
-                "input_number.target_temperature_kueche"
-                "button.restart_${esp.kueche}"
-              ];
-            }
-            {
               type = "logbook";
               entities = [
                 "climate.kueche"
@@ -882,6 +894,22 @@ in {
         schlafzimmerstack = {
           type = "vertical-stack";
           cards = [
+            {
+              type = "entities";
+              title = "Schlafzimmer";
+              entities = [
+                "input_number.target_temperature_schlafzimmer"
+                "group.schlafzimmer_lights"
+                {
+                  entity = "button.restart_${esp.schlafzimmer}";
+                  name = "Klimasensor Neustarten";
+                }
+                {
+                  entity = "button.${sensor.schlafzimmer}_force_calibration";
+                  name = "CO2 Kalibrieren";
+                }
+              ];
+            }
             {
               type = "custom:mini-graph-card";
               entities = [
@@ -1026,14 +1054,6 @@ in {
               points_per_hour = 3;
             }
             {
-              type = "entities";
-              entities = [
-                "input_number.target_temperature_schlafzimmer"
-                "group.schlafzimmer_lights"
-                "button.restart_${esp.schlafzimmer}"
-              ];
-            }
-            {
               type = "logbook";
               entities = [
                 "switch.weihnachtsstern_schlafzimmer"
@@ -1047,6 +1067,16 @@ in {
         badstack = {
           type = "vertical-stack";
           cards = [
+            {
+              type = "entities";
+              title = "Bad";
+              entities = [
+                {
+                  entity = "button.restart_${esp.bad}";
+                  name = "Klimasensor Neustarten";
+                }
+              ];
+            }
             {
               type = "custom:mini-graph-card";
               entities = [
@@ -1145,57 +1175,8 @@ in {
               ];
             }
             {
-              type = "entities";
-              entities = [
-                "button.restart_${esp.bad}"
-              ];
-            }
-            {
               type = "logbook";
               entities = ["switch.lueftung_bad"];
-            }
-          ];
-        };
-        flurstack = {
-          type = "vertical-stack";
-          cards = [
-            {
-              type = "custom:mini-graph-card";
-              entities = [
-                {
-                  entity = "sensor.wohnungstur";
-                  name = "Wohnungstür";
-                  color = colors.window;
-                  show_fill = true;
-                  aggregate_func = "max";
-                  smoothing = false;
-                }
-              ];
-              show = {
-                labels = true;
-              };
-              lower_bound = 0;
-              upper_bound = 1;
-              hour24 = true;
-              decimals = 1;
-              points_per_hour = 3;
-              hours_to_show = 24;
-              update_interval = 30;
-              line_width = 2;
-              state_map = [
-                {
-                  value = 0;
-                  label = "Zu";
-                }
-                {
-                  value = 1;
-                  label = "Auf";
-                }
-              ];
-            }
-            {
-              type = "logbook";
-              entities = ["binary_sensor.wohnungstuer"];
             }
           ];
         };
