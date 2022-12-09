@@ -1,0 +1,7 @@
+platform: template
+name: "${macsuffix}_scd41_force_calibration"
+on_press:
+  - scd4x.perform_forced_calibration:
+      # https://www.co2.earth/daily-co2, maybe find a more local value?
+      value: 415
+      id: scd41

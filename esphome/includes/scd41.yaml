@@ -1,0 +1,7 @@
+sensor:
+  - !include sensor/scd41-dewpoint.yaml
+  - !include sensor/scd41.yaml
+
+button:
+  - !include button/restart.yaml
+  - !include button/calibrate.yaml
