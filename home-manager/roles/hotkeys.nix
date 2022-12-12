@@ -1,7 +1,7 @@
 {pkgs, ...}: let
   fork = cmd: "fork ${cmd}";
   edit_dir = dir: "sh -c 'cd ${dir}; hx ${dir}'";
-  with-mic-check = cmd: fork "sh -c 'footclient mic-check; ${cmd}'";
+  with-mic-check = cmd: fork "sh -c 'foot mic-check; ${cmd}'";
 in [
   {
     Orga = [
@@ -19,7 +19,7 @@ in [
       Zotero = fork "zotero";
       Open = fork "evince ~/git/promotion/out/print.pdf";
       Build = "sh -c 'cd ~/git/promotion; nix develop -c nix run'";
-      Directory = fork "footclient -d ~/git/promotion";
+      Directory = fork "foot -d ~/git/promotion";
       Edit = edit_dir "~/git/promotion";
     };
   }
@@ -71,7 +71,7 @@ in [
       Editor = fork "kitty";
       Config = edit_dir "~/git/config";
       Files = fork "nautilus";
-      DarkTerminal = fork "footclient -o 'color.background=000000' -o 'foreground=ffffff'";
+      DarkTerminal = fork "foot -o 'colors.background=000000' -o 'colors.foreground=ffffff'";
       Accounting = {
         Update = "nix run ./git/buchhaltung#update";
         Display = "hledger -f ~/git/buchhaltung/buchhaltung.journal ui -- --watch --theme=terminal -X€ -t -E";

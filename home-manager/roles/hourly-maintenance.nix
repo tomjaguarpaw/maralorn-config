@@ -12,7 +12,7 @@
       echo "Git repo up-to-date, not doing anything."
       exit 0;
     else
-      ${pkgs.foot}/bin/footclient --hold ${config.home.profileDirectory}/bin/maintenance
+      ${pkgs.foot}/bin/foot --hold ${config.home.profileDirectory}/bin/maintenance
     fi
   '';
 in {
