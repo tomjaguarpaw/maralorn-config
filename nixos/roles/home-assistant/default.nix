@@ -376,7 +376,7 @@ in {
                   above = toString limit;
                   entity_id = ["sensor.${sensor.schlafzimmer}_co2" "sensor.${sensor.wohnzimmer}_co2"];
                 }) [1500 2000 2500 3000];
-              action = [(actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%.")];
+              action = [(actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }} ppm.")];
             }
             {
               alias = "Warnung bei niedrigem Akkustand";
