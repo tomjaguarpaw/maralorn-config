@@ -13,10 +13,10 @@ let
       "youtube.*"
       "*.element.io"
       "twitter.com"
+      "chaos.social"
     ]
     ++ newsPages;
   newsPages = [
-    "chaos.social"
     "zeit.de"
     "heise.de"
     "spiegel.de"
@@ -76,6 +76,7 @@ let
         ./roles/wallpaper.nix
         ./roles/zettelkasten.nix
         ./roles/kitty.nix
+        ./roles/leisure.nix
       ];
     orgaExtra = [
       ./roles/mail-client.nix
@@ -110,7 +111,6 @@ let
       ++ orgaExtra
       ++ [
         ./roles/chat.nix
-        ./roles/leisure.nix
         (blockServer newsPages)
       ]
     );
@@ -120,7 +120,6 @@ let
       ++ [
         ./roles/games.nix
         ./roles/chat.nix
-        ./roles/leisure.nix
         (blockServer newsPages)
       ]
     );
@@ -130,7 +129,6 @@ let
       ++ [
         ./roles/games.nix
         ./roles/chat.nix
-        ./roles/leisure.nix
         (blockServer [])
       ]
     );
