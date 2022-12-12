@@ -100,7 +100,7 @@
     "nixpkgs-bot": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:nixpkgs-bot",
-        "rev": "6d4c2970895fbab9f05674484cedd62f3f322284",
+        "rev": "c0f8e0842e491092dc9e3d0d17fc400f53baed41",
         "type": "git"
     },
     "pre-commit-hooks.nix": {
