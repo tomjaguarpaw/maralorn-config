@@ -161,7 +161,7 @@ branchHTML branch = repoLink ("tree/" <> branch) branch
 prHTML :: PRInfo -> App MessageText
 prHTML
   (PullRequest{pullRequestNumber, pullRequestTitle}, branches) = do
-    branch_info <- forM branches \(arrived, branch) -> (m (if arrived then "✔ " else "⏳") <>) <$> branchHTML branch
+    branch_info <- forM branches \(arrived, branch) -> (m (if arrived then "✅ " else "⏳") <>) <$> branchHTML branch
     link_ <-
       repoLink
         ("pull/" <> show pullRequestNumber)
