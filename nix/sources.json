@@ -52,7 +52,7 @@
     "nix-output-monitor": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
-        "rev": "1b4a922460bc5faec7daf55671bf16169f7d1ae3",
+        "rev": "1df1a83e3213ea35367abbe95f47a511583ade32",
         "type": "git"
     },
     "nixos-hardware": {
@@ -91,10 +91,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "2dea0f4c2d6e4603f54b2c56c22367e77869490c",
-        "sha256": "1sazdjffsjhg4qcvx18bymd8hkfiq8mpzfd23cx6xnwjzps7fkzy",
+        "rev": "33e0d99cbedf2acfd7340d2150837fbb28039a64",
+        "sha256": "15ll14rycfarqd7isyfms1fhszw9k36ars58gvdw3bkka5mj48cr",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/2dea0f4c2d6e4603f54b2c56c22367e77869490c.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/33e0d99cbedf2acfd7340d2150837fbb28039a64.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-bot": {
