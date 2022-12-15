@@ -967,6 +967,12 @@ in {
                   color = colors.temperature;
                 }
                 {
+                  entity = "sensor.${esp.schlafzimmer}_bme280_temperature";
+                  name = "BME280 Temperatur";
+                  show_fill = false;
+                  color = "#ff0000";
+                }
+                {
                   entity = "sensor.${sensor.schlafzimmer}_dew_point";
                   name = "Taupunkt";
                   show_fill = false;
@@ -1030,6 +1036,12 @@ in {
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
                   state_adaptive_color = true;
+                }
+                {
+                  entity = "sensor.${esp.schlafzimmer}_bme280_humidity";
+                  name = "Luftfeuchtigkeit";
+                  show_fill = false;
+                  color = "#ff0000";
                 }
                 {
                   entity = "sensor.luftentfeuchter";
