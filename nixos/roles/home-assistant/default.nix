@@ -121,6 +121,7 @@ in {
         frontend.themes.ourdefault = {
           primary-color = colors.primary;
         };
+        timer.block_heating_schlafzimmer = {};
         automation =
           [
             {
@@ -236,12 +237,24 @@ in {
             #  ];
             #}
             {
+              alias = "Schlafzimmerfenstertimer";
+              trigger = with triggers; [(stateTrigger "binary_sensor.schlafzimmerfenster")];
+              action = {
+                service = "timer.start";
+                data = {
+                  entity_id = "timer.block_heating_schlafzimmer";
+                  duration = "00:10:00";
+                };
+              };
+            }
+            {
               alias = "Thermostatsteuerung Schlafzimmer";
               trigger = with triggers; [
                 (stateTrigger "input_number.target_temperature_schlafzimmer")
                 (stateTrigger "sensor.${sensor.schlafzimmer}_temperature")
                 (stateTrigger "binary_sensor.schlafzimmerfenster")
                 (stateTrigger "climate.schlafzimmer")
+                (stateTrigger "timer.block_heating_schlafzimmer")
               ];
               action = [
                 {
@@ -252,6 +265,11 @@ in {
                           condition = "numeric_state";
                           entity_id = "sensor.${sensor.schlafzimmer}_temperature";
                           below = "input_number.target_temperature_schlafzimmer";
+                        }
+                        {
+                          condition = "state";
+                          entity_id = "timer.block_heating_schlafzimmer";
+                          state = ["idle"];
                         }
                         {
                           condition = "state";
@@ -622,6 +640,41 @@ in {
             }
           ];
         };
+        multiScaleGraphCards = config: let
+          mkConfig = lib.recursiveUpdate (lib.recursiveUpdate config {
+            line_width = 3;
+            font_size = 60;
+            show = {
+              labels = true;
+              labels_secondary = "hover";
+              state = false;
+              legend = false;
+            };
+          });
+        in {
+          type = "horizontal-stack";
+          cards = [
+            (mkConfig {
+              hours_to_show = 168;
+              points_per_hour = 0.25;
+              name = "7d";
+            })
+            (mkConfig {
+              hours_to_show = 24;
+              points_per_hour = 1;
+              name = "24h";
+            })
+            (mkConfig
+              {
+                name = "60m";
+                hours_to_show = 1;
+                points_per_hour = 30;
+                show = {
+                  state = true;
+                };
+              })
+          ];
+        };
         wohnzimmerstack = {
           type = "vertical-stack";
           cards = [
@@ -641,7 +694,7 @@ in {
                 }
               ];
             }
-            {
+            (multiScaleGraphCards {
               type = "custom:mini-graph-card";
               entities = [
                 {
@@ -683,18 +736,12 @@ in {
                   smoothing = false;
                 }
               ];
-              show = {
-                labels = true;
-                labels_secondary = "hover";
-              };
               lower_bound_secondary = 0;
               upper_bound_secondary = 1;
-              hours_to_show = 24;
               update_interval = 30;
               line_width = 2;
               hour24 = true;
               decimals = 1;
-              points_per_hour = 3;
               state_map = [
                 {
                   value = 0;
@@ -705,8 +752,8 @@ in {
                   label = "An";
                 }
               ];
-            }
-            {
+            })
+            (multiScaleGraphCards {
               type = "custom:mini-graph-card";
               entities = [
                 {
@@ -725,8 +772,8 @@ in {
               hour24 = true;
               decimals = 1;
               points_per_hour = 3;
-            }
-            {
+            })
+            (multiScaleGraphCards {
               type = "custom:mini-graph-card";
               entities = [
                 {
@@ -758,7 +805,7 @@ in {
                   label = "An/Auf";
                 }
               ];
-            }
+            })
             {
               type = "logbook";
               entities = [
@@ -784,7 +831,7 @@ in {
                 }
               ];
             }
-            {
+            (multiScaleGraphCards {
               type = "custom:mini-graph-card";
               entities = [
                 {
@@ -826,8 +873,8 @@ in {
                   label = "Auf";
                 }
               ];
-            }
-            {
+            })
+            (multiScaleGraphCards {
               type = "custom:mini-graph-card";
               entities = [
                 {
@@ -881,7 +928,7 @@ in {
                   label = "An";
                 }
               ];
-            }
+            })
             {
               type = "logbook";
               entities = [
@@ -910,7 +957,7 @@ in {
                 }
               ];
             }
-            {
+            (multiScaleGraphCards {
               type = "custom:mini-graph-card";
               entities = [
                 {
@@ -974,8 +1021,8 @@ in {
                   label = "An";
                 }
               ];
-            }
-            {
+            })
+            (multiScaleGraphCards {
               type = "custom:mini-graph-card";
               entities = [
                 {
@@ -1032,8 +1079,8 @@ in {
                   label = "An/Auf";
                 }
               ];
-            }
-            {
+            })
+            (multiScaleGraphCards {
               type = "custom:mini-graph-card";
               entities = [
                 {
@@ -1052,7 +1099,7 @@ in {
               hour24 = true;
               decimals = 1;
               points_per_hour = 3;
-            }
+            })
             {
               type = "logbook";
               entities = [
@@ -1077,7 +1124,7 @@ in {
                 }
               ];
             }
-            {
+            (multiScaleGraphCards {
               type = "custom:mini-graph-card";
               entities = [
                 {
@@ -1115,8 +1162,8 @@ in {
                   label = "An";
                 }
               ];
-            }
-            {
+            })
+            (multiScaleGraphCards {
               type = "custom:mini-graph-card";
               entities = [
                 {
@@ -1173,7 +1220,7 @@ in {
                   label = "An";
                 }
               ];
-            }
+            })
             {
               type = "logbook";
               entities = ["switch.lueftung_bad"];
@@ -1184,26 +1231,31 @@ in {
         views = [
           {
             icon = "mdi:sofa";
+            type = "panel";
             inherit badges;
             cards = [wohnzimmerstack];
           }
           {
             icon = "mdi:countertop";
+            type = "panel";
             inherit badges;
             cards = [kuechenstack];
           }
           {
             icon = "mdi:bed-king";
+            type = "panel";
             inherit badges;
             cards = [schlafzimmerstack];
           }
           {
             icon = "mdi:shower-head";
+            type = "panel";
             inherit badges;
             cards = [badstack];
           }
           {
             icon = "mdi:city";
+            type = "panel";
             inherit badges;
             cards = [envstack];
           }
