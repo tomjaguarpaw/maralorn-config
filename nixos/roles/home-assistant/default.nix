@@ -666,10 +666,11 @@ in {
             })
             (mkConfig
               {
-                name = "60m";
                 hours_to_show = 1;
                 points_per_hour = 30;
                 show = {
+                  name = false;
+                  icon = false;
                   state = true;
                 };
               })
