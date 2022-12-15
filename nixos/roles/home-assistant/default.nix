@@ -1039,7 +1039,7 @@ in {
                 }
                 {
                   entity = "sensor.${esp.schlafzimmer}_bme280_humidity";
-                  name = "Luftfeuchtigkeit";
+                  name = "BME280 Luftfeuchtigkeit";
                   show_fill = false;
                   color = "#ff0000";
                 }
