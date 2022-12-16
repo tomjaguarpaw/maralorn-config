@@ -687,7 +687,7 @@ in {
                 "input_number.target_temperature_wohnzimmer"
                 "group.wohnzimmer_lights"
                 {
-                  entity = "button.restart#_${esp.wohnzimmer}";
+                  entity = "button.restart_${esp.wohnzimmer}";
                   name = "Klimasensor Neus#tarten";
                 }
                 {
