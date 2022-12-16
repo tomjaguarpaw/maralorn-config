@@ -57,7 +57,7 @@ in {
     "org/gnome/shell/extensions/gtile" = let
       left = r: "1:${r} 2:${r},1:${r} 1:${r},2:${r} 2:${r}";
       right = r: "3:${r} 4:${r},4:${r} 4:${r},3:${r} 3:${r}";
-      middle = r: "2:${r} 3:${r}, 2:${r} 2:${r}, 3:${r} 3:${r}";
+      middle = r: "2:${r} 3:${r}, 2:${r} 2:${r}, 3:${r} 3:${r}, 1:${r} 4:${r}";
     in {
       global-presets = true;
       grid-sizes = "4x2";
