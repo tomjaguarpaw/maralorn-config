@@ -22,7 +22,7 @@
     kueche = "670dcb";
   };
   sensor = {
-    schlafzimmer = "${esp.schlafzimmer}_scd41";
+    schlafzimmer = "${esp.schlafzimmer}_bme280";
     wohnzimmer = "${esp.wohnzimmer}_scd41";
     bad = "${esp.bad}_bme280";
     kueche = "${esp.kueche}_bme280";
@@ -644,6 +644,7 @@ in {
           mkConfig = lib.recursiveUpdate (lib.recursiveUpdate config {
             line_width = 3;
             font_size = 60;
+            height = 200;
             show = {
               labels = true;
               labels_secondary = "hover";
@@ -686,8 +687,8 @@ in {
                 "input_number.target_temperature_wohnzimmer"
                 "group.wohnzimmer_lights"
                 {
-                  entity = "button.restart_${esp.wohnzimmer}";
-                  name = "Klimasensor Neustarten";
+                  entity = "button.restart#_${esp.wohnzimmer}";
+                  name = "Klimasensor Neus#tarten";
                 }
                 {
                   entity = "button.${sensor.wohnzimmer}_force_calibration";
@@ -952,10 +953,10 @@ in {
                   entity = "button.restart_${esp.schlafzimmer}";
                   name = "Klimasensor Neustarten";
                 }
-                {
-                  entity = "button.${sensor.schlafzimmer}_force_calibration";
-                  name = "CO2 Kalibrieren";
-                }
+                #{
+                #  entity = "button.${sensor.schlafzimmer}_force_calibration";
+                #  name = "CO2 Kalibrieren";
+                #}
               ];
             }
             (multiScaleGraphCards {
@@ -966,12 +967,6 @@ in {
                   name = "Temperatur";
                   show_fill = false;
                   color = colors.temperature;
-                }
-                {
-                  entity = "sensor.${esp.schlafzimmer}_bme280_temperature";
-                  name = "BME280 Temperatur";
-                  show_fill = false;
-                  color = "#ff0000";
                 }
                 {
                   entity = "sensor.${sensor.schlafzimmer}_dew_point";
@@ -1039,12 +1034,6 @@ in {
                   state_adaptive_color = true;
                 }
                 {
-                  entity = "sensor.${esp.schlafzimmer}_bme280_humidity";
-                  name = "BME280 Luftfeuchtigkeit";
-                  show_fill = false;
-                  color = "#ff0000";
-                }
-                {
                   entity = "sensor.luftentfeuchter";
                   name = "Entfeuchter";
                   color = colors.dehumidifier;
@@ -1093,26 +1082,26 @@ in {
                 }
               ];
             })
-            (multiScaleGraphCards {
-              type = "custom:mini-graph-card";
-              entities = [
-                {
-                  entity = "sensor.${sensor.schlafzimmer}_co2";
-                  name = "CO2";
-                  show_fill = false;
-                }
-              ];
-              show = {
-                labels = true;
-                labels_secondary = "hover";
-              };
-              hours_to_show = 24;
-              update_interval = 30;
-              line_width = 2;
-              hour24 = true;
-              decimals = 1;
-              points_per_hour = 3;
-            })
+            #(multiScaleGraphCards {
+            #  type = "custom:mini-graph-card";
+            #  entities = [
+            #    {
+            #      entity = "sensor.${sensor.schlafzimmer}_co2";
+            #      name = "CO2";
+            #      show_fill = false;
+            #    }
+            #  ];
+            #  show = {
+            #    labels = true;
+            #    labels_secondary = "hover";
+            #  };
+            #  hours_to_show = 24;
+            #  update_interval = 30;
+            #  line_width = 2;
+            #  hour24 = true;
+            #  decimals = 1;
+            #  points_per_hour = 3;
+            #})
             {
               type = "logbook";
               entities = [
