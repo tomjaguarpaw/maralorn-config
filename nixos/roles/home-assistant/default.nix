@@ -688,7 +688,7 @@ in {
                 "group.wohnzimmer_lights"
                 {
                   entity = "button.restart_${esp.wohnzimmer}";
-                  name = "Klimasensor Neus#tarten";
+                  name = "Klimasensor Neustarten";
                 }
                 {
                   entity = "button.${sensor.wohnzimmer}_force_calibration";
