@@ -657,18 +657,18 @@ in {
           cards = [
             (mkConfig {
               hours_to_show = 168;
-              points_per_hour = 0.25;
+              points_per_hour = 1;
               name = "7d";
             })
             (mkConfig {
               hours_to_show = 24;
-              points_per_hour = 1;
+              points_per_hour = 3;
               name = "24h";
             })
             (mkConfig
               {
                 hours_to_show = 1;
-                points_per_hour = 30;
+                points_per_hour = 60;
                 show = {
                   name = false;
                   icon = false;
