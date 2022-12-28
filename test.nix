@@ -10,7 +10,6 @@ in {
       nix-linter.enable = false; # Too many false positives for now
       statix.enable = true;
       fourmolu.enable = true;
-      cabal-fmt.enable = true;
       shellcheck.enable = true;
     };
   };
