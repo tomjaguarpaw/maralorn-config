@@ -26,8 +26,9 @@
       
       lean
       yaml-language-server
-      languagetool
+      ltex-ls
       ;
+    # languagetool support for markdown
   };
 in {
   home = {
@@ -79,6 +80,16 @@ in {
       {
         name = "haskell";
         config.languageServerHaskell.formattingProvider = "fourmolu";
+      }
+      {
+        name = "markdown";
+        language-server.command = "ltex-ls";
+        file-types = ["md" "markdown" "text"];
+        config.ltex.additionalRules = {
+          enablePickyRules = true;
+          motherTongue = "de-DE";
+          completionEnabled = true;
+        };
       }
       {
         name = "nix";
