@@ -54,6 +54,7 @@ alias u='systemctl --user'
 alias m=man
 alias h=hx
 alias vim="echo use h"
+alias r="NIX_AUTO_RUN=1"
 
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
