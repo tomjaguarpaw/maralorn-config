@@ -1,31 +1,29 @@
-{pkgs, ...}: {
-  home.sessionVariables.TERMINAL = "${pkgs.foot}/bin/foot";
+{
+  pkgs,
+  config,
+  ...
+}: {
+  home.sessionVariables.TERMINAL = "${pkgs.kitty}/bin/kitty";
   home.packages = [
     (pkgs.runCommandLocal "fake-gnome-terminal" {} ''
       mkdir -p $out/bin
-      ln -s ${pkgs.foot}/bin/foot $out/bin/gnome-terminal
+      ln -s ${config.home.sessionVariables.TERMINAL} $out/bin/gnome-terminal
     '')
   ];
-  programs.foot = {
+  programs.kitty = {
     enable = true;
+    keybindings = {
+      "ctrl+plus" = "change_font_size all +1.0";
+      "ctrl+minus" = "change_font_size all -1.0";
+    };
+    theme = "Tokyo Night";
     settings = {
-      csd = {
-        preferred = "client";
-        size = "0";
-        border-width = "1";
-        color = "af0000aa";
-      };
-      main = {
-        font = "monospace:size=10.5";
-        dpi-aware = "no";
-        include = "${pkgs.foot.themes}/share/foot/themes/selenized-white";
-      };
-      mouse = {
-        hide-when-typing = "yes";
-      };
-      scrollback = {
-        lines = 100000;
-      };
+      linux_display_server = "wayland"; # Causes ugly decorations
+      hide_window_decorations = true;
+      window_margin_width = 0;
+      strip_trailing_spaces = "always";
+
+      font_size = "10.5";
     };
   };
 }

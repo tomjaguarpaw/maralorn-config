@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 } @ args: let
   hotkeys = import ./hotkeys.nix args;
@@ -167,12 +168,12 @@ in {
     };
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal" = {
       binding = "<Super>Return";
-      command = "foot";
+      command = "${config.home.sessionVariables.TERMINAL}";
       name = "Terminal";
     };
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" = {
       binding = "<Super>space";
-      command = "foot ${pkgs.wizards-dialog}/bin/hotkeys ${pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)}";
+      command = "${config.home.sessionVariables.TERMINAL} ${pkgs.wizards-dialog}/bin/hotkeys ${pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)}";
       name = "Hotkeys";
     };
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby" = {

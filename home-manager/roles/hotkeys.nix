@@ -1,7 +1,11 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  config,
+  ...
+}: let
   fork = cmd: "fork ${cmd}";
   edit_dir = dir: "sh -c 'cd ${dir}; hx ${dir}'";
-  with-mic-check = cmd: fork "sh -c 'foot mic-check; ${cmd}'";
+  with-mic-check = cmd: fork "sh -c '${config.home.sessionVariables.TERMINAL} mic-check; ${cmd}'";
 in [
   {
     Orga = [
@@ -19,7 +23,7 @@ in [
       Zotero = fork "zotero";
       Open = fork "evince ~/git/promotion/out/print.pdf";
       Build = "sh -c 'cd ~/git/promotion; nix develop -c nix run'";
-      Directory = fork "foot -d ~/git/promotion";
+      Directory = fork "${config.home.sessionVariables.TERMINAL} -d ~/git/promotion";
       Edit = edit_dir "~/git/promotion";
     };
   }
@@ -32,7 +36,7 @@ in [
   }
   {
     SSH = let
-      ssh = host: "ssh ${host}";
+      ssh = host: "${config.home.sessionVariables.TERMINAL} +kitten ssh ${host}";
     in [
       {"hera via vpn" = ssh "hera.vpn.m-0.eu";}
       {"fluffy via vpn" = ssh "fluffy.vpn.m-0.eu";}
@@ -68,10 +72,8 @@ in [
   }
   {
     Apps = {
-      Editor = fork "kitty";
       Config = edit_dir "~/git/config";
       Files = fork "nautilus";
-      DarkTerminal = fork "foot -o 'colors.background=000000' -o 'colors.foreground=ffffff'";
       Accounting = {
         Update = "nix run ./git/buchhaltung#update";
         Display = "hledger -f ~/git/buchhaltung/buchhaltung.journal ui -- --watch --theme=terminal -X€ -t -E";

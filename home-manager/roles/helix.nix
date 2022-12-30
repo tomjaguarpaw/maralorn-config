@@ -40,7 +40,6 @@ in {
   programs.helix = {
     enable = true;
     settings = {
-      theme = "catppuccin_latte";
       keys = let
         common_keys = {
           "C-s" = ":w";
@@ -66,6 +65,11 @@ in {
         lsp.display-messages = true;
         indent-guides.render = true;
         cursorline = true;
+        cursor-shape = {
+          insert = "bar";
+          normal = "underline";
+        };
+        file-picker.git-ignore = false;
         color-modes = true;
         bufferline = "multiple";
         auto-save = true;
