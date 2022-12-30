@@ -82,9 +82,18 @@ in {
         config.languageServerHaskell.formattingProvider = "fourmolu";
       }
       {
+        name = "comment";
+        language-server.command = "ltex-ls";
+        config.ltex.additionalRules = {
+          enablePickyRules = true;
+          motherTongue = "de-DE";
+          completionEnabled = true;
+        };
+      }
+      {
         name = "markdown";
         language-server.command = "ltex-ls";
-        file-types = ["md" "markdown" "text"];
+        file-types = ["md" "markdown" "txt"];
         config.ltex.additionalRules = {
           enablePickyRules = true;
           motherTongue = "de-DE";
