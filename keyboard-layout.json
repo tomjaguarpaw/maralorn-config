@@ -449,11 +449,9 @@
         "categories": ["blanks"]
       },
       {
-        "code": 17453,
-        "label": {"hint": "ShiftTo", "base": "#3"},
-        "target": 3,
-        "rangeStart": 17450,
-        "categories": ["layer", "shifttolayer"]
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
       },
       {
         "code": 18637,
@@ -468,22 +466,23 @@
         "categories": ["consumer"]
       },
       {
-        "code": 53602,
-        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#6"},
-        "rangeStart": 53596,
-        "categories": ["dynmacros"]
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
       },
       {
-        "code": 53603,
-        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#7"},
-        "rangeStart": 53596,
-        "categories": ["dynmacros"]
+        "code": 594,
+        "label": {
+          "hint": {"full": "Alt+", "1u": "A+"},
+          "base": {"full": "Up Arrow", "1u": "↑"}
+        },
+        "categories": ["with-modifiers", "alt"],
+        "baseCode": 82
       },
       {
-        "code": 53604,
-        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#8"},
-        "rangeStart": 53596,
-        "categories": ["dynmacros"]
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
       },
       {
         "code": 65535,
@@ -559,22 +558,27 @@
         "categories": ["consumer"]
       },
       {
-        "code": 53599,
-        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#3"},
-        "rangeStart": 53596,
-        "categories": ["dynmacros"]
+        "code": 592,
+        "label": {
+          "hint": {"full": "Alt+", "1u": "A+"},
+          "base": {"full": "Left Arrow", "1u": "←"}
+        },
+        "categories": ["with-modifiers", "alt"],
+        "baseCode": 80
       },
       {
-        "code": 53600,
-        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#4"},
-        "rangeStart": 53596,
-        "categories": ["dynmacros"]
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
       },
       {
-        "code": 53601,
-        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#5"},
-        "rangeStart": 53596,
-        "categories": ["dynmacros"]
+        "code": 591,
+        "label": {
+          "hint": {"full": "Alt+", "1u": "A+"},
+          "base": {"full": "Right Arrow", "1u": "→"}
+        },
+        "categories": ["with-modifiers", "alt"],
+        "baseCode": 79
       },
       {
         "code": 65535,
@@ -663,22 +667,23 @@
         "categories": ["consumer"]
       },
       {
-        "code": 53596,
-        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#0"},
-        "rangeStart": 53596,
-        "categories": ["dynmacros"]
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
       },
       {
-        "code": 53597,
-        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#1"},
-        "rangeStart": 53596,
-        "categories": ["dynmacros"]
+        "code": 593,
+        "label": {
+          "hint": {"full": "Alt+", "1u": "A+"},
+          "base": {"full": "Down Arrow", "1u": "↓"}
+        },
+        "categories": ["with-modifiers", "alt"],
+        "baseCode": 81
       },
       {
-        "code": 53598,
-        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#2"},
-        "rangeStart": 53596,
-        "categories": ["dynmacros"]
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
       },
       {
         "code": 65535,

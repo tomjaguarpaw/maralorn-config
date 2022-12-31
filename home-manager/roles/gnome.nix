@@ -16,9 +16,7 @@
       windownavigator
       user-themes
       removable-drive-menu
-      highlight-focus
-      mouse-follows-focus
-      gtile
+      pop-shell
       caffeine
       ;
     executor = pkgs.gnomeExtensions.executor.overrideAttrs (old: {
@@ -39,9 +37,22 @@ in {
       switch-input-source-backward = [];
       switch-applications = [];
       switch-applications-backward = [];
+      minimize = [];
+      unmaximize = [];
       cycle-windows = ["<Super>Tab"];
       cycle-windows-backward = ["<Shift><Super>Tab"];
       close = ["<Super>q"];
+      move-to-monitor-down = [];
+      move-to-monitor-left = [];
+      move-to-monitor-right = [];
+      move-to-monitor-up = [];
+      move-to-workspace-left = [];
+      move-to-workspace-right = [];
+    };
+
+    "org/gnome/mutter/keybindings" = {
+      toggle-tiled-left = [];
+      toggle-tiled-right = [];
     };
 
     "org/gnome/settings-daemon/plugins/color" = {
@@ -53,35 +64,6 @@ in {
     "org/gnome/settings-daemon/plugins/power" = {
       sleep-inactive-ac-timeout = 900;
       sleep-inactive-ac-type = "suspend";
-    };
-
-    "org/gnome/shell/extensions/gtile" = let
-      left = r: "1:${r} 2:${r},1:${r} 1:${r},2:${r} 2:${r}";
-      right = r: "3:${r} 4:${r},4:${r} 4:${r},3:${r} 3:${r}";
-      middle = r: "2:${r} 3:${r}, 2:${r} 2:${r}, 3:${r} 3:${r}, 1:${r} 4:${r}";
-    in {
-      global-presets = true;
-      grid-sizes = "4x2";
-      preset-resize-1 = ["<Control><Super>m"];
-      preset-resize-2 = ["<Control><Super>comma"];
-      preset-resize-3 = ["<Control><Super>period"];
-      preset-resize-4 = ["<Control><Super>n"];
-      preset-resize-5 = ["<Control><Super>r"];
-      preset-resize-6 = ["<Control><Super>t"];
-      preset-resize-7 = ["<Control><Super>h"];
-      preset-resize-8 = ["<Control><Super>g"];
-      preset-resize-9 = ["<Control><Super>f"];
-      resize1 = "4x2 ${left "2"}";
-      resize2 = "4x2 ${middle "2"}";
-      resize3 = "4x2 ${right "2"}";
-      resize4 = "4x1 ${left "1"}";
-      resize5 = "4x1 ${middle "1"}";
-      resize6 = "4x1 ${right "1"}";
-      resize7 = "4x2 ${left "1"}";
-      resize8 = "4x2 ${middle "1"}";
-      resize9 = "4x2 ${right "1"}";
-      show-toggle-tiling-alt = ["<Super>t"];
-      show-icon = false;
     };
 
     "org/gnome/desktop/peripherals/mouse" = {
@@ -106,7 +88,6 @@ in {
 
     "org/gnome/desktop/wm/preferences" = {
       auto-raise = true;
-      focus-mode = "sloppy";
       titlebar-font = "B612 9";
     };
 
@@ -159,6 +140,27 @@ in {
       show-tooltip = true;
     };
 
+    "org/gnome/shell/extensions/pop-shell" = {
+      gap-inner = 1;
+      gap-outer = 0;
+      smart-gaps = true;
+      snap-to-grid = true;
+      tile-by-default = true;
+      active-hint = true;
+      hint-color-rgba = "rgba(0,0,255,1)";
+      tile-enter = ["<Super>t"];
+      tile-move-left-global = ["<Super><Shift>Left"];
+      tile-move-right-global = ["<Super><Shift>Right"];
+      tile-move-up-global = ["<Super><Shift>Up"];
+      tile-move-down-global = ["<Super><Shift>Down"];
+      pop-workspace-up = ["<Super><Shift>PageUp"];
+      pop-workspace-down = ["<Super><Shift>PageDown"];
+      pop-monitor-left = [];
+      pop-monitor-right = [];
+      pop-monitor-up = [];
+      pop-monitor-down = [];
+    };
+
     "org/gnome/desktop/input-sources" = {
       sources = [(mkTuple ["xkb" "de+neo"])]; # use neo
       xkb-options = [
@@ -184,20 +186,14 @@ in {
 
     "org/gnome/shell/extensions/nothing-to-say" = {
       icon-visibility = "always";
-      keybinding-toggle-mute = ["<Primary><Shift>U+2113"]; # Mouse key side middle
     };
+
     "org/gnome/settings-daemon/plugins/media-keys" = {
       custom-keybindings = [
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby/"
       ];
-      next = ["<Primary><Shift>dollar"];
-      play = ["<Primary><Shift>guillemotleft"];
-      previous = ["<Primary><Shift>EuroSign"];
-      screensaver = ["<Primary>Escape"];
-      volume-down = ["<Primary><Shift>section"];
-      volume-up = ["<Primary><Shift>degree"];
       area-screenshot-clip = ["Print"];
       screenshot = [];
     };
