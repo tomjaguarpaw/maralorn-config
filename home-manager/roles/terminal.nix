@@ -24,6 +24,8 @@
       strip_trailing_spaces = "always";
 
       font_size = "10.5";
+
+      cursor = "#1e66f5";
     };
   };
 }

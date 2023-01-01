@@ -147,7 +147,7 @@ in {
       snap-to-grid = true;
       tile-by-default = true;
       active-hint = true;
-      hint-color-rgba = "rgba(0,0,255,1)";
+      hint-color-rgba = "rgba(30,102,245,1)";
       tile-enter = ["<Super>t"];
       tile-move-left-global = ["<Super><Shift>Left"];
       tile-move-right-global = ["<Super><Shift>Right"];
