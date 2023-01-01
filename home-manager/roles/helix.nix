@@ -90,7 +90,6 @@ in {
           insert = "bar";
           normal = "underline";
         };
-        file-picker.git-ignore = false;
         color-modes = true;
         bufferline = "multiple";
         auto-save = true;
