@@ -14,9 +14,8 @@
       window-is-ready-remover
       nothing-to-say
       windownavigator
-      user-themes
+      dash-to-panel
       removable-drive-menu
-      highlight-focus
       mouse-follows-focus
       pop-shell
       caffeine
@@ -29,7 +28,7 @@
         '';
     });
   };
-  inherit (lib.hm.gvariant) mkTuple;
+  inherit (lib.hm.gvariant) mkTuple mkUint32;
 in {
   home.packages = extensions;
   services.gpg-agent.pinentryFlavor = "gnome3";
@@ -42,6 +41,7 @@ in {
       minimize = [];
       maximize = [];
       unmaximize = [];
+      toggle-overview = [];
       cycle-windows = ["<Super>Tab"];
       cycle-windows-backward = ["<Shift><Super>Tab"];
       close = ["<Super>q"];
@@ -144,8 +144,8 @@ in {
     };
 
     "org/gnome/shell/extensions/pop-shell" = {
-      gap-inner = 1;
-      gap-outer = 0;
+      gap-inner = mkUint32 1;
+      gap-outer = mkUint32 1;
       smart-gaps = true;
       snap-to-grid = true;
       tile-by-default = true;
@@ -156,14 +156,18 @@ in {
       tile-move-right-global = ["<Super><Shift>Right"];
       tile-move-up-global = ["<Super><Shift>Up"];
       tile-move-down-global = ["<Super><Shift>Down"];
-      pop-workspace-up = ["<Super><Shift>PageUp"];
-      pop-workspace-down = ["<Super><Shift>PageDown"];
+      pop-workspace-up = ["<Super><Shift>Page_Up"];
+      pop-workspace-down = ["<Super><Shift>Page_Down"];
       pop-monitor-left = [];
       pop-monitor-right = [];
       pop-monitor-up = [];
       pop-monitor-down = [];
     };
-
+    "org/gnome/shell/extensions/dash-to-panel" = {
+      panel-element-positions = ''{"0":[{"element":"dateMenu","visible":true,"position":"stackedTL"},{"element":"leftBox","visible":true,"position":"stackedBR"},{"element":"centerBox","visible":true,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"}]}'';
+      panel-positions = ''{"0":"TOP"}'';
+      panel-sizes = ''{"0":24}'';
+    };
     "org/gnome/desktop/input-sources" = {
       sources = [(mkTuple ["xkb" "de+neo"])]; # use neo
       xkb-options = [
