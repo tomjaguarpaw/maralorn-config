@@ -16,6 +16,8 @@
       windownavigator
       user-themes
       removable-drive-menu
+      highlight-focus
+      mouse-follows-focus
       pop-shell
       caffeine
       ;
@@ -38,6 +40,7 @@ in {
       switch-applications = [];
       switch-applications-backward = [];
       minimize = [];
+      maximize = [];
       unmaximize = [];
       cycle-windows = ["<Super>Tab"];
       cycle-windows-backward = ["<Shift><Super>Tab"];
