@@ -16,7 +16,7 @@
       "ctrl+plus" = "change_font_size all +1.0";
       "ctrl+minus" = "change_font_size all -1.0";
     };
-    theme = "Tokyo Night";
+    theme = "Catppuccin-Latte";
     settings = {
       linux_display_server = "wayland"; # Causes ugly decorations
       hide_window_decorations = true;

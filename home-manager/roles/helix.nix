@@ -40,7 +40,27 @@ in {
   };
   programs.helix = {
     enable = true;
+    themes.mytheme = {
+      inherits = "catppuccin_latte";
+      "diagnostic.info".underline = {
+        color = "blue";
+        style = "curl";
+      };
+      "diagnostic.hint".underline = {
+        color = "green";
+        style = "curl";
+      };
+      "diagnostic.warning".underline = {
+        color = "yellow";
+        style = "curl";
+      };
+      "diagnostic.error".underline = {
+        color = "red";
+        style = "curl";
+      };
+    };
     settings = {
+      theme = "mytheme";
       keys = let
         common_keys = {
           "C-s" = ":w";
