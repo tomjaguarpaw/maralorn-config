@@ -101,7 +101,7 @@ main = do
             pure $
               if null appointments
                 then Nothing
-                else Just [i|<span foreground='\#bbb0fb'>#{Text.intercalate "; " appointments}</span>|]
+                else Just [i|<span foreground='\#8839ef'>#{Text.intercalate "; " appointments}</span>|]
         , simpleModule oneSecond $
             Just . Text.replace "Stopped -" "⏹" . Text.replace "Playing -" "▶" . Text.replace "Paused -" "⏸" . Text.intercalate " - " . fmap decodeUtf8 . filter (/= "") <$> mapM tryCmd [playerctl "status", playerctl "metadata" "title", playerctl "metadata" "album", playerctl "metadata" "artist"]
         , simpleModule oneSecond $ do
@@ -110,40 +110,40 @@ main = do
               if mode >= Orga
                 then notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
                 else pure "0"
-            pure $ memptyIfFalse (unread /= "0") (Just [i|<span foreground='\#DC143C'>Unread: #{unread}</span>|])
+            pure $ memptyIfFalse (unread /= "0") (Just [i|<span foreground='\#d20f39'>Unread: #{unread}</span>|])
         , simpleModule oneSecond $ do
             mode <- read_mode
             inbox <-
               if mode == Leisure
                 then notmuch "count" "folder:hera/Inbox" |> captureTrim
                 else pure "0"
-            pure $ memptyIfFalse (inbox /= "0") (Just [i|<span foreground='\#7fff00'>Inbox: #{inbox}</span>|])
+            pure $ memptyIfFalse (inbox /= "0") (Just [i|<span foreground='\#e53443'>Inbox: #{inbox}</span>|])
         , simpleModule oneSecond $ do
             mode <- read_mode
             codeMails <-
               if mode == Code
                 then notmuch "count" "folder:hera/Code" |> captureTrim
                 else pure "0"
-            pure $ memptyIfFalse (codeMails /= "0") (Just [i|<span foreground='\#20c420'>Code Mails: #{codeMails}</span>|])
+            pure $ memptyIfFalse (codeMails /= "0") (Just [i|<span foreground='\#8839ef'>Code Mails: #{codeMails}</span>|])
         , simpleModule (5 * oneSecond) $ do
             mode <- read_mode
             codeUpdates <-
               if mode == Code
                 then fromMaybe 0 . readMaybe . toString . Text.replace " unread articles" "" . decodeUtf8 <$> tryCmd (exe "software-updates" "-x" "print-unread")
                 else pure 0
-            pure $ memptyIfFalse (codeUpdates /= 0) (Just [i|<span foreground='\#20c420'>Code Updates: #{codeUpdates}</span>|])
+            pure $ memptyIfFalse (codeUpdates /= 0) (Just [i|<span foreground='\#179299'>Code Updates: #{codeUpdates}</span>|])
         , simpleModule (5 * oneSecond) $ do
             dirs <- listDirectory "/home/maralorn/git"
             dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/" <>)) dirs
-            pure $ memptyIfFalse (not (null dirty)) (Just [i|<span foreground='\#ff9f50'>Dirty: #{Text.intercalate " " dirty}</span>|])
+            pure $ memptyIfFalse (not (null dirty)) (Just [i|<span foreground='\#e64443'>Dirty: #{Text.intercalate " " dirty}</span>|])
         , simpleModule (5 * oneSecond) $ do
             dirs <- listDirectory "/home/maralorn/git"
             unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/" <>)) dirs
-            pure $ memptyIfFalse (not (null unpushed)) (Just [i|<span foreground='\#f2995e'>Unpushed: #{Text.intercalate " " unpushed}</span>|])
+            pure $ memptyIfFalse (not (null unpushed)) (Just [i|<span foreground='\#fe640b'>Unpushed: #{Text.intercalate " " unpushed}</span>|])
         , simpleModule 1 $ do
             atomically $ takeTMVar (update mode_var)
             mode <- read_mode
-            pure $ Just [i|<span foreground='\#a0a0ff'>#{show mode}</span>|]
+            pure $ Just [i|<span foreground='\#7287fd'>#{show mode}</span>|]
         ]
   foldConcurrently_
     [ void $ simpleModule oneSecond getMode mode_var
