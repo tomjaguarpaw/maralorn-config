@@ -158,6 +158,10 @@ in {
       tile-move-right-global = ["<Super><Shift>Right"];
       tile-move-up-global = ["<Super><Shift>Up"];
       tile-move-down-global = ["<Super><Shift>Down"];
+      tile-resize-left = ["n"];
+      tile-resize-right = ["t"];
+      tile-resize-up = ["g"];
+      tile-resize-down = ["r"];
       pop-workspace-up = ["<Super><Shift>Page_Up"];
       pop-workspace-down = ["<Super><Shift>Page_Down"];
       pop-monitor-left = [];

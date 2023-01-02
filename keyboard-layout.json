@@ -567,9 +567,13 @@
         "baseCode": 80
       },
       {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
+        "code": 593,
+        "label": {
+          "hint": {"full": "Alt+", "1u": "A+"},
+          "base": {"full": "Down Arrow", "1u": "↓"}
+        },
+        "categories": ["with-modifiers", "alt"],
+        "baseCode": 81
       },
       {
         "code": 591,
@@ -672,13 +676,9 @@
         "categories": ["blanks"]
       },
       {
-        "code": 593,
-        "label": {
-          "hint": {"full": "Alt+", "1u": "A+"},
-          "base": {"full": "Down Arrow", "1u": "↓"}
-        },
-        "categories": ["with-modifiers", "alt"],
-        "baseCode": 81
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
       },
       {
         "code": 65535,
