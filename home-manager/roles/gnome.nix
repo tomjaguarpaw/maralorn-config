@@ -34,6 +34,9 @@ in {
   home.packages = extensions;
   services.gpg-agent.pinentryFlavor = "gnome3";
   dconf.settings = {
+    "org/gnome/shell/keybindings" = {
+      "toggle-overview" = [];
+    };
     "org/gnome/desktop/wm/keybindings" = {
       switch-input-source = [];
       switch-input-source-backward = [];
@@ -42,7 +45,6 @@ in {
       minimize = [];
       maximize = [];
       unmaximize = [];
-      toggle-overview = [];
       cycle-windows = ["<Super>Tab"];
       cycle-windows-backward = ["<Shift><Super>Tab"];
       close = ["<Super>q"];
