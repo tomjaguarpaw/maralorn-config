@@ -51,11 +51,11 @@ in {
         style = "curl";
       };
       "diagnostic.warning".underline = {
-        color = "yellow";
+        color = "peach";
         style = "curl";
       };
       "diagnostic.error".underline = {
-        color = "red";
+        color = "maroon";
         style = "curl";
       };
     };

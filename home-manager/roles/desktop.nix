@@ -91,12 +91,16 @@ in {
   gtk = {
     enable = true;
     iconTheme = {
-      name = "Arc";
-      package = pkgs.arc-icon-theme;
+      name = "Tela-circle";
+      package = pkgs.tela-circle-icon-theme;
+    };
+    cursorTheme = {
+      name = "Catppuccin-Latte-Blue-Cursors";
+      package = pkgs.catppuccin-cursors.latteBlue;
     };
     theme = {
-      name = "Arc";
-      package = pkgs.arc-theme;
+      name = "Catppuccin-Light";
+      package = pkgs.catppuccin-gtk;
     };
     gtk3.bookmarks = [
       "ftp://fluffy.lo.m-0.eu"

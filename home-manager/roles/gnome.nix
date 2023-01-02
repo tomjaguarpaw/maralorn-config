@@ -14,6 +14,7 @@
       window-is-ready-remover
       nothing-to-say
       windownavigator
+      user-themes
       dash-to-panel
       removable-drive-menu
       mouse-follows-focus
@@ -74,8 +75,7 @@ in {
     };
 
     "org/gnome/desktop/interface" = {
-      gtk-theme = "Arc";
-      icon-theme = "Arc";
+      gtk-theme = "Catppuccin-Light";
       document-font-name = "B612 9";
       font-antialiasing = "rgba";
       font-hinting = "slight";
@@ -111,7 +111,7 @@ in {
     };
 
     "org/gnome/shell/extensions/user-theme" = {
-      name = "Arc";
+      name = "Catppuccin-Light";
     };
 
     "system/locale" = {
@@ -150,7 +150,7 @@ in {
       snap-to-grid = true;
       tile-by-default = true;
       active-hint = true;
-      hint-color-rgba = "rgba(30,102,245,1)";
+      hint-color-rgba = "rgba(114,135,253,1)";
       tile-enter = ["<Super>t"];
       tile-move-left-global = ["<Super><Shift>Left"];
       tile-move-right-global = ["<Super><Shift>Right"];
