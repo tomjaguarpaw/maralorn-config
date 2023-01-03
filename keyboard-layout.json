@@ -449,9 +449,10 @@
         "categories": ["blanks"]
       },
       {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
+        "code": 226,
+        "label": {"base": "Alt"},
+        "location": "left",
+        "categories": ["modifier"]
       },
       {
         "code": 18637,
@@ -470,15 +471,7 @@
         "label": {"base": {"full": "Transparent", "1u": " "}},
         "categories": ["blanks"]
       },
-      {
-        "code": 594,
-        "label": {
-          "hint": {"full": "Alt+", "1u": "A+"},
-          "base": {"full": "Up Arrow", "1u": "↑"}
-        },
-        "categories": ["with-modifiers", "alt"],
-        "baseCode": 82
-      },
+      {"code": 82, "label": {"base": {"full": "Up Arrow", "1u": "↑"}}},
       {
         "code": 65535,
         "label": {"base": {"full": "Transparent", "1u": " "}},
@@ -557,33 +550,9 @@
         },
         "categories": ["consumer"]
       },
-      {
-        "code": 592,
-        "label": {
-          "hint": {"full": "Alt+", "1u": "A+"},
-          "base": {"full": "Left Arrow", "1u": "←"}
-        },
-        "categories": ["with-modifiers", "alt"],
-        "baseCode": 80
-      },
-      {
-        "code": 593,
-        "label": {
-          "hint": {"full": "Alt+", "1u": "A+"},
-          "base": {"full": "Down Arrow", "1u": "↓"}
-        },
-        "categories": ["with-modifiers", "alt"],
-        "baseCode": 81
-      },
-      {
-        "code": 591,
-        "label": {
-          "hint": {"full": "Alt+", "1u": "A+"},
-          "base": {"full": "Right Arrow", "1u": "→"}
-        },
-        "categories": ["with-modifiers", "alt"],
-        "baseCode": 79
-      },
+      {"code": 80, "label": {"base": {"full": "Left Arrow", "1u": "←"}}},
+      {"code": 81, "label": {"base": {"full": "Down Arrow", "1u": "↓"}}},
+      {"code": 79, "label": {"base": {"full": "Right Arrow", "1u": "→"}}},
       {
         "code": 65535,
         "label": {"base": {"full": "Transparent", "1u": " "}},
