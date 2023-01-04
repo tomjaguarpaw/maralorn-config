@@ -79,10 +79,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "feda52be1d59f13b9aa02f064b4f14784b9a06c8",
-        "sha256": "13ic4a7n719x5yjmd0138hdh2sggcrw4iwkfrq8ili0y5b602g6b",
+        "rev": "0bf3109eeb61780965c27f4a0a4affdcd0cd4d3d",
+        "sha256": "17bk7s5908bc21mvh31ra94pdqmr2pdrlhavqga6ysfl013jnpvv",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/feda52be1d59f13b9aa02f064b4f14784b9a06c8.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/0bf3109eeb61780965c27f4a0a4affdcd0cd4d3d.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-unstable": {
@@ -91,10 +91,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "8ba56d7c0d7490680f2d51ba46a141eca7c46afa",
-        "sha256": "066bd7zpzx6bp8hls0laa0mg7s0z54wj67gd25mnaaa75jgq612q",
+        "rev": "0fc9fca9c8d43edd79d33fea0dd8409d7c4580f4",
+        "sha256": "16kvq3abj85wdxishnqzrcli2rbl190f3r1hdik7vsvc42487igb",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/8ba56d7c0d7490680f2d51ba46a141eca7c46afa.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/0fc9fca9c8d43edd79d33fea0dd8409d7c4580f4.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-bot": {
@@ -109,16 +109,16 @@
         "homepage": "",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "2d947ef03b7cba461aab65a5df1ede03be567068",
-        "sha256": "1hmc88j9ybzc97gd0j3l2nrf453rrjhibcwic646rvdwjg5nzwpn",
+        "rev": "d0ce0a861260493c6c21f16f59d25076f73cb931",
+        "sha256": "1nf35c5zjninjfycbvdjh12z3y67jk1a6j05w6758dqvzng021dv",
         "type": "tarball",
-        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/2d947ef03b7cba461aab65a5df1ede03be567068.tar.gz",
+        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/d0ce0a861260493c6c21f16f59d25076f73cb931.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "wizards-dialog": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:wizards-dialog",
-        "rev": "e8de71f2e03257df12e38956782bf851249ccc4e",
+        "rev": "7f0628a6b0ca2a091063486bab24f54a99e412cf",
         "type": "git"
     }
 }
