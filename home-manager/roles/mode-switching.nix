@@ -85,7 +85,7 @@ in {
           clear
           writeFile "${modeFile}" mode
           activate_mode
-          ignoreFailure $ killall "GeckoMain"
+          ignoreFailure $ killall ["GeckoMain", "firefox", ".firefox-wrapped"]
       '';
   };
 }
