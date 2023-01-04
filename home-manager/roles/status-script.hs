@@ -93,7 +93,7 @@ simpleModule delay action var = repeatM do
 
 main :: IO ()
 main = do
-  mode_var <- newVar Orga
+  mode_var <- newVar Unrestricted
   let read_mode = readTVarIO (value mode_var)
       modules =
         [ simpleModule (5 * oneSecond) $ do
