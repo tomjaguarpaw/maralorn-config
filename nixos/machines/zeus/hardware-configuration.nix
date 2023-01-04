@@ -7,7 +7,9 @@
   pkgs,
   modulesPath,
   ...
-}: {
+}: let
+  nixos-uuid = "47552982-2abf-45c6-8c5c-d33091ce3f5a";
+in {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
@@ -23,20 +25,20 @@
   };
 
   fileSystems."/disk" = {
-    device = "/dev/disk/by-uuid/ac20f7bf-387e-42b0-b3df-b14163f45913";
+    device = "/dev/disk/by-uuid/${nixos-uuid}";
     fsType = "btrfs";
   };
 
   boot.initrd.luks.devices."crypted-nixos".device = "/dev/disk/by-uuid/2518e0e0-c263-40bc-b378-419832dc62cc";
 
   fileSystems."/nix" = {
-    device = "/dev/disk/by-uuid/ac20f7bf-387e-42b0-b3df-b14163f45913";
+    device = "/dev/disk/by-uuid/${nixos-uuid}";
     fsType = "btrfs";
     options = ["subvol=nix"];
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/ac20f7bf-387e-42b0-b3df-b14163f45913";
+    device = "/dev/disk/by-uuid/${nixos-uuid}";
     fsType = "btrfs";
     options = ["subvol=boot"];
   };
