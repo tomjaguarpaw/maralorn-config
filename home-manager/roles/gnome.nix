@@ -173,6 +173,8 @@ in {
       panel-element-positions = ''{"0":[{"element":"dateMenu","visible":true,"position":"stackedTL"},{"element":"leftBox","visible":true,"position":"stackedBR"},{"element":"centerBox","visible":true,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"}]}'';
       panel-positions = ''{"0":"TOP"}'';
       panel-sizes = ''{"0":24}'';
+      tray-padding = 0;
+      status-icon-padding = 4;
     };
     "org/gnome/desktop/input-sources" = {
       sources = [(mkTuple ["xkb" "de+neo"])]; # use neo
