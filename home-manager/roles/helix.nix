@@ -86,6 +86,7 @@ in {
         lsp.display-messages = true;
         indent-guides.render = true;
         cursorline = true;
+        cursorcolumn = true;
         cursor-shape = {
           insert = "bar";
           normal = "underline";
