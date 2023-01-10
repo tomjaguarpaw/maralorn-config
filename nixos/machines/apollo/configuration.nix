@@ -105,5 +105,6 @@ in {
       }
       // syncthing.declarativeWith ["hera" "zeus" "pegasus"] "/home/maralorn/media";
   };
+  systemd.services.NetworkManager-wait-online.enable = false;
   system.stateVersion = "19.09";
 }
