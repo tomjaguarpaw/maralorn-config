@@ -61,10 +61,10 @@
         "homepage": "",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "ca29e25c39b8e117d4d76a81f1e229824a9b3a26",
-        "sha256": "1wmh03w2ybx0adzc15lv1zvf04a0lcl5dr401v2kwd8hqx26z2a5",
+        "rev": "48745e081cfdcc678633c61dbf47a9bd3dfd93a7",
+        "sha256": "02np8ivwsyw24z8c3gix97109qgs078kxqbx90hhka8n8c3diwbp",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixos-hardware/archive/ca29e25c39b8e117d4d76a81f1e229824a9b3a26.tar.gz",
+        "url": "https://github.com/nixos/nixos-hardware/archive/48745e081cfdcc678633c61dbf47a9bd3dfd93a7.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-mailserver": {
@@ -91,10 +91,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "a518c77148585023ff56022f09c4b2c418a51ef5",
-        "sha256": "0rr6qp2zk1yp3z1sz3zxm1gmqpyy0vnbxs14qgpq9m6977ngjgm3",
+        "rev": "f6f44561884c3470e2b783683d5dbac42dfc833b",
+        "sha256": "1ibpkbi7m5np3n7mqj8j0fb0my9rwm35753r4rkb0h8dm4m501lq",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/a518c77148585023ff56022f09c4b2c418a51ef5.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/f6f44561884c3470e2b783683d5dbac42dfc833b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-bot": {
@@ -109,10 +109,10 @@
         "homepage": "",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "a4548c09eac4afb592ab2614f4a150120b29584c",
-        "sha256": "11q5i7k8ss98kckq750vwdq5g7iy06i0cawyyh76k8yw90liwx22",
+        "rev": "f8992fb404c7e79638192a10905b7ea985818050",
+        "sha256": "11wkhnxb1g0wv3zqfryp0r7238gkfcw25xg048d4cys9g8dk99dz",
         "type": "tarball",
-        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/a4548c09eac4afb592ab2614f4a150120b29584c.tar.gz",
+        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/f8992fb404c7e79638192a10905b7ea985818050.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "wizards-dialog": {
