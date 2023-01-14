@@ -3,8 +3,29 @@
   config,
   lib,
   ...
-}: {
+}: let
+  inherit (import ../../nix/sources.nix) nixos-unstable;
+  networkingModule = name: "${nixos-unstable}/nixos/modules/services/networking/${name}.nix";
+in {
+  # nftables using module not available in 22.11.
+  disabledModules = [
+    "services/networking/firewall.nix"
+    "services/networking/nftables.nix"
+    "services/networking/nat.nix"
+    "services/networking/redsocks.nix"
+    "services/networking/miniupnpd.nix"
+    "services/audio/roon-server.nix"
+    "services/audio/roon-bridge.nix"
+  ];
+
   imports = [
+    (networkingModule "firewall-iptables")
+    (networkingModule "firewall-nftables")
+    (networkingModule "firewall")
+    (networkingModule "nat-iptables")
+    (networkingModule "nat-nftables")
+    (networkingModule "nat")
+    (networkingModule "nftables")
     ../../common
     ./admin.nix
   ];
@@ -23,7 +44,12 @@
 
   networking = {
     resolvconf.dnsExtensionMechanism = false; # this breaks dnssec but is necessary for certain bad-behaved hotspots
-    firewall.allowPing = true;
+    firewall = {
+      enable = true; # It’s the default, but better make sure.
+      allowPing = true;
+      extraInputRules = "meta iifname m0wire accept comment \"My VPN\"";
+    };
+    nftables.enable = true; # Uses firewall variables since 23.05
     useDHCP = false; # enabled per interface
     hosts =
       lib.zipAttrs
@@ -171,17 +197,16 @@
   services = {
     logind.killUserProcesses = false;
     journald.extraConfig = "SystemMaxUse=5G";
-    #prometheus.exporters = {
-    #  node = {
-    #    enable = false;
-    #    enabledCollectors = ["systemd" "logind"];
-    #    disabledCollectors = ["timex"];
-    #  };
-    #  nginx = {
-    #    inherit (config.services.nginx) enable;
-    #    # openFirewall = true;
-    #  };
-    #};
+    prometheus.exporters = {
+      node = {
+        enable = true;
+        enabledCollectors = ["systemd" "logind"];
+        disabledCollectors = ["timex"];
+      };
+      nginx = {
+        inherit (config.services.nginx) enable;
+      };
+    };
     nginx = {
       statusPage = true;
       recommendedOptimisation = true;

@@ -8,12 +8,6 @@
     prometheus = {
       enable = true;
       extraFlags = ["--query.lookback-delta=180m" "--storage.tsdb.retention.time=720d"];
-      exporters = {
-        blackbox = {
-          enable = true;
-          configFile = ./blackbox_rules.yml;
-        };
-      };
       ruleFiles = [./rules.yml];
       scrapeConfigs = let
         alert_type = "infrastructure";

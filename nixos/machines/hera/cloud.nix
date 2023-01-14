@@ -104,16 +104,12 @@ with lib; let
           address = hosts.hera-intern-v4;
           interface = "eth0";
         };
-        firewall.allowedTCPPorts = [80 443];
+        firewall.allowedTCPPorts = [80 443 9100 9113];
       };
 
       systemd.services = nextcloudServices hostname;
       services = {
         nextcloud = nextcloudConf hostname;
-        prometheus.exporters = {
-          node.openFirewall = true;
-          nginx.openFirewall = true;
-        };
         nginx.appendHttpConfig = "access_log off;";
         redis.servers."".enable = true;
 
@@ -132,7 +128,7 @@ in {
     services =
       {
         rss-server = {
-          serviceConfig.ExecStart = "${pkgs.python3}/bin/python -m http.server 8842 -d /var/www/rss";
+          serviceConfig.ExecStart = "${pkgs.python3}/bin/python -m http.server --bind ${hosts.vpn.hera} 8842 -d /var/www/rss";
           wantedBy = ["multi-user.target"];
         };
       }
