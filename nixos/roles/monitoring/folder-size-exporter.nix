@@ -5,7 +5,7 @@
 }: let
   textfilesDir = "/var/cache/prometheus-textfiles";
 in {
-  services.prometheus.exporters.node.extraFlags = ["--collector.textfile.directory /var/cache/prometheus-textfiles"];
+  # services.prometheus.exporters.node.extraFlags = ["--collector.textfile.directory /var/cache/prometheus-textfiles"];
   systemd = {
     services.folder-size-exporter = {
       description = "Write folder size for promtext exporter";

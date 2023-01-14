@@ -35,14 +35,14 @@ in {
       interface = "ens18";
     };
 
-    firewall = {
-      extraCommands = ''
-        ip6tables -A INPUT -i m0wire -j ACCEPT
-        ip6tables -A FORWARD -p ipv6-icmp -j ACCEPT
-        ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-        ip6tables -A FORWARD ! -i m0wire -j nixos-fw-log-refuse
-      '';
-    };
+    #firewall = {
+    #  extraCommands = ''
+    #    ip6tables -A INPUT -i m0wire -j ACCEPT
+    #    ip6tables -A FORWARD -p ipv6-icmp -j ACCEPT
+    #    ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+    #    ip6tables -A FORWARD ! -i m0wire -j nixos-fw-log-refuse
+    #  '';
+    #};
 
     bridges.bridge.interfaces = [];
     interfaces.bridge = {

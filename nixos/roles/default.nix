@@ -171,17 +171,17 @@
   services = {
     logind.killUserProcesses = false;
     journald.extraConfig = "SystemMaxUse=5G";
-    prometheus.exporters = {
-      node = {
-        enable = true;
-        enabledCollectors = ["systemd" "logind"];
-        disabledCollectors = ["timex"];
-      };
-      nginx = {
-        inherit (config.services.nginx) enable;
-        openFirewall = true;
-      };
-    };
+    #prometheus.exporters = {
+    #  node = {
+    #    enable = false;
+    #    enabledCollectors = ["systemd" "logind"];
+    #    disabledCollectors = ["timex"];
+    #  };
+    #  nginx = {
+    #    inherit (config.services.nginx) enable;
+    #    # openFirewall = true;
+    #  };
+    #};
     nginx = {
       statusPage = true;
       recommendedOptimisation = true;
