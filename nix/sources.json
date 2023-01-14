@@ -11,6 +11,12 @@
         "url": "https://github.com/srid/emanote/archive/584d52c4c7071e643ce738db9db0196f17071518.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "mastodon_digest": {
+        "branch": "main",
+        "repo": "git@hera.m-0.eu:mastodon_digest",
+        "rev": "abea31381316d762d3c8eecc6f732eb6620e259e",
+        "type": "git"
+    },
     "hexa-nur-packages": {
         "branch": "master",
         "description": "My personal NUR repository: [maintainer=@mweinelt] ",
