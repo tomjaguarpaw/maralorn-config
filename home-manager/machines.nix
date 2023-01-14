@@ -13,10 +13,10 @@ let
       "youtube.*"
       "*.element.io"
       "twitter.com"
-      "chaos.social"
     ]
     ++ newsPages;
   newsPages = [
+    "chaos.social"
     "zeit.de"
     "heise.de"
     "spiegel.de"
