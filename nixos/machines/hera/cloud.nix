@@ -131,18 +131,8 @@ in {
   systemd = {
     services =
       {
-        "container@chor-cloud" = {
-          #serviceConfig.RestartSec = 10;
-          unitConfig = {
-            #StartLimitIntervalSec = 30;
-            #StartLimitBurst = 2;
-          };
-        };
         rss-server = {
-          serviceConfig = {
-            WorkingDirectory = "/var/www/rss";
-            ExecStart = "${pkgs.python3}/bin/python -m http.server 8842";
-          };
+          serviceConfig.ExecStart = "${pkgs.python3}/bin/python -m http.server 8842 -d /var/www/rss";
           wantedBy = ["multi-user.target"];
         };
       }
