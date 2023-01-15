@@ -35,20 +35,6 @@
         "url": "https://github.com/nix-community/home-manager/archive/89a8ba0b5b43b3350ff2e3ef37b66736b2ef8706.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "kassandra": {
-        "branch": "main",
-        "ref": "main",
-        "repo": "git@hera.m-0.eu:kassandra2",
-        "rev": "d8faaef9bc0f6d2b2beba194b30a554afd5b905b",
-        "type": "git"
-    },
-    "logfeed": {
-        "branch": "main",
-        "ref": "main",
-        "repo": "git@hera.m-0.eu:logfeed",
-        "rev": "5efd50132edb72365d30347092371ab11d9355dd",
-        "type": "git"
-    },
     "nix-output-monitor": {
         "branch": "main",
         "repo": "git@hera.m-0.eu:nix-output-monitor",
@@ -97,28 +83,4 @@
         "url": "https://github.com/NixOS/nixpkgs/archive/6c8644fc37b6e141cbfa6c7dc8d98846c4ff0c2e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "nixpkgs-bot": {
-        "branch": "main",
-        "repo": "git@hera.m-0.eu:nixpkgs-bot",
-        "rev": "c0f8e0842e491092dc9e3d0d17fc400f53baed41",
-        "type": "git"
-    },
-    "pre-commit-hooks.nix": {
-        "branch": "master",
-        "description": "Seamless integration of https://pre-commit.com git hooks with Nix.",
-        "homepage": "",
-        "owner": "cachix",
-        "repo": "pre-commit-hooks.nix",
-        "rev": "f8992fb404c7e79638192a10905b7ea985818050",
-        "sha256": "11wkhnxb1g0wv3zqfryp0r7238gkfcw25xg048d4cys9g8dk99dz",
-        "type": "tarball",
-        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/f8992fb404c7e79638192a10905b7ea985818050.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "wizards-dialog": {
-        "branch": "main",
-        "repo": "git@hera.m-0.eu:wizards-dialog",
-        "rev": "7f0628a6b0ca2a091063486bab24f54a99e412cf",
-        "type": "git"
-    }
 }
