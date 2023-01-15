@@ -1,0 +1,10 @@
+Htop: htop
+Web:
+   - Thunderbird: fork thunderbird
+     Banana: "echo lol"
+   - Firefox: fork firefox
+Test:
+   - B: "b"
+   - A: "a"
+   - D: "d"
+     C: "c"
