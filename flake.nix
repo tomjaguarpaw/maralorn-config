@@ -3,13 +3,10 @@
 
   inputs = {
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
-    nixos-unstable.follows = "nixpkgs";
-    nixos-stable.url = "github:nixos/nixpkgs/nixos-22.11";
     pre-commit-hooks-nix = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        nixpkgs-stable.follows = "nixos-stable";
       };
     };
   };
