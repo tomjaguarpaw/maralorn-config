@@ -90,10 +90,6 @@ in {
       cleanupInterval = "15m";
       snapshotInterval = "*:00/3:00";
     };
-    prometheus.exporters.node = {
-      firewallFilter = "-i m0wire -p tcp -m tcp -m multiport --dports 9100,9558";
-      openFirewall = true;
-    };
     syncthing =
       {
         enable = true;
