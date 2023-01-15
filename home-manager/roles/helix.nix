@@ -65,10 +65,16 @@ in {
         common_keys = {
           "C-s" = ":w";
           "C-f" = ":format";
-          "C-r" = ":reflow";
         };
       in {
-        normal = common_keys;
+        normal =
+          common_keys
+          // {
+            "C-r" = ["extend_to_line_bounds" ":reflow"];
+          };
+        select = {
+          "C-r" = ["extend_to_line_bounds" "join_selections" "keep_primary_selection" "extend_to_line_bounds" ":reflow"];
+        };
         insert =
           common_keys
           // {
