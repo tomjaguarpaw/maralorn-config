@@ -1,0 +1,79 @@
+cabal-version:   3.0
+name:            nixpkgs-bot
+version:         0.1.0.0
+synopsis:
+  A matrix bot which watches nixpkgs and informs about PR progress.
+
+homepage:        https://git.maralorn.de/nixpkgs-bot
+license:         AGPL-3.0-or-later
+license-file:    LICENSE
+author:          maralorn
+maintainer:      mail@maralorn.de
+build-type:      Simple
+extra-doc-files: CHANGELOG.md
+
+common common-config
+  ghc-options:        -Wall
+  default-extensions:
+    NoImplicitPrelude
+    BlockArguments
+    DataKinds
+    DeriveAnyClass
+    DeriveGeneric
+    DerivingStrategies
+    DuplicateRecordFields
+    FlexibleContexts
+    FlexibleInstances
+    GADTs
+    GeneralizedNewtypeDeriving
+    LambdaCase
+    MultiParamTypeClasses
+    NamedFieldPuns
+    OverloadedStrings
+    QuasiQuotes
+    ScopedTypeVariables
+    StandaloneDeriving
+    TemplateHaskell
+    TupleSections
+    TypeApplications
+    TypeFamilies
+    UndecidableInstances
+
+  build-depends:
+    , aeson-schemas
+    , async
+    , base               >=4.15 && <5
+    , clock
+    , containers
+    , esqueleto
+    , exceptions
+    , graphql-client
+    , http-client
+    , matrix-client
+    , monad-logger
+    , mtl
+    , persistent
+    , persistent-sqlite
+    , random
+    , relude
+    , resourcet
+    , time
+    , typed-process
+    , yaml
+
+  default-language:   Haskell2010
+
+library
+  import:          common-config
+  exposed-modules:
+    NixpkgsBot.GraphQL.API
+    NixpkgsBot.GraphQL.Scalars
+
+  hs-source-dirs:  lib
+
+executable nixpkgs-bot
+  import:         common-config
+  main-is:        Main.hs
+  hs-source-dirs: exe
+  ghc-options:    -threaded
+  build-depends:  nixpkgs-bot

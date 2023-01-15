@@ -1,0 +1,20 @@
+query PullRequest($number: Int!, $owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
+    pullRequest(number: $number) {
+      number
+      title
+      mergeCommit {
+        oid
+      }
+      author {
+        login
+      }
+      merged
+      baseRefName
+    }
+  }
+  rateLimit {
+    remaining
+    resetAt
+  }
+}
