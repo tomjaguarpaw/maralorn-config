@@ -10,8 +10,9 @@ import qualified Data.Sequence.NonEmpty as NESeq
 import qualified Data.Set as Set
 import qualified Data.Text as Text
 import Kassandra.BaseWidgets (
+  br,
   button,
-  icon, br
+  icon,
  )
 import Kassandra.Config (DefinitionElement)
 import Kassandra.Debug (
@@ -138,7 +139,8 @@ dependenciesWidget = do
   revDepends <- filter stillTodo <<$>> lookupTasksM (taskInfos ^. #revDepends)
   depends <- filter stillTodo <<$>> (lookupTasksM . toList) (taskInfos ^. #depends)
   D.dyn_ $
-    whenNotNull <$> depends
+    whenNotNull
+      <$> depends
       <*> pure
         ( \ds -> do
             br
@@ -150,7 +152,8 @@ dependenciesWidget = do
               br
         )
   D.dyn_ $
-    whenJust . nonEmptySeq <$> revDepends
+    whenJust . nonEmptySeq
+      <$> revDepends
       <*> pure
         ( \rds -> do
             br
@@ -186,7 +189,8 @@ dropChildWidget = do
   childrenD <- getChildren
   showIcon <- fmap not <$> getIsExpanded (taskInfos ^. #uuid)
   D.dyn_ $
-    when <$> showIcon
+    when
+      <$> showIcon
       <*> pure
         ( childDropArea
             ( SortPosition
@@ -204,11 +208,11 @@ dropChildWidget = do
     (icon "dropHere plusOne" "block")
     $ fmap
       ( \dependencies ->
-          one $
-            #depends
+          one
+            $ #depends
               %~ Set.union (Set.fromList $ toList $ (^. #uuid) <$> dependencies)
-              $ taskInfos
-                ^. #task
+            $ taskInfos
+              ^. #task
       )
   taskDropArea
     (taskInfos ^. #uuid % to (R.constDyn . one))
@@ -245,7 +249,8 @@ childrenWidget taskInfosD = do
   showOptional :: Bool -> m ()
   showOptional x = when x $ do
     children <-
-      R.holdUniqDyn . fmap (filter stillTodo) =<< lookupTasksDynM
+      R.holdUniqDyn . fmap (filter stillTodo)
+        =<< lookupTasksDynM
         =<< R.holdUniqDyn
           (taskInfosD ^. mapping #children)
     let sortModeD = SortModePartof <$> taskInfosD ^. mapping #uuid
@@ -255,7 +260,6 @@ childrenWidget taskInfosD = do
     sortedList <- R.holdUniqDyn $ sortTasks <$> sortModeD <*> children
     D.divClass "children" $
       taskList (sortModeD ^. #current) sortedList blacklist taskWidget
-
 
 taskList ::
   StandardWidget t m r e =>
@@ -368,7 +372,8 @@ statusWidget = do
     (el, ()) <- D.elAttr' "div" ("class" =: "checkbox") $ do
       D.elClass
         "i"
-        ( "material-icons " <> showClass
+        ( "material-icons "
+            <> showClass
             <> if isJust handlerMay
               then " hideable"
               else ""

@@ -51,7 +51,7 @@ remoteBackendWidget closeEvent mayBackend = D.divClass "remoteBackend" $ do
   backendDyn <- maybe inputBackend getPassword mayBackend
   responseEvent <-
     D.dyn
-      (withBackend (closeEvent <> wrap (() <$ R.updated backendDyn)) <$> backendDyn)
+      (withBackend (closeEvent <> wrap (void $ R.updated backendDyn)) <$> backendDyn)
   D.holdDyn Nothing responseEvent
  where
   getPassword :: RemoteBackend PasswordConfig -> m (R.Dynamic t (Maybe (RemoteBackend Text)))
@@ -122,9 +122,9 @@ remoteBackendWidget closeEvent mayBackend = D.divClass "remoteBackend" $ do
     D.inputElement $
       D.def
         & lensVL D.inputElementConfig_initialValue
-        .~ defaultValue
+          .~ defaultValue
         & lensVL (D.inputElementConfig_elementConfig . D.elementConfig_initialAttributes)
-        .~ if hidden then "type" D.=: "password" else mempty
+          .~ if hidden then "type" D.=: "password" else mempty
   inputValue = R.current . D._inputElement_value
 
 data WebSocketState = WebSocketError Text | Connecting deriving stock (Show)

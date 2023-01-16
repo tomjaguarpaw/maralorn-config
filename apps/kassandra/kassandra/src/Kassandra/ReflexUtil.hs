@@ -10,7 +10,8 @@ module Kassandra.ReflexUtil (
 
 import qualified Data.Map as Map
 import qualified Data.Patch.Map as Patch
---import qualified Data.Patch.MapWithMove as Patch
+
+-- import qualified Data.Patch.MapWithMove as Patch
 import qualified Data.Sequence as Seq
 import qualified Reflex as R
 import qualified Reflex.Dom as D
@@ -29,27 +30,28 @@ smartSimpleList ::
   m ()
 smartSimpleList widget listElements = do
   void $ R.simpleList (toList <$> listElements) \vDyn -> do
-     u <- R.holdUniqDyn vDyn
-     D.dyn_ . fmap widget $ u
-  --postBuild <- R.getPostBuild
-  --keyMap <- R.holdUniqDyn $ Seq.foldMapWithIndex (curry one) <$> listElements
-  --let keyMapChange =
-        --R.attachWith
-          --((Newtype.under @(Map Int (Patch.NodeInfo Int v)) fixPatchMap .) . Patch.patchThatChangesMap)
-          --(R.current keyMap)
-          --(R.updated keyMap)
-      --initialKeyMap = Patch.patchMapWithMoveInsertAll <$> R.tag (R.current keyMap) postBuild
-      --keyMapEvents = keyMapChange <> initialKeyMap
-  --void $ R.mapMapWithAdjustWithMove (const widget) mempty keyMapEvents
+    u <- R.holdUniqDyn vDyn
+    D.dyn_ . fmap widget $ u
 
--- | A workaround for a bug in patchThatChangesMap in patch 0.0.3.2.
---fixPatchMap :: Map Int (Patch.NodeInfo Int v) -> Map Int (Patch.NodeInfo Int v)
---fixPatchMap inputMap = appEndo setMoves . fmap (Patch.nodeInfoSetTo Nothing) $ inputMap
--- where
---  setMoves = Map.foldMapWithKey f inputMap
---  f to' (Patch.NodeInfo (Patch.From_Move from) _) = Endo $ Map.adjust (Patch.nodeInfoSetTo (Just to')) from
---  f _ _ = mempty
+-- postBuild <- R.getPostBuild
+-- keyMap <- R.holdUniqDyn $ Seq.foldMapWithIndex (curry one) <$> listElements
+-- let keyMapChange =
+-- R.attachWith
+-- ((Newtype.under @(Map Int (Patch.NodeInfo Int v)) fixPatchMap .) . Patch.patchThatChangesMap)
+-- (R.current keyMap)
+-- (R.updated keyMap)
+-- initialKeyMap = Patch.patchMapWithMoveInsertAll <$> R.tag (R.current keyMap) postBuild
+-- keyMapEvents = keyMapChange <> initialKeyMap
+-- void $ R.mapMapWithAdjustWithMove (const widget) mempty keyMapEvents
 
+{- | A workaround for a bug in patchThatChangesMap in patch 0.0.3.2.
+fixPatchMap :: Map Int (Patch.NodeInfo Int v) -> Map Int (Patch.NodeInfo Int v)
+fixPatchMap inputMap = appEndo setMoves . fmap (Patch.nodeInfoSetTo Nothing) $ inputMap
+ where
+  setMoves = Map.foldMapWithKey f inputMap
+  f to' (Patch.NodeInfo (Patch.From_Move from) _) = Endo $ Map.adjust (Patch.nodeInfoSetTo (Just to')) from
+  f _ _ = mempty
+-}
 listWithGaps ::
   (R.Adjustable t m, R.PostBuild t m, R.MonadHold t m, MonadFix m, Ord v, D.NotReady t m) =>
   (v -> m ()) ->
@@ -62,9 +64,9 @@ listWithGaps widget gapWidget listD = do
   gapWidget lastElementD
  where
   elementWidget currentElement = do
-      elementPair <- R.holdUniqDyn $ (,Just currentElement) . Map.lookup currentElement <$> prevElementsD
-      gapWidget elementPair
-      widget currentElement
+    elementPair <- R.holdUniqDyn $ (,Just currentElement) . Map.lookup currentElement <$> prevElementsD
+    gapWidget elementPair
+    widget currentElement
   prevElementsD = (\xs -> Map.unions . fmap one $ Seq.zip (Seq.drop 1 xs) xs) <$> listD
 
 keyDynamic ::

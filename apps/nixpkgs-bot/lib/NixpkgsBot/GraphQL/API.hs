@@ -14,7 +14,7 @@ import Data.GraphQL.Bootstrap
 import NixpkgsBot.GraphQL.Scalars
 
 {-----------------------------------------------------------------------------
-* MergingPullRequest
+\* MergingPullRequest
 
 -- result :: Object MergingPullRequestSchema; throws a GraphQL exception on errors
 result <- runQuery MergingPullRequestQuery
@@ -113,7 +113,7 @@ instance GraphQLQuery MergingPullRequestQuery where
       ]
 
 {-----------------------------------------------------------------------------
-* PullRequest
+\* PullRequest
 
 -- result :: Object PullRequestSchema; throws a GraphQL exception on errors
 result <- runQuery PullRequestQuery

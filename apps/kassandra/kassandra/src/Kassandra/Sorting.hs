@@ -7,12 +7,12 @@ module Kassandra.Sorting (
 
 import qualified Data.Aeson as Aeson
 import Data.Scientific (toRealFloat)
+import qualified Data.Sequence as Seq
 import Data.Set (member)
 import Kassandra.Types (TaskInfos)
 import qualified Reflex as R
 import Relude.Extra.Foldable1 (maximum1)
 import qualified Taskwarrior.Task as Task
-import qualified Data.Sequence as Seq
 
 data SortMode = SortModePartof UUID | SortModeTag Task.Tag
   deriving stock (Show, Eq, Ord, Generic)
@@ -80,9 +80,9 @@ sortingChanges mode list =
         | otherwise = assureSort minTouchedDist sortedList
       getWrite (task, sortState)
         | has #_WillWrite sortState || not (taskInList mode task) =
-          Just . setSortOrder mode (newValue sortState) . insertInList mode $ task
+            Just . setSortOrder mode (newValue sortState) . insertInList mode $ task
         | otherwise =
-          Nothing
+            Nothing
    in mapMaybe getWrite finalList
 
 applyUntil :: (a -> a) -> (a -> Bool) -> a -> a
@@ -92,7 +92,7 @@ applyUntil f condition x
 
 minOrder, maxOrder, minDist, minTouchedDist :: Double
 minOrder = -1
-maxOrder = - minOrder
+maxOrder = -minOrder
 minDist = 10 ** (-6)
 minTouchedDist = 10 ** (-3)
 
@@ -111,9 +111,9 @@ unSetWorstUnsorted unSet delta (IsNonEmpty (x :<|| xs))
       Seq.breakl
         ((worst ==) . snd)
         (toSeq badnesses) =
-    fine <> (unSet a <| alsoFine)
+      fine <> (unSet a <| alsoFine)
   | otherwise =
-    error "Assumed wrong invariant in unSetWorstUnsorted" -- The list of badnesses has to contain its maximum
+      error "Assumed wrong invariant in unSetWorstUnsorted" -- The list of badnesses has to contain its maximum
  where
   badnesses = go mempty (x :<|| xs) <&> \(a, _, badness) -> (a, badness)
   worst = maximum1 $ snd <$> badnesses
@@ -146,16 +146,16 @@ addSortState f = go (minOrder, 0)
   go (iprev, dprev) list
     | IsEmpty <- list = mempty
     | IsNonEmpty (x :<|| xs) <- list
-      , Just int <- f x =
-      (x, HasSortPos int) <| go (int, 0) xs
+    , Just int <- f x =
+        (x, HasSortPos int) <| go (int, 0) xs
     | IsNonEmpty (x :<|| xs) <- list
-      , next@(IsNonEmpty ((_, sortStateNext -> (inext, dnext)) :<|| _)) <-
-          go
-            (iprev, dprev + 1)
-            xs =
-      (x, WillWrite iprev (dprev + 1) inext (dnext + 1)) <| next
+    , next@(IsNonEmpty ((_, sortStateNext -> (inext, dnext)) :<|| _)) <-
+        go
+          (iprev, dprev + 1)
+          xs =
+        (x, WillWrite iprev (dprev + 1) inext (dnext + 1)) <| next
     | IsNonEmpty (x :<|| _) <- list =
-      one (x, WillWrite iprev (dprev + 1) maxOrder 1)
+        one (x, WillWrite iprev (dprev + 1) maxOrder 1)
 
 insertBefore :: Seq Task -> Seq Task -> Maybe UUID -> Seq Task
 insertBefore list toInsert = \case

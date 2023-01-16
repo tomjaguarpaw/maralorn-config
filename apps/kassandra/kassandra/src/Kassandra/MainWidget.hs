@@ -9,7 +9,7 @@ import qualified Data.Sequence as Seq
 import qualified Data.Sequence.NonEmpty as NESeq
 import qualified Data.Set as Set
 import Kassandra.AgendaWidget (agendaWidget)
-import Kassandra.BaseWidgets (button, br)
+import Kassandra.BaseWidgets (br, button)
 import Kassandra.Calendar (CalendarEvent)
 import Kassandra.Config (DefinitionElement, Widget (DefinitionElementWidget, SearchWidget))
 import Kassandra.Debug (
@@ -183,17 +183,20 @@ nextWidget = do
       <$> getTasks
   D.dynText $
     (\x y -> if length x + length y > 0 then [i|There are #{length x} tasks in the inbox and #{length y} tasks unsorted.|] else "Nothing to do.")
-      <$> inboxTasks <*> unsortedTasks
+      <$> inboxTasks
+      <*> unsortedTasks
   inboxTaskDyn <- R.maybeDyn $ Seq.lookup 0 <$> inboxTasks
   let decorateSortTask x = D.el "p" (D.text "Sort this task into the task tree:") *> taskTreeWidget x
-      decorateInboxTask x = D.el "p" $ do
-         D.text "Process this task from the inbox:" *> br
-         D.text "1. Does it need to be done?" *> br
-         D.text "2. Can you do it in under 2 minutes?" *> br
-         D.text "3. Should someone else do this?" *> br
-         D.text "4. Should you split this task into sub tasks?" *> br
-         D.text "5. On which tag list does it belong or when do you want to do it?" *> br
-       *> taskTreeWidget x
+      decorateInboxTask x =
+        D.el "p" $
+          do
+            D.text "Process this task from the inbox:" *> br
+            D.text "1. Does it need to be done?" *> br
+            D.text "2. Can you do it in under 2 minutes?" *> br
+            D.text "3. Should someone else do this?" *> br
+            D.text "4. Should you split this task into sub tasks?" *> br
+            D.text "5. On which tag list does it belong or when do you want to do it?" *> br
+            *> taskTreeWidget x
       sortTask = do
         taskDyn <- R.maybeDyn $ viaNonEmpty head <$> unsortedTasks
         D.dyn_ (maybe pass decorateSortTask <$> taskDyn)

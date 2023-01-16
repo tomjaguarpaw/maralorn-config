@@ -1,0 +1,5 @@
+- arguments:
+  - -XRecursiveDo
+  - -XQuasiQuotes
+- ignore:
+    name: Eta reduce

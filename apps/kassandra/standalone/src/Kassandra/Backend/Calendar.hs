@@ -73,9 +73,9 @@ import Kassandra.Debug (Severity (..), log)
 import qualified Streamly.Data.Fold as FL
 import Streamly.External.ByteString (fromArray, toArray)
 import qualified Streamly.FileSystem.Handle as FS
+import Streamly.Internal.Data.Array.Stream.Foreign (splitOn)
 import qualified Streamly.Internal.FileSystem.File as FSFile
 import Streamly.Memory.Array as Mem (fromList)
-import Streamly.Internal.Data.Array.Stream.Foreign (splitOn)
 
 dirName :: FilePath
 dirName = "/home/maralorn/.calendars/"
@@ -121,12 +121,12 @@ saveCache cache = do
 writeJSONStream :: (IsStream t, MonadIO (t IO), ToJSON k, ToJSON v) => STM.Map k v -> FilePath -> t IO ()
 writeJSONStream stmMap fileName =
   FSFile.withFile fileName WriteMode \handle ->
-    liftIO $
-      S.fold (FS.writeChunks handle)
+    liftIO
+      $ S.fold (FS.writeChunks handle)
         . asyncly
         . S.intersperse (Mem.fromList [10])
         . fmap (toArray . toStrict . encode)
-        $ streamSTMMap stmMap
+      $ streamSTMMap stmMap
 
 streamSTMMap :: forall t k v. (MonadIO (t IO), IsStream t) => STM.Map k v -> t IO (k, v)
 streamSTMMap = join . atomically . UnfoldlM.foldlM' (\x y -> pure $ S.cons y x) S.nil . STM.unfoldlM
@@ -145,7 +145,8 @@ data Cache = Cache
   { icsCache :: ICSCache
   , tzCache :: TZCache
   , uidCache :: UIDCache
-  } deriving (Generic)
+  }
+  deriving (Generic)
 
 newCache :: IO Cache
 newCache = atomically $ Cache <$> STM.new <*> STM.new <*> STM.new
@@ -284,11 +285,11 @@ translateEvent cache calendarName vEvent =
   -- Also we are ignoring the timezone delivered with this calendar and taking our own
   getTimes
     | Just (DTStartDateTime start _) <- veDTStart vEvent
-      , Just (Left (DTEndDateTime end _)) <- veDTEndDuration vEvent =
-      S.yieldM . liftIO $ SimpleEvent <$> datetimeToTZTime cache start <*> datetimeToTZTime cache end
+    , Just (Left (DTEndDateTime end _)) <- veDTEndDuration vEvent =
+        S.yieldM . liftIO $ SimpleEvent <$> datetimeToTZTime cache start <*> datetimeToTZTime cache end
     | Just (dateValue . dtStartDateValue -> start) <- veDTStart vEvent
-      , Just (Left (dateValue . dtEndDateValue -> end)) <- veDTEndDuration vEvent =
-      S.yield $ AllDayEvent start (addDays (-1) end)
+    , Just (Left (dateValue . dtEndDateValue -> end)) <- veDTEndDuration vEvent =
+        S.yield $ AllDayEvent start (addDays (-1) end)
     | otherwise = S.nil
 
 datetimeToTZTime :: Cache -> DateTime -> IO TZTime

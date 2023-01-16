@@ -53,11 +53,12 @@ module Prelude (
   pattern IsNonEmpty,
   pattern (:<||),
   pattern (:||>),
-  (|>),(<|),
+  (|>),
+  (<|),
   toSeq,
   mapMaybe,
   filter,
-  partitionEithersNESeq
+  partitionEithersNESeq,
 ) where
 
 import Control.Concurrent.Async (
@@ -81,12 +82,11 @@ import Data.Generics.Product.Typed (HasType (typed))
 import Data.Generics.Sum.Constructors (AsConstructor' (_Ctor'))
 import Data.Generics.Sum.Typed (AsType (_Typed))
 import Data.List.Extra (firstJust)
-import Data.Sequence.NonEmpty hiding (filter, (|>), (<|))
-import Data.Sequence ((|>),(<|))
+import Data.Sequence ((<|), (|>))
+import Data.Sequence.NonEmpty hiding (filter, (<|), (|>))
 import Data.String.Interpolate (i)
 import Data.Text.Optics hiding (text)
-import Data.These (partitionEithersNE, These(..))
-import Data.Witherable ( mapMaybe, (<$?>), (<&?>), filter )
+import Data.These (These (..), partitionEithersNE)
 import Data.Time (
   UTCTime,
   addUTCTime,
@@ -105,14 +105,15 @@ import Data.Time.LocalTime (
   zonedTimeToLocalTime,
  )
 import Data.UUID (UUID)
+import Data.Witherable (filter, mapMaybe, (<$?>), (<&?>))
 import Language.Haskell.TH.Syntax (
   Dec,
   Name,
   Q,
  )
-import Optics hiding ((|>), (<|))
+import Optics hiding ((<|), (|>))
 import Optics.TH
-import Relude hiding (uncons, mapMaybe, filter)
+import Relude hiding (filter, mapMaybe, uncons)
 import Relude.Extra.Foldable1
 import Taskwarrior.Status (Status)
 import Taskwarrior.Task (Task)
@@ -122,7 +123,7 @@ instance One (NESeq a) where
   one = singleton
 
 instance Foldable1 NESeq where
-   foldMap1 f = foldMapWithIndex (const f)
+  foldMap1 f = foldMapWithIndex (const f)
 
 -- (lensField .~ noPrefixNamer $ fieldLabelsRules) == noPrefixFieldLabels but only in optics-th 0.2
 makeLabels :: Name -> Q [Dec]

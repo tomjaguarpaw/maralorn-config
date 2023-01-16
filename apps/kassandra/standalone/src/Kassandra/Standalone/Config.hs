@@ -6,14 +6,15 @@ module Kassandra.Standalone.Config (
   StandaloneAccount (LocalAccount, RemoteAccount),
   BackendConfig (..),
   backends,
- dhallTypes
+  dhallTypes,
 ) where
 
 import Dhall (FromDhall)
 import Kassandra.Config (
-  Dict,
   AccountConfig,
   DefinitionElement,
+  Dict,
+  ListItem,
   ListQuery,
   LocalBackend,
   NamedBackend,
@@ -24,7 +25,7 @@ import Kassandra.Config (
   TaskwarriorOption,
   TreeOption,
   UserConfig,
-  Widget, ListItem
+  Widget,
  )
 import Kassandra.Config.Dhall (
   DhallLoadConfig (..),
@@ -42,7 +43,7 @@ data StandaloneAccount = RemoteAccount {backend :: Maybe (RemoteBackend Password
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (FromDhall)
 
-data BackendConfig = BackendConfig
+newtype BackendConfig = BackendConfig
   { users :: Dict AccountConfig
   }
   deriving (Show, Eq, Generic, FromDhall)

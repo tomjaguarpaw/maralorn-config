@@ -50,13 +50,13 @@ serveWebsocket config backendRequestQueue params =
       mayCreds = liftA2 (,) mayUsername mayPassword
       action (Just (username, password))
         | Just userConfig <- lookup username (users config)
-          , PasswordCheckSuccess <- checkPassword (mkPassword password) (passwordHash userConfig) =
-          acceptSocket backendRequestQueue username userConfig
+        , PasswordCheckSuccess <- checkPassword (mkPassword password) (passwordHash userConfig) =
+            acceptSocket backendRequestQueue username userConfig
       action (Just (username, _))
         | Just _ <- lookup username (users config) =
-          \connection -> do
-            say [i|Rejecting Websocket request for #{username :: Text}, wrong password.|]
-            rejectRequest connection "No valid 'username' and 'password' provided."
+            \connection -> do
+              say [i|Rejecting Websocket request for #{username :: Text}, wrong password.|]
+              rejectRequest connection "No valid 'username' and 'password' provided."
       action _ = \connection -> do
         say [i|Rejecting Websocket request #{show mayUsername :: Text}. No matching user found.|]
         rejectRequest connection "No valid 'username' and 'password' provided."

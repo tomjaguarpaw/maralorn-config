@@ -12,7 +12,7 @@ import Control.Category
 import qualified Control.Category
 import Data.Text (Text)
 
---import Data.Functor.Identity
+-- import Data.Functor.Identity
 
 import Obelisk.Route
 import Obelisk.Route.TH
@@ -41,7 +41,7 @@ fullRouteEncoder =
     (FullRoute_Backend BackendRouteMissing :/ ())
     ( \case
         BackendRouteMissing -> PathSegment "missing" $ unitEncoder mempty
-        BackendRouteSocket -> PathSegment "socket" $ Control.Category.id
+        BackendRouteSocket -> PathSegment "socket" Control.Category.id
     )
     ( \case
         FrontendRouteMain -> PathEnd $ unitEncoder mempty

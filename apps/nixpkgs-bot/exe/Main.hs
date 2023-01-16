@@ -269,8 +269,12 @@ getMissingAuthorSubscriptions pr_key author = do
   author_subs <- SQL.select $ do
     author_sub <- SQL.from $ SQL.table @AuthorSubscription
     SQL.where_
-      ( author_sub ^. AuthorSubscriptionGithubLogin ==. SQL.val author
-          SQL.&&. author_sub ^. AuthorSubscriptionUser `notIn` SQL.subSelectList users_subscribed_to_this_pr
+      ( author_sub
+          ^. AuthorSubscriptionGithubLogin
+          ==. SQL.val author
+          SQL.&&. author_sub
+          ^. AuthorSubscriptionUser
+          `notIn` SQL.subSelectList users_subscribed_to_this_pr
       )
     pure author_sub
   pure $ fmap (authorSubscriptionUser . Persist.entityVal) author_subs
@@ -461,10 +465,12 @@ deleteUnusedQueries :: App ()
 deleteUnusedQueries = SQL.delete do
   query <- SQL.from $ SQL.table @Query
   SQL.where_ $
-    (query ^. QueryUser) `notIn` SQL.subList_select do
-      sub <- SQL.from $ SQL.table @Subscription
-      pure (sub ^. SubscriptionUser)
-      &&. (query ^. QueryUser) `notIn` SQL.subList_select do
+    (query ^. QueryUser)
+      `notIn` SQL.subList_select do
+        sub <- SQL.from $ SQL.table @Subscription
+        pure (sub ^. SubscriptionUser)
+      &&. (query ^. QueryUser)
+      `notIn` SQL.subList_select do
         sub <- SQL.from $ SQL.table @AuthorSubscription
         pure (sub ^. AuthorSubscriptionUser)
 
@@ -565,8 +571,8 @@ setQueries commands = do
       Just query
         | queryRoom query == coerce (roomId command) -> pass
         | otherwise -> do
-          set_room
-          sendMessageToUser (author command) $ m "Because you sent your most recent message to this room, I will use this room for direct messages to you from now on."
+            set_room
+            sendMessageToUser (author command) $ m "Because you sent your most recent message to this room, I will use this room for direct messages to you from now on."
       _ -> do
         putTextLn $ "Setting Query for user " <> author command <> " to " <> coerce (roomId command)
         set_room
@@ -595,32 +601,32 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
     (cmd,) <$> catchAll case cmd of
       MkCommand{command, author, args}
         | Text.isPrefixOf command "subscribe"
-          , split_args <- Text.words args
-          , fromMaybe False (viaNonEmpty (flip Text.isPrefixOf "user" . head) split_args) -> do
-          case maybeAt 1 split_args of
-            Nothing -> pure $ m "Please tell me a user to subscribe to."
-            Just user -> do
-              notSubbed <- hasAuthorSub author user
-              if notSubbed
-                then do
-                  Persist.insert_ $ AuthorSubscription author user
-                  pure $ m $ "I will now track for you all pull requests by " <> user
-                else pure $ m $ "Okay, but you were already subscribed to pull requests by user " <> user
+        , split_args <- Text.words args
+        , fromMaybe False (viaNonEmpty (flip Text.isPrefixOf "user" . head) split_args) -> do
+            case maybeAt 1 split_args of
+              Nothing -> pure $ m "Please tell me a user to subscribe to."
+              Just user -> do
+                notSubbed <- hasAuthorSub author user
+                if notSubbed
+                  then do
+                    Persist.insert_ $ AuthorSubscription author user
+                    pure $ m $ "I will now track for you all pull requests by " <> user
+                  else pure $ m $ "Okay, but you were already subscribed to pull requests by user " <> user
       MkCommand{command, author, args}
         | Text.isPrefixOf command "unsubscribe"
-          , split_args <- Text.words args
-          , fromMaybe False (viaNonEmpty (flip Text.isPrefixOf "user" . head) split_args) -> do
-          case maybeAt 1 split_args of
-            Nothing -> pure $ m "Please tell me a user to unsubscribe from."
-            Just user -> do
-              notSubbed <- hasAuthorSub author user
-              if notSubbed
-                then pure $ m $ "I haven‘t been tracking pull requests by " <> user <> " for you."
-                else do
-                  SQL.delete $ do
-                    author_sub <- SQL.from $ SQL.table @AuthorSubscription
-                    SQL.where_ (author_sub ^. AuthorSubscriptionUser ==. SQL.val author &&. author_sub ^. AuthorSubscriptionGithubLogin ==. SQL.val user)
-                  pure $ m $ "I will not subscribe you automatically to new pull requests by user " <> user <> " anymore."
+        , split_args <- Text.words args
+        , fromMaybe False (viaNonEmpty (flip Text.isPrefixOf "user" . head) split_args) -> do
+            case maybeAt 1 split_args of
+              Nothing -> pure $ m "Please tell me a user to unsubscribe from."
+              Just user -> do
+                notSubbed <- hasAuthorSub author user
+                if notSubbed
+                  then pure $ m $ "I haven‘t been tracking pull requests by " <> user <> " for you."
+                  else do
+                    SQL.delete $ do
+                      author_sub <- SQL.from $ SQL.table @AuthorSubscription
+                      SQL.where_ (author_sub ^. AuthorSubscriptionUser ==. SQL.val author &&. author_sub ^. AuthorSubscriptionGithubLogin ==. SQL.val user)
+                    pure $ m $ "I will not subscribe you automatically to new pull requests by user " <> user <> " anymore."
       MkCommand{command, author, args} | Text.isPrefixOf command "subscribe" ->
         case parsePRNumber args of
           Nothing -> pure $ m $ "I could not parse \"" <> args <> "\" as a pull request number. Have you maybe mistyped it?"
@@ -644,7 +650,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
             case pr_msg_may of
               Just prMsg
                 | notSubbed ->
-                  pure $ m "Well, you were not subscribed to pull request " <> prMsg
+                    pure $ m "Well, you were not subscribed to pull request " <> prMsg
               Just prMsg -> do
                 Persist.delete $ SubscriptionKey author pr_key
                 pure $ m "Okay, I will not send you updates about pull request " <> prMsg

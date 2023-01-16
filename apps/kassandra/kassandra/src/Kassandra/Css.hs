@@ -31,10 +31,11 @@ css fontPath = do
     fontFace $ do
       fontFamily [fontName] []
       fontFaceSrc [FontFaceSrcUrl fontSrc (Just OpenType)]
-  let --darkBlue      = rgb 0 0 33
-      lightBlue = rgb 200 200 255
-      noMargin = margin (px 0) (px 0) (px 0) (px 0)
-      noPadding = padding (px 0) (px 0) (px 0) (px 0)
+  let
+    -- darkBlue      = rgb 0 0 33
+    lightBlue = rgb 200 200 255
+    noMargin = margin (px 0) (px 0) (px 0) (px 0)
+    noPadding = padding (px 0) (px 0) (px 0) (px 0)
   star ? do
     fontFamily ["B612"] []
     noMargin
@@ -91,13 +92,13 @@ css fontPath = do
           color white
   ".button" ? buttonCss
   ".selector" ? buttonCss
-  --".tag" ? ".icon" ? do
-  --position absolute
-  --borderRadius tagRadius tagRadius tagRadius tagRadius
-  --background lightBlue
-  --marginLeft (em (-1.1))
-  --marginTop (em 0.70)
-  --fontSize (em 0.85)
+  -- ".tag" ? ".icon" ? do
+  -- position absolute
+  -- borderRadius tagRadius tagRadius tagRadius tagRadius
+  -- background lightBlue
+  -- marginLeft (em (-1.1))
+  -- marginTop (em 0.70)
+  -- fontSize (em 0.85)
   ".material-icons" ? do
     fontFamily [fontName] []
     fontWeight normal
@@ -141,9 +142,9 @@ css fontPath = do
   ".children" ? do
     padding (px 0) (px 0) (px 0) leftBarWidth
     background black
-  --".slimButton" ? do
-  --marginRight (px (-5))
-  --marginLeft (px (-5))
+  -- ".slimButton" ? do
+  -- marginRight (px (-5))
+  -- marginLeft (px (-5))
   let blockSize = do
         width (em 1)
         height (em 1)
@@ -162,5 +163,6 @@ css fontPath = do
       ".grey" & color (grayish 160)
       ".show" & color black
       ".showable" & display none
-    active & i ? do
-      background black
+    active
+      & i ? do
+        background black

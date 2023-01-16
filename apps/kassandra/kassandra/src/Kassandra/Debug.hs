@@ -21,6 +21,9 @@ import Reflex as R
 import System.IO.Unsafe (unsafePerformIO)
 
 import qualified Debug.Trace as Trace
+import Relude.Extra.Bifunctor
+import Relude.Extra.Enum
+import Say
 import System.Console.ANSI (
   Color (..),
   ColorIntensity (Vivid),
@@ -28,9 +31,6 @@ import System.Console.ANSI (
   SGR (..),
   setSGRCode,
  )
-import Relude.Extra.Bifunctor
-import Relude.Extra.Enum
-import Say
 
 data Severity = Debug | Info | Warning | Error deriving stock (Show, Read, Eq, Ord)
 
@@ -149,7 +149,8 @@ showSeverity = \case
  where
   color :: Color -> Text -> Text
   color c txt =
-    toText (setSGRCode [SetColor Foreground Vivid c]) <> txt
+    toText (setSGRCode [SetColor Foreground Vivid c])
+      <> txt
       <> toText
         (setSGRCode [Reset])
 

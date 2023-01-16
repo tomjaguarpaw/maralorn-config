@@ -23,7 +23,7 @@ module Kassandra.Config (
   TaskwarriorOption (..),
 ) where
 
-import Data.Default.Class ( Default(..) )
+import Data.Default.Class (Default (..))
 import Data.Password.Argon2 (
   Argon2,
   PasswordHash,
@@ -142,22 +142,22 @@ data PasswordConfig = Prompt | Password {plaintext :: Text} | PasswordCommand {c
 
 data LocalBackend
   = TaskwarriorBackend
-      { -- | Set config file
-        taskRcPath :: Maybe Text
-      , -- | Set task data directory
-        taskDataPath :: Maybe Text
-      , -- | Override config variables
-        taskConfig :: Seq TaskwarriorOption
-      , -- | Path to taskwarrior binary. Nothing => Lookup "task" from PATH
-        taskBin :: Maybe Text
-      , -- | Use the first free port from the given range for the taskwarrior hook listener.
-        hookListenPort :: PortConfig
-      , -- | Created hooks are called ".on-add.<suffix>.<port>" and ".on-remove.<suffix>.<port>"
-        hookSuffix :: Text
-      , -- | Ensure existence of taskwarrior hook on every start
-        createHooksOnStart :: Bool
-      , -- | Remove hook on exit.
-        removeHooksOnExit :: Bool
+      { taskRcPath :: Maybe Text
+      -- ^ Set config file
+      , taskDataPath :: Maybe Text
+      -- ^ Set task data directory
+      , taskConfig :: Seq TaskwarriorOption
+      -- ^ Override config variables
+      , taskBin :: Maybe Text
+      -- ^ Path to taskwarrior binary. Nothing => Lookup "task" from PATH
+      , hookListenPort :: PortConfig
+      -- ^ Use the first free port from the given range for the taskwarrior hook listener.
+      , hookSuffix :: Text
+      -- ^ Created hooks are called ".on-add.<suffix>.<port>" and ".on-remove.<suffix>.<port>"
+      , createHooksOnStart :: Bool
+      -- ^ Ensure existence of taskwarrior hook on every start
+      , removeHooksOnExit :: Bool
+      -- ^ Remove hook on exit.
       }
   | GitBackend
       { directoryPath :: Text
