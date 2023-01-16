@@ -20,7 +20,7 @@ import Say
 import Shh
 import System.Environment (getEnv, setEnv)
 
-load Absolute ["laminarc", "git", "nix-build"]
+load Absolute ["laminarc", "git", "nix"]
 
 repo = "git@hera.m-0.eu:nixos-config"
 
@@ -51,7 +51,7 @@ main = do
   git "checkout" (toString branch)
   setEnv "LAMINAR_REASON" [i|Building config branch #{branch} for all systems in #{jobId}:#{runId}|]
   say [i|Starting builds of branch #{branch} for all systems.|]
-  concurrently_ (mapConcurrently_ (\x -> laminarc ["run", x, [i|BRANCH=#{branch}|]]) jobs) $ nix_build "test.nix"
+  concurrently_ (mapConcurrently_ (\x -> laminarc ["run", x, [i|BRANCH=#{branch}|]]) jobs) $ nix "flake" "check"
   say [i|Builds succeeded.|]
   when (branch == "main") $ do
     say [i|Deploying new config to localhost.|]
