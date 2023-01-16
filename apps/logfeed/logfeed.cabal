@@ -14,8 +14,9 @@ build-type:         Simple
 extra-source-files: CHANGELOG.md
 
 executable log2rss
-  main-is:          Main.hs
-  ghc-options:      -Wall -Wcompat
+  main-is:            Main.hs
+  ghc-options:        -Wall -Wcompat
+  default-extensions: ImportQualifiedPost
 
   -- other-modules:
   -- other-extensions:
@@ -31,11 +32,12 @@ executable log2rss
     , text
     , time
 
-  default-language: Haskell2010
+  default-language:   Haskell2010
 
 executable mail2rss
-  main-is:          Mail.hs
-  ghc-options:      -Wall -Wcompat
+  default-extensions: ImportQualifiedPost
+  main-is:            Mail.hs
+  ghc-options:        -Wall -Wcompat
   build-depends:
       base
     , containers
@@ -56,4 +58,4 @@ executable mail2rss
     , text
     , time
 
-  default-language: Haskell2010
+  default-language:   Haskell2010
