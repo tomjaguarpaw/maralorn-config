@@ -82,5 +82,5 @@
         "type": "tarball",
         "url": "https://github.com/NixOS/nixpkgs/archive/6c8644fc37b6e141cbfa6c7dc8d98846c4ff0c2e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
+    }
 }

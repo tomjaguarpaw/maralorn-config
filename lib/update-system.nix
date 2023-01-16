@@ -17,7 +17,7 @@ in {
           nom_build (paths ++ buildSystemParams ++ ["--no-out-link"] ++ remoteBuildParams ++ fmap toString args)
           setEnv "WITH_SECRETS" "true"
           oldSystem <- readlink "-f" "/run/current-system" |> captureTrim
-          nixos_rebuild (paths ++ ["switch"] ++ fmap toString args) &!> StdOut |> nom
+          nixos_rebuild (paths ++ ["switch", "--no-flake"] ++ fmap toString args) &!> StdOut |> nom
           newSystem <- readlink "-f" "/run/current-system" |> captureTrim
           nvd "diff" oldSystem newSystem
     '';
