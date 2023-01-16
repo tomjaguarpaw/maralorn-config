@@ -14,10 +14,10 @@ final: prev: let
     rev = "07d8827a79086263f0e0f161faa2c12e405b2929";
     hash = "sha256-iFOvexzj5UQve67nvNcGthrvVbL5yQbYyUIXlaRYlug=";
   };
-  patchedSrc = pkgs.runCommand "mastodon_digest-patched-src" ''    { }
-       cp -r ${src} $out
-       chmod -R +w $out
-       patch -d $out -p1 < ${./all-posts.patch}
+  patchedSrc = pkgs.runCommand "mastodon_digest-patched-src" {} ''
+    cp -r ${src} $out
+    chmod -R +w $out
+    patch -d $out -p1 < ${./all-posts.patch}
   '';
 in {
   mastodon_digest = pkgs.writeShellApplication {

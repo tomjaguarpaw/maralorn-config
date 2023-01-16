@@ -15,7 +15,5 @@ in {
     emanote
     helix
     ;
-  nixpkgs-bot = (myFlake "nixpkgs-bot").default;
   nix-output-monitor = (myFlake "nix-output-monitor").default;
-  inherit (myFlake "mastodon_digest") mastodon_digest;
 }
