@@ -5,7 +5,6 @@ cabal-version:      >=1.10
 
 name:               logfeed
 version:            0.1.0.0
-
 author:             maralorn
 maintainer:         mail@maralorn.de
 
@@ -41,20 +40,20 @@ executable mail2rss
       base
     , containers
     , errors
+    , exceptions
     , extra
-    , feed                >=1.3.0.0
+    , feed                  >=1.3.0.0
     , filepattern
     , lens
     , megaparsec
     , notmuch
+    , optparse-applicative
     , purebred-email
     , relude
     , say
     , string-interpolate
+    , tagsoup
     , text
     , time
-    , optparse-applicative
-    , exceptions
-    , tagsoup
 
   default-language: Haskell2010

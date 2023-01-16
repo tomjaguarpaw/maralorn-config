@@ -26,6 +26,7 @@ common common-config
     FlexibleInstances
     GADTs
     GeneralizedNewtypeDeriving
+    ImportQualifiedPost
     LambdaCase
     MultiParamTypeClasses
     NamedFieldPuns
@@ -38,7 +39,6 @@ common common-config
     TypeApplications
     TypeFamilies
     UndecidableInstances
-    ImportQualifiedPost
 
   build-depends:
     , aeson-schemas

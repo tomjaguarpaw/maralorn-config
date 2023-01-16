@@ -4,7 +4,7 @@ in  { users = toMap
         { maralorn =
           { filterTag = ""
           , passwordHash =
-              "$argon2id$v=19$m=65536,t=2,p=1$2capLVJQQBvndRxOKIVogQ==$wCGgmPx4yVyr+nMM9fWCtn1aPvi3uZDvpdhX85GuIxU="
+              "\$argon2id\$v=19\$m=65536,t=2,p=1\$2capLVJQQBvndRxOKIVogQ==\$wCGgmPx4yVyr+nMM9fWCtn1aPvi3uZDvpdhX85GuIxU="
           , userConfig =
             { localBackend =
                 types.LocalBackend.TaskwarriorBackend

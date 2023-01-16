@@ -13,6 +13,8 @@ let extensions =
       , "FlexibleContexts"
       , "FlexibleInstances"
       , "GADTs"
+      , "GeneralizedNewtypeDeriving"
+      , "ImportQualifiedPost"
       , "LambdaCase"
       , "MultiParamTypeClasses"
       , "NamedFieldPuns"
@@ -54,8 +56,8 @@ in  ''
     -- BEGIN dhall generated common configuration
     -- generate with: dhall text --file common-config.dhall
     license-file:       LICENSE
-    author:             Malte Brandy
-    maintainer:         malte.brandy@maralorn.de
+    author:             maralorn
+    maintainer:         mail@maralorn.de
     build-type:         Simple
     extra-source-files: CHANGELOG.md
 

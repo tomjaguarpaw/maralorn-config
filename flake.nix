@@ -46,6 +46,8 @@
               statix.enable = true;
               fourmolu.enable = true;
               shellcheck.enable = true;
+              cabal-fmt.enable = true;
+              dhall-format.enable = true;
             };
           };
         };

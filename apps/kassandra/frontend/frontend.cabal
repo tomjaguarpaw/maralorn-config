@@ -74,6 +74,7 @@ library
     , optics-th
     , reflex
     , reflex-dom
+    , relude
     , scientific
     , taskwarrior
     , text
@@ -81,7 +82,6 @@ library
     , time
     , unordered-containers
     , uuid
-    , relude
 
   exposed-modules:
     Frontend
@@ -101,4 +101,4 @@ executable frontend
     , reflex-dom
 
   ghc-options:    -threaded
-  mixins:             base hiding (Prelude)
+  mixins:         base hiding (Prelude)

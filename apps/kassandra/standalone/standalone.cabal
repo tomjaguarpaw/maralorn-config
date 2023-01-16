@@ -5,8 +5,8 @@ version:            0.1.0.0
 -- BEGIN dhall generated common configuration
 -- generate with: dhall text --file common-config.dhall
 license-file:       LICENSE
-author:             Malte Brandy
-maintainer:         malte.brandy@maralorn.de
+author:             maralorn
+maintainer:         mail@maralorn.de
 build-type:         Simple
 extra-source-files: CHANGELOG.md
 
@@ -24,6 +24,7 @@ common common-config
     FlexibleContexts
     FlexibleInstances
     GADTs
+    ImportQualifiedPost
     LambdaCase
     MultiParamTypeClasses
     NamedFieldPuns
@@ -78,11 +79,11 @@ library
     , either
     , filepath
     , filepattern
-    , iCalendar               >=0.4
+    , iCalendar            >=0.4
     , kassandra
     , network-simple
     , nonempty-containers
-    , password                >=2.0.1.0
+    , password             >=2.0.1.0
     , paths
     , reflex
     , reflex-dom
@@ -109,4 +110,5 @@ executable kassandra2
     , base
     , kassandra
     , standalone
+
   ghc-options:    -threaded
