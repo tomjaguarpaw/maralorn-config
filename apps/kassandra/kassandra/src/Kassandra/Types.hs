@@ -27,15 +27,15 @@ module Kassandra.Types (
   getExpandedTasks,
 ) where
 
-import qualified Data.Aeson as Aeson
+import Data.Aeson qualified as Aeson
 import Data.HashSet (member)
 import Kassandra.Calendar
 import Kassandra.Config (DefinitionElement, UIConfig)
 import Language.Javascript.JSaddle (MonadJSM)
-import qualified Reflex as R
-import qualified Reflex.Dom as D
-import qualified Taskwarrior.Status
-import qualified Taskwarrior.Task
+import Reflex qualified as R
+import Reflex.Dom qualified as D
+import Taskwarrior.Status qualified
+import Taskwarrior.Task qualified
 import Text.Show
 
 type Widget t m =

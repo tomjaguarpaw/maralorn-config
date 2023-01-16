@@ -32,13 +32,21 @@
         };
         pre-commit = {
           check.enable = true;
-          settings.hooks = {
-            hlint.enable = true;
-            alejandra.enable = true;
-            nix-linter.enable = false; # Too many false positives for now
-            statix.enable = true;
-            fourmolu.enable = true;
-            shellcheck.enable = true;
+          settings = {
+            settings.ormolu.defaultExtensions = [
+              "TypeApplications"
+              "BangPatterns"
+              "ImportQualifiedPost"
+              "BlockArguments"
+            ];
+            hooks = {
+              hlint.enable = true;
+              alejandra.enable = true;
+              nix-linter.enable = false; # Too many false positives for now
+              statix.enable = true;
+              fourmolu.enable = true;
+              shellcheck.enable = true;
+            };
           };
         };
       };

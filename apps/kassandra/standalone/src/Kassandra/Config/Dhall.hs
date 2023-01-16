@@ -8,7 +8,7 @@ import Data.Password.Argon2 (
   Argon2,
   PasswordHash (PasswordHash),
  )
-import qualified Data.UUID as UUID
+import Data.UUID qualified as UUID
 import Dhall (
   Decoder,
   FromDhall,
@@ -20,7 +20,7 @@ import Dhall (
   input,
   toMonadic,
  )
-import qualified Dhall
+import Dhall qualified
 import Dhall.Core (pretty)
 import System.Environment ()
 

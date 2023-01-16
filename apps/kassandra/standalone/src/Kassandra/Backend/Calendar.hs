@@ -7,13 +7,13 @@ module Kassandra.Backend.Calendar (
   saveCache,
 ) where
 
-import qualified Control.Concurrent.STM as STM
-import qualified Data.Aeson as JSON
-import qualified Data.ByteString.Lazy as LBS
+import Control.Concurrent.STM qualified as STM
+import Data.Aeson qualified as JSON
+import Data.ByteString.Lazy qualified as LBS
 import Data.Default (Default (def))
-import qualified Data.Map as Map
-import qualified Data.Set as Set
-import qualified Data.Text as Text
+import Data.Map qualified as Map
+import Data.Set qualified as Set
+import Data.Text qualified as Text
 import Data.Time (ZonedTime (ZonedTime), addDays, getCurrentTime, nominalDay, utc)
 import Data.Time.Zones (
   TZ,
@@ -22,9 +22,9 @@ import Data.Time.Zones (
   localTimeToUTCTZ,
   timeZoneForUTCTime,
  )
-import qualified StmContainers.Map as STM
+import StmContainers.Map qualified as STM
 import Streamly (IsStream, SerialT, async, asyncly, maxThreads)
-import qualified Streamly.Prelude as S
+import Streamly.Prelude qualified as S
 import System.Directory (
   XdgDirectory (XdgCache),
   createDirectoryIfMissing,
@@ -60,7 +60,7 @@ import Text.ICalendar (
 
 import Control.Exception (onException)
 import Data.Aeson (decodeStrict', encode)
-import qualified DeferredFolds.UnfoldlM as UnfoldlM
+import DeferredFolds.UnfoldlM qualified as UnfoldlM
 import Kassandra.Calendar (
   CalendarEvent (..),
   CalendarList (CalendarList),
@@ -70,11 +70,11 @@ import Kassandra.Calendar (
   zonedDay,
  )
 import Kassandra.Debug (Severity (..), log)
-import qualified Streamly.Data.Fold as FL
+import Streamly.Data.Fold qualified as FL
 import Streamly.External.ByteString (fromArray, toArray)
-import qualified Streamly.FileSystem.Handle as FS
+import Streamly.FileSystem.Handle qualified as FS
 import Streamly.Internal.Data.Array.Stream.Foreign (splitOn)
-import qualified Streamly.Internal.FileSystem.File as FSFile
+import Streamly.Internal.FileSystem.File qualified as FSFile
 import Streamly.Memory.Array as Mem (fromList)
 
 dirName :: FilePath

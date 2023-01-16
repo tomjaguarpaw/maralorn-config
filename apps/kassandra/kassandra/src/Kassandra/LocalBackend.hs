@@ -9,7 +9,7 @@ import Kassandra.Api (SocketMessage, SocketRequest)
 import Kassandra.Config (UserConfig)
 import Kassandra.State (ClientSocket)
 import Kassandra.Types (WidgetIO)
-import qualified Reflex as R
+import Reflex qualified as R
 
 data LocalSocketState = LocalError Text | SettingUp deriving (Show)
 makePrismLabels ''LocalSocketState

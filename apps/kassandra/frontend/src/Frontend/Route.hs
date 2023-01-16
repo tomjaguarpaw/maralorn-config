@@ -9,7 +9,7 @@ import Prelude hiding (id, (.))
 import Control.Category
 -}
 
-import qualified Control.Category
+import Control.Category qualified
 import Data.Text (Text)
 
 -- import Data.Functor.Identity

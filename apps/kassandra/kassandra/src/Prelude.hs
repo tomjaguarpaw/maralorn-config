@@ -75,7 +75,7 @@ import Data.Aeson (
   fromJSON,
   toJSON,
  )
-import qualified Data.Aeson as Aeson
+import Data.Aeson qualified as Aeson
 import Data.Generics.Product.Any (HasAny (the))
 import Data.Generics.Product.Fields (HasField' (field'))
 import Data.Generics.Product.Typed (HasType (typed))

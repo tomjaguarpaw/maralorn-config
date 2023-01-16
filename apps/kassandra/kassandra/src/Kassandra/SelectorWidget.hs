@@ -4,8 +4,8 @@ module Kassandra.SelectorWidget (
 
 import Kassandra.Config (NamedBackend (..))
 import Kassandra.Types (Widget)
-import qualified Reflex as R
-import qualified Reflex.Dom as D
+import Reflex qualified as R
+import Reflex.Dom qualified as D
 
 backendSelector ::
   Widget t m => NonEmpty (NamedBackend a) -> m (R.Dynamic t (NamedBackend a))

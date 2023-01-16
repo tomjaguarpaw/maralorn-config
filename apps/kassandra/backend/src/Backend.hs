@@ -5,7 +5,7 @@ module Backend (
 import Backend.Config (BackendConfig, readConfig, users)
 import Control.Concurrent.STM.TQueue (TQueue, newTQueueIO, writeTQueue)
 import Control.Exception (try)
-import qualified Data.Aeson as Aeson
+import Data.Aeson qualified as Aeson
 import Data.Map (lookup)
 import Data.Password.Argon2
 import Frontend.Route (BackendRoute (..), FrontendRoute, fullRouteEncoder)

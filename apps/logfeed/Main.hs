@@ -9,7 +9,7 @@
 
 module Main where
 
-import qualified Data.List.Extra as L
+import Data.List.Extra qualified as L
 import Data.List.NonEmpty (
   groupBy,
   zip,
@@ -19,10 +19,10 @@ import Data.Text (
   intercalate,
   replace,
  )
-import qualified Data.Text as Text
-import qualified Data.Time.Calendar as T
-import qualified Data.Time.Clock as T
-import qualified Data.Time.Format as T
+import Data.Text qualified as Text
+import Data.Time.Calendar qualified as T
+import Data.Time.Clock qualified as T
+import Data.Time.Format qualified as T
 import Relude hiding (
   intercalate,
   zip,
@@ -31,10 +31,10 @@ import System.Environment ()
 import System.FilePattern.Directory (getDirectoryFiles)
 import Text.Atom.Feed
 import Text.Atom.Feed.Export (textFeed)
-import qualified Text.Megaparsec as MP
-import qualified Text.Megaparsec.Char as MP
-import qualified Text.Megaparsec.Char as MPC
-import qualified Text.Megaparsec.Char.Lexer as MP
+import Text.Megaparsec qualified as MP
+import Text.Megaparsec.Char qualified as MP
+import Text.Megaparsec.Char qualified as MPC
+import Text.Megaparsec.Char.Lexer qualified as MP
 
 -- TODO: use Text instead of linked lists of chars
 

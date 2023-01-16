@@ -14,7 +14,7 @@ import Kassandra.RemoteBackendWidget (
   remoteBackendWidget,
  )
 import Kassandra.Types
-import qualified Reflex.Dom as D
+import Reflex.Dom qualified as D
 import Relude.Extra.Newtype
 
 -- This runs in a monad that can be run on the client or the server.

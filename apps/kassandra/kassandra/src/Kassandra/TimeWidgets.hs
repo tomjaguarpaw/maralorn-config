@@ -13,8 +13,8 @@ import Kassandra.Types (
   Widget,
   getTime,
  )
-import qualified Reflex as R
-import qualified Reflex.Dom as D
+import Reflex qualified as R
+import Reflex.Dom qualified as D
 
 myFormatTime :: ZonedTime -> Text
 myFormatTime = toText . formatTime defaultTimeLocale "%Y-%m-%d %H:%M"

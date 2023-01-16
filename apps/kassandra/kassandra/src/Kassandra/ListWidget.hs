@@ -3,7 +3,7 @@ module Kassandra.ListWidget (
   listWidget,
 ) where
 
-import qualified Data.HashMap.Strict as HashMap
+import Data.HashMap.Strict qualified as HashMap
 import Kassandra.Config (DefinitionElement (TagList))
 import Kassandra.ListElementWidget (AdhocContext (NoContext), definitionElementWidget)
 import Kassandra.Types (
@@ -12,8 +12,8 @@ import Kassandra.Types (
   Widget,
   getTasks,
  )
-import qualified Reflex as R
-import qualified Reflex.Dom as D
+import Reflex qualified as R
+import Reflex.Dom qualified as D
 
 listsWidget :: (StandardWidget t m r e) => m ()
 listsWidget = do

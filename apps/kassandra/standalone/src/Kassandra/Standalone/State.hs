@@ -7,11 +7,11 @@ module Kassandra.Standalone.State (
 import Control.Concurrent.STM (TQueue, readTQueue)
 import Control.Concurrent.STM.TVar (stateTVar)
 import Control.Monad.STM (retry)
-import qualified Data.Aeson as Aeson
-import qualified Data.Map as Map
-import qualified Data.Sequence as Seq
-import qualified Data.Sequence.NonEmpty as NESeq
-import qualified Network.Simple.TCP as Net
+import Data.Aeson qualified as Aeson
+import Data.Map qualified as Map
+import Data.Sequence qualified as Seq
+import Data.Sequence.NonEmpty qualified as NESeq
+import Network.Simple.TCP qualified as Net
 import Say (say, sayErr)
 import Streamly (
   SerialT,
@@ -21,7 +21,7 @@ import Streamly (
   parallely,
   serial,
  )
-import qualified Streamly.Prelude as S
+import Streamly.Prelude qualified as S
 import Taskwarrior.IO (getTasks, saveTasks)
 
 import Kassandra.Api (

@@ -10,7 +10,7 @@ import Kassandra.Config (
 import Kassandra.LocalBackend (LocalBackendRequest, localClientSocket)
 import Kassandra.State (StateProvider, makeStateProvider)
 import Kassandra.Types (WidgetIO)
-import qualified Reflex as R
+import Reflex qualified as R
 
 localBackendWidget ::
   WidgetIO t m =>

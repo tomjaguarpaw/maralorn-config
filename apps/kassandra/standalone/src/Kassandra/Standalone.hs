@@ -23,8 +23,8 @@ import Kassandra.Standalone.State (localBackendProvider)
 import Kassandra.State (StateProvider)
 import Kassandra.Types (WidgetJSM)
 import Kassandra.Util (defDynDyn)
-import qualified Reflex as R
-import qualified Reflex.Dom as D
+import Reflex qualified as R
+import Reflex.Dom qualified as D
 import Relude.Extra.Newtype (wrap)
 import Say (say)
 import System.Exit (ExitCode (ExitFailure))

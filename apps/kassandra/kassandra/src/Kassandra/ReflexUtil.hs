@@ -8,13 +8,13 @@ module Kassandra.ReflexUtil (
   keyDynamic,
 ) where
 
-import qualified Data.Map as Map
-import qualified Data.Patch.Map as Patch
+import Data.Map qualified as Map
+import Data.Patch.Map qualified as Patch
 
 -- import qualified Data.Patch.MapWithMove as Patch
-import qualified Data.Sequence as Seq
-import qualified Reflex as R
-import qualified Reflex.Dom as D
+import Data.Sequence qualified as Seq
+import Reflex qualified as R
+import Reflex.Dom qualified as D
 
 {- | Renders a list of widgets depending on a Dynamic list of inputs. This will
  call the widget constructor once per value in the list.

@@ -70,6 +70,7 @@ in {
       {-# LANGUAGE TupleSections #-}
       {-# LANGUAGE PartialTypeSignatures #-}
       {-# LANGUAGE BlockArguments #-}
+      {-# LANGUAGE ImportQualifiedPost #-}
 
       import Shh
       import Relude

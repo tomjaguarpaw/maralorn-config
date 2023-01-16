@@ -2,8 +2,8 @@
 
 module Kassandra.AgendaWidget (agendaWidget) where
 
-import qualified Data.Sequence as Seq
-import qualified Data.Sequence.NonEmpty as NESeq
+import Data.Sequence qualified as Seq
+import Data.Sequence.NonEmpty qualified as NESeq
 import Kassandra.BaseWidgets (br, button, icon)
 import Kassandra.Calendar (
   CalendarEvent (
@@ -26,8 +26,8 @@ import Kassandra.ListElementWidget (AdhocContext (..), definitionElementWidget, 
 import Kassandra.ReflexUtil (listWithGaps)
 import Kassandra.TextEditWidget (createTextWidget)
 import Kassandra.Types (StandardWidget, Widget, getAppState)
-import qualified Reflex as R
-import qualified Reflex.Dom as D
+import Reflex qualified as R
+import Reflex.Dom qualified as D
 
 agendaWidget :: StandardWidget t m r e => m ()
 agendaWidget = do

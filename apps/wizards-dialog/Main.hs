@@ -8,10 +8,10 @@ import Relude
 import Witch
 
 import Data.Aeson (FromJSON (..), Value (Array, String), withObject)
-import qualified Data.Aeson.Key as Key
-import qualified Data.Aeson.KeyMap as Aeson
-import qualified Data.Foldable as Foldable
-import qualified Data.Text as Text
+import Data.Aeson.Key qualified as Key
+import Data.Aeson.KeyMap qualified as Aeson
+import Data.Foldable qualified as Foldable
+import Data.Text qualified as Text
 import Data.Yaml (decodeFileEither)
 
 import System.Posix.Daemon (Redirection (DevNull), runDetached)

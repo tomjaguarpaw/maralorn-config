@@ -26,8 +26,8 @@ import Kassandra.State (
  )
 import Kassandra.Types (WidgetJSM)
 import Language.Javascript.JSaddle (liftJSM)
-import qualified Reflex as R
-import qualified Reflex.Dom as D
+import Reflex qualified as R
+import Reflex.Dom qualified as D
 import Relude.Extra.Newtype (un, wrap)
 import System.Process (readCreateProcess, shell)
 

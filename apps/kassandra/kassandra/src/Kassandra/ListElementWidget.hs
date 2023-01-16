@@ -9,9 +9,9 @@ module Kassandra.ListElementWidget (
   selectWidget,
 ) where
 
-import qualified Data.HashMap.Strict as HashMap
-import qualified Data.Sequence as Seq
-import qualified Data.Set as Set
+import Data.HashMap.Strict qualified as HashMap
+import Data.Sequence qualified as Seq
+import Data.Set qualified as Set
 import Kassandra.BaseWidgets (br, button, icon)
 import Kassandra.Calendar (CalendarList, completed)
 import Kassandra.Config (
@@ -40,8 +40,8 @@ import Kassandra.TaskWidget (
 import Kassandra.TextEditWidget (createTextWidget)
 import Kassandra.Types (AppStateChange, DataChange (SetEventList), StandardWidget, TaskInfos, TaskState, getAppState, getSelectState, getTasks)
 import Kassandra.Util (tellNewTask, tellSingleton)
-import qualified Reflex as R
-import qualified Reflex.Dom as D
+import Reflex qualified as R
+import Reflex.Dom qualified as D
 
 data AdhocContext = NoContext | AgendaEvent Text CalendarList | AgendaList Text (Set Text)
 

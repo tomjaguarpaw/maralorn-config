@@ -28,8 +28,8 @@ import Kassandra.Util (
   lookupTask,
   tellSingleton,
  )
-import qualified Reflex as R
-import qualified Reflex.Dom as D
+import Reflex qualified as R
+import Reflex.Dom qualified as D
 
 tellSelected :: (MonadIO m, WriteApp t m e) => R.Event t (Seq DefinitionElement) -> m ()
 tellSelected = tellSingleton . fmap (_Typed @AppStateChange % _Typed @SelectState #) <=< logRShow Info

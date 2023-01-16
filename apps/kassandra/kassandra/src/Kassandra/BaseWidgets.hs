@@ -6,8 +6,8 @@ module Kassandra.BaseWidgets (
 ) where
 
 import Kassandra.Types (Widget)
-import qualified Reflex as R
-import qualified Reflex.Dom as D
+import Reflex qualified as R
+import Reflex.Dom qualified as D
 import Relude.Extra.Bifunctor (secondF)
 
 br :: D.DomBuilder t m => m ()

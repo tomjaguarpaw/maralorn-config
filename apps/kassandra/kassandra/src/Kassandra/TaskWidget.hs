@@ -4,11 +4,11 @@ module Kassandra.TaskWidget (
   uuidWidget,
 ) where
 
-import qualified Data.HashSet as HashSet
-import qualified Data.Sequence as Seq
-import qualified Data.Sequence.NonEmpty as NESeq
-import qualified Data.Set as Set
-import qualified Data.Text as Text
+import Data.HashSet qualified as HashSet
+import Data.Sequence qualified as Seq
+import Data.Sequence.NonEmpty qualified as NESeq
+import Data.Set qualified as Set
+import Data.Text qualified as Text
 import Kassandra.BaseWidgets (
   br,
   button,
@@ -51,10 +51,10 @@ import Kassandra.Types (
   getTime,
  )
 import Kassandra.Util (lookupTaskM, lookupTasksDynM, lookupTasksM, stillTodo, tellNewTask, tellTask, tellToggle)
-import qualified Reflex as R
+import Reflex qualified as R
 import Reflex.Dom ((=:))
-import qualified Reflex.Dom as D
-import qualified Taskwarrior.Status as Status
+import Reflex.Dom qualified as D
+import Taskwarrior.Status qualified as Status
 import Taskwarrior.UDA (UDA)
 
 type TaskWidget t m r e = (TaskTreeWidget t m r e, HaveTask m r)

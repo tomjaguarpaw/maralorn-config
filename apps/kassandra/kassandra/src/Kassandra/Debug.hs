@@ -20,7 +20,7 @@ import GHC.Stack (
 import Reflex as R
 import System.IO.Unsafe (unsafePerformIO)
 
-import qualified Debug.Trace as Trace
+import Debug.Trace qualified as Trace
 import Relude.Extra.Bifunctor
 import Relude.Extra.Enum
 import Say

@@ -2,33 +2,33 @@
 
 module Main (main) where
 
-import qualified Control.Exception as Exception
+import Control.Exception qualified as Exception
 import Control.Monad.Catch (MonadMask)
-import qualified Control.Monad.Catch as MonadCatch
-import qualified Control.Monad.Except as Except
-import qualified Control.Monad.Logger as MonadLogger
-import qualified Control.Monad.Trans.Resource as ResourceT
+import Control.Monad.Catch qualified as MonadCatch
+import Control.Monad.Except qualified as Except
+import Control.Monad.Logger qualified as MonadLogger
+import Control.Monad.Trans.Resource qualified as ResourceT
 import Data.GraphQL (get)
-import qualified Data.GraphQL as GraphQL
-import qualified Data.List.NonEmpty as NonEmpty
-import qualified Data.Map.Strict as Map
-import qualified Data.Text as Text
-import qualified Data.Time as Time
+import Data.GraphQL qualified as GraphQL
+import Data.List.NonEmpty qualified as NonEmpty
+import Data.Map.Strict qualified as Map
+import Data.Text qualified as Text
+import Data.Time qualified as Time
 import Data.Yaml (FromJSON)
-import qualified Data.Yaml as Yaml
+import Data.Yaml qualified as Yaml
 import Database.Esqueleto.Experimental (notIn, (&&.), (<.), (==.), (^.))
-import qualified Database.Esqueleto.Experimental as SQL
-import qualified Database.Persist as Persist
-import qualified Database.Persist.Sqlite as Persist.Sqlite
-import qualified Database.Persist.TH as Persist
-import qualified Network.HTTP.Client as HTTP
-import qualified Network.Matrix.Client as Matrix
-import qualified NixpkgsBot.GraphQL.API as GraphQL.API
+import Database.Esqueleto.Experimental qualified as SQL
+import Database.Persist qualified as Persist
+import Database.Persist.Sqlite qualified as Persist.Sqlite
+import Database.Persist.TH qualified as Persist
+import Network.HTTP.Client qualified as HTTP
+import Network.Matrix.Client qualified as Matrix
+import NixpkgsBot.GraphQL.API qualified as GraphQL.API
 import Relude hiding (get)
-import qualified System.Clock as Clock
-import qualified System.Environment as System
-import qualified System.Process.Typed as Process
-import qualified System.Random as Random
+import System.Clock qualified as Clock
+import System.Environment qualified as System
+import System.Process.Typed qualified as Process
+import System.Random qualified as Random
 
 data Repo = MkRepo
   { localPath :: FilePath
@@ -517,8 +517,8 @@ getCommands roomId events = do
     session <- getEnv matrixSession
     members <- unwrapMatrixError $ Matrix.getRoomMembers session roomId
     let isQuery = Map.size members <= 2
-    forM (toList messages) \(author, message) -> do
-      let (cmd, args) = second (Text.drop 1) $ Text.breakOn " " $ Text.strip message
+    join <$> forM (toList messages) \(author, message) -> forM (Text.lines message) \line -> do
+      let (cmd, args) = second (Text.drop 1) $ Text.breakOn " " $ Text.strip line
       pure $ MkCommand{command = Text.toLower cmd, args, author, isQuery, roomId}
  where
   getCommand Matrix.RoomEvent{Matrix.reSender = Matrix.Author author, Matrix.reContent = Matrix.EventRoomMessage (Matrix.RoomMessageText (Matrix.MessageText{Matrix.mtBody, Matrix.mtType = Matrix.TextType}))} = Just (author, mtBody)
@@ -697,7 +697,7 @@ helpMessage = do
       , m "I will inform you, when one of the pull requests you subscribed to reaches one of these branches: " <> branchList
       , mempty
       , m "I have been programmed and am being hosted by " <> mention "@maralorn:maralorn.de" <> m ". Feel free to reach out to him, if you have any problems or suggestions."
-      , m "My code is written in Haskell, is open source under the AGPL license and can be found at " <> link "https://git.maralorn.de/nixpkgs-bot" "git.maralorn.de/nixpkgs-bot" <> m "."
+      , m "My code is written in Haskell, is open source under the AGPL license and can be found at " <> link "https://git.maralorn.de/nixos-config/tree/apps/nixpkgs-bot" "git.maralorn.de/nixos-config/tree/apps/nixpkgs-bot" <> m "."
       ]
 
 whenTimeIsUp :: (Environment -> IORef Clock.TimeSpec) -> Int64 -> App () -> App ()

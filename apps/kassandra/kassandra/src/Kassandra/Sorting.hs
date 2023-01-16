@@ -5,14 +5,14 @@ module Kassandra.Sorting (
   SortMode (SortModePartof, SortModeTag),
 ) where
 
-import qualified Data.Aeson as Aeson
+import Data.Aeson qualified as Aeson
 import Data.Scientific (toRealFloat)
-import qualified Data.Sequence as Seq
+import Data.Sequence qualified as Seq
 import Data.Set (member)
 import Kassandra.Types (TaskInfos)
-import qualified Reflex as R
+import Reflex qualified as R
 import Relude.Extra.Foldable1 (maximum1)
-import qualified Taskwarrior.Task as Task
+import Taskwarrior.Task qualified as Task
 
 data SortMode = SortModePartof UUID | SortModeTag Task.Tag
   deriving stock (Show, Eq, Ord, Generic)

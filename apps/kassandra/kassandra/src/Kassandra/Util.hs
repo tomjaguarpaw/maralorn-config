@@ -30,8 +30,8 @@ import Kassandra.Types (
   getExpandedTasks,
   getTasks,
  )
-import qualified Reflex as R
-import qualified Reflex.Dom as D
+import Reflex qualified as R
+import Reflex.Dom qualified as D
 
 stillTodo :: TaskInfos -> Bool
 stillTodo = has (#status % #_Pending)

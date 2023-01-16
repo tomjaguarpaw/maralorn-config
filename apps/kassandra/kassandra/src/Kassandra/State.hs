@@ -5,8 +5,8 @@ module Kassandra.State (
   DataState (..),
 ) where
 
-import qualified Data.HashMap.Strict as HashMap
-import qualified Data.Sequence as Seq
+import Data.HashMap.Strict qualified as HashMap
+import Data.Sequence qualified as Seq
 import Kassandra.Api (SocketMessage (..), SocketRequest (..))
 import Kassandra.Calendar
 import Kassandra.Config (UIConfig)
@@ -16,8 +16,8 @@ import Kassandra.Types (
   TaskState,
   WidgetIO,
  )
-import qualified Reflex as R
-import qualified Reflex.Dom as D
+import Reflex qualified as R
+import Reflex.Dom qualified as D
 import Taskwarrior.IO (createTask)
 
 getParents :: HashMap UUID Task -> UUID -> Seq UUID

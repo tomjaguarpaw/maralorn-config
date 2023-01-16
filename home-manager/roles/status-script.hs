@@ -7,14 +7,14 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
-import qualified Control.Concurrent
-import qualified Control.Concurrent as Concurrent
-import qualified Control.Concurrent.Async as Async
-import qualified Control.Concurrent.STM as STM
+import Control.Concurrent qualified
+import Control.Concurrent qualified as Concurrent
+import Control.Concurrent.Async qualified as Async
+import Control.Concurrent.STM qualified as STM
 import Control.Exception (catch, onException)
-import qualified Data.ByteString.Lazy as LBS
+import Data.ByteString.Lazy qualified as LBS
 import Data.String.Interpolate (i)
-import qualified Data.Text as Text
+import Data.Text qualified as Text
 import Relude
 import Say (sayErr)
 import Shh (ExecReference (Absolute), captureTrim, exe, ignoreFailure, load, (|>))

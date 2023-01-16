@@ -4,10 +4,10 @@ module Kassandra.MainWidget (
   mainWidget,
 ) where
 
-import qualified Data.HashMap.Strict as HashMap
-import qualified Data.Sequence as Seq
-import qualified Data.Sequence.NonEmpty as NESeq
-import qualified Data.Set as Set
+import Data.HashMap.Strict qualified as HashMap
+import Data.Sequence qualified as Seq
+import Data.Sequence.NonEmpty qualified as NESeq
+import Data.Set qualified as Set
 import Kassandra.AgendaWidget (agendaWidget)
 import Kassandra.BaseWidgets (br, button)
 import Kassandra.Calendar (CalendarEvent)
@@ -37,8 +37,8 @@ import Kassandra.Types (
   getTime,
  )
 import Kassandra.Util (lookupTasks, stillTodo, tellNewTask)
-import qualified Reflex as R
-import qualified Reflex.Dom as D
+import Reflex qualified as R
+import Reflex.Dom qualified as D
 
 mainWidget :: WidgetIO t m => StateProvider t m -> m ()
 mainWidget stateProvider = do
