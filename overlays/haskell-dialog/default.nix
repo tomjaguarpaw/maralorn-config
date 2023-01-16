@@ -1,3 +1,3 @@
 _: prev: {
-  wizards-dialog = prev.unstableHaskellPackages.callCabal2nix "wizards-dialog" prev.sources.wizards-dialog {};
+  wizards-dialog = prev.haskellPackages.callCabal2nix "wizards-dialog" ../apps/wizard-dialog {};
 }

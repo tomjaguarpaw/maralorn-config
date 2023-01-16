@@ -1,3 +1,3 @@
 final: prev: {
-  logfeed = prev.haskellPackages.callCabal2nix "logfeed" prev.sources.logfeed {};
+  logfeed = prev.haskellPackages.callCabal2nix "logfeed" ../apps/logfeed {};
 }
