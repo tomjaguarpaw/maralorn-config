@@ -6,13 +6,8 @@ cabal-version:      >=1.10
 name:               logfeed
 version:            0.1.0.0
 
--- synopsis:
--- description:
--- bug-reports:
--- license:
-license-file:       LICENSE
-author:             Malte Brandy
-maintainer:         malte.brandy@maralorn.de
+author:             maralorn
+maintainer:         mail@maralorn.de
 
 -- copyright:
 -- category:
