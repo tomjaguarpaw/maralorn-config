@@ -1,4 +1,4 @@
-{pkgs ? import (import nix/sources.nix).nixpkgs {}}: let
+{pkgs ? import (import ../../nix/sources.nix).nixos-unstable {}}: let
   inherit (pkgs) haskellPackages;
 in
   haskellPackages.shellFor {

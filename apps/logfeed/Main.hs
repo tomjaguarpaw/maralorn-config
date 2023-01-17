@@ -1,6 +1,8 @@
 {-# LANGUAGE ExtendedDefaultRules #-}
+{-# LANGUAGE GHC2021 #-}
 {-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -143,15 +145,27 @@ yesterday = T.addDays (negate 1) . today
 timestamp :: T.UTCTime -> Text
 timestamp = toText . T.formatTime T.defaultTimeLocale "%Y-%m-%d %H:%M"
 
+blockList =
+  [ "#haskell"
+  , "#general"
+  , "#home manager"
+  , "#hledger"
+  , "#nix _ nixos"
+  , "#nix _ nixpkgs _ nixos dev"
+  , "#nix offtopic"
+  , "#buchhaltung"
+  , "#krebs"
+  ]
+
 logToFeedEntry :: T.UTCTime -> Log -> Maybe Entry
 logToFeedEntry now =
-  \Log{logchannel, logserver, messages = filter msgFilter -> messages} ->
-    if not (null messages)
+  \Log{logchannel, logserver, messages = reverse . takeWhile (not . is_me) . reverse . filter msgFilter -> messages} ->
+    if not (null messages || logchannel `elem` blockList) && Text.isPrefixOf "#" logchannel
       then
         Just
           ( nullEntry
               [i|#{logserver}-#{logchannel}-#{timestamp now}|]
-              (TextString [i|#{logchannel} - (#{logserver})|])
+              (TextString logchannel)
               (timestamp now)
           )
             { entryContent = Just $ HTMLContent $ printHTML messages
@@ -161,6 +175,7 @@ logToFeedEntry now =
   cutoff =
     toText $ T.formatTime T.defaultTimeLocale "%Y-%m-%d 19:50" $ yesterday now
   msgFilter msg = [i|#{wlDate msg} #{wlTime msg}|] >= cutoff
+  is_me weechat_line = Text.isInfixOf "maralorn" (weechat_line.wlNick)
 
 data Log = Log
   { logchannel :: Text
