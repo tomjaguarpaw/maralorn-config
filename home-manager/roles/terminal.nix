@@ -23,7 +23,7 @@
       window_margin_width = 0;
       strip_trailing_spaces = "always";
 
-      font_size = "10.5";
+      font_size = "8";
 
       cursor = "#1e66f5";
     };
