@@ -11,9 +11,7 @@
     "https://ci.maralorn.de/jobs/${name}";
   badges = lib.concatStringsSep "\\n" [
     (heading "ci.maralorn.de" "https://ci.maralorn.de")
-    (job "kassandra")
     (job "test-config")
-    (job "logfeed")
     (job "blog")
 
     (heading "haskell-taskwarrior" "https://hackage.haskell.org/package/taskwarrior")
