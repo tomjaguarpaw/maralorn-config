@@ -35,13 +35,14 @@ in {
       '';
       after = pkgs.writeShellScript "after-all-jobs-script" ''
         LAMINAR_URL="https://ci.maralorn.de"
-        exec 100>${stateDir}/matrix-lock
-        ${pkgs.utillinux}/bin/flock -w 10 100
-        trap 'rm -f ${stateDir}/matrix-lock' EXIT
-        ${pkgs.matrix-commander}/bin/matrix-commander -c ${stateDir}/matrix-credentials.json -s ${stateDir}/matrix-secrets-store <<EOF
+        read -r -d "" message <<EOF
         $JOB #$RUN: $BRANCH$DERIVATION $RESULT https://ci.m-0.eu/jobs/$JOB/$RUN
         $(if [[ $RESULT == "failed" ]]; then echo -e 'maralorn'; ${pkgs.curl}/bin/curl -m5 -s $LAMINAR_URL/log/$JOB/$RUN | tail; fi)
         EOF
+        exec 100>${stateDir}/matrix-lock
+        ${pkgs.utillinux}/bin/flock -w 10 100
+        trap 'rm -f ${stateDir}/matrix-lock' EXIT
+        ${pkgs.matrix-commander}/bin/matrix-commander -c ${stateDir}/matrix-credentials.json -s ${stateDir}/matrix-secrets-store -m "$message"
         echo "Result was: $RESULT"
       '';
       contexts = {
