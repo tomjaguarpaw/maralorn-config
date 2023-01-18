@@ -27,7 +27,7 @@ in {
       };
     };
   };
-  imports = [./kassandra.nix ./test-config.nix ./projects.nix];
+  imports = [./test-config.nix ./projects.nix];
   config = {
     services.laminar.cfgFiles = {
       env = builtins.toFile "laminar-env" ''
