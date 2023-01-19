@@ -152,23 +152,26 @@ in {
     lib.mkIf (!pkgs.withSecrets) {text = "echo No secrets loaded!; exit 1;";};
 
   nix = {
-    settings.substituters = lib.mkAfter (
-      pkgs.privateValue [] "binary-caches"
-      # ++ (
-      #   if config.networking.hostName != "hera" then [ "ssh-ng://nix-ssh@hera.m-0.eu?trusted=true&priority=100" ] else [ ]
-      # )
-    );
-    settings.trusted-public-keys = [
-      "nixbuild.net/maralorn-1:cpqv21sJgRL+ROaKY1Gr0k7AKolAKaP3S3iemGxK/30="
-    ];
+    settings = {
+      substituters = lib.mkAfter (
+        pkgs.privateValue [] "binary-caches"
+        # ++ (
+        #   if config.networking.hostName != "hera" then [ "ssh-ng://nix-ssh@hera.m-0.eu?trusted=true&priority=100" ] else [ ]
+        # )
+      );
+      trusted-public-keys = [
+        "nixbuild.net/maralorn-1:cpqv21sJgRL+ROaKY1Gr0k7AKolAKaP3S3iemGxK/30="
+      ];
+      trusted-users = ["maralorn" "laminar"];
+    };
     nixPath = ["/etc/nix-path"];
-    settings.trusted-users = ["maralorn" "laminar"];
     buildMachines = pkgs.privateValue [] "remote-builders";
     extraOptions = ''
       experimental-features = nix-command flakes
       fallback = true
       auto-optimise-store = true
       builders-use-substitutes = true
+      allow-import-from-derivation = true
     '';
     optimise = {
       dates = [];

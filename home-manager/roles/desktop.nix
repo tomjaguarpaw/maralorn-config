@@ -69,7 +69,7 @@ in {
         xwayland
         xdg_utils
         libnotify
-        kassandra
+        kassandra-standalone
         shotcut
         audacity
         paprefs

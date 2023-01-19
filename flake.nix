@@ -1,7 +1,11 @@
 {
   description = "maralorns configuration";
+  nixConfig = {
+    allow-import-from-derivation = true;
+  };
 
   inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     pre-commit-hooks-nix = {
       url = "github:cachix/pre-commit-hooks.nix";
@@ -25,11 +29,17 @@
         self',
         pkgs,
         config,
+        lib,
         ...
-      }: {
-        devShells.default = pkgs.mkShell {
+      }: let
+        packages = import ./packages {inherit pkgs;};
+      in {
+        devShells.default = packages.shell {
           shellHook = config.pre-commit.installationScript;
         };
+        inherit (packages) packages;
+        legacyPackages = {inherit (packages) haskellPackagesOverlay;};
+
         pre-commit = {
           check.enable = true;
           settings = {

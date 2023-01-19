@@ -1,5 +1,7 @@
 /configuration.nix
-/.pre-commit-config.yaml
-/result
-/result-?
-/.direnv
+**/flake.lock
+!/flake.lock
+.pre-commit-config.yaml
+result
+result-?
+.direnv
