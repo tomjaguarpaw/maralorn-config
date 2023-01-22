@@ -89,7 +89,15 @@ in {
       };
     };
   };
+
   services = {
+    unbound = {
+      enable = true;
+      settings.server = {
+        access-control = ["127.0.0.0/8 allow" "::1/128 allow" "fdc0:7::/64 allow"];
+        interface = ["::1" "127.0.0.1" hosts.vpn.hera];
+      };
+    };
     ndppd = {
       enable = true;
       configFile = pkgs.writeText "ndppd.conf" ''

@@ -56,9 +56,6 @@ in {
     }
   ];
 
-  programs = {
-    java.enable = true;
-  };
   systemd.services =
     {
       pg_backup = {
