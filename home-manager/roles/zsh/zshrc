@@ -52,7 +52,7 @@ alias s='sudo -A systemctl'
 alias g='lazygit'
 alias u='systemctl --user'
 alias m=man
-alias h=hx
+alias h='f() { if [[ "$1" == "" ]]; then hx .; else hx "$@"; fi}; f'
 alias vim="echo use h"
 alias r="NIX_AUTO_RUN=1"
 
