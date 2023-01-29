@@ -535,21 +535,21 @@ in {
             unit_of_measurement = "°C";
             min = "16";
             max = "23";
-            step = "0.25";
+            step = "0.5";
           };
           target_temperature_wohnzimmer = {
             name = "Zieltemperatur Wohnzimmer";
             unit_of_measurement = "°C";
             min = "16";
             max = "23";
-            step = "0.25";
+            step = "0.5";
           };
           target_temperature_kueche = {
             name = "Zieltemperatur Küche";
             unit_of_measurement = "°C";
             min = "16";
             max = "23";
-            step = "0.25";
+            step = "0.5";
           };
         };
         system_health = {};
