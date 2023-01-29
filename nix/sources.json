@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "0977bc1dd34d6ebf0eea045b121ed86dce5e2e88",
-        "sha256": "0016znbdb9wl3czgfc9sbgn9kpmqq3bjfsq9mjrhgc0gks8q6jgi",
+        "rev": "15865e7caf117a9979d27a5b5a1c41b62b0b01a4",
+        "sha256": "1hgnsbk75bdl5dp98apiad6dsj1c1q4wp5yrzv4pwn2xhkxfs511",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/0977bc1dd34d6ebf0eea045b121ed86dce5e2e88.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/15865e7caf117a9979d27a5b5a1c41b62b0b01a4.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hexa-nur-packages": {
@@ -65,10 +65,10 @@
         "homepage": null,
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "cc4bb87f5457ba06af9ae57ee4328a49ce674b1b",
-        "sha256": "072q50x5p06qjf0cvz68gcrbkpv94bdl55h71j0rz6bgfhaqmiwy",
+        "rev": "ce20e9ebe1903ea2ba1ab006ec63093020c761cb",
+        "sha256": "01wvmlvv5qh3kg9v09y256jpj84hwb0y0klsxl1vhdcz3vd6clvq",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/cc4bb87f5457ba06af9ae57ee4328a49ce674b1b.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/ce20e9ebe1903ea2ba1ab006ec63093020c761cb.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-unstable": {
