@@ -5,10 +5,10 @@
         "homepage": "https://emanote.srid.ca",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "15865e7caf117a9979d27a5b5a1c41b62b0b01a4",
-        "sha256": "1hgnsbk75bdl5dp98apiad6dsj1c1q4wp5yrzv4pwn2xhkxfs511",
+        "rev": "1a24258057e18c3b03b2465a33f4f56aca9d48c0",
+        "sha256": "124xgdj0faflrggj3wp7za2bnld57ilbn50izib3rg3mbv1jh9j8",
         "type": "tarball",
-        "url": "https://github.com/srid/emanote/archive/15865e7caf117a9979d27a5b5a1c41b62b0b01a4.tar.gz",
+        "url": "https://github.com/srid/emanote/archive/1a24258057e18c3b03b2465a33f4f56aca9d48c0.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hexa-nur-packages": {
