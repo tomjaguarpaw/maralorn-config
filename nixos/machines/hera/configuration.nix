@@ -28,6 +28,7 @@ in {
     ../../roles/firefox-sync.nix
     ../../roles/goatcounter.nix
     ../../roles/nixpkgs-bot.nix
+    ../../roles/miniflux.nix
     (import ../../roles/monitoring/folder-size-exporter.nix {
       folders = [
         "/"

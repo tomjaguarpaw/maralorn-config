@@ -7,11 +7,10 @@
     enable = true;
     adminCredentialsFile = pkgs.privatePath "miniflux-admin-credentials";
     config = {
-      DEBUG = true;
-      LOG_DATE_TIME = true;
-      SCHEDULER_SERVICE = false;
-      BATCH_SIZE = 1000;
-      LISTEN_ADDRESS = "${config.m-0.hosts.vpn.hera}:8100";
+      DEBUG = "1";
+      SCHEDULER_SERVICE = "0";
+      BATCH_SIZE = "1000";
+      LISTEN_ADDR = "[${config.m-0.hosts.vpn.hera}]:8100";
     };
   };
 }
