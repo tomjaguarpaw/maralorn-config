@@ -7,8 +7,8 @@
     enable = true;
     adminCredentialsFile = pkgs.privatePath "miniflux-admin-credentials";
     config = {
-      SCHEDULER_SERVICE = "0";
-      BATCH_SIZE = "1000";
+      POLLING_FREQUENCY = "525600"; # We don‘t want polling so we set this to a year.
+      BATCH_SIZE = "1000"; # To make sure that all feeds can get refreshed. Default is 100, which is probably fine.
       LISTEN_ADDR = "[${config.m-0.hosts.vpn.hera}]:8100";
     };
   };
