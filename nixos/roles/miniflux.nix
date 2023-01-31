@@ -34,13 +34,13 @@ in {
       };
     };
     refresh-miniflux = {
-      script = "${pkgs.curl}/bin/curl -X PUT -H \"X-AUTH-TOKEN: $(cat $CREDENTIALS_DIRECTORY/miniflux_token)\" hera.vpn.m-0.eu:8100/v1/feeds/refresh";
+      script = "${pkgs.curl}/bin/curl -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header hera.vpn.m-0.eu:8100/v1/feeds/refresh";
       after = ["mastodon-digest.service"];
       requires = ["mastodon-digest.service"];
       startAt = "20:00:00";
       serviceConfig = {
         Type = "oneshot";
-        LoadCredential = ["miniflux_token:${pkgs.privatePath "miniflux-refresh-token"}"];
+        LoadCredential = ["auth-header:${pkgs.privatePath "miniflux-refresh-auth-header"}"];
       };
     };
   };
