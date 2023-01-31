@@ -1,16 +1,4 @@
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE ImportQualifiedPost #-}
-{-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE NamedFieldPuns #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE PartialTypeSignatures #-}
-{-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TupleSections #-}
-{-# LANGUAGE ViewPatterns #-}
+module Mail (main) where
 
 import Control.Error (
   throwE,
@@ -28,7 +16,7 @@ import Data.MIME qualified as MIME
 import Data.MIME.Charset
 import Data.Map qualified as Map
 import Data.String.Interpolate
-import Data.Text qualified as T
+import Data.Text qualified as Text
 import Data.Time
 import Notmuch qualified
 import Options.Applicative qualified as O
@@ -38,7 +26,7 @@ import Say
 import Text.Atom.Feed
 import Text.Atom.Feed.Export (textFeed)
 import Text.HTML.TagSoup
-import Prelude ()
+import Witch
 
 data Options = Options
   { dbPath :: String
@@ -82,8 +70,8 @@ main = do
         O.fullDesc
   res <- runExceptT do
     (thrds, msgs) <- withExceptT
-      ( \(er :: Notmuch.Status) ->
-          [i|Failed to read notmuch data.\ndb path: #{dbPath}\nquery: Folder #{folder}\nerror: #{er}|]
+      ( \(notmuch_status :: Notmuch.Status) ->
+          [i|Failed to read notmuch data.\ndb path: #{dbPath}\nquery: Folder #{folder}\nerror: #{notmuch_status}|]
       )
       do
         db <- Notmuch.databaseOpenReadOnly dbPath
@@ -98,8 +86,7 @@ main = do
             fst
             (msgsByThread <> thrdsByThread)
     now <- lift getCurrentTime
-    let entries =
-          threadToEntry <$> sortOn (date :: Thread -> UTCTime) (rights result)
+    let entries = threadToEntry <$> sortOn (.date) (rights result)
         feed =
           nullFeed
             [i|read-later-e-mails-#{timestamp now}|]
@@ -109,15 +96,11 @@ main = do
     feedText <-
       tryJust [i|Failed to generate feed.|] . textFeed $
         feed
-          { feedEntries =
-              (if null errors then id else (errorsToEntry now errors :))
-                entries
+          { feedEntries = (if null errors then id else (errorsToEntry now errors :)) entries
           }
     say $ toStrict feedText
   either
-    ( \(er :: Text) ->
-        sayErr [i|mail2feed failed to export mails to rss.\n#{er}|]
-    )
+    (\(er :: Text) -> sayErr [i|mail2feed failed to export mails to rss.\n#{er}|])
     (const pass)
     res
 
@@ -130,7 +113,7 @@ threadToEntry Thread{subject, messages, threadid, totalCount, date, authors} =
  where
   threadUrl = [i|thread-#{threadid}-#{timestamp date}|]
   threadTitle = TextString [i|#{subject} (#{length messages}/#{totalCount})|]
-  content = T.intercalate [i|<br>\n<hr>\n|] (messageToHtml <$> messages)
+  content = Text.intercalate [i|<br>\n<hr>\n|] (messageToHtml <$> messages)
 
 errorsToEntry :: UTCTime -> [Error] -> Entry
 errorsToEntry now er =
@@ -142,14 +125,14 @@ errorsToEntry now er =
     { entryContent =
         Just
           . HTMLContent
-          . T.intercalate "<br>\n"
-          . T.splitOn "\n"
-          . T.intercalate "\n"
+          . Text.intercalate "<br>\n"
+          . Text.splitOn "\n"
+          . Text.intercalate "\n"
           $ er
     }
 
 timestamp :: UTCTime -> Text
-timestamp = toText . formatTime defaultTimeLocale "%Y-%m-%d %H:%M"
+timestamp = into . formatTime defaultTimeLocale "%Y-%m-%d %H:%M"
 
 processThread ::
   (MonadIO m, MonadCatch m) =>
@@ -158,7 +141,7 @@ processThread ::
   ) ->
   ExceptT Error m Thread
 processThread (threadid, toList -> thrdAndMsgs) =
-  handleIOError (\er -> throwE [i|IOError: #{er}|]) $ do
+  handleIOError (\io_error -> throwE [i|IOError: #{io_error}|]) $ do
     thread <-
       tryJust [i|No Thread object found for Threadid #{threadid}|]
         . viaNonEmpty head
@@ -166,7 +149,7 @@ processThread (threadid, toList -> thrdAndMsgs) =
         $ thrdAndMsgs
     let msgs = rights thrdAndMsgs
     results <- mapM processMessage msgs
-    let messages = sortOn (date :: Message -> UTCTime) results
+    let messages = sortOn (.date) results
     subject <- decodeUtf8 <$> Notmuch.threadSubject thread
     totalCount <- Notmuch.threadTotalMessages thread
     authors <- (^. Notmuch.matchedAuthors) <$> Notmuch.threadAuthors thread
@@ -175,7 +158,7 @@ processThread (threadid, toList -> thrdAndMsgs) =
 
 messageToHtml :: Message -> Text
 messageToHtml Message{headers, body} =
-  T.intercalate "<br>\n" $
+  Text.intercalate "<br>\n" $
     ((\(name, content) -> [i|<b>#{name}:</b> #{content}|]) <$> headers)
       <> one (bodyToHtml body)
 
@@ -183,7 +166,7 @@ bodyToHtml :: Body -> Text
 bodyToHtml (HTMLBody x) = fromMaybe x onlyBody
  where
   onlyBody = renderTags . takeWhile (not . isTagCloseName "body") <$> (viaNonEmpty tail . dropWhile (not . isTagOpenName "body") . parseTags $ x)
-bodyToHtml (TextBody x) = T.intercalate "<br>\n" . T.splitOn "\n" $ x
+bodyToHtml (TextBody x) = Text.intercalate "<br>\n" . Text.splitOn "\n" $ x
 
 processMessage :: (MonadIO m, MonadCatch m) => Notmuch.Message n a -> m Message
 processMessage msg = do
@@ -205,10 +188,10 @@ processMessage msg = do
           , ("Unsubscribe", unsub)
           ]
   msgEither <- runExceptT $ withExceptT
-    (\er -> [i|Failed to read msg\nFilename:#{fileName}\nerror: #{er}|])
+    (\error_msg -> [i|Failed to read msg\nFilename:#{fileName}\nerror: #{error_msg}|])
     do
       msgContent <-
-        handleIOError (\er -> throwE [i|IOError: #{er}|]) $
+        handleIOError (\io_error -> throwE [i|IOError: #{io_error}|]) $
           readFileBS fileName
       parseResult <-
         hoistEither . first toText $

@@ -1,14 +1,3 @@
-{-# LANGUAGE ExtendedDefaultRules #-}
-{-# LANGUAGE GHC2021 #-}
-{-# LANGUAGE MultiWayIf #-}
-{-# LANGUAGE NamedFieldPuns #-}
-{-# LANGUAGE OverloadedRecordDot #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE ViewPatterns #-}
-{-# LANGUAGE NoImplicitPrelude #-}
-
 module Main where
 
 import Data.List.Extra qualified as L
@@ -37,6 +26,8 @@ import Text.Megaparsec qualified as MP
 import Text.Megaparsec.Char qualified as MP
 import Text.Megaparsec.Char qualified as MPC
 import Text.Megaparsec.Char.Lexer qualified as MP
+import Witch (into, unsafeInto)
+import Witch.Encoding (UTF_8)
 
 -- TODO: use Text instead of linked lists of chars
 
@@ -145,6 +136,7 @@ yesterday = T.addDays (negate 1) . today
 timestamp :: T.UTCTime -> Text
 timestamp = toText . T.formatTime T.defaultTimeLocale "%Y-%m-%d %H:%M"
 
+blockList :: [Text]
 blockList =
   [ "#haskell"
   , "#general"
@@ -187,7 +179,7 @@ data Log = Log
 readLogFiles :: NonEmpty LogFile -> IO Log
 readLogFiles files =
   readLogFile (head files)
-    <$> mapM (readFileText . toString . (logFolder <>) . path) files
+    <$> mapM (fmap (unsafeInto @Text . into @(UTF_8 ByteString)) . readFileBS . into . (logFolder <>) . path) files
 
 readLogFile :: LogFile -> NonEmpty Text -> Log
 readLogFile LogFile{channel, server} contents =

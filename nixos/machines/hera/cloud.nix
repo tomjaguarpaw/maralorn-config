@@ -124,27 +124,7 @@ with lib; let
   };
   mainHostName = "cloud.maralorn.de";
 in {
-  systemd = {
-    services =
-      {
-        rss-server = {
-          serviceConfig.ExecStart = "${pkgs.python3}/bin/python -m http.server --bind ${hosts.vpn.hera} 8842 -d /var/www/rss";
-          wantedBy = ["multi-user.target"];
-        };
-        mastodon-digest = {
-          script = ''
-            ln -fs ${pkgs.privatePath "mastodon-env"} .env
-            now=$(date "+%Y-%m-%d")
-            mkdir -p /var/www/rss/mastodon/$now-highlights
-            mkdir -p /var/www/rss/mastodon/$now-all
-            ${pkgs.mastodon_digest}/bin/mastodon_digest -o /var/www/rss/mastodon/$now-highlights -n 24 -t lax --theme light
-            ${pkgs.mastodon_digest}/bin/mastodon_digest -o /var/www/rss/mastodon/$now-all -n 24 -t all --theme light -f list:3811
-          '';
-          startAt = "19:59";
-        };
-      }
-      // nextcloudServices mainHostName;
-  };
+  systemd.services = nextcloudServices mainHostName;
   services = {
     redis.servers."".enable = true;
     nextcloud = nextcloudConf mainHostName;
