@@ -1,1 +1,6 @@
-_: prev: (import ../packages {pkgs = prev.unstable;}).packages
+_: prev: let
+  inherit (import ../packages {pkgs = prev;}) haskellPackagesOverlay selectHaskellPackages;
+in
+  selectHaskellPackages (prev.unstable.haskellPackages.override {
+    overrides = haskellPackagesOverlay;
+  })

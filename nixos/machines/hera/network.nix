@@ -62,28 +62,28 @@ in {
     wireguard.interfaces = {
       m0wire = {
         ips = ["${hosts.hera-wg}/112" "${hosts.vpn.hera}/64"];
-        privateKeyFile = pkgs.privatePath "wireguard/hera-private";
+        privateKeyFile = config.age.secrets."wireguard/hera-private".path;
         listenPort = wireguard.port;
         peers = [
           {
             publicKey = wireguard.pub.zeus;
             allowedIPs = ["${hosts.zeus-wg}/128" "${hosts.vpn.zeus}/128"];
-            presharedKeyFile = pkgs.privatePath "wireguard/psk";
+            presharedKeyFile = config.age.secrets."wireguard/psk".path;
           }
           {
             publicKey = wireguard.pub.apollo;
             allowedIPs = ["${hosts.apollo-wg}/128" "${hosts.vpn.apollo}/128"];
-            presharedKeyFile = pkgs.privatePath "wireguard/psk";
+            presharedKeyFile = config.age.secrets."wireguard/psk".path;
           }
           {
             publicKey = wireguard.pub.fluffy;
             allowedIPs = ["${hosts.vpn.fluffy}/128"];
-            presharedKeyFile = pkgs.privatePath "wireguard/psk";
+            presharedKeyFile = config.age.secrets."wireguard/psk".path;
           }
           {
             publicKey = wireguard.pub.pegasus;
             allowedIPs = ["${hosts.vpn.pegasus}/128"];
-            presharedKeyFile = pkgs.privatePath "wireguard/psk";
+            presharedKeyFile = config.age.secrets."wireguard/psk".path;
           }
         ];
       };

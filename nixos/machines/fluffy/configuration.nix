@@ -121,7 +121,7 @@ in {
             publicKey = wireguard.pub.hera;
             allowedIPs = ["${hosts.vpn.prefix}::/64"];
             endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
-            presharedKeyFile = pkgs.privatePath "wireguard/psk";
+            presharedKeyFile = config.age.secrets."wireguard/psk".path;
             persistentKeepalive = 25;
           }
         ];

@@ -35,9 +35,6 @@
         prev.matrix-client;
       aeson-schemas = unmarkBroken (dontCheck prev.aeson-schemas);
     };
-  hpkgs = pkgs.haskellPackages.override {
-    overrides = haskellPackagesOverlay;
-  };
   selectHaskellPackages = attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages;
   myHaskellPackages = {
     wizards-dialog = cleanCabalPackage {
@@ -62,15 +59,5 @@
     };
   };
 in {
-  packages = selectHaskellPackages hpkgs;
-  inherit haskellPackagesOverlay;
-  shell = args:
-    hpkgs.shellFor ({
-        packages = hpkgs: (builtins.attrValues (selectHaskellPackages hpkgs));
-        buildInputs = [
-          hpkgs.haskell-language-server
-          pkgs.cabal-install
-        ];
-      }
-      // args);
+  inherit selectHaskellPackages haskellPackagesOverlay;
 }

@@ -5,13 +5,15 @@
   };
 
   inputs = {
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     pre-commit-hooks-nix = {
       url = "github:cachix/pre-commit-hooks.nix";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -27,18 +29,28 @@
       systems = ["x86_64-linux"];
       perSystem = {
         self',
+        inputs',
         pkgs,
         config,
         lib,
         ...
       }: let
-        packages = import ./packages {inherit pkgs;};
-      in {
-        devShells.default = packages.shell {
-          shellHook = config.pre-commit.installationScript;
+        inherit (import ./packages {inherit pkgs;}) haskellPackagesOverlay selectHaskellPackages;
+        hpkgs = pkgs.haskellPackages.override {
+          overrides = haskellPackagesOverlay;
         };
-        inherit (packages) packages;
-        legacyPackages = {inherit (packages) haskellPackagesOverlay;};
+      in {
+        devShells.default = hpkgs.shellFor {
+          packages = hpkgs: (builtins.attrValues (selectHaskellPackages hpkgs));
+          shellHook = config.pre-commit.installationScript;
+          buildInputs = [
+            hpkgs.haskell-language-server
+            pkgs.cabal-install
+            inputs'.agenix.packages.default
+          ];
+        };
+        packages = selectHaskellPackages hpkgs;
+        legacyPackages = {inherit haskellPackagesOverlay;};
 
         pre-commit = {
           check.enable = true;

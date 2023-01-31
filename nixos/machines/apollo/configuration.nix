@@ -41,19 +41,11 @@ in {
     hostName = "apollo";
     domain = "m-0.eu";
     networkmanager.enable = true;
-    firewall = {
-      allowedTCPPorts = [
-        4713 # pulseaudio
-      ];
-      allowedUDPPorts = [
-        4713 # pulseaudio
-      ];
-    };
     wireguard.interfaces = {
       m0wire = {
         allowedIPsAsRoutes = false;
         ips = ["${hosts.apollo-wg}/112" "${hosts.vpn.apollo}/64"];
-        privateKeyFile = pkgs.privatePath "wireguard/apollo-private";
+        privateKeyFile = config.age.secrets."wireguard/apollo-private".path;
         peers = [
           {
             publicKey = wireguard.pub.hera;
@@ -61,7 +53,7 @@ in {
             # endpoint =
             #  "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
             endpoint = "[${hosts.hera-v4}]:${builtins.toString wireguard.port}";
-            presharedKeyFile = pkgs.privatePath "wireguard/psk";
+            presharedKeyFile = config.age.secrets."wireguard/psk".path;
             persistentKeepalive = 25;
           }
         ];
@@ -96,8 +88,8 @@ in {
         group = "users";
         user = "maralorn";
         openDefaultPorts = true;
-        cert = pkgs.privatePath "syncthing/apollo/cert.pem";
-        key = pkgs.privatePath "syncthing/apollo/key.pem";
+        cert = config.age.secrets."syncthing/apollo/cert.pem".path;
+        key = config.age.secrets."syncthing/apollo/key.pem".path;
       }
       // syncthing.declarativeWith ["hera" "zeus" "pegasus"] "/home/maralorn/media";
   };

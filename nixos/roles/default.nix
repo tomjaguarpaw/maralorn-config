@@ -19,6 +19,7 @@ in {
   ];
 
   imports = [
+    (builtins.getFlake "github:ryantm/agenix").nixosModules.default
     (networkingModule "firewall-iptables")
     (networkingModule "firewall-nftables")
     (networkingModule "firewall")
@@ -29,6 +30,11 @@ in {
     ../../common
     ./admin.nix
   ];
+
+  age.secrets = (import ../../private/secret-config.nix).module-config {
+    inherit (config.networking) hostName;
+    inherit lib;
+  };
 
   i18n = {
     defaultLocale = "en_DK.UTF-8";

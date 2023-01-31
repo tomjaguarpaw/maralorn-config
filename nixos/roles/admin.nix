@@ -4,8 +4,8 @@
   lib,
   ...
 }: let
-  passwordFile = pkgs.privatePath "pam-login-password";
   openssh.authorizedKeys.keys = pkgs.privateValue [] "ssh-keys";
+  passwordFile = config.age.secrets.pam-login-password.path;
 in {
   users.users = {
     maralorn = {
