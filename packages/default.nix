@@ -45,8 +45,8 @@
       source = ./wizards-dialog;
     };
     logfeed = cleanCabalPackage {
-      name = "logfeed";
-      source = ./logfeed;
+      name = "rssfeeds";
+      source = ./rssfeeds;
     };
     kassandra = cleanCabalPackage {
       name = "kassandra";

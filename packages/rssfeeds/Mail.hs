@@ -1,4 +1,4 @@
-module Mail (main) where
+module Main (main) where
 
 import Control.Error (
   throwE,

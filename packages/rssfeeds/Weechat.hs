@@ -1,4 +1,4 @@
-module Main where
+module Main (main) where
 
 import Data.List.Extra qualified as L
 import Data.List.NonEmpty (
@@ -31,7 +31,6 @@ import Witch.Encoding (UTF_8)
 
 -- TODO: use Text instead of linked lists of chars
 
-type WeechatLog = [WeechatLine]
 data WeechatLine = WeechatLine
   { wlDate :: Text
   , wlTime :: Text
