@@ -6,9 +6,8 @@
 }: let
   wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts prefix;
-  inherit (import ../../../nix/sources.nix) nixos-hardware nixos-unstable;
+  inherit (import ../../../nix/sources.nix) nixos-hardware;
   inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
-  vpn = (import ../../../private.nix).privateValue (_: _: {}) "vpn";
 in {
   imports = [
     "${nixos-hardware}/common/gpu/amd/sea-islands"
@@ -21,7 +20,6 @@ in {
     ../../roles/display-server.nix
     #../../roles/boot-key.nix
     ../../roles/standalone
-    (vpn "zeus")
   ];
 
   fileSystems = let

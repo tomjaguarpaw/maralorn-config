@@ -19,7 +19,6 @@ in {
   ];
 
   imports = [
-    (builtins.getFlake "github:ryantm/agenix").nixosModules.default
     (networkingModule "firewall-iptables")
     (networkingModule "firewall-nftables")
     (networkingModule "firewall")
@@ -30,11 +29,6 @@ in {
     ../../common
     ./admin.nix
   ];
-
-  age.secrets = (import ../../private/secret-config.nix).module-config {
-    inherit (config.networking) hostName;
-    inherit lib;
-  };
 
   i18n = {
     defaultLocale = "en_DK.UTF-8";
@@ -154,9 +148,6 @@ in {
       (_: "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt");
   };
 
-  system.activationScripts =
-    lib.mkIf (!pkgs.withSecrets) {text = "echo No secrets loaded!; exit 1;";};
-
   nix = {
     settings = {
       substituters = lib.mkAfter (
@@ -225,11 +216,6 @@ in {
     };
   };
   programs = {
-    command-not-found.dbPath = "${
-      builtins.fetchTarball {
-        url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
-      }
-    }/programs.sqlite";
     git.config.init.defaultBranch = "main";
     ssh = {
       extraConfig = pkgs.privateValue "" "ssh-config";

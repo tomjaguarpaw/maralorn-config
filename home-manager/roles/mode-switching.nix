@@ -19,7 +19,7 @@ in {
       echo "Running update-modes …"
       ${updateModes}/bin/update-modes
       echo "Running update-system …"
-      /run/wrappers/bin/sudo -A /run/current-system/sw/bin/update-system
+      /run/wrappers/bin/sudo -A /run/current-system/sw/bin/nixos-rebuild switch
       echo "Maintenance finished."
     '';
     activateMode = pkgs.writeHaskellScript {name = "activate-mode";} ''

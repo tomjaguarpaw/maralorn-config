@@ -5,15 +5,20 @@
   };
 
   inputs = {
+    secrets.url = "git+ssh://git@hera.m-0.eu/config-secrets";
     agenix = {
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixos-stable.url = "github:nixos/nixpkgs/nixos-22.11";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     pre-commit-hooks-nix = {
       url = "github:cachix/pre-commit-hooks.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs-stable.follows = "nixos-stable";
+        nixpkgs.follows = "nixpkgs";
+      };
     };
   };
 
@@ -27,6 +32,27 @@
         inputs.pre-commit-hooks-nix.flakeModule
       ];
       systems = ["x86_64-linux"];
+      flake.nixosConfigurations = {
+        zeus = inputs.nixos-stable.lib.nixosSystem {
+          modules = [
+            (inputs.secrets.private.privateValue (_: _: {}) "vpn" "zeus")
+            ./nixos/machines/zeus/configuration.nix
+            inputs.secrets.nixosModules.secrets
+            inputs.agenix.nixosModules.default
+            ({pkgs, ...}: {
+              nixpkgs.overlays = [
+                (self: super:
+                  {
+                    unstable = nixpkgs.legacyPackages.x86_64-linux;
+                    nixpkgs-channel = "nixos-stable";
+                    home-manager-channel = "home-manager-stable";
+                  }
+                  // inputs.secrets.private)
+              ];
+            })
+          ];
+        };
+      };
       perSystem = {
         self',
         inputs',
