@@ -21,23 +21,9 @@
   services.sshd.enable = true;
 
   nix = {
-    nixPath = ["nixos-config=/etc/nixos/configuration.nix"];
     gc = {
       automatic = false;
       options = "-d";
-    };
-  };
-
-  environment = {
-    # Put these into an extra file so the essential packages can also be included on non selfadminstrated systems from home-manager
-    systemPackages = builtins.attrValues {
-      inherit
-        (import ../../../lib/update-system.nix {
-          inherit pkgs;
-          inherit (config.system.build) nixos-rebuild;
-        })
-        update-system
-        ;
     };
   };
 

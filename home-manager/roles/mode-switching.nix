@@ -18,7 +18,7 @@ in {
       ${configGit} submodule update
       echo "Running update-modes …"
       ${updateModes}/bin/update-modes
-      echo "Running update-system …"
+      echo "Updating system …"
       /run/wrappers/bin/sudo -A /run/current-system/sw/bin/nixos-rebuild switch
       echo "Maintenance finished."
     '';

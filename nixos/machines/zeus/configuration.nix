@@ -134,7 +134,7 @@ in {
       m0wire = {
         allowedIPsAsRoutes = false;
         ips = ["${hosts.zeus-wg}/112" "${hosts.vpn.zeus}/64"];
-        privateKeyFile = "/disk/persist/wireguard-private-key";
+        privateKeyFile = config.age.secrets."wireguard/zeus-private".path;
         peers = [
           {
             publicKey = wireguard.pub.hera;
@@ -175,6 +175,8 @@ in {
         user = "maralorn";
         openDefaultPorts = true;
         configDir = "/disk/persist/syncthing";
+        cert = config.age.secrets."syncthing/zeus/cert.pem".path;
+        key = config.age.secrets."syncthing/zeus/key.pem".path;
       }
       // syncthing.declarativeWith ["hera" "apollo" "pegasus"] "/disk/persist/maralorn/media";
     #minecraft-server = {
