@@ -92,9 +92,9 @@ in {
     };
     services = {
       log2rss = {
-        Unit.Description = "log2rss";
+        Unit.Description = "weechat2rss";
         Service = {
-          ExecStart = "${pkgs.logfeed}/bin/log2rss /var/www/rss/chats.xml";
+          ExecStart = "${pkgs.logfeed}/bin/weechat2rss /var/www/rss/chats.xml";
           Type = "oneshot";
         };
       };
