@@ -2,10 +2,9 @@
   config,
   pkgs,
   lib,
-  #flake-inputs,
+  flake-inputs,
   ...
 }: let
-  flake-inputs.secrets = "help";
   gitoliteCfg = config.services.gitolite;
   post-update =
     pkgs.writeHaskellScript
