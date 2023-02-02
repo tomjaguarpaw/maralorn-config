@@ -4,7 +4,7 @@
       "inputs": {
         "darwin": "darwin",
         "nixpkgs": [
-          "nixpkgs"
+          "nixos-unstable"
         ]
       },
       "locked": {
@@ -62,7 +62,7 @@
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": [
-          "nixpkgs"
+          "nixos-unstable"
         ]
       },
       "locked": {
@@ -114,6 +114,38 @@
         "type": "github"
       }
     },
+    "hexa-nur-packages": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1675199516,
+        "narHash": "sha256-U/50T9feHTIXb4E/s43/kgf2QvDsc6I5N4xsNSWKh+M=",
+        "owner": "mweinelt",
+        "repo": "nur-packages",
+        "rev": "c5ee6567584c06af0d7b027fcd858dc03d3a68a4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mweinelt",
+        "repo": "nur-packages",
+        "type": "github"
+      }
+    },
+    "nixos-hardware": {
+      "locked": {
+        "lastModified": 1674550793,
+        "narHash": "sha256-ljJlIFQZwtBbzWqWTmmw2O5BFmQf1A/DspwMOQtGXHk=",
+        "owner": "NixOS",
+        "repo": "nixos-hardware",
+        "rev": "b7ac0a56029e4f9e6743b9993037a5aaafd57103",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixos-hardware",
+        "type": "indirect"
+      }
+    },
     "nixos-stable": {
       "locked": {
         "lastModified": 1675154384,
@@ -130,18 +162,34 @@
         "type": "github"
       }
     },
-    "nixpkgs": {
+    "nixos-unstable": {
       "locked": {
-        "lastModified": 1675115703,
-        "narHash": "sha256-4zetAPSyY0D77x+Ww9QBe8RHn1akvIvHJ/kgg8kGDbk=",
+        "lastModified": 1675183161,
+        "narHash": "sha256-Zq8sNgAxDckpn7tJo7V1afRSk2eoVbu3OjI1QklGLNg=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "2caf4ef5005ecc68141ecb4aac271079f7371c44",
+        "rev": "e1e1b192c1a5aab2960bf0a0bd53a2e8124fa18e",
         "type": "github"
       },
       "original": {
         "owner": "nixos",
         "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1624561540,
+        "narHash": "sha256-izJ2PYZMGMsSkg+e7c9A1x3t/yOLT+qzUM6WQsc2tqo=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "c6a049a3d32293b24c0f894a840872cf67fd7c11",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -152,7 +200,7 @@
         "flake-utils": "flake-utils",
         "gitignore": "gitignore",
         "nixpkgs": [
-          "nixpkgs"
+          "nixos-unstable"
         ],
         "nixpkgs-stable": [
           "nixos-stable"
@@ -176,19 +224,24 @@
       "inputs": {
         "agenix": "agenix",
         "flake-parts": "flake-parts",
+        "hexa-nur-packages": "hexa-nur-packages",
+        "nixos-hardware": "nixos-hardware",
         "nixos-stable": "nixos-stable",
-        "nixpkgs": "nixpkgs",
+        "nixos-unstable": "nixos-unstable",
+        "nixpkgs": [
+          "nixos-unstable"
+        ],
         "pre-commit-hooks-nix": "pre-commit-hooks-nix",
         "secrets": "secrets"
       }
     },
     "secrets": {
       "locked": {
-        "lastModified": 1675214458,
-        "narHash": "sha256-79JdedIoZ0QpLSB4m0jlTLXEtVex7LNJuEAun43sHyI=",
+        "lastModified": 1675309422,
+        "narHash": "sha256-Y9v+JaIzUi0dZMjiFobQEbt0Co0eF7Elxf2A+WtagJQ=",
         "ref": "refs/heads/main",
-        "rev": "147bf3431575832da87e6a587aca2641f7df0187",
-        "revCount": 166,
+        "rev": "9f9b064b6b8fe2d166bfa6400a94606b0a869726",
+        "revCount": 173,
         "type": "git",
         "url": "ssh://git@hera.m-0.eu/config-secrets"
       },

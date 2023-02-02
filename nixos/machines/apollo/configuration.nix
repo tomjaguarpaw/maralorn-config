@@ -1,4 +1,4 @@
-{
+flake-inputs: {
   lib,
   config,
   pkgs,
@@ -8,7 +8,7 @@
   inherit (config.m-0) hosts prefix;
   inherit ((import ../../../nix/sources.nix)) nixos-hardware;
   inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
-  vpn = (import ../../../private.nix).privateValue (_: _: {}) "vpn";
+  vpn = flake-inputs.secrets.private.privateValue (_: _: {}) "vpn";
 in {
   imports = [
     "${nixos-hardware}/lenovo/thinkpad/t480s"

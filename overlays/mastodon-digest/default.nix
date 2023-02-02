@@ -24,10 +24,7 @@ in {
     name = "mastodon_digest";
     runtimeInputs = [python-env];
     text = ''
-      set -o allexport
       # shellcheck source=/dev/null
-      source .env
-      set +o allexport
       cd ${patchedSrc} && python run.py "''${@}"
     '';
   };

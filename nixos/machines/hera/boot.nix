@@ -1,5 +1,5 @@
 {pkgs, ...}: {
-  m-0.server.initSSHKey = pkgs.privatePath "hera-boot-ssh-key";
+  m-0.server.initSSHKey = "/var/boot-ssh-key";
 
   boot = {
     loader.grub = {

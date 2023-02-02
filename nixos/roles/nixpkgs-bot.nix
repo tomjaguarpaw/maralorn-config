@@ -1,6 +1,10 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  config,
+  ...
+}: let
   stateDirectory = "/var/lib/nixpkgs-bot";
-  config = {
+  configFile = {
     server = "https://matrix.maralorn.de";
     database = "${stateDirectory}/state.sqlite";
     repo = {
@@ -16,11 +20,6 @@
       "nixpkgs-unstable" = [];
       "nixos-unstable-small" = ["nixos-unstable"];
       "nixos-unstable" = [];
-      "staging-22.05" = ["staging-next-22.05"];
-      "staging-next-22.05" = ["release-22.05"];
-      "release-22.05" = ["nixos-22.05-small"];
-      "nixos-22.05-small" = ["nixos-22.05"];
-      "nixos-22.05" = [];
       "staging-22.11" = ["staging-next-22.11"];
       "staging-next-22.11" = ["release-22.11"];
       "release-22.11" = ["nixos-22.11-small"];
@@ -34,9 +33,12 @@ in {
     description = "nixpkgs-bot";
     path = [pkgs.git];
     serviceConfig = {
-      LoadCredential = ["matrix_token:${pkgs.privatePath "nixpkgs-bot/matrix_token"}" "github_token:${pkgs.privatePath "nixpkgs-bot/github_token"}"];
+      LoadCredential = [
+        "matrix_token:${config.age.secrets."nixpkgs-bot/matrix_token".path}"
+        "github_token:${config.age.secrets."nixpkgs-bot/github_token".path}"
+      ];
       WorkingDirectory = "/var/lib/nixpkgs-bot";
-      ExecStart = "${pkgs.nixpkgs-bot}/bin/nixpkgs-bot ${builtins.toFile "config.yaml" (builtins.toJSON config)}";
+      ExecStart = "${pkgs.nixpkgs-bot}/bin/nixpkgs-bot ${builtins.toFile "config.yaml" (builtins.toJSON configFile)}";
       DynamicUser = true;
       StateDirectory = "nixpkgs-bot";
     };

@@ -8,50 +8,34 @@
     secrets.url = "git+ssh://git@hera.m-0.eu/config-secrets";
     agenix = {
       url = "github:ryantm/agenix";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixos-unstable";
     };
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixos-stable.url = "github:nixos/nixpkgs/nixos-22.11";
-    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
+    nixpkgs.follows = "nixos-unstable";
+    flake-parts.inputs.nixpkgs-lib.follows = "nixos-unstable";
+    hexa-nur-packages.url = "github:mweinelt/nur-packages";
     pre-commit-hooks-nix = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs = {
         nixpkgs-stable.follows = "nixos-stable";
-        nixpkgs.follows = "nixpkgs";
+        nixpkgs.follows = "nixos-unstable";
       };
     };
   };
 
-  outputs = inputs @ {
-    nixpkgs,
-    flake-parts,
-    ...
-  }:
-    flake-parts.lib.mkFlake {inherit inputs;} {
+  outputs = inputs @ {nixos-hardware, ...}: let
+    unstable = inputs.nixos-unstable.legacyPackages.x86_64-linux;
+    inherit (import ./packages {pkgs = unstable;}) haskellPackagesOverlay selectHaskellPackages;
+  in
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       imports = [
         inputs.pre-commit-hooks-nix.flakeModule
       ];
       systems = ["x86_64-linux"];
-      flake.nixosConfigurations = {
-        zeus = inputs.nixos-stable.lib.nixosSystem {
-          modules = [
-            (inputs.secrets.private.privateValue (_: _: {}) "vpn" "zeus")
-            ./nixos/machines/zeus/configuration.nix
-            inputs.secrets.nixosModules.secrets
-            inputs.agenix.nixosModules.default
-            ({pkgs, ...}: {
-              nixpkgs.overlays = [
-                (self: super:
-                  {
-                    unstable = nixpkgs.legacyPackages.x86_64-linux;
-                    nixpkgs-channel = "nixos-stable";
-                    home-manager-channel = "home-manager-stable";
-                  }
-                  // inputs.secrets.private)
-              ];
-            })
-          ];
-        };
+      flake = {
+        nixosConfigurations = import ./nixos/configurations.nix inputs;
+        overlays.haskellPackages = haskellPackagesOverlay;
       };
       perSystem = {
         self',
@@ -61,9 +45,8 @@
         lib,
         ...
       }: let
-        inherit (import ./packages {inherit pkgs;}) haskellPackagesOverlay selectHaskellPackages;
         hpkgs = pkgs.haskellPackages.override {
-          overrides = haskellPackagesOverlay;
+          overrides = inputs.self.overlays.haskellPackages;
         };
       in {
         devShells.default = hpkgs.shellFor {
@@ -75,8 +58,13 @@
             inputs'.agenix.packages.default
           ];
         };
+        checks = {
+          system-checks = pkgs.runCommand "system-checks" {} ''
+            ${lib.concatMapStringsSep "\n" (x: "# ${x.config.system.build.toplevel}") (builtins.attrValues inputs.self.nixosConfigurations)}
+            echo success > $out
+          '';
+        };
         packages = selectHaskellPackages hpkgs;
-        legacyPackages = {inherit haskellPackagesOverlay;};
 
         pre-commit = {
           check.enable = true;

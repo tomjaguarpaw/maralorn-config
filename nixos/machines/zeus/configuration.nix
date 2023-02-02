@@ -1,4 +1,4 @@
-{
+flake-inputs: {
   config,
   pkgs,
   lib,
@@ -6,11 +6,11 @@
 }: let
   wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts prefix;
-  inherit (import ../../../nix/sources.nix) nixos-hardware;
   inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
 in {
   imports = [
-    "${nixos-hardware}/common/gpu/amd/sea-islands"
+    (flake-inputs.secrets.private.privateValue (_: _: {}) "vpn" "zeus")
+    "${flake-inputs.nixos-hardware}/common/gpu/amd/sea-islands"
     ./hardware-configuration.nix
     ../../roles
     ../../roles/admin.nix

@@ -5,9 +5,12 @@
   config,
   lib,
   pkgs,
+  modulesPath,
   ...
 }: {
-  imports = [<nixpkgs/nixos/modules/profiles/qemu-guest.nix>];
+  imports = [
+    (modulesPath + "/profiles/qemu-guest.nix")
+  ];
 
   boot.initrd.availableKernelModules = ["ata_piix" "uhci_hcd" "virtio_pci" "sr_mod" "virtio_blk"];
   boot.kernelModules = [];
@@ -26,4 +29,6 @@
   swapDevices = [{device = "/dev/disk/by-uuid/1e651bde-94b5-4fe2-9e6a-7af916d80057";}];
 
   nix.settings.max-jobs = lib.mkDefault 4;
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }

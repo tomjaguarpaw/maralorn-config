@@ -1,4 +1,4 @@
-{
+_: {
   config,
   pkgs,
   lib,
@@ -115,8 +115,8 @@ in {
         group = "nginx";
         user = "maralorn";
         openDefaultPorts = true;
-        cert = pkgs.privatePath "syncthing/hera/cert.pem";
-        key = pkgs.privatePath "syncthing/hera/key.pem";
+        cert = config.age.secrets."syncthing/hera/cert.pem".path;
+        key = config.age.secrets."syncthing/hera/key.pem".path;
       }
       // syncthing.declarativeWith ["apollo" "zeus" "pegasus"] "/media";
   };
@@ -133,7 +133,7 @@ in {
       isNormalUser = true;
       uid = 1001;
       extraGroups = ["wheel" "systemd-journal"];
-      passwordFile = pkgs.privatePath "pam-login-password-choreutes";
+      passwordFile = config.age.secrets.pam-login-password-choreutes.path;
     };
     ved-backup = {
       isNormalUser = true;

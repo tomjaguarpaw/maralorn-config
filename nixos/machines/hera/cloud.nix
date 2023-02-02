@@ -2,9 +2,9 @@
   pkgs,
   config,
   lib,
+  flake-inputs,
   ...
-}:
-with lib; let
+}: let
   adminCreds =
     pkgs.privateValue
     {
@@ -78,7 +78,7 @@ with lib; let
     privateNetwork = true;
     hostBridge = "bridge";
     config = {pkgs, ...}: {
-      imports = [../../roles];
+      imports = [(args @ {pkgs, ...}: import ../../roles (args // {inherit flake-inputs;}))] ++ flake-inputs.modules;
 
       networking = {
         interfaces.eth0 = {

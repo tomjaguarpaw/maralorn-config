@@ -2,10 +2,12 @@
   config,
   lib,
   pkgs,
+  modulesPath,
   ...
 }: {
-  imports = [<nixpkgs/nixos/modules/installer/scan/not-detected.nix>];
-
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
   boot = {
     loader = {
       efi = {
@@ -41,5 +43,6 @@
     };
   };
 
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   nix.settings.max-jobs = lib.mkDefault 8;
 }

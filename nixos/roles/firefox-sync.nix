@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }: {
   services.mysql = {
@@ -18,7 +19,7 @@
   services = {
     firefox-syncserver = {
       enable = true;
-      secrets = pkgs.privatePath "firefox-syncserver-secrets";
+      secrets = config.age.secrets.firefox-syncserver-secrets.path;
       logLevel = "trace";
       database = {
         name = "firefox_syncserver";

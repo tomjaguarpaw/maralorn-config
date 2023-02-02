@@ -2,30 +2,10 @@
   pkgs,
   config,
   lib,
+  flake-inputs,
   ...
-}: let
-  inherit (import ../../nix/sources.nix) nixos-unstable;
-  networkingModule = name: "${nixos-unstable}/nixos/modules/services/networking/${name}.nix";
-in {
-  # nftables using module not available in 22.11.
-  disabledModules = [
-    "services/networking/firewall.nix"
-    "services/networking/nftables.nix"
-    "services/networking/nat.nix"
-    "services/networking/redsocks.nix"
-    "services/networking/miniupnpd.nix"
-    "services/audio/roon-server.nix"
-    "services/audio/roon-bridge.nix"
-  ];
-
+}: {
   imports = [
-    (networkingModule "firewall-iptables")
-    (networkingModule "firewall-nftables")
-    (networkingModule "firewall")
-    (networkingModule "nat-iptables")
-    (networkingModule "nat-nftables")
-    (networkingModule "nat")
-    (networkingModule "nftables")
     ../../common
     ./admin.nix
   ];
@@ -37,7 +17,15 @@ in {
 
   # For nixos-rebuild
   nixpkgs.overlays =
-    [(_: _: (import ../../channels.nix)."${config.networking.hostName}")]
+    [
+      (_: _:
+        {
+          unstable = flake-inputs.nixos-unstable.legacyPackages.x86_64-linux;
+          nixpkgs-channel = "nixos-stable";
+          home-manager-channel = "home-manager-stable";
+        }
+        // flake-inputs.secrets.private)
+    ]
     ++ import ../../overlays {inherit lib;};
 
   time.timeZone = "Europe/Berlin";
