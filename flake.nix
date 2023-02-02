@@ -5,16 +5,18 @@
   };
 
   inputs = {
-    secrets.url = "git+ssh://git@hera.m-0.eu/config-secrets";
-    agenix = {
-      url = "github:ryantm/agenix";
+    secrets = {
+      url = "git+ssh://git@hera.m-0.eu/config-secrets";
       inputs.nixpkgs.follows = "nixos-unstable";
     };
     nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixos-stable.url = "github:nixos/nixpkgs/nixos-22.11";
     nixpkgs.follows = "nixos-unstable";
     flake-parts.inputs.nixpkgs-lib.follows = "nixos-unstable";
-    hexa-nur-packages.url = "github:mweinelt/nur-packages";
+    hexa-nur-packages = {
+      url = "github:mweinelt/nur-packages";
+      inputs.nixpkgs.follows = "nixos-unstable";
+    };
     pre-commit-hooks-nix = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs = {
@@ -49,14 +51,18 @@
           overrides = inputs.self.overlays.haskellPackages;
         };
       in {
-        devShells.default = hpkgs.shellFor {
-          packages = hpkgs: (builtins.attrValues (selectHaskellPackages hpkgs));
-          shellHook = config.pre-commit.installationScript;
-          buildInputs = [
-            hpkgs.haskell-language-server
-            pkgs.cabal-install
-            inputs'.agenix.packages.default
-          ];
+        devShells = {
+          default = pkgs.mkShell {
+            shellHook = config.pre-commit.installationScript;
+          };
+          haskell = hpkgs.shellFor {
+            packages = hpkgs: (builtins.attrValues (selectHaskellPackages hpkgs));
+            shellHook = config.pre-commit.installationScript;
+            buildInputs = [
+              hpkgs.haskell-language-server
+              pkgs.cabal-install
+            ];
+          };
         };
         checks = {
           system-checks = pkgs.runCommand "system-checks" {} ''

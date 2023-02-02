@@ -4,7 +4,8 @@
       "inputs": {
         "darwin": "darwin",
         "nixpkgs": [
-          "nixos-unstable"
+          "secrets",
+          "nixpkgs"
         ]
       },
       "locked": {
@@ -24,6 +25,7 @@
     "darwin": {
       "inputs": {
         "nixpkgs": [
+          "secrets",
           "agenix",
           "nixpkgs"
         ]
@@ -116,7 +118,9 @@
     },
     "hexa-nur-packages": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": [
+          "nixos-unstable"
+        ]
       },
       "locked": {
         "lastModified": 1675199516,
@@ -178,22 +182,6 @@
         "type": "github"
       }
     },
-    "nixpkgs": {
-      "locked": {
-        "lastModified": 1624561540,
-        "narHash": "sha256-izJ2PYZMGMsSkg+e7c9A1x3t/yOLT+qzUM6WQsc2tqo=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "c6a049a3d32293b24c0f894a840872cf67fd7c11",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "pre-commit-hooks-nix": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -222,7 +210,6 @@
     },
     "root": {
       "inputs": {
-        "agenix": "agenix",
         "flake-parts": "flake-parts",
         "hexa-nur-packages": "hexa-nur-packages",
         "nixos-hardware": "nixos-hardware",
@@ -236,12 +223,18 @@
       }
     },
     "secrets": {
+      "inputs": {
+        "agenix": "agenix",
+        "nixpkgs": [
+          "nixos-unstable"
+        ]
+      },
       "locked": {
-        "lastModified": 1675311984,
-        "narHash": "sha256-QCTEDcDxycWrKUUN+pjvF1/zA/l3znWMbKWjcfZ0UTw=",
+        "lastModified": 1675313356,
+        "narHash": "sha256-3LkUMhFfB8A+2kfS5HE5Gs3+KuU+pYXw3WbNyYW8k24=",
         "ref": "refs/heads/main",
-        "rev": "027ebd2cadf06f984916534a44414e9d8581965c",
-        "revCount": 174,
+        "rev": "a2b507c00439a75e10b314018ff1e74c7f06f514",
+        "revCount": 175,
         "type": "git",
         "url": "ssh://git@hera.m-0.eu/config-secrets"
       },

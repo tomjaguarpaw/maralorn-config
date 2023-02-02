@@ -28,7 +28,6 @@ flake-inputs: let
         [
           (import (./. + "/machines/${name}/configuration.nix") flake-inputs)
           flake-inputs.secrets.nixosModules.secrets
-          flake-inputs.agenix.nixosModules.default
           (_: {config._module.args.flake-inputs = flake-inputs // {inherit modules;};})
         ]
         ++ modules;
