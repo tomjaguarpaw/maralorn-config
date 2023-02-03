@@ -22,7 +22,6 @@ in {
     ../../roles/coturn.nix
     ../../roles/go-neb.nix
     ../../roles/laminar
-    ../../roles/kassandra-server.nix
     ../../roles/foundryvtt.nix
     ../../roles/mailman.nix
     ../../roles/firefox-sync.nix
