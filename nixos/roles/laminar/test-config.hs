@@ -32,8 +32,8 @@ main = do
   git "clone" repo "."
   git "checkout" (toString branch)
   say "Running checks"
-  nix "flake" "check"
-  nix ["build", ".#checks.x86_64-linux.system-checks", "-o", "/var/cache/gc-links/test-config"]
+  nix "flake" "check" "--builders" "@/etc/nix/machines"
+  nix ["build", ".#checks.x86_64-linux.system-checks", "-o", "/var/cache/gc-links/test-config", "--builders", "@/etc/nix/machines"]
   say "Checks succeeded"
   when (branch == "main") $ do
     say [i|Deploying new config to localhost.|]

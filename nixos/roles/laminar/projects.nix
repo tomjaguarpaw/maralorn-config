@@ -15,7 +15,7 @@
       if [[ -e "flake.nix" ]]; then
         echo "Flake detected."
         echo "Running 'flake check'"
-        ${pkgs.nix}/bin/nix flake check
+        ${pkgs.nix}/bin/nix flake check --builders @/etc/nix/machines
         echo "Running 'nix build'"
         ${pkgs.nix}/bin/nix build $FLAGS
       else
