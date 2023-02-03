@@ -19,7 +19,7 @@ import Say
 import Shh
 import System.Environment
 
-load Absolute ["git", "niv"]
+load Absolute ["git", "nix"]
 paths :: [Text]
 paths =
   $$( bindCode (runIO pathBinsAbs) \rawPaths ->
@@ -32,11 +32,11 @@ repo = "git@hera.m-0.eu:nixos-config"
 main = do
   git "clone" repo "."
   setEnv "PATH" . toString $ Text.intercalate ":" paths
-  ignoreFailure $ niv "update"
+  ignoreFailure $ nix "flake" "update"
   changed <- (mempty /=) <$> (git "status" "--porcelain" |> captureTrim)
   when changed $ do
     git "config" "user.email" "maralorn@maralorn.de"
     git "config" "user.name" "maralorn (nix-auto-updater)"
-    git "commit" "-am" "Update dependencies with niv"
+    git "commit" "-am" "Update flake dependencies"
     git "push" "-f" "origin" "HEAD:niv-bump"
-  unless changed $ say "No updates in any niv source. Doing nothing."
+  unless changed $ say "No flake updates. Doing nothing."

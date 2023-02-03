@@ -69,6 +69,6 @@
         ]
         ++ import ../overlays {inherit lib;};
     };
-    nixosConfigurations = lib.genAttrs ["zeus" "apollo" "hera" "fluffy"] makeSystem;
+    nixosConfigurations = lib.genAttrs (builtins.attrNames (builtins.readDir ./machines)) makeSystem;
   });
 }

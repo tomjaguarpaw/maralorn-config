@@ -33,6 +33,7 @@ main = do
   git "checkout" (toString branch)
   say "Running checks"
   nix "flake" "check"
+  nix ["build", ".#checks.x86_64-linux.system-checks", "-o", "/var/cache/gc-links/test-config"]
   say "Checks succeeded"
   when (branch == "main") $ do
     say [i|Deploying new config to localhost.|]
