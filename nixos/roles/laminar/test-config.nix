@@ -64,7 +64,7 @@ in {
   ];
   systemd.services = {
     update-config = {
-      path = [pkgs.git pkgs.nix pkgs.openssh pkgs.nixos-rebuild];
+      path = [pkgs.git pkgs.nix pkgs.openssh pkgs.nixos-rebuild pkgs.home-manager];
       restartIfChanged = false;
       unitConfig.X-StopOnRemoval = false;
       serviceConfig = {
@@ -76,7 +76,7 @@ in {
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull --ff-only
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos submodule update --init
         nixos-rebuild switch
-        # /run/wrappers/bin/sudo -u ${user} /var/cache/gc-links/home-config-hera/default/activate
+        /run/wrappers/bin/sudo -u ${user} home-manager --flake /home/maralorn/git/config#hera-default
       '';
     };
   };
