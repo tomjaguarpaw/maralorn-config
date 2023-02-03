@@ -108,9 +108,6 @@ in {
          tag name str = ["-I", [i|#{name :: Text}=#{str :: Text}|]] :: [String]
          getNivAssign (name, repo) = tag name <$> getNivPath path repo
 
-      myNixPath :: Text -> IO [String]
-      myNixPath = aNixPath "${pkgs.home-manager-channel}" "${pkgs.nixpkgs-channel}"
-
       buildSystemParams :: [String]
       buildSystemParams = ["<nixpkgs/nixos>", "-A", "system"]
 

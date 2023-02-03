@@ -2,7 +2,6 @@
   pkgs,
   config,
   lib,
-  flake-inputs,
   ...
 }: {
   imports = [
@@ -14,19 +13,6 @@
     defaultLocale = "en_DK.UTF-8";
     supportedLocales = ["en_DK.UTF-8/UTF-8" "de_DE.UTF-8/UTF-8" "en_US.UTF-8/UTF-8"];
   };
-
-  # For nixos-rebuild
-  nixpkgs.overlays =
-    [
-      (_: _:
-        {
-          unstable = flake-inputs.nixos-unstable.legacyPackages.x86_64-linux;
-          nixpkgs-channel = "nixos-stable";
-          home-manager-channel = "home-manager-stable";
-        }
-        // flake-inputs.secrets.private)
-    ]
-    ++ import ../../overlays {inherit lib;};
 
   time.timeZone = "Europe/Berlin";
 
@@ -65,6 +51,7 @@
     systemPackages = builtins.attrValues {
       inherit
         (pkgs)
+        git
         gnumake
         mkpasswd
         file
@@ -121,16 +108,6 @@
         ;
       inherit (pkgs.python3Packages) qrcode;
     };
-    etc =
-      lib.mapAttrs'
-      (name: value: lib.nameValuePair "nix-path/${name}" {source = value;})
-      (lib.filterAttrs (name: value: name != "__functor") pkgs.sources)
-      // {
-        "nix-path/nixos".source = pkgs.sources."${pkgs.nixpkgs-channel}";
-        "nix-path/nixpkgs".source = pkgs.sources."${pkgs.nixpkgs-channel}";
-        "nix-path/home-manager".source =
-          pkgs.sources."${pkgs.home-manager-channel}";
-      };
     variables =
       lib.genAttrs ["CURL_CA_BUNDLE" "GIT_SSL_CAINFO" "SSL_CERT_FILE"]
       (_: "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt");
@@ -138,18 +115,12 @@
 
   nix = {
     settings = {
-      substituters = lib.mkAfter (
-        pkgs.privateValue [] "binary-caches"
-        # ++ (
-        #   if config.networking.hostName != "hera" then [ "ssh-ng://nix-ssh@hera.m-0.eu?trusted=true&priority=100" ] else [ ]
-        # )
-      );
+      substituters = lib.mkAfter (pkgs.privateValue [] "binary-caches");
       trusted-public-keys = [
         "nixbuild.net/maralorn-1:cpqv21sJgRL+ROaKY1Gr0k7AKolAKaP3S3iemGxK/30="
       ];
       trusted-users = ["maralorn" "laminar"];
     };
-    nixPath = ["/etc/nix-path"];
     buildMachines = pkgs.privateValue [] "remote-builders";
     extraOptions = ''
       experimental-features = nix-command flakes

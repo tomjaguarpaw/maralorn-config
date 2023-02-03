@@ -13,7 +13,6 @@
     ./helix.nix
     ./nvd.nix
   ];
-  nixpkgs.overlays = import ../../overlays {inherit lib;};
 
   news.display = "silent";
 

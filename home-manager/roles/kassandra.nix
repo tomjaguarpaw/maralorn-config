@@ -24,10 +24,5 @@
     ln -s ${standalone}/source.dhall $out/config.dhall
   '';
 in {
-  xdg.configFile =
-    if pkgs.withSecrets
-    then {
-      kassandra.source = dhallResult.out;
-    }
-    else {};
+  xdg.configFile.kassandra.source = dhallResult.out;
 }

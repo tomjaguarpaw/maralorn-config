@@ -9,10 +9,17 @@
       url = "git+ssh://git@hera.m-0.eu/config-secrets";
       inputs.nixpkgs.follows = "nixos-unstable";
     };
-    nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixos-stable.url = "github:nixos/nixpkgs/nixos-22.11";
+    nixos-unstable.url = "nixpkgs/nixos-unstable";
+    nixos-stable.url = "nixpkgs/nixos-22.11";
     nixpkgs.follows = "nixos-unstable";
     flake-parts.inputs.nixpkgs-lib.follows = "nixos-unstable";
+    home-manager = {
+      url = "home-manager/release-22.11";
+      inputs = {
+        utils.follows = "pre-commit-hooks-nix/flake-utils";
+        nixpkgs.follows = "nixos-unstable";
+      };
+    };
     hexa-nur-packages = {
       url = "github:mweinelt/nur-packages";
       inputs.nixpkgs.follows = "nixos-unstable";
@@ -26,19 +33,15 @@
     };
   };
 
-  outputs = inputs @ {nixos-hardware, ...}: let
-    unstable = inputs.nixos-unstable.legacyPackages.x86_64-linux;
-    inherit (import ./packages {pkgs = unstable;}) haskellPackagesOverlay selectHaskellPackages;
-  in
+  outputs = inputs @ {nixos-hardware, ...}:
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       imports = [
         inputs.pre-commit-hooks-nix.flakeModule
+        ./nixos/configurations.nix
+        ./home-manager/modes.nix
+        ./packages
       ];
       systems = ["x86_64-linux"];
-      flake = {
-        nixosConfigurations = import ./nixos/configurations.nix inputs;
-        overlays.haskellPackages = haskellPackagesOverlay;
-      };
       perSystem = {
         self',
         inputs',
@@ -46,31 +49,19 @@
         config,
         lib,
         ...
-      }: let
-        hpkgs = pkgs.haskellPackages.override {
-          overrides = inputs.self.overlays.haskellPackages;
-        };
-      in {
+      }: {
         devShells = {
           default = pkgs.mkShell {
             shellHook = config.pre-commit.installationScript;
           };
-          haskell = hpkgs.shellFor {
-            packages = hpkgs: (builtins.attrValues (selectHaskellPackages hpkgs));
-            shellHook = config.pre-commit.installationScript;
-            buildInputs = [
-              hpkgs.haskell-language-server
-              pkgs.cabal-install
-            ];
-          };
         };
         checks = {
           system-checks = pkgs.runCommand "system-checks" {} ''
-            ${lib.concatMapStringsSep "\n" (x: "# ${x.config.system.build.toplevel}") (builtins.attrValues inputs.self.nixosConfigurations)}
-            echo success > $out
+            mkdir -p $out
+            ${lib.concatMapStringsSep "\n" (x: x) (lib.mapAttrsToList (name: x: "ln -s ${x.config.system.build.toplevel} $out/${name}-system") inputs.self.nixosConfigurations)}
+            ${lib.concatMapStringsSep "\n" (x: x) (lib.mapAttrsToList (name: x: "ln -s ${x} $out/${name}-home") inputs.self.homeModes)}
           '';
         };
-        packages = selectHaskellPackages hpkgs;
 
         pre-commit = {
           check.enable = true;

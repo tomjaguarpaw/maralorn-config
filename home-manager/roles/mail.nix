@@ -64,7 +64,7 @@ in {
     msmtp.enable = true;
     mbsync.enable = true;
     notmuch = {
-      enable = pkgs.withSecrets;
+      enable = true;
       hooks.postInsert = ''
         ${pkgs.notmuch}/bin/notmuch tag +deleted -- "folder:/Trash/ (not tag:deleted)"
         ${pkgs.notmuch}/bin/notmuch tag -deleted -- "(not folder:/Trash/) tag:deleted"

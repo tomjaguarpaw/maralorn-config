@@ -1,5 +1,9 @@
-{pkgs}: let
-  inherit (pkgs) lib;
+{
+  lib,
+  inputs,
+  ...
+}: let
+  pkgs = inputs.nixos-unstable.legacyPackages.x86_64-linux;
   inherit (pkgs.haskell.lib.compose) unmarkBroken doJailbreak dontCheck appendPatch;
   includePatterns = [
     ".hs"
@@ -58,6 +62,24 @@
       source = ./nixpkgs-bot;
     };
   };
+  hpkgs = pkgs.haskellPackages.override {
+    overrides = haskellPackagesOverlay;
+  };
+  packages = selectHaskellPackages hpkgs;
 in {
-  inherit selectHaskellPackages haskellPackagesOverlay;
+  flake.overlays = {
+    inherit haskellPackagesOverlay;
+    addMyHaskellPackages = _: _: packages;
+  };
+  perSystem = {config, ...}: {
+    inherit packages;
+    devShells.haskell = hpkgs.shellFor {
+      packages = hpkgs: (builtins.attrValues (selectHaskellPackages hpkgs));
+      shellHook = config.pre-commit.installationScript;
+      buildInputs = [
+        hpkgs.haskell-language-server
+        hpkgs.cabal-install
+      ];
+    };
+  };
 }

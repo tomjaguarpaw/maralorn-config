@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  flake-inputs,
   ...
 }: let
   fix-tasks = pkgs.writeShellScriptBin "fix-tasks" ''
@@ -75,10 +76,10 @@ in {
     dataLocation = "${config.home.homeDirectory}/.task";
     config = {
       taskd = {
-        certificate = pkgs.privatePath "taskwarrior/public.cert";
+        certificate = "${flake-inputs.secrets}/taskwarrior/public.cert";
         credentials = pkgs.privateValue "" "taskwarrior/credentials";
-        ca = pkgs.privatePath "taskwarrior/ca.cert";
-        key = pkgs.privatePath "taskwarrior/private.key";
+        ca = "${flake-inputs.secrets}/taskwarrior/ca.cert";
+        key = "${flake-inputs.secrets}/taskwarrior/private.key";
         server = "hera.m-0.eu:53589";
       };
     };

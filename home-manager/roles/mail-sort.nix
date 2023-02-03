@@ -117,7 +117,7 @@ in {
     postExec = "${sortMail}/bin/sort-mail-archive";
     preExec = toString mail2task;
   };
-  accounts.email.accounts = lib.mkIf pkgs.withSecrets {
+  accounts.email.accounts = {
     hera.imapnotify = {
       onNotifyPost = toString mail2task;
       boxes = ["Move/todo"];

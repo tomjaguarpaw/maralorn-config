@@ -40,15 +40,9 @@ in {
         name = "update-modes";
         bins = [activateMode pkgs.git pkgs.nix-output-monitor];
       } ''
-        params = ["${configPath}/home-manager/target.nix", "-A", "${hostName}"]
-
         main = do
           say "Building ~/.modes for ${hostName}"
-          nixPath <- myNixPath "${configPath}"
-          setEnv "WITH_SECRETS" "false"
-          nom_build nixPath (params ++ remoteBuildParams ++ ["--no-out-link"])
-          setEnv "WITH_SECRETS" "true"
-          nom_build nixPath (params ++ ["-o", "${modeDir}"])
+          nom ["build", "/home/maralorn/git/config#homeModes.${hostName}", "-o", "${modeDir}"]
           activate_mode
       '';
     quickUpdateMode =
@@ -61,10 +55,10 @@ in {
         getMode = decodeUtf8 <$> (cat "${modeFile}" |> captureTrim)
 
         main = do
-          nixPath <- myNixPath "${configPath}"
           mode <- getMode
           say [i|Quick switching to mode #{mode} ...|]
-          ignoreFailure (home_manager (nixPath <> ["switch", "-A", [i|${hostName}-#{mode}|]])) &!> StdOut |> nom
+          path :: Text <- decodeUtf8 <$> (nix ["build", "--print-out-paths", [i|/home/maralorn/git/config\#homeConfigurations.${hostName}-#{mode}.activationPackage|]] |> captureTrim)
+          exe ([i|#{path}/activate|] :: String)
           update_modes
       '';
     selectMode =
