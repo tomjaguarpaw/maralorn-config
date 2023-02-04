@@ -78,7 +78,12 @@
     privateNetwork = true;
     hostBridge = "bridge";
     config = {pkgs, ...}: {
-      imports = [flake-inputs.self.nixosModules.insertOverlays] ++ flake-inputs.modules;
+      imports =
+        [
+          ../../roles
+          flake-inputs.self.nixosModules.insertOverlays
+        ]
+        ++ flake-inputs.modules;
 
       networking = {
         interfaces.eth0 = {
