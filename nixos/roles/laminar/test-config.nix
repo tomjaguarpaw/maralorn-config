@@ -76,7 +76,7 @@ in {
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull --ff-only
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos submodule update --init
         nixos-rebuild switch
-        /run/wrappers/bin/sudo -u ${user} home-manager --flake /home/maralorn/git/config#hera-default
+        /run/wrappers/bin/sudo -u ${user} update-mode
       '';
     };
   };
