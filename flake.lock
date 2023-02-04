@@ -360,11 +360,11 @@
     },
     "nixos-stable": {
       "locked": {
-        "lastModified": 1675327819,
-        "narHash": "sha256-Fd2BUNUsTO7wmoU1fbOC4HNkl370dYdkfKgWPretuj0=",
+        "lastModified": 1675410244,
+        "narHash": "sha256-ODj6egMoH/HgAF/0wIy0EfRBeUx5FMuLl6uAdUW3kCI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "21efc622b939884db3c92f49d638ca89f12f22f8",
+        "rev": "f7543a7539a007e9562e4d8d24e17a4bcf369b68",
         "type": "github"
       },
       "original": {
@@ -375,11 +375,11 @@
     },
     "nixos-unstable": {
       "locked": {
-        "lastModified": 1675273418,
-        "narHash": "sha256-tpYc4TEGvDzh9uRf44QemyQ4TpVuUbxb07b2P99XDbM=",
+        "lastModified": 1675362331,
+        "narHash": "sha256-VmcnKPj5gJLxWK7Bxlhg2LoQvhKRss7Ax+uoFjd3qKY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "4d7c2644dbac9cf8282c0afe68fca8f0f3e7b2db",
+        "rev": "a100acd7bbf105915b0004427802286c37738fef",
         "type": "github"
       },
       "original": {
@@ -442,11 +442,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1675470417,
-        "narHash": "sha256-4B+3GzKF7CydZHTGpwr/CL0SnYjdUrneBBOhG41kuWc=",
+        "lastModified": 1675476212,
+        "narHash": "sha256-0VPStyGeHJ0ssk9JhnO/fgZGDHQgxjVb4mlUMmDbY8c=",
         "ref": "refs/heads/main",
-        "rev": "d9922f315041dfee8c0955975feab2bb8855ad61",
-        "revCount": 181,
+        "rev": "dd81ce6998c4d17e7bab2356daac15f81ed15106",
+        "revCount": 182,
         "type": "git",
         "url": "ssh://git@hera.m-0.eu/config-secrets"
       },
