@@ -76,7 +76,7 @@ in {
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull --ff-only
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos submodule update --init
         nixos-rebuild switch
-        /run/wrappers/bin/sudo -u ${user} update-mode
+        /run/wrappers/bin/sudo -u ${user} /nix/var/nix/profiles/per-user/maralorn/profile/bin/update-modes
       '';
     };
   };
