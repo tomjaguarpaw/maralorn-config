@@ -23,6 +23,7 @@
       modules = [
         config
         inputs.self.nixosModules.insertOverlays
+        inputs.emanote.homeManagerModule
       ];
     });
     buildModesForHost = host: modes:

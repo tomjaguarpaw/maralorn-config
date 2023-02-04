@@ -1,4 +1,4 @@
-_: {
+flake-inputs: {
   config,
   pkgs,
   lib,
@@ -8,7 +8,12 @@ _: {
   inherit (config.m-0) hosts;
   localAddress = "fdc0:1::2";
 in {
+  disabledModules = [
+    "services/home-automation/home-assistant.nix"
+  ];
+
   imports = [
+    "${flake-inputs.nixos-unstable}/nixos/modules/services/home-automation/home-assistant.nix"
     ./hardware-configuration.nix
     ../../roles
     ../../roles/admin.nix

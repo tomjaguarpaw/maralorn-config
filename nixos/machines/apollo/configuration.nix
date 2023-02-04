@@ -6,12 +6,11 @@ flake-inputs: {
 }: let
   wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts prefix;
-  inherit ((import ../../../nix/sources.nix)) nixos-hardware;
   inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
-  vpn = flake-inputs.secrets.private.privateValue (_: _: {}) "vpn";
 in {
   imports = [
-    "${nixos-hardware}/lenovo/thinkpad/t480s"
+    (flake-inputs.secrets.lib.vpn "apollo")
+    "${flake-inputs.nixos-hardware}/lenovo/thinkpad/t480s"
     ./hardware-configuration.nix
     ../../roles
     ../../roles/fonts.nix
@@ -29,7 +28,6 @@ in {
         "/home/maralorn/git"
       ];
     })
-    (vpn "apollo")
   ];
   systemd.services.lenovo_fix.path = [pkgs.kmod];
 

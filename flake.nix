@@ -9,14 +9,39 @@
       url = "git+ssh://git@hera.m-0.eu/config-secrets";
       inputs.nixpkgs.follows = "nixos-unstable";
     };
+    emanote = {
+      url = "github:srid/emanote";
+      inputs = {
+        flake-parts.follows = "flake-parts";
+        nixpkgs.follows = "nixos-unstable";
+      };
+    };
+    nix-output-monitor = {
+      inputs = {
+        flake-compat.follows = "pre-commit-hooks/flake-compat";
+        flake-utils.follows = "pre-commit-hooks/flake-utils";
+        nixpkgs.follows = "nixos-unstable";
+        pre-commit-hooks.follows = "pre-commit-hooks";
+      };
+      url = "git+ssh://git@hera.m-0.eu/nix-output-monitor?ref=main";
+    };
     nixos-unstable.url = "nixpkgs/nixos-unstable";
+    nixos-mailserver = {
+      inputs = {
+        flake-compat.follows = "pre-commit-hooks/flake-compat";
+        utils.follows = "pre-commit-hooks/flake-utils";
+        nixpkgs.follows = "nixos-unstable";
+        nixpkgs-22_11.follows = "nixos-stable";
+      };
+      url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git";
+    };
     nixos-stable.url = "nixpkgs/nixos-22.11";
     nixpkgs.follows = "nixos-unstable";
     flake-parts.inputs.nixpkgs-lib.follows = "nixos-unstable";
     home-manager = {
       url = "home-manager/release-22.11";
       inputs = {
-        utils.follows = "pre-commit-hooks-nix/flake-utils";
+        utils.follows = "pre-commit-hooks/flake-utils";
         nixpkgs.follows = "nixos-unstable";
       };
     };
@@ -24,7 +49,7 @@
       url = "github:mweinelt/nur-packages";
       inputs.nixpkgs.follows = "nixos-unstable";
     };
-    pre-commit-hooks-nix = {
+    pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs = {
         nixpkgs-stable.follows = "nixos-stable";
@@ -36,7 +61,7 @@
   outputs = inputs @ {nixos-hardware, ...}:
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       imports = [
-        inputs.pre-commit-hooks-nix.flakeModule
+        inputs.pre-commit-hooks.flakeModule
         ./nixos/configurations.nix
         ./home-manager/modes.nix
         ./packages

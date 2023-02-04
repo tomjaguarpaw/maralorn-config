@@ -15,8 +15,6 @@ in {
     }
   ];
 
-  imports = [../../roles "${(import ../../../nix/sources.nix).nixos-mailserver}"];
-
   services = {
     unbound.enable = true;
     prometheus.exporters = {

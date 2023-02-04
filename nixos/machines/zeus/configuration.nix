@@ -9,7 +9,7 @@ flake-inputs: {
   inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
 in {
   imports = [
-    (flake-inputs.secrets.private.privateValue (_: _: {}) "vpn" "zeus")
+    (flake-inputs.secrets.lib.vpn "zeus")
     "${flake-inputs.nixos-hardware}/common/gpu/amd/sea-islands"
     ./hardware-configuration.nix
     ../../roles

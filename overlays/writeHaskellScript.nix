@@ -92,35 +92,7 @@ in {
         (builtins.map toString (bins ++ [pkgs.coreutils pkgs.nix]))
       } :: [String])
 
-      getNivPath :: Text -> Text -> IO Text
-      getNivPath sources channel = do
-        let expression = [i|(import #{sources}/nix/sources.nix)."#{channel}"|] :: String
-        nix_build ["-Q", "-E", expression, "--no-out-link"] &> devNull
-        escaped <- nix_instantiate ["--eval" :: String, "-E", [i|toString #{expression}|]] |> captureTrim
-        pure . Text.dropAround ('"' ==) . decodeUtf8 . trim $ escaped
-
-      aNixPath :: Text -> Text -> Text -> IO [String]
-      aNixPath homeManagerChannel nixpkgsChannel path = concat <$> mapM getNivAssign
-          [("home-manager", homeManagerChannel),
-           ("nixpkgs", nixpkgsChannel),
-           ("nixos-unstable", "nixos-unstable")]
-        where
-         tag name str = ["-I", [i|#{name :: Text}=#{str :: Text}|]] :: [String]
-         getNivAssign (name, repo) = tag name <$> getNivPath path repo
-
-      buildSystemParams :: [String]
-      buildSystemParams = ["<nixpkgs/nixos>", "-A", "system"]
-
-      remoteBuildParams :: [String]
-      remoteBuildParams = ["--builders", "@/etc/nix/machines"]
-
       main :: IO ()
       ${code}
     '';
-  get-niv-path = pkgs.writeHaskellScript {name = "get-niv-path";} ''
-    main = do
-        [sources, channel] <- fmap toText <$> getArgs
-        path <- getNivPath sources channel
-        say path
-  '';
 }

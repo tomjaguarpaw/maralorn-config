@@ -1,4 +1,4 @@
-_: {
+flake-inputs: {
   config,
   pkgs,
   lib,
@@ -9,6 +9,7 @@ _: {
   backupJobNames = map (name: "borgbackup-job-${name}") (lib.attrNames backupJobs);
 in {
   imports = [
+    flake-inputs.nixos-mailserver.nixosModules.default
     ./hardware-configuration.nix
     ../../roles
     ../../roles/standalone

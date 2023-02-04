@@ -64,17 +64,12 @@
     "kalliope_battery_level"
     "schlafzimmerfenster_battery"
   ];
-  inherit (import ../../../nix/sources.nix) nixos-unstable;
   homeAssistantDir = "/disk/persist/home-assistant";
 in {
-  disabledModules = [
-    "services/home-automation/home-assistant.nix"
-  ];
-
   imports = [
-    "${nixos-unstable}/nixos/modules/services/home-automation/home-assistant.nix"
     ./hexa-cards.nix
   ];
+
   systemd.tmpfiles.rules = [
     "d ${homeAssistantDir} - - - - -"
   ];

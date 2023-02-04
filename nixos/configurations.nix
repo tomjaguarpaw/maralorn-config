@@ -36,7 +36,7 @@
         imports =
           [
             (import (./. + "/machines/${name}/configuration.nix") inputs)
-            inputs.secrets.nixosModules.secrets
+            inputs.secrets.nixosModules.default
             inputs.self.nixosModules.insertOverlays
           ]
           ++ modules;
@@ -51,6 +51,7 @@
         [
           (_: _:
             {
+              nix-output-monitor = inputs'.nix-output-monitor.packages.default;
               unstable = inputs'.nixos-unstable.legacyPackages;
               unfree = import inputs.nixos-stable {
                 inherit system;

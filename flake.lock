@@ -22,6 +22,53 @@
         "type": "github"
       }
     },
+    "blobs": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1604995301,
+        "narHash": "sha256-wcLzgLec6SGJA8fx1OEN1yV/Py5b+U5iyYpksUY/yLw=",
+        "owner": "simple-nixos-mailserver",
+        "repo": "blobs",
+        "rev": "2cccdf1ca48316f2cfd1c9a0017e8de5a7156265",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "simple-nixos-mailserver",
+        "repo": "blobs",
+        "type": "gitlab"
+      }
+    },
+    "cdarknet-hosts": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1671575921,
+        "narHash": "sha256-A+6Rb6ZffrD/MUrTME11gSLlKDTpUT4mv3WvrTTOU90=",
+        "ref": "refs/heads/master",
+        "rev": "7944c58a8993941b612e8f8822c3073d5e46e774",
+        "revCount": 240,
+        "type": "git",
+        "url": "ssh://git@git.darmstadt.ccc.de/cdark.net/hosts.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@git.darmstadt.ccc.de/cdark.net/hosts.git"
+      }
+    },
+    "check-flake": {
+      "locked": {
+        "lastModified": 1662502605,
+        "narHash": "sha256-jAT55UhabAxLAVGanxjnNdzH2/oX2ZjLsL4i2jPIP+g=",
+        "owner": "srid",
+        "repo": "check-flake",
+        "rev": "48a17393ed4fcd523399d6602c283775b5127295",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "repo": "check-flake",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -42,6 +89,33 @@
         "owner": "lnl7",
         "ref": "master",
         "repo": "nix-darwin",
+        "type": "github"
+      }
+    },
+    "emanote": {
+      "inputs": {
+        "check-flake": "check-flake",
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "flake-root": "flake-root",
+        "haskell-flake": "haskell-flake",
+        "nixpkgs": [
+          "nixos-unstable"
+        ],
+        "treefmt-nix": "treefmt-nix"
+      },
+      "locked": {
+        "lastModified": 1675106498,
+        "narHash": "sha256-vqstWyXjaMER9LgRiwW4Dog0PoFMRZ2WIwRfxPEsaEA=",
+        "owner": "srid",
+        "repo": "emanote",
+        "rev": "66dad06ca8fff73e30c52aee28f6458c73c900e3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "repo": "emanote",
         "type": "github"
       }
     },
@@ -80,6 +154,21 @@
         "type": "indirect"
       }
     },
+    "flake-root": {
+      "locked": {
+        "lastModified": 1671378805,
+        "narHash": "sha256-yqGxyzMN2GuppwG3dTWD1oiKxi+jGYP7D1qUSc5vKhI=",
+        "owner": "srid",
+        "repo": "flake-root",
+        "rev": "dc7ba6166e478804a9da6881aa48c45d300075cf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "repo": "flake-root",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "locked": {
         "lastModified": 1667395993,
@@ -98,7 +187,7 @@
     "gitignore": {
       "inputs": {
         "nixpkgs": [
-          "pre-commit-hooks-nix",
+          "pre-commit-hooks",
           "nixpkgs"
         ]
       },
@@ -113,6 +202,21 @@
       "original": {
         "owner": "hercules-ci",
         "repo": "gitignore.nix",
+        "type": "github"
+      }
+    },
+    "haskell-flake": {
+      "locked": {
+        "lastModified": 1674066917,
+        "narHash": "sha256-nRSAb7N64zmAbXUoVVqY/s2LbSIdDTdfN0sSKG5/CCY=",
+        "owner": "srid",
+        "repo": "haskell-flake",
+        "rev": "c6ff897db9abdd4e5ff7911b5f9234a1380c6611",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "repo": "haskell-flake",
         "type": "github"
       }
     },
@@ -142,7 +246,7 @@
           "nixos-unstable"
         ],
         "utils": [
-          "pre-commit-hooks-nix",
+          "pre-commit-hooks",
           "flake-utils"
         ]
       },
@@ -160,6 +264,54 @@
         "type": "indirect"
       }
     },
+    "nix-output-monitor": {
+      "inputs": {
+        "flake-compat": [
+          "pre-commit-hooks",
+          "flake-compat"
+        ],
+        "flake-utils": [
+          "pre-commit-hooks",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixos-unstable"
+        ],
+        "pre-commit-hooks": [
+          "pre-commit-hooks"
+        ]
+      },
+      "locked": {
+        "lastModified": 1672353191,
+        "narHash": "sha256-e9OwOsD2lfJ8WfcIEcGU6tY9LWB2VGnKDEC4ZKfKJVc=",
+        "ref": "main",
+        "rev": "9345278323e8763ca04ede5429c72655c4cef0bf",
+        "revCount": 400,
+        "type": "git",
+        "url": "ssh://git@hera.m-0.eu/nix-output-monitor"
+      },
+      "original": {
+        "ref": "main",
+        "type": "git",
+        "url": "ssh://git@hera.m-0.eu/nix-output-monitor"
+      }
+    },
+    "nixdark": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1622585364,
+        "narHash": "sha256-XcPtucllbbB9p9HGkvKbaP5ep1pJ1FCFlb8cXmyIkMg=",
+        "ref": "refs/heads/master",
+        "rev": "4003f84e73e65ec3ee96803eae3b7015c4a13b4f",
+        "revCount": 14,
+        "type": "git",
+        "url": "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark.git"
+      }
+    },
     "nixos-hardware": {
       "locked": {
         "lastModified": 1674550793,
@@ -172,6 +324,38 @@
       "original": {
         "id": "nixos-hardware",
         "type": "indirect"
+      }
+    },
+    "nixos-mailserver": {
+      "inputs": {
+        "blobs": "blobs",
+        "flake-compat": [
+          "pre-commit-hooks",
+          "flake-compat"
+        ],
+        "nixpkgs": [
+          "nixos-unstable"
+        ],
+        "nixpkgs-22_11": [
+          "nixos-stable"
+        ],
+        "utils": [
+          "pre-commit-hooks",
+          "flake-utils"
+        ]
+      },
+      "locked": {
+        "lastModified": 1671738303,
+        "narHash": "sha256-PRgqtaWf2kMSYqVmcnmhTh+UsC0RmvXRTr+EOw5VZUA=",
+        "ref": "refs/heads/master",
+        "rev": "6d0d9fb966cc565a3df74d3b686f924c7615118c",
+        "revCount": 544,
+        "type": "git",
+        "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git"
       }
     },
     "nixos-stable": {
@@ -204,7 +388,7 @@
         "type": "indirect"
       }
     },
-    "pre-commit-hooks-nix": {
+    "pre-commit-hooks": {
       "inputs": {
         "flake-compat": "flake-compat",
         "flake-utils": "flake-utils",
@@ -232,38 +416,58 @@
     },
     "root": {
       "inputs": {
+        "emanote": "emanote",
         "flake-parts": "flake-parts",
         "hexa-nur-packages": "hexa-nur-packages",
         "home-manager": "home-manager",
+        "nix-output-monitor": "nix-output-monitor",
         "nixos-hardware": "nixos-hardware",
+        "nixos-mailserver": "nixos-mailserver",
         "nixos-stable": "nixos-stable",
         "nixos-unstable": "nixos-unstable",
         "nixpkgs": [
           "nixos-unstable"
         ],
-        "pre-commit-hooks-nix": "pre-commit-hooks-nix",
+        "pre-commit-hooks": "pre-commit-hooks",
         "secrets": "secrets"
       }
     },
     "secrets": {
       "inputs": {
         "agenix": "agenix",
+        "cdarknet-hosts": "cdarknet-hosts",
+        "nixdark": "nixdark",
         "nixpkgs": [
           "nixos-unstable"
         ]
       },
       "locked": {
-        "lastModified": 1675313356,
-        "narHash": "sha256-3LkUMhFfB8A+2kfS5HE5Gs3+KuU+pYXw3WbNyYW8k24=",
+        "lastModified": 1675470417,
+        "narHash": "sha256-4B+3GzKF7CydZHTGpwr/CL0SnYjdUrneBBOhG41kuWc=",
         "ref": "refs/heads/main",
-        "rev": "a2b507c00439a75e10b314018ff1e74c7f06f514",
-        "revCount": 175,
+        "rev": "d9922f315041dfee8c0955975feab2bb8855ad61",
+        "revCount": 181,
         "type": "git",
         "url": "ssh://git@hera.m-0.eu/config-secrets"
       },
       "original": {
         "type": "git",
         "url": "ssh://git@hera.m-0.eu/config-secrets"
+      }
+    },
+    "treefmt-nix": {
+      "locked": {
+        "lastModified": 1671882555,
+        "narHash": "sha256-43HxY5gNaDMkKckeEXbhua4Ay1/S1HnYzqZBIVhzeqI=",
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "rev": "97981314ddf673803a1d5f966014f444a1054b1e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "type": "github"
       }
     }
   },
