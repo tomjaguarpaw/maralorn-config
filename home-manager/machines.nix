@@ -70,7 +70,7 @@ let
         ./roles/mpd.nix
         ./roles/pythia.nix
         ./roles/research.nix
-        # ./roles/night-shutdown.nix
+        ./roles/night-shutdown.nix
         ./roles/tinkering.nix
         ./roles/wallpaper.nix
         ./roles/zettelkasten.nix
