@@ -59,12 +59,10 @@ in {
         "https://ci.maralorn.de"
         "https://cloud.maralorn.de"
         "https://firefox-sync.maralorn.de"
-        "https://fdroid.maralorn.de/index-v1.json"
         "https://matrix.maralorn.de"
         "https://monitoring.maralorn.de"
         "https://rpg.maralorn.de"
         "https://stats.maralorn.de"
-        "https://tasks.maralorn.de"
         "https://hochzeit.malte-und-clai.re"
 
         "https://wiki.vocalensemble-darmstadt.de"
