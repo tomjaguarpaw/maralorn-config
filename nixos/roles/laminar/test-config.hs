@@ -38,8 +38,8 @@ main = do
   when (branch == "main") $ do
     say [i|Deploying new config to localhost.|]
     exe "/run/wrappers/bin/sudo" deployCommand
-  when (branch == "niv-bump") $ do
-    say [i|Merging branch niv-bump into main.|]
+  when (branch == "flake-lock-update") $ do
+    say [i|Merging branch flake-lock-update into main.|]
     git "checkout" "main"
-    git "merge" "origin/niv-bump"
+    git "merge" "origin/flake-lock-update"
     git "push"

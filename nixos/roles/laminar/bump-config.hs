@@ -10,6 +10,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# OPTIONS_GHC -Wall -Werror -Wno-missing-signatures -Wno-type-defaults -Wno-orphans #-}
 
+import Data.ByteString.Lazy qualified as LBS
 import Data.String.Interpolate
 import Data.Text qualified as Text
 import Language.Haskell.TH
@@ -30,13 +31,12 @@ paths =
 repo = "git@hera.m-0.eu:nixos-config"
 
 main = do
+  git "config" "user.email" "maralorn@maralorn.de"
+  git "config" "user.name" "maralorn (nix-auto-updater)"
   git "clone" repo "."
   setEnv "PATH" . toString $ Text.intercalate ":" paths
-  ignoreFailure $ nix "flake" "update"
-  changed <- (mempty /=) <$> (git "status" "--porcelain" |> captureTrim)
-  when changed $ do
-    git "config" "user.email" "maralorn@maralorn.de"
-    git "config" "user.name" "maralorn (nix-auto-updater)"
-    git "commit" "-am" "Update flake dependencies"
-    git "push" "-f" "origin" "HEAD:niv-bump"
-  unless changed $ say "No flake updates. Doing nothing."
+  ignoreFailure $ nix "flake" "update" "--commit-lock-file" "--commit-lockfile-summary"
+  changed <- LBS.null <$> (git "branch" "-r" "--contains" "HEAD" |> captureTrim)
+  if changed
+    then git "push" "-f" "origin" "HEAD:flake-lock-update"
+    else say "No flake updates. Doing nothing."
