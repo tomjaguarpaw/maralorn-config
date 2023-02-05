@@ -18,6 +18,8 @@
     };
     theme = "Catppuccin-Latte";
     settings = {
+      enable_audio_bell = false;
+      visual_bell_duration = "0.1";
       linux_display_server = "wayland"; # Causes ugly decorations
       hide_window_decorations = true;
       window_margin_width = 0;
