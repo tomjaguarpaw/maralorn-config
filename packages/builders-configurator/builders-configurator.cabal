@@ -1,0 +1,40 @@
+cabal-version:   3.0
+name:            builders-configurator
+version:         0.1.0.0
+
+-- synopsis:
+-- description:
+license:         AGPL-3.0-or-later
+license-file:    LICENSE
+author:          maralorn
+maintainer:      mail@maralorn.de
+
+-- copyright:
+build-type:      Simple
+extra-doc-files: CHANGELOG.md
+
+-- extra-source-files:
+
+common warnings
+  ghc-options: -Wall
+
+executable builders-configurator
+  import:             warnings
+  main-is:            Main.hs
+  default-extensions:
+    NoImplicitPrelude
+    OverloadedRecordDot
+    OverloadedStrings
+    QuasiQuotes
+
+  build-depends:
+    , base                ^>=4.16.3.0
+    , containers
+    , relude
+    , say
+    , string-interpolate
+    , text
+    , witch
+
+  hs-source-dirs:     exe
+  default-language:   GHC2021
