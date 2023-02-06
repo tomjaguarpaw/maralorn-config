@@ -31,9 +31,9 @@ paths =
 repo = "git@hera.m-0.eu:nixos-config"
 
 main = do
+  git "clone" repo "."
   git "config" "user.email" "maralorn@maralorn.de"
   git "config" "user.name" "maralorn (nix-auto-updater)"
-  git "clone" repo "."
   setEnv "PATH" . toString $ Text.intercalate ":" paths
   ignoreFailure $ nix "flake" "update" "--commit-lock-file" "--commit-lockfile-summary"
   changed <- LBS.null <$> (git "branch" "-r" "--contains" "HEAD" |> captureTrim)
