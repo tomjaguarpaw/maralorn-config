@@ -35,7 +35,7 @@ main = do
   git "config" "user.email" "maralorn@maralorn.de"
   git "config" "user.name" "maralorn (nix-auto-updater)"
   setEnv "PATH" . toString $ Text.intercalate ":" paths
-  ignoreFailure $ nix "flake" "update" "--commit-lock-file" "--commit-lockfile-summary"
+  ignoreFailure $ nix "flake" "update" "--commit-lock-file"
   changed <- LBS.null <$> (git "branch" "-r" "--contains" "HEAD" |> captureTrim)
   if changed
     then git "push" "-f" "origin" "HEAD:flake-lock-update"
