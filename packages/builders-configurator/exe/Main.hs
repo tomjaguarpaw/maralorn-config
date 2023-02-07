@@ -63,8 +63,8 @@ builderInfos =
 builderConfigs :: Map.Map Text [BuilderTries]
 builderConfigs =
   Map.fromList
-    [ ("hera", [FirstOf ["zeus-builder"], Use "fluffy-builder", Use "remote-builder", Use "nixbuild.net"])
-    , ("apollo", [FirstOf ["zeus-builder-local", "zeus-builder"], FirstOfFinally ["fluffy-builder-local"] "fluffy-builder", Use "remote-builder", Use "nixbuild.net"])
+    [ ("hera", [FirstOf ["zeus-builder"], Use "remote-builder", Use "nixbuild.net"])
+    , ("apollo", [FirstOf ["zeus-builder-local", "zeus-builder"], FirstOf ["fluffy-builder-local"], Use "remote-builder", Use "nixbuild.net"])
     , ("fluffy", [FirstOf ["zeus-builder-local"], Use "remote-builder", Use "nixbuild.net"])
     , ("zeus", [Use "fluffy-builder-local", Use "remote-builder", Use "nixbuild.net"])
     ]
