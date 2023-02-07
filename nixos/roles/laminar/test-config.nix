@@ -4,7 +4,7 @@
   config,
   ...
 }: let
-  bins = lib.attrValues {inherit (pkgs) git nix gnutar xz gzip openssh laminar;};
+  bins = lib.attrValues {inherit (pkgs) git nix gnutar xz gzip openssh laminar builders-configurator;};
   standardPath = lib.makeBinPath bins;
   systems = builtins.attrNames (builtins.readDir ../../machines);
   homes = lib.attrNames (import ../../../home-manager/machines.nix);

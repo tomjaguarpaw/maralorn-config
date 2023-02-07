@@ -11,7 +11,7 @@
       export PATH=${lib.makeBinPath path}:$PATH
       git clone git@localhost:${name} .
       git show -q --oneline
-      export FLAGS="--builders @$(${pkgs.builders-configurator}/bin/builders-configurators) -o /var/cache/gc-links/$JOB"
+      export FLAGS="--builders @$(${pkgs.builders-configurator}/bin/builders-configurator) -o /var/cache/gc-links/$JOB"
       if [[ -e "flake.nix" ]]; then
         echo "Flake detected."
         echo "Running 'flake check'"
