@@ -442,11 +442,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1675690809,
-        "narHash": "sha256-bllH/nodCUWnemHIcLyovdiU6kczBZ39MFb+JT81jok=",
+        "lastModified": 1675787571,
+        "narHash": "sha256-kH4qhDoWFIDmU8kTFBRtdDgBZewDs5mWILddbEMJZQc=",
         "ref": "refs/heads/main",
-        "rev": "ce26b50737a19228bfdb3d0a01e321a6a38acc6a",
-        "revCount": 185,
+        "rev": "fb086c9d89718abafd612e7ad9d559dae48d2fc7",
+        "revCount": 189,
         "type": "git",
         "url": "ssh://git@hera.m-0.eu/config-secrets"
       },
