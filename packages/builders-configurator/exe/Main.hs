@@ -94,18 +94,15 @@ printBuilders = Text.unlines . fmap builderLine . Foldable.foldr' folder []
 main :: IO ()
 main = do
   args <- getArgs
-  env_host <- fromMaybe (error "accessed $HOST which is not set.") <$> lookupEnv "HOST"
+  env_host <- readFileBS "/etc/hostname" `Exception.catch` \(e :: Exception.IOException) -> pure (error (show e))
   let (host, withoutConnection) = case args of
-        [] -> (env_host, False)
-        [host'] -> (host', False)
-        [host', "--without-connection"] -> (host', True)
+        [] -> (Text.strip (decodeUtf8 env_host), False)
+        [host'] -> (into host', False)
+        [host', "--without-connection"] -> (into host', True)
         _ -> error [i|Unknown arguments: #{args}|]
       builder_tries :: Ping :> es => Eff es [Text]
       builder_tries = testBuilders $ fromMaybe (error [i|#{host} not found in builderConfigs.|]) $ Map.lookup (into host) builderConfigs
-  builders <-
-    if withoutConnection
-      then pure $ Eff.runPureEff $ runWithoutConnectivity builder_tries
-      else Eff.runEff $ runWithPing builder_tries
+  builders <- Eff.runEff $ (if withoutConnection then runWithoutConnectivity else runWithPing) builder_tries
   (path, handle) <- IO.openTempFile "/tmp" "machines"
   TextIO.hPutStr handle (printBuilders builders)
   IO.hClose handle
