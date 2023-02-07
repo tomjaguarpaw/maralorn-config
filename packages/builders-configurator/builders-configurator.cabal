@@ -23,15 +23,24 @@ executable builders-configurator
   main-is:            Main.hs
   default-extensions:
     NoImplicitPrelude
+    BlockArguments
+    DataKinds
+    ExtendedDefaultRules
+    LambdaCase
     OverloadedRecordDot
     OverloadedStrings
     QuasiQuotes
+    TemplateHaskell
+    TypeFamilies
 
   build-depends:
     , base                ^>=4.16.3.0
     , containers
+    , effectful
+    , effectful-th
     , relude
     , say
+    , shh
     , string-interpolate
     , text
     , witch

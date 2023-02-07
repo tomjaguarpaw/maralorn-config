@@ -1,14 +1,19 @@
-{-# LANGUAGE LambdaCase #-}
-
 module Main where
 
+import Control.Exception qualified as Exception
 import Data.Foldable qualified as Foldable
 import Data.Map.Strict qualified as Map
 import Data.String.Interpolate
 import Data.Text qualified as Text
 import Data.Text.IO qualified as TextIO
+import Effectful (Eff, Effect, (:>))
+import Effectful qualified as Eff
+import Effectful.Dispatch.Dynamic qualified as Eff
+import Effectful.TH (makeEffect)
 import Relude
 import Say (say)
+import Shh ((&!>), (&>))
+import Shh qualified
 import System.IO qualified as IO
 import Witch (into)
 
@@ -18,6 +23,32 @@ supportedFeatures :: [Text]
 supportedFeatures = ["benchmark", "big-parallel", "kvm", "nixos-test"]
 
 data BuilderTries = FirstOf [Text] | FirstOfFinally [Text] Text | Use Text
+
+data Ping :: Effect where
+  CheckConnectivity :: Text -> Ping m Bool
+
+makeEffect ''Ping
+
+runWithoutConnectivity :: Eff (Ping : es) a -> Eff es a
+runWithoutConnectivity = Eff.interpret $ \_ -> \case
+  CheckConnectivity _ -> pure False
+
+runWithPing :: Eff.IOE :> es => Eff (Ping : es) a -> Eff es a
+runWithPing = Eff.interpret $ \_ -> \case
+  CheckConnectivity host_name -> do
+    liftIO $ ping `Exception.catch` \(_ :: Shh.Failure) -> pure False
+   where
+    ping = do
+      Shh.exe ["/run/wrappers/bin/ping", into @String (sshHostToDNS host_name), "-c1", "-w1"] &> Shh.devNull &!> Shh.devNull
+      pure True
+
+sshHostToDNS :: Text -> Text
+sshHostToDNS = \case
+  "zeus-builder" -> "zeus.vpn.m-0.eu"
+  "fluffy-builder" -> "fluffy.vpn.m-0.eu"
+  "zeus-builder-local" -> "zeus.lo.m-0.eu"
+  "fluffy-builder-local" -> "fluffy.lo.m-0.eu"
+  host -> error [i|No dns name none for ssh host #{host}|]
 
 builderInfos :: Map.Map Text Natural
 builderInfos =
@@ -44,15 +75,12 @@ commaList = Text.intercalate ","
 builderLine :: (Text, Natural, Natural) -> Text
 builderLine (hostName, maxJobs, speed_factor) = [i|ssh://#{hostName} #{commaList systems} - #{maxJobs} #{speed_factor} #{commaList supportedFeatures} - -|]
 
-testBuilders :: [BuilderTries] -> IO [Text]
+testBuilders :: Ping :> es => [BuilderTries] -> Eff es [Text]
 testBuilders =
-  pure
-    . mapMaybe
-      ( \case
-          Use x -> Just x
-          FirstOf x -> listToMaybe x
-          FirstOfFinally x y -> listToMaybe x <|> pure y
-      )
+  fmap catMaybes . mapM \case
+    Use host -> pure $ Just host
+    FirstOf hosts -> listToMaybe <$> filterM checkConnectivity hosts
+    FirstOfFinally hosts fallback -> listToMaybe . (++ [fallback]) <$> filterM checkConnectivity hosts
 
 printBuilders :: [Text] -> Text
 printBuilders = Text.unlines . fmap builderLine . Foldable.foldr' folder []
@@ -65,8 +93,19 @@ printBuilders = Text.unlines . fmap builderLine . Foldable.foldr' folder []
 
 main :: IO ()
 main = do
-  (host : args) <- getArgs
-  builders <- testBuilders $ fromMaybe (error [i|#{host} not found in builderConfigs.|]) $ Map.lookup (into host) builderConfigs
+  host : args <- getArgs
+  let withoutConnection =
+        args & \case
+          [] -> False
+          ["--without-connection"] -> True
+          _ -> error [i|Unknown arguments: #{args}|]
+  let
+    builder_tries :: Ping :> es => Eff es [Text]
+    builder_tries = testBuilders $ fromMaybe (error [i|#{host} not found in builderConfigs.|]) $ Map.lookup (into host) builderConfigs
+  builders <-
+    if withoutConnection
+      then pure $ Eff.runPureEff $ runWithoutConnectivity builder_tries
+      else Eff.runEff $ runWithPing builder_tries
   (path, handle) <- IO.openTempFile "/tmp" "machines"
   TextIO.hPutStr handle (printBuilders builders)
   IO.hClose handle
