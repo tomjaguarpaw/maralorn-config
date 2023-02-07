@@ -61,6 +61,10 @@
       name = "nixpkgs-bot";
       source = ./nixpkgs-bot;
     };
+    builders-configurator = cleanCabalPackage {
+      name = "builders-configurator";
+      source = ./builders-configurator;
+    };
   };
   hpkgs = pkgs.haskellPackages.override {
     overrides = haskellPackagesOverlay;

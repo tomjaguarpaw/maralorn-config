@@ -121,7 +121,6 @@
       ];
       trusted-users = ["maralorn" "laminar"];
     };
-    buildMachines = pkgs.privateValue [] "remote-builders";
     extraOptions = ''
       experimental-features = nix-command flakes
       fallback = true
