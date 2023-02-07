@@ -106,11 +106,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1675106498,
-        "narHash": "sha256-vqstWyXjaMER9LgRiwW4Dog0PoFMRZ2WIwRfxPEsaEA=",
+        "lastModified": 1675720684,
+        "narHash": "sha256-Zu6J7jlZyt3UhLZaga3cDu0ajkI4vr6AaKAniQ1/Vkw=",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "66dad06ca8fff73e30c52aee28f6458c73c900e3",
+        "rev": "a6f21458536d9630657d36209225d3dd37363cda",
         "type": "github"
       },
       "original": {
@@ -360,11 +360,11 @@
     },
     "nixos-stable": {
       "locked": {
-        "lastModified": 1675600654,
-        "narHash": "sha256-ipsDTkzRq1CAl2g5tYd7ugjVMSKF6KLh9F+5Kso0lT0=",
+        "lastModified": 1675681488,
+        "narHash": "sha256-0E/oYpixC+joFk7UrY60TwZcdthzP2BXmJwne3Ni8ZI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "cff83d5032a21aad4f69bf284e95b5f564f4a54e",
+        "rev": "13fdd3945d8a2da5e4afe35d8a629193a9680911",
         "type": "github"
       },
       "original": {
@@ -401,11 +401,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1675337566,
-        "narHash": "sha256-jmLBTQcs1jFOn8h1Q5b5XwPfYgFOtcZ3+mU9KvfC6Js=",
+        "lastModified": 1675688762,
+        "narHash": "sha256-oit/SxMk0B380ASuztBGQLe8TttO1GJiXF8aZY9AYEc=",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "5668d079583a5b594cb4e0cc0e6d84f1b93da7ae",
+        "rev": "ab608394886fb04b8a5df3cb0bab2598400e3634",
         "type": "github"
       },
       "original": {
@@ -442,11 +442,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1675596942,
-        "narHash": "sha256-PLJn6OGI0kC8NzZU/LhNq42pyKVJwRwZ0dksA6ie6/c=",
+        "lastModified": 1675690809,
+        "narHash": "sha256-bllH/nodCUWnemHIcLyovdiU6kczBZ39MFb+JT81jok=",
         "ref": "refs/heads/main",
-        "rev": "956ba16c712ad1e8b674017a92a2075bbd444b4d",
-        "revCount": 184,
+        "rev": "ce26b50737a19228bfdb3d0a01e321a6a38acc6a",
+        "revCount": 185,
         "type": "git",
         "url": "ssh://git@hera.m-0.eu/config-secrets"
       },
@@ -456,12 +456,18 @@
       }
     },
     "treefmt-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "emanote",
+          "nixpkgs"
+        ]
+      },
       "locked": {
-        "lastModified": 1671882555,
-        "narHash": "sha256-43HxY5gNaDMkKckeEXbhua4Ay1/S1HnYzqZBIVhzeqI=",
+        "lastModified": 1675588998,
+        "narHash": "sha256-CLeFLmah0mxNp/EIW0PMG3YutKxVIIs4B0f5oJhwe8E=",
         "owner": "numtide",
         "repo": "treefmt-nix",
-        "rev": "97981314ddf673803a1d5f966014f444a1054b1e",
+        "rev": "70e03145e26c2f3199f4320ecd9fd343f1129c60",
         "type": "github"
       },
       "original": {
