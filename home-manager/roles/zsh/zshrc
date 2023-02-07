@@ -41,10 +41,10 @@ function title {
 setopt prompt_subst
 autoload -U colors && colors # Enable colors in prompt
 
-alias nom-build-remote="nom build --builders $(builders-configurators)"
-alias nix-build-remote="nix build --builders $(builders-configurators)"
-alias nixpkgs-review-pr-remote='nixpkgs-review pr --build-args "--builders $(builders-configurators)'
-alias nixpkgs-review-rev-remote='nixpkgs-review rev --build-args "--builders $(builders-configurators)'
+alias nom-build-remote='nom build --builders $(builders-configurator)'
+alias nix-build-remote='nix build --builders $(builders-configurator)'
+alias nixpkgs-review-pr-remote='nixpkgs-review pr --build-args "--builders $(builders-configurator)'
+alias nixpkgs-review-rev-remote='nixpkgs-review rev --build-args "--builders $(builders-configurator)'
 alias accounting='f() { if [[ "$1" == "" ]]; then year="buchhaltung" else year="$1" fi; hledger -f ~/git/buchhaltung/$year.journal ui -- --watch --theme=terminal -X€ -t -E}; f'
 alias o=xdg-open
 alias sudo='sudo -A'
