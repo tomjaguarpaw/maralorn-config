@@ -24,6 +24,8 @@ in {
 
   age.identityPaths = ["/disk/persist/etc/ssh/ssh_host_ed25519_key"];
 
+  nix.distributedBuilds = false;
+
   fileSystems = let
     btrfsOptions = {options = ["compress=zstd" "autodefrag" "noatime"];};
   in {

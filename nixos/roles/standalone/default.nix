@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  lib,
   ...
 }: {
   boot = {
@@ -25,7 +26,7 @@
   '');
 
   nix = {
-    distributedBuilds = true;
+    distributedBuilds = lib.mkDefault true;
     gc = {
       automatic = false;
       options = "-d";

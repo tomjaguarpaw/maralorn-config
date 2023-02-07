@@ -105,6 +105,7 @@
         nix-output-monitor
         jq
         home-manager
+        builders-configurator
         ;
       inherit (pkgs.python3Packages) qrcode;
     };

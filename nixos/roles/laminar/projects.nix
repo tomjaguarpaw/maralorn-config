@@ -11,11 +11,11 @@
       export PATH=${lib.makeBinPath path}:$PATH
       git clone git@localhost:${name} .
       git show -q --oneline
-      export FLAGS="--builders @/etc/nix/machines -o /var/cache/gc-links/$JOB"
+      export FLAGS="--builders @$(${pkgs.builders-configurator}/bin/builders-configurators) -o /var/cache/gc-links/$JOB"
       if [[ -e "flake.nix" ]]; then
         echo "Flake detected."
         echo "Running 'flake check'"
-        ${pkgs.nix}/bin/nix flake check --builders @/etc/nix/machines
+        ${pkgs.nix}/bin/nix flake check $FLAGS
         echo "Running 'nix build'"
         ${pkgs.nix}/bin/nix build $FLAGS
       else

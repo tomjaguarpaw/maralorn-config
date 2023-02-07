@@ -65,8 +65,8 @@ builderConfigs =
   Map.fromList
     [ ("hera", [FirstOf ["zeus-builder"], Use "fluffy-builder", Use "remote-builder", Use "nixbuild.net"])
     , ("apollo", [FirstOf ["zeus-builder-local", "zeus-builder"], FirstOfFinally ["fluffy-builder-local"] "fluffy-builder", Use "remote-builder", Use "nixbuild.net"])
-    , ("fluffy", [FirstOf ["zeus-builder-local"], Use "fluffy-builder-local", Use "remote-builder", Use "nixbuild.net"])
-    , ("zeus", [Use "zeus-builder-local", Use "fluffy-builder-local", Use "remote-builder", Use "nixbuild.net"])
+    , ("fluffy", [FirstOf ["zeus-builder-local"], Use "remote-builder", Use "nixbuild.net"])
+    , ("zeus", [Use "fluffy-builder-local", Use "remote-builder", Use "nixbuild.net"])
     ]
 
 commaList :: [Text] -> Text
@@ -93,15 +93,15 @@ printBuilders = Text.unlines . fmap builderLine . Foldable.foldr' folder []
 
 main :: IO ()
 main = do
-  host : args <- getArgs
-  let withoutConnection =
-        args & \case
-          [] -> False
-          ["--without-connection"] -> True
-          _ -> error [i|Unknown arguments: #{args}|]
-  let
-    builder_tries :: Ping :> es => Eff es [Text]
-    builder_tries = testBuilders $ fromMaybe (error [i|#{host} not found in builderConfigs.|]) $ Map.lookup (into host) builderConfigs
+  args <- getArgs
+  env_host <- fromMaybe (error "accessed $HOST which is not set.") <$> lookupEnv "HOST"
+  let (host, withoutConnection) = case args of
+        [] -> (env_host, False)
+        [host'] -> (host', False)
+        [host', "--without-connection"] -> (host', True)
+        _ -> error [i|Unknown arguments: #{args}|]
+      builder_tries :: Ping :> es => Eff es [Text]
+      builder_tries = testBuilders $ fromMaybe (error [i|#{host} not found in builderConfigs.|]) $ Map.lookup (into host) builderConfigs
   builders <-
     if withoutConnection
       then pure $ Eff.runPureEff $ runWithoutConnectivity builder_tries
