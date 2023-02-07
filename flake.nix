@@ -62,9 +62,9 @@
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       imports = [
         inputs.pre-commit-hooks.flakeModule
-        ./nixos/configurations.nix
-        ./home-manager/modes.nix
-        ./packages
+        ./nixos/flake-parts.nix
+        ./home-manager/flake-parts.nix
+        ./packages/flake-parts.nix
       ];
       systems = ["x86_64-linux"];
       perSystem = {
