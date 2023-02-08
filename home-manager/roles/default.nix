@@ -48,6 +48,7 @@
       enable = true;
       config.global.warn_timeout = "1h";
       # default: enableZshIntegration = true;
+      nix-direnv.enable = true;
     };
 
     tmux = {
