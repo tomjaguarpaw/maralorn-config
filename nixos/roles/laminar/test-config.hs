@@ -34,8 +34,8 @@ main = do
   git "show" "-q"
   say "Running checks"
   builders <- builders_configurator |> captureTrim
-  nix "flake" "check" "--builders" ([i|@#{builders}|] :: String) "--accept-flake-config"
-  nix ["build", ".#checks.x86_64-linux.system-checks", "-o", "/var/cache/gc-links/test-config", "--builders", [i|@#{builders}|], "--accept-flake-config"]
+  nix "flake" "check" "--builders" ([i|@#{builders}|] :: String) "--accept-flake-config" "-L" "-v"
+  nix ["build", ".#checks.x86_64-linux.system-checks", "-o", "/var/cache/gc-links/test-config", "--builders", [i|@#{builders}|], "--accept-flake-config", "-L", "-v"]
   say "Checks succeeded"
   when (branch == "main") $ do
     say [i|Deploying new config to localhost.|]
