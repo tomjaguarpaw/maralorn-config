@@ -115,19 +115,26 @@
   };
 
   nix = {
-    settings = {
-      substituters = lib.mkAfter (pkgs.privateValue [] "binary-caches");
-      trusted-public-keys = [
-        "nixbuild.net/maralorn-1:cpqv21sJgRL+ROaKY1Gr0k7AKolAKaP3S3iemGxK/30="
-      ];
-      trusted-users = ["maralorn" "laminar"];
-    };
+    registry =
+      lib.mapAttrs (id: flake: {
+        from = {
+          type = "indirect";
+          inherit id;
+        };
+        inherit flake;
+      })
+      pkgs.flake-inputs;
+    settings.trusted-users = ["maralorn" "laminar"];
+    # substituters = lib.mkAfter (pkgs.privateValue [] "binary-caches");
+    # trusted-public-keys = [
+    #   "nixbuild.net/maralorn-1:cpqv21sJgRL+ROaKY1Gr0k7AKolAKaP3S3iemGxK/30="
+    # ];
+    # Extra Option which is on by default: allow-import-from-derivation = true
     extraOptions = ''
       experimental-features = nix-command flakes
       fallback = true
       auto-optimise-store = true
       builders-use-substitutes = true
-      allow-import-from-derivation = true
     '';
     optimise = {
       dates = [];
