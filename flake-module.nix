@@ -14,6 +14,7 @@
   perSystem = {
     inputs',
     lib,
+    config,
     pkgs,
     ...
   }: {
@@ -24,8 +25,8 @@
     };
     checks = {
       system-checks = pkgs.recursiveLinkFarm "all-configs" {
-        nixos-configurations = lib.mapAttrs (_: config: config.config.system.build.toplevel) config.flake.nixosConfigurations;
-        home-manager-configurations = config.flake.homeModes;
+        nixos-configurations = lib.mapAttrs (_: config: config.config.system.build.toplevel) inputs.self.nixosConfigurations;
+        home-manager-configurations = inputs.self.homeModes;
       };
     };
 
