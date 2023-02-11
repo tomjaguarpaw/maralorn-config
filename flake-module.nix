@@ -1,4 +1,8 @@
-{inputs, ...}: {
+{
+  inputs,
+  config,
+  ...
+}: {
   imports = [
     inputs.pre-commit-hooks.flakeModule
     ./nixos/flake-module.nix
@@ -9,7 +13,6 @@
   systems = ["x86_64-linux"];
   perSystem = {
     inputs',
-    config,
     lib,
     pkgs,
     ...
