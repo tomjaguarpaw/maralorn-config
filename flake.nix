@@ -59,62 +59,6 @@
     };
   };
 
-  outputs = inputs @ {
-    nixos-hardware,
-    self,
-    ...
-  }:
-    inputs.flake-parts.lib.mkFlake {inherit inputs;} {
-      imports = [
-        inputs.pre-commit-hooks.flakeModule
-        ./nixos/flake-parts.nix
-        ./home-manager/flake-parts.nix
-        ./packages/flake-parts.nix
-        ./overlays/flake-parts.nix
-      ];
-      systems = ["x86_64-linux"];
-      perSystem = {
-        self',
-        inputs',
-        config,
-        lib,
-        pkgs,
-        ...
-      }: {
-        devShells = {
-          default = pkgs.mkShell {
-            shellHook = config.pre-commit.installationScript;
-          };
-        };
-        checks = {
-          system-checks = pkgs.recursiveLinkFarm "all-configs" {
-            nixos-configurations = lib.mapAttrs (_: config: config.config.system.build.toplevel) self.nixosConfigurations;
-            home-manager-configurations = self.homeModes;
-          };
-        };
-
-        pre-commit = {
-          pkgs = inputs'.nixos-unstable.legacyPackages;
-          check.enable = true;
-          settings = {
-            settings.ormolu.defaultExtensions = [
-              "TypeApplications"
-              "BangPatterns"
-              "ImportQualifiedPost"
-              "BlockArguments"
-            ];
-            hooks = {
-              hlint.enable = true;
-              alejandra.enable = true;
-              nix-linter.enable = false; # Too many false positives for now
-              statix.enable = true;
-              fourmolu.enable = true;
-              shellcheck.enable = true;
-              cabal-fmt.enable = true;
-              dhall-format.enable = true;
-            };
-          };
-        };
-      };
-    };
+  outputs = inputs @ {nixos-hardware, ...}:
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} (import ./flake-module.nix);
 }
