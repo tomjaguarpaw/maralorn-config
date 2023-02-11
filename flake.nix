@@ -7,31 +7,31 @@
   inputs = {
     secrets = {
       url = "git+ssh://git@hera.m-0.eu/config-secrets";
-      inputs.nixpkgs.follows = "nixos-unstable";
+      inputs.nixpkgs.follows = "";
     };
     emanote = {
       url = "github:srid/emanote";
       inputs = {
         flake-parts.follows = "flake-parts";
-        nixpkgs.follows = "nixos-unstable";
+        nixpkgs.follows = "";
       };
     };
     nix-output-monitor = {
       inputs = {
-        flake-compat.follows = "pre-commit-hooks/flake-compat";
         flake-utils.follows = "pre-commit-hooks/flake-utils";
         nixpkgs.follows = "nixos-unstable";
-        pre-commit-hooks.follows = "pre-commit-hooks";
+        pre-commit-hooks.follows = "";
       };
       url = "git+ssh://git@hera.m-0.eu/nix-output-monitor?ref=main";
     };
     nixos-unstable.url = "nixpkgs/nixos-unstable";
     nixos-mailserver = {
       inputs = {
-        flake-compat.follows = "pre-commit-hooks/flake-compat";
-        utils.follows = "pre-commit-hooks/flake-utils";
-        nixpkgs.follows = "nixos-unstable";
-        nixpkgs-22_11.follows = "nixos-stable";
+        flake-compat.follows = "";
+        utils.follows = "";
+        nixpkgs.follows = "";
+        nixpkgs-22_11.follows = "";
+        blobs.follows = "";
       };
       url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git";
     };
@@ -41,7 +41,7 @@
       url = "home-manager/release-22.11";
       inputs = {
         utils.follows = "pre-commit-hooks/flake-utils";
-        nixpkgs.follows = "nixos-unstable";
+        nixpkgs.follows = "";
       };
     };
     hexa-nur-packages = {
@@ -51,8 +51,10 @@
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs = {
-        nixpkgs-stable.follows = "nixos-stable";
-        nixpkgs.follows = "nixos-unstable";
+        flake-compat.follows = "";
+        gitignore.follows = "";
+        nixpkgs-stable.follows = "";
+        nixpkgs.follows = "";
       };
     };
   };

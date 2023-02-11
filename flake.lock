@@ -2,7 +2,9 @@
   "nodes": {
     "agenix": {
       "inputs": {
-        "darwin": "darwin",
+        "darwin": [
+          "secrets"
+        ],
         "nixpkgs": [
           "secrets",
           "nixpkgs"
@@ -20,22 +22,6 @@
         "owner": "ryantm",
         "repo": "agenix",
         "type": "github"
-      }
-    },
-    "blobs": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1604995301,
-        "narHash": "sha256-wcLzgLec6SGJA8fx1OEN1yV/Py5b+U5iyYpksUY/yLw=",
-        "owner": "simple-nixos-mailserver",
-        "repo": "blobs",
-        "rev": "2cccdf1ca48316f2cfd1c9a0017e8de5a7156265",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "simple-nixos-mailserver",
-        "repo": "blobs",
-        "type": "gitlab"
       }
     },
     "cdarknet-hosts": {
@@ -69,29 +55,6 @@
         "type": "github"
       }
     },
-    "darwin": {
-      "inputs": {
-        "nixpkgs": [
-          "secrets",
-          "agenix",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1673295039,
-        "narHash": "sha256-AsdYgE8/GPwcelGgrntlijMg4t3hLFJFCRF3tL5WVjA=",
-        "owner": "lnl7",
-        "repo": "nix-darwin",
-        "rev": "87b9d090ad39b25b2400029c64825fc2a8868943",
-        "type": "github"
-      },
-      "original": {
-        "owner": "lnl7",
-        "ref": "master",
-        "repo": "nix-darwin",
-        "type": "github"
-      }
-    },
     "emanote": {
       "inputs": {
         "check-flake": "check-flake",
@@ -100,9 +63,7 @@
         ],
         "flake-root": "flake-root",
         "haskell-flake": "haskell-flake",
-        "nixpkgs": [
-          "nixos-unstable"
-        ],
+        "nixpkgs": [],
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
@@ -116,22 +77,6 @@
       "original": {
         "owner": "srid",
         "repo": "emanote",
-        "type": "github"
-      }
-    },
-    "flake-compat": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1673956053,
-        "narHash": "sha256-4gtG9iQuiKITOjNQQeQIpoIB6b16fm+504Ch3sNKLd8=",
-        "owner": "edolstra",
-        "repo": "flake-compat",
-        "rev": "35bb57c0c8d8b62bbfd284272c928ceb64ddbde9",
-        "type": "github"
-      },
-      "original": {
-        "owner": "edolstra",
-        "repo": "flake-compat",
         "type": "github"
       }
     },
@@ -184,34 +129,13 @@
         "type": "github"
       }
     },
-    "gitignore": {
-      "inputs": {
-        "nixpkgs": [
-          "pre-commit-hooks",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1660459072,
-        "narHash": "sha256-8DFJjXG8zqoONA1vXtgeKXy68KdJL5UaXR8NtVMUbx8=",
-        "owner": "hercules-ci",
-        "repo": "gitignore.nix",
-        "rev": "a20de23b925fd8264fd7fad6454652e142fd7f73",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hercules-ci",
-        "repo": "gitignore.nix",
-        "type": "github"
-      }
-    },
     "haskell-flake": {
       "locked": {
-        "lastModified": 1674066917,
-        "narHash": "sha256-nRSAb7N64zmAbXUoVVqY/s2LbSIdDTdfN0sSKG5/CCY=",
+        "lastModified": 1676059626,
+        "narHash": "sha256-u//argrsQJqUvcynWO7t50872fzxb/Tuc7Nnm7ObIuM=",
         "owner": "srid",
         "repo": "haskell-flake",
-        "rev": "c6ff897db9abdd4e5ff7911b5f9234a1380c6611",
+        "rev": "4585d422cd4428e2279e344d7dc84436bab93300",
         "type": "github"
       },
       "original": {
@@ -242,9 +166,7 @@
     },
     "home-manager": {
       "inputs": {
-        "nixpkgs": [
-          "nixos-unstable"
-        ],
+        "nixpkgs": [],
         "utils": [
           "pre-commit-hooks",
           "flake-utils"
@@ -266,10 +188,6 @@
     },
     "nix-output-monitor": {
       "inputs": {
-        "flake-compat": [
-          "pre-commit-hooks",
-          "flake-compat"
-        ],
         "flake-utils": [
           "pre-commit-hooks",
           "flake-utils"
@@ -277,16 +195,14 @@
         "nixpkgs": [
           "nixos-unstable"
         ],
-        "pre-commit-hooks": [
-          "pre-commit-hooks"
-        ]
+        "pre-commit-hooks": []
       },
       "locked": {
-        "lastModified": 1672353191,
-        "narHash": "sha256-e9OwOsD2lfJ8WfcIEcGU6tY9LWB2VGnKDEC4ZKfKJVc=",
+        "lastModified": 1676128992,
+        "narHash": "sha256-wUT87VzPxSL86panS9Px0M4HiEXKGrASRRHZwE0Visg=",
         "ref": "main",
-        "rev": "9345278323e8763ca04ede5429c72655c4cef0bf",
-        "revCount": 400,
+        "rev": "6475c58cb95b5654abd834368ea451006ce5c2f3",
+        "revCount": 401,
         "type": "git",
         "url": "ssh://git@hera.m-0.eu/nix-output-monitor"
       },
@@ -328,21 +244,11 @@
     },
     "nixos-mailserver": {
       "inputs": {
-        "blobs": "blobs",
-        "flake-compat": [
-          "pre-commit-hooks",
-          "flake-compat"
-        ],
-        "nixpkgs": [
-          "nixos-unstable"
-        ],
-        "nixpkgs-22_11": [
-          "nixos-stable"
-        ],
-        "utils": [
-          "pre-commit-hooks",
-          "flake-utils"
-        ]
+        "blobs": [],
+        "flake-compat": [],
+        "nixpkgs": [],
+        "nixpkgs-22_11": [],
+        "utils": []
       },
       "locked": {
         "lastModified": 1671738303,
@@ -390,15 +296,11 @@
     },
     "pre-commit-hooks": {
       "inputs": {
-        "flake-compat": "flake-compat",
+        "flake-compat": [],
         "flake-utils": "flake-utils",
-        "gitignore": "gitignore",
-        "nixpkgs": [
-          "nixos-unstable"
-        ],
-        "nixpkgs-stable": [
-          "nixos-stable"
-        ]
+        "gitignore": [],
+        "nixpkgs": [],
+        "nixpkgs-stable": []
       },
       "locked": {
         "lastModified": 1675688762,
@@ -434,16 +336,14 @@
         "agenix": "agenix",
         "cdarknet-hosts": "cdarknet-hosts",
         "nixdark": "nixdark",
-        "nixpkgs": [
-          "nixos-unstable"
-        ]
+        "nixpkgs": []
       },
       "locked": {
-        "lastModified": 1675787571,
-        "narHash": "sha256-kH4qhDoWFIDmU8kTFBRtdDgBZewDs5mWILddbEMJZQc=",
+        "lastModified": 1676128536,
+        "narHash": "sha256-CYz7l1X2qEtNJ6cGQgipe0g7fc2jKR1lRHcRBdGpnTo=",
         "ref": "refs/heads/main",
-        "rev": "fb086c9d89718abafd612e7ad9d559dae48d2fc7",
-        "revCount": 189,
+        "rev": "ca999ba0a47e5a442d51a4427980ea30d9ed90bd",
+        "revCount": 190,
         "type": "git",
         "url": "ssh://git@hera.m-0.eu/config-secrets"
       },
@@ -460,11 +360,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1675588998,
-        "narHash": "sha256-CLeFLmah0mxNp/EIW0PMG3YutKxVIIs4B0f5oJhwe8E=",
+        "lastModified": 1676025303,
+        "narHash": "sha256-LYs0309IqjzoygHLMfNVROV0MnUI5eT2M8+/bqFrhpo=",
         "owner": "numtide",
         "repo": "treefmt-nix",
-        "rev": "70e03145e26c2f3199f4320ecd9fd343f1129c60",
+        "rev": "3718741eacb10cc530a65e49a92e267338118c9d",
         "type": "github"
       },
       "original": {
