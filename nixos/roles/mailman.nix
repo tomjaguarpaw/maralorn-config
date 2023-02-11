@@ -38,7 +38,7 @@ in {
         "paths.fhs".template_dir =
           lib.mkForce
           (
-            pkgs.setToDirectories {
+            pkgs.recursiveLinkFarm "mailman-templates" {
               site.de = {
                 "list:user:notice:goodbye.txt" = builtins.toFile "goodbye" ''
                   Du erhältst nun keine E-Mails mehr über diese Mailingliste.

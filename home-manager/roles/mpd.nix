@@ -8,7 +8,7 @@
   playlist_dir = "${audio_dir}/playlists";
 in {
   home.file."media/audio/playlists" = {
-    source = pkgs.setToDirectories (lib.mapAttrs' (name: content: lib.nameValuePair "${name}.m3u" (builtins.toFile "${name}.m3u" content)) {
+    source = pkgs.recursiveLinkFarm "mpd-playlists" (lib.mapAttrs' (name: content: lib.nameValuePair "${name}.m3u" (builtins.toFile "${name}.m3u" content)) {
       "radio-swiss-classic" = "https://stream.srg-ssr.ch/m/rsc_de/aacp_96";
       "radio-swiss-jazz" = "https://stream.srg-ssr.ch/m/rsj/aacp_96";
       "br-klassik" = "http://dispatcher.rndfnk.com/br/brklassik/live/mp3/high";

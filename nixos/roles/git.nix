@@ -2,7 +2,6 @@
   config,
   pkgs,
   lib,
-  flake-inputs,
   ...
 }: let
   gitoliteCfg = config.services.gitolite;
@@ -110,7 +109,7 @@ in {
     cd $dir
     git clone git@localhost:gitolite-admin
     cd gitolite-admin
-    cp -r ${flake-inputs.secrets}/gitolite/* .
+    cp -r ${pkgs.flake-inputs.secrets}/gitolite/* .
     if [[ "$(git status --porcelain)" != "" ]]; then
       git "config" "user.email" "git@hera.m-0.eu"
       git "config" "user.name" "git user"

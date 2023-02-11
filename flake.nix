@@ -36,7 +36,6 @@
       url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git";
     };
     nixos-stable.url = "nixpkgs/nixos-22.11";
-    nixpkgs.follows = "nixos-unstable";
     flake-parts.inputs.nixpkgs-lib.follows = "nixos-unstable";
     home-manager = {
       url = "home-manager/release-22.11";
@@ -58,21 +57,26 @@
     };
   };
 
-  outputs = inputs @ {nixos-hardware, ...}:
+  outputs = inputs @ {
+    nixos-hardware,
+    self,
+    ...
+  }:
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       imports = [
         inputs.pre-commit-hooks.flakeModule
         ./nixos/flake-parts.nix
         ./home-manager/flake-parts.nix
         ./packages/flake-parts.nix
+        ./overlays/flake-parts.nix
       ];
       systems = ["x86_64-linux"];
       perSystem = {
         self',
         inputs',
-        pkgs,
         config,
         lib,
+        pkgs,
         ...
       }: {
         devShells = {
@@ -81,14 +85,14 @@
           };
         };
         checks = {
-          system-checks = pkgs.runCommand "system-checks" {} ''
-            mkdir -p $out
-            ${lib.concatMapStringsSep "\n" (x: x) (lib.mapAttrsToList (name: x: "ln -s ${x.config.system.build.toplevel} $out/${name}-system") inputs.self.nixosConfigurations)}
-            ${lib.concatMapStringsSep "\n" (x: x) (lib.mapAttrsToList (name: x: "ln -s ${x} $out/${name}-home") inputs.self.homeModes)}
-          '';
+          system-checks = pkgs.recursiveLinkFarm "all-configs" {
+            nixos-configurations = lib.mapAttrs (_: config: config.config.system.build.toplevel) self.nixosConfigurations;
+            home-manager-configurations = self.homeModes;
+          };
         };
 
         pre-commit = {
+          pkgs = inputs'.nixos-unstable.legacyPackages;
           check.enable = true;
           settings = {
             settings.ormolu.defaultExtensions = [

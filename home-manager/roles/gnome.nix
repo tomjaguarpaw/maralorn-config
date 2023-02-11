@@ -55,6 +55,7 @@ in {
       move-to-monitor-up = [];
       move-to-workspace-left = [];
       move-to-workspace-right = [];
+      toggle-fullscreen = ["<Super>f"];
     };
 
     "org/gnome/mutter/keybindings" = {

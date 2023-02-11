@@ -425,9 +425,6 @@
         "nixos-mailserver": "nixos-mailserver",
         "nixos-stable": "nixos-stable",
         "nixos-unstable": "nixos-unstable",
-        "nixpkgs": [
-          "nixos-unstable"
-        ],
         "pre-commit-hooks": "pre-commit-hooks",
         "secrets": "secrets"
       }

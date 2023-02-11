@@ -1,18 +1,20 @@
-_: prev: let
-  inherit (prev) lib;
+final: _: let
+  inherit (final) lib;
   linkToPath = path: fileOrDir: (
-    if prev.lib.types.path.check fileOrDir
-    then ["ln -sT ${fileOrDir} ${path}"]
+    if final.lib.types.path.check fileOrDir
+    then [
+      {
+        name = lib.concatStringsSep "/" path;
+        path = fileOrDir;
+      }
+    ]
     else
-      ["mkdir -p ${path}"]
-      ++ lib.concatLists (
+      lib.concatLists (
         lib.mapAttrsToList
-        (dirName: linkToPath "${path}/${dirName}")
+        (dirName: linkToPath (path ++ [dirName]))
         fileOrDir
       )
   );
 in {
-  setToDirectories = files:
-    prev.runCommand "set-to-directories" {}
-    (lib.concatStringsSep "\n" (linkToPath "$out" files));
+  recursiveLinkFarm = name: files: final.linkFarm name (linkToPath [] files);
 }

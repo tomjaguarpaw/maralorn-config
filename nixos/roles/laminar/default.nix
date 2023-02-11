@@ -70,7 +70,7 @@ in {
         LimitNOFILE = "1024000";
       };
       after = ["network.target"];
-      preStart = "ln -sfT ${pkgs.setToDirectories (addTimeouts cfg.cfgFiles)} ${cfgDir}";
+      preStart = "ln -sfT ${pkgs.recursiveLinkFarm "laminar-config-dir" (addTimeouts cfg.cfgFiles)} ${cfgDir}";
     };
     services = {
       nginx = {

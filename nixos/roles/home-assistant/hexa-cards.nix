@@ -1,9 +1,5 @@
-{
-  pkgs,
-  flake-inputs,
-  ...
-}: let
-  nur = flake-inputs.hexa-nur-packages.packages.x86_64-linux;
+{pkgs, ...}: let
+  nur = pkgs.flake-inputs'.hexa-nur-packages.packages;
 
   mkLovelaceModule = name: {
     url = "custom/${name}.js?${nur.hassLovelaceModules."${name}".version}";

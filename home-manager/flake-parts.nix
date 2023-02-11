@@ -4,8 +4,11 @@
   inputs,
   ...
 }: {
-  flake = withSystem "x86_64-linux" ({inputs', ...}: let
-    pkgs = inputs'.nixos-stable.legacyPackages;
+  flake = withSystem "x86_64-linux" ({
+    self',
+    pkgs,
+    ...
+  }: let
     flattenAttrs = attrs:
       lib.listToAttrs (lib.flatten (lib.mapAttrsToList
         (
@@ -22,14 +25,14 @@
       inherit pkgs;
       modules = [
         config
-        inputs.self.nixosModules.insertOverlays
         inputs.emanote.homeManagerModule
       ];
     });
     buildModesForHost = host: modes:
-      pkgs.runCommandLocal "${host}-modes" {} ''
-        mkdir $out
-        ${lib.concatStringsSep "\n" (lib.mapAttrsToList (mode: config: "ln -s ${(buildHomeManager config).activationPackage} $out/${mode}") modes)}'';
+      pkgs.recursiveLinkFarm "${host}-modes"
+      (lib.mapAttrs
+        (_: config: (buildHomeManager config).activationPackage)
+        modes);
   in {
     homeConfigurations = lib.mapAttrs (_: buildHomeManager) (flattenAttrs machines);
     homeModes = lib.mapAttrs buildModesForHost machines;

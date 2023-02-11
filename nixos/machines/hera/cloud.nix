@@ -2,7 +2,6 @@
   pkgs,
   config,
   lib,
-  flake-inputs,
   ...
 }: let
   adminCreds =
@@ -77,13 +76,12 @@
     autoStart = true;
     privateNetwork = true;
     hostBridge = "bridge";
-    config = {pkgs, ...}: {
-      imports =
-        [
-          ../../roles
-          flake-inputs.self.nixosModules.insertOverlays
-        ]
-        ++ flake-inputs.modules;
+    config = _: {
+      imports = [
+        ../../roles
+        pkgs.flake-inputs.self.nixosModules.unstableNFTables
+      ];
+      nixpkgs = {inherit pkgs;};
 
       networking = {
         interfaces.eth0 = {
