@@ -17,12 +17,10 @@
     source = true;
     dependencies = [pkgs.dhallPackages.Prelude];
   };
-
-  dhallResult = pkgs.runCommand "kassandra-config" {} ''
-    mkdir $out
-    ln -s ${backend}/source.dhall $out/backend.dhall
-    ln -s ${standalone}/source.dhall $out/config.dhall
-  '';
+  dhallResult = pkgs.recursiveLinkFarm "kassandra-config" {
+    "backend.dhall" = "${backend}/source.dhall";
+    "config.dhall" = "${standalone}/source.dhall";
+  };
 in {
   xdg.configFile.kassandra.source = dhallResult.out;
 }

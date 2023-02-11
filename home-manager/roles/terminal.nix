@@ -5,10 +5,9 @@
 }: {
   home.sessionVariables.TERMINAL = "${pkgs.kitty}/bin/kitty";
   home.packages = [
-    (pkgs.runCommandLocal "fake-gnome-terminal" {} ''
-      mkdir -p $out/bin
-      ln -s ${config.home.sessionVariables.TERMINAL} $out/bin/gnome-terminal
-    '')
+    (pkgs.recursiveLinkFarm "fake-gnome-terminal" {
+      "bin/gnome-terminal" = config.home.sessionVariables.TERMINAL;
+    })
   ];
   programs.kitty = {
     enable = true;
