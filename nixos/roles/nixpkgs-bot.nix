@@ -37,6 +37,7 @@ in {
         "matrix_token:${config.age.secrets."nixpkgs-bot/matrix_token".path}"
         "github_token:${config.age.secrets."nixpkgs-bot/github_token".path}"
       ];
+      Restart = "always"; # TODO: Add error handling to git querying github in nixpkgs-bot
       WorkingDirectory = "/var/lib/nixpkgs-bot";
       ExecStart = "${pkgs.nixpkgs-bot}/bin/nixpkgs-bot ${builtins.toFile "config.yaml" (builtins.toJSON configFile)}";
       DynamicUser = true;
