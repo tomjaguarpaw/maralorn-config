@@ -145,7 +145,6 @@
           tasksh
           magic-wormhole
           alejandra
-          rustup
           nix-top
           ghcWithPackages
           ghcid
