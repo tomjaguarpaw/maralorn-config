@@ -31,6 +31,7 @@ main = do
   branch <- process <$> lookupEnv "BRANCH"
   git "clone" repo "."
   git "checkout" (toString branch)
+  git "show" "-q"
   say "Running checks"
   builders <- builders_configurator |> captureTrim
   nix "flake" "check" "--builders" ([i|@#{builders}|] :: String) "--accept-flake-config"
