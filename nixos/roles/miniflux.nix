@@ -24,11 +24,13 @@ in {
         now=$(date "+%Y-%m-%d")
         mkdir -p /var/www/rss/mastodon/$now-home-feed-highlights
         mkdir -p /var/www/rss/mastodon/$now-read-all-list
+        mkdir -p /var/www/rss/mastodon/$now-tags
         set -o allexport
         source $CREDENTIALS_DIRECTORY/mastodon-auth-env
         set +o allexport
-        ${pkgs.mastodon_digest}/bin/mastodon_digest -o /var/www/rss/mastodon/$now-home-feed-highlights -n 24 -t lax --theme light
-        ${pkgs.mastodon_digest}/bin/mastodon_digest -o /var/www/rss/mastodon/$now-read-all-list -n 24 -t all --theme light -f list:3811
+        ${pkgs.mastodon_digest}/bin/mastodon_digest -o /var/www/rss/mastodon/$now-home-feed-highlights -n 24 -t normal --theme light
+        ${pkgs.mastodon_digest}/bin/mastodon_digest -o /var/www/rss/mastodon/$now-read-all-list -n 24 -t all --theme light-no-boosts -f list:3811
+        ${pkgs.mastodon_digest}/bin/mastodon_digest -o /var/www/rss/mastodon/$now-tags -n 24 -t all --theme light -f list:4160
         ${pkgs.logfeed}/bin/mastodon2rss /var/www/rss/mastodon.xml /var/www/rss/mastodon
       '';
       serviceConfig = {
