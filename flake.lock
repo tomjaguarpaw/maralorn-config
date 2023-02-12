@@ -89,10 +89,9 @@
       "locked": {
         "lastModified": 1675933616,
         "narHash": "sha256-/rczJkJHtx16IFxMmAWu5nNYcSXNg1YYXTHoGjLrLUA=",
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
+        "path": "/nix/store/8zrjcl2ssb4b83m7wpqyvmj004h7bx6p-source",
         "rev": "47478a4a003e745402acf63be7f9a092d51b83d7",
-        "type": "github"
+        "type": "path"
       },
       "original": {
         "id": "flake-parts",
@@ -232,10 +231,9 @@
       "locked": {
         "lastModified": 1675933606,
         "narHash": "sha256-y427VhPQHOKkYvkc9MMsL/2R7M11rQxzsRdRLM3htx8=",
-        "owner": "NixOS",
-        "repo": "nixos-hardware",
+        "path": "/nix/store/93f5s8b50wpyvv4p04l3wlk5b4y8g731-source",
         "rev": "44ae00e02e8036a66c08f4decdece7e3bbbefee2",
-        "type": "github"
+        "type": "path"
       },
       "original": {
         "id": "nixos-hardware",
