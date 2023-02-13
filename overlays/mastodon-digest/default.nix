@@ -20,7 +20,7 @@ final: prev: let
     patch -d $out -p1 < ${./all-posts.patch}
     cd $out/templates/themes
     cp -r light light-no-boosts
-    cp ${./index.html.jinja} light-no-boosts/
+    cp ${./index.html.jinja} light-no-boosts/index.html.jinja
   '';
 in {
   mastodon_digest = pkgs.writeShellApplication {
