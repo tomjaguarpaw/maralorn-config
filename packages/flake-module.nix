@@ -4,7 +4,7 @@
   ...
 }: let
   pkgs = inputs.nixos-unstable.legacyPackages.x86_64-linux;
-  inherit (pkgs.haskell.lib.compose) unmarkBroken doJailbreak dontCheck appendPatch;
+  inherit (pkgs.haskell.lib.compose) appendPatch;
   includePatterns = [
     ".hs"
     ".cabal"
@@ -25,11 +25,7 @@
   haskellPackagesOverlay = final: prev:
     lib.mapAttrs (_: package: package final) myHaskellPackages
     // {
-      # For kassandra
-      clay = unmarkBroken (doJailbreak prev.clay);
-      streamly-bytestring =
-        unmarkBroken (dontCheck prev.streamly-bytestring);
-      # For nixpkgs-bot
+      # For nixpkgs-bot, this patch is already merged upstream and can be removed on the next release
       matrix-client =
         appendPatch (pkgs.fetchpatch {
           url = "https://github.com/softwarefactory-project/matrix-client-haskell/commit/97cb1918fcdf9b0249c6c8e70c7bfc664d718022.patch";
@@ -37,7 +33,6 @@
           relative = "matrix-client";
         })
         prev.matrix-client;
-      aeson-schemas = unmarkBroken (dontCheck prev.aeson-schemas);
     };
   selectHaskellPackages = attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages;
   myHaskellPackages = {
