@@ -95,12 +95,16 @@ in {
       package = pkgs.tela-circle-icon-theme;
     };
     cursorTheme = {
-      name = "Catppuccin-Latte-Blue-Cursors";
-      package = pkgs.catppuccin-cursors.latteBlue;
+      name = "Catppuccin-Mocha-Blue-Cursors";
+      package = pkgs.catppuccin-cursors.mochaBlue;
     };
     theme = {
-      name = "Catppuccin-Light";
-      package = pkgs.catppuccin-gtk;
+      name = "Catppuccin-Mocha-Compact-Blue-Dark";
+      package = pkgs.unstable.catppuccin-gtk.override {
+        variant = "mocha";
+        size = "compact";
+        tweaks = ["rimless"];
+      };
     };
     gtk3.bookmarks = [
       "ftp://fluffy.lo.m-0.eu"

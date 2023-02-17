@@ -79,10 +79,9 @@ in {
     };
 
     "org/gnome/desktop/interface" = {
-      gtk-theme = "Catppuccin-Light";
       document-font-name = font;
-      font-antialiasing = "rgba";
-      font-hinting = "full";
+      font-antialiasing = "grayscale";
+      font-hinting = "slight";
       font-name = font;
       titlebar-font = font;
       clock-show-weekday = true;

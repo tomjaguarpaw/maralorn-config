@@ -41,7 +41,7 @@ in {
   programs.helix = {
     enable = true;
     themes.mytheme = {
-      inherits = "catppuccin_latte";
+      inherits = "catppuccin_mocha";
       "diagnostic.info".underline = {
         color = "blue";
         style = "curl";

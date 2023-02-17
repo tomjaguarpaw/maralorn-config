@@ -15,7 +15,7 @@
       "ctrl+plus" = "change_font_size all +1.0";
       "ctrl+minus" = "change_font_size all -1.0";
     };
-    theme = "Catppuccin-Latte";
+    theme = "Catppuccin-Mocha";
     settings = {
       enable_audio_bell = false;
       visual_bell_duration = "0.1";
