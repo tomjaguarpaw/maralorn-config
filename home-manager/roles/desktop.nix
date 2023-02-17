@@ -55,7 +55,7 @@ in {
         deluge
         gmpc
         vlc
-        youtube-dl
+        yt-dlp
         spotdl
         ffmpeg
         syncplay
