@@ -30,7 +30,7 @@
     });
   };
   inherit (lib.hm.gvariant) mkTuple mkUint32;
-  font = "B612 8";
+  font = "Monospace 8";
 in {
   home.packages = extensions;
   services.gpg-agent.pinentryFlavor = "gnome3";
@@ -80,13 +80,12 @@ in {
 
     "org/gnome/desktop/interface" = {
       document-font-name = font;
+      font-name = font;
+      monospace-font-name = font;
       font-antialiasing = "grayscale";
       font-hinting = "full";
-      font-name = font;
-      titlebar-font = font;
       clock-show-weekday = true;
       clock-show-seconds = false;
-      monospace-font-name = "JetBrainsMono Nerd Font Mono Bold 9";
       locate-pointer = true;
     };
 
@@ -96,7 +95,7 @@ in {
 
     "org/gnome/desktop/wm/preferences" = {
       auto-raise = true;
-      titlebar-font = "B612 9";
+      titlebar-font = font;
     };
 
     "org/gnome/shell/extensions/executor" = {
@@ -116,7 +115,7 @@ in {
     };
 
     "org/gnome/shell/extensions/user-theme" = {
-      name = "Catppuccin-Light";
+      name = "Catppuccin-Mocha-Compact-Blue-Dark";
     };
 
     "system/locale" = {
@@ -180,8 +179,8 @@ in {
       status-icon-padding = 4;
       trans-use-custom-opacity = true;
       trans-panel-opacity = 0.8;
-      leftbox-size = 10;
-      tray-size = 10;
+      leftbox-size = 13;
+      tray-size = 13;
     };
     "org/gnome/desktop/input-sources" = {
       sources = [(mkTuple ["xkb" "de+neo"])]; # use neo
