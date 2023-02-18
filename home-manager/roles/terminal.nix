@@ -12,7 +12,7 @@
   programs.foot = {
     settings = {
       main = {
-        font = "monospace:pixelsize=12";
+        font = "Cozette:pixelsize=13";
         include = "${pkgs.foot.themes}/share/foot/themes/catppuccin";
       };
       csd = {

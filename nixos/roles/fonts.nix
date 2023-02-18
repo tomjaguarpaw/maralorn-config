@@ -11,7 +11,7 @@
       defaultFonts = let
         unicode-fallback = ["Noto Sans Symbols" "Noto Sans Symbols2"];
       in {
-        monospace = ["TamzenForPowerline" "Noto Sans Mono"] ++ unicode-fallback;
+        monospace = ["Cozette" "Noto Sans Mono"] ++ unicode-fallback;
         sansSerif = ["B612" "Noto Sans"] ++ unicode-fallback;
         serif = ["Libertinus Serif" "Noto Serif"] ++ unicode-fallback;
       };
@@ -26,6 +26,14 @@
         # icons in my app
         
         tamzen
+        # 12px
+        
+        cozette
+        # 13px
+        
+        scientifica
+        # 11px
+        
         # For all my terminal needs.
         
         b612
