@@ -42,7 +42,7 @@ in {
       script = "${pkgs.curl}/bin/curl -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header hera.vpn.m-0.eu:8100/v1/feeds/refresh";
       after = ["mastodon-digest.service"];
       requires = ["mastodon-digest.service"];
-      startAt = "20:00:00";
+      startAt = "9:00:00";
       serviceConfig = {
         Type = "oneshot";
         LoadCredential = ["auth-header:${config.age.secrets.miniflux-refresh-auth-header.path}"];
