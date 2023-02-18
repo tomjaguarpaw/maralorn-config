@@ -81,7 +81,7 @@ in {
     "org/gnome/desktop/interface" = {
       document-font-name = font;
       font-antialiasing = "grayscale";
-      font-hinting = "slight";
+      font-hinting = "full";
       font-name = font;
       titlebar-font = font;
       clock-show-weekday = true;
