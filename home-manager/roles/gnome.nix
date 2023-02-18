@@ -53,8 +53,6 @@ in {
       move-to-monitor-left = [];
       move-to-monitor-right = [];
       move-to-monitor-up = [];
-      move-to-workspace-left = [];
-      move-to-workspace-right = [];
       toggle-fullscreen = ["<Super>f"];
     };
 
@@ -164,8 +162,8 @@ in {
       tile-resize-right = ["t"];
       tile-resize-up = ["g"];
       tile-resize-down = ["r"];
-      pop-workspace-up = ["<Super><Shift>Page_Up"];
-      pop-workspace-down = ["<Super><Shift>Page_Down"];
+      pop-workspace-up = [];
+      pop-workspace-down = [];
       pop-monitor-left = [];
       pop-monitor-right = [];
       pop-monitor-up = [];
