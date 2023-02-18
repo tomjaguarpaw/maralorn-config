@@ -36,7 +36,7 @@ in [
   }
   {
     SSH = let
-      ssh = host: "${config.home.sessionVariables.TERMINAL} +kitten ssh ${host}";
+      ssh = host: "ssh ${host}";
     in [
       {"hera via vpn" = ssh "hera.vpn.m-0.eu";}
       {"fluffy via vpn" = ssh "fluffy.vpn.m-0.eu";}

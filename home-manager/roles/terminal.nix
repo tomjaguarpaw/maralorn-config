@@ -3,30 +3,28 @@
   config,
   ...
 }: {
-  home.sessionVariables.TERMINAL = "${pkgs.kitty}/bin/kitty";
+  home.sessionVariables.TERMINAL = "${pkgs.foot}/bin/foot";
   home.packages = [
     (pkgs.recursiveLinkFarm "fake-gnome-terminal" {
       "bin/gnome-terminal" = config.home.sessionVariables.TERMINAL;
     })
   ];
-  programs.kitty = {
-    enable = true;
-    keybindings = {
-      "ctrl+plus" = "change_font_size all +1.0";
-      "ctrl+minus" = "change_font_size all -1.0";
-    };
-    theme = "Catppuccin-Mocha";
+  programs.foot = {
     settings = {
-      enable_audio_bell = false;
-      visual_bell_duration = "0.1";
-      linux_display_server = "wayland"; # Causes ugly decorations
-      hide_window_decorations = true;
-      window_margin_width = 0;
-      strip_trailing_spaces = "always";
-
-      font_size = "8";
-
-      cursor = "#1e66f5";
+      main = {
+        font = "monospace:pixelsize=12";
+        include = "${pkgs.foot.themes}/share/foot/themes/catppuccin";
+      };
+      csd = {
+        preferred = "client";
+        size = "0";
+        border-width = "1";
+        color = "af0000aa";
+      };
+      mouse = {
+        hide-when-typing = "yes";
+      };
     };
+    enable = true;
   };
 }

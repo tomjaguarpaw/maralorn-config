@@ -11,7 +11,7 @@
       defaultFonts = let
         unicode-fallback = ["Noto Sans Symbols" "Noto Sans Symbols2"];
       in {
-        monospace = ["JetBrainsMono Nerd Font" "Noto Sans Mono"] ++ unicode-fallback;
+        monospace = ["TamzenForPowerline" "Noto Sans Mono"] ++ unicode-fallback;
         sansSerif = ["B612" "Noto Sans"] ++ unicode-fallback;
         serif = ["Libertinus Serif" "Noto Serif"] ++ unicode-fallback;
       };
@@ -19,14 +19,14 @@
     fonts = builtins.attrValues {
       inherit
         (pkgs)
-        nerdfonts
-        # For all my terminal needs.
-        
         libertinus
         # nice text font
         
         material-icons
         # icons in my app
+        
+        tamzen
+        # For all my terminal needs.
         
         b612
         # sans font, very good for displays
