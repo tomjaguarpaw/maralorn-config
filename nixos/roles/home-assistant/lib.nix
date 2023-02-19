@@ -21,7 +21,7 @@ rec {
   };
   actions = {
     notify = message: {
-      service = "notify.notify";
+      service = "notify.matrix";
       data = {inherit message;};
     };
     cycleMode = mode: {

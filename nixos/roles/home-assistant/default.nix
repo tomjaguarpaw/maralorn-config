@@ -98,6 +98,7 @@ in {
         };
         notify = [
           {
+            name = "matrix";
             platform = "matrix";
             default_room = "#fluffy:maralorn.de";
           }
