@@ -95,14 +95,15 @@ main :: IO ()
 main = do
   args <- getArgs
   env_host <- readFileBS "/etc/hostname" `Exception.catch` \(e :: Exception.IOException) -> pure (error (show e))
-  let (host, withoutConnection) = case args of
-        [] -> (Text.strip (decodeUtf8 env_host), False)
-        [host'] -> (into host', False)
-        [host', "--without-connection"] -> (into host', True)
+  let (host, withoutConnection, allow_empty) = case args of
+        [] -> (Text.strip (decodeUtf8 env_host), False, True)
+        [host'] -> (into host', False, True)
+        [host', "--force"] -> (into host', False, False)
+        [host', "--without-connection"] -> (into host', True, False)
         _ -> error [i|Unknown arguments: #{args}|]
       builder_tries :: Ping :> es => Eff es [Text]
       builder_tries = testBuilders $ fromMaybe (error [i|#{host} not found in builderConfigs.|]) $ Map.lookup (into host) builderConfigs
-  builders <- Eff.runEff $ (if withoutConnection then runWithoutConnectivity else runWithPing) builder_tries
+  builders <- if allow_empty && host == "zeus" then pure [] else Eff.runEff $ (if withoutConnection then runWithoutConnectivity else runWithPing) builder_tries
   (path, handle) <- IO.openTempFile "/tmp" "machines"
   TextIO.hPutStr handle (printBuilders builders)
   IO.hClose handle

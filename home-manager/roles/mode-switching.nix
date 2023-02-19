@@ -15,10 +15,10 @@ in {
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
       ${configGit} pull --ff-only
-      ${configGit} submodule update
       echo "Running update-modes …"
       ${updateModes}/bin/update-modes
       echo "Updating system …"
+      ${pkgs.nix-output-monitor}/bin/nom build --builders @$(builders-configurator) $(readlink -f /etc/nixos)#nixosConfigurations.$(hostname).config.system.build.toplevel --allow-import-from-derivation
       /run/wrappers/bin/sudo -A /run/current-system/sw/bin/nixos-rebuild switch
       echo "Maintenance finished."
     '';
@@ -38,18 +38,19 @@ in {
       pkgs.writeHaskellScript
       {
         name = "update-modes";
-        bins = [activateMode pkgs.git pkgs.nix-output-monitor];
+        bins = [activateMode pkgs.git pkgs.nix-output-monitor pkgs.builders-configurator];
       } ''
         main = do
           say "Building ~/.modes for ${hostName}"
-          nom ["build", "/home/maralorn/git/config#homeModes.${hostName}", "-o", "${modeDir}"]
+          builders <- builders_configurator |> captureTrim
+          nom ["build", "--builders", [i|@#{builders}|], "/home/maralorn/git/config#homeModes.${hostName}", "-o", "${modeDir}", "--allow-import-from-derivation"]
           activate_mode
       '';
     quickUpdateMode =
       pkgs.writeHaskellScript
       {
         name = "quick-update-mode";
-        bins = [updateModes pkgs.git pkgs.home-manager pkgs.nix-output-monitor];
+        bins = [updateModes pkgs.git pkgs.home-manager pkgs.nix-output-monitor pkgs.builders-configurator];
       } ''
         getMode :: IO Text
         getMode = decodeUtf8 <$> (cat "${modeFile}" |> captureTrim)
@@ -57,7 +58,8 @@ in {
         main = do
           mode <- getMode
           say [i|Quick switching to mode #{mode} ...|]
-          path :: Text <- decodeUtf8 <$> (nix ["build", "--print-out-paths", [i|/home/maralorn/git/config\#homeConfigurations.${hostName}-#{mode}.activationPackage|]] |> captureTrim)
+          builders <- builders_configurator |> captureTrim
+          path :: Text <- decodeUtf8 <$> (nom ["build", "--builders", [i|@#{builders}|], "--allow-import-from-derivation", "--print-out-paths", "--no-link", [i|/home/maralorn/git/config\#homeConfigurations.${hostName}-#{mode}.activationPackage|]] |> captureTrim)
           exe ([i|#{path}/activate|] :: String)
           update_modes
       '';
