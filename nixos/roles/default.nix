@@ -115,20 +115,16 @@
   };
 
   nix = {
-    registry =
-      lib.mapAttrs (id: flake: {
+    registry = [
+      {
         from = {
           type = "indirect";
-          inherit id;
+          id = "nixpkgs";
         };
-        inherit flake;
-      })
-      pkgs.flake-inputs;
+        flake = pkgs.flake-inputs.nixos-stable;
+      }
+    ];
     settings.trusted-users = ["maralorn" "laminar"];
-    # substituters = lib.mkAfter (pkgs.privateValue [] "binary-caches");
-    # trusted-public-keys = [
-    #   "nixbuild.net/maralorn-1:cpqv21sJgRL+ROaKY1Gr0k7AKolAKaP3S3iemGxK/30="
-    # ];
     # Extra Option which is on by default: allow-import-from-derivation = true
     extraOptions = ''
       experimental-features = nix-command flakes
