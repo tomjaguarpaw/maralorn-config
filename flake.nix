@@ -24,7 +24,8 @@
       };
       url = "git+ssh://git@hera.m-0.eu/nix-output-monitor?ref=main";
     };
-    nixos-unstable.url = "nixpkgs/nixos-unstable";
+    # Don’t use registry so that we can override it locally.
+    nixos-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixos-mailserver = {
       inputs = {
         flake-compat.follows = "";
@@ -35,7 +36,7 @@
       };
       url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git";
     };
-    nixos-stable.url = "nixpkgs/nixos-22.11";
+    nixos-stable.url = "github:nixos/nixpkgs/nixos-22.11";
     flake-parts.inputs.nixpkgs-lib.follows = "nixos-unstable";
     home-manager = {
       url = "home-manager/release-22.11";

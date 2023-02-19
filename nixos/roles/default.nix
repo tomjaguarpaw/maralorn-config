@@ -115,15 +115,13 @@
   };
 
   nix = {
-    registry = [
-      {
-        from = {
-          type = "indirect";
-          id = "nixpkgs";
-        };
-        flake = pkgs.flake-inputs.nixos-stable;
-      }
-    ];
+    registry.nixpkgs = {
+      from = {
+        type = "indirect";
+        id = "nixpkgs";
+      };
+      flake = pkgs.flake-inputs.nixos-stable;
+    };
     settings.trusted-users = ["maralorn" "laminar"];
     # Extra Option which is on by default: allow-import-from-derivation = true
     extraOptions = ''
