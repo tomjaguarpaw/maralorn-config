@@ -6,8 +6,6 @@
    font-weight: normal !important;
 }
 
-/*
-.mx_LeftPanel_wrapper {
+.mx_RoomSublist[aria-label="Rooms"] .mx_RoomTile {
    display: none !important;
 }
-*/
