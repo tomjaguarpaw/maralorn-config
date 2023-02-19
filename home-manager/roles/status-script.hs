@@ -42,6 +42,7 @@ data Var a = MkVar
   { value :: TVar a
   , update :: TMVar ()
   }
+
 newVar :: a -> IO (Var a)
 newVar initial_value = atomically $ MkVar <$> newTVar initial_value <*> newEmptyTMVar
 
@@ -92,6 +93,12 @@ simpleModule delay action var = repeatM do
   atomically . updateVarIfChanged var =<< action
   Concurrent.threadDelay delay
 
+withColor :: Monad m => Text -> Text -> m (Maybe Text)
+withColor color content = pure $ Just [i|<span foreground='\##{color}'>#{content}</span>|]
+
+when' :: Monad m => Bool -> m (Maybe a) -> m (Maybe a)
+when' cond result = if cond then result else pure Nothing
+
 main :: IO ()
 main = do
   mode_var <- newVar Unrestricted
@@ -99,52 +106,63 @@ main = do
       modules =
         [ simpleModule (5 * oneSecond) $ do
             appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
-            pure $
-              if null appointments
-                then Nothing
-                else Just [i|<span foreground='\#8839ef'>#{Text.intercalate "; " appointments}</span>|]
+            when' (not $ null appointments) $
+              withColor "8839ef" (Text.intercalate "; " appointments)
         , simpleModule oneSecond $
-            Just . Text.replace "Stopped -" "⏹" . Text.replace "Playing -" "▶" . Text.replace "Paused -" "⏸" . Text.intercalate " - " . fmap decodeUtf8 . filter (/= "") <$> mapM tryCmd [playerctl "status", playerctl "metadata" "title", playerctl "metadata" "album", playerctl "metadata" "artist"]
+            Just
+              . Text.replace "Stopped -" "⏹"
+              . Text.replace "Playing -" "▶"
+              . Text.replace "Paused -" "⏸"
+              . Text.intercalate " - "
+              . fmap decodeUtf8
+              . filter (/= "")
+              <$> mapM
+                tryCmd
+                [ playerctl "status"
+                , playerctl "metadata" "title"
+                , playerctl "metadata" "album"
+                , playerctl "metadata" "artist"
+                ]
         , simpleModule oneSecond $ do
             mode <- read_mode
             unread <-
               if mode >= Orga
                 then notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
                 else pure "0"
-            pure $ memptyIfFalse (unread /= "0") (Just [i|<span foreground='\#d20f39'>Unread: #{unread}</span>|])
+            when' (unread /= "0") $ withColor "d20f39" [i|Unread: #{unread}|]
         , simpleModule oneSecond $ do
             mode <- read_mode
             inbox <-
               if mode == Leisure
                 then notmuch "count" "folder:hera/Inbox" |> captureTrim
                 else pure "0"
-            pure $ memptyIfFalse (inbox /= "0") (Just [i|<span foreground='\#e53443'>Inbox: #{inbox}</span>|])
+            when' (inbox /= "0") $ withColor "e53443" [i|Inbox: #{inbox}|]
         , simpleModule oneSecond $ do
             mode <- read_mode
             codeMails <-
               if mode == Code
                 then notmuch "count" "folder:hera/Code" |> captureTrim
                 else pure "0"
-            pure $ memptyIfFalse (codeMails /= "0") (Just [i|<span foreground='\#8839ef'>Code Mails: #{codeMails}</span>|])
+            when' (codeMails /= "0") $ withColor "8839ef" [i|Code Mails: #{codeMails}|]
         , simpleModule (5 * oneSecond) $ do
             mode <- read_mode
             codeUpdates <-
               if mode == Code
                 then fromMaybe 0 . readMaybe . toString . Text.replace " unread articles" "" . decodeUtf8 <$> tryCmd (exe "software-updates" "-x" "print-unread")
                 else pure 0
-            pure $ memptyIfFalse (codeUpdates /= 0) (Just [i|<span foreground='\#179299'>Code Updates: #{codeUpdates}</span>|])
+            when' (codeUpdates /= 0) $ withColor "179299" [i|Code Updates: #{codeUpdates}|]
         , simpleModule (5 * oneSecond) $ do
             dirs <- listDirectory "/home/maralorn/git"
             dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/" <>)) dirs
-            pure $ memptyIfFalse (not (null dirty)) (Just [i|<span foreground='\#e64443'>Dirty: #{Text.intercalate " " dirty}</span>|])
+            when' (not $ null dirty) $ withColor "e64443" [i|Dirty: #{Text.intercalate " " dirty}|]
         , simpleModule (5 * oneSecond) $ do
             dirs <- listDirectory "/home/maralorn/git"
             unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/" <>)) dirs
-            pure $ memptyIfFalse (not (null unpushed)) (Just [i|<span foreground='\#fe640b'>Unpushed: #{Text.intercalate " " unpushed}</span>|])
+            when' (not $ null unpushed) $ withColor "fe640b" [i|Unpushed: #{Text.intercalate " " unpushed}|]
         , simpleModule 1 $ do
             atomically $ takeTMVar (update mode_var)
             mode <- read_mode
-            pure $ Just [i|<span foreground='\#7287fd'>#{show mode}</span>|]
+            withColor "7287fd" (show mode)
         ]
   foldConcurrently_
     [ void $ simpleModule oneSecond getMode mode_var
