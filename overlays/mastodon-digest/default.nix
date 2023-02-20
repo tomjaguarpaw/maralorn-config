@@ -19,8 +19,8 @@ final: prev: let
     chmod -R +w $out
     patch -d $out -p1 < ${./all-posts.patch}
     cd $out/templates/themes
-    cp -r dark dark-no-boosts
-    cp ${./index.html.jinja} dark-no-boosts/index.html.jinja
+    cp -r default no-boosts
+    cp ${./index.html.jinja} no-boosts/index.html.jinja
   '';
 in {
   mastodon_digest = pkgs.writeShellApplication {
