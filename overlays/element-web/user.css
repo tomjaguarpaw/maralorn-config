@@ -1,3 +1,7 @@
+.mx_NotificationBadge_dot {
+   display: none !important;
+}
+
 * {
    font-size: 11px !important;
    font-smooth: never;
