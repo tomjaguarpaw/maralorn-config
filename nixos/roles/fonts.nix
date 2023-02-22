@@ -11,7 +11,7 @@
       defaultFonts = let
         unicode-fallback = ["Noto Sans Symbols" "Noto Sans Symbols2"];
       in {
-        monospace = ["scientifica" "Cozette" "Noto Sans Mono"] ++ unicode-fallback;
+        monospace = ["scientifica" "curie" "Noto Sans Mono"] ++ unicode-fallback;
         sansSerif = ["B612" "Noto Sans"] ++ unicode-fallback;
         serif = ["Libertinus Serif" "Noto Serif"] ++ unicode-fallback;
       };
@@ -31,6 +31,7 @@
         cozette
         # 13px
         
+        curie
         scientifica
         # 11px
         

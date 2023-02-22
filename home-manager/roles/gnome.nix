@@ -30,7 +30,7 @@
     });
   };
   inherit (lib.hm.gvariant) mkTuple mkUint32;
-  font = "Monospace 8";
+  font = "Monospace 8.25";
 in {
   home.packages = extensions;
   services.gpg-agent.pinentryFlavor = "gnome3";
