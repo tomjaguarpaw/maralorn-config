@@ -177,8 +177,8 @@ in {
       status-icon-padding = 4;
       trans-use-custom-opacity = true;
       trans-panel-opacity = 0.8;
-      leftbox-size = 13;
-      tray-size = 13;
+      leftbox-size = 11;
+      tray-size = 11;
     };
     "org/gnome/desktop/input-sources" = {
       sources = [(mkTuple ["xkb" "de+neo"])]; # use neo
