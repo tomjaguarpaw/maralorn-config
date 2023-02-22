@@ -2,9 +2,9 @@
    display: none !important;
 }
 
-* {
+span, div {
    font-size: 11px !important;
-   font-smooth: never;
+   -webkit-font-smoothing: none !important;
 }
 
 .mx_RoomSublist[aria-label="Rooms"] .mx_RoomTile {
