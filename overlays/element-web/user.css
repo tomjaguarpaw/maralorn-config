@@ -3,7 +3,8 @@
 }
 
 span, div {
-   font-size: 11px !important;
+   font-size: 12px !important;
+   font-family: "Spleen 6x12", Twemoji !important;
    -webkit-font-smoothing: none !important;
 }
 

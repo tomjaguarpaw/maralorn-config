@@ -12,7 +12,7 @@
   programs.foot = {
     settings = {
       main = {
-        font = "scientifica:pixelsize=11";
+        font = "Spleen:pixelsize=12";
         include = "${pkgs.foot.themes}/share/foot/themes/catppuccin";
       };
       csd = {

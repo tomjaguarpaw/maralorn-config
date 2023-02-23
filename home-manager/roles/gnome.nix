@@ -30,7 +30,7 @@
     });
   };
   inherit (lib.hm.gvariant) mkTuple mkUint32;
-  font = "Monospace 8.25";
+  font = "Monospace 9";
 in {
   home.packages = extensions;
   services.gpg-agent.pinentryFlavor = "gnome3";
@@ -177,8 +177,8 @@ in {
       status-icon-padding = 4;
       trans-use-custom-opacity = true;
       trans-panel-opacity = 0.8;
-      leftbox-size = 11;
-      tray-size = 11;
+      leftbox-size = 12;
+      tray-size = 12;
     };
     "org/gnome/desktop/input-sources" = {
       sources = [(mkTuple ["xkb" "de+neo"])]; # use neo

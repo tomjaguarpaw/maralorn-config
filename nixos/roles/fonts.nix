@@ -11,7 +11,7 @@
       defaultFonts = let
         unicode-fallback = ["Noto Sans Symbols" "Noto Sans Symbols2"];
       in {
-        monospace = ["scientifica" "curie" "Noto Sans Mono"] ++ unicode-fallback;
+        monospace = ["Spleen 6x12" "Noto Sans Mono"] ++ unicode-fallback;
         sansSerif = ["B612" "Noto Sans"] ++ unicode-fallback;
         serif = ["Libertinus Serif" "Noto Serif"] ++ unicode-fallback;
       };
@@ -31,9 +31,29 @@
         cozette
         # 13px
         
-        curie
+        # too wide: dina-font
+        
+        # can‘t find font in there: efont-unicode
+        
+        # too wide: envypn-font
+        
+        spleen
+        # Great if you need 8 px font, also nice on 12px.
+        
+        gohufont
+        tewi-font
+        # Too wide tracking: curie
+        
         scientifica
-        # 11px
+        # Quite cool on: 11px
+        
+        # Tried but didn‘t like:
+        
+        # biwidth: too small
+        
+        # Too wide tracking: creep
+        
+        #
         
         # For all my terminal needs.
         
