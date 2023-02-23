@@ -18,7 +18,7 @@ in {
       echo "Running update-modes …"
       ${updateModes}/bin/update-modes
       echo "Updating system …"
-      ${pkgs.nix-output-monitor}/bin/nom build --builders @$(builders-configurator) $(readlink -f /etc/nixos)#nixosConfigurations.$(hostname).config.system.build.toplevel --allow-import-from-derivation
+      ${pkgs.nix-output-monitor}/bin/nom build --builders @$(builders-configurator) $(readlink -f /etc/nixos)#nixosConfigurations.$(hostname).config.system.build.toplevel --allow-import-from-derivation --no-link
       /run/wrappers/bin/sudo -A /run/current-system/sw/bin/nixos-rebuild switch
       echo "Maintenance finished."
     '';
@@ -43,7 +43,7 @@ in {
         main = do
           say "Building ~/.modes for ${hostName}"
           builders <- builders_configurator |> captureTrim
-          nom ["build", "--builders", [i|@#{builders}|], "/home/maralorn/git/config#homeModes.${hostName}", "-o", "${modeDir}", "--allow-import-from-derivation"]
+          nom ["build", "--builders", [i|@#{builders}|], "/home/maralorn/git/config#homeModes.${hostName}", "-o", "${modeDir}"]
           activate_mode
       '';
     quickUpdateMode =

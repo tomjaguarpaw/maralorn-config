@@ -35,7 +35,7 @@ autoload -U colors && colors # Enable colors in prompt
 
 alias nom-build-remote='nom build --builders @$(builders-configurator --force)'
 alias nix-build-remote='nix build --builders @$(builders-configurator --force)'
-alias update-system='nom build --builders @$(builders-configurator)'" $(readlink -f /etc/nixos)#nixosConfigurations.$(hostname).config.system.build.toplevel && sudo -A nixos-rebuild switch"
+alias update-system='nom build --builders @$(builders-configurator)'" $(readlink -f /etc/nixos)#nixosConfigurations.$(hostname).config.system.build.toplevel --no-link && sudo -A nixos-rebuild switch"
 alias nixpkgs-review-pr-remote='nixpkgs-review pr --build-args "--builders @$(builders-configurator --force)"'
 alias nixpkgs-review-rev-remote='nixpkgs-review rev --build-args "--builders @$(builders-configurator --force)"'
 alias accounting='f() { if [[ "$1" == "" ]]; then year="buchhaltung" else year="$1" fi; hledger -f ~/git/buchhaltung/$year.journal ui -- --watch --theme=terminal -X€ -t -E}; f'
