@@ -4,22 +4,36 @@
   ...
 }: let
   pkgs = inputs.nixos-unstable.legacyPackages.x86_64-linux;
-  inherit (pkgs.haskell.lib.compose) appendPatch;
+  inherit (pkgs.haskell.lib.compose) appendPatch overrideCabal;
   includePatterns = [
     ".hs"
     ".cabal"
     "LICENSE"
+    "default.nix"
     "CHANGELOG.md"
   ];
   cleanCabalPackage = {
     name,
     source,
     extraPatterns ? [],
-  }: hpkgs:
-    lib.pipe source
+  }: hpkgs: let
+    cleanSource = lib.sourceFilesBySuffices source (includePatterns ++ extraPatterns);
+  in
+    lib.pipe {}
     [
-      (src: lib.sourceFilesBySuffices src (includePatterns ++ extraPatterns))
-      (src: hpkgs.callCabal2nix name src {})
+      (hpkgs.callPackage source)
+      (overrideCabal (
+        old: {
+          src = cleanSource;
+          preConfigure = ''
+            echo "Checking that default.nix is up-to-date."
+            ${hpkgs.cabal2nix}/bin/cabal2nix . > fresh-default.nix
+            cp ${cleanSource}/default.nix .
+            ${pkgs.alejandra}/bin/alejandra -q fresh-default.nix default.nix
+            ${pkgs.diffutils}/bin/diff -w default.nix fresh-default.nix
+          '';
+        }
+      ))
       hpkgs.buildFromCabalSdist
     ];
   haskellPackagesOverlay = final: prev:

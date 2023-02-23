@@ -1,8 +1,5 @@
 {
   description = "maralorns configuration";
-  nixConfig = {
-    allow-import-from-derivation = true;
-  };
 
   inputs = {
     secrets = {

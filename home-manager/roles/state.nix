@@ -15,7 +15,6 @@ defaultMode: {
     ".config/Signal"
     ".config/discord"
     ".config/gh"
-    ".config/VSCodium/User"
     ".contacts"
     ".gnupg"
     ".config/mpv/watch_later"
@@ -57,7 +56,6 @@ in {
     ++ [
       (mkLine "L+" "${home}/.password-store" "git/password-store")
       (mkLine "L+" "${home}/.volatile" "/disk/volatile/maralorn")
-      (mkLine "L+" "${home}/.config/nixpkgs/home.nix" "${home}/git/config/home.nix")
       (mkLine "L+" "${home}/.persist" "/disk/persist/maralorn")
       (mkLine "f" "${home}/.mode" defaultMode)
       (mkLine "f" "${home}/.config/lazygit/state.yml" "startuppopupversion: 5")
