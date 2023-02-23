@@ -11,7 +11,7 @@
       defaultFonts = let
         unicode-fallback = ["Noto Sans Symbols" "Noto Sans Symbols2"];
       in {
-        monospace = ["Spleen 6x12" "Noto Sans Mono"] ++ unicode-fallback;
+        monospace = ["Cozette" "Noto Sans Mono"] ++ unicode-fallback;
         sansSerif = ["B612" "Noto Sans"] ++ unicode-fallback;
         serif = ["Libertinus Serif" "Noto Serif"] ++ unicode-fallback;
       };
@@ -47,13 +47,9 @@
         scientifica
         # Quite cool on: 11px
         
-        # Tried but didn‘t like:
-        
         # biwidth: too small
         
         # Too wide tracking: creep
-        
-        #
         
         # For all my terminal needs.
         
