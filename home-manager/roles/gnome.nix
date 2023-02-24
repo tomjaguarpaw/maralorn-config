@@ -21,6 +21,10 @@
       pop-shell
       workspace-indicator
       caffeine
+      notification-counter
+      permanent-notifications
+      notification-banner-reloaded
+      expandable-notifications
       ;
     executor = pkgs.gnomeExtensions.executor.overrideAttrs (old: {
       postInstall =
@@ -36,6 +40,14 @@ in {
   home.packages = extensions;
   services.gpg-agent.pinentryFlavor = "gnome3";
   dconf.settings = {
+    "org/gnome/shell/extensions/notification-banner-reloaded" = {
+      padding-vertical = 1;
+      padding-horizontal = 1;
+      anchor-horizontal = 0;
+      anchor-vertical = 0;
+      animation-direction = 0;
+      animation-time = 1000;
+    };
     "org/gnome/shell/keybindings" = {
       "toggle-overview" = [];
     };
