@@ -8,4 +8,5 @@
       };
     };
   };
+  config.m-0.colors.accent = "3000d0";
 }

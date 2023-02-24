@@ -33,7 +33,6 @@
   inherit (lib.hm.gvariant) mkTuple mkUint32;
   font = "B612 8";
 in {
-  m-0.colors.accent = "3000d0";
   home.packages = extensions;
   services.gpg-agent.pinentryFlavor = "gnome3";
   dconf.settings = {
