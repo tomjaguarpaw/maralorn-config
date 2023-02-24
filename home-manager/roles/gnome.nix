@@ -181,8 +181,8 @@ in {
       trans-use-custom-gradient = true;
       trans-gradient-top-color = "#0014ff";
       trans-gradient-bottom-color = "#000000";
-      trans-gradient-top-opacity = 1;
-      trans-gradient-bottom-opacity = 1;
+      trans-gradient-top-opacity = 1.0;
+      trans-gradient-bottom-opacity = 1.0;
     };
     "org/gnome/desktop/input-sources" = {
       sources = [(mkTuple ["xkb" "de+neo"])]; # use neo
