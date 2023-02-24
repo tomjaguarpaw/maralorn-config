@@ -19,6 +19,7 @@
       removable-drive-menu
       mouse-follows-focus
       pop-shell
+      workspace-indicator
       caffeine
       ;
     executor = pkgs.gnomeExtensions.executor.overrideAttrs (old: {
@@ -98,10 +99,10 @@ in {
 
     "org/gnome/shell/extensions/executor" = {
       location = 1;
-      left-active = true;
-      left-commands-json = ''{"commands":[{"command":"cat /run/user/1000/status-bar","interval":1,"uuid":"d20a15a4-aea9-48e1-955f-4bd9f55b08bc"}]}'';
-      left-index = 0;
-      center-active = false;
+      left-active = false;
+      center-active = true;
+      center-commands-json = ''{"commands":[{"command":"cat /run/user/1000/status-bar","interval":1,"uuid":"d20a15a4-aea9-48e1-955f-4bd9f55b08bc"}]}'';
+      center-index = 0;
       right-active = false;
     };
 
@@ -170,15 +171,18 @@ in {
       pop-monitor-down = [];
     };
     "org/gnome/shell/extensions/dash-to-panel" = {
-      panel-element-positions = ''{"0":[{"element":"dateMenu","visible":true,"position":"stackedTL"},{"element":"leftBox","visible":true,"position":"stackedBR"},{"element":"centerBox","visible":true,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"}]}'';
+      panel-element-positions = ''{"0":[{"element":"showAppsButton","visible":false,"position":"stackedTL"},{"element":"dateMenu","visible":true,"position":"stackedTL"},{"element":"activitiesButton","visible":false,"position":"stackedTL"},{"element":"taskbar","visible":true,"position":"stackedTL"},{"element":"rightBox","visible":true,"position":"stackedTL"},{"element":"leftBox","visible":true,"position":"stackedTL"},{"element":"centerBox","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"},{"element":"desktopButton","visible":false,"position":"stackedBR"}]}'';
       panel-positions = ''{"0":"TOP"}'';
       panel-sizes = ''{"0":24}'';
       tray-padding = 0;
       status-icon-padding = 4;
-      trans-use-custom-opacity = true;
-      trans-panel-opacity = 0.8;
       leftbox-size = 13;
       tray-size = 13;
+      trans-use-custom-gradient = true;
+      trans-gradient-top-color = "#0014ff";
+      trans-gradient-bottom-color = "#000000";
+      trans-gradient-top-opacity = 1;
+      trans-gradient-bottom-opacity = 1;
     };
     "org/gnome/desktop/input-sources" = {
       sources = [(mkTuple ["xkb" "de+neo"])]; # use neo
