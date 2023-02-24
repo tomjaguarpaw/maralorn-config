@@ -31,7 +31,7 @@
     });
   };
   inherit (lib.hm.gvariant) mkTuple mkUint32;
-  font = "B612 8";
+  font = "Monospace 9";
 in {
   home.packages = extensions;
   services.gpg-agent.pinentryFlavor = "gnome3";
@@ -80,7 +80,7 @@ in {
     "org/gnome/desktop/interface" = {
       document-font-name = font;
       font-name = font;
-      monospace-font-name = "Monospace 9";
+      monospace-font-name = font;
       font-antialiasing = "grayscale";
       font-hinting = "full";
       clock-show-weekday = true;

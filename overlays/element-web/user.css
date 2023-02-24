@@ -2,13 +2,13 @@
    display: none !important;
 }
 
-/*
+
 span, div {
    font-size: 12px !important;
-   font-family: "Spleen 6x12", Twemoji !important;
+   font-family: CozetteVector, Twemoji !important;
    -webkit-font-smoothing: none !important;
 }
-*/
+
 
 .mx_RoomSublist[aria-label="Rooms"] .mx_RoomTile {
    display: none !important;

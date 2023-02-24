@@ -12,7 +12,7 @@
   programs.foot = {
     settings = {
       main = {
-        font = "Cozette:pixelsize=13";
+        font = "CozetteVector:pixelsize=12";
         include = toString (pkgs.writeText "foot-theme" ''
           ${builtins.readFile "${pkgs.foot.themes}/share/foot/themes/catppuccin"}
           background=000000
