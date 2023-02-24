@@ -33,6 +33,7 @@
   inherit (lib.hm.gvariant) mkTuple mkUint32;
   font = "B612 8";
 in {
+  m-0.colors.accent = "3000d0";
   home.packages = extensions;
   services.gpg-agent.pinentryFlavor = "gnome3";
   dconf.settings = {
@@ -153,7 +154,7 @@ in {
       snap-to-grid = true;
       tile-by-default = true;
       active-hint = true;
-      hint-color-rgba = "rgba(114,135,253,0.5)";
+      hint-color-rgba = "rgba(48, 0, 208,1.0)";
       tile-enter = ["<Super>t"];
       tile-move-left-global = ["<Super><Shift>Left"];
       tile-move-right-global = ["<Super><Shift>Right"];
@@ -180,7 +181,7 @@ in {
       tray-size = 13;
       show-appmenu = true;
       trans-use-custom-gradient = true;
-      trans-gradient-top-color = "#0014ff";
+      trans-gradient-top-color = "#${config.m-0.colors.accent}";
       trans-gradient-bottom-color = "#000000";
       trans-gradient-top-opacity = 1.0;
       trans-gradient-bottom-opacity = 1.0;

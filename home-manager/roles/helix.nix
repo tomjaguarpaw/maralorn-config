@@ -42,6 +42,10 @@ in {
     enable = true;
     themes.mytheme = {
       inherits = "catppuccin_mocha";
+      palette = {
+        mantle = "#${config.m-0.colors.accent}";
+        base = "#000000";
+      };
       "diagnostic.info".underline = {
         color = "blue";
         style = "curl";

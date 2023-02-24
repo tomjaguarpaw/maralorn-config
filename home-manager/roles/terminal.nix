@@ -13,13 +13,16 @@
     settings = {
       main = {
         font = "Cozette:pixelsize=13";
-        include = "${pkgs.foot.themes}/share/foot/themes/catppuccin";
+        include = toString (pkgs.writeText "foot-theme" ''
+          ${builtins.readFile "${pkgs.foot.themes}/share/foot/themes/catppuccin"}
+          background=000000
+        '');
       };
       csd = {
         preferred = "client";
         size = "0";
         border-width = "1";
-        color = "af0000aa";
+        color = "ff${config.m-0.colors.accent}";
       };
       mouse = {
         hide-when-typing = "yes";

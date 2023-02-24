@@ -1,8 +1,5 @@
-{pkgs, ...}: let
-  inherit (import ../../lib) colors;
-in {
+{pkgs, ...}: {
   imports = [./mpv];
-  m-0.colors = colors;
   home = {
     packages = builtins.attrValues {
       zoom = pkgs.zoom-us.overrideAttrs (old: {
