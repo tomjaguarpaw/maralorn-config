@@ -156,6 +156,7 @@ in {
       net-speed-in-bits = true;
       net-style = "both";
       show-tooltip = true;
+      background = "#00000000";
     };
 
     "org/gnome/shell/extensions/pop-shell" = {
