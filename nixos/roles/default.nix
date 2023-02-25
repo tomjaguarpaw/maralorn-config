@@ -115,12 +115,12 @@
   };
 
   nix = {
-    registry.nixpkgs = {
+    registry.pkgs = {
       from = {
         type = "indirect";
-        id = "nixpkgs";
+        id = "pkgs";
       };
-      flake = pkgs.flake-inputs.nixos-stable;
+      flake = pkgs.flake-inputs.nixos-unstable;
     };
     settings.trusted-users = ["maralorn" "laminar"];
     # Extra Option which is on by default: allow-import-from-derivation = true
@@ -129,6 +129,7 @@
       fallback = true
       auto-optimise-store = true
       builders-use-substitutes = true
+      warn-dirty = false
     '';
     optimise = {
       dates = [];
