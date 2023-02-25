@@ -125,7 +125,7 @@
     settings.trusted-users = ["maralorn" "laminar"];
     # Extra Option which is on by default: allow-import-from-derivation = true
     extraOptions = ''
-      experimental-features = nix-command flakes
+      experimental-features = nix-command flakes repl-flake
       fallback = true
       auto-optimise-store = true
       builders-use-substitutes = true
