@@ -64,7 +64,7 @@ in {
   ];
   systemd.services = {
     update-config = {
-      path = [pkgs.git pkgs.nix pkgs.openssh pkgs.nixos-rebuild pkgs.home-manager pkgs.builders-configurator];
+      path = [pkgs.git pkgs.nix pkgs.openssh pkgs.nixos-rebuild pkgs.builders-configurator];
       restartIfChanged = false;
       unitConfig.X-StopOnRemoval = false;
       serviceConfig = {
@@ -75,7 +75,6 @@ in {
       in ''
         /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull --ff-only
         nixos-rebuild switch --builders @$(builders-configurator)
-        /run/wrappers/bin/sudo -u ${user} /nix/var/nix/profiles/per-user/maralorn/profile/bin/update-modes
       '';
     };
   };
