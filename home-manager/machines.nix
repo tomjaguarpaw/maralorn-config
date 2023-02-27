@@ -39,25 +39,28 @@ let
   makeAutostart = name: {config, ...}: {
     config.xdg.configFile."autostart/${name}.desktop".source = "${config.home.path}/share/applications/${name}.desktop";
   };
-  on-my-machines = [
-    ./roles/on-my-machine.nix
+  orga-basics = [
     ./roles/mail.nix
-    ./roles/firefox.nix
-    ./roles/kassandra.nix
     ./roles/taskwarrior.nix
     ./roles/vdirsyncer.nix
     ./roles/khard.nix
     ./roles/khal.nix
-    ./roles/mode-switching.nix
+  ];
+  default = [
+    ./roles/on-my-machine.nix
     ./roles/systemd-exporter.nix
   ];
   daily-driver = name: extra: let
     all =
       extra
-      ++ on-my-machines
+      ++ orga-basics
+      ++ default
       ++ [
         (makeAutostart "kassandra2")
         (makeAutostart "unlock-ssh")
+        ./roles/firefox.nix
+        ./roles/kassandra.nix
+        ./roles/mode-switching.nix
         ./roles/beets.nix
         ./roles/desktop-items.nix
         ./roles/desktop.nix
@@ -76,11 +79,6 @@ let
         ./roles/zettelkasten.nix
         ./roles/leisure.nix
       ];
-    orgaExtra = [
-      ./roles/mail-client.nix
-      ./roles/pythia.nix
-      ./roles/tinkering.nix
-    ];
     blockServer = import ./roles/block-server.nix;
   in {
     klausur = makeConfig name (
@@ -91,31 +89,31 @@ let
     );
     orga = makeConfig name (
       all
-      ++ orgaExtra
       ++ [
+        ./roles/mail-client.nix
         (blockServer restrictedPages)
       ]
     );
     communication = makeConfig name (
       all
-      ++ orgaExtra
       ++ [
+        ./roles/mail-client.nix
         ./roles/chat.nix
         (blockServer restrictedPages)
       ]
     );
     code = makeConfig name (
       all
-      ++ orgaExtra
       ++ [
+        ./roles/mail-client.nix
         ./roles/chat.nix
         (blockServer newsPages)
       ]
     );
     leisure = makeConfig name (
       all
-      ++ orgaExtra
       ++ [
+        ./roles/mail-client.nix
         ./roles/games.nix
         ./roles/chat.nix
         (blockServer newsPages)
@@ -123,8 +121,8 @@ let
     );
     unrestricted = makeConfig name (
       all
-      ++ orgaExtra
       ++ [
+        ./roles/mail-client.nix
         ./roles/games.nix
         ./roles/chat.nix
         (blockServer [])
@@ -142,14 +140,16 @@ in {
     ./roles/trusted-env.nix
     ./roles/monitor-config
   ];
-  fluffy.default = makeConfig "fluffy" [
-    ./roles/on-my-machine.nix
-    ./roles/mode-switching.nix
-    ./roles/systemd-exporter.nix
-    ./roles/headless.nix
-    (import ./roles/state.nix "default")
-  ];
-  hera.default = makeConfig "hera" (on-my-machines
+  fluffy.default = makeConfig "fluffy" (
+    default
+    ++ [
+      ./roles/headless.nix
+      (import ./roles/state.nix "default")
+    ]
+  );
+  hera.default = makeConfig "hera" (
+    default
+    ++ orga-basics
     ++ [
       ./roles/fetch-banking-timer.nix
       ./roles/weechat
@@ -158,5 +158,6 @@ in {
       ./roles/headless-mpd.nix
       ./roles/headless.nix
       ./roles/create-plans.nix
-    ]);
+    ]
+  );
 }
