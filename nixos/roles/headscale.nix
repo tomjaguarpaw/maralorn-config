@@ -18,7 +18,7 @@ in {
         logtail.enabled = false;
         metrics_listen_addr = "[::1]:9098";
         ip_prefixes = [
-          "10.7.0.0/10"
+          "100.7.0.0/10"
           "fd07::/48"
         ];
       };
