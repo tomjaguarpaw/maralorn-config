@@ -86,13 +86,5 @@ in {
   };
   perSystem = {config, ...}: {
     inherit packages;
-    devShells.haskell = hpkgs.shellFor {
-      packages = hpkgs: (builtins.attrValues (selectHaskellPackages hpkgs));
-      shellHook = config.pre-commit.installationScript;
-      buildInputs = [
-        hpkgs.haskell-language-server
-        hpkgs.cabal-install
-      ];
-    };
   };
 }

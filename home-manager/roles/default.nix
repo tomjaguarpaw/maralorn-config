@@ -146,7 +146,6 @@
           magic-wormhole
           alejandra
           nix-top
-          ghcWithPackages
           ghcid
           matrix-commander
           upterm

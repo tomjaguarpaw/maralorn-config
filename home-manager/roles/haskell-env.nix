@@ -7,4 +7,5 @@
       Restart = "always";
     };
   };
+  home.packages = [pkgs.ghcWithPackages];
 }

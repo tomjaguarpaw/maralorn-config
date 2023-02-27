@@ -64,7 +64,7 @@ let
         ./roles/git-sign.nix
         ./roles/gnome.nix
         ./roles/status-script.nix
-        ./roles/hoogle.nix
+        ./roles/haskell-env.nix
         ./roles/terminal.nix
         ./roles/mpclient.nix
         ./roles/mpd.nix
