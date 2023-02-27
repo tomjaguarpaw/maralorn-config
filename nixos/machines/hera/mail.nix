@@ -1,4 +1,4 @@
-{
+flake-inputs: {
   pkgs,
   config,
   lib,
@@ -8,6 +8,7 @@
   nonMailboxDomains = ["lists.maralorn.de"];
   inherit (config.m-0) hosts;
 in {
+  imports = [flake-inputs.nixos-mailserver.nixosModules.default];
   m-0.monitoring = [
     {
       name = "postfix on hera";

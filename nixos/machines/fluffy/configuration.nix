@@ -8,20 +8,16 @@ flake-inputs: {
   inherit (config.m-0) hosts;
   localAddress = "fdc0:1::2";
 in {
-  disabledModules = [
-    "services/home-automation/home-assistant.nix"
-  ];
-
   imports = [
-    "${flake-inputs.nixos-unstable}/nixos/modules/services/home-automation/home-assistant.nix"
-    ./hardware-configuration.nix
+    (import ../../roles/home-assistant flake-inputs)
+    (import ../../roles/home-manager.nix flake-inputs)
     ../../roles
     ../../roles/admin.nix
-    ../../roles/fonts.nix
     ../../roles/earlyoom.nix
-    ../../roles/standalone
-    ../../roles/home-assistant
+    ../../roles/fonts.nix
     ../../roles/metal.nix
+    ../../roles/standalone
+    ./hardware-configuration.nix
   ];
 
   age.identityPaths = ["/disk/persist/etc/ssh/ssh_host_ed25519_key"];

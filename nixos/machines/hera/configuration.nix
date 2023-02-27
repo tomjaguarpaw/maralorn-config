@@ -9,26 +9,31 @@ flake-inputs: {
   backupJobNames = map (name: "borgbackup-job-${name}") (lib.attrNames backupJobs);
 in {
   imports = [
-    flake-inputs.nixos-mailserver.nixosModules.default
-    ./hardware-configuration.nix
+    (import ../../roles/home-manager.nix flake-inputs)
+    (import ./mail.nix flake-inputs)
     ../../roles
-    ../../roles/standalone
-    ../../roles/server
-    ../../roles/git.nix
-    ../../roles/mathechor.de.nix
-    ../../roles/monitoring
     ../../roles/blog.nix
-    ../../roles/email2matrix.nix
-    ../../roles/matrix-synapse
     ../../roles/coturn.nix
-    ../../roles/go-neb.nix
-    ../../roles/laminar
-    ../../roles/foundryvtt.nix
-    ../../roles/mailman.nix
+    ../../roles/email2matrix.nix
     ../../roles/firefox-sync.nix
+    ../../roles/foundryvtt.nix
+    ../../roles/git.nix
+    ../../roles/go-neb.nix
     ../../roles/goatcounter.nix
-    ../../roles/nixpkgs-bot.nix
+    ../../roles/laminar
+    ../../roles/mailman.nix
+    ../../roles/mathechor.de.nix
+    ../../roles/matrix-synapse
     ../../roles/miniflux.nix
+    ../../roles/monitoring
+    ../../roles/nixpkgs-bot.nix
+    ../../roles/server
+    ../../roles/standalone
+    ./boot.nix
+    ./cloud.nix
+    ./hardware-configuration.nix
+    ./network.nix
+    ./web.nix
     (import ../../roles/monitoring/folder-size-exporter.nix {
       folders = [
         "/"
@@ -44,11 +49,6 @@ in {
         "/var/vmail"
       ];
     })
-    ./web.nix
-    ./mail.nix
-    ./boot.nix
-    ./cloud.nix
-    ./network.nix
   ];
   m-0.monitoring = [
     {

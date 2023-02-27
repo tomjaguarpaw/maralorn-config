@@ -1,4 +1,4 @@
-{
+flake-inputs: {
   pkgs,
   lib,
   ...
@@ -68,6 +68,10 @@
 in {
   imports = [
     ./hexa-cards.nix
+    "${flake-inputs.nixos-unstable}/nixos/modules/services/home-automation/home-assistant.nix"
+  ];
+  disabledModules = [
+    "services/home-automation/home-assistant.nix"
   ];
 
   systemd.tmpfiles.rules = [
