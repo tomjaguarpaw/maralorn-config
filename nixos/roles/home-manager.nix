@@ -3,6 +3,6 @@ flake-inputs: {config, ...}: {
   home-manager = {
     backupFileExtension = "home-manager-backup";
     useGlobalPkgs = true;
-    users.maralorn = flake-inputs.self.homeConfigurations.${config.networking.hostName};
+    users.maralorn = (import ../../home-manager/machines.nix).${config.networking.hostName}.default;
   };
 }

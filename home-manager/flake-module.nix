@@ -35,6 +35,6 @@
         modes);
   in {
     homeConfigurations = lib.mapAttrs (_: buildHomeManager) (flattenAttrs machines);
-    homeModes = lib.mapAttrs buildModesForHost machines;
+    homeModes = lib.mapAttrs buildModesForHost {inherit (machines) zeus apollo;};
   });
 }
