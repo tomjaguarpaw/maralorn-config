@@ -37,11 +37,6 @@ in {
       device = "/disk/persist/maralorn/.config/pulse";
       options = ["bind"];
     };
-    "/var/lib/bluetooth" = {
-      mountPoint = "/var/lib/bluetooth";
-      device = "/disk/persist/bluetooth";
-      options = ["bind"];
-    };
   };
 
   environment.etc = {
@@ -70,22 +65,27 @@ in {
 
   systemd.tmpfiles.rules = [
     "d /disk/persist/root 700 root root - -"
-    "d /disk/persist/root/.ssh 700 root root - -"
-    "d /disk/persist/etc/ssh 755 root root - -"
-    "d /disk/persist/var/lib/nixos 755 root root - -"
     "z / 755 - - - -"
     "d /disk/persist/maralorn 700 maralorn users - -"
     "d /disk/persist/maralorn/.config/pulse 700 maralorn users - -"
     "d /home/maralorn/.config 700 maralorn users - -"
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
-    "d /disk/persist/bluetooth - - - - -"
     # "d /disk/persist/minecraft 700 minecraft minecraft - -"
     "d /var/lib/misc 755 - - - -"
+
+    "d /disk/persist/root/.ssh 700 root root - -"
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
-    "L+ /etc/ssh - - - - /disk/persist/etc/ssh"
-    "L+ /var/lib/nixos - - - - /disk/persist/var/lib/nixos"
   ];
+
+  environment.persistence."/disk/persist" = {
+    directories = [
+      "/etc/ssh"
+      "/var/lib/nixos"
+      "/var/lib/bluetooth"
+      "/var/lib/tailscale"
+    ];
+  };
 
   boot = {
     loader = {

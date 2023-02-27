@@ -55,6 +55,7 @@
         nixpkgs.follows = "";
       };
     };
+    impermanence.url = "github:nix-community/impermanence";
   };
 
   outputs = inputs @ {nixos-hardware, ...}:

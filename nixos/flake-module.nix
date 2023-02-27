@@ -17,6 +17,7 @@
           imports = [
             (import (./. + "/machines/${name}/configuration.nix") inputs)
             inputs.secrets.nixosModules.default
+            inputs.impermanence.nixosModules.impermanence
             inputs.self.nixosModules.unstableNFTables
           ];
         };
