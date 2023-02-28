@@ -109,8 +109,8 @@ in {
         ];
         local-data = [
           "\"vpn.m-0.eu IN CNAME hera.m-0.eu\""
-          "\"home.vpn.m-0.eu IN CNAME fluffy.p.m-0.eu\""
-          "\"rss.vpn.m-0.eu IN CNAME hera.p.m-0.eu\""
+          # "\"home.vpn.m-0.eu IN CNAME fluffy.p.m-0.eu\""
+          # "\"rss.vpn.m-0.eu IN CNAME hera.p.m-0.eu\""
         ];
       };
     };

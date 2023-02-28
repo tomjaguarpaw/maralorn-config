@@ -13,12 +13,9 @@ in {
     "${flake-inputs.nixos-hardware}/common/gpu/amd/sea-islands"
     ./hardware-configuration.nix
     ../../roles
-    ../../roles/admin.nix
     ../../roles/fonts.nix
-    ../../roles/earlyoom.nix
     ../../roles/metal.nix
     ../../roles/display-server.nix
-    #../../roles/boot-key.nix
     ../../roles/standalone
   ];
 

@@ -21,12 +21,6 @@
     firewall = {
       enable = true; # It’s the default, but better make sure.
       allowPing = true;
-      extraInputRules = ''
-        meta iifname m0wire accept comment "wireguard vpp"
-        meta iifname tailscale0 accept comment "headscale vpn"
-      '';
-      checkReversePath = "loose";
-      allowedUDPPorts = [config.services.tailscale.port];
     };
     nftables.enable = true; # Uses firewall variables since 23.05
     useDHCP = false; # enabled per interface
@@ -41,7 +35,6 @@
         config.m-0.hosts
       );
   };
-  services.tailscale.enable = true;
 
   security.acme = {
     defaults.email = "security@maralorn.de";
