@@ -1,9 +1,14 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   systemd.user = {
     services.fetch-banking = {
       Unit.Description = "Fetch banking";
       Service = {
         Type = "oneshot";
+        Environment = "PATH=${lib.makeBinPath [pkgs.coreutils pkgs.git]}";
         ExecStart = toString (
           pkgs.writeShellScript "fetch-banking" ''
             cd ~/git/buchhaltung
