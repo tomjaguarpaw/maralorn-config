@@ -13,12 +13,15 @@ in {
       address = "[::1]";
       port = 8289;
       serverUrl = "https://${domain}";
-      dns.baseDomain = "m-0.eu";
+      dns = {
+        baseDomain = "m-0.eu";
+        nameservers = ["100.64.7.1" "1.1.1.1" "9.9.9.9"];
+      };
       settings = {
         logtail.enabled = false;
         metrics_listen_addr = "[::1]:9098";
         ip_prefixes = [
-          "100.7.0.0/10"
+          "100.64.7.0/24"
           "fd07::/48"
         ];
       };

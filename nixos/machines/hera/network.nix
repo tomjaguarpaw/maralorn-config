@@ -92,10 +92,26 @@ in {
 
   services = {
     unbound = {
+      resolveLocalQueries = false;
       enable = true;
       settings.server = {
-        access-control = ["127.0.0.0/8 allow" "::1/128 allow" "fdc0:7::/64 allow"];
-        interface = ["::1" "127.0.0.1" hosts.vpn.hera];
+        access-control = [
+          "127.0.0.0/8 allow"
+          "::1/128 allow"
+          "fdc0:7::/64 allow"
+          "100.64.7.0/24 allow"
+          "fd07::/48 allow"
+        ];
+        interface = [
+          "lo"
+          "m0wire"
+          "tailscale0"
+        ];
+        local-data = [
+          "\"vpn.m-0.eu IN CNAME hera.m-0.eu\""
+          "\"home.vpn.m-0.eu IN CNAME fluffy.p.m-0.eu\""
+          "\"rss.vpn.m-0.eu IN CNAME hera.p.m-0.eu\""
+        ];
       };
     };
     ndppd = {

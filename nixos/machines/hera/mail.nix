@@ -17,7 +17,6 @@ in {
   ];
 
   services = {
-    unbound.enable = true;
     prometheus.exporters = {
       postfix = {
         enable = true;
