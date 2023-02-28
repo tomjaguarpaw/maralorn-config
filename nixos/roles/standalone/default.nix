@@ -4,7 +4,7 @@
   lib,
   ...
 }: {
-  imports = [./vpn.nix];
+  imports = [../vpn.nix];
 
   boot = {
     plymouth.enable = true;
