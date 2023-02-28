@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   imports = [
-    ../../roles/earlyoom.nix
+    ./earlyoom.nix
   ];
   boot.kernelParams = ["mitigations=off"];
   console.keyMap = "neo";
