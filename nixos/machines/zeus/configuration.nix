@@ -70,9 +70,6 @@ in {
     "d /disk/volatile/maralorn 700 maralorn users - -"
     # "d /disk/persist/minecraft 700 minecraft minecraft - -"
     "d /var/lib/misc 755 - - - -"
-
-    "d /disk/persist/root/.ssh 700 root root - -"
-    "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
 
   environment.persistence."/disk/persist" = {
@@ -81,6 +78,7 @@ in {
       "/var/lib/nixos"
       "/var/lib/bluetooth"
       "/var/lib/tailscale"
+      "/root/.ssh"
     ];
   };
 
