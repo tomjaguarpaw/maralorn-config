@@ -166,8 +166,8 @@ main = do
             unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/" <>)) dirs
             when' (not $ null unpushed) $ withColor "fe640b" [i|Unpushed: #{Text.intercalate " " unpushed}|]
         , simpleModule (60 * oneSecond) $ do
-            current_kernel <- readlink "/run/current-system/kernel"
-            booted_kernel <- readlink "/run/booted-system/kernel"
+            current_kernel <- readlink "/run/current-system/kernel" |> captureTrim
+            booted_kernel <- readlink "/run/booted-system/kernel" |> captureTrim
             when' (current_kernel /= booted_kernel) $ withColor "ffff00" "Booted kernel stale"
         , \var -> do
             module_state <- newTVarIO ("", "")
