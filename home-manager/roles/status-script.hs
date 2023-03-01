@@ -168,20 +168,21 @@ main = do
         , simpleModule (60 * oneSecond) $ do
             current_kernel <- readlink "/run/current-system/kernel"
             booted_kernel <- readlink "/run/booted-system/kernel"
-            when' (current_kernel /= booted_kernel) $ withColor "ffff00" "Reboot required after Kernel update"
+            when' (current_kernel /= booted_kernel) $ withColor "ffff00" "Booted kernel stale"
         , \var -> do
-            last_checked_commit <- newTVarIO ""
-            dirty <- newTVarIO False
-            host_name <- readFileBS "/etc/hostname"
+            module_state <- newTVarIO ("", "")
+            dirty_var <- newTVarIO False
+            host_name <- ByteString.strip <$> readFileBS "/etc/hostname"
             ( simpleModule (60 * oneSecond) $ do
                 current_commit <- readFileBS "/home/maralorn/git/config/.git/refs/heads/main"
-                commit_changed <- atomically $ STM.stateTVar last_checked_commit (\previous_commit -> (previous_commit /= current_commit, current_commit))
-                when commit_changed do
-                  current_system <- readlink "/run/current-system"
-                  next_system <- nix "eval" "--raw" ([i|/disk/persist/maralorn/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel|] :: String)
-                  atomically $ writeTVar dirty (current_system /= next_system)
-                is_dirty <- readTVarIO dirty
-                when' is_dirty $ withColor "ffff00" "System update required"
+                current_system <- readlink "/run/current-system" |> captureTrim
+                some_change <- atomically $ STM.stateTVar module_state \(previous_commit, previous_system) ->
+                  (previous_commit /= current_commit || previous_system /= current_system, (current_commit, current_system))
+                when some_change do
+                  next_system <- nix "eval" "--raw" ([i|/disk/persist/maralorn/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel|] :: String) |> captureTrim
+                  atomically $ writeTVar dirty_var (current_system /= next_system)
+                is_dirty <- readTVarIO dirty_var
+                when' is_dirty $ withColor "ffff00" "Current system stale"
               )
               var
         , \var -> do
