@@ -115,6 +115,7 @@ main = do
             when' (not $ null appointments) $
               withColor "8839ef" (Text.intercalate "; " appointments)
         , simpleModule oneSecond $
+            -- TODO: Use something like:  playerctl metadata -F -f "player:{{playerName}} position:{{duration(position)}}/{{duration(mpris:length)}} status:{{status}} album:{{album}} artist:{{artist}} title:{{title}}"
             Just
               . Text.replace "Stopped -" "⏹"
               . Text.replace "Playing -" "▶"
