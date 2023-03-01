@@ -8,34 +8,40 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
-import Control.Concurrent qualified
 import Control.Concurrent qualified as Concurrent
 import Control.Concurrent.Async qualified as Async
 import Control.Concurrent.STM qualified as STM
 import Control.Exception (catch, onException)
+import Data.ByteString.Char8 qualified as ByteString
 import Data.ByteString.Lazy qualified as LBS
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Relude
 import Say (sayErr)
-import Shh (ExecReference (Absolute), captureTrim, exe, ignoreFailure, load, (|>))
+import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, (|>))
 import System.Directory (listDirectory)
 
 data Mode = Klausur | Orga | Communication | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
-load Absolute ["git", "khal", "playerctl", "notmuch"]
+load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix"]
 
+modes :: [Mode]
 modes = enumFrom Klausur
 
+getMode :: IO Mode
 getMode = do
-  name <- Text.strip <$> readFileText "/home/maralorn/.mode" `onException` sayErr "File /home/maralorn/.mode not found."
+  name <- decodeUtf8 . ByteString.strip <$> readFileBS "/home/maralorn/.mode" `onException` sayErr "File /home/maralorn/.mode not found."
   maybe (sayErr [i|Unknown mode #{name}|] >> error [i|Unknown mode #{name}|]) pure $ find (\mode -> name == Text.toLower (show mode)) modes
 
+isDirty :: String -> IO Bool
 isDirty gitDir = ((/= "") <$> (git "--no-optional-locks" "-C" gitDir "status" "--porcelain" |> captureTrim)) `catch` (\(_ :: SomeException) -> pure True)
+
+isUnpushed :: String -> IO Bool
 isUnpushed gitDir = do
   revs <- tryCmd (git "--no-optional-locks" "-C" gitDir "branch" "-r" "--contains" "HEAD")
   pure $ LBS.null revs
 
+tryCmd :: Proc a -> IO LBS.ByteString
 tryCmd x = ignoreFailure x |> captureTrim
 
 data Var a = MkVar
@@ -159,10 +165,35 @@ main = do
             dirs <- listDirectory "/home/maralorn/git"
             unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/" <>)) dirs
             when' (not $ null unpushed) $ withColor "fe640b" [i|Unpushed: #{Text.intercalate " " unpushed}|]
-        , simpleModule 1 $ do
-            atomically $ takeTMVar (update mode_var)
-            mode <- read_mode
-            withColor "7287fd" (show mode)
+        , simpleModule (60 * oneSecond) $ do
+            current_kernel <- readlink "/run/current-system/kernel"
+            booted_kernel <- readlink "/run/booted-system/kernel"
+            when' (current_kernel /= booted_kernel) $ withColor "ffff00" "Reboot required after Kernel update"
+        , \var -> do
+            last_checked_commit <- newTVarIO ""
+            dirty <- newTVarIO False
+            host_name <- readFileBS "/etc/hostname"
+            ( simpleModule (60 * oneSecond) $ do
+                current_commit <- readFileBS "/home/maralorn/git/config/.git/refs/heads/main"
+                commit_changed <- atomically $ STM.stateTVar last_checked_commit (\previous_commit -> (previous_commit /= current_commit, current_commit))
+                when commit_changed do
+                  current_system <- readlink "/run/current-system"
+                  next_system <- nix "eval" "--raw" ([i|/disk/persist/maralorn/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel|] :: String)
+                  atomically $ writeTVar dirty (current_system /= next_system)
+                is_dirty <- readTVarIO dirty
+                when' is_dirty $ withColor "ffff00" "System update required"
+              )
+              var
+        , \var -> do
+            let show_mode = do
+                  mode <- read_mode
+                  withColor "7287fd" (show mode)
+            show_mode
+            ( simpleModule 1 $ do
+                atomically $ takeTMVar (update mode_var)
+                show_mode
+              )
+              var
         ]
   foldConcurrently_
     [ void $ simpleModule oneSecond getMode mode_var

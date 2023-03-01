@@ -13,6 +13,7 @@ rec {
       fdo-notify
       these
       fsnotify
+      witch
       ;
   };
   makeHaskellPackages = p:
@@ -30,7 +31,6 @@ rec {
         hlint
         cabal2nix
         nix-derivation
-        witch
         ;
     }
     // makeHaskellScriptPackages p;

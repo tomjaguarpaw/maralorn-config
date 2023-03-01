@@ -146,7 +146,6 @@
           magic-wormhole
           alejandra
           nix-top
-          ghcid
           matrix-commander
           upterm
           lazygit

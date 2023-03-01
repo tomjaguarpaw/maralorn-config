@@ -4,7 +4,7 @@
     {
       libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
       ghcEnv = {
-        PATH = "${pkgs.lib.makeBinPath [pkgs.git pkgs.notmuch pkgs.playerctl pkgs.khal]}:$PATH";
+        PATH = "${pkgs.lib.makeBinPath [pkgs.git pkgs.notmuch pkgs.playerctl pkgs.khal pkgs.nix pkgs.coreutils]}:$PATH";
       };
       ghcArgs = ["-threaded"];
     }
