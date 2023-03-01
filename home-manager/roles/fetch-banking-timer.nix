@@ -8,7 +8,7 @@
       Unit.Description = "Fetch banking";
       Service = {
         Type = "oneshot";
-        Environment = "PATH=${lib.makeBinPath [pkgs.coreutils pkgs.git]}";
+        Environment = "PATH=${lib.makeBinPath [pkgs.coreutils pkgs.git pkgs.pass pkgs.gnupg]}";
         ExecStart = toString (
           pkgs.writeShellScript "fetch-banking" ''
             cd ~/git/buchhaltung
