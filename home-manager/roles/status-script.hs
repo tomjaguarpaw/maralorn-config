@@ -7,6 +7,9 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# OPTIONS_GHC -Wall -Wno-missing-signatures -Wno-unused-top-binds -Wno-type-defaults #-}
+
+module Main (main) where
 
 import Control.Concurrent qualified as Concurrent
 import Control.Concurrent.Async qualified as Async
@@ -18,7 +21,7 @@ import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Relude
 import Say (sayErr)
-import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, (|>))
+import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, readInputLines, (|>))
 import System.Directory (listDirectory)
 
 data Mode = Klausur | Orga | Communication | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
@@ -105,6 +108,24 @@ withColor color content = pure $ Just [i|<span foreground='\##{color}'>#{content
 when' :: Monad m => Bool -> m (Maybe a) -> m (Maybe a)
 when' cond result = if cond then result else pure Nothing
 
+playerCTLFormat = "@{{status}} {{title}} - {{album}} - {{artist}}"
+
+playerModule = \var ->
+  let update_lines =
+        mapM_
+          ( atomically
+              . updateVarIfChanged var
+              . Just
+              . Text.replace "@Stopped" "⏹"
+              . Text.replace "@Playing" "▶"
+              . Text.replace "@Paused" "⏸"
+              . Text.replace "-  -" "-"
+              . decodeUtf8
+          )
+   in forever $
+        playerctl "metadata" "-F" "-f" playerCTLFormat
+          |> Shh.readInputLines update_lines
+
 main :: IO ()
 main = do
   mode_var <- newVar Unrestricted
@@ -114,22 +135,7 @@ main = do
             appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
             when' (not $ null appointments) $
               withColor "8839ef" (Text.intercalate "; " appointments)
-        , simpleModule oneSecond $
-            -- TODO: Use something like:  playerctl metadata -F -f "player:{{playerName}} position:{{duration(position)}}/{{duration(mpris:length)}} status:{{status}} album:{{album}} artist:{{artist}} title:{{title}}"
-            Just
-              . Text.replace "Stopped -" "⏹"
-              . Text.replace "Playing -" "▶"
-              . Text.replace "Paused -" "⏸"
-              . Text.intercalate " - "
-              . fmap decodeUtf8
-              . filter (/= "")
-              <$> mapM
-                tryCmd
-                [ playerctl "status"
-                , playerctl "metadata" "title"
-                , playerctl "metadata" "album"
-                , playerctl "metadata" "artist"
-                ]
+        , playerModule
         , simpleModule oneSecond $ do
             mode <- read_mode
             unread <-
@@ -188,16 +194,9 @@ main = do
                 when' (system_dirty || modes_dirty) $ withColor "ffff00" [i|Current #{case (system_dirty,modes_dirty) of (True, True) -> "home and system"; (True, _) -> "system"; _ -> "home"} stale|]
               )
               var
-        , \var -> do
-            let show_mode = do
-                  mode <- read_mode
-                  withColor "7287fd" (show mode)
-            show_mode
-            ( simpleModule 1 $ do
-                atomically $ takeTMVar (update mode_var)
-                show_mode
-              )
-              var
+        , \var -> forever do
+            atomically . updateVarIfChanged var =<< withColor "7287fd" . show =<< read_mode
+            atomically $ takeTMVar (update mode_var)
         ]
   foldConcurrently_
     [ void $ simpleModule oneSecond getMode mode_var
