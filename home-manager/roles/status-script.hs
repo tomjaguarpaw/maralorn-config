@@ -108,8 +108,10 @@ withColor color content = pure $ Just [i|<span foreground='\##{color}'>#{content
 when' :: Monad m => Bool -> m (Maybe a) -> m (Maybe a)
 when' cond result = if cond then result else pure Nothing
 
+playerCTLFormat :: String
 playerCTLFormat = "@{{status}} {{title}} - {{album}} - {{artist}}"
 
+playerModule :: Module (Maybe Text)
 playerModule = \var ->
   let update_lines =
         mapM_
