@@ -1,6 +1,20 @@
-final: _: let
+final: prev: let
   myPkgs = import ./packages.nix;
-in {
-  myHaskellScriptPackages = myPkgs.makeHaskellScriptPackages final.haskellPackages;
-  ghcWithPackages = final.unstableGhc.withHoogle (p: builtins.attrValues (myPkgs.makeHaskellPackages p // (final.flake-inputs.self.overlays.addMyHaskellPackages "" "")));
-}
+  inherit (prev.flake-inputs) self;
+  inherit (self.lib) selectHaskellPackages;
+  hpkgs = final.unstableHaskellPackages.override {
+    overrides = self.overlays.haskellPackagesOverlay;
+  };
+  shell = hpkgs.shellFor {
+    withHoogle = true;
+    packages = p: builtins.attrValues (self.lib.selectHaskellPackages p);
+    extraDependencies = p: {
+      libraryHaskellDepends = builtins.attrValues (myPkgs.makeHaskellPackages p // selectHaskellPackages p);
+    };
+  };
+in
+  {
+    myHaskellScriptPackages = myPkgs.makeHaskellScriptPackages final.haskellPackages;
+    ghcWithPackages = builtins.head shell.nativeBuildInputs;
+  }
+  // selectHaskellPackages hpkgs

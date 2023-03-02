@@ -80,9 +80,9 @@
   };
   packages = selectHaskellPackages hpkgs;
 in {
-  flake.overlays = {
-    inherit haskellPackagesOverlay;
-    addMyHaskellPackages = _: _: packages;
+  flake = {
+    lib = {inherit selectHaskellPackages;};
+    overlays = {inherit haskellPackagesOverlay;};
   };
   perSystem = {config, ...}: {
     inherit packages;

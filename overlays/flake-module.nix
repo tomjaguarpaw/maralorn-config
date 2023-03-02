@@ -14,7 +14,6 @@
           flake-inputs = inputs;
           flake-inputs' = inputs';
         })
-        inputs.self.overlays.addMyHaskellPackages
       ]
       ++ (let
         overlayPath = ./.;
