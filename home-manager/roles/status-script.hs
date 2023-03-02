@@ -1,5 +1,6 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -19,6 +20,7 @@ import Data.ByteString.Char8 qualified as ByteString
 import Data.ByteString.Lazy qualified as LBS
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
+import Data.Unique qualified as Unique
 import Relude
 import Say (sayErr)
 import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, readInputLines, (|>))
@@ -47,34 +49,53 @@ isUnpushed gitDir = do
 tryCmd :: Proc a -> IO LBS.ByteString
 tryCmd x = ignoreFailure x |> captureTrim
 
-data Var a = MkVar
-  { value :: TVar a
-  , update :: TMVar ()
+newtype Var a = MkVar
+  { value :: TVar (a, Unique.Unique)
   }
 
+getUnique = fmap snd . readTVar . value
+getVal = fmap fst . readTVar . value
+
 newVar :: a -> IO (Var a)
-newVar initial_value = atomically $ MkVar <$> newTVar initial_value <*> newEmptyTMVar
+newVar initial_value = do
+  unique <- Unique.newUnique
+  MkVar <$> newTVarIO (initial_value, unique)
 
 newMaybeVar :: IO (Var (Maybe a))
-newMaybeVar = atomically $ MkVar <$> newTVar Nothing <*> newEmptyTMVar
+newMaybeVar = newVar Nothing
 
 type Vars = [Var (Maybe Text)]
 type Module a = Var a -> IO Void
 
-repeatM :: IO a -> IO Void
-repeatM action = fix (action >>)
-
 writeVars :: Vars -> IO Void
-writeVars vars = repeatM do
-  outputs <- atomically $ do
-    updates <- forM vars $ \MkVar{update} -> tryTakeTMVar update
-    STM.check $ any isJust updates
-    forM vars \MkVar{value} -> readTVar value
+writeVars vars = onUpdatesMono vars do
+  outputs <- atomically $ mapM getVal vars
   writeFileText "/run/user/1000/status-bar" $
     Text.replace "&" "&amp;" $
       Text.unwords $
         ("<executor.markup.true>" :) $
           catMaybes outputs
+
+data AnyVar where
+  AVar :: Var a -> AnyVar
+
+onUpdate :: Var a -> (a -> IO ()) -> IO Void
+onUpdate var action = onUpdatesMono [var] do
+  action =<< atomically (getVal var)
+
+onUpdatesMono :: [Var a] -> IO () -> IO Void
+onUpdatesMono = onUpdates . fmap AVar
+
+onUpdates :: [AnyVar] -> IO () -> IO Void
+onUpdates vars action = go []
+ where
+  go previous_uniques = do
+    next_uniques <- atomically $ do
+      current_uniques <- mapM (\(AVar a) -> getUnique a) vars
+      STM.check $ previous_uniques /= current_uniques
+      pure current_uniques
+    action
+    go next_uniques
 
 runModules :: [Module (Maybe Text)] -> IO ()
 runModules modules = do
@@ -90,16 +111,17 @@ foldConcurrently_ = Async.mapConcurrently_ id
 oneSecond :: Int
 oneSecond = 1000000
 
-updateVarIfChanged :: Eq a => Var a -> a -> STM ()
-updateVarIfChanged MkVar{value, update} new_value = do
-  old_value <- readTVar value
-  unless (old_value == new_value) do
-    writeTVar value new_value
-    putTMVar update ()
+updateVarIfChanged :: Eq a => Var a -> a -> IO ()
+updateVarIfChanged var@MkVar{value} new_value = do
+  new_unique <- Unique.newUnique
+  atomically do
+    old_value <- getVal var
+    unless (old_value == new_value) do
+      writeTVar value (new_value, new_unique)
 
 simpleModule :: Eq a => Int -> IO a -> Module a
-simpleModule delay action var = repeatM do
-  atomically . updateVarIfChanged var =<< action
+simpleModule delay action var = forever do
+  updateVarIfChanged var =<< action
   Concurrent.threadDelay delay
 
 withColor :: Monad m => Text -> Text -> m (Maybe Text)
@@ -115,8 +137,7 @@ playerModule :: Module (Maybe Text)
 playerModule = \var ->
   let update_lines =
         mapM_
-          ( atomically
-              . updateVarIfChanged var
+          ( updateVarIfChanged var
               . Just
               . Text.replace "@Stopped" "⏹"
               . Text.replace "@Playing" "▶"
@@ -131,7 +152,7 @@ playerModule = \var ->
 main :: IO ()
 main = do
   mode_var <- newVar Unrestricted
-  let read_mode = readTVarIO (value mode_var)
+  let read_mode = fst <$> readTVarIO (value mode_var)
       modules =
         [ simpleModule (5 * oneSecond) $ do
             appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
@@ -196,9 +217,8 @@ main = do
                 when' (system_dirty || modes_dirty) $ withColor "ffff00" [i|Current #{case (system_dirty,modes_dirty) of (True, True) -> "home and system"; (True, _) -> "system"; _ -> "home"} stale|]
               )
               var
-        , \var -> forever do
-            atomically . updateVarIfChanged var =<< withColor "7287fd" . show =<< read_mode
-            atomically $ takeTMVar (update mode_var)
+        , \var ->
+            onUpdate mode_var $ updateVarIfChanged var . runIdentity . withColor "7287fd" . show
         ]
   foldConcurrently_
     [ void $ simpleModule oneSecond getMode mode_var
