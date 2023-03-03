@@ -28,7 +28,7 @@ in {
         metrics_listen_addr = "[::1]:9098";
         ip_prefixes = [
           "100.64.7.0/24"
-          "fd07::/48"
+          "fd7a:115c:a1e0:77::/64"
         ];
       };
     };
