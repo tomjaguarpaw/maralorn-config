@@ -11,5 +11,6 @@ self: super: {
     chrysalis
     emanote
     helix
+    headscale
     ;
 }
