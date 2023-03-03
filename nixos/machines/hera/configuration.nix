@@ -15,7 +15,7 @@ in {
     ../../roles/blog.nix
     ../../roles/coturn.nix
     ../../roles/email2matrix.nix
-    ../../roles/firefox-sync.nix
+    #../../roles/firefox-sync.nix
     ../../roles/foundryvtt.nix
     ../../roles/git.nix
     ../../roles/go-neb.nix
