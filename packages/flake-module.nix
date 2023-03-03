@@ -3,8 +3,9 @@
   inputs,
   ...
 }: let
-  pkgs = inputs.nixos-unstable.legacyPackages.x86_64-linux;
-  inherit (pkgs.haskell.lib.compose) appendPatch overrideCabal;
+  stable-pkgs = inputs.nixos-stable.legacyPackages.x86_64-linux;
+  unstable-pkgs = inputs.nixos-unstable.legacyPackages.x86_64-linux;
+  inherit (unstable-pkgs.haskell.lib.compose) appendPatch overrideCabal;
   includePatterns = [
     ".hs"
     ".cabal"
@@ -16,6 +17,7 @@
     name,
     source,
     extraPatterns ? [],
+    overrides ? _: {},
   }: hpkgs: let
     cleanSource = lib.sourceFilesBySuffices source (includePatterns ++ extraPatterns);
   in
@@ -23,16 +25,20 @@
     [
       (hpkgs.callPackage source)
       (overrideCabal (
-        old: {
-          src = cleanSource;
-          preConfigure = ''
-            echo "Checking that default.nix is up-to-date."
-            ${hpkgs.cabal2nix}/bin/cabal2nix . > fresh-default.nix
-            cp ${cleanSource}/default.nix .
-            ${pkgs.alejandra}/bin/alejandra -q fresh-default.nix default.nix
-            ${pkgs.diffutils}/bin/diff -w default.nix fresh-default.nix
-          '';
-        }
+        old:
+          {
+            src = cleanSource;
+            preConfigure = ''
+              echo "Checking that default.nix is up-to-date …"
+              ${lib.getExe hpkgs.cabal2nix} . > fresh-default.nix
+              cp ${cleanSource}/default.nix .
+              chmod u+w default.nix
+              ${lib.getExe stable-pkgs.alejandra} -q fresh-default.nix default.nix
+              ${stable-pkgs.diffutils}/bin/diff -w default.nix fresh-default.nix
+              echo "default.nix confirmed to be up-to-date."
+            '';
+          }
+          // overrides old
       ))
       hpkgs.buildFromCabalSdist
     ];
@@ -41,7 +47,7 @@
     // {
       # For nixpkgs-bot, this patch is already merged upstream and can be removed on the next release
       matrix-client =
-        appendPatch (pkgs.fetchpatch {
+        appendPatch (stable-pkgs.fetchpatch {
           url = "https://github.com/softwarefactory-project/matrix-client-haskell/commit/97cb1918fcdf9b0249c6c8e70c7bfc664d718022.patch";
           sha256 = "sha256-YyxgfNO5RtqpKJ9UOYPlRple0FuNmjAB1iy9vYy0HOE=";
           relative = "matrix-client";
@@ -74,8 +80,18 @@
       name = "builders-configurator";
       source = ./builders-configurator;
     };
+    status-script = cleanCabalPackage {
+      name = "status-script";
+      source = ./status-script;
+      overrides = old: {
+        buildDepends = builtins.attrValues {
+          inherit (stable-pkgs) git khal playerctl notmuch;
+          inherit (unstable-pkgs) nix;
+        };
+      };
+    };
   };
-  hpkgs = pkgs.haskellPackages.override {
+  hpkgs = unstable-pkgs.haskellPackages.override {
     overrides = haskellPackagesOverlay;
   };
   packages = selectHaskellPackages hpkgs;

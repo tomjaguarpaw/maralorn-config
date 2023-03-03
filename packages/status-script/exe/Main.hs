@@ -1,15 +1,3 @@
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE ExtendedDefaultRules #-}
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE ImportQualifiedPost #-}
-{-# LANGUAGE NamedFieldPuns #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# OPTIONS_GHC -Wall -Wno-missing-signatures -Wno-unused-top-binds -Wno-type-defaults #-}
-
 module Main (main) where
 
 import Control.Concurrent qualified as Concurrent
