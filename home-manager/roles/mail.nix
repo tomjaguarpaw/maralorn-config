@@ -54,7 +54,7 @@ in {
     lib.mapAttrs' mkWatchService (lib.filterAttrs hasImapHost config.accounts.email.accounts)
     // {
       mbsync.Service = {
-        Environment = "PATH=${pkgs.coreutils}/bin";
+        Environment = "PATH=${lib.makeBinPath [pkgs.pass pkgs.gnupg pkgs.coreutils]}";
         Restart = "on-failure";
         RestartSec = "30s";
       };
