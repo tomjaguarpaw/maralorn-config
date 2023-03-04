@@ -80,7 +80,7 @@ with lib; {
         hera-p = "${p}::3";
         wg-p = "${p}::100";
         v4-p = "10.0.0";
-      in rec {
+      in {
         hera = "${p}::1";
         vpn = rec {
           prefix = "fdc0:7";
@@ -106,11 +106,11 @@ with lib; {
         # generate with:
         # (echo '{' && tailscale status -json | jq -r '.Self,.Peer[] | .DNSName[:-17] + " = { A = \"" + .TailscaleIPs[0] + "\"; AAAA = \"" + .TailscaleIPs[1] + "\";};"' && echo '}') > common/tailscale.nix
         tailscale = import ./tailscale.nix;
-        aliases = with (lib.mapAttrs (name: _: name) tailscale); {
-          home = fluffy;
-          rss = hera;
-          monitoring = hera;
-          alerts = hera;
+        aliases = {
+          hera = ["rss" "monitoring" "alerts" "syncthing-hera" "rspamd"];
+          fluffy = ["home" "syncthing-fluffy"];
+          zeus = ["syncthing-zeus"];
+          apollo = ["syncthing-apollo"];
         };
       };
     };

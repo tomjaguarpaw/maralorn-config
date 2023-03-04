@@ -137,9 +137,9 @@ in {
                         (lib.filterAttrs (_: addr: addr != "") ips)
                     )
                     hosts.tailscale)
-                  ++ lib.mapAttrsToList
-                  (from: to: "${from} IN CNAME ${to}")
-                  config.m-0.hosts.aliases)
+                  ++ lib.concatLists (lib.mapAttrsToList
+                    (to: map (from: "${from} IN CNAME ${to}"))
+                    config.m-0.hosts.aliases))
               }
             '';
           }
