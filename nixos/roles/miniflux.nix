@@ -4,6 +4,7 @@
   ...
 }: let
   inherit (config.m-0) hosts;
+  address = "[::1]:8100";
 in {
   services.miniflux = {
     enable = true;
@@ -11,12 +12,18 @@ in {
     config = {
       POLLING_FREQUENCY = "525600"; # We don‘t want polling so we set this to a year.
       BATCH_SIZE = "1000"; # To make sure that all feeds can get refreshed. Default is 100, which is probably fine.
-      LISTEN_ADDR = "[${hosts.vpn.hera}]:8100";
+      LISTEN_ADDR = address;
+    };
+  };
+  nginx.virtualHosts."rss.vpn.m-0.eu" = {
+    locations."/" = {
+      proxyPass = "http://${address}";
+      proxyWebsockets = true;
     };
   };
   systemd.services = {
     rss-server = {
-      serviceConfig.ExecStart = "${pkgs.python3}/bin/python -m http.server --bind ${hosts.vpn.hera} 8842 -d /var/www/rss";
+      serviceConfig.ExecStart = "${pkgs.python3}/bin/python -m http.server --bind ${hosts.headscale.hera.AAAA} 8842 -d /var/www/rss";
       wantedBy = ["multi-user.target"];
     };
     mastodon-digest = {
@@ -39,7 +46,7 @@ in {
       };
     };
     refresh-miniflux = {
-      script = "${pkgs.curl}/bin/curl -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header hera.vpn.m-0.eu:8100/v1/feeds/refresh";
+      script = "${pkgs.curl}/bin/curl -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header rss.vpn.m-0.eu/v1/feeds/refresh";
       after = ["mastodon-digest.service"];
       requires = ["mastodon-digest.service"];
       startAt = "9:00:00";

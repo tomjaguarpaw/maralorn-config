@@ -110,9 +110,11 @@ in {
             "tailscale0"
           ];
         };
-        auth-zone = [
+        auth-zone = let
+          name = "vpn.m-0.eu";
+        in [
           {
-            name = "maralorn.de";
+            inherit name;
             fallback-enabled = true;
             zonefile = let
               aliases = with (lib.mapAttrs (name: _: name) hosts.tailscale); {
@@ -122,17 +124,17 @@ in {
                 alerts = hera;
               };
             in
-              builtins.toFile "maralorn.de-zonfile" ''
-                $ORIGIN maralorn.de.
+              builtins.toFile "${name}-zonfile" ''
+                $ORIGIN ${name}.
                 $TTL 60
-                @ IN SOA hera.maralorn.de. hostmaster.maralorn.de. (
+                @ IN SOA hera.${name}. hostmaster.${name}. (
                 	2001062501 ; serial
                 	21600      ; refresh after 6 hours
                 	3600       ; retry after 1 hour
                 	604800     ; expire after 1 week
                 	86400 )    ; minimum TTL of 1 day
                   IN MX 10 hera.m-0.eu
-                  IN NS hera.maralorn.de.
+                  IN NS hera.${name}.
                 ${
                   lib.concatStringsSep "\n"
                   (lib.concatLists (lib.mapAttrsToList

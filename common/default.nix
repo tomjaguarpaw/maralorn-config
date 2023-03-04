@@ -108,7 +108,7 @@ with lib; {
         hera-intern-v4 = "${v4-p}.1";
         chor-cloud-intern-v4 = "${v4-p}.3";
         # generate with:
-        # (echo '{' && tailscale status -json | jq -r '.Self,.Peer[] | .DNSName[:-9] + " = { A = \"" + .TailscaleIPs[0] + "\"; AAAA = \"" + .TailscaleIPs[1] + "\";};"' && echo '}') > common/tailscale.nix
+        # (echo '{' && tailscale status -json | jq -r '.Self,.Peer[] | .DNSName[:-17] + " = { A = \"" + .TailscaleIPs[0] + "\"; AAAA = \"" + .TailscaleIPs[1] + "\";};"' && echo '}') > common/tailscale.nix
         tailscale = import ./tailscale.nix;
       };
     };

@@ -1,5 +1,6 @@
 flake-inputs: {config, ...}: let
   domain = "headscale.maralorn.de";
+  zone = "vpn.m-0.eu";
 in {
   disabledModules = [
     "services/networking/headscale.nix"
@@ -21,10 +22,10 @@ in {
       settings = {
         server_url = "https://${domain}";
         dns_config = {
-          base_domain = "m-0.eu";
-          restricted_nameservers."maralorn.de" = ["100.64.7.1"];
-          nameservers = ["1.1.1.1" "9.9.9.9"];
-          domains = ["maralorn.de"];
+          base_domain = zone;
+          restricted_nameservers.${zone} = [config.m-0.hosts.tailscale.hera.AAAA];
+          nameservers = ["1.1.1.1"];
+          domains = [zone];
         };
         logtail.enabled = false;
         metrics_listen_addr = "[::1]:9098";
