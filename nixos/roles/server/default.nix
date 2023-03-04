@@ -1,3 +1,3 @@
 _: {
-  imports = [./init_ssh.nix];
+  security.sudo.wheelNeedsPassword = false;
 }

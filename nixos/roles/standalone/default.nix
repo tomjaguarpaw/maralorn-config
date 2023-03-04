@@ -4,7 +4,10 @@
   lib,
   ...
 }: {
-  imports = [../vpn.nix];
+  imports = [
+    ../vpn.nix
+    ../admin.nix
+  ];
 
   boot = {
     plymouth.enable = true;
@@ -21,7 +24,10 @@
 
   security.sudo.extraConfig = "\n    Defaults timestamp_type=global, timestamp_timeout=15\n  ";
 
-  services.sshd.enable = true;
+  services.openssh = {
+    enable = true;
+    # permitRootLogin = "prohibit-password"; Default
+  };
 
   environment.etc."nix/machines".source = toString (pkgs.runCommand "nix-machines" {} ''
     cp $(${pkgs.builders-configurator}/bin/builders-configurator ${config.networking.hostName} --without-connection) $out

@@ -29,6 +29,7 @@ in {
     ../../roles/monitoring
     ../../roles/nixpkgs-bot.nix
     ../../roles/server
+    ../../roles/server/init_ssh.nix
     ../../roles/standalone
     ./boot.nix
     ./cloud.nix

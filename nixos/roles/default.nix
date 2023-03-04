@@ -6,7 +6,6 @@
 }: {
   imports = [
     ../../common
-    ./admin.nix
   ];
 
   i18n = {
