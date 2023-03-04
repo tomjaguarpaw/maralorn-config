@@ -116,40 +116,32 @@ in {
           {
             inherit name;
             fallback-enabled = true;
-            zonefile = let
-              aliases = with (lib.mapAttrs (name: _: name) hosts.tailscale); {
-                home = fluffy;
-                rss = hera;
-                monitoring = hera;
-                alerts = hera;
-              };
-            in
-              builtins.toFile "${name}-zonfile" ''
-                $ORIGIN ${name}.
-                $TTL 60
-                @ IN SOA hera.${name}. hostmaster.${name}. (
-                	2001062501 ; serial
-                	21600      ; refresh after 6 hours
-                	3600       ; retry after 1 hour
-                	604800     ; expire after 1 week
-                	86400 )    ; minimum TTL of 1 day
-                  IN MX 10 hera.m-0.eu
-                  IN NS hera.${name}.
-                ${
-                  lib.concatStringsSep "\n"
-                  (lib.concatLists (lib.mapAttrsToList
-                      (
-                        name: ips:
-                          lib.mapAttrsToList
-                          (type: ip: "${name} IN ${type} ${ip}")
-                          (lib.filterAttrs (_: addr: addr != "") ips)
-                      )
-                      hosts.tailscale)
-                    ++ lib.mapAttrsToList
-                    (from: to: "${from} IN CNAME ${to}")
-                    aliases)
-                }
-              '';
+            zonefile = builtins.toFile "${name}-zonfile" ''
+              $ORIGIN ${name}.
+              $TTL 60
+              @ IN SOA hera.${name}. hostmaster.${name}. (
+              	2001062501 ; serial
+              	21600      ; refresh after 6 hours
+              	3600       ; retry after 1 hour
+              	604800     ; expire after 1 week
+              	86400 )    ; minimum TTL of 1 day
+                IN MX 10 hera.m-0.eu
+                IN NS hera.${name}.
+              ${
+                lib.concatStringsSep "\n"
+                (lib.concatLists (lib.mapAttrsToList
+                    (
+                      name: ips:
+                        lib.mapAttrsToList
+                        (type: ip: "${name} IN ${type} ${ip}")
+                        (lib.filterAttrs (_: addr: addr != "") ips)
+                    )
+                    hosts.tailscale)
+                  ++ lib.mapAttrsToList
+                  (from: to: "${from} IN CNAME ${to}")
+                  config.m-0.hosts.aliases)
+              }
+            '';
           }
         ];
       };

@@ -33,6 +33,14 @@
           then {}
           else {"${ip}" = "${host} ${host}.m-0.eu";})
         config.m-0.hosts
+        ++ lib.mapAttrsToList
+        (host: ips: let
+          name = "${host} ${host}.vpn.m-0.eu ${lib.concatStringsSep " " (builtins.attrNames (lib.filterAttrs (_: to: to == host) config.m-0.hosts.aliases))}";
+        in {
+          ${ips.AAAA} = name;
+          ${ips.A} = name;
+        })
+        config.m-0.hosts.tailscale
       );
   };
 

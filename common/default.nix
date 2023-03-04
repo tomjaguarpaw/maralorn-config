@@ -78,11 +78,9 @@ with lib; {
       default = let
         p = config.m-0.prefix;
         hera-p = "${p}::3";
-        apollo-p = "${p}::1";
         wg-p = "${p}::100";
         v4-p = "10.0.0";
       in rec {
-        hera = "${p}::1";
         vpn = rec {
           prefix = "fdc0:7";
           hera = "${prefix}::1";
@@ -102,14 +100,17 @@ with lib; {
         hera-intern = "${hera-p}:1";
         chor-cloud = "${hera-p}:b";
 
-        apollo = apollo-wg;
-        zeus = zeus-wg;
-
         hera-intern-v4 = "${v4-p}.1";
         chor-cloud-intern-v4 = "${v4-p}.3";
         # generate with:
         # (echo '{' && tailscale status -json | jq -r '.Self,.Peer[] | .DNSName[:-17] + " = { A = \"" + .TailscaleIPs[0] + "\"; AAAA = \"" + .TailscaleIPs[1] + "\";};"' && echo '}') > common/tailscale.nix
         tailscale = import ./tailscale.nix;
+        aliases = with (lib.mapAttrs (name: _: name) tailscale); {
+          home = fluffy;
+          rss = hera;
+          monitoring = hera;
+          alerts = hera;
+        };
       };
     };
   };
