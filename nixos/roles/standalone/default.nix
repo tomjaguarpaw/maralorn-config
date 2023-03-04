@@ -6,7 +6,6 @@
 }: {
   imports = [
     ../vpn.nix
-    ../admin.nix
   ];
 
   boot = {
