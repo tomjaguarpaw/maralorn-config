@@ -81,6 +81,7 @@ with lib; {
         wg-p = "${p}::100";
         v4-p = "10.0.0";
       in rec {
+        hera = "${p}::1";
         vpn = rec {
           prefix = "fdc0:7";
           hera = "${prefix}::1";
