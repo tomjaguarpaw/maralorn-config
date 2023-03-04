@@ -58,7 +58,7 @@ in {
         "https://blog.maralorn.de"
         "https://ci.maralorn.de"
         "https://cloud.maralorn.de"
-        "https://firefox-sync.maralorn.de"
+        #"https://firefox-sync.maralorn.de"
         "https://matrix.maralorn.de"
         "https://monitoring.maralorn.de"
         "https://rpg.maralorn.de"
