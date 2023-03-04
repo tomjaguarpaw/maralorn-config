@@ -6,24 +6,26 @@
   inherit (config.m-0) hosts;
   address = "[::1]:8100";
 in {
-  services.miniflux = {
-    enable = true;
-    adminCredentialsFile = config.age.secrets.miniflux-admin-credentials.path;
-    config = {
-      POLLING_FREQUENCY = "525600"; # We don‘t want polling so we set this to a year.
-      BATCH_SIZE = "1000"; # To make sure that all feeds can get refreshed. Default is 100, which is probably fine.
-      LISTEN_ADDR = address;
+  services = {
+    miniflux = {
+      enable = true;
+      adminCredentialsFile = config.age.secrets.miniflux-admin-credentials.path;
+      config = {
+        POLLING_FREQUENCY = "525600"; # We don‘t want polling so we set this to a year.
+        BATCH_SIZE = "1000"; # To make sure that all feeds can get refreshed. Default is 100, which is probably fine.
+        LISTEN_ADDR = address;
+      };
     };
-  };
-  nginx.virtualHosts."rss.vpn.m-0.eu" = {
-    locations."/" = {
-      proxyPass = "http://${address}";
-      proxyWebsockets = true;
+    nginx.virtualHosts."rss.vpn.m-0.eu" = {
+      locations."/" = {
+        proxyPass = "http://${address}";
+        proxyWebsockets = true;
+      };
     };
   };
   systemd.services = {
     rss-server = {
-      serviceConfig.ExecStart = "${pkgs.python3}/bin/python -m http.server --bind ${hosts.headscale.hera.AAAA} 8842 -d /var/www/rss";
+      serviceConfig.ExecStart = "${pkgs.python3}/bin/python -m http.server --bind ${hosts.tailscale.hera.AAAA} 8842 -d /var/www/rss";
       wantedBy = ["multi-user.target"];
     };
     mastodon-digest = {
