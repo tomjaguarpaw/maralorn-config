@@ -41,7 +41,7 @@
       fi
 
       # otherwise authenticate with tailscale
-      ${lib.getExe pkgs.tailscale} up -authkey file:${config.age.secrets."tailscale-preauthkey".path} -login-server https://vpn.m-0.eu
+      ${lib.getExe pkgs.tailscale} up -authkey file:${config.age.secrets."tailscale-preauthkey".path} -login-server https://headscale.maralorn.de
     '';
   };
 }

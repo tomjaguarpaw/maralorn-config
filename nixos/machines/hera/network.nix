@@ -94,24 +94,27 @@ in {
     unbound = {
       resolveLocalQueries = false;
       enable = true;
-      settings.server = {
-        access-control = [
-          "127.0.0.0/8 allow"
-          "::1/128 allow"
-          "fdc0:7::/64 allow"
-          "100.64.7.0/24 allow"
-          "fd07::/48 allow"
-        ];
-        interface = [
-          "lo"
-          "m0wire"
-          "tailscale0"
-        ];
-        local-data = [
-          "\"vpn.m-0.eu IN CNAME hera.m-0.eu\""
-          # "\"home.vpn.m-0.eu IN CNAME fluffy.p.m-0.eu\""
-          # "\"rss.vpn.m-0.eu IN CNAME hera.p.m-0.eu\""
-        ];
+      settings = {
+        server = {
+          access-control = [
+            "127.0.0.0/8 allow"
+            "::1/128 allow"
+            "fdc0:7::/64 allow"
+            "100.64.7.0/24 allow"
+            "fd7a:115c:a1e0:77::/64 allow"
+          ];
+          interface = [
+            "lo"
+            "m0wire"
+            "tailscale0"
+          ];
+          local-data = [
+            #"\"vpn.m-0.eu IN CNAME hera.m-0.eu\""
+            "\"home.maralorn.de IN A 100.64.7.2\""
+            "\"rss.maralorn.de IN A 100.64.7.2\""
+            #    "\"home.maralorn.de IN CNAME hera.p.m-0.eu\""
+          ];
+        };
       };
     };
     ndppd = {
