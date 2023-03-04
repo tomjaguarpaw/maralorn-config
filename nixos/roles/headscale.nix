@@ -1,6 +1,6 @@
 flake-inputs: {config, ...}: let
   domain = "headscale.maralorn.de";
-  zone = "vpn.m-0.eu";
+  zone = "maralorn.de";
 in {
   disabledModules = [
     "services/networking/headscale.nix"

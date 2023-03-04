@@ -107,7 +107,26 @@ with lib; {
         # (echo '{' && tailscale status -json | jq -r '.Self,.Peer[] | .DNSName[:-17] + " = { A = \"" + .TailscaleIPs[0] + "\"; AAAA = \"" + .TailscaleIPs[1] + "\";};"' && echo '}') > common/tailscale.nix
         tailscale = import ./tailscale.nix;
         aliases = {
-          hera = ["rss" "monitoring" "alerts" "syncthing-hera" "rspamd"];
+          hera = [
+            "rss"
+            "monitoring"
+            "alerts"
+            "syncthing-hera"
+            "rspamd"
+            "lists"
+            "analytics"
+            "blog"
+            "ci"
+            "cloud"
+            "element"
+            "fdroid"
+            "firefox-sync"
+            "git"
+            "matrix"
+            "rpg"
+            "stream"
+            "tasks"
+          ];
           fluffy = ["home" "syncthing-fluffy"];
           zeus = ["syncthing-zeus"];
           apollo = ["syncthing-apollo"];

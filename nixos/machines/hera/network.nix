@@ -111,11 +111,10 @@ in {
           ];
         };
         auth-zone = let
-          name = "vpn.m-0.eu";
+          name = "maralorn.de";
         in [
           {
             inherit name;
-            fallback-enabled = true;
             zonefile = builtins.toFile "${name}-zonfile" ''
               $ORIGIN ${name}.
               $TTL 60
@@ -127,6 +126,8 @@ in {
               	86400 )    ; minimum TTL of 1 day
                 IN MX 10 hera.m-0.eu
                 IN NS hera.${name}.
+
+              headscale.maralorn.de IN CNAME hera.m-0.eu
               ${
                 lib.concatStringsSep "\n"
                 (lib.concatLists (lib.mapAttrsToList
