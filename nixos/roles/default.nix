@@ -35,7 +35,7 @@
         config.m-0.hosts
         ++ lib.mapAttrsToList
         (host: ips: let
-          name = "${host} ${host}.vpn.m-0.eu ${lib.concatMapStringsSep " " (name: "${name} ${name}.vpn.m-0.eu") config.m-0.hosts.aliases.${host}}";
+          name = "${host} ${host}.vpn.m-0.eu ${lib.concatMapStringsSep " " (name: "${name} ${name}.vpn.m-0.eu") config.m-0.hosts.aliases.${host} or []}";
         in {
           ${ips.AAAA} = name;
           ${ips.A} = name;
