@@ -198,8 +198,8 @@ main = do
                 some_change <- atomically $ STM.stateTVar module_state \(previous_commit, previous_system, previous_modes) ->
                   (previous_commit /= current_commit || previous_system /= current_system || previous_modes /= current_modes, (current_commit, current_system, current_modes))
                 when some_change do
-                  next_system <- nix "eval" "--raw" ([i|/disk/persist/maralorn/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel|] :: String) |> captureTrim
-                  next_modes <- nix "eval" "--raw" ([i|/disk/persist/maralorn/git/config\#homeModes.#{host_name}|] :: String) |> captureTrim
+                  next_system <- nix "eval" "--raw" ([i|/home/maralorn/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel|] :: String) |> captureTrim
+                  next_modes <- nix "eval" "--raw" ([i|/home/maralorn/git/config\#homeModes.#{host_name}|] :: String) |> captureTrim
                   atomically $ writeTVar dirty_var (current_system /= next_system, current_modes /= next_modes)
                 (system_dirty, modes_dirty) <- readTVarIO dirty_var
                 when' (system_dirty || modes_dirty) $ withColor "ffff00" [i|Current #{case (system_dirty,modes_dirty) of (True, True) -> "home and system"; (True, _) -> "system"; _ -> "home"} stale|]
