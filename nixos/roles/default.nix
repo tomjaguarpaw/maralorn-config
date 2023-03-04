@@ -3,7 +3,10 @@
   config,
   lib,
   ...
-}: {
+}: let
+  inherit (config.m-0) hosts;
+  inherit (config.networking) hostName;
+in {
   imports = [
     ../../common
     ./admin.nix
@@ -44,13 +47,13 @@
       );
   };
 
-  m-0.hosts = {
-    virtual = lib.genAttrs (config.m-0.hosts.aliases.${config.networking.hostName} or []) (name: "${name}.maralorn.de");
+  m-0 = {
+    virtualHosts = lib.genAttrs (hosts.aliases.${hostName} or []) (name: "${name}.maralorn.de");
     privateListenAddresses = [
       "127.0.0.1"
       "[::1]"
-      "[${config.m-0.hosts.tailscale.${config.networking.hostName}.AAAA}]"
-      config.m-0.hosts.tailscale.${config.networking.hostName}.A
+      "[${hosts.tailscale.${hostName}.AAAA}]"
+      hosts.tailscale.${hostName}.A
     ];
   };
 

@@ -9,6 +9,8 @@
     extraConfig = ''
       satisfy any;
       allow ${config.m-0.prefix}::/64;
+      allow ${config.m-0.hosts.tailscale.hera.AAAA}/64;
+      allow ${config.m-0.hosts.tailscale.hera.A}/24;
       deny all;
     '';
     basicAuthFile = config.age.secrets."basic-auth/monitoring".path;

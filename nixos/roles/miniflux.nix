@@ -4,9 +4,8 @@
   lib,
   ...
 }: let
-  inherit (config.m-0) hosts;
+  inherit (config.m-0) privateListenAddresses virtualHosts;
   address = "[::1]:8100";
-  own-feed-port = "8842";
 in {
   services = {
     miniflux = {
@@ -18,22 +17,18 @@ in {
         LISTEN_ADDR = address;
       };
     };
-    nginx.virtualHosts.${hosts.virtual.rss} = {
+    nginx.virtualHosts.${virtualHosts.rss} = {
       locations."/" = {
         proxyPass = "http://${address}";
         proxyWebsockets = true;
       };
-      locations."/own" = {
-        proxyPass = "http://[::1]:${own-feed-port}";
+      locations."/own/" = {
+        alias = "/var/www/rss/";
       };
-      listenAddresses = hosts.privateListenAddresses;
+      listenAddresses = privateListenAddresses;
     };
   };
   systemd.services = {
-    rss-server = {
-      serviceConfig.ExecStart = "${lib.getExe pkgs.python3} -m http.server --bind ::1 ${own-feed-port} -d /var/www/rss";
-      wantedBy = ["multi-user.target"];
-    };
     mastodon-digest = {
       script = ''
         now=$(date "+%Y-%m-%d")
@@ -54,7 +49,7 @@ in {
       };
     };
     refresh-miniflux = {
-      script = "${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header ${config.m-0.hosts.virtual.rss}/v1/feeds/refresh";
+      script = "${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header ${virtualHosts.rss}/v1/feeds/refresh";
       after = ["mastodon-digest.service"];
       requires = ["mastodon-digest.service"];
       startAt = "9:00:00";

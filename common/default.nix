@@ -47,16 +47,12 @@ with lib; {
     ];
   };
 
-  options = {
-    m-0.private = mkOption {
-      default = {};
-      type = types.attrs;
-    };
-    m-0.prefix = mkOption {
+  options.m-0 = {
+    prefix = mkOption {
       default = "2a02:c207:3002:7584";
       type = types.str;
     };
-    m-0.monitoring = mkOption {
+    monitoring = mkOption {
       type = types.listOf (types.submodule {
         options = {
           name = mkOption {type = types.str;};
@@ -73,14 +69,20 @@ with lib; {
       });
       default = [];
     };
-    m-0.hosts = mkOption {
+    privateListenAddresses = mkOption {
+      type = types.listOf types.string;
+    };
+    virtualHosts = mkOption {
+      type = types.attrs;
+    };
+    hosts = mkOption {
       type = types.attrs;
       default = let
         p = config.m-0.prefix;
         hera-p = "${p}::3";
         wg-p = "${p}::100";
         v4-p = "10.0.0";
-      in rec {
+      in {
         hera = "${p}::1";
         vpn = rec {
           prefix = "fdc0:7";
@@ -123,6 +125,7 @@ with lib; {
             "rpg"
             "rspamd"
             "rss"
+            "stats"
             "stream"
             "syncthing-hera"
             "tasks"
