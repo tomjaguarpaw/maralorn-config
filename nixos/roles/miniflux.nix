@@ -25,7 +25,6 @@ in {
       locations."/own/" = {
         alias = "/var/www/rss/";
       };
-      listenAddresses = privateListenAddresses;
     };
   };
   systemd.services = {

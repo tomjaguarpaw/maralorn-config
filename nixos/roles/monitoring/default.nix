@@ -31,11 +31,11 @@ in {
           locations."/".proxyPass = "http://localhost:9093";
         }
         // commonOptions;
-      virtualHosts."stats.maralorn.de" = {
-        enableACME = true;
-        forceSSL = true;
-        locations."/".proxyPass = "http://localhost:3000/";
-      };
+      virtualHosts."stats.maralorn.de" =
+        {
+          locations."/".proxyPass = "http://localhost:3000/";
+        }
+        // commonOptions;
       virtualHosts."monitoring.maralorn.de" =
         {
           locations."/".proxyPass = "http://localhost:9090";
