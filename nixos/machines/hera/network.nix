@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  lib,
   ...
 }: let
   wireguard = import ../../../common/wireguard.nix;
@@ -108,12 +109,22 @@ in {
             "m0wire"
             "tailscale0"
           ];
-          local-data = [
-            #"\"vpn.m-0.eu IN CNAME hera.m-0.eu\""
-            "\"home.maralorn.de IN A 100.64.7.2\""
-            "\"rss.maralorn.de IN A 100.64.7.2\""
-            #    "\"home.maralorn.de IN CNAME hera.p.m-0.eu\""
-          ];
+          local-data = let
+            aliases = with hosts.tailscale; {
+              home = fluffy;
+              rss = hera;
+              monitoring = hera;
+              alerts = hera;
+            };
+          in
+            lib.concatLists
+            (lib.mapAttrsToList
+              (
+                name:
+                  lib.mapAttrsToList
+                  (type: ip: "\"${name}.maralorn.de IN ${type} ${ip}\"")
+              )
+              aliases);
         };
       };
     };
