@@ -49,12 +49,6 @@ in {
 
   m-0 = {
     virtualHosts = lib.genAttrs (hosts.aliases.${hostName} or []) (name: "${name}.maralorn.de");
-    privateListenAddresses = [
-      "127.0.0.1"
-      "[::1]"
-      "[${hosts.tailscale.${hostName}.AAAA}]"
-      hosts.tailscale.${hostName}.A
-    ];
   };
 
   security.acme = {
@@ -189,6 +183,16 @@ in {
       };
     };
     nginx = {
+      virtualHosts =
+        lib.genAttrs
+        (map (name: "${name}.maralorn.de") (builtins.filter (name: !(builtins.elem name hosts.publicAliases.${hostName} or []))
+            (hosts.aliases.${hostName} or []))) (_: {
+          extraConfig = ''
+            satisfy any;
+            ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};") config.m-0.headscaleIPs}
+            deny all;
+          '';
+        });
       statusPage = true;
       recommendedOptimisation = true;
       recommendedGzipSettings = true;

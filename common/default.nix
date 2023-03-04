@@ -69,8 +69,12 @@ with lib; {
       });
       default = [];
     };
-    privateListenAddresses = mkOption {
+    headscaleIPs = mkOption {
       type = types.listOf types.string;
+      default = [
+        "100.64.7.0/24"
+        "fd7a:115c:a1e0:77::/64"
+      ];
     };
     virtualHosts = mkOption {
       type = types.attrs;
@@ -108,6 +112,16 @@ with lib; {
         # generate with:
         # (echo '{' && tailscale status -json | jq -r '.Self,.Peer[] | .DNSName[:-17] + " = { A = \"" + .TailscaleIPs[0] + "\"; AAAA = \"" + .TailscaleIPs[1] + "\";};"' && echo '}') > common/tailscale.nix
         tailscale = import ./tailscale.nix;
+        publicAliases = {
+          hera = [
+            "blog"
+            "cloud"
+            "git"
+            "lists"
+            "matrix"
+            "rpg"
+          ];
+        };
         aliases = {
           hera = [
             "alerts"

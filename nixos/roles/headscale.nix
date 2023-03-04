@@ -29,10 +29,7 @@ in {
         };
         logtail.enabled = false;
         metrics_listen_addr = "[::1]:9098";
-        ip_prefixes = [
-          "100.64.7.0/24"
-          "fd7a:115c:a1e0:77::/64"
-        ];
+        ip_prefixes = config.m-0.headscaleIPs;
       };
     };
 
