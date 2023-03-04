@@ -23,7 +23,7 @@ feedFromFileName now file_name =
       (Feed.TextString [i|mastodon digest #{digest_name}|])
       (timestamp now)
   )
-    { Feed.entryLinks = [Feed.nullLink [i|http://hera.vpn.m-0.eu:8842/mastodon/#{file_name}|]]
+    { Feed.entryLinks = [Feed.nullLink [i|http://rss.maralorn.de/own/mastodon/#{file_name}|]]
     }
  where
   digest_name = Text.drop 11 folder_name

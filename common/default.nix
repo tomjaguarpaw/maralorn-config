@@ -80,7 +80,7 @@ with lib; {
         hera-p = "${p}::3";
         wg-p = "${p}::100";
         v4-p = "10.0.0";
-      in {
+      in rec {
         hera = "${p}::1";
         vpn = rec {
           prefix = "fdc0:7";
@@ -108,12 +108,7 @@ with lib; {
         tailscale = import ./tailscale.nix;
         aliases = {
           hera = [
-            "rss"
-            "monitoring"
             "alerts"
-            "syncthing-hera"
-            "rspamd"
-            "lists"
             "analytics"
             "blog"
             "ci"
@@ -122,9 +117,14 @@ with lib; {
             "fdroid"
             "firefox-sync"
             "git"
+            "lists"
             "matrix"
+            "monitoring"
             "rpg"
+            "rspamd"
+            "rss"
             "stream"
+            "syncthing-hera"
             "tasks"
           ];
           fluffy = ["home" "syncthing-fluffy"];

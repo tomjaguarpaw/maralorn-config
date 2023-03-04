@@ -1,10 +1,12 @@
 {
   pkgs,
   config,
+  lib,
   ...
 }: let
   inherit (config.m-0) hosts;
   address = "[::1]:8100";
+  own-feed-port = "8842";
 in {
   services = {
     miniflux = {
@@ -16,16 +18,20 @@ in {
         LISTEN_ADDR = address;
       };
     };
-    nginx.virtualHosts."rss.vpn.m-0.eu" = {
+    nginx.virtualHosts.${hosts.virtual.rss} = {
       locations."/" = {
         proxyPass = "http://${address}";
         proxyWebsockets = true;
       };
+      locations."/own" = {
+        proxyPass = "http://[::1]:${own-feed-port}";
+      };
+      listenAddresses = hosts.privateListenAddresses;
     };
   };
   systemd.services = {
     rss-server = {
-      serviceConfig.ExecStart = "${pkgs.python3}/bin/python -m http.server --bind ${hosts.tailscale.hera.AAAA} 8842 -d /var/www/rss";
+      serviceConfig.ExecStart = "${lib.getExe pkgs.python3} -m http.server --bind ::1 ${own-feed-port} -d /var/www/rss";
       wantedBy = ["multi-user.target"];
     };
     mastodon-digest = {
@@ -37,9 +43,9 @@ in {
         set -o allexport
         source $CREDENTIALS_DIRECTORY/mastodon-auth-env
         set +o allexport
-        ${pkgs.mastodon_digest}/bin/mastodon_digest -o /var/www/rss/mastodon/$now-home-feed-highlights -n 24 -t normal
-        ${pkgs.mastodon_digest}/bin/mastodon_digest -o /var/www/rss/mastodon/$now-read-all-list -n 24 -t all --theme no-boosts -f list:3811
-        ${pkgs.mastodon_digest}/bin/mastodon_digest -o /var/www/rss/mastodon/$now-tags -n 24 -t all -f list:4160
+        ${lib.getExe pkgs.mastodon_digest} -o /var/www/rss/mastodon/$now-home-feed-highlights -n 24 -t normal
+        ${lib.getExe pkgs.mastodon_digest} -o /var/www/rss/mastodon/$now-read-all-list -n 24 -t all --theme no-boosts -f list:3811
+        ${lib.getExe pkgs.mastodon_digest} -o /var/www/rss/mastodon/$now-tags -n 24 -t all -f list:4160
         ${pkgs.logfeed}/bin/mastodon2rss /var/www/rss/mastodon.xml /var/www/rss/mastodon
       '';
       serviceConfig = {
@@ -48,7 +54,7 @@ in {
       };
     };
     refresh-miniflux = {
-      script = "${pkgs.curl}/bin/curl -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header rss.vpn.m-0.eu/v1/feeds/refresh";
+      script = "${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header ${config.m-0.hosts.virtual.rss}/v1/feeds/refresh";
       after = ["mastodon-digest.service"];
       requires = ["mastodon-digest.service"];
       startAt = "9:00:00";

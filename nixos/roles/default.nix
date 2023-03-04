@@ -44,6 +44,16 @@
       );
   };
 
+  m-0.hosts = {
+    virtual = lib.genAttrs (config.m-0.hosts.aliases.${config.networking.hostName} or []) (name: "${name}.maralorn.de");
+    privateListenAddresses = [
+      "127.0.0.1"
+      "[::1]"
+      "[${config.m-0.hosts.tailscale.${config.networking.hostName}.AAAA}]"
+      config.m-0.hosts.tailscale.${config.networking.hostName}.A
+    ];
+  };
+
   security.acme = {
     defaults.email = "security@maralorn.de";
     acceptTerms = true;
