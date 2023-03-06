@@ -32,9 +32,12 @@ in {
           domains = [zone];
           extra_records = lib.concatLists (lib.concatLists (lib.mapAttrsToList (
               host: ips: (
-                map (name:
+                map (alias:
                   lib.mapAttrsToList
-                  (type: value: {inherit name type value;})
+                  (type: value: {
+                    name = "${alias}.${zone}";
+                    inherit type value;
+                  })
                   (lib.filterAttrs (_: addr: addr != "") ips))
                 (hosts.aliases.${host} or [])
               )
