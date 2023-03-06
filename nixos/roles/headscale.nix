@@ -28,13 +28,15 @@ in {
       port = 8289;
       settings = {
         server_url = "https://${domain}";
-        derp.server = {
-          enabled = true;
-          stun_listen_addr = "0.0.0.0:${toString derp_port}";
-          region_id = "hera";
-          region_code = "hera";
-          region_name = "Hera";
-          urls = []; # Disable default derps, can’t use vpn without hera anyways
+        derp = {
+          server = {
+            enabled = true;
+            stun_listen_addr = "0.0.0.0:${toString derp_port}";
+            region_id = "hera";
+            region_code = "hera";
+            region_name = "Hera";
+          };
+          urls = [];
         };
         dns_config = {
           base_domain = "m-0.eu";
