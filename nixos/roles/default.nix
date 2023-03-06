@@ -7,19 +7,12 @@
   inherit (config.m-0) hosts;
   inherit (config.networking) hostName;
   inherit (pkgs.flake-inputs.self) sourceInfo;
-  s = builtins.substring;
-  formatDate = date: "${s 0 4 date}-${s 4 2 date}-${s 6 2 date}-${s 8 2 date}:${s 10 2 date}";
 in {
   imports = [
     ../../common
     ./admin.nix
   ];
   system = {
-    configurationRevision = sourceInfo.rev or null;
-    nixos.label =
-      if sourceInfo ? shortRev
-      then "${formatDate sourceInfo.lastModifiedDate}-${sourceInfo.shortRev}"
-      else "${formatDate sourceInfo.lastModifiedDate}-dirty";
     systemBuilderCommands = lib.mkIf (sourceInfo ? rev) ''
       echo ${sourceInfo.rev} > $out/config-commit
     '';
