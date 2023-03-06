@@ -15,8 +15,8 @@ in {
   system = {
     nixos.label =
       if sourceInfo ? shortRev
-      then "${formatDate sourceInfo.lastModifiedDate}-${sourceInfo.shortRev}"
-      else "${formatDate sourceInfo.lastModifiedDate}-dirty";
+      then "${config.system.nixos.version}-${formatDate sourceInfo.lastModifiedDate}-${sourceInfo.shortRev}"
+      else "${config.system.nixos.version}-dirty";
     systemBuilderCommands = lib.mkIf (sourceInfo ? rev) ''
       echo ${sourceInfo.rev} > $out/config-commit
     '';
