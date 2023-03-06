@@ -2,7 +2,7 @@ final: _: {
   updateSystem = final.writeShellScriptBin "update-system" ''
     set -e
     remote_host=$1
-    host=''${remote_host:-$(hostName)}
+    host=''${remote_host:-$(hostname)}
     echo "Building configuration for $host …"
     output=$(nom build --builders @$(builders-configurator) /home/maralorn/git/config#nixosConfigurations.$host.config.system.build.toplevel --no-link --print-out-paths)
     if [[ -z "$remote_host" ]]; then
