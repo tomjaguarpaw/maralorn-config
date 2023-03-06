@@ -35,7 +35,6 @@ autoload -U colors && colors # Enable colors in prompt
 
 alias nom-build-remote='nom build --builders @$(builders-configurator $(hostname) --force)'
 alias nix-build-remote='nix build --builders @$(builders-configurator $(hostname) --force)'
-# alias update-system='nom build --builders @$(builders-configurator)'" $(readlink -f /etc/nixos)#nixosConfigurations.$(hostname).config.system.build.toplevel --no-link && sudo -A nixos-rebuild switch"
 alias nixpkgs-review-pr-remote='nixpkgs-review pr --build-args "--builders @$(builders-configurator --force)"'
 alias nixpkgs-review-rev-remote='nixpkgs-review rev --build-args "--builders @$(builders-configurator --force)"'
 alias accounting='f() { if [[ "$1" == "" ]]; then year="buchhaltung" else year="$1" fi; hledger -f ~/git/buchhaltung/$year.journal ui -- --watch --theme=terminal -X€ -t -E}; f'
@@ -49,23 +48,6 @@ alias h='f() { if [[ "$1" == "" ]]; then hx .; else hx "$@"; fi}; f'
 alias vim="echo use h"
 alias r="NIX_AUTO_RUN=1"
 
-update-system() {
-	remote_host=$1
-	host=${remote_host:-$HOST}
-
-    echo "Building configuration for $host …"
-    output=$(nom build --builders @$(builders-configurator) $(readlink -f /etc/nixos)#nixosConfigurations.$host.config.system.build.toplevel --no-link	--print-out-paths)
-
-	if [[ -z "$remote_host" ]] {
-		on_target=("sudo" "-A")
-	} else {
-        on_target=("ssh" "root@$host")
-		echo "Uploading configuration to $host …"
-	    nix copy $output --to ssh://$host
-	} 
-	$on_target[@] nix-env -p /nix/var/nix/profiles/system --set $output
-    $on_target[@] $output/bin/switch-to-configuration switch
-}
 
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs

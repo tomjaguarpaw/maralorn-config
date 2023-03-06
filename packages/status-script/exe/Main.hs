@@ -141,6 +141,7 @@ playerModule = \var ->
 main :: IO ()
 main = do
   mode_var <- newVar Unrestricted
+  dirty_var <- newTVarIO []
   let read_mode = fst <$> readTVarIO (value mode_var)
       modules =
         [ simpleModule (5 * oneSecond) $ do
@@ -179,22 +180,24 @@ main = do
         , simpleModule (5 * oneSecond) $ do
             dirs <- listDirectory "/home/maralorn/git"
             dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/" <>)) dirs
+            atomically $ writeTVar dirty_var dirty
             when' (not $ null dirty) $ withColor "e64443" [i|Dirty: #{Text.intercalate " " dirty}|]
         , simpleModule (5 * oneSecond) $ do
             dirs <- listDirectory "/home/maralorn/git"
             unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/" <>)) dirs
             when' (not $ null unpushed) $ withColor "fe640b" [i|Unpushed: #{Text.intercalate " " unpushed}|]
-        , simpleModule (60 * oneSecond) $ do
+        , simpleModule (5 * oneSecond) $ do
             current_kernel <- readlink "/run/current-system/kernel" |> captureTrim
             booted_kernel <- readlink "/run/booted-system/kernel" |> captureTrim
             when' (current_kernel /= booted_kernel) $ withColor "ffff00" "Booted kernel stale"
-        , simpleModule (60 * oneSecond) $ do
+        , simpleModule (5 * oneSecond) $ do
             current_commit <- readFileBS "/home/maralorn/git/config/.git/refs/heads/main"
-            system_commit <- Exception.try @Exception.IOException $ readFileBS "/run/current-system/config-commit"
-            home_commit <- Exception.try $ readFileBS "/home/maralorn/.volatile/modes/config-commit"
-            let dirty_config = \case
+            system_commit <- Exception.try do readFileBS "/run/current-system/config-commit"
+            home_commit <- Exception.try do readFileBS "/home/maralorn/.volatile/modes/config-commit"
+            dirty <- readTVarIO dirty_var
+            let dirty_config :: Either Exception.IOException ByteString -> Bool = \case
                   (Right commit) | commit == current_commit -> False
-                  _ -> True
+                  _ -> "config" `notElem` dirty
                 system_dirty = dirty_config system_commit
                 modes_dirty = dirty_config home_commit
             when' (system_dirty || modes_dirty) $ withColor "ffff00" [i|Current #{case (system_dirty,modes_dirty) of (True, True) -> "home and system"; (True, _) -> "system"; _ -> "home"} stale|]

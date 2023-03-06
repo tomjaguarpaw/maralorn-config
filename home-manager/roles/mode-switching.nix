@@ -12,14 +12,30 @@
   configGit = "${pkgs.git}/bin/git -C ${configPath}";
 in {
   home.packages = builtins.attrValues rec {
+    updateSystem = pkgs.writeShellScriptBin "update-system" ''
+      remote_host=$1
+      host=''${remote_host:-${hostName}}
+
+      echo "Building configuration for $host …"
+      output=$(nom build --builders @$(builders-configurator) ~/git/config#nixosConfigurations.$host.config.system.build.toplevel --no-link	--print-out-paths)
+
+      if [[ -z "$remote_host" ]]; then
+      	on_target=("sudo" "-A")
+      else
+        on_target=("ssh" "root@$host")
+      	echo "Uploading configuration to $host …"
+        nix copy $output --to ssh://$host
+      fi
+      $on_target[@] nix-env -p /nix/var/nix/profiles/system --set $output
+      $on_target[@] $output/bin/switch-to-configuration switch
+    '';
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
       ${configGit} pull --ff-only
       echo "Running update-modes …"
-      ${updateModes}/bin/update-modes
+      ${lib.getExe updateModes}
       echo "Updating system …"
-      ${pkgs.nix-output-monitor}/bin/nom build --builders @$(builders-configurator) $(readlink -f /etc/nixos)#nixosConfigurations.$(hostname).config.system.build.toplevel --no-link
-      /run/wrappers/bin/sudo -A /run/current-system/sw/bin/nixos-rebuild switch
+      ${lib.getExe updateSystem}
       echo "Maintenance finished."
     '';
     activateMode = pkgs.writeHaskellScript {name = "activate-mode";} ''
