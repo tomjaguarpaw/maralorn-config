@@ -77,7 +77,10 @@ in {
           pkgs.writeHaskellScript
           {
             inherit name;
-            imports = ["Control.Exception qualified as Exception"];
+            imports = [
+              "Control.Exception qualified as Exception"
+              "Data.ByteString.Char8 qualified as BSC"
+            ];
           } ''
             exitOnError = \msg action -> try action >>= \case
                 Left (_ :: Exception.IOException) -> say msg >> exitSuccess
@@ -88,9 +91,10 @@ in {
             main = do
               cd "/etc/nixos"
               exitOnError "Cannot pull forward git config." do void do git ["pull", "--ff-only"]
-              current_commit <- exitOnError "Current system is from a dirty commit." $ readFileBS "/run/current-system/config-commit"
+              current_commit <- BSC.strip <$> (exitOnError "Current system is from a dirty commit." do readFileBS "/run/current-system/config-commit")
               new_system <- readlink "-f" "/var/cache/gc-links/test-config/nixos-configurations/hera" |> captureTrim
-              new_commit <- readFileBS [i|#{new_system}/config-commit|]
+              new_commit <- BSC.strip <$> readFileBS [i|#{new_system}/config-commit|]
+              when (current_commit == new_commit) do say "No changes." >> exitSuccess
               is_direct_forward <- ("" ==) <$> (git ["log", "-n1", "--oneline", [i|^#{new_commit}|], decodeUtf8 current_commit])
               when is_direct_forward do
                 nix_env "-p" "/nix/var/nix/profiles/system" "--set" (decodeUtf8 new_system :: String)
