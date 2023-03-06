@@ -7,14 +7,16 @@
 
 
 # Warnings currently triggered by your code
-- ignore: {name: Redundant lambda}
-- ignore: {name: Eta reduce}
+- ignore: {name: Redundant lambda} # I like them
+- ignore: {name: Eta reduce} # That’s no Haskell anymore.
+- ignore: {name: Redundant Bracket} # Buggy warning
 
 # Specify additional command line arguments
 #
 - arguments:
   - -XRecursiveDo
   - -XQuasiQuotes
+  - -XBlockArguments
 
 # Control which extensions/flags/modules/functions can be used
 #
