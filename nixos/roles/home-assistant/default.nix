@@ -1273,7 +1273,7 @@ in {
       enable = true;
       virtualHosts = {
         "home.lo.m-0.eu" = {
-          serverAliases = ["home.vpn.m-0.eu"];
+          serverAliases = ["home.vpn.m-0.eu" "home.maralorn.de" "home"];
           extraConfig = "proxy_buffering off;";
           locations."/" = {
             proxyPass = "http://[::1]:8123";
@@ -1283,8 +1283,11 @@ in {
             alias = "/run/hass/";
           };
         };
-        "fluffy.lo.m-0.eu" = {
+        "fluffy.maralorn.de" = {
           default = true;
+          locations."/".extraConfig = "return 301 http://home.maralorn.de$request_uri;";
+        };
+        "fluffy.lo.m-0.eu" = {
           locations."/".extraConfig = "return 301 http://home.lo.m-0.eu$request_uri;";
         };
       };
