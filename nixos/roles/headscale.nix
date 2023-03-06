@@ -22,7 +22,7 @@ in {
       settings = {
         server_url = "https://${domain}";
         dns_config = {
-          base_domain = zone;
+          base_domain = "m-0.eu";
           restricted_nameservers.${zone} = [config.m-0.hosts.tailscale.hera.AAAA];
           nameservers = ["1.1.1.1"];
           domains = [zone];

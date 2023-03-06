@@ -23,42 +23,20 @@ in {
           "m0wire"
           "tailscale0"
         ];
+        local-data = lib.concatLists (lib.concatLists (
+          lib.mapAttrsToList
+          (
+            name: ips: (
+              map (alias:
+                lib.mapAttrsToList
+                (type: ip: "\"${alias}.maralorn.de IN ${type} ${ip}\"")
+                (lib.filterAttrs (_: addr: addr != "") ips))
+              (hosts.aliases.${name} or [])
+            )
+          )
+          hosts.tailscale
+        ));
       };
-      auth-zone = let
-        name = "maralorn.de";
-      in [
-        {
-          inherit name;
-          zonefile = builtins.toFile "${name}-zonfile" ''
-            $ORIGIN ${name}.
-            $TTL 60
-            @ IN SOA hera.${name}. hostmaster.${name}. (
-              2001062501 ; serial
-              21600      ; refresh after 6 hours
-              3600       ; retry after 1 hour
-              604800     ; expire after 1 week
-              86400 )    ; minimum TTL of 1 day
-              IN MX 10 hera.m-0.eu
-              IN NS hera.${name}.
-
-            headscale IN CNAME hera.m-0.eu.
-            ${
-              lib.concatStringsSep "\n"
-              (lib.concatLists (lib.mapAttrsToList
-                  (
-                    name: ips:
-                      lib.mapAttrsToList
-                      (type: ip: "${name} IN ${type} ${ip}")
-                      (lib.filterAttrs (_: addr: addr != "") ips)
-                  )
-                  hosts.tailscale)
-                ++ lib.concatLists (lib.mapAttrsToList
-                  (to: map (from: "${from} IN CNAME ${to}"))
-                  config.m-0.hosts.aliases))
-            }
-          '';
-        }
-      ];
     };
   };
 }
