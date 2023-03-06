@@ -20,14 +20,18 @@ in {
       output=$(nom build --builders @$(builders-configurator) ~/git/config#nixosConfigurations.$host.config.system.build.toplevel --no-link	--print-out-paths)
 
       if [[ -z "$remote_host" ]]; then
-      	on_target=("sudo" "-A")
+        on_target() {
+          /run/wrappers/bin/sudo $@
+        }
       else
-        on_target=("ssh" "root@$host")
+        on_target() {
+          ${lib.getExe pkgs.openssh} root@$host $@
+        }
       	echo "Uploading configuration to $host …"
-        nix copy $output --to ssh://$host
+        ${lib.getExe pkgs.nix} copy $output --to ssh://$host
       fi
-      $on_target[@] nix-env -p /nix/var/nix/profiles/system --set $output
-      $on_target[@] $output/bin/switch-to-configuration switch
+      on_target ${pkgs.nix}/bin/nix-env -p /nix/var/nix/profiles/system --set $output
+      on_target $output/bin/switch-to-configuration switch
     '';
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e

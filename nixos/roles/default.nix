@@ -25,6 +25,8 @@ in {
 
   time.timeZone = "Europe/Berlin";
 
+  security.sudo.wheelNeedsPassword = false; # If my user account is pwned all is lost anyway.
+
   networking = {
     resolvconf.dnsExtensionMechanism = false; # this breaks dnssec but is necessary for certain bad-behaved hotspots
     firewall = {
@@ -219,11 +221,5 @@ in {
       enableCompletion = true;
       syntaxHighlighting.enable = true;
     };
-  };
-  documentation = {
-    # man.enable = true;
-    doc.enable = false;
-    info.enable = false;
-    nixos.enable = false;
   };
 }

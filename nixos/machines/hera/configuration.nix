@@ -28,7 +28,6 @@ in {
     ../../roles/miniflux.nix
     ../../roles/monitoring
     ../../roles/nixpkgs-bot.nix
-    ../../roles/server
     ../../roles/server/init_ssh.nix
     ../../roles/standalone
     ../../roles/unbound.nix

@@ -12,7 +12,6 @@ in {
     (import ../../roles/home-assistant flake-inputs)
     (import ../../roles/home-manager.nix flake-inputs)
     ../../roles
-    ../../roles/server
     ../../roles/fonts.nix
     ../../roles/metal.nix
     ../../roles/standalone
