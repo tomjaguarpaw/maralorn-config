@@ -4,6 +4,7 @@ import Control.Concurrent qualified as Concurrent
 import Control.Concurrent.Async qualified as Async
 import Control.Concurrent.STM qualified as STM
 import Control.Exception (catch, onException)
+import Control.Exception qualified as Exception
 import Data.ByteString.Char8 qualified as ByteString
 import Data.ByteString.Lazy qualified as LBS
 import Data.String.Interpolate (i)
@@ -187,24 +188,16 @@ main = do
             current_kernel <- readlink "/run/current-system/kernel" |> captureTrim
             booted_kernel <- readlink "/run/booted-system/kernel" |> captureTrim
             when' (current_kernel /= booted_kernel) $ withColor "ffff00" "Booted kernel stale"
-        , \var -> do
-            module_state <- newTVarIO ("", "", "")
-            dirty_var <- newTVarIO (False, False)
-            host_name <- ByteString.strip <$> readFileBS "/etc/hostname"
-            ( simpleModule (60 * oneSecond) $ do
-                current_commit <- readFileBS "/home/maralorn/git/config/.git/refs/heads/main"
-                current_system <- readlink "/run/current-system" |> captureTrim
-                current_modes <- readlink "/home/maralorn/.volatile/modes" |> captureTrim
-                some_change <- atomically $ STM.stateTVar module_state \(previous_commit, previous_system, previous_modes) ->
-                  (previous_commit /= current_commit || previous_system /= current_system || previous_modes /= current_modes, (current_commit, current_system, current_modes))
-                when some_change do
-                  next_system <- nix "eval" "--raw" ([i|/home/maralorn/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel|] :: String) |> captureTrim
-                  next_modes <- nix "eval" "--raw" ([i|/home/maralorn/git/config\#homeModes.#{host_name}|] :: String) |> captureTrim
-                  atomically $ writeTVar dirty_var (current_system /= next_system, current_modes /= next_modes)
-                (system_dirty, modes_dirty) <- readTVarIO dirty_var
-                when' (system_dirty || modes_dirty) $ withColor "ffff00" [i|Current #{case (system_dirty,modes_dirty) of (True, True) -> "home and system"; (True, _) -> "system"; _ -> "home"} stale|]
-              )
-              var
+        , simpleModule (60 * oneSecond) $ do
+            current_commit <- readFileBS "/home/maralorn/git/config/.git/refs/heads/main"
+            system_commit <- Exception.try @Exception.IOException $ readFileBS "/run/current-system/config-commit"
+            home_commit <- Exception.try $ readFileBS "/home/maralorn/.volatile/modes/config-commit"
+            let dirty_config = \case
+                  (Right commit) | commit == current_commit -> False
+                  _ -> True
+                system_dirty = dirty_config system_commit
+                modes_dirty = dirty_config home_commit
+            when' (system_dirty || modes_dirty) $ withColor "ffff00" [i|Current #{case (system_dirty,modes_dirty) of (True, True) -> "home and system"; (True, _) -> "system"; _ -> "home"} stale|]
         , \var ->
             onUpdate mode_var $ updateVarIfChanged var . runIdentity . withColor "7287fd" . show
         ]

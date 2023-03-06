@@ -29,6 +29,7 @@ executable status-script
     ExtendedDefaultRules
     GADTs
     ImportQualifiedPost
+    LambdaCase
     NamedFieldPuns
     OverloadedStrings
     QuasiQuotes
