@@ -64,7 +64,6 @@ in {
   ];
   systemd.services = {
     update-config = {
-      path = [pkgs.git pkgs.nix pkgs.openssh pkgs.nixos-rebuild pkgs.builders-configurator];
       restartIfChanged = false;
       unitConfig.X-StopOnRemoval = false;
       serviceConfig = {
@@ -81,6 +80,7 @@ in {
               "Control.Exception qualified as Exception"
               "Data.ByteString.Char8 qualified as BSC"
             ];
+            bins = [pkgs.nix-diff pkgs.jq];
           } ''
             exitOnError = \msg action -> try action >>= \case
                 Left (_ :: Exception.IOException) -> say msg >> exitSuccess
@@ -90,15 +90,20 @@ in {
 
             main = do
               cd "/etc/nixos"
-              exitOnError "Cannot pull forward git config." do void do git ["pull", "--ff-only"]
-              current_commit <- BSC.strip <$> (exitOnError "Current system is from a dirty commit." do readFileBS "/run/current-system/config-commit")
+              void $ git ["pull", "--ff-only"]
               new_system <- readlink "-f" "/var/cache/gc-links/test-config/nixos-configurations/hera" |> captureTrim
+              old_system <- readlink "-f" "/run/current-system" |> captureTrim
+              when (new_system == old_system) do say "No changes."; exitSuccess
+              let switch = do
+                   nix_env "-p" "/nix/var/nix/profiles/system" "--set" (decodeUtf8 new_system :: String)
+                   exe ([i|#{new_system}/bin/switch-to-configuration|] :: String) "switch"
+                   exitSuccess
+              diff_is_small <- (== "[]") <$> (nix_diff "--json" [new_system, "/run/current-system"] |> jq ".inputsDiff.inputDerivationDiffs" |> captureTrim)
+              when diff_is_small switch
+              current_commit <- BSC.strip <$> (exitOnError "Current system is from a dirty commit." do readFileBS "/run/current-system/config-commit")
               new_commit <- BSC.strip <$> readFileBS [i|#{new_system}/config-commit|]
-              when (current_commit == new_commit) do say "No changes." >> exitSuccess
               is_direct_forward <- ("" ==) <$> (git ["log", "-n1", "--oneline", [i|^#{new_commit}|], decodeUtf8 current_commit])
-              when is_direct_forward do
-                nix_env "-p" "/nix/var/nix/profiles/system" "--set" (decodeUtf8 new_system :: String)
-                exe ([i|#{new_system}/bin/switch-to-configuration|] :: String) "switch"
+              when is_direct_forward switch
           '';
       in
         lib.getExe haskell_script;
