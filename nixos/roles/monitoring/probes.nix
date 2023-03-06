@@ -44,8 +44,10 @@ in {
         "hera.m-0.eu:25"
       ])
       (makeProbe "http" [
-        "hera.m-0.eu:80"
-        "home.vpn.m-0.eu"
+        "hera.m-0.eu"
+        "home.maralorn.de"
+        "rss.maralorn.de"
+        "analytics.maralorn.de"
       ])
       (makeProbe "https" [
         "https://hera.m-0.eu"
