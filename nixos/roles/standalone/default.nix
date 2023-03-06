@@ -28,9 +28,12 @@
     # permitRootLogin = "prohibit-password"; Default
   };
 
-  environment.etc."nix/machines".source = toString (pkgs.runCommand "nix-machines" {} ''
-    cp $(${pkgs.builders-configurator}/bin/builders-configurator ${config.networking.hostName} --without-connection) $out
-  '');
+  environment = {
+    systemPackages = [pkgs.updateSystem];
+    etc."nix/machines".source = toString (pkgs.runCommand "nix-machines" {} ''
+      cp $(${pkgs.builders-configurator}/bin/builders-configurator ${config.networking.hostName} --without-connection) $out
+    '');
+  };
 
   nix = {
     distributedBuilds = lib.mkDefault true;

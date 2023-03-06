@@ -9,37 +9,16 @@
   modeFile = "${config.home.homeDirectory}/.mode";
   modeDir = "${config.home.homeDirectory}/.volatile/modes";
   configPath = "${config.home.homeDirectory}/git/config";
-  configGit = "${pkgs.git}/bin/git -C ${configPath}";
+  configGit = "${lib.getExe pkgs.git} -C ${configPath}";
 in {
   home.packages = builtins.attrValues rec {
-    updateSystem = pkgs.writeShellScriptBin "update-system" ''
-      remote_host=$1
-      host=''${remote_host:-${hostName}}
-
-      echo "Building configuration for $host …"
-      output=$(nom build --builders @$(builders-configurator) ~/git/config#nixosConfigurations.$host.config.system.build.toplevel --no-link	--print-out-paths)
-
-      if [[ -z "$remote_host" ]]; then
-        on_target() {
-          /run/wrappers/bin/sudo $@
-        }
-      else
-        on_target() {
-          ${lib.getExe pkgs.openssh} root@$host $@
-        }
-      	echo "Uploading configuration to $host …"
-        ${lib.getExe pkgs.nix} copy $output --to ssh://$host
-      fi
-      on_target ${pkgs.nix}/bin/nix-env -p /nix/var/nix/profiles/system --set $output
-      on_target $output/bin/switch-to-configuration switch
-    '';
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
       ${configGit} pull --ff-only
       echo "Running update-modes …"
       ${lib.getExe updateModes}
       echo "Updating system …"
-      ${lib.getExe updateSystem}
+      ${lib.getExe pkgs.updateSystem}
       echo "Maintenance finished."
     '';
     activateMode = pkgs.writeHaskellScript {name = "activate-mode";} ''
@@ -63,7 +42,7 @@ in {
         main = do
           say "Building ~/.modes for ${hostName}"
           builders <- builders_configurator |> captureTrim
-          nom ["build", "--builders", [i|@#{builders}|], "/home/maralorn/git/config#homeModes.${hostName}", "-o", "${modeDir}"]
+          nom ["build", "--builders", [i|@#{builders}|], "${configPath}#homeModes.${hostName}", "-o", "${modeDir}"]
           activate_mode
       '';
     quickUpdateMode =
@@ -79,7 +58,7 @@ in {
           mode <- getMode
           say [i|Quick switching to mode #{mode} ...|]
           builders <- builders_configurator |> captureTrim
-          path :: Text <- decodeUtf8 <$> (nom ["build", "--builders", [i|@#{builders}|], "--print-out-paths", "--no-link", [i|/home/maralorn/git/config\#homeConfigurations.${hostName}-#{mode}.activationPackage|]] |> captureTrim)
+          path :: Text <- decodeUtf8 <$> (nom ["build", "--builders", [i|@#{builders}|], "--print-out-paths", "--no-link", [i|${configPath}\#homeConfigurations.${hostName}-#{mode}.activationPackage|]] |> captureTrim)
           exe ([i|#{path}/activate|] :: String)
           update_modes
       '';
