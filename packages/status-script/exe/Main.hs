@@ -11,13 +11,13 @@ import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Data.Unique qualified as Unique
 import Relude
-import Say (sayErr)
+import Say (say, sayErr)
 import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, readInputLines, (|>))
 import System.Directory (listDirectory)
 
 data Mode = Klausur | Orga | Communication | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
-load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix"]
+load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq"]
 
 modes :: [Mode]
 modes = enumFrom Klausur
@@ -186,21 +186,51 @@ main = do
             dirs <- listDirectory "/home/maralorn/git"
             unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/" <>)) dirs
             when' (not $ null unpushed) $ withColor "fe640b" [i|Unpushed: #{Text.intercalate " " unpushed}|]
-        , simpleModule (5 * oneSecond) $ do
-            current_kernel <- readlink "/run/current-system/kernel" |> captureTrim
-            booted_kernel <- readlink "/run/booted-system/kernel" |> captureTrim
-            when' (current_kernel /= booted_kernel) $ withColor "ffff00" "Booted kernel stale"
-        , simpleModule (5 * oneSecond) $ do
-            current_commit <- readFileBS "/home/maralorn/git/config/.git/refs/heads/main"
-            system_commit <- Exception.try do readFileBS "/run/current-system/config-commit"
-            home_commit <- Exception.try do readFileBS "/home/maralorn/.volatile/modes/config-commit"
-            dirty <- readTVarIO dirty_var
-            let dirty_config :: Either Exception.IOException ByteString -> Bool = \case
-                  (Right commit) | commit == current_commit -> False
-                  _ -> "config" `notElem` dirty
-                system_dirty = dirty_config system_commit
-                modes_dirty = dirty_config home_commit
-            when' (system_dirty || modes_dirty) $ withColor "ffff00" [i|Current #{case (system_dirty,modes_dirty) of (True, True) -> "home and system"; (True, _) -> "system"; _ -> "home"} stale|]
+        , \var -> do
+            commit_var <- newTVarIO ""
+            system_var <- newTVarIO ""
+            modes_var <- newTVarIO ""
+            system_dirty_var <- newTVarIO False
+            modes_dirty_var <- newTVarIO False
+            host_name <- ByteString.strip <$> readFileBS "/etc/hostname"
+            let scan = do
+                  current_commit <- readFileBS "/home/maralorn/git/config/.git/refs/heads/main"
+                  system_commit <- Exception.try do readFileBS "/run/current-system/config-commit"
+                  modes_commit <- Exception.try do readFileBS "/home/maralorn/.volatile/modes/config-commit"
+                  current_system <- readlink "/run/current-system" |> captureTrim
+                  current_modes <- readlink "/home/maralorn/.volatile/modes" |> captureTrim
+                  let stale_config :: Either Exception.IOException ByteString -> Bool = \case
+                        (Right commit) | commit == current_commit -> False
+                        _ -> True
+                      system_stale = stale_config system_commit
+                      modes_stale = stale_config modes_commit
+                  (commit_change, system_change, modes_change) <-
+                    atomically $
+                      (,,)
+                        <$> (STM.stateTVar commit_var \previous_commit -> (previous_commit /= current_commit, current_commit))
+                        <*> (STM.stateTVar system_var \previous_system -> (previous_system /= current_system, current_system))
+                        <*> (STM.stateTVar modes_var \previous_modes -> (previous_modes /= current_modes, current_modes))
+                  if system_stale
+                    then when (commit_change || system_change) do
+                      say "Eval system config …"
+                      next_system <- nix "eval" "--raw" ([i|/home/maralorn/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel.drvPath|] :: String) |> captureTrim
+                      diff_is_small <- diffIsSmall next_system current_system
+                      atomically $ writeTVar system_dirty_var (not diff_is_small)
+                    else atomically do writeTVar system_dirty_var False
+                  if modes_stale
+                    then when (commit_change || modes_change) do
+                      say "Eval home config …"
+                      next_modes <- nix "eval" "--raw" ([i|/home/maralorn/git/config\#homeModes.#{host_name}|] :: String) |> captureTrim
+                      diff_is_small <- diffIsSmall next_modes current_modes
+                      atomically $ writeTVar modes_dirty_var (not diff_is_small)
+                    else atomically do writeTVar modes_dirty_var False
+                  system_dirty <- readTVarIO system_dirty_var
+                  modes_dirty <- readTVarIO modes_dirty_var
+                  when' (system_dirty || modes_dirty) $ withColor "ffff00" [i|Current #{case (system_dirty,modes_dirty) of (True, True) -> "home and system"; (True, _) -> "system"; _ -> "home"} stale|]
+            var & simpleModule (60 * oneSecond) do
+              Concurrent.threadDelay (5 * oneSecond)
+              dirty <- elem "config" <$> readTVarIO dirty_var
+              if dirty then pure Nothing else scan
         , \var ->
             onUpdate mode_var $ updateVarIfChanged var . runIdentity . withColor "7287fd" . show
         ]
@@ -208,3 +238,5 @@ main = do
     [ void $ simpleModule oneSecond getMode mode_var
     , runModules modules
     ]
+
+diffIsSmall = \pathA pathB -> (== "[]") <$> (nix_diff "--json" [pathA, pathB] |> jq ".inputsDiff.inputDerivationDiffs" |> captureTrim)
