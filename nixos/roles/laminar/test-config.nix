@@ -72,10 +72,29 @@ in {
       };
       script = let
         user = "maralorn";
-      in ''
-        /run/wrappers/bin/sudo -u ${user} git -C /etc/nixos pull --ff-only
-        nixos-rebuild switch --builders @$(builders-configurator)
-      '';
+        name = "update-config-after-build-if-forward";
+        haskell_script =
+          pkgs.writeHaskellScript
+          {
+            inherit name;
+            bins = [pkgs.git];
+            imports = ["Control.Exception qualified as Exception"];
+          } ''
+            main = do
+              cd "/etc/nixos"
+              exe "/run/wrappers/bin/sudo" "-u" "${user}" "git" "pull" "--ff-only"
+              current_commit_either <- try $ readFileBS "/run/current-system/config-commit"
+              current_commit <- case current_commit_either of
+                Left (_ :: Exception.IOException) -> say "Current system is from a dirty commit." >> exitSuccess
+                Right commit -> pure commit
+              new_system <- readlink "-f" "/var/cache/gc-links/test-config/nixos-configurations/hera" |> captureTrim
+              new_commit <- readFileBS [i|#{new_system}/config-commit"|]
+              is_direct_forward <- ("" ==) <$> (git "log" "-n1" "--oneline" ([i|^#{new_commit}|] :: String) (decodeUtf8 current_commit :: String) |> captureTrim)
+              when is_direct_forward do
+                nix_env "-p" "/nix/var/nix/profiles/system" "--set" (decodeUtf8 new_system :: String)
+                exe ([i|#{new_system}/bin/switch-to-configuration|] :: String) "switch"
+          '';
+      in "${haskell_script}/bin/${name}";
     };
   };
 }
