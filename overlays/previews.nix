@@ -5,12 +5,13 @@ self: super: {
   unstableGhc = self.unstable.ghc;
   inherit
     (self.unstable)
-    nix
-    home-assistant
-    cabal2nix
-    chrysalis
-    emanote
-    helix
-    headscale
+    nix # Always good for early nom problem detection.
+    home-assistant # hexa says that’s better than stable
+    emanote # Haskell
+    cabal2nix # Haskell
+    chrysalis # Only until 23.05
+    helix # until 23.05: Various features
+    headscale # until 23.05: Required for correct hostnames and Android compat
+    lklWithFirewall # until 23.05: To Fix firewall checks
     ;
 }
