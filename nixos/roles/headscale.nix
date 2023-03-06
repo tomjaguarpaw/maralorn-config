@@ -1,4 +1,9 @@
-flake-inputs: {config, ...}: let
+flake-inputs: {
+  config,
+  lib,
+  ...
+}: let
+  inherit (config.m-0) hosts;
   domain = "headscale.maralorn.de";
   zone = "maralorn.de";
 in {
@@ -23,9 +28,18 @@ in {
         server_url = "https://${domain}";
         dns_config = {
           base_domain = "m-0.eu";
-          restricted_nameservers.${zone} = [config.m-0.hosts.tailscale.hera.AAAA];
-          nameservers = ["1.1.1.1"];
+          nameservers = [config.m-0.hosts.tailscale.hera.AAAA];
           domains = [zone];
+          extra_records = lib.concatLists (lib.concatLists (lib.mapAttrsToList (
+              host: ips: (
+                map (name:
+                  lib.mapAttrsToList
+                  (type: value: {inherit name type value;})
+                  (lib.filterAttrs (_: addr: addr != "") ips))
+                (hosts.aliases.${host} or [])
+              )
+            )
+            hosts.tailscale));
         };
         logtail.enabled = false;
         metrics_listen_addr = "[::1]:9098";
