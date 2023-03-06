@@ -31,6 +31,7 @@ in {
     ../../roles/server
     ../../roles/server/init_ssh.nix
     ../../roles/standalone
+    ../../roles/unbound.nix
     ./boot.nix
     ./cloud.nix
     ./hardware-configuration.nix
