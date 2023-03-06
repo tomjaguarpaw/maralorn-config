@@ -220,15 +220,15 @@ main = do
                   if modes_stale
                     then when (commit_change || modes_change) do
                       say "Eval home config …"
-                      next_modes <- nix "eval" "--raw" ([i|/home/maralorn/git/config\#homeModes.#{host_name}|] :: String) |> captureTrim
+                      next_modes <- nix "eval" "--raw" ([i|/home/maralorn/git/config\#homeModes.#{host_name}.drvPath|] :: String) |> captureTrim
                       diff_is_small <- diffIsSmall next_modes current_modes
                       atomically $ writeTVar modes_dirty_var (not diff_is_small)
                     else atomically do writeTVar modes_dirty_var False
                   system_dirty <- readTVarIO system_dirty_var
                   modes_dirty <- readTVarIO modes_dirty_var
                   when' (system_dirty || modes_dirty) $ withColor "ffff00" [i|Current #{case (system_dirty,modes_dirty) of (True, True) -> "home and system"; (True, _) -> "system"; _ -> "home"} stale|]
-            var & simpleModule (60 * oneSecond) do
-              Concurrent.threadDelay (5 * oneSecond)
+            var & simpleModule oneSecond do
+              Concurrent.threadDelay (4 * oneSecond)
               dirty <- elem "config" <$> readTVarIO dirty_var
               if dirty then pure Nothing else scan
         , \var ->
