@@ -6,11 +6,22 @@
 }: let
   inherit (config.m-0) hosts;
   inherit (config.networking) hostName;
+  inherit (pkgs.flake-inputs.self) sourceInfo;
 in {
   imports = [
     ../../common
     ./admin.nix
   ];
+  system = {
+    configurationRevision = sourceInfo.rev or null;
+    nixos.label =
+      if sourceInfo ? shortRev
+      then "${sourceInfo.lastModifiedDate}.${sourceInfo.shortRev}"
+      else "${sourceInfo.lastModifiedDate}.dirty";
+    systemBuilderCommands = lib.mkIf (sourceInfo ? rev) ''
+      echo ${sourceInfo.rev} > $out/config-commit
+    '';
+  };
 
   i18n = {
     defaultLocale = "en_DK.UTF-8";
