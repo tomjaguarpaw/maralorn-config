@@ -41,7 +41,7 @@ in {
               IN MX 10 hera.m-0.eu
               IN NS hera.${name}.
 
-            headscale IN CNAME hera.m-0.eu
+            headscale IN CNAME hera.m-0.eu.
             ${
               lib.concatStringsSep "\n"
               (lib.concatLists (lib.mapAttrsToList
