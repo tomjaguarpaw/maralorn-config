@@ -86,7 +86,7 @@ in {
                 Left (_ :: Exception.IOException) -> say msg >> exitSuccess
                 Right value -> pure value
 
-            git arg = exe "/run/wrappers/bin/sudo" "-u" "${user}" "git" arg |> captureTrim
+            git arg = exe "/run/wrappers/bin/sudo" "-u" "${user}" "${lib.getExe pkgs.git}" arg |> captureTrim
 
             main = do
               cd "/etc/nixos"

@@ -13,5 +13,6 @@ self: super: {
     helix # until 23.05: Various features
     headscale # until 23.05: Required for correct hostnames and Android compat
     lklWithFirewall # until 23.05: To Fix firewall checks
+    nix-diff
     ;
 }

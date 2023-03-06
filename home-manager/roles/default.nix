@@ -146,6 +146,7 @@
           magic-wormhole
           alejandra
           nix-top
+          nix-diff
           matrix-commander
           upterm
           lazygit
