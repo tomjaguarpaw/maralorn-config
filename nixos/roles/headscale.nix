@@ -6,6 +6,7 @@ flake-inputs: {
   inherit (config.m-0) hosts;
   domain = "headscale.maralorn.de";
   zone = "maralorn.de";
+  derp_port = 3478;
 in {
   disabledModules = [
     "services/networking/headscale.nix"
@@ -19,6 +20,7 @@ in {
       host = "[::1]:9098";
     }
   ];
+  networking.firewall.allowedUDPPorts = [derp_port];
   services = {
     headscale = {
       enable = true;
@@ -26,9 +28,20 @@ in {
       port = 8289;
       settings = {
         server_url = "https://${domain}";
+        derp.server = {
+          enabled = true;
+          stun_listen_addr = "0.0.0.0:${toString derp_port}";
+          region_id = "hera";
+          region_code = "hera";
+          region_name = "Hera";
+          urls = []; # Disable default derps, can’t use vpn without hera anyways
+        };
         dns_config = {
           base_domain = "m-0.eu";
-          nameservers = [config.m-0.hosts.tailscale.hera.AAAA 9.9 .9 .9];
+          nameservers = [
+            config.m-0.hosts.tailscale.hera.AAAA
+            "9.9.9.9"
+          ];
           domains = [zone];
           extra_records = lib.concatLists (lib.concatLists (lib.mapAttrsToList (
               host: ips: (
