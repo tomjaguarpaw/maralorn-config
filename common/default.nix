@@ -144,7 +144,7 @@ with lib; {
             "syncthing-hera"
             "tasks"
           ];
-          fluffy = ["home" "syncthing-fluffy"];
+          fluffy = ["home" "syncthing-fluffy" "5e"];
           zeus = ["syncthing-zeus"];
           apollo = ["syncthing-apollo"];
         };
