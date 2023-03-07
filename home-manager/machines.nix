@@ -71,6 +71,8 @@ let
         ./roles/terminal.nix
         ./roles/mpclient.nix
         ./roles/mpd.nix
+        ./roles/mpv
+        ./roles/bitwarden.nix
         ./roles/pythia.nix
         ./roles/research.nix
         ./roles/night-shutdown.nix

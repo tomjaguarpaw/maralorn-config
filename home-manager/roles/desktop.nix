@@ -1,5 +1,4 @@
 {pkgs, ...}: {
-  imports = [./mpv];
   home = {
     packages = builtins.attrValues {
       zoom = pkgs.zoom-us.overrideAttrs (old: {
