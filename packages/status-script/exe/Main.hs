@@ -12,12 +12,13 @@ import Data.Text qualified as Text
 import Data.Unique qualified as Unique
 import Relude
 import Say (say, sayErr)
-import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, readInputLines, (|>))
+import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, readInputLines, (&>), (|>))
+import Shh qualified
 import System.Directory (listDirectory)
 
 data Mode = Klausur | Orga | Communication | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
-load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq"]
+load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq", "tailscale"]
 
 modes :: [Mode]
 modes = enumFrom Klausur
@@ -177,15 +178,19 @@ main = do
                 then fromMaybe 0 . readMaybe . toString . Text.replace " unread articles" "" . decodeUtf8 <$> tryCmd (exe "software-updates" "-x" "print-unread")
                 else pure 0
             when' (codeUpdates /= 0) $ withColor "179299" [i|Code Updates: #{codeUpdates}|]
-        , simpleModule (5 * oneSecond) $ do
+        , simpleModule (5 * oneSecond) do
             dirs <- listDirectory "/home/maralorn/git"
             dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/" <>)) dirs
             atomically $ writeTVar dirty_var dirty
             when' (not $ null dirty) $ withColor "e64443" [i|Dirty: #{Text.intercalate " " dirty}|]
-        , simpleModule (5 * oneSecond) $ do
+        , simpleModule (5 * oneSecond) do
             dirs <- listDirectory "/home/maralorn/git"
             unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/" <>)) dirs
-            when' (not $ null unpushed) $ withColor "fe640b" [i|Unpushed: #{Text.intercalate " " unpushed}|]
+            when' (not $ null unpushed) do withColor "fe640b" [i|Unpushed: #{Text.intercalate " " unpushed}|]
+        , simpleModule (5 * oneSecond) do
+            let hosts = ["hera", "fluffy"]
+            unreachable_hosts <- flip filterM hosts \host -> isLeft <$> (Shh.tryFailure do (tailscale "ping" "-c" "1" (toString host)) &> Shh.devNull)
+            when' ([] /= unreachable_hosts) do withColor "c00000" [i|No tunnel to #{Text.intercalate ", " unreachable_hosts}|]
         , \var -> do
             commit_var <- newTVarIO ""
             system_var <- newTVarIO ""

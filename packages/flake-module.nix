@@ -85,7 +85,7 @@
       source = ./status-script;
       overrides = old: {
         buildDepends = builtins.attrValues {
-          inherit (stable-pkgs) git khal playerctl notmuch jq;
+          inherit (stable-pkgs) git khal playerctl notmuch jq tailscale;
           inherit (unstable-pkgs) nix nix-diff;
         };
       };

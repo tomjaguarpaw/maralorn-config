@@ -41,7 +41,7 @@
           "BlockArguments"
         ];
         hooks = {
-          hlint.enable = false;
+          hlint.enable = true;
           alejandra.enable = true;
           nix-linter.enable = false; # Too many false positives for now
           statix.enable = true;
