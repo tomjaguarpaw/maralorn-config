@@ -139,6 +139,15 @@ playerModule = \var ->
         playerctl "metadata" "-F" "-f" playerCTLFormat
           |> Shh.readInputLines update_lines
 
+black = "6E6C7E"
+red = "F28FAD"
+green = "ABE9B3"
+yellow = "FAE3B0"
+blue = "96CDFB"
+magenta = "F5C2E7"
+cyan = "89DCEB"
+white = "D9E0EE"
+
 main :: IO ()
 main = do
   mode_var <- newVar Unrestricted
@@ -148,7 +157,7 @@ main = do
         [ simpleModule (5 * oneSecond) $ do
             appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
             when' (not $ null appointments) $
-              withColor "8839ef" (Text.intercalate "; " appointments)
+              withColor magenta (Text.intercalate "; " appointments)
         , playerModule
         , simpleModule oneSecond $ do
             mode <- read_mode
@@ -156,41 +165,41 @@ main = do
               if mode >= Orga
                 then notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
                 else pure "0"
-            when' (unread /= "0") $ withColor "d20f39" [i|Unread: #{unread}|]
+            when' (unread /= "0") $ withColor red [i|Unread: #{unread}|]
         , simpleModule oneSecond $ do
             mode <- read_mode
             inbox <-
               if mode == Leisure
                 then notmuch "count" "folder:hera/Inbox" |> captureTrim
                 else pure "0"
-            when' (inbox /= "0") $ withColor "e53443" [i|Inbox: #{inbox}|]
+            when' (inbox /= "0") $ withColor yellow [i|Inbox: #{inbox}|]
         , simpleModule oneSecond $ do
             mode <- read_mode
             codeMails <-
               if mode == Code
                 then notmuch "count" "folder:hera/Code" |> captureTrim
                 else pure "0"
-            when' (codeMails /= "0") $ withColor "8839ef" [i|Code Mails: #{codeMails}|]
+            when' (codeMails /= "0") $ withColor blue [i|Code Mails: #{codeMails}|]
         , simpleModule (5 * oneSecond) $ do
             mode <- read_mode
             codeUpdates <-
               if mode == Code
                 then fromMaybe 0 . readMaybe . toString . Text.replace " unread articles" "" . decodeUtf8 <$> tryCmd (exe "software-updates" "-x" "print-unread")
                 else pure 0
-            when' (codeUpdates /= 0) $ withColor "179299" [i|Code Updates: #{codeUpdates}|]
+            when' (codeUpdates /= 0) $ withColor cyan [i|Code Updates: #{codeUpdates}|]
         , simpleModule (5 * oneSecond) do
             dirs <- listDirectory "/home/maralorn/git"
             dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/" <>)) dirs
             atomically $ writeTVar dirty_var dirty
-            when' (not $ null dirty) $ withColor "e64443" [i|Dirty: #{Text.intercalate " " dirty}|]
+            when' (not $ null dirty) $ withColor red [i|Dirty: #{Text.intercalate " " dirty}|]
         , simpleModule (5 * oneSecond) do
             dirs <- listDirectory "/home/maralorn/git"
             unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/" <>)) dirs
-            when' (not $ null unpushed) do withColor "fe640b" [i|Unpushed: #{Text.intercalate " " unpushed}|]
+            when' (not $ null unpushed) do withColor yellow [i|Unpushed: #{Text.intercalate " " unpushed}|]
         , simpleModule (5 * oneSecond) do
             let hosts = ["hera", "fluffy"]
             unreachable_hosts <- flip filterM hosts \host -> isLeft <$> (Shh.tryFailure do (tailscale "ping" "-c" "1" (toString host)) &> Shh.devNull)
-            when' ([] /= unreachable_hosts) do withColor "c00000" [i|No tunnel to #{Text.intercalate ", " unreachable_hosts}|]
+            when' ([] /= unreachable_hosts) do withColor red [i|No tunnel to #{Text.intercalate ", " unreachable_hosts}|]
         , \var -> do
             commit_var <- newTVarIO ""
             system_var <- newTVarIO ""
@@ -219,6 +228,7 @@ main = do
                     then when (commit_change || system_change) do
                       say "Eval system config …"
                       next_system <- nix "eval" "--raw" ([i|/home/maralorn/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel.drvPath|] :: String) |> captureTrim
+                      say "System eval finished."
                       diff_is_small <- diffIsSmall next_system current_system
                       atomically $ writeTVar system_dirty_var (not diff_is_small)
                     else atomically do writeTVar system_dirty_var False
@@ -226,18 +236,19 @@ main = do
                     then when (commit_change || modes_change) do
                       say "Eval home config …"
                       next_modes <- nix "eval" "--raw" ([i|/home/maralorn/git/config\#homeModes.#{host_name}.drvPath|] :: String) |> captureTrim
+                      say "Home eval finished."
                       diff_is_small <- diffIsSmall next_modes current_modes
                       atomically $ writeTVar modes_dirty_var (not diff_is_small)
                     else atomically do writeTVar modes_dirty_var False
                   system_dirty <- readTVarIO system_dirty_var
                   modes_dirty <- readTVarIO modes_dirty_var
-                  when' (system_dirty || modes_dirty) $ withColor "ffff00" [i|Current #{case (system_dirty,modes_dirty) of (True, True) -> "home and system"; (True, _) -> "system"; _ -> "home"} stale|]
+                  when' (system_dirty || modes_dirty) $ withColor yellow [i|Current #{case (system_dirty,modes_dirty) of (True, True) -> "home and system"; (True, _) -> "system"; _ -> "home"} stale|]
             var & simpleModule oneSecond do
               Concurrent.threadDelay (4 * oneSecond)
               dirty <- elem "config" <$> readTVarIO dirty_var
               if dirty then pure Nothing else scan
         , \var ->
-            onUpdate mode_var $ updateVarIfChanged var . runIdentity . withColor "7287fd" . show
+            onUpdate mode_var $ updateVarIfChanged var . runIdentity . withColor blue . show
         ]
   foldConcurrently_
     [ void $ simpleModule oneSecond getMode mode_var
