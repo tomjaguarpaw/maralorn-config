@@ -4,7 +4,9 @@
   config,
   ...
 } @ args: let
-  hotkeys = import ./hotkeys.nix args;
+  hotkeys = pkgs.writeShellScriptBin "hotkeys" ''
+    ${pkgs.wizards-dialog}/bin/hotkeys ${pkgs.writeText "hotkeys.yaml" (builtins.toJSON (import ./hotkeys.nix args))}
+  '';
   extensions = builtins.attrValues {
     inherit
       (pkgs.gnomeExtensions)
@@ -37,7 +39,7 @@
   inherit (lib.hm.gvariant) mkTuple mkUint32;
   font = "Monospace 9";
 in {
-  home.packages = extensions;
+  home.packages = extensions ++ [hotkeys];
   services.gpg-agent.pinentryFlavor = "gnome3";
   dconf.settings = {
     "org/gnome/shell/extensions/notification-banner-reloaded" = {
@@ -212,7 +214,7 @@ in {
     };
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" = {
       binding = "<Super>space";
-      command = "${config.home.sessionVariables.TERMINAL} ${pkgs.wizards-dialog}/bin/hotkeys ${pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)}";
+      command = "${config.home.sessionVariables.TERMINAL} ${lib.getExe hotkeys}";
       name = "Hotkeys";
     };
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby" = {

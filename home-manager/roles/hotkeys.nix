@@ -22,8 +22,8 @@ in [
     Research = {
       Zotero = fork "zotero";
       Open = fork "evince ~/git/promotion/out/print.pdf";
-      Build = "sh -c 'cd ~/git/promotion; nix develop -c nix run'";
-      Directory = fork "${config.home.sessionVariables.TERMINAL} -d ~/git/promotion";
+      Build = "sh -c 'cd ~/git/promotion; nix run'";
+      Directory = fork "${config.home.sessionVariables.TERMINAL} -D ~/git/promotion";
       Edit = edit_dir "~/git/promotion";
     };
   }
@@ -40,13 +40,13 @@ in [
     in [
       {"hera via vpn" = ssh "hera.vpn.m-0.eu";}
       {"fluffy via vpn" = ssh "fluffy.vpn.m-0.eu";}
-      {remote-builder = ssh "phoibe.cased.de -i /etc/nixos/private/id_ed25519-nix-builder";}
+      {remote-builder = ssh "phoibe.cased.de";}
       {ag = ssh "ag-forward";}
       {mathe-gateway = ssh "gw";}
       {backup-server = ssh "borg.cysec.de";}
       {shells = ssh "shells";}
       {"bach (ved)" = ssh "bach.vocalensemble-darmstadt.de";}
-      {"nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net -i /etc/nixos/private/id_ed25519-nix-builder shell";}
+      {"nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net shell";}
       {"fluffy via local network" = ssh "fluffy.lo.m-0.eu";}
       {"hera via public v4" = ssh "hera-v4";}
       {"TU Tunnel" = "sshuttle --python python3.9 -r gw 130.83.0.0/16";}
@@ -133,6 +133,9 @@ in [
     "W17" = {
       "MPD Whisky" = "ncmpcpp -h whisky.w17.io";
       "MPD Burbon" = "ncmpcpp -h burbon.w17.io";
+      "MPD Kitchen" = "ncmpcpp -h kitchen.w17.io";
+      Strichliste = "firefox https://strichliste.w17.io";
+      Hub = "firefox https://hub.w17.io";
       Summer = "ssh door@burbon.w17.io buzzer";
       Open = "ssh door@burbon.w17.io open";
       Close = "ssh door@burbon.w17.io close";
