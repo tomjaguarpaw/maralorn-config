@@ -78,6 +78,7 @@ in {
       "/var/lib/tailscale"
       "/root/.ssh"
     ];
+    users.maralorn.directories = [".cache/rbw"];
   };
 
   boot = {

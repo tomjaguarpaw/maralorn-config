@@ -1,5 +1,4 @@
 _: {
-  home.persistence."/disk/persist/home/maralorn".directories = [".cache/rbw"];
   programs.rbw = {
     enable = true;
     settings = {
