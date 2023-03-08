@@ -71,13 +71,16 @@ in {
       {-# LANGUAGE PartialTypeSignatures #-}
       {-# LANGUAGE BlockArguments #-}
       {-# LANGUAGE ImportQualifiedPost #-}
+      {-# LANGUAGE TypeApplications #-}
 
       import Shh
       import Relude
       import Say
       import qualified Relude.Unsafe as Unsafe
       import qualified Data.ByteString.Lazy as LBS
+      import qualified Data.ByteString.Lazy.Char8 as LBSC
       import qualified Data.ByteString as BS
+      import qualified Data.ByteString.Char8 as BSC
       import qualified Data.Text as Text
       import System.Environment (setEnv)
       import Control.Exception (bracket, try)

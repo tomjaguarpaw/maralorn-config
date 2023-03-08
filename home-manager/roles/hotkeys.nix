@@ -134,7 +134,7 @@ in [
       "MPD Whisky" = "ncmpcpp -h whisky.w17.io";
       "MPD Burbon" = "ncmpcpp -h burbon.w17.io";
       "MPD Kitchen" = "ncmpcpp -h kitchen.w17.io";
-      Strichliste = "firefox https://strichliste.w17.io";
+      Strichliste = "firefox https://strichliste.w17.io/#!/user/56";
       Hub = "firefox https://hub.w17.io";
       Summer = "ssh door@burbon.w17.io buzzer";
       Open = "ssh door@burbon.w17.io open";
