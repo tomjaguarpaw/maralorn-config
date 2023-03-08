@@ -63,13 +63,11 @@ in {
   systemd.tmpfiles.rules = [
     "d /disk/persist/root 700 root root - -"
     "z / 755 - - - -"
-    "d /disk/persist/maralorn 700 maralorn users - -"
-    "d /disk/persist/maralorn/.config/pulse 700 maralorn users - -"
-    "d /home/maralorn/.config 700 maralorn users - -"
+    "d /disk/persist/home/maralorn 700 maralorn users - -"
+    "d /disk/volatile/home/maralorn 700 maralorn users - -"
     "Z /home/maralorn - maralorn users - -"
-    "d /disk/volatile/maralorn 700 maralorn users - -"
     # "d /disk/persist/minecraft 700 minecraft minecraft - -"
-    "d /var/lib/misc 755 - - - -"
+    #"d /var/lib/misc 755 - - - -"
   ];
 
   environment.persistence."/disk/persist" = {
