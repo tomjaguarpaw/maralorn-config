@@ -64,7 +64,7 @@ in {
   ];
   systemd.services = {
     update-config = {
-      path = [pkgs.git pkgs.openssh];
+      path = [pkgs.git pkgs.openssh pkgs.nix];
       restartIfChanged = false;
       unitConfig.X-StopOnRemoval = false;
       serviceConfig = {
