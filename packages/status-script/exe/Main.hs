@@ -25,7 +25,7 @@ modes = enumFrom Klausur
 
 getMode :: IO Mode
 getMode = do
-  name <- decodeUtf8 . ByteString.strip <$> readFileBS "/home/maralorn/.mode" `onException` sayErr "File /home/maralorn/.mode not found."
+  name <- decodeUtf8 . ByteString.strip <$> readFileBS "/home/maralorn/.volatile/mode" `onException` sayErr "File /home/maralorn/.mode not found."
   maybe (sayErr [i|Unknown mode #{name}|] >> error [i|Unknown mode #{name}|]) pure $ find (\mode -> name == Text.toLower (show mode)) modes
 
 isDirty :: String -> IO Bool
