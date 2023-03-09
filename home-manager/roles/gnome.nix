@@ -12,7 +12,6 @@
       (pkgs.gnomeExtensions)
       appindicator
       system-monitor
-      clipboard-indicator
       window-is-ready-remover
       nothing-to-say
       windownavigator

@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  lib,
   ...
 }: let
   fork = cmd: "fork ${cmd}";
@@ -99,7 +100,8 @@ in [
   }
   {
     Passmenu = {
-      Password = "pass-fzf";
+      Password = "sh -c '(rbw-fzf | wl-copy) && ${lib.getExe pkgs.termdown} -T \"Clearing password in\" -f term 20 && wl-copy -c'";
+      "Old Passwords" = "pass-fzf";
       OTP = "pass-fzf otp";
     };
   }
