@@ -13,7 +13,7 @@
         enableACME = true;
         locations = {
           "/" = {
-            root = "/var/www/mathechor/public";
+            root = "/var/cache/gc-links/mathechor.de/public";
             index = "index.html";
             extraConfig = "location ~* .(otf)$ {add_header Access-Control-Allow-Origin *;}";
           };
@@ -24,7 +24,7 @@
         enableACME = true;
         locations = {
           "/" = {
-            root = "/var/www/mathechor/intern";
+            root = "/var/cache/gc-links/mathechor.de/intern";
             index = "index.html";
             extraConfig = ''
               if ($query_string ~ "pw=([A-Za-z]*)") {
