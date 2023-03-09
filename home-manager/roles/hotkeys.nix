@@ -105,7 +105,7 @@ in [
       OTP = "pass-fzf otp";
     };
   }
-  {"Select Mode" = "select-mode";}
+  {"Select Mode" = lib.mapAttrs (name: _: "select-mode ${name}") (import ../machines.nix).${config.m-0.hostName};}
   {
     Communication = [
       {Matrix = fork "element-desktop";}
