@@ -31,13 +31,11 @@
   # The list of segments shown on the left. Fill it with the most important segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
     # os_icon               # os identifier
-    time                    # current time
     nix_shell               # nix shell (https://nixos.org/nixos/nix-pills/developing-with-nix-shell.html)
     background_jobs         # presence of background jobs
     context                 # user@hostname
     dir                     # current directory
     vcs                     # git status
-    command_execution_time  # duration of the last command
     status                  # exit code of the last command
     prompt_char             # prompt symbol
   )
@@ -47,6 +45,8 @@
   # automatically hidden when the input line reaches it. Right prompt above the
   # last prompt line gets hidden if it would overlap with left prompt.
   typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
+    command_execution_time  # duration of the last command
+    time                    # current time
     asdf                    # asdf version manager (https://github.com/asdf-vm/asdf)
     virtualenv              # python virtual environment (https://docs.python.org/3/library/venv.html)
     anaconda                # conda environment (https://conda.io/)
