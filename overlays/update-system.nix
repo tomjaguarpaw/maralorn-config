@@ -1,7 +1,7 @@
 final: _: let
   inherit (final) pkgs lib;
   homeDir = "/home/maralorn";
-  modeFile = "${homeDir}/mode";
+  modeFile = "${homeDir}/.mode";
   modeDir = "${homeDir}/.volatile/modes";
   configPath = "${homeDir}/git/config";
   configGit = "${lib.getExe pkgs.git} -C ${configPath}";
