@@ -195,12 +195,12 @@ main = do
             when' (codeUpdates /= 0) $ withColor cyan [i|Code Updates: #{codeUpdates}|]
         , simpleModule (5 * oneSecond) do
             dirs <- listDirectory git_dir
-            dirty <- fmap toText <$> filterM (isDirty . (git_dir <>)) dirs
+            dirty <- fmap toText <$> filterM (isDirty . (git_dir </>)) dirs
             atomically $ writeTVar dirty_var dirty
             when' (not $ null dirty) $ withColor red [i|Dirty: #{Text.intercalate " " dirty}|]
         , simpleModule (5 * oneSecond) do
             dirs <- listDirectory git_dir
-            unpushed <- fmap toText <$> filterM (isUnpushed . (git_dir <>)) dirs
+            unpushed <- fmap toText <$> filterM (isUnpushed . (git_dir </>)) dirs
             when' (not $ null unpushed) do withColor yellow [i|Unpushed: #{Text.intercalate " " unpushed}|]
         , simpleModule (5 * oneSecond) do
             let hosts = ["hera", "fluffy"]
