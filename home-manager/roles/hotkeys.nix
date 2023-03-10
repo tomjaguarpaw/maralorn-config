@@ -102,8 +102,6 @@ in [
     Passmenu = {
       Password = "sh -c '(rbw-fzf | wl-copy) && ${lib.getExe pkgs.termdown} -T \"Clearing password in\" -f term 20 && wl-copy -c'";
       "OTP" = "sh -c 'rbw-totp-fzf | wl-copy'";
-      "Old Passwords" = "pass-fzf";
-      "Old OTP" = "pass-fzf otp";
     };
   }
   {"Select Mode" = lib.mapAttrs (name: _: "select-mode ${name}") (import ../machines.nix).${config.m-0.hostName};}
