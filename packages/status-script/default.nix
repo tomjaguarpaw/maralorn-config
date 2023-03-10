@@ -4,6 +4,7 @@
   base,
   bytestring,
   directory,
+  filepath,
   lib,
   reflex,
   relude,
@@ -23,6 +24,7 @@ mkDerivation {
     base
     bytestring
     directory
+    filepath
     reflex
     relude
     say
