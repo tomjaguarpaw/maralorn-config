@@ -22,7 +22,7 @@ systems = ["x86_64-linux", "i686-linux"]
 supportedFeatures :: [Text]
 supportedFeatures = ["benchmark", "big-parallel", "kvm", "nixos-test"]
 
-data BuilderTries = FirstOf [Text] | FirstOfFinally [Text] Text | Use Text
+data Reachable = Always | Check
 
 data Ping :: Effect where
   CheckConnectivity :: Text -> Ping m Bool
@@ -46,8 +46,6 @@ sshHostToDNS :: Text -> Text
 sshHostToDNS = \case
   "zeus-builder" -> "zeus.vpn.m-0.eu"
   "fluffy-builder" -> "fluffy.vpn.m-0.eu"
-  "zeus-builder-local" -> "zeus.lo.m-0.eu"
-  "fluffy-builder-local" -> "fluffy.lo.m-0.eu"
   host -> error [i|No dns name none for ssh host #{host}|]
 
 builderInfos :: Map.Map Text Natural
@@ -57,16 +55,14 @@ builderInfos =
     , ("nixbuild.net", 100)
     , ("zeus-builder", 12)
     , ("fluffy-builder", 2)
-    , ("zeus-builder-local", 12)
-    , ("fluffy-builder-local", 2)
     ]
-builderConfigs :: Map.Map Text [BuilderTries]
+builderConfigs :: Map.Map Text [(Text, Reachable)]
 builderConfigs =
   Map.fromList
-    [ ("hera", [FirstOf ["zeus-builder"], Use "remote-builder", Use "nixbuild.net"])
-    , ("apollo", [FirstOf ["zeus-builder-local", "zeus-builder"], FirstOf ["fluffy-builder-local"], Use "remote-builder", Use "nixbuild.net"])
-    , ("fluffy", [FirstOf ["zeus-builder-local"], Use "remote-builder", Use "nixbuild.net"])
-    , ("zeus", [Use "fluffy-builder-local", Use "remote-builder", Use "nixbuild.net"])
+    [ ("hera", [("zeus-builder", Check), ("fluffy-builder", Check), ("remote-builder", Always), ("nixbuild.net", Always)])
+    , ("apollo", [("zeus-builder", Check), ("fluffy-builder", Check), ("remote-builder", Always), ("nixbuild.net", Always)])
+    , ("fluffy", [("zeus-builder", Check), ("remote-builder", Always), ("nixbuild.net", Always)])
+    , ("zeus", [("remote-builder", Always), ("fluffy-builder", Check), ("nixbuild.net", Always)])
     ]
 
 commaList :: [Text] -> Text
@@ -75,12 +71,11 @@ commaList = Text.intercalate ","
 builderLine :: (Text, Natural, Natural) -> Text
 builderLine (hostName, maxJobs, speed_factor) = [i|ssh://#{hostName} #{commaList systems} - #{maxJobs} #{speed_factor} #{commaList supportedFeatures} - -|]
 
-testBuilders :: Ping :> es => [BuilderTries] -> Eff es [Text]
+testBuilders :: Ping :> es => [(Text, Reachable)] -> Eff es [Text]
 testBuilders =
-  fmap catMaybes . mapM \case
-    Use host -> pure $ Just host
-    FirstOf hosts -> listToMaybe <$> filterM checkConnectivity hosts
-    FirstOfFinally hosts fallback -> listToMaybe . (++ [fallback]) <$> filterM checkConnectivity hosts
+  fmap (fmap fst) . filterM \case
+    (_, Always) -> pure True
+    (host, Check) -> checkConnectivity host
 
 printBuilders :: [Text] -> Text
 printBuilders = Text.unlines . fmap builderLine . Foldable.foldr' folder []
