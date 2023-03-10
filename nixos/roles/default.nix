@@ -146,6 +146,8 @@ in {
       fallback = true
       auto-optimise-store = true
       builders-use-substitutes = true
+      keep-derivations = true
+      keep-outputs = true
       warn-dirty = false
     '';
     optimise = {
