@@ -1,15 +1,12 @@
 final: _: let
   inherit (final) pkgs lib;
   homeDir = "/home/maralorn";
-  modeFile = "${homeDir}/.volatile/mode";
+  modeFile = "${homeDir}/mode";
   modeDir = "${homeDir}/.volatile/modes";
   configPath = "${homeDir}/git/config";
   configGit = "${lib.getExe pkgs.git} -C ${configPath}";
   get_mode = ''
     mode <- decodeUtf8 @Text <$> (cat "${modeFile}" |> captureTrim)
-  '';
-  get_available_modes = ''
-    available_modes <- Directory.listDirectory "${modeDir}"
   '';
   get_hostname = ''
     hostname <- BSC.strip <$> readFileBS "/etc/hostname"
@@ -48,8 +45,6 @@ final: _: let
       } ''
         main = do
           [mode] <- getArgs
-          ${get_available_modes}
-          unless (mode `elem` available_modes) do say [i|"#{mode}" is not a known mode|]; exitFailure
           writeFile "${modeFile}" mode
           activate_mode
           ignoreFailure $ killall ["GeckoMain", "firefox", ".firefox-wrapped"]

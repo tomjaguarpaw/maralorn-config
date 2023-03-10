@@ -3,7 +3,7 @@
   config,
   ...
 }: let
-  modeFile = "${config.home.homeDirectory}/.volatile/mode";
+  modeFile = "${config.home.homeDirectory}/.mode";
   wallPapers = "${config.home.homeDirectory}/media/images/wallpapers";
   randomWallpaper =
     pkgs.writeHaskellScript

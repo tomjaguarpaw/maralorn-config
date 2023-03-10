@@ -15,6 +15,8 @@ import Say (say, sayErr)
 import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, readInputLines, (&>), (|>))
 import Shh qualified
 import System.Directory (listDirectory)
+import System.Environment (getEnv)
+import System.FilePath ((</>))
 
 data Mode = Klausur | Orga | Communication | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
@@ -23,9 +25,10 @@ load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-di
 modes :: [Mode]
 modes = enumFrom Klausur
 
-getMode :: IO Mode
-getMode = do
-  name <- decodeUtf8 . ByteString.strip <$> readFileBS "/home/maralorn/.volatile/mode" `onException` sayErr "File /home/maralorn/.mode not found."
+getMode :: FilePath -> IO Mode
+getMode home = do
+  let mode_file = home </> ".mode"
+  name <- decodeUtf8 . ByteString.strip <$> readFileBS mode_file `onException` sayErr [i|File #{mode_file} not found.|]
   maybe (sayErr [i|Unknown mode #{name}|] >> error [i|Unknown mode #{name}|]) pure $ find (\mode -> name == Text.toLower (show mode)) modes
 
 isDirty :: String -> IO Bool
@@ -150,6 +153,9 @@ white = "D9E0EE"
 
 main :: IO ()
 main = do
+  home <- getEnv "HOME"
+  let git_dir = home </> "git"
+      modes_dir = home </> ".volatile" </> "modes"
   mode_var <- newVar Unrestricted
   dirty_var <- newTVarIO []
   let read_mode = fst <$> readTVarIO (value mode_var)
@@ -188,13 +194,13 @@ main = do
                 else pure 0
             when' (codeUpdates /= 0) $ withColor cyan [i|Code Updates: #{codeUpdates}|]
         , simpleModule (5 * oneSecond) do
-            dirs <- listDirectory "/home/maralorn/git"
-            dirty <- fmap toText <$> filterM (isDirty . ("/home/maralorn/git/" <>)) dirs
+            dirs <- listDirectory git_dir
+            dirty <- fmap toText <$> filterM (isDirty . (git_dir <>)) dirs
             atomically $ writeTVar dirty_var dirty
             when' (not $ null dirty) $ withColor red [i|Dirty: #{Text.intercalate " " dirty}|]
         , simpleModule (5 * oneSecond) do
-            dirs <- listDirectory "/home/maralorn/git"
-            unpushed <- fmap toText <$> filterM (isUnpushed . ("/home/maralorn/git/" <>)) dirs
+            dirs <- listDirectory git_dir
+            unpushed <- fmap toText <$> filterM (isUnpushed . (git_dir <>)) dirs
             when' (not $ null unpushed) do withColor yellow [i|Unpushed: #{Text.intercalate " " unpushed}|]
         , simpleModule (5 * oneSecond) do
             let hosts = ["hera", "fluffy"]
@@ -208,11 +214,11 @@ main = do
             modes_dirty_var <- newTVarIO False
             host_name <- ByteString.strip <$> readFileBS "/etc/hostname"
             let scan = do
-                  current_commit <- readFileBS "/home/maralorn/git/config/.git/refs/heads/main"
+                  current_commit <- readFileBS (git_dir </> "config/.git/refs/heads/main")
                   system_commit <- Exception.try do readFileBS "/run/current-system/config-commit"
-                  modes_commit <- Exception.try do readFileBS "/home/maralorn/.volatile/modes/config-commit"
+                  modes_commit <- Exception.try do readFileBS (modes_dir </> "config-commit")
                   current_system <- readlink "/run/current-system" |> captureTrim
-                  current_modes <- readlink "/home/maralorn/.volatile/modes" |> captureTrim
+                  current_modes <- readlink modes_dir |> captureTrim
                   let stale_config :: Either Exception.IOException ByteString -> Bool = \case
                         (Right commit) | commit == current_commit -> False
                         _ -> True
@@ -251,7 +257,7 @@ main = do
             onUpdate mode_var $ updateVarIfChanged var . runIdentity . withColor blue . show
         ]
   foldConcurrently_
-    [ void $ simpleModule oneSecond getMode mode_var
+    [ void $ simpleModule oneSecond (getMode home) mode_var
     , runModules modules
     ]
 
