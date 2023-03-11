@@ -260,11 +260,11 @@
         "pre-commit-hooks": []
       },
       "locked": {
-        "lastModified": 1677163242,
-        "narHash": "sha256-aKtnMKbQ4PwzWMFvbDPvk39mWiOdRhmf0dfXMSHqclQ=",
+        "lastModified": 1678485798,
+        "narHash": "sha256-JbMEujzzzH9OQ8FSfJ9XP6j9wNoogB/ndj92ZFh9nhY=",
         "ref": "main",
-        "rev": "f0554b1295703940f4a292962fde2b6d67301166",
-        "revCount": 404,
+        "rev": "e6e9afee53969418954cd01b02b1cd56fdbf8ab7",
+        "revCount": 407,
         "type": "git",
         "url": "ssh://git@hera.m-0.eu/nix-output-monitor"
       },
@@ -328,11 +328,11 @@
     },
     "nixos-stable": {
       "locked": {
-        "lastModified": 1678230755,
-        "narHash": "sha256-SFAXgNjNTXzcAideXcP0takfUGVft/VR5CACmYHg+Fc=",
+        "lastModified": 1678426640,
+        "narHash": "sha256-3Q4KN0XAXQT7YE3A8n3LzLtRNUCo0U++W3gl+5NhKHs=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "a7cc81913bb3cd1ef05ed0ece048b773e1839e51",
+        "rev": "824f886682fc893e6dbf27114e5001ebf2770ea1",
         "type": "github"
       },
       "original": {
@@ -344,11 +344,11 @@
     },
     "nixos-unstable": {
       "locked": {
-        "lastModified": 1678293141,
-        "narHash": "sha256-lLlQHaR0y+q6nd6kfpydPTGHhl1rS9nU9OQmztzKOYs=",
+        "lastModified": 1678380223,
+        "narHash": "sha256-HUxnK38iqrX84QdQxbFcosRKV3/koj1Zzp5b5aP4lIo=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "c90c4025bb6e0c4eaf438128a3b2640314b1c58d",
+        "rev": "1e2590679d0ed2cee2736e8b80373178d085d263",
         "type": "github"
       },
       "original": {
