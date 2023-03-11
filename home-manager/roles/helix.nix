@@ -97,6 +97,7 @@ in {
         indent-guides.render = true;
         cursorline = true;
         cursorcolumn = true;
+        auto-pairs = false;
         cursor-shape = {
           insert = "bar";
           normal = "underline";

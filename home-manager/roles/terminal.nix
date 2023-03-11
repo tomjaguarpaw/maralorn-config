@@ -16,6 +16,7 @@
         include = toString (pkgs.writeText "foot-theme" ''
           ${builtins.readFile "${pkgs.foot.themes}/share/foot/themes/catppuccin"}
           background=000000
+          alpha=0.9
         '');
       };
       csd = {
