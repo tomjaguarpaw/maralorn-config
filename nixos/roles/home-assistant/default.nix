@@ -118,9 +118,7 @@ in {
           };
         };
         homeassistant = pkgs.privateValue {} "homeassistant-home";
-        frontend.themes.ourdefault = {
-          primary-color = colors.primary;
-        };
+        frontend.themes.ourdefault.modes.dark.primary-color = colors.primary;
         timer.block_heating_schlafzimmer = {};
         automation =
           [
