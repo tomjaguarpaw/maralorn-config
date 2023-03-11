@@ -92,8 +92,7 @@ in {
       extraComponents = [];
       config = {
         esphome = {};
-        zeroconf = {};
-        dhcp = {};
+        default_config = {};
         shopping_list = {};
         matrix = {
           homeserver = "https://matrix.maralorn.de";
@@ -437,14 +436,8 @@ in {
               action = [(actions.notify "{{ trigger.to_state.name }} ist seit mehr als ${minutes} Minuten offen.")];
             })
             (map toString [10 20 30 40 50 60]));
-        history = {};
         image = {};
-        sun = {};
-        logbook = {};
-        config = {};
-        mobile_app = {};
         recorder = {};
-        ssdp = {};
         template = [
           {
             sensor = [
@@ -550,7 +543,6 @@ in {
             step = "0.5";
           };
         };
-        system_health = {};
         zha = {
           device_config = {
             "00:12:4b:00:24:c0:ff:52-1".type = "switch"; # Lüftung Bad
