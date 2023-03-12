@@ -48,6 +48,7 @@ executable status-script
     , shh
     , stm
     , string-interpolate
+    , time
 
   hs-source-dirs:     exe
   default-language:   GHC2021

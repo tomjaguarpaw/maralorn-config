@@ -12,6 +12,7 @@
   shh,
   stm,
   string-interpolate,
+  time,
 }:
 mkDerivation {
   pname = "status-script";
@@ -31,6 +32,7 @@ mkDerivation {
     shh
     stm
     string-interpolate
+    time
   ];
   license = lib.licenses.agpl3Plus;
   mainProgram = "status-script";

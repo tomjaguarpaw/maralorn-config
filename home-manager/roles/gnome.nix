@@ -11,29 +11,16 @@
     inherit
       (pkgs.gnomeExtensions)
       appindicator
-      system-monitor
       window-is-ready-remover
       nothing-to-say
       windownavigator
       user-themes
       dash-to-panel
       removable-drive-menu
-      mouse-follows-focus
       pop-shell
-      workspace-indicator
+      notifications-to-file
       caffeine
-      notification-counter
-      permanent-notifications
-      notification-banner-reloaded
-      expandable-notifications
       ;
-    executor = pkgs.gnomeExtensions.executor.overrideAttrs (old: {
-      postInstall =
-        (old.postInstall or "")
-        + ''
-          substituteInPlace $out/share/gnome-shell/extensions/executor@raujonas.github.io/extension.js --replace "'/bin/bash'" "'bash'"
-        '';
-    });
   };
   inherit (lib.hm.gvariant) mkTuple mkUint32;
   font = "Monospace 9";
@@ -41,14 +28,6 @@ in {
   home.packages = extensions ++ [hotkeys];
   services.gpg-agent.pinentryFlavor = "gnome3";
   dconf.settings = {
-    "org/gnome/shell/extensions/notification-banner-reloaded" = {
-      padding-vertical = 1;
-      padding-horizontal = 1;
-      anchor-horizontal = 0;
-      anchor-vertical = 0;
-      animation-direction = 0;
-      animation-time = 1000;
-    };
     "org/gnome/shell/keybindings" = {
       "toggle-overview" = [];
     };
@@ -110,15 +89,6 @@ in {
       titlebar-font = font;
     };
 
-    "org/gnome/shell/extensions/executor" = {
-      location = 1;
-      left-active = false;
-      center-active = true;
-      center-commands-json = ''{"commands":[{"command":"cat /run/user/1000/status-bar","interval":1,"uuid":"d20a15a4-aea9-48e1-955f-4bd9f55b08bc"}]}'';
-      center-index = 0;
-      right-active = false;
-    };
-
     "org/gnome/shell" = {
       disable-extension-version-validation = true;
       disable-user-extensions = false;
@@ -140,24 +110,6 @@ in {
 
     "org/gnome/desktop/session" = {
       idle-delay = "300"; # blank screen after 5 minutes
-    };
-
-    "org/gnome/shell/extensions/system-monitor" = {
-      center-display = true;
-      compact-display = true;
-      cpu-show-menu = false;
-      cpu-show-text = false;
-      cpu-style = "graph";
-      icon-display = false;
-      memory-show-text = false;
-      memory-style = "graph";
-      move-clock = false;
-      net-show-menu = true;
-      net-show-text = false;
-      net-speed-in-bits = true;
-      net-style = "both";
-      show-tooltip = true;
-      background = "#00000000";
     };
 
     "org/gnome/shell/extensions/pop-shell" = {
@@ -184,21 +136,20 @@ in {
       pop-monitor-up = [];
       pop-monitor-down = [];
     };
+
     "org/gnome/shell/extensions/dash-to-panel" = {
-      panel-element-positions = ''{"0":[{"element":"showAppsButton","visible":false,"position":"stackedTL"},{"element":"dateMenu","visible":true,"position":"stackedTL"},{"element":"activitiesButton","visible":false,"position":"stackedTL"},{"element":"taskbar","visible":true,"position":"stackedTL"},{"element":"leftBox","visible":true,"position":"stackedTL"},{"element":"centerBox","visible":true,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedTL"},{"element":"systemMenu","visible":true,"position":"stackedBR"},{"element":"desktopButton","visible":false,"position":"stackedBR"}]}'';
-      panel-positions = ''{"0":"TOP"}'';
+      panel-element-positions = ''{"0":[{"element":"showAppsButton","visible":false,"position":"stackedTL"},{"element":"dateMenu","visible":false,"position":"stackedTL"},{"element":"activitiesButton","visible":false,"position":"stackedTL"},{"element":"taskbar","visible":false,"position":"stackedTL"},{"element":"leftBox","visible":false,"position":"stackedTL"},{"element":"centerBox","visible":false,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"},{"element":"desktopButton","visible":false,"position":"stackedBR"}]}'';
+      panel-positions = ''{"0":"LEFT"}'';
+      panel-anchors = ''{"0":"END"}'';
       panel-sizes = ''{"0":24}'';
       tray-padding = 0;
       status-icon-padding = 4;
       leftbox-size = 13;
       tray-size = 13;
-      show-appmenu = true;
-      trans-use-custom-gradient = true;
-      trans-gradient-top-color = "#${config.m-0.colors.accent}";
-      trans-gradient-bottom-color = "#000000";
-      trans-gradient-top-opacity = 1.0;
-      trans-gradient-bottom-opacity = 1.0;
+      trans-use-custom-opacity = true;
+      trans-panel-opacty = 0.0;
     };
+
     "org/gnome/desktop/input-sources" = {
       sources = [(mkTuple ["xkb" "de+neo"])]; # use neo
       xkb-options = [
@@ -206,16 +157,19 @@ in {
         "lv3:menu_switch" # So that gnome-settings does not set it to ralt
       ];
     };
+
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal" = {
       binding = "<Super>Return";
       command = "${config.home.sessionVariables.TERMINAL}";
       name = "Terminal";
     };
+
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" = {
       binding = "<Super>space";
       command = "${config.home.sessionVariables.TERMINAL} ${lib.getExe hotkeys}";
       name = "Hotkeys";
     };
+
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby" = {
       binding = "<Super>F5";
       command = "systemctl suspend";

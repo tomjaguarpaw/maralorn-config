@@ -9,6 +9,7 @@ import Data.ByteString.Char8 qualified as ByteString
 import Data.ByteString.Lazy qualified as LBS
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
+import Data.Time qualified as Time
 import Data.Unique qualified as Unique
 import Relude
 import Say (say, sayErr)
@@ -60,14 +61,15 @@ newMaybeVar = newVar Nothing
 type Vars = [Var (Maybe Text)]
 type Module a = Var a -> IO Void
 
+separator = "\n$color1$hr\n"
+
 writeVars :: Vars -> IO Void
 writeVars vars = onUpdatesMono vars do
   outputs <- atomically $ mapM getVal vars
   writeFileText "/run/user/1000/status-bar" $
-    Text.replace "&" "&amp;" $
-      Text.unwords $
-        ("<executor.markup.true>" :) $
-          catMaybes outputs
+    Text.intercalate separator $
+      reverse $
+        catMaybes outputs
 
 data AnyVar where
   AVar :: Var a -> AnyVar
@@ -118,24 +120,26 @@ simpleModule delay action var = forever do
   Concurrent.threadDelay delay
 
 withColor :: Monad m => Text -> Text -> m (Maybe Text)
-withColor color content = pure $ Just [i|<span foreground='\##{color}'>#{content}</span>|]
+withColor color content = pure $ Just [i|${color \##{color}}#{content}|]
 
 when' :: Monad m => Bool -> m (Maybe a) -> m (Maybe a)
 when' cond result = if cond then result else pure Nothing
 
 playerCTLFormat :: String
-playerCTLFormat = "@{{status}} {{title}} - {{album}} - {{artist}}"
+playerCTLFormat = "@{{status}} {{title}} | {{album}} | {{artist}}"
 
 playerModule :: Module (Maybe Text)
 playerModule = \var ->
   let update_lines =
         mapM_
           ( updateVarIfChanged var
-              . Just
+              . runIdentity
+              . withColor white
+              . Text.replace " | " "\n"
               . Text.replace "@Stopped" "⏹"
               . Text.replace "@Playing" "▶"
               . Text.replace "@Paused" "⏸"
-              . Text.replace "-  -" "-"
+              . Text.replace " |  | " " | "
               . decodeUtf8
           )
    in forever $
@@ -163,7 +167,7 @@ main = do
         [ simpleModule (5 * oneSecond) $ do
             appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
             when' (not $ null appointments) $
-              withColor magenta (Text.intercalate "; " appointments)
+              withColor magenta (Text.unlines appointments)
         , playerModule
         , simpleModule oneSecond $ do
             mode <- read_mode
@@ -255,6 +259,10 @@ main = do
               if dirty then pure Nothing else scan
         , \var ->
             onUpdate mode_var $ updateVarIfChanged var . runIdentity . withColor blue . show
+        , simpleModule (1 * oneSecond) do
+            now <- Time.getCurrentTime
+            notifications <- lines . decodeUtf8 . ByteString.strip . fromRight "" <$> Exception.try @Exception.IOException (readFileBS [i|/home/maralorn/.notifications/#{Time.formatTime Time.defaultTimeLocale "%Y-%m-%d" now}.log|])
+            when' (not $ null notifications) $ withColor red $ Text.strip $ Text.intercalate [i|\n$color1$hr${color \##{red}}\n|] $ fmap (unwords . drop 3 . Text.splitOn "|") notifications
         ]
   foldConcurrently_
     [ void $ simpleModule oneSecond (getMode home) mode_var
