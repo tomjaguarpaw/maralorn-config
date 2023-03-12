@@ -69,7 +69,7 @@ commaList :: [Text] -> Text
 commaList = Text.intercalate ","
 
 builderLine :: (Text, Natural, Natural) -> Text
-builderLine (hostName, maxJobs, speed_factor) = [i|ssh://#{hostName} #{commaList systems} - #{maxJobs} #{speed_factor} #{commaList supportedFeatures} - -|]
+builderLine (hostName, maxJobs, speed_factor) = [i|ssh-ng://#{hostName} #{commaList systems} - #{maxJobs} #{speed_factor} #{commaList supportedFeatures} - -|]
 
 testBuilders :: Ping :> es => [(Text, Reachable)] -> Eff es [Text]
 testBuilders =
