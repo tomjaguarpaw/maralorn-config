@@ -261,12 +261,22 @@ main = do
             onUpdate mode_var $ updateVarIfChanged var . runIdentity . withColor blue . show
         , simpleModule (1 * oneSecond) do
             now <- Time.getCurrentTime
-            notifications <- lines . decodeUtf8 . ByteString.strip . fromRight "" <$> Exception.try @Exception.IOException (readFileBS [i|/home/maralorn/.notifications/#{Time.formatTime Time.defaultTimeLocale "%Y-%m-%d" now}.log|])
-            when' (not $ null notifications) $ withColor red $ Text.strip $ Text.intercalate [i|\n$color1$hr${color \##{red}}\n|] $ fmap (Text.intercalate ":${color0} " . drop 3 . Text.splitOn "|") notifications
+            notifications <- processNotifications . fromRight "" <$> Exception.try @Exception.IOException (readFileBS [i|/home/maralorn/.notifications/#{Time.formatTime Time.defaultTimeLocale "%Y-%m-%d" now}.log|])
+            when' (not $ Text.null notifications) $ withColor red notifications
         ]
   foldConcurrently_
     [ void $ simpleModule oneSecond (getMode home) mode_var
     , runModules modules
     ]
+
+processNotifications =
+  Text.intercalate [i|\n$color1$hr${color \##{red}}\n|]
+    . filter (\x -> not $ any (`Text.isPrefixOf` x) notificationBlockList)
+    . fmap (Text.intercalate ":${color0} " . drop 3 . Text.splitOn "|")
+    . lines
+    . decodeUtf8
+    . ByteString.strip
+
+notificationBlockList = ["Automatic suspend"]
 
 diffIsSmall = \pathA pathB -> (== "[]") <$> (nix_diff "--json" [pathA, pathB] |> jq ".inputsDiff.inputDerivationDiffs" |> captureTrim)
