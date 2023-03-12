@@ -57,8 +57,8 @@ final: _: let
       } ''
         main = do
           ${get_hostname}
-          say [i|Building ~/.modes for #{hostname}|]
           ${get_builders}
+          say [i|Building modes for #{hostname} …|]
           nom ["build", "--builders", [i|@#{builders}|], [i|${configPath}\#homeModes.#{hostname}|], "-o", "${modeDir}"]
           activate_mode
       '';
@@ -82,8 +82,10 @@ final: _: let
       set -e
       remote_host=$1
       host=''${remote_host:-$(hostname)}
+      echo "Evaluating configuration for $host …"
+      outputDrv=$(nix eval --raw $HOME/git/config#nixosConfigurations.$host.config.system.build.toplevel.drvPath)
       echo "Building configuration for $host …"
-      output=$(nom build --builders @$(builders-configurator) /home/maralorn/git/config#nixosConfigurations.$host.config.system.build.toplevel --no-link --print-out-paths)
+      output=$(nom build --builders @$(builders-configurator) $outputDrv --no-link --print-out-paths)
       if [[ -z "$remote_host" ]]; then
         on_target() {
           /run/wrappers/bin/sudo $@
@@ -93,7 +95,7 @@ final: _: let
           ${pkgs.lib.getExe pkgs.openssh} root@$host $@
         }
         echo "Uploading configuration to $host …"
-        ${final.lib.getExe pkgs.nix} copy $output --to ssh://$host
+        ${final.lib.getExe pkgs.nix} copy $outputDrv $output --to ssh-ng://$host
       fi
       on_target ${pkgs.nix}/bin/nix-env -p /nix/var/nix/profiles/system --set $output
       on_target $output/bin/switch-to-configuration switch
