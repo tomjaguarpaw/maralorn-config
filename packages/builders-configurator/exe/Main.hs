@@ -17,6 +17,20 @@ import Shh qualified
 import System.IO qualified as IO
 import Witch (into)
 
+{-
+=== Benchmark Results ===
+nix run pkgs#sysbench -- cpu run
+
+Host    events/s
+----------------
+Zeus           ?
+Fluffy      1672
+Apollo      1112
+Remote       767
+Hera         729
+
+-}
+
 systems :: [Text]
 systems = ["x86_64-linux", "i686-linux"]
 supportedFeatures :: [Text]
