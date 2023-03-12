@@ -262,7 +262,7 @@ main = do
         , simpleModule (1 * oneSecond) do
             now <- Time.getCurrentTime
             notifications <- lines . decodeUtf8 . ByteString.strip . fromRight "" <$> Exception.try @Exception.IOException (readFileBS [i|/home/maralorn/.notifications/#{Time.formatTime Time.defaultTimeLocale "%Y-%m-%d" now}.log|])
-            when' (not $ null notifications) $ withColor red $ Text.strip $ Text.intercalate [i|\n$color1$hr${color \##{red}}\n|] $ fmap (unwords . drop 3 . Text.splitOn "|") notifications
+            when' (not $ null notifications) $ withColor red $ Text.strip $ Text.intercalate [i|\n$color1$hr${color \##{red}}\n|] $ fmap (Text.intercalate ":${color0} " . drop 3 . Text.splitOn "|") notifications
         ]
   foldConcurrently_
     [ void $ simpleModule oneSecond (getMode home) mode_var
