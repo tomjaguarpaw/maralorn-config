@@ -147,7 +147,7 @@ in {
       leftbox-size = 13;
       tray-size = 13;
       trans-use-custom-opacity = true;
-      trans-panel-opacty = 0.0;
+      trans-panel-opacity = 0.0;
     };
 
     "org/gnome/desktop/input-sources" = {
