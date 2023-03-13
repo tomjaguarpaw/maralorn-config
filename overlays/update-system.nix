@@ -95,7 +95,7 @@ final: _: let
           ${pkgs.lib.getExe pkgs.openssh} root@$host $@
         }
         echo "Uploading configuration to $host …"
-        ${final.lib.getExe pkgs.nix} copy $outputDrv $output --to ssh-ng://$host
+        ${final.lib.getExe pkgs.nix} copy $outputDrv $output --to ssh://$host
       fi
       on_target ${pkgs.nix}/bin/nix-env -p /nix/var/nix/profiles/system --set $output
       on_target $output/bin/switch-to-configuration switch
