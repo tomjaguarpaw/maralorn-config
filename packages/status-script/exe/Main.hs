@@ -135,11 +135,12 @@ playerModule = \var ->
           ( updateVarIfChanged var
               . runIdentity
               . withColor white
-              . Text.replace " | " "\n"
               . Text.replace "@Stopped" "⏹"
               . Text.replace "@Playing" "▶"
               . Text.replace "@Paused" "⏸"
-              . Text.replace " |  | " " | "
+              . Text.intercalate "\n"
+              . filter (not . Text.null)
+              . Text.splitOn " | "
               . decodeUtf8
           )
    in forever $
