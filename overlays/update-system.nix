@@ -82,10 +82,8 @@ final: _: let
       set -e
       remote_host=$1
       host=''${remote_host:-$(hostname)}
-      echo "Evaluating configuration for $host …"
-      outputDrv=$(nix eval --raw $HOME/git/config#nixosConfigurations.$host.config.system.build.toplevel.drvPath)
       echo "Building configuration for $host …"
-      output=$(nom build --builders @$(builders-configurator) $outputDrv --no-link --print-out-paths)
+      output=$(nom build --builders @$(builders-configurator) $HOME/git/config#nixosConfigurations.$host.config.system.build.toplevel --no-link --print-out-paths)
       if [[ -z "$remote_host" ]]; then
         on_target() {
           /run/wrappers/bin/sudo $@
@@ -94,8 +92,10 @@ final: _: let
         on_target() {
           ${pkgs.lib.getExe pkgs.openssh} root@$host $@
         }
+        echo "Uploading derivation to $host …"
+        ${final.lib.getExe pkgs.nix} copy --derivation $output --to ssh://$host
         echo "Uploading configuration to $host …"
-        ${final.lib.getExe pkgs.nix} copy $outputDrv $output --to ssh://$host
+        ${final.lib.getExe pkgs.nix} copy $output --to ssh://$host
       fi
       on_target ${pkgs.nix}/bin/nix-env -p /nix/var/nix/profiles/system --set $output
       on_target $output/bin/switch-to-configuration switch
