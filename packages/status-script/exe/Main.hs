@@ -277,6 +277,6 @@ processNotifications =
     . decodeUtf8
     . ByteString.strip
 
-notificationBlockList = ["Automatic suspend"]
+notificationBlockList = ["Automatic suspend", "Auto suspend"]
 
 diffIsSmall = \pathA pathB -> (== "[]") <$> (nix_diff "--json" [pathA, pathB] |> jq ".inputsDiff.inputDerivationDiffs" |> captureTrim)
