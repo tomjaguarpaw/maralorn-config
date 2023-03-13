@@ -23,7 +23,7 @@ nix run pkgs#sysbench -- cpu run
 
 Host    events/s
 ----------------
-Zeus           ?
+Zeus        5249
 Fluffy      1672
 Apollo      1112
 Remote       767
