@@ -6,7 +6,7 @@ flake-inputs: {
   inherit (config.m-0) hosts;
   domain = "headscale.maralorn.de";
   zone = "maralorn.de";
-  derp_port = 3478;
+  derp_port = 3479;
 in {
   disabledModules = [
     "services/networking/headscale.nix"
