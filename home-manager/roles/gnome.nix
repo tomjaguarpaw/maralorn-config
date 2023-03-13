@@ -28,6 +28,9 @@ in {
   home.packages = extensions ++ [hotkeys];
   services.gpg-agent.pinentryFlavor = "gnome3";
   dconf.settings = {
+    "org/gnome/desktop/notifications" = {
+      show-banners = false;
+    };
     "org/gnome/shell/keybindings" = {
       "toggle-overview" = [];
     };
