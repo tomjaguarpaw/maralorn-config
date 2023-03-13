@@ -272,7 +272,14 @@ main = do
 processNotifications =
   Text.intercalate [i|\n$color1$hr${color \##{red}}\n|]
     . filter (\x -> not $ any (`Text.isPrefixOf` x) notificationBlockList)
-    . fmap (Text.intercalate ":${color0} " . drop 3 . Text.splitOn "|")
+    . filter (not . Text.null)
+    . fmap
+      ( Text.replace "&gt;" ">"
+          . Text.replace "&lt;" "<"
+          . Text.intercalate ":${color0} "
+      )
+    . filter (\x -> length x >= 2)
+    . fmap (filter (not . Text.null) . drop 3 . Text.splitOn "|")
     . foldl'
       ( flip \line -> \case
           [] -> [line]
