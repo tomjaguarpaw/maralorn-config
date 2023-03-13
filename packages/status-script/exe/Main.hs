@@ -273,6 +273,13 @@ processNotifications =
   Text.intercalate [i|\n$color1$hr${color \##{red}}\n|]
     . filter (\x -> not $ any (`Text.isPrefixOf` x) notificationBlockList)
     . fmap (Text.intercalate ":${color0} " . drop 3 . Text.splitOn "|")
+    . foldl'
+      ( flip \line -> \case
+          [] -> [line]
+          messages | Text.isInfixOf "|" line -> line : messages
+          last_message : rest_of_messages -> last_message <> "\n" <> line : rest_of_messages
+      )
+      []
     . lines
     . decodeUtf8
     . ByteString.strip
