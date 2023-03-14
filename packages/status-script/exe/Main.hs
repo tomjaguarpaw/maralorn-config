@@ -257,7 +257,8 @@ main = do
             var & simpleModule oneSecond do
               Concurrent.threadDelay (4 * oneSecond)
               dirty <- elem "config" <$> readTVarIO dirty_var
-              if dirty then pure Nothing else scan
+              mode <- read_mode
+              if dirty || mode == Klausur then pure Nothing else scan
         , \var ->
             onUpdate mode_var $ updateVarIfChanged var . runIdentity . withColor blue . show
         , simpleModule (1 * oneSecond) do
