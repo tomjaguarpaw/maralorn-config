@@ -211,6 +211,10 @@ main = do
             let hosts = ["hera", "fluffy"]
             unreachable_hosts <- flip filterM hosts \host -> isLeft <$> (Shh.tryFailure do (tailscale "ping" "-c" "1" (toString host)) &> Shh.devNull)
             when' ([] /= unreachable_hosts) do withColor red [i|No tunnel to #{Text.intercalate ", " unreachable_hosts}|]
+        , simpleModule (5 * oneSecond) $ do
+            current_kernel <- readlink "/run/current-system/kernel" |> captureTrim
+            booted_kernel <- readlink "/run/booted-system/kernel" |> captureTrim
+            when' (current_kernel /= booted_kernel) $ withColor "ffff00" "Booted kernel stale"
         , \var -> do
             commit_var <- newTVarIO ""
             system_var <- newTVarIO ""
