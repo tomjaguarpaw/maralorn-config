@@ -93,7 +93,6 @@ in [
       Chromium = fork "chromium";
       "Software-Updates" = "software-updates";
       Watchfeeds = "watchfeeds";
-      News = "news";
       Deluge = fork "deluge";
       VoxMachina = "mpv https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_";
     };
