@@ -48,7 +48,7 @@
         if (type == "caldav")
         then {
           inherit username;
-          "password.fetch" = ["command" (lib.getExe config.programs.rbw.package) passwordPath];
+          "password.fetch" = ["command" (lib.getExe config.programs.rbw.package) "get" passwordPath];
           read_only = readOnly;
         }
         else {}

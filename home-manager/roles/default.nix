@@ -167,7 +167,7 @@
         )
         (
           pkgs.writeShellScriptBin "print-ssh-pw"
-          "rbw ${config.m-0.hostName}.m-0.eu ssh-key"
+          "rbw get ${config.m-0.hostName}.m-0.eu ssh-key"
         )
         (
           pkgs.writeShellScriptBin "dingdingding" (builtins.readFile ./signal.sh)
@@ -178,7 +178,7 @@
       BROWSER = "firefox";
       SUDO_ASKPASS = toString (
         pkgs.writeShellScript "print-sudo-pw"
-        "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/${config.home.username}"
+        "rbw get ${config.m-0.hostName}.m-0.eu ${config.home.username}"
       );
     };
   };

@@ -12,7 +12,16 @@ in {
       description = "maralorn";
       isNormalUser = true;
       uid = 1000;
-      extraGroups = ["wheel" "systemd-journal" "networkmanager" "docker" "video" "adbusers" "dialout"];
+      extraGroups = [
+        "wheel"
+        "systemd-journal"
+        "networkmanager"
+        "docker"
+        "video"
+        "keys"
+        "adbusers"
+        "dialout"
+      ];
       inherit openssh passwordFile;
     };
     root = {inherit openssh passwordFile;};

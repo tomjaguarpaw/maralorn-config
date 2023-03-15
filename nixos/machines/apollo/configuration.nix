@@ -34,6 +34,8 @@ in {
     pkgs.networkmanagerapplet # For when the gnome dialog sucks in asking for a wifi password.
   ];
 
+  services.fprintd.enable = true;
+
   networking = {
     hostName = "apollo";
     domain = "m-0.eu";
