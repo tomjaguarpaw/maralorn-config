@@ -48,7 +48,7 @@
         if (type == "caldav")
         then {
           inherit username;
-          "password.fetch" = ["command" (lib.getExe config.programs.rbw.package) "get" passwordPath];
+          "password.fetch" = ["command" (lib.getExe config.programs.rbw.package) "get"] ++ passwordPath;
           read_only = readOnly;
         }
         else {}
@@ -80,7 +80,7 @@
     "storage ${remoteName}" = {
       type = "carddav";
       inherit url username;
-      "password.fetch" = ["command" "${pkgs.pass}/bin/pass" passwordPath];
+      "password.fetch" = ["command" (lib.getExe config.programs.rbw.package) "get"] ++ passwordPath;
       read_only = readOnly;
     };
   };
