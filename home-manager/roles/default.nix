@@ -150,7 +150,6 @@
           aqbanking
           ;
         inherit (pkgs.haskellPackages) hledger hledger-ui hledger-web;
-        pass-fzf = pkgs.writeShellScriptBin "pass-fzf" (builtins.readFile ./pass-fzf.sh);
         mytmux = pkgs.writeShellScriptBin "mytmux" ''
           session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
           if [[ -n $session ]]; then
