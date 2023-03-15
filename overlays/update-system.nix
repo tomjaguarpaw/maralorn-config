@@ -86,7 +86,7 @@ final: _: let
       output=$(nom build --builders @$(builders-configurator) $HOME/git/config#nixosConfigurations.$host.config.system.build.toplevel --no-link --print-out-paths)
       if [[ -z "$remote_host" ]]; then
         on_target() {
-          /run/wrappers/bin/sudo $@
+          /run/wrappers/bin/sudo -A $@
         }
       else
         on_target() {

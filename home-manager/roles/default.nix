@@ -62,11 +62,6 @@
         set -g allow-rename on
       '';
     };
-    password-store = {
-      package = pkgs.pass-wayland.withExtensions (exts: [exts.pass-update exts.pass-otp]);
-      enable = true;
-      settings.PASSWORD_STORE_DIR = "${config.home.homeDirectory}/git/password-store";
-    };
     git = {
       aliases = {
         sync = "!git pull -r && git push";
@@ -173,7 +168,7 @@
         )
         (
           pkgs.writeShellScriptBin "print-ssh-pw"
-          "pass show eu/m-0/${config.m-0.hostName}.m-0.eu/ssh-key"
+          "rbw ${config.m-0.hostName}.m-0.eu ssh-key"
         )
         (
           pkgs.writeShellScriptBin "dingdingding" (builtins.readFile ./signal.sh)

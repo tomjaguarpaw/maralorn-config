@@ -48,7 +48,7 @@
         if (type == "caldav")
         then {
           inherit username;
-          "password.fetch" = ["command" "${pkgs.pass}/bin/pass" passwordPath];
+          "password.fetch" = ["command" (lib.getExe config.programs.rbw.package) passwordPath];
           read_only = readOnly;
         }
         else {}

@@ -63,14 +63,6 @@
         "exec:${serien}"
       ];
     };
-    news = {
-      config = ''
-        urls-source "ocnews"
-        ocnews-url "https://cloud.maralorn.de"
-        ocnews-login "maralorn"
-        ocnews-password "${(pkgs.privateValue {adminpass = "";} "nextcloud-admin").adminpass}"
-      '';
-    };
     software-updates = {
       feeds =
         [

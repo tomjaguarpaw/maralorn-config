@@ -30,7 +30,7 @@
         url: http://hackage.haskell.org/
 
       username: maralorn
-      password-command: pass org/haskell/hackage.haskell.org/maralorn
+      password-command: rbw get hackage.haskell.org
     '';
   };
 }

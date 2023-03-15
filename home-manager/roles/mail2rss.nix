@@ -33,7 +33,7 @@ in {
       mail2rss = {
         Unit.Description = "Mail to rss exporter";
         Service = {
-          Environment = "PATH=${lib.makeBinPath [pkgs.coreutils pkgs.pass]}";
+          Environment = "PATH=${lib.makeBinPath [pkgs.coreutils config.programs.rbw.packages]}";
           ExecStart = "${mail2rss}/bin/mail2rss";
           Type = "oneshot";
         };

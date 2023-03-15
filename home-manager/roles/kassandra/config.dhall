@@ -22,19 +22,6 @@ in  { backends =
                 }
               }
         }
-      , { name = "tasks.maralorn.de"
-        , backend =
-            types.StandaloneAccount.RemoteAccount
-              { backend = Some
-                { url = "https://tasks.maralorn.de"
-                , user = "maralorn"
-                , password =
-                    types.PasswordConfig.PasswordCommand
-                      { command = "pass de/maralorn/tasks.maralorn.de/maralorn"
-                      }
-                }
-              }
-        }
       , { name = "Dynamic Backend"
         , backend =
             types.StandaloneAccount.RemoteAccount

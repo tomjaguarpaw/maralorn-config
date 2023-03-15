@@ -54,7 +54,7 @@ in {
     lib.mapAttrs' mkWatchService (lib.filterAttrs hasImapHost config.accounts.email.accounts)
     // {
       mbsync.Service = {
-        Environment = "PATH=${lib.makeBinPath [pkgs.pass pkgs.gnupg pkgs.coreutils]}";
+        Environment = "PATH=${lib.makeBinPath [pkgs.rbw pkgs.gnupg pkgs.coreutils]}";
         Restart = "on-failure";
         RestartSec = "30s";
       };
@@ -127,7 +127,7 @@ in {
         ${move-message-macro "l" "Move/readlater" "readlater list"}
         macro attach 'V' "<pipe-entry>iconv -c --to-code=UTF8 > ~/.cache/mutt/mail.html<enter><shell-escape>firefox ~/.cache/mutt/mail.html<enter>"
 
-        macro index,pager <F6> "<shell-escape>${pkgs.zsh}/bin/zsh -c '${pkgs.sieve-connect}/bin/sieve-connect -s ${config.accounts.email.accounts.hera.imap.host or ""} -u ${config.accounts.email.accounts.hera.userName or ""} --passwordfd 3 --edit --remotesieve filter 3<<(pass eu/m-0/hera/mail.hera.m-0.eu/maralorn)'\n"
+        macro index,pager <F6> "<shell-escape>${pkgs.zsh}/bin/zsh -c '${pkgs.sieve-connect}/bin/sieve-connect -s ${config.accounts.email.accounts.hera.imap.host or ""} -u ${config.accounts.email.accounts.hera.userName or ""} --passwordfd 3 --edit --remotesieve filter 3<<(cat /run/agenix/mail-password)'\n"
         macro index,pager A "<pipe-message>${pkgs.khard}/bin/khard add-email<return>" "add sender to to khard"
 
         set query_format="%4c %t %-70.70a %-70.70n %?e?(%e)?"

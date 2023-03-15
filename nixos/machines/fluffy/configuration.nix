@@ -15,6 +15,7 @@ in {
     ../../roles/fonts.nix
     ../../roles/metal.nix
     ../../roles/standalone
+    ../../roles/server
     ./hardware-configuration.nix
   ];
 
