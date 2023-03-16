@@ -32,7 +32,13 @@ in {
   };
   systemd.user.timers.mbsync.Timer.RandomizedDelaySec = "10m";
 
-  accounts.email.accounts = pkgs.privateValue {} "mail/accounts";
+  accounts.email.accounts = lib.recursiveUpdate (pkgs.privateValue {} "mail/accounts") {
+    hera = {
+      passwordCommand = "${pkgs.coreutils}/bin/cat /run/agenix/mail-password";
+      imapnotfiy.onNotify = lib.getExe quick-mail-sync;
+    };
+  };
+
   systemd.user.services = let
     hasImapHost = name: account: account.imap != null;
     mkWatchService = name: account: {
@@ -42,7 +48,7 @@ in {
         Service = {
           ExecStart = toString (pkgs.writeShellScript "watch-${name}-maildir" ''
             while ${pkgs.coreutils}/bin/sleep 1s; do
-              ${quick-mail-sync}/bin/quick-mail-sync
+              ${lib.getExe quick-mail-sync}
               ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete -r ${maildir}/${name}/Inbox ${maildir}/${name}/Code
             done
           '');
@@ -54,7 +60,7 @@ in {
     lib.mapAttrs' mkWatchService (lib.filterAttrs hasImapHost config.accounts.email.accounts)
     // {
       mbsync.Service = {
-        Environment = "PATH=${lib.makeBinPath [pkgs.rbw pkgs.gnupg pkgs.coreutils]}";
+        Environment = "PATH=${lib.makeBinPath [pkgs.rbw pkgs.coreutils]}";
         Restart = "on-failure";
         RestartSec = "30s";
       };
@@ -177,7 +183,7 @@ in {
         set mime_forward=yes
         set mime_forward_rest=yes
 
-        macro index <F5> "!${quick-mail-sync}/bin/quick-mail-sync > /dev/null<enter>"
+        macro index <F5> "!${lib.getExe quick-mail-sync} > /dev/null<enter>"
 
         source "${hide-sidebar}"
         macro index <right> "<enter-command>source ${hide-sidebar}<enter>"
