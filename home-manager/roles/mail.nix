@@ -35,7 +35,7 @@ in {
   accounts.email.accounts = lib.recursiveUpdate (pkgs.privateValue {} "mail/accounts") {
     hera = {
       passwordCommand = "${pkgs.coreutils}/bin/cat /run/agenix/mail-password";
-      imapnotfiy.onNotify = lib.getExe quick-mail-sync;
+      imapnotify.onNotify = lib.getExe quick-mail-sync;
     };
   };
 
