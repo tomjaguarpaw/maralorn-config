@@ -30,6 +30,7 @@ in {
   dconf.settings = {
     "org/gnome/desktop/notifications" = {
       show-banners = false;
+      show-in-lock-screen = false;
     };
     "org/gnome/shell/keybindings" = {
       "toggle-overview" = [];
