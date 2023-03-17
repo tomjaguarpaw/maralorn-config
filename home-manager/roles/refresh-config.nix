@@ -8,10 +8,10 @@
 in {
   systemd.user = {
     services.update-config = {
-      Unit.Description = "Routine maintenance";
+      Unit.Description = "Fetch config repo";
       Service = {
         Type = "oneshot";
-        ExecStart = "${configGit} pull --ff-only";
+        ExecStart = "${configGit} fetch origin main";
       };
     };
     timers.update-config = {

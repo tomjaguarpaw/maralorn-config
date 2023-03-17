@@ -58,6 +58,7 @@ let
       ++ [
         (makeAutostart "kassandra2")
         (makeAutostart "unlock-ssh")
+        ./roles/refresh-config.nix
         ./roles/firefox.nix
         ./roles/kassandra.nix
         ./roles/mode-switching.nix
@@ -138,7 +139,6 @@ in {
     ./roles/untrusted-env.nix
   ];
   zeus = daily-driver "zeus" [
-    ./roles/hourly-maintenance.nix
     (import ./roles/state.nix "orga")
     ./roles/trusted-env.nix
     ./roles/monitor-config

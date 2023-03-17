@@ -7,6 +7,7 @@ import Control.Exception (catch, onException)
 import Control.Exception qualified as Exception
 import Data.ByteString.Char8 qualified as ByteString
 import Data.ByteString.Lazy qualified as LBS
+import Data.ByteString.Lazy.Char8 qualified as LBSC
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Data.Time qualified as Time
@@ -214,7 +215,14 @@ main = do
         , simpleModule (5 * oneSecond) $ do
             current_kernel <- readlink "/run/current-system/kernel" |> captureTrim
             booted_kernel <- readlink "/run/booted-system/kernel" |> captureTrim
-            when' (current_kernel /= booted_kernel) $ withColor "ffff00" "Booted kernel stale"
+            when' (current_kernel /= booted_kernel) $ withColor yellow "Booted kernel stale"
+        , simpleModule (5 * oneSecond) $ do
+            mode <- read_mode
+            behind <-
+              if mode /= Klausur
+                then tryCmd (git "--no-optional-locks" "-C" git_dir "log" "--oneline" "origin/main" "^main")
+                else pure ""
+            when' (not $ LBS.null behind) $ withColor yellow [i|Config #{show (length (LBSC.lines behind))} commits behind.|]
         , \var -> do
             commit_var <- newTVarIO ""
             system_var <- newTVarIO ""
