@@ -6,6 +6,7 @@ self: super: {
   inherit
     (self.unstable)
     nix # Always good for early nom problem detection.
+    nil # Because old nil with new nix does not get cached.
     home-assistant # hexa says that’s better than stable
     emanote # Haskell
     cabal2nix # Haskell
