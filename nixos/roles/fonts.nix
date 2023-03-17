@@ -11,7 +11,7 @@
       defaultFonts = let
         unicode-fallback = ["Noto Sans Symbols" "Noto Sans Symbols2"];
       in {
-        monospace = ["CozetteVector" "Noto Sans Mono"] ++ unicode-fallback;
+        monospace = ["Symbols Nerd Font Mono" "CozetteVector" "Noto Sans Mono"] ++ unicode-fallback;
         sansSerif = ["B612" "Noto Sans"] ++ unicode-fallback;
         serif = ["Libertinus Serif" "Noto Serif"] ++ unicode-fallback;
       };
@@ -59,6 +59,7 @@
         noto-fonts
         # for unicode fallback
         
+        nerdfonts
         ;
     };
   };
