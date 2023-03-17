@@ -47,7 +47,7 @@ final: _: let
           [mode] <- getArgs
           writeFile "${modeFile}" mode
           activate_mode
-          ignoreFailure $ killall ["GeckoMain", "firefox", ".firefox-wrapped"]
+          ignoreFailure $ killall ["GeckoMain", "firefox", ".firefox-wrapped",".electron-wrapped","signal-desktop"]
       '';
     updateModes =
       pkgs.writeHaskellScript
