@@ -28,6 +28,7 @@
       mouse = {
         hide-when-typing = "yes";
       };
+      tweak.font-monospace-warn = "no";
     };
     enable = true;
   };
