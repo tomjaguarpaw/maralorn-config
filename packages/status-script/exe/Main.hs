@@ -220,7 +220,7 @@ main = do
             mode <- read_mode
             behind <-
               if mode /= Klausur
-                then tryCmd (git "--no-optional-locks" "-C" git_dir "log" "--oneline" "origin/main" "^main")
+                then tryCmd (git "--no-optional-locks" "-C" (git_dir </> "config") "log" "--oneline" "origin/main" "^main")
                 else pure ""
             when' (not $ LBS.null behind) $ withColor yellow [i|Config #{show (length (LBSC.lines behind))} commits behind.|]
         , \var -> do
