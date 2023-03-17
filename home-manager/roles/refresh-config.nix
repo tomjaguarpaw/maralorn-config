@@ -7,16 +7,16 @@
   configGit = "${pkgs.git}/bin/git -C ${configPath}";
 in {
   systemd.user = {
-    services.update-config = {
+    services.refresh-config = {
       Unit.Description = "Fetch config repo";
       Service = {
         Type = "oneshot";
         ExecStart = "${configGit} fetch origin main";
       };
     };
-    timers.update-config = {
+    timers.refresh-config = {
       Unit.Description = "Fetch config updates";
-      Timer.OnCalendar = "minutely";
+      Timer.OnCalendar = "*:0/5:0";
       Install.WantedBy = ["timers.target"];
     };
   };
