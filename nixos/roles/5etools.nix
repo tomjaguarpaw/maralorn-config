@@ -13,7 +13,7 @@ in {
   systemd.services.update-5etools = {
     script = ''
       cd /var/www/5etools
-      if [[ -f ".git" ]]; then
+      if [[ -d ".git" ]]; then
          ${lib.getExe pkgs.git} pull
       else
          ${lib.getExe pkgs.git} clone https://github.com/5etools-mirror-1/5etools-mirror-1.github.io.git .
