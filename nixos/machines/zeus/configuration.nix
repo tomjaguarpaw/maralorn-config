@@ -126,7 +126,6 @@ in {
     };
     firewall.allowedTCPPorts = [
       6600 # mpd
-      5454 # 5etools
     ];
     wireguard.interfaces = {
       m0wire = {
