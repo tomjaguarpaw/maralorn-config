@@ -16,6 +16,7 @@ in {
     ../../roles/metal.nix
     ../../roles/standalone
     ../../roles/server
+    ../../roles/5etools.nix
     ./hardware-configuration.nix
   ];
 
