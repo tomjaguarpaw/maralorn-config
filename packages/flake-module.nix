@@ -53,6 +53,11 @@
           relative = "matrix-client";
         })
         prev.matrix-client;
+      streamly-core = final.callHackageDirect {
+        pkg = "streamly-core";
+        ver = "0.1.0";
+        sha256 = "sha256-hoSV6Q2+X5a7hFnJAArqNPjcMaCVyX9Vz4FcxeJ+jgI=";
+      } {};
     };
   selectHaskellPackages = attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages;
   myHaskellPackages = {
@@ -80,16 +85,25 @@
       name = "builders-configurator";
       source = ./builders-configurator;
     };
-    status-script = cleanCabalPackage {
-      name = "status-script";
-      source = ./status-script;
-      overrides = old: {
-        buildDepends = builtins.attrValues {
-          inherit (stable-pkgs) git khal playerctl notmuch jq tailscale;
-          inherit (unstable-pkgs) nix nix-diff;
-        };
+    status-script = hpkgs:
+      (cleanCabalPackage {
+          name = "status-script";
+          source = ./status-script;
+          overrides = old: {
+            buildDepends = builtins.attrValues {
+              inherit (stable-pkgs) git khal playerctl notmuch jq tailscale;
+              inherit (unstable-pkgs) nix nix-diff;
+            };
+          };
+        }
+        hpkgs)
+      .override {
+        streamly = hpkgs.callHackageDirect {
+          pkg = "streamly";
+          ver = "0.9.0";
+          sha256 = "sha256-eOxVb8qQjZDo1+S7CStqYSExOg2QHWkMY+zlOYqwZak=";
+        } {};
       };
-    };
   };
   hpkgs = unstable-pkgs.haskellPackages.override {
     overrides = haskellPackagesOverlay;

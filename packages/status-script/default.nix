@@ -6,11 +6,12 @@
   directory,
   filepath,
   lib,
-  reflex,
   relude,
   say,
   shh,
   stm,
+  streamly,
+  streamly-core,
   string-interpolate,
   time,
 }:
@@ -26,11 +27,12 @@ mkDerivation {
     bytestring
     directory
     filepath
-    reflex
     relude
     say
     shh
     stm
+    streamly
+    streamly-core
     string-interpolate
     time
   ];
