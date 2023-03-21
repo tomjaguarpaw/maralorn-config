@@ -26,6 +26,7 @@
   stm-containers,
   streamly,
   streamly-bytestring,
+  streamly-core,
   taskwarrior,
   text,
   time,
@@ -65,6 +66,7 @@ mkDerivation {
     stm-containers
     streamly
     streamly-bytestring
+    streamly-core
     taskwarrior
     text
     time

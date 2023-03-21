@@ -71,9 +71,13 @@ import Kassandra.Calendar (
  )
 import Kassandra.Debug (Severity (..), log)
 import Streamly.Data.Fold qualified as FL
+import Streamly.Data.Fold qualified as Fold
+import Streamly.Data.Stream (Stream)
+import Streamly.Data.Stream.Prelude qualified as Stream
 import Streamly.External.ByteString (fromArray, toArray)
 import Streamly.FileSystem.Handle qualified as FS
-import Streamly.Internal.Data.Array.Stream.Foreign (splitOn)
+import Streamly.Internal.Data.Array qualified as Array
+import Streamly.Internal.Data.Stream.Chunked qualified as Chunked
 import Streamly.Internal.FileSystem.File qualified as FSFile
 import Streamly.Memory.Array as Mem (fromList)
 
@@ -91,45 +95,53 @@ loadCache :: Cache -> IO ()
 loadCache cache = do
   dir <- getCacheDir
   let a =
-        S.drain $
-          readJSONStream (cache ^. #icsCache) (dir </> "fileinfo.cache")
-            `async` readJSONStream (cache ^. #uidCache) (dir </> "uid.cache")
+        Stream.fold Fold.drain $
+          Stream.parList
+            id
+            [ readJSONStream (cache ^. #icsCache) (dir </> "fileinfo.cache")
+            , readJSONStream (cache ^. #uidCache) (dir </> "uid.cache")
+            ]
   catch a \(e :: IOException) -> log Warning [i|Error loading calendar Cache:#{e}|]
   log Debug "Cache Loaded"
 
-readJSONStream :: (IsStream t, Eq k, Hashable k, MonadIO (t IO), FromJSON k, FromJSON v) => STM.Map k v -> FilePath -> t IO ()
+readJSONStream :: (Eq k, Hashable k, FromJSON k, FromJSON v) => STM.Map k v -> FilePath -> Stream IO ()
 readJSONStream stmMap fileName =
-  FSFile.withFile fileName ReadMode $
-    S.fold
-      (foldSTMMap stmMap)
-      . asyncly
-      . S.mapMaybe (decodeStrict' . fromArray)
-      . splitOn 10
-      . S.unfold FS.readChunks
+  FSFile.withFile fileName ReadMode $ \handle ->
+    Stream.fromEffect
+      ( Stream.fold
+          (foldSTMMap stmMap)
+          . Stream.mapMaybe (decodeStrict' . fromArray)
+          . Chunked.splitOn 10
+          . Stream.unfold FS.chunkReader
+          $ handle
+      )
 
 saveCache :: Cache -> IO ()
 saveCache cache = do
   dir <- getCacheDir
   createDirectoryIfMissing True dir
   let a =
-        S.drain $
-          writeJSONStream (cache ^. #icsCache) (dir </> "fileinfo.cache")
-            `async` writeJSONStream (cache ^. #uidCache) (dir </> "uid.cache")
+        Stream.fold Fold.drain $
+          Stream.parList
+            id
+            [ writeJSONStream (cache ^. #icsCache) (dir </> "fileinfo.cache")
+            , writeJSONStream (cache ^. #uidCache) (dir </> "uid.cache")
+            ]
   catch a \(e :: IOException) -> log Warning [i|Error writing calendar Cache:#{e}|]
   log Debug "Saved Cache"
 
-writeJSONStream :: (IsStream t, MonadIO (t IO), ToJSON k, ToJSON v) => STM.Map k v -> FilePath -> t IO ()
+writeJSONStream :: (ToJSON k, ToJSON v) => STM.Map k v -> FilePath -> Stream IO ()
 writeJSONStream stmMap fileName =
   FSFile.withFile fileName WriteMode \handle ->
-    liftIO
-      $ S.fold (FS.writeChunks handle)
-        . asyncly
-        . S.intersperse (Mem.fromList [10])
-        . fmap (toArray . toStrict . encode)
-      $ streamSTMMap stmMap
+    Stream.fromEffect
+      ( Stream.fold (FS.writeChunks handle)
+          . Stream.intersperse (Mem.fromList [10])
+          . fmap (toArray . toStrict . encode)
+          $ streamSTMMap stmMap
+      )
 
-streamSTMMap :: forall t k v. (MonadIO (t IO), IsStream t) => STM.Map k v -> t IO (k, v)
-streamSTMMap = join . atomically . UnfoldlM.foldlM' (\x y -> pure $ S.cons y x) S.nil . STM.unfoldlM
+streamSTMMap :: forall k v. STM.Map k v -> Stream IO (k, v)
+streamSTMMap = Stream.concatEffect . atomically . UnfoldlM.foldlM' (\x y -> pure $ Stream.cons y x) Stream.nil . STM.unfoldlM
 
 getCacheDir :: IO FilePath
 getCacheDir = getXdgDirectory XdgCache "kassandra"

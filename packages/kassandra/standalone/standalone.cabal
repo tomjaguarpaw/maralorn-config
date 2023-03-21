@@ -93,6 +93,7 @@ library
     , stm-containers
     , streamly
     , streamly-bytestring
+    , streamly-core
     , taskwarrior
     , text
     , time
