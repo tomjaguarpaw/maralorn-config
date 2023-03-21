@@ -60,7 +60,7 @@ let
         (makeAutostart "unlock-ssh")
         ./roles/refresh-config.nix
         ./roles/firefox.nix
-        ./roles/kassandra.nix
+        #./roles/kassandra.nix
         ./roles/mode-switching.nix
         ./roles/beets.nix
         ./roles/desktop-items.nix
