@@ -4,6 +4,7 @@
   base,
   bytestring,
   directory,
+  exceptions,
   filepath,
   lib,
   relude,
@@ -26,6 +27,7 @@ mkDerivation {
     base
     bytestring
     directory
+    exceptions
     filepath
     relude
     say
