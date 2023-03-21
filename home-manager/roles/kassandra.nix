@@ -23,4 +23,5 @@
   };
 in {
   xdg.configFile.kassandra.source = dhallResult.out;
+  home.packages = [pkgs.kassandra-standalone];
 }
