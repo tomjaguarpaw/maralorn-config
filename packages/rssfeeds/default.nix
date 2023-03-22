@@ -20,6 +20,7 @@
   text,
   time,
   witch,
+  wreq,
 }:
 mkDerivation {
   pname = "rssfeeds";
@@ -47,6 +48,7 @@ mkDerivation {
     text
     time
     witch
+    wreq
   ];
   license = "unknown";
 }

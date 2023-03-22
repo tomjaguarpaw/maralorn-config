@@ -74,6 +74,25 @@ executable mail2rss
 
   default-language: GHC2021
 
+executable folders2rss
+  import:           common-options
+  main-is:          Folders.hs
+  build-depends:
+    , base
+    , containers
+    , extra
+    , feed                >=1.3.0.0
+    , filepattern
+    , relude
+    , string-interpolate
+    , tagsoup
+    , text
+    , time
+    , witch
+    , wreq
+
+  default-language: GHC2021
+
 executable mastodon2rss
   import:           common-options
   main-is:          Mastodon.hs
