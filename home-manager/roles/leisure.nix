@@ -9,7 +9,7 @@
     config ? "",
     user,
   }: let
-    configFile = pkgs.writeText "${name}-config" ''
+    configFile = pkgs.writeText "${name}-newsboat-config" ''
       show-read-feeds no
       show-read-articles no
       datetime-format "%Y-%m-%d"
@@ -20,7 +20,7 @@
       ${config}
     '';
   in
-    pkgs.writeShellScriptBin name "${lib.getExe pkgs.newsboat} -r -C ${configFile} -c ~/.local/share/newsboat/cache.db \"$@\"") {
+    pkgs.writeShellScriptBin name "${lib.getExe pkgs.newsboat} -r -C ${configFile} -c ~/.local/share/newsboat/${name}-cache.db \"$@\"") {
     news = {
       user = "maralorn";
     };
