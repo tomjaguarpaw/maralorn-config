@@ -6,6 +6,7 @@
   exceptions,
   extra,
   feed,
+  filepath,
   filepattern,
   lens,
   lib,
@@ -35,6 +36,7 @@ mkDerivation {
     exceptions
     extra
     feed
+    filepath
     filepattern
     lens
     megaparsec

@@ -82,7 +82,7 @@ executable folders2rss
     , containers
     , extra
     , feed                >=1.3.0.0
-    , filepattern
+    , filepath
     , relude
     , string-interpolate
     , tagsoup
