@@ -435,11 +435,11 @@
         "nixpkgs": []
       },
       "locked": {
-        "lastModified": 1679696328,
-        "narHash": "sha256-a+FQvEAY0noHkzNylITDf/1XFA2t6MjUnySg7+KuOyw=",
+        "lastModified": 1679698313,
+        "narHash": "sha256-qmOa2tQWc+AKBEysZOJY6b96+u0viXCxUGq4k+k5mcY=",
         "ref": "refs/heads/main",
-        "rev": "710c04cc028348366e40aea919615d5dc9e8aa62",
-        "revCount": 210,
+        "rev": "508d5004906906aef3c391914c36387d56e1f782",
+        "revCount": 211,
         "type": "git",
         "url": "ssh://git@hera.m-0.eu/config-secrets"
       },
