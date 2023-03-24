@@ -48,13 +48,21 @@ in {
       };
     };
     refresh-miniflux = {
-      script = "${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header ${virtualHosts.rss}/v1/feeds/refresh";
+      script = ''
+        ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header ${virtualHosts.rss}/v1/feeds/refresh
+        ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-watchfeeds ${virtualHosts.rss}/v1/feeds/refresh
+        ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-softwareupdates ${virtualHosts.rss}/v1/feeds/refresh
+      '';
       after = ["mastodon-digest.service"];
       requires = ["mastodon-digest.service"];
       startAt = "9:00:00";
       serviceConfig = {
         Type = "oneshot";
-        LoadCredential = ["auth-header:${config.age.secrets.miniflux-refresh-auth-header.path}"];
+        LoadCredential = [
+          "auth-header:${config.age.secrets.miniflux-refresh-auth-header.path}"
+          "auth-header-watchfeeds:${config.age.secrets.miniflux-refresh-auth-header-watchfeeds.path}"
+          "auth-header-softwareupdates:${config.age.secrets.miniflux-refresh-auth-header-softwareupdates.path}"
+        ];
       };
     };
   };
