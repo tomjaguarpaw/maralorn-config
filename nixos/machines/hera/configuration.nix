@@ -9,6 +9,7 @@ flake-inputs: {
   backupJobNames = map (name: "borgbackup-job-${name}") (lib.attrNames backupJobs);
 in {
   imports = [
+    (flake-inputs.secrets.lib.vpn "hera")
     (import ../../roles/home-manager.nix flake-inputs)
     (import ./mail.nix flake-inputs)
     (import ../../roles/headscale.nix flake-inputs)
