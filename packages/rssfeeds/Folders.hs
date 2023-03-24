@@ -40,7 +40,7 @@ extractIndex = \url ->
     . (^. Wreq.responseBody)
     <$> Wreq.get [i|#{url}|]
 
-collectEntries :: Text -> (Text, Text, UTCTime) -> IO [Feed.Entry]
+collectEntries :: Text -> (Text, Text, UTCTime) -> IO [(Feed.Entry, UTCTime)]
 collectEntries = \url (link, title, date) ->
   if Text.isSuffixOf "/" link
     then do
@@ -56,6 +56,7 @@ collectEntries = \url (link, title, date) ->
             )
               { Feed.entryLinks = [Feed.nullLink [i|#{url}#{link}|]]
               }
+          , date
           )
         | ext `notElem` hiddenTypes
         ]
@@ -70,10 +71,11 @@ main :: IO ()
 main = do
   [root_dir] <- getArgs
   folders <- extractIndex (toText root_dir)
-  feeds <- forM folders \x@(link, title, date) -> do
+  feeds <- forM folders \x@(link, title, date') -> do
     let path = Text.dropAround (== '/') link
     entries <- collectEntries [i|#{root_dir}/|] x
-    let emptyFeed =
+    let date = List.maximum (date' : fmap snd entries)
+        emptyFeed =
           Feed.nullFeed
             [i|#{path}-#{timestamp date}|]
             (Feed.TextString title)
@@ -82,7 +84,7 @@ main = do
           fromMaybe (error "Could not produce feed.") $
             Feed.textFeed
               emptyFeed
-                { Feed.feedEntries = entries
+                { Feed.feedEntries = fmap fst entries
                 , Feed.feedLinks = [Feed.nullLink [i|#{root_dir}/#{link}|]]
                 }
     writeFileLText [i|#{title}.xml|] feed
