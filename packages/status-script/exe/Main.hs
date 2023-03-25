@@ -1,6 +1,3 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-
-{-# HLINT ignore "Avoid lambda" #-}
 module Main (main) where
 
 import Control.Concurrent qualified as Concurrent
@@ -37,7 +34,7 @@ import System.IO.Unsafe qualified as Unsafe
 
 data Mode = Klausur | Orga | Communication | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
-load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq", "tailscale"]
+load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq"]
 
 main = oldmain
 
@@ -270,7 +267,7 @@ oldmain = do
             when' (not $ null unpushed) do withColor yellow [i|Unpushed: #{Text.intercalate " " unpushed}|]
         , simpleModule (5 * oneSecond) do
             let hosts = ["hera", "fluffy"]
-            unreachable_hosts <- flip filterM hosts \host -> isLeft <$> (Shh.tryFailure do (tailscale "ping" "-c" "1" (toString host)) &> Shh.devNull)
+            unreachable_hosts <- flip filterM hosts \host -> isLeft <$> (Shh.tryFailure do (exe "/run/wrappers/bin/ping" "-c" "1" (toString host)) &> Shh.devNull)
             when' ([] /= unreachable_hosts) do withColor red [i|No tunnel to #{Text.intercalate ", " unreachable_hosts}|]
         , simpleModule (5 * oneSecond) $ do
             current_kernel <- readlink "/run/current-system/kernel" |> captureTrim
