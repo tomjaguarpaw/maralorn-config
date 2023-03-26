@@ -90,6 +90,7 @@ in {
           space = "all";
           tab = "all";
         };
+        rulers = [80 100 120];
         lsp.display-messages = true;
         indent-guides.render = true;
         cursorline = true;
