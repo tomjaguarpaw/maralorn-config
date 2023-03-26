@@ -33,6 +33,16 @@ in {
         enabled = off
       '';
     };
+    irc = {
+      target = ".weechat/irc.conf";
+      text = ''
+        [server]
+        hackint.nicks = "maralorn-irc,irclorn"
+        hackint.addresses = "irc.hackint.org/6697"
+        hackint.ssl = on
+        hackint.ipv6 = on
+      '';
+    };
     weechat = {
       target = ".weechat/weechat.conf";
       text = ''
