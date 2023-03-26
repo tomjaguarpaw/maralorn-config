@@ -1,10 +1,7 @@
 {pkgs, ...}: let
   calendars = pkgs.privateValue [] "calendars";
-  ui = pkgs.writeShellScriptBin "calendar" ''
-    ikhal -d Serien
-  '';
 in {
-  home.packages = [pkgs.khal ui];
+  home.packages = [pkgs.khal];
   xdg.configFile."khal/config".text = ''
     [locale]
     dateformat = "%Y-%m-%d"

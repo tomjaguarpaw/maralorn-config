@@ -11,7 +11,7 @@ in [
   {
     Orga = [
       {Kassandra = fork "kassandra2";}
-      {Kalendar = "calendar";}
+      {Kalendar = "ikhal";}
       {Habitica = fork "firefox https://habitica.com";}
       {Tasks = "tasksh";}
       {Meditate = "meditate";}
