@@ -76,9 +76,9 @@ executable mail2rss
 
   default-language: GHC2021
 
-executable folders2rss
+executable fancyindex2rss
   import:           common-options
-  main-is:          Folders.hs
+  main-is:          FancyIndex.hs
   build-depends:
     , base
     , containers
