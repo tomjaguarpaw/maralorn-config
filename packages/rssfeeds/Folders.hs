@@ -9,108 +9,40 @@ import Network.Wreq qualified as Wreq
 import Relude
 import Relude.Extra ((^.))
 import System.FilePath qualified as FilePath
+import System.FilePath.Posix ((<.>))
 import Text.Atom.Feed qualified as Feed
 import Text.Atom.Feed.Export qualified as Feed
 import Text.HTML.TagSoup qualified as TagSoup
 import Witch (into)
 
-extractItem :: [TagSoup.Tag Text] -> Maybe (Text, Text, UTCTime)
-extractItem x = case ( List.firstJust extractFolder
-                        . filter (TagSoup.isTagOpenName "a")
-                        $ x
-                     , TagSoup.maybeTagText
-                        <=< ( find TagSoup.isTagText
-                                . dropWhile
-                                  (\tag -> not (TagSoup.isTagOpenName "td" tag && "date" == TagSoup.fromAttrib "class" tag))
-                            )
-                        $ x
-                     ) of
-  (Just (link, title), Just date_str)
-    | Just date <- Time.parseTimeM True Time.defaultTimeLocale "%Y-%b-%d %H:%M" (toString date_str) ->
-        Just (link, title, date)
-  _ -> Nothing
+data Entry = MkEntry
+  { link :: Text
+  , title :: Text
+  , time :: UTCTime
+  }
 
-extractIndex :: Text -> IO [(Text, Text, UTCTime)]
-extractIndex = \url ->
-  mapMaybe extractItem
-    . List.split (TagSoup.isTagOpenName "tr")
-    . dropWhile (not . TagSoup.isTagOpenName "tbody")
-    . TagSoup.parseTags
-    . decodeUtf8
-    . (^. Wreq.responseBody)
-    <$> Wreq.get [i|#{url}|]
+type Tag = TagSoup.Tag Text
 
-collectEntries :: Text -> (Text, Text, UTCTime) -> IO [(Feed.Entry, UTCTime)]
-collectEntries = \url (link, title, date) ->
-  if Text.isSuffixOf "/" link
-    then do
-      entries <- extractIndex [i|#{url}#{link}|]
-      join <$> forM entries (collectEntries [i|#{url}#{link}|])
-    else do
-      let ext = Text.dropAround (== '.') . toText . FilePath.takeExtension . toString $ link
-      pure
-        [ ( ( Feed.nullEntry
-                (Text.dropAround (== '/') link)
-                (Feed.TextString title)
-                (timestamp date)
-            )
-              { Feed.entryLinks = [Feed.nullLink [i|#{url}#{link}|]]
-              }
-          , date
-          )
-        | ext `notElem` hiddenTypes
-        ]
+extractTimeFromTableRow :: [Tag] -> Maybe UTCTime
+extractTimeFromTableRow =
+  ( dropWhile (not . isDateTag)
+      <&> find TagSoup.isTagText
+  )
+    >=> TagSoup.maybeTagText
+    >=> parseTime "%Y-%b-%d %H:%M"
 
--- Scrape an nginx fancy index.
--- Create one RSS feed for every subfolder of the given folder.
+isDateTag :: Tag -> Bool
+isDateTag = \tag ->
+  TagSoup.isTagOpenName "td" tag
+    && "date" == TagSoup.fromAttrib "class" tag
 
-hiddenTypes :: [Text]
-hiddenTypes = ["txt", "srt", "sub", "idx"]
+extractFolderFromTableRow :: [Tag] -> Maybe (Text, Text)
+extractFolderFromTableRow =
+  filter (TagSoup.isTagOpenName "a")
+    <&> List.firstJust extractFolderFromATag
 
-main :: IO ()
-main = do
-  [root_dir] <- getArgs
-  folders <- extractIndex (toText root_dir)
-  feeds <- forM folders \x@(link, title, date') -> do
-    let path = Text.dropAround (== '/') link
-    entries <- collectEntries [i|#{root_dir}/|] x
-    let date = List.maximum (date' : fmap snd entries)
-        emptyFeed =
-          Feed.nullFeed
-            [i|#{path}-#{timestamp date}|]
-            (Feed.TextString title)
-            (timestamp date)
-        feed =
-          fromMaybe (error "Could not produce feed.") $
-            Feed.textFeed
-              emptyFeed
-                { Feed.feedEntries = fmap fst entries
-                , Feed.feedLinks = [Feed.nullLink [i|#{root_dir}/#{link}|]]
-                }
-    writeFileLText [i|#{title}.xml|] feed
-    pure [i|<li><a href="#{path}.xml">#{title} (#{length entries} entries, newest from #{timestamp date})</a></li>|]
-  writeFileText [i|index.html|] $
-    Text.unlines $
-      [ "<!DOCTYPE html>"
-      , "<html>"
-      , "<head>"
-      , "<title>Available RSS Feeds</title>"
-      , "</head>"
-      , "<body>"
-      , "<h1>Available RSS Feeds</h1>"
-      , "<ul>"
-      ]
-        ++ feeds
-        ++ [ "</ul>"
-           , "</body>"
-           , "</html>"
-           ]
-
-timestamp :: UTCTime -> Text
-timestamp = into . Time.formatTime Time.defaultTimeLocale "%Y-%m-%d %H:%M"
-
-extractFolder :: TagSoup.Tag Text -> Maybe (Text, Text)
-extractFolder = \tag ->
+extractFolderFromATag :: Tag -> Maybe (Text, Text)
+extractFolderFromATag = \tag ->
   let
     title = TagSoup.fromAttrib "title" tag
     href = TagSoup.fromAttrib "href" tag
@@ -118,3 +50,139 @@ extractFolder = \tag ->
     if Text.null title || Text.null href
       then Nothing
       else Just (href, title)
+
+parseTime :: Text -> Text -> Maybe UTCTime
+parseTime = \format time_text ->
+  Time.parseTimeM
+    True
+    Time.defaultTimeLocale
+    (toString format)
+    (toString time_text)
+
+extractEntryFromTableRow :: [Tag] -> Maybe Entry
+extractEntryFromTableRow = \row ->
+  (\(link, title) time -> MkEntry{..})
+    <$> (extractFolderFromTableRow row)
+    <*> (extractTimeFromTableRow row)
+
+fetchIndex :: Text -> IO [Entry]
+fetchIndex = \url ->
+  mapMaybe extractEntryFromTableRow
+    . List.split (TagSoup.isTagOpenName "tr")
+    . dropWhile (not . TagSoup.isTagOpenName "tbody")
+    . TagSoup.parseTags
+    . decodeUtf8
+    . (^. Wreq.responseBody)
+    <$> Wreq.get (toString url)
+
+getExtension :: Text -> Text
+getExtension =
+  toString
+    <&> FilePath.takeExtension
+    <&> toText
+    <&> Text.dropAround (== '.')
+
+collectEntries :: Text -> Entry -> IO [(Feed.Entry, UTCTime)]
+collectEntries url entry
+  | Text.isSuffixOf "/" entry.link = do
+      entries <- fetchIndex path
+      join <$> forM entries (collectEntries path)
+  | ext `notElem` hiddenTypes = pure [(feedEntry, entry.time)]
+  | otherwise = pure []
+ where
+  path = url <> entry.link
+  ext = getExtension entry.link
+  feedEntry =
+    ( Feed.nullEntry
+        (Text.dropAround (== '/') entry.link)
+        (Feed.TextString entry.title)
+        (timestamp entry.time)
+    )
+      { Feed.entryLinks = [Feed.nullLink path]
+      }
+
+hiddenTypes :: [Text]
+hiddenTypes = ["txt", "srt", "sub", "idx"]
+
+data FeedInfo = MkFeedInfo
+  { path :: Text
+  , title :: Text
+  , size :: Int
+  , time :: UTCTime
+  }
+
+{- | Scrape an nginx fancy index.
+ | Create one RSS feed for every subfolder of the given folder.
+-}
+main :: IO ()
+main = do
+  [root_dir_str] <- getArgs
+  let root_dir = [i|#{root_dir_str}/|]
+  folders <- fetchIndex root_dir
+  feeds <- forM folders \entry -> do
+    let path = Text.dropAround (== '/') entry.link
+    entries <- collectEntries root_dir entry
+
+    -- The Timestamp reported from nginx fancy index does not report changes in subsubfolders.
+    -- So we calculate it ourselves.
+    let time = List.maximum (entry.time : fmap snd entries)
+        emptyFeed =
+          Feed.nullFeed
+            [i|#{path}-#{timestamp time}|]
+            (Feed.TextString entry.title)
+            (timestamp time)
+        feed =
+          fromMaybe (error "Could not produce feed.") $
+            Feed.textFeed
+              emptyFeed
+                { Feed.feedEntries = fmap fst entries
+                , Feed.feedLinks = [Feed.nullLink (root_dir <> entry.link)]
+                }
+    writeFileLText (toString entry.title <.> "xml") feed
+    pure
+      MkFeedInfo
+        { path = path <> ".xml"
+        , title = entry.title
+        , size = length entries
+        , time
+        }
+  writeFileText [i|index.html|] (mkFeedIndex feeds)
+
+mkFeedIndex :: [FeedInfo] -> Text
+mkFeedIndex = \feeds ->
+  Text.unlines $
+    [ "<!DOCTYPE html>"
+    , "<html>"
+    , "<head>"
+    , "<title>Available RSS Feeds</title>"
+    , "</head>"
+    , "<body>"
+    , "<h1>Available RSS Feeds</h1>"
+    , "<i>"
+    , "Report generate by the"
+    , "< a href =\"https://git.maralorn.de/nixos-config/tree/packages/rssfeeds/Folders.hs\">"
+    , "folders2rss"
+    , "</a>"
+    , "script."
+    , "</i>"
+    , "<ul>"
+    ]
+      ++ concatMap
+        ( \feedInfo ->
+            [ "<li>"
+            , makeFeedLink feedInfo
+            , "</li>"
+            ]
+        )
+        feeds
+      ++ [ "</ul>"
+         , "</body>"
+         , "</html>"
+         ]
+
+makeFeedLink :: FeedInfo -> Text
+makeFeedLink = \MkFeedInfo{..} ->
+  [i|a href="#{path}">#{title} (Entries: #{size} Newest: #{timestamp time})</a>|]
+
+timestamp :: UTCTime -> Text
+timestamp = into . Time.formatTime Time.defaultTimeLocale "%Y-%m-%d %H:%M"

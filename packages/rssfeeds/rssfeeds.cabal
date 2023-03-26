@@ -12,6 +12,7 @@ build-type:    Simple
 common common-options
   ghc-options:        -Wall -Wcompat
   default-extensions:
+    NoFieldSelectors
     NoImplicitPrelude
     BlockArguments
     DataKinds
@@ -26,6 +27,7 @@ common common-options
     OverloadedStrings
     PartialTypeSignatures
     QuasiQuotes
+    RecordWildCards
     ScopedTypeVariables
     TupleSections
     ViewPatterns

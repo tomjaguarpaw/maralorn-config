@@ -1,3 +1,8 @@
+{-# LANGUAGE FieldSelectors #-}
+
+-- Legacy code, which works fine.
+-- Can refactor if needed.
+
 module Main (main) where
 
 import Data.List.Extra qualified as L
