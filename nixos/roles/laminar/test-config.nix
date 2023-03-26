@@ -103,7 +103,7 @@ in {
               when diff_is_small switch
               current_commit <- BSC.strip <$> (exitOnError "Current system is from a dirty commit." do readFileBS "/run/current-system/config-commit")
               new_commit <- BSC.strip <$> readFileBS [i|#{new_system}/config-commit|]
-              is_direct_forward <- ("" ==) <$> (git ["log", "-n1", "--oneline", [i|^#{new_commit}|], decodeUtf8 current_commit])
+              is_direct_forward <- ("" ==) <$> exitOnError "Unknown commit." (git ["log", "-n1", "--oneline", [i|^#{new_commit}|], decodeUtf8 current_commit])
               when is_direct_forward switch
           '';
       in
