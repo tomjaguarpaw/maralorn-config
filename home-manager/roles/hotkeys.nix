@@ -92,6 +92,7 @@ in [
       "Private Browser" = fork "firefox --private-window";
       Chromium = fork "chromium";
       "Software-Updates" = "software-updates";
+      News = "news";
       Watchfeeds = "watchfeeds";
       Deluge = fork "deluge";
       VoxMachina = "mpv https://www.youtube.com/playlist?list=PL1tiwbzkOjQz7D0l_eLJGAISVtcL7oRu_";
