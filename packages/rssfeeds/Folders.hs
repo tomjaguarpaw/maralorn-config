@@ -160,7 +160,7 @@ mkFeedIndex = \feeds ->
     , "<h1>Available RSS Feeds</h1>"
     , "<i>"
     , "Report generate by the"
-    , "< a href =\"https://git.maralorn.de/nixos-config/tree/packages/rssfeeds/Folders.hs\">"
+    , "<a href =\"https://git.maralorn.de/nixos-config/tree/packages/rssfeeds/Folders.hs\">"
     , "folders2rss"
     , "</a>"
     , "script."
@@ -182,7 +182,7 @@ mkFeedIndex = \feeds ->
 
 makeFeedLink :: FeedInfo -> Text
 makeFeedLink = \MkFeedInfo{..} ->
-  [i|a href="#{path}">#{title} (Entries: #{size} Newest: #{timestamp time})</a>|]
+  [i|<a href="#{path}">#{title}</a> Entries: #{size} Newest: #{timestamp time}|]
 
 timestamp :: UTCTime -> Text
 timestamp = into . Time.formatTime Time.defaultTimeLocale "%Y-%m-%d %H:%M"
