@@ -8,7 +8,7 @@
     pkgs.writeHaskellScript
     {
       name = "mail2rss";
-      bins = [pkgs.notmuch pkgs.mblaze pkgs.isync pkgs.logfeed];
+      bins = [pkgs.notmuch pkgs.mblaze pkgs.isync pkgs.rssfeeds];
       imports = ["System.Environment (setEnv)"];
     } ''
       main = do

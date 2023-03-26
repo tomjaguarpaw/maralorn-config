@@ -94,7 +94,7 @@ in {
       log2rss = {
         Unit.Description = "weechat2rss";
         Service = {
-          ExecStart = "${pkgs.logfeed}/bin/weechat2rss /var/www/rss/chats.xml";
+          ExecStart = "${pkgs.rssfeeds}/bin/weechat2rss /var/www/rss/chats.xml";
           Type = "oneshot";
         };
       };

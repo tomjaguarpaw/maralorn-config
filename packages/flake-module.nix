@@ -75,7 +75,7 @@
       name = "wizards-dialog";
       source = ./wizards-dialog;
     };
-    logfeed = cleanCabalPackage {
+    rssfeeds = cleanCabalPackage {
       name = "rssfeeds";
       source = ./rssfeeds;
     };

@@ -40,7 +40,7 @@ in {
         ${lib.getExe pkgs.mastodon_digest} -o /var/www/rss/mastodon/$now-home-feed-highlights -n 24 -t normal
         ${lib.getExe pkgs.mastodon_digest} -o /var/www/rss/mastodon/$now-read-all-list -n 24 -t all --theme no-boosts -f list:3811
         ${lib.getExe pkgs.mastodon_digest} -o /var/www/rss/mastodon/$now-tags -n 24 -t all -f list:4160
-        ${pkgs.logfeed}/bin/mastodon2rss /var/www/rss/mastodon.xml /var/www/rss/mastodon
+        ${pkgs.rssfeeds}/bin/mastodon2rss /var/www/rss/mastodon.xml /var/www/rss/mastodon
       '';
       serviceConfig = {
         Type = "oneshot";
