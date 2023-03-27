@@ -12,5 +12,5 @@ self: super: let
   };
 in {
   inherit (unfree) discord zoom-us minecraft teamviewer steam androidsdk_9_0;
-  inherit (unstableUnfree) minecraft-server;
+  inherit (unstableUnfree) factorio minecraft-server;
 }
