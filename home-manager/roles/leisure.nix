@@ -43,7 +43,7 @@ in {
         ExecStart = toString (pkgs.writeShellScript "update-plans" ''
           ${commands.software-updates}/bin/software-updates -x reload
         '');
-        Restart = "always";
+        Restart = "on-failure";
       };
     };
     timers.update-software-feeds = {
