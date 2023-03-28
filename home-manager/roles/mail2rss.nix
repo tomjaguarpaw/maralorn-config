@@ -26,14 +26,14 @@
 in {
   systemd.user = {
     timers.mail2rss = {
-      Timer.OnCalendar = "8:55";
+      Timer.OnCalendar = "23:58";
       Install.WantedBy = ["timers.target"];
     };
     services = {
       mail2rss = {
         Unit.Description = "Mail to rss exporter";
         Service = {
-          Environment = "PATH=${lib.makeBinPath [pkgs.coreutils config.programs.rbw.package]}";
+          Environment = "PATH=${lib.makeBinPath [pkgs.coreutils]}";
           ExecStart = "${mail2rss}/bin/mail2rss";
           Type = "oneshot";
         };

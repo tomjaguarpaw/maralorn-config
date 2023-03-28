@@ -97,7 +97,7 @@ in {
 
   systemd.user = {
     timers.log2rss = {
-      Timer.OnCalendar = "8:55";
+      Timer.OnCalendar = "23:58";
       Install.WantedBy = ["timers.target"];
     };
     services = {
