@@ -18,7 +18,7 @@
     	gap_y = 1,
     	minimum_height = 5,
     	minimum_width = 2,
-    	max_text_width = 26,
+    	max_text_width = 25,
     	net_avg_samples = 2,
     	no_buffers = true,
     	out_to_console = false,
@@ -49,7 +49,7 @@
       gap_x = 1,
     ''}
     conky.text = [[
-    $color0''${time %Y-%m-%d KW%V %a %H:%M}
+    ''${time %Y-%m-%d KW%V %a %H:%M}
     $color1$hr
     ''${catp /run/user/1000/status-bar}
     ]]
