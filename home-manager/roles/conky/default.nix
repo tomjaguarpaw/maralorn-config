@@ -43,7 +43,7 @@
   '';
   status = builtins.toFile "conky-status.conf" ''
     ${config ''
-       alignment = 'top_left',
+      alignment = 'top_left',
       text_buffer_size = 2047,
       update_interval = 0.25,
       gap_x = 1,
@@ -59,7 +59,7 @@
   in
     builtins.toFile "conky-monitor.conf" ''
       ${config ''
-         alignment = 'bottom_left',
+        alignment = 'bottom_left',
         gap_x = 23,
         update_interval = 5.0,
       ''}

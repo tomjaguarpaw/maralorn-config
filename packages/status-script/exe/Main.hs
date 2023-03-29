@@ -333,7 +333,7 @@ oldmain = do
         , simpleModule (1 * oneSecond) do
             now <- Time.getCurrentTime
             notifications <- processNotifications . fromRight "" <$> Exception.try @Exception.IOException (readFileBS [i|/home/maralorn/.notifications/#{Time.formatTime Time.defaultTimeLocale "%Y-%m-%d" now}.log|])
-            when' (not $ Text.null notifications) $ withColor red (Text.take 25 (Text.drop ((`rem` 15) . round . Time.utctDayTime $ now) "NOTIFICATIONS! NOTIFICATIONS! NOTIFICATIONS!") <> "\n" <> notifications)
+            when' (not $ Text.null notifications) $ withColor red (Text.take 24 (Text.drop ((`rem` 15) . round . Time.utctDayTime $ now) "NOTIFICATIONS! NOTIFICATIONS! NOTIFICATIONS!") <> "\n" <> notifications)
         ]
   foldConcurrently_
     [ void $ simpleModule oneSecond (getMode home) mode_var
@@ -347,6 +347,7 @@ processNotifications =
     . fmap
       ( Text.replace "&gt;" ">"
           . Text.replace "&lt;" "<"
+          . Text.replace "#" "\\#"
           . Text.intercalate ":${color0} "
       )
     . filter (\x -> length x >= 2)
