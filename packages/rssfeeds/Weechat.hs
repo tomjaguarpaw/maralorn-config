@@ -169,7 +169,7 @@ logToFeedEntry now =
       else Nothing
  where
   cutoff =
-    toText $ T.formatTime T.defaultTimeLocale "%Y-%m-%d 19:50" $ yesterday now
+    toText $ T.formatTime T.defaultTimeLocale "%Y-%m-%d 23:55" $ yesterday now
   msgFilter msg = [i|#{wlDate msg} #{wlTime msg}|] >= cutoff
   is_me weechat_line = Text.isInfixOf "maralorn" (weechat_line.wlNick)
 
