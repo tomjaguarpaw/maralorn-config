@@ -130,11 +130,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1679937399,
-        "narHash": "sha256-2ZmCGM5Zjp2MOZg08KkeDPAOqFUv95NKBRB/Q1Yv+14=",
+        "lastModified": 1680101351,
+        "narHash": "sha256-IT94gNV8BGRK1U3vniqlaDHbsP3636vV8E3gszPT4wM=",
         "owner": "srid",
         "repo": "emanote",
-        "rev": "4512e8a5af0a931ac0254ad6a29d2414a5f1a77a",
+        "rev": "b798e67652b0e54bf7dd0dd8f8709da9c389ec47",
         "type": "github"
       },
       "original": {
@@ -214,11 +214,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1677866165,
-        "narHash": "sha256-Wb7bRlWu1uwpUPh2QRn3ms25RCcH3UPw+6jApdMPjBA=",
+        "lastModified": 1680123135,
+        "narHash": "sha256-uymF+qX6qOY4dFx9sfFOaKdsHR108fGQxX/gvYUwoYM=",
         "owner": "mweinelt",
         "repo": "nur-packages",
-        "rev": "92f3eea8772a2d0db295dc7a7a56983eb7a180fa",
+        "rev": "93ab40bca3132a15c8fd20a8e491bf9eb4b77ec1",
         "type": "github"
       },
       "original": {
@@ -308,11 +308,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1679944521,
-        "narHash": "sha256-SipdMlnCv/pDvo/j7ctEGqKvQSmn2gcoHSJgIVysXbk=",
+        "lastModified": 1680070330,
+        "narHash": "sha256-aoT2YZCd9LEtiEULFLIF0ykKydgE72X8gw/k9/pRS5I=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "82ecc5b88ffed8c0317c064dfd8f82f4b9882100",
+        "rev": "a6aa8174fa61e55bd7e62d35464d3092aefe0421",
         "type": "github"
       },
       "original": {
