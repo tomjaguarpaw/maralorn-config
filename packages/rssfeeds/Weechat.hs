@@ -142,15 +142,17 @@ timestamp = toText . T.formatTime T.defaultTimeLocale "%Y-%m-%d %H:%M"
 
 blockList :: [Text]
 blockList =
-  [ "#haskell"
+  [ "#buchhaltung"
+  , "#ci-monitoring"
+  , "#fluffy warnung"
   , "#general"
-  , "#home manager"
+  , "#haskell"
   , "#hledger"
+  , "#home manager"
+  , "#krebs"
   , "#nix _ nixos"
   , "#nix _ nixpkgs _ nixos dev"
   , "#nix offtopic"
-  , "#buchhaltung"
-  , "#krebs"
   ]
 
 logToFeedEntry :: T.UTCTime -> Log -> Maybe Entry

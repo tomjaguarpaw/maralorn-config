@@ -10,13 +10,13 @@ import Text.Atom.Feed qualified as Feed
 import Text.Atom.Feed.Export qualified as Feed
 import Witch
 
-timestamp :: Time.UTCTime -> Text
+timestamp :: Time.ZonedTime -> Text
 timestamp = into . Time.formatTime Time.defaultTimeLocale "%Y-%m-%d %H:%M"
 
-todayMask :: Time.UTCTime -> Directory.FilePattern
+todayMask :: Time.ZonedTime -> Directory.FilePattern
 todayMask = Time.formatTime Time.defaultTimeLocale "%Y-%m-%d-*/index.html"
 
-feedFromFileName :: Time.UTCTime -> Text -> Feed.Entry
+feedFromFileName :: Time.ZonedTime -> Text -> Feed.Entry
 feedFromFileName now file_name =
   ( Feed.nullEntry
       folder_name
@@ -30,7 +30,7 @@ feedFromFileName now file_name =
   folder_name =
     Text.dropEnd 11 file_name
 
-makeFeed :: Time.UTCTime -> [FilePath] -> Maybe LazyText.Text
+makeFeed :: Time.ZonedTime -> [FilePath] -> Maybe LazyText.Text
 makeFeed now file_names =
   Feed.textFeed emptyFeed{Feed.feedEntries = feedFromFileName now . into <$> file_names}
  where
@@ -43,7 +43,7 @@ makeFeed now file_names =
 main :: IO ()
 main = do
   [out_file, dir] <- getArgs
-  now <- Time.getCurrentTime
+  now <- Time.getZonedTime
   file_names <- Directory.getDirectoryFiles dir [todayMask now]
   whenJust (makeFeed now file_names) $
     \file -> writeFileLText out_file file
