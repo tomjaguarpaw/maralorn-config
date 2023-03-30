@@ -130,6 +130,9 @@ in {
     firewall.allowedTCPPorts = [
       6600 # mpd
     ];
+    firewall.allowedUDPPorts = [
+      34197 # factorio
+    ];
     wireguard.interfaces = {
       m0wire = {
         allowedIPsAsRoutes = false;
