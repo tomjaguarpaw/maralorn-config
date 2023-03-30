@@ -153,6 +153,11 @@ blockList =
   , "#nix _ nixos"
   , "#nix _ nixpkgs _ nixos dev"
   , "#nix offtopic"
+  , "#agenix"
+  , "#devenv"
+  , "#ema apps"
+  , "#hercules ci"
+  , "#nixos-mailserver"
   ]
 
 logToFeedEntry :: T.UTCTime -> Log -> Maybe Entry
