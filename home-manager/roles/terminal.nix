@@ -16,7 +16,7 @@
         include =
           (pkgs.runCommandLocal "foot-theme" {} ''
             cat ${pkgs.foot.themes}/share/foot/themes/catppuccin > $out
-            echo "background=000000\nalpha=0.9" >> $out
+            echo -e "background=000000\nalpha=0.9" >> $out
           '')
           .outPath;
       };
