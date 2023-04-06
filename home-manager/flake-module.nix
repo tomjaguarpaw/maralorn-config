@@ -26,7 +26,7 @@
       modules = [
         config
         inputs.emanote.homeManagerModule
-        inputs.impermanence.nixosModules.home-manager.impermanence
+        inputs.nix-index-database.hmModules.nix-index
       ];
     });
     buildModesForHost = host: modes:

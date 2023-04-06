@@ -19,6 +19,7 @@
   home.stateVersion = "22.05";
 
   programs = {
+    nix-index.enable = true;
     home-manager.enable = true;
     exa = {
       enable = true;
