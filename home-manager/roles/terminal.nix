@@ -13,11 +13,12 @@
     settings = {
       main = {
         font = "Symbols Nerd Font Mono:pixelsize=12,CozetteVector:pixelsize=12";
-        include = toString (pkgs.writeText "foot-theme" ''
-          ${builtins.readFile "${pkgs.foot.themes}/share/foot/themes/catppuccin"}
-          background=000000
-          alpha=0.9
-        '');
+        include =
+          (pkgs.runCommandLocal "foot-theme" {} ''
+            cat ${pkgs.foot.themes}/share/foot/themes/catppuccin > $out
+            echo "background=000000\nalpha=0.9" >> $out
+          '')
+          .outPath;
       };
       csd = {
         preferred = "client";
