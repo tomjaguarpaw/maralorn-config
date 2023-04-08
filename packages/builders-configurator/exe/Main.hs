@@ -31,6 +31,25 @@ Hera         729
 
 -}
 
+builderInfos :: Map.Map Text Natural
+builderInfos =
+  Map.fromList
+    [ ("remote-builder", 32)
+    , ("nixbuild.net", 100)
+    , ("zeus-builder", 12)
+    , ("fluffy-builder", 2)
+    ]
+
+builderConfigs :: Map.Map Text [(Text, Reachable)]
+builderConfigs =
+  Map.fromList
+    -- don’t use fluffy on hera, it OOM kills builds
+    [ ("hera", [("zeus-builder", Check), ("remote-builder", Always), ("nixbuild.net", Always)])
+    , ("apollo", [("zeus-builder", Check), ("fluffy-builder", Check), ("remote-builder", Always), ("nixbuild.net", Always)])
+    , ("fluffy", [("zeus-builder", Check), ("remote-builder", Always), ("nixbuild.net", Always)])
+    , ("zeus", [("remote-builder", Always), ("fluffy-builder", Check), ("nixbuild.net", Always)])
+    ]
+
 systems :: [Text]
 systems = ["x86_64-linux", "i686-linux"]
 supportedFeatures :: [Text]
@@ -61,23 +80,6 @@ sshHostToDNS = \case
   "zeus-builder" -> "zeus.vpn.m-0.eu"
   "fluffy-builder" -> "fluffy.vpn.m-0.eu"
   host -> error [i|No dns name none for ssh host #{host}|]
-
-builderInfos :: Map.Map Text Natural
-builderInfos =
-  Map.fromList
-    [ ("remote-builder", 32)
-    , ("nixbuild.net", 100)
-    , ("zeus-builder", 12)
-    , ("fluffy-builder", 2)
-    ]
-builderConfigs :: Map.Map Text [(Text, Reachable)]
-builderConfigs =
-  Map.fromList
-    [ ("hera", [("zeus-builder", Check), ("fluffy-builder", Check), ("remote-builder", Always), ("nixbuild.net", Always)])
-    , ("apollo", [("zeus-builder", Check), ("fluffy-builder", Check), ("remote-builder", Always), ("nixbuild.net", Always)])
-    , ("fluffy", [("zeus-builder", Check), ("remote-builder", Always), ("nixbuild.net", Always)])
-    , ("zeus", [("remote-builder", Always), ("fluffy-builder", Check), ("nixbuild.net", Always)])
-    ]
 
 commaList :: [Text] -> Text
 commaList = Text.intercalate ","
