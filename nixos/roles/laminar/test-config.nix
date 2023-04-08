@@ -69,6 +69,7 @@ in {
       unitConfig.X-StopOnRemoval = false;
       serviceConfig = {
         Type = "oneshot";
+        Restart = "on-failure";
       };
       script = let
         user = "maralorn";
