@@ -43,11 +43,11 @@ builderInfos =
 builderConfigs :: Map.Map Text [(Text, Reachable)]
 builderConfigs =
   Map.fromList
-    -- don’t use fluffy on hera, it OOM kills builds
+    -- don’t use fluffy as remote builder, it’s not beefy enough
     [ ("hera", [("zeus-builder", Check), ("remote-builder", Always), ("nixbuild.net", Always)])
-    , ("apollo", [("zeus-builder", Check), ("fluffy-builder", Check), ("remote-builder", Always), ("nixbuild.net", Always)])
+    , ("apollo", [("zeus-builder", Check), ("remote-builder", Always), ("nixbuild.net", Always)])
     , ("fluffy", [("zeus-builder", Check), ("remote-builder", Always), ("nixbuild.net", Always)])
-    , ("zeus", [("remote-builder", Always), ("fluffy-builder", Check), ("nixbuild.net", Always)])
+    , ("zeus", [("remote-builder", Always), ("nixbuild.net", Always)])
     ]
 
 systems :: [Text]
