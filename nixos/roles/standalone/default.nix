@@ -42,6 +42,21 @@ in {
     # permitRootLogin = "prohibit-password"; Default
   };
 
+  nix = {
+    registry.pkgs = {
+      from = {
+        type = "indirect";
+        id = "pkgs";
+      };
+      flake = pkgs.flake-inputs.nixos-unstable;
+    };
+    settings.trusted-users = ["maralorn" "laminar"];
+    optimise = {
+      dates = [];
+      automatic = true;
+    };
+  };
+
   environment = {
     systemPackages = [pkgs.updateSystem];
     etc."nix/machines".source = toString (pkgs.runCommand "nix-machines" {} ''

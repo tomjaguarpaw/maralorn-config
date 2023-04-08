@@ -52,6 +52,19 @@ in {
     virtualHosts = lib.genAttrs (hosts.aliases.${hostName} or []) (name: "${name}.maralorn.de");
   };
 
+  nix = {
+    # Extra Option which is on by default: allow-import-from-derivation = true
+    extraOptions = ''
+      experimental-features = nix-command flakes repl-flake
+      fallback = true
+      auto-optimise-store = true
+      builders-use-substitutes = true
+      keep-derivations = true
+      keep-outputs = true
+      warn-dirty = false
+    '';
+  };
+
   security.acme = {
     defaults.email = "security@maralorn.de";
     acceptTerms = true;
@@ -127,31 +140,6 @@ in {
     variables =
       lib.genAttrs ["CURL_CA_BUNDLE" "GIT_SSL_CAINFO" "SSL_CERT_FILE"]
       (_: "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt");
-  };
-
-  nix = {
-    registry.pkgs = {
-      from = {
-        type = "indirect";
-        id = "pkgs";
-      };
-      flake = pkgs.flake-inputs.nixos-unstable;
-    };
-    settings.trusted-users = ["maralorn" "laminar"];
-    # Extra Option which is on by default: allow-import-from-derivation = true
-    extraOptions = ''
-      experimental-features = nix-command flakes repl-flake
-      fallback = true
-      auto-optimise-store = true
-      builders-use-substitutes = true
-      keep-derivations = true
-      keep-outputs = true
-      warn-dirty = false
-    '';
-    optimise = {
-      dates = [];
-      automatic = true;
-    };
   };
 
   systemd.services = let
