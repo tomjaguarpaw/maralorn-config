@@ -45,29 +45,7 @@
   haskellPackagesOverlay = final: prev:
     lib.mapAttrs (_: package: package final) myHaskellPackages
     // {
-      # For nixpkgs-bot, this patch is already merged upstream and can be removed on the next release
-      matrix-client =
-        appendPatch (stable-pkgs.fetchpatch {
-          url = "https://github.com/softwarefactory-project/matrix-client-haskell/commit/97cb1918fcdf9b0249c6c8e70c7bfc664d718022.patch";
-          sha256 = "sha256-YyxgfNO5RtqpKJ9UOYPlRple0FuNmjAB1iy9vYy0HOE=";
-          relative = "matrix-client";
-        })
-        prev.matrix-client;
-      streamly-core = final.callHackageDirect {
-        pkg = "streamly-core";
-        ver = "0.1.0";
-        sha256 = "sha256-hoSV6Q2+X5a7hFnJAArqNPjcMaCVyX9Vz4FcxeJ+jgI=";
-      } {};
-      streamly = hpkgs.callHackageDirect {
-        pkg = "streamly";
-        ver = "0.9.0";
-        sha256 = "sha256-eOxVb8qQjZDo1+S7CStqYSExOg2QHWkMY+zlOYqwZak=";
-      } {};
-      streamly-bytestring = hpkgs.callHackageDirect {
-        pkg = "streamly-bytestring";
-        ver = "0.2.0";
-        sha256 = "sha256-9mZiEVPtB0fU65nTcx2CX/3GoXbpZs5BXOgZyT+R2AY=";
-      } {};
+      streamly = final.streamly_0_9_0;
     };
   selectHaskellPackages = attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages;
   myHaskellPackages = {
