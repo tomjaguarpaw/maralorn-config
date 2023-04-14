@@ -6,7 +6,8 @@ flake-inputs: {
 }: let
   certPath = "/var/lib/acme/hera.m-0.eu";
   nonMailboxDomains = ["lists.maralorn.de"];
-  inherit (config.m-0) hosts;
+  inherit (config.m-0) hosts virtualHosts;
+  rspamd-address = "[::1]:11334";
 in {
   imports = [flake-inputs.nixos-mailserver.nixosModules.default];
   m-0.monitoring = [
@@ -17,6 +18,10 @@ in {
   ];
 
   services = {
+    nginx.virtualHosts.${virtualHosts.rspamd}.locations."/" = {
+      proxyPass = "http://${rspamd-address}";
+      proxyWebsockets = true;
+    };
     prometheus.exporters = {
       postfix = {
         enable = true;
@@ -28,9 +33,9 @@ in {
     rspamd = {
       workers = {
         controller = {
-          bindSockets = ["[fdc0:7::1]:11334"];
+          bindSockets = [rspamd-address];
           extraConfig = ''
-            secure_ip = "fdc0:7::/64 ::1 127.0.0.1";
+            secure_ip = "::1/128 127.0.0.1/32";
           '';
         };
         normal = {};
