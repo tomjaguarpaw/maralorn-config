@@ -46,8 +46,6 @@ executable status-script
     , say
     , shh
     , stm
-    , streamly
-    , streamly-core
     , string-interpolate
     , time
 

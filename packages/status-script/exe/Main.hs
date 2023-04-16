@@ -5,12 +5,14 @@ import Control.Concurrent.Async qualified as Async
 import Control.Concurrent.STM qualified as STM
 import Control.Exception (catch, onException)
 import Control.Exception qualified as Exception
-import Control.Monad.Catch (MonadCatch)
-import Data.ByteString qualified as ByteString
+
+-- import Control.Monad.Catch (MonadCatch)
+-- import Data.ByteString qualified as ByteString
 import Data.ByteString.Char8 qualified as ByteStringChar
 import Data.ByteString.Lazy qualified as LBS
 import Data.ByteString.Lazy.Char8 qualified as LBSC
-import Data.IntMap.Strict qualified as IntMap
+
+-- import Data.IntMap.Strict qualified as IntMap
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Data.Time qualified as Time
@@ -19,18 +21,20 @@ import Relude
 import Say (say, sayErr)
 import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, readInputLines, (&>), (|>))
 import Shh qualified
-import Streamly.Data.Array (Array)
-import Streamly.Data.Array qualified as Array
-import Streamly.Data.Fold (Fold)
-import Streamly.Data.Fold qualified as Fold
-import Streamly.Data.Stream.Prelude (MonadAsync, Stream)
-import Streamly.Data.Stream.Prelude qualified as Stream
-import Streamly.Internal.FileSystem.Event.Linux qualified as FileSystemStream
-import Streamly.Unicode.Stream qualified as Unicode
+
+-- import Streamly.Data.Array (Array)
+-- import Streamly.Data.Array qualified as Array
+-- import Streamly.Data.Fold (Fold)
+-- import Streamly.Data.Fold qualified as Fold
+-- import Streamly.Data.Stream.Prelude (MonadAsync, Stream)
+-- import Streamly.Data.Stream.Prelude qualified as Stream
+-- import Streamly.Internal.FileSystem.Event.Linux qualified as FileSystemStream
+-- import Streamly.Unicode.Stream qualified as Unicode
 import System.Directory (listDirectory)
 import System.Environment (getEnv)
 import System.FilePath ((</>))
-import System.IO.Unsafe qualified as Unsafe
+
+-- import System.IO.Unsafe qualified as Unsafe
 
 data Mode = Klausur | Orga | Communication | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
@@ -47,48 +51,48 @@ getMode home = do
   name <- decodeUtf8 . ByteStringChar.strip <$> readFileBS mode_file `onException` sayErr [i|File #{mode_file} not found.|]
   maybe (sayErr [i|Unknown mode #{name}|] >> error [i|Unknown mode #{name}|]) pure $ find (\mode -> name == Text.toLower (show mode)) modes
 
-home = "/home/maralorn"
+-- home = "/home/maralorn"
 
-modeFile = home </> ".mode"
+-- modeFile = home </> ".mode"
 
-toByteArray :: String -> Array Word8
-toByteArray = Unsafe.unsafePerformIO . Stream.fold Array.write . Unicode.encodeUtf8 . Stream.fromList
-
-modeStream :: Stream IO (Either Text Mode)
-modeStream = do
-  FileSystemStream.watch (fromList [toByteArray home])
-    & ( Stream.mapMaybe \case
-          event | FileSystemStream.getRelPath event == toByteArray ".mode" -> Just ()
-          _ -> Nothing
-      )
-    & Stream.cons ()
-    & Stream.mapM \_ ->
-      do
-        name <- decodeUtf8 . ByteStringChar.strip <$> readFileBS modeFile `onException` sayErr [i|File #{modeFile} not found.|]
-        pure $ maybe (Left [i|Unknown mode #{name}|]) Right $ find (\mode -> name == Text.toLower (show mode)) modes
-
-modeModuleStream :: Stream IO (Either Text Mode) -> Stream IO (Maybe Text)
-modeModuleStream =
-  fmap $
-    Just . \case
-      Left err -> withColor' red err
-      Right mode -> withColor' blue (show mode)
-
-hush = \case
-  Left _ -> Nothing
-  Right x -> Just x
-
-setDefault :: Monad m => a -> Stream m a -> Stream m a
-setDefault = \default_value -> Stream.scan (Fold.foldl' (const id) default_value)
-
-withColor' :: Text -> Text -> Text
-withColor' color content = [i|${color \##{color}}#{content}|]
-
-defaultedModeStream :: Stream IO (Either Text Mode) -> Stream IO Mode
-defaultedModeStream =
-  setDefault Orga
-    . Stream.catMaybes
-    . fmap hush
+-- toByteArray :: String -> Array Word8
+-- toByteArray = Unsafe.unsafePerformIO . Stream.fold Array.write . Unicode.encodeUtf8 . Stream.fromList
+--
+-- modeStream :: Stream IO (Either Text Mode)
+-- modeStream = do
+--  FileSystemStream.watch (fromList [toByteArray home])
+--    & ( Stream.mapMaybe \case
+--          event | FileSystemStream.getRelPath event == toByteArray ".mode" -> Just ()
+--          _ -> Nothing
+--      )
+--    & Stream.cons ()
+--    & Stream.mapM \_ ->
+--      do
+--        name <- decodeUtf8 . ByteStringChar.strip <$> readFileBS modeFile `onException` sayErr [i|File #{modeFile} not found.|]
+--        pure $ maybe (Left [i|Unknown mode #{name}|]) Right $ find (\mode -> name == Text.toLower (show mode)) modes
+--
+-- modeModuleStream :: Stream IO (Either Text Mode) -> Stream IO (Maybe Text)
+-- modeModuleStream =
+--  fmap $
+--    Just . \case
+--      Left err -> withColor' red err
+--      Right mode -> withColor' blue (show mode)
+--
+-- hush = \case
+--  Left _ -> Nothing
+--  Right x -> Just x
+--
+-- setDefault :: Monad m => a -> Stream m a -> Stream m a
+-- setDefault = \default_value -> Stream.scan (Fold.foldl' (const id) default_value)
+--
+-- withColor' :: Text -> Text -> Text
+-- withColor' color content = [i|${color \##{color}}#{content}|]
+--
+-- defaultedModeStream :: Stream IO (Either Text Mode) -> Stream IO Mode
+-- defaultedModeStream =
+--  setDefault Orga
+--    . Stream.catMaybes
+--    . fmap hush
 
 isDirty :: String -> IO Bool
 isDirty gitDir = ((/= "") <$> (git "--no-optional-locks" "-C" gitDir "status" "--porcelain" |> captureTrim)) `catch` (\(_ :: SomeException) -> pure True)
@@ -367,53 +371,53 @@ notificationBlockList = ["Automatic suspend", "Auto suspend"]
 
 diffIsSmall = \pathA pathB -> (== "[]") <$> (nix_diff "--json" [pathA, pathB] |> jq ".inputsDiff.inputDerivationDiffs" |> captureTrim)
 
--- | Drain first stream exactly once, second stream as often as you want!
-mirrorStream :: (MonadAsync m, MonadCatch m) => Stream m a -> m (Stream m a, Stream m a)
-mirrorStream stream = do
-  emiters <- newIORef []
-  pure
-    ( stream
-        & Stream.finally
-          ( do
-              emiters' <- readIORef emiters
-              forM_ emiters' \emiter -> emiter Nothing
-          )
-        & Stream.mapM
-          ( \x -> do
-              emiters' <- readIORef emiters
-              forM_ emiters' \emiter -> emiter (Just x)
-              pure x
-          )
-    , Stream.fromCallback (\emit -> modifyIORef' emiters (emit :)) & Stream.takeWhile isJust & Stream.catMaybes
-    )
-
-collectLatestJusts :: MonadAsync m => [Stream m (Maybe a)] -> Stream m [a]
-collectLatestJusts =
-  fmap IntMap.elems
-    . Stream.scan (Fold.foldl' (&) IntMap.empty)
-    . Stream.parList id
-    . zipWith (\index stream -> (\new_value -> IntMap.alter (const new_value) index) <$> stream) [0 ..]
-
-toStatusFile :: MonadIO m => Fold m [Text] ()
-toStatusFile =
-  Fold.foldlM'
-    ( const \modules -> do
-        print modules
-        writeFileText "/run/user/1000/status-bar"
-          . Text.intercalate separator
-          . reverse
-          $ modules
-    )
-    pass
-
-newmain :: IO ()
-newmain = do
-  let modules =
-        [ modeModuleStream modeStream
-        ]
-  collectLatestJusts modules
-    --    & Stream.sampleIntervalEnd 0.05
-    & Stream.fold toStatusFile
+---- | Drain first stream exactly once, second stream as often as you want!
+-- mirrorStream :: (MonadAsync m, MonadCatch m) => Stream m a -> m (Stream m a, Stream m a)
+-- mirrorStream stream = do
+--  emiters <- newIORef []
+--  pure
+--    ( stream
+--        & Stream.finally
+--          ( do
+--              emiters' <- readIORef emiters
+--              forM_ emiters' \emiter -> emiter Nothing
+--          )
+--        & Stream.mapM
+--          ( \x -> do
+--              emiters' <- readIORef emiters
+--              forM_ emiters' \emiter -> emiter (Just x)
+--              pure x
+--          )
+--    , Stream.fromCallback (\emit -> modifyIORef' emiters (emit :)) & Stream.takeWhile isJust & Stream.catMaybes
+--    )
+--
+-- collectLatestJusts :: MonadAsync m => [Stream m (Maybe a)] -> Stream m [a]
+-- collectLatestJusts =
+--  fmap IntMap.elems
+--    . Stream.scan (Fold.foldl' (&) IntMap.empty)
+--    . Stream.parList id
+--    . zipWith (\index stream -> (\new_value -> IntMap.alter (const new_value) index) <$> stream) [0 ..]
+--
+-- toStatusFile :: MonadIO m => Fold m [Text] ()
+-- toStatusFile =
+--  Fold.foldlM'
+--    ( const \modules -> do
+--        print modules
+--        writeFileText "/run/user/1000/status-bar"
+--          . Text.intercalate separator
+--          . reverse
+--          $ modules
+--    )
+--    pass
+--
+-- newmain :: IO ()
+-- newmain = do
+--  let modules =
+--        [ modeModuleStream modeStream
+--        ]
+--  collectLatestJusts modules
+--    --    & Stream.sampleIntervalEnd 0.05
+--    & Stream.fold toStatusFile
 
 {-
 import Data.IntMap.Strict qualified as IntMap

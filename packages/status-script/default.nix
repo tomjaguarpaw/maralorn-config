@@ -11,8 +11,6 @@
   say,
   shh,
   stm,
-  streamly,
-  streamly-core,
   string-interpolate,
   time,
 }:
@@ -33,8 +31,6 @@ mkDerivation {
     say
     shh
     stm
-    streamly
-    streamly-core
     string-interpolate
     time
   ];
