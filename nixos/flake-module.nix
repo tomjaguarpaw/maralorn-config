@@ -24,6 +24,8 @@
     in
       lib.genAttrs machines makeSystem);
     nixosModules.unstableNFTables = _: {
+      # Only until 23.05.
+      networking.nftables.checkRuleset = false;
       disabledModules = [
         "services/networking/firewall.nix"
         "services/networking/nftables.nix"
