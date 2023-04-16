@@ -42,9 +42,6 @@ let
   orga-basics = [
     ./roles/mail.nix
     ./roles/taskwarrior.nix
-    ./roles/vdirsyncer.nix
-    ./roles/khard.nix
-    ./roles/khal.nix
   ];
   default = [
     ./roles/on-my-machine.nix
@@ -58,30 +55,33 @@ let
       ++ [
         (makeAutostart "kassandra2")
         (makeAutostart "unlock-ssh")
-        ./roles/refresh-config.nix
-        ./roles/firefox.nix
-        ./roles/kassandra.nix
-        ./roles/mode-switching.nix
         ./roles/beets.nix
+        ./roles/bitwarden.nix
+        ./roles/conky
         ./roles/desktop-items.nix
         ./roles/desktop.nix
+        ./roles/firefox.nix
         ./roles/git-sign.nix
         ./roles/gnome.nix
-        ./roles/status-script.nix
-        ./roles/conky
         ./roles/haskell-env.nix
-        ./roles/terminal.nix
+        ./roles/kassandra.nix
+        ./roles/khal.nix
+        ./roles/khard.nix
+        ./roles/leisure.nix
+        ./roles/mode-switching.nix
         ./roles/mpclient.nix
         ./roles/mpd.nix
         ./roles/mpv
-        ./roles/bitwarden.nix
-        ./roles/pythia.nix
-        ./roles/research.nix
         ./roles/night-shutdown.nix
+        ./roles/pythia.nix
+        ./roles/refresh-config.nix
+        ./roles/research.nix
+        ./roles/status-script.nix
+        ./roles/terminal.nix
         ./roles/tinkering.nix
+        ./roles/vdirsyncer.nix
         ./roles/wallpaper.nix
         ./roles/zettelkasten.nix
-        ./roles/leisure.nix
       ];
     blockServer = import ./roles/block-server.nix;
   in {
@@ -140,8 +140,9 @@ in {
   ];
   zeus = daily-driver "zeus" [
     (import ./roles/state.nix "orga")
-    ./roles/trusted-env.nix
+    ./roles/create-plans.nix
     ./roles/monitor-config
+    ./roles/trusted-env.nix
   ];
   fluffy.default = makeConfig "fluffy" (
     default
@@ -160,7 +161,6 @@ in {
       ./roles/mail2rss.nix
       ./roles/headless-mpd.nix
       ./roles/headless.nix
-      ./roles/create-plans.nix
     ]
   );
 }
