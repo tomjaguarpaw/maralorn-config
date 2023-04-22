@@ -13,7 +13,7 @@
 
     filename="`${lib.getExe pkgs.yt-dlp} -j $link | ${lib.getExe pkgs.jq} -r .filename`"
     if [[ ! -f "$filename" ]]; then
-      ${lib.getExe pkgs.yt-dlp} $1
+      ${lib.getExe pkgs.yt-dlp} --embed-subs --embed-metadata --embed-chapters $1
     fi
     ${lib.getExe pkgs.mpv} "$filename"
   '';
