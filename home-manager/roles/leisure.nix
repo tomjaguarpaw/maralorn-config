@@ -12,15 +12,10 @@
     link="''${1:-`${lib.getBin pkgs.wl-clipboard}/bin/wl-paste`}"
 
     filename="`${lib.getExe pkgs.yt-dlp} -j $link | ${lib.getExe pkgs.jq} -r .filename`"
-    if [[ -f "$filename" ]]; then
-      echo "Found File with matching name. Playing."
-      ${lib.getExe pkgs.mpv} "$filename"
-    else
-      foot -derror ${lib.getExe pkgs.yt-dlp} $1 &
-      echo "Waiting 2 seconds for download to start …"
-      sleep 2s
-      ${lib.getExe pkgs.mpv} "''${filename%.*}"*.part
+    if [[ ! -f "$filename" ]]; then
+      ${lib.getExe pkgs.yt-dlp} $1
     fi
+    ${lib.getExe pkgs.mpv} "$filename"
   '';
   commands =
     builtins.mapAttrs (name: {
