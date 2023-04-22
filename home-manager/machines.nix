@@ -124,7 +124,7 @@ in {
     ./roles/untrusted-env.nix
   ];
   zeus = daily-driver "zeus" [
-    (import ./roles/state.nix "orga")
+    (import ./roles/state.nix "klausur")
     ./roles/create-plans.nix
     ./roles/monitor-config
     ./roles/trusted-env.nix
