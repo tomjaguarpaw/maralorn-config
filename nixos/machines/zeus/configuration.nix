@@ -47,7 +47,7 @@ in {
       if [[ -e /home/maralorn/.mode ]]; then
         MODE="$(cat /home/maralorn/.mode)"
       else
-        MODE="orga"
+        MODE="klausur"
       fi
       /disk/volatile/maralorn/modes/$MODE/activate
     '';
