@@ -91,21 +91,6 @@ let
         (blockServer restrictedPages)
       ]
     );
-    orga = makeConfig name (
-      all
-      ++ [
-        ./roles/mail-client.nix
-        (blockServer restrictedPages)
-      ]
-    );
-    communication = makeConfig name (
-      all
-      ++ [
-        ./roles/mail-client.nix
-        ./roles/chat.nix
-        (blockServer restrictedPages)
-      ]
-    );
     code = makeConfig name (
       all
       ++ [
