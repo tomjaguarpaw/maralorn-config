@@ -5,7 +5,7 @@
 }: let
   stable-pkgs = inputs.nixos-stable.legacyPackages.x86_64-linux;
   unstable-pkgs = inputs.nixos-unstable.legacyPackages.x86_64-linux;
-  inherit (unstable-pkgs.haskell.lib.compose) appendPatch overrideCabal;
+  inherit (unstable-pkgs.haskell.lib.compose) appendPatch overrideCabal dontHaddock;
   includePatterns = [
     ".hs"
     ".cabal"
@@ -60,6 +60,9 @@
     kassandra = cleanCabalPackage {
       name = "kassandra";
       source = ./kassandra/kassandra;
+      overrides = _: {
+        doHaddock = false;
+      };
     };
     kassandra-standalone = cleanCabalPackage {
       name = "standalone";
