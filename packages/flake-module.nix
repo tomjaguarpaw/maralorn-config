@@ -45,13 +45,6 @@
   haskellPackagesOverlay = final: prev:
     lib.mapAttrs (_: package: package final) myHaskellPackages
     // {
-      jsaddle-webkit2gtk =
-        appendPatch (unstable-pkgs.fetchpatch {
-          url = "https://github.com/ghcjs/jsaddle/commit/f990366f19d23a8008d482572d52351c1a6f7215.patch";
-          hash = "sha256-IbkJrlyG6q5rqMIhn//Dt3u6T314Pug+mQMwwe0LK5w=";
-          relative = "jsaddle-webkit2gtk";
-        })
-        prev.jsaddle-webkit2gtk;
       streamly = final.streamly_0_9_0;
     };
   selectHaskellPackages = attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages;
