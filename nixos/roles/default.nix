@@ -158,7 +158,11 @@ in {
       };
     };
   in
-    {nix-optimise.serviceConfig.Type = "oneshot";} // builtins.listToAttrs (map makeConfig hosts);
+    {
+      nix-gc.serviceConfig.Type = "oneshot";
+      nix-optimise.serviceConfig.Type = "oneshot";
+    }
+    // builtins.listToAttrs (map makeConfig hosts);
 
   services = {
     logind.killUserProcesses = false;
