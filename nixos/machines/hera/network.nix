@@ -1,10 +1,9 @@
 {
   pkgs,
   config,
-  lib,
   ...
 }: let
-  wireguard = import ../../../common/wireguard.nix;
+  #wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts;
 in {
   boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
@@ -22,10 +21,6 @@ in {
       ipv6.addresses = [
         {
           address = hosts.hera;
-          prefixLength = 128;
-        }
-        {
-          address = hosts.hera-wg-host;
           prefixLength = 128;
         }
       ];
@@ -59,36 +54,36 @@ in {
     };
     nameservers = ["213.136.95.10" "2a02:c207::1:53" "2a02:c207::2:53"];
     firewall.allowedTCPPorts = [8666];
-    firewall.allowedUDPPorts = [wireguard.port];
-    wireguard.interfaces = {
-      m0wire = {
-        ips = ["${hosts.hera-wg}/112" "${hosts.vpn.hera}/64"];
-        privateKeyFile = config.age.secrets."wireguard/hera-private".path;
-        listenPort = wireguard.port;
-        peers = [
-          {
-            publicKey = wireguard.pub.zeus;
-            allowedIPs = ["${hosts.zeus-wg}/128" "${hosts.vpn.zeus}/128"];
-            presharedKeyFile = config.age.secrets."wireguard/psk".path;
-          }
-          {
-            publicKey = wireguard.pub.apollo;
-            allowedIPs = ["${hosts.apollo-wg}/128" "${hosts.vpn.apollo}/128"];
-            presharedKeyFile = config.age.secrets."wireguard/psk".path;
-          }
-          {
-            publicKey = wireguard.pub.fluffy;
-            allowedIPs = ["${hosts.vpn.fluffy}/128"];
-            presharedKeyFile = config.age.secrets."wireguard/psk".path;
-          }
-          {
-            publicKey = wireguard.pub.pegasus;
-            allowedIPs = ["${hosts.vpn.pegasus}/128"];
-            presharedKeyFile = config.age.secrets."wireguard/psk".path;
-          }
-        ];
-      };
-    };
+    #firewall.allowedUDPPorts = [wireguard.port];
+    #wireguard.interfaces = {
+    #  m0wire = {
+    #    ips = ["${hosts.hera-wg}/112" "${hosts.vpn.hera}/64"];
+    #    privateKeyFile = config.age.secrets."wireguard/hera-private".path;
+    #    listenPort = wireguard.port;
+    #    peers = [
+    #      {
+    #        publicKey = wireguard.pub.zeus;
+    #        allowedIPs = ["${hosts.zeus-wg}/128" "${hosts.vpn.zeus}/128"];
+    #        presharedKeyFile = config.age.secrets."wireguard/psk".path;
+    #      }
+    #      {
+    #        publicKey = wireguard.pub.apollo;
+    #        allowedIPs = ["${hosts.apollo-wg}/128" "${hosts.vpn.apollo}/128"];
+    #        presharedKeyFile = config.age.secrets."wireguard/psk".path;
+    #      }
+    #      {
+    #        publicKey = wireguard.pub.fluffy;
+    #        allowedIPs = ["${hosts.vpn.fluffy}/128"];
+    #        presharedKeyFile = config.age.secrets."wireguard/psk".path;
+    #      }
+    #      {
+    #        publicKey = wireguard.pub.pegasus;
+    #        allowedIPs = ["${hosts.vpn.pegasus}/128"];
+    #        presharedKeyFile = config.age.secrets."wireguard/psk".path;
+    #      }
+    #    ];
+    #  };
+    #};
   };
 
   services.ndppd = {

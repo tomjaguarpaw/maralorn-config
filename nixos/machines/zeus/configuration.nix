@@ -133,23 +133,23 @@ in {
     firewall.allowedUDPPorts = [
       34197 # factorio
     ];
-    wireguard.interfaces = {
-      m0wire = {
-        allowedIPsAsRoutes = false;
-        ips = ["${hosts.zeus-wg}/112" "${hosts.vpn.zeus}/64"];
-        privateKeyFile = config.age.secrets."wireguard/zeus-private".path;
-        peers = [
-          {
-            publicKey = wireguard.pub.hera;
-            allowedIPs = ["::/0"];
-            endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
-            presharedKeyFile = config.age.secrets."wireguard/psk".path;
-            persistentKeepalive = 25;
-          }
-        ];
-        postSetup = ["${pkgs.iproute}/bin/ip route add ${prefix}::/96 dev m0wire"];
-      };
-    };
+    #wireguard.interfaces = {
+    #  m0wire = {
+    #    allowedIPsAsRoutes = false;
+    #    ips = ["${hosts.zeus-wg}/112" "${hosts.vpn.zeus}/64"];
+    #    privateKeyFile = config.age.secrets."wireguard/zeus-private".path;
+    #    peers = [
+    #      {
+    #        publicKey = wireguard.pub.hera;
+    #        allowedIPs = ["::/0"];
+    #        endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
+    #        presharedKeyFile = config.age.secrets."wireguard/psk".path;
+    #        persistentKeepalive = 25;
+    #      }
+    #    ];
+    #    postSetup = ["${pkgs.iproute}/bin/ip route add ${prefix}::/96 dev m0wire"];
+    #  };
+    #};
   };
   services = {
     snapper = {

@@ -84,25 +84,11 @@ with lib; {
       default = let
         p = config.m-0.prefix;
         hera-p = "${p}::3";
-        wg-p = "${p}::100";
         v4-p = "10.0.0";
       in {
         hera = "${p}::1";
-        vpn = rec {
-          prefix = "fdc0:7";
-          hera = "${prefix}::1";
-          fluffy = "${prefix}::2";
-          apollo = "${prefix}::5";
-          zeus = "${prefix}::4";
-          pegasus = "${prefix}::6";
-        };
-        hera-wg-host = "${p}::100:0:1";
 
         hera-v4 = "213.136.94.190";
-
-        hera-wg = "${wg-p}:1";
-        apollo-wg = "${wg-p}:2";
-        zeus-wg = "${wg-p}:3";
 
         hera-intern = "${hera-p}:1";
         chor-cloud = "${hera-p}:b";

@@ -83,9 +83,16 @@ in {
     hostName = "fluffy";
     domain = "lo.m-0.eu";
     firewall = {
-      allowedUDPPorts = [631];
-      allowedTCPPorts = [21 80 631];
+      allowedUDPPorts = [
+        631 # cups
+      ];
+      allowedTCPPorts = [
+        21 # ftp for scanner
+        80 # http
+        631 # cups
+      ];
       allowedTCPPortRanges = [
+        # also ftp
         {
           from = 51000;
           to = 51999;
@@ -101,21 +108,21 @@ in {
       ];
       useDHCP = true;
     };
-    wireguard.interfaces = {
-      m0wire = {
-        ips = ["${hosts.vpn.fluffy}/64"];
-        privateKeyFile = "/disk/persist/wireguard-private-key";
-        peers = [
-          {
-            publicKey = wireguard.pub.hera;
-            allowedIPs = ["${hosts.vpn.prefix}::/64"];
-            endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
-            presharedKeyFile = config.age.secrets."wireguard/psk".path;
-            persistentKeepalive = 25;
-          }
-        ];
-      };
-    };
+    #wireguard.interfaces = {
+    #  m0wire = {
+    #    ips = ["${hosts.vpn.fluffy}/64"];
+    #    privateKeyFile = "/disk/persist/wireguard-private-key";
+    #    peers = [
+    #      {
+    #        publicKey = wireguard.pub.hera;
+    #        allowedIPs = ["${hosts.vpn.prefix}::/64"];
+    #        endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
+    #        presharedKeyFile = config.age.secrets."wireguard/psk".path;
+    #        persistentKeepalive = 25;
+    #      }
+    #    ];
+    #  };
+    #};
   };
   programs = {
     ssh = {
