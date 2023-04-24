@@ -416,6 +416,28 @@ in {
             }
           ]
           ++ (map
+            (entity: {
+              alias = "Unreachable Warnung";
+              trigger =
+                triggers.stateTrigger entity
+                // {
+                  to = "unavailable";
+                  for = "01:00:00";
+                };
+              action = [(actions.notify "{{ trigger.to_state.name }} ist seit 1h unerreichbar.")];
+            }) [
+              "switch.luftentfeuchter"
+              "switch.lueftung_bad"
+              "sensor.${sensor.bad}_humidity"
+              "sensor.${sensor.schlafzimmer}_humidity"
+            ])
+          #condition = {
+          #  condition = "numeric_state";
+          #  entity_id = "weather.dwd_darmstadt";
+          #  attribute = "temperature";
+          #  below = 15;
+          #};
+          ++ (map
             (minutes: {
               alias = "Warnung bei ${minutes} Minuten offenem Fenster oder offener Tür";
               trigger =
@@ -1221,28 +1243,25 @@ in {
         };
       in {
         views = [
+          # panels don’t support badges
           {
             icon = "mdi:sofa";
             type = "panel";
-            inherit badges;
             cards = [wohnzimmerstack];
           }
           {
             icon = "mdi:countertop";
             type = "panel";
-            inherit badges;
             cards = [kuechenstack];
           }
           {
             icon = "mdi:bed-king";
             type = "panel";
-            inherit badges;
             cards = [schlafzimmerstack];
           }
           {
             icon = "mdi:shower-head";
             type = "panel";
-            inherit badges;
             cards = [badstack];
           }
           {
@@ -1253,7 +1272,7 @@ in {
           }
           {
             icon = "mdi:floor-plan";
-            badges = alertbadges;
+            inherit badges;
             cards = [wohnzimmerstack schlafzimmerstack kuechenstack badstack];
           }
         ];
