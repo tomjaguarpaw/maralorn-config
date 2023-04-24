@@ -1265,7 +1265,6 @@ in {
           }
           {
             icon = "mdi:city";
-            type = "panel";
             inherit badges;
             cards = [envstack];
           }
