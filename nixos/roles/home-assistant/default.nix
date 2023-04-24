@@ -458,7 +458,6 @@ in {
               action = [(actions.notify "{{ trigger.to_state.name }} ist seit mehr als ${minutes} Minuten offen.")];
             })
             (map toString [10 20 30 40 50 60]));
-        image = {};
         recorder = {};
         template = [
           {
