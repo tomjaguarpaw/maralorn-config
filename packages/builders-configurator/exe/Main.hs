@@ -31,23 +31,32 @@ Hera         729
 
 -}
 
+remoteBuilder :: Text
+remoteBuilder = "remote.builder"
+nixbuildDotNet :: Text
+nixbuildDotNet = "nixbuild.net"
+zeusBuilder :: Text
+zeusBuilder = "zeus.builder"
+fluffyBuilder :: Text
+fluffyBuilder = "fluffy.builder"
+
 builderInfos :: Map.Map Text Natural
 builderInfos =
   Map.fromList
-    [ ("remote.builder", 32)
-    , ("nixbuild.net", 100)
-    , ("zeus.builder", 12)
-    , ("fluffy.builder", 2)
+    [ (remoteBuilder, 32)
+    , (nixbuildDotNet, 100)
+    , (zeusBuilder, 12)
+    , (fluffyBuilder, 2)
     ]
 
 builderConfigs :: Map.Map Text [(Text, Reachable)]
 builderConfigs =
   Map.fromList
     -- don’t use fluffy as remote builder, it’s not beefy enough
-    [ ("hera", [("zeus.builder", Check), ("fluffy.builder", Check), ("remote.builder", Always), ("nixbuild.net", Always)])
-    , ("apollo", [("zeus.builder", Check), ("fluffy.builder", Check), ("remote.builder", Always), ("nixbuild.net", Always)])
-    , ("fluffy", [("zeus.builder", Check), ("remote.builder", Always), ("nixbuild.net", Always)])
-    , ("zeus", [("remote.builder", Always), ("fluffy.builder", Check), ("nixbuild.net", Always)])
+    [ ("hera", [(zeusBuilder, Check), (fluffyBuilder, Check), (remoteBuilder, Always), (nixbuildDotNet, Always)])
+    , ("apollo", [(zeusBuilder, Check), (fluffyBuilder, Check), (remoteBuilder, Always), (nixbuildDotNet, Always)])
+    , ("fluffy", [(zeusBuilder, Check), (remoteBuilder, Always), (nixbuildDotNet, Always)])
+    , ("zeus", [(remoteBuilder, Always), (fluffyBuilder, Check), (nixbuildDotNet, Always)])
     ]
 
 systems :: [Text]
@@ -77,8 +86,8 @@ runWithPing = Eff.interpret $ \_ -> \case
 
 sshHostToDNS :: Text -> Text
 sshHostToDNS = \case
-  "zeus-builder" -> "zeus.vpn.m-0.eu"
-  "fluffy-builder" -> "fluffy.vpn.m-0.eu"
+  b | b == zeusBuilder -> "zeus.vpn.m-0.eu"
+  b | b == fluffyBuilder -> "fluffy.vpn.m-0.eu"
   host -> error [i|No dns name none for ssh host #{host}|]
 
 commaList :: [Text] -> Text
