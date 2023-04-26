@@ -54,22 +54,29 @@ in [
     ];
   }
   {
-    Sound = {
-      "Play/Pause" = "${pkgs.playerctl}/bin/playerctl play-pause";
-      MPD = "ncmpcpp";
-      "Lautstärke" = "ncpamixer";
-      Pavucontrol = fork "pavucontrol";
-      Headset = {
-        Earplugs = {
-          connect = "bluetoothctl connect 00:00:AB:BD:7D:68";
-          disconnect = "bluetoothctl disconnect 00:00:AB:BD:7D:68";
+    Sound = let
+      mpdclient = host: "sh -c 'switch-mpd ${host}; ncmpcpp -h ${host}'";
+    in [
+      {"Play/Pause" = "${pkgs.playerctl}/bin/playerctl play-pause";}
+      {"MPD lokal" = mpdclient "::";}
+      {"Lautstärke" = "ncpamixer";}
+      {Pavucontrol = fork "pavucontrol";}
+      {
+        Headset = {
+          Earplugs = {
+            connect = "bluetoothctl connect 00:00:AB:BD:7D:68";
+            disconnect = "bluetoothctl disconnect 00:00:AB:BD:7D:68";
+          };
+          Overears = {
+            connect = "bluetoothctl connect E8:EE:CC:25:66:C3";
+            disconnect = "bluetoothctl disconnect E8:EE:CC:25:66:C3";
+          };
         };
-        Overears = {
-          connect = "bluetoothctl connect E8:EE:CC:25:66:C3";
-          disconnect = "bluetoothctl disconnect E8:EE:CC:25:66:C3";
-        };
-      };
-    };
+      }
+      {"MPD Lounge" = mpdclient "lounge.w17.io";}
+      {"MPD Kitchen" = mpdclient "kitchen.w17.io";}
+      {"MPD Space" = mpdclient "burbon.w17.io";}
+    ];
   }
   {
     Apps = {
@@ -132,9 +139,6 @@ in [
   {"Monitor (btop)" = "btop";}
   {
     "W17" = {
-      "MPD Whisky" = "ncmpcpp -h whisky.w17.io";
-      "MPD Burbon" = "ncmpcpp -h burbon.w17.io";
-      "MPD Kitchen" = "ncmpcpp -h kitchen.w17.io";
       Strichliste = "firefox https://strichliste.w17.io/#!/user/56";
       Hub = "firefox https://hub.w17.io";
       Summer = "ssh door@burbon.w17.io buzzer";

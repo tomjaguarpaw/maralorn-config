@@ -6,6 +6,8 @@
 }: let
   audio_dir = "${config.home.homeDirectory}/media/audio";
   playlist_dir = "${audio_dir}/playlists";
+  mprisCfg = config.xdg.configFile."mpDris2/mpDris2.conf";
+  replace_string = "@HOST@";
 in {
   home.file."media/audio/playlists" = {
     source = pkgs.recursiveLinkFarm "mpd-playlists" (lib.mapAttrs' (name: content: lib.nameValuePair "${name}.m3u" (builtins.toFile "${name}.m3u" content)) {
@@ -19,6 +21,7 @@ in {
     });
     recursive = true;
   };
+  xdg.configFile."mpDris2/mpDris2.conf".enable = false;
   services = {
     mpd = {
       enable = true;
@@ -32,6 +35,16 @@ in {
         }
       '';
     };
-    mpdris2.enable = true;
+    mpdris2 = {
+      enable = true;
+      mpd.host = replace_string;
+    };
   };
+  home.packages = [
+    (pkgs.writeShellScriptBin "switch-mpd" ''
+      mkdir -p ${config.xdg.configHome}/mpDris2
+      ${lib.getExe pkgs.sd} -p ${replace_string} "$1" ${mprisCfg.source} > $HOME/${mprisCfg.target}
+      ${pkgs.systemd}/bin/systemctl --user restart mpdris2.service
+    '')
+  ];
 }

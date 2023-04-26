@@ -230,23 +230,19 @@
     },
     "home-manager": {
       "inputs": {
-        "nixpkgs": [],
-        "utils": [
-          "pre-commit-hooks",
-          "flake-utils"
-        ]
+        "nixpkgs": []
       },
       "locked": {
-        "lastModified": 1681092193,
-        "narHash": "sha256-JerCqqOqbT2tBnXQW4EqwFl0hHnuZp21rIQ6lu/N4rI=",
+        "lastModified": 1682535786,
+        "narHash": "sha256-NH2a8yB8V25cglvcHDrvaTLvohzMgGLLZ4vnXQn4vOw=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "f9edbedaf015013eb35f8caacbe0c9666bbc16af",
+        "rev": "d82c9af8175878a461a0fdf914e67cc446664570",
         "type": "github"
       },
       "original": {
         "id": "home-manager",
-        "ref": "release-22.11",
+        "ref": "master",
         "type": "indirect"
       }
     },

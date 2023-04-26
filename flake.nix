@@ -35,9 +35,8 @@
       url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git";
     };
     home-manager = {
-      url = "home-manager/release-22.11";
+      url = "home-manager/master";
       inputs = {
-        utils.follows = "pre-commit-hooks/flake-utils";
         nixpkgs.follows = "";
       };
     };
