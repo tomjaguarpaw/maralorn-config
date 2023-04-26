@@ -79,7 +79,7 @@
     config = _: {
       imports = [
         ../../roles
-        pkgs.flake-inputs.self.nixosModules.unstableNFTables
+        #pkgs.flake-inputs.self.nixosModules.unstableNFTables
       ];
       nixpkgs = {inherit pkgs;};
 

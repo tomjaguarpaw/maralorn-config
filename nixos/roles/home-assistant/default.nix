@@ -66,13 +66,7 @@ flake-inputs: {
   ];
   homeAssistantDir = "/disk/persist/home-assistant";
 in {
-  imports = [
-    ./hexa-cards.nix
-    "${flake-inputs.nixos-unstable}/nixos/modules/services/home-automation/home-assistant.nix"
-  ];
-  disabledModules = [
-    "services/home-automation/home-assistant.nix"
-  ];
+  imports = [./hexa-cards.nix];
 
   systemd.tmpfiles.rules = [
     "d ${homeAssistantDir} - - - - -"

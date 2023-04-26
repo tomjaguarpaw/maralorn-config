@@ -3,7 +3,7 @@
 
   inputs = {
     nixos-unstable.url = "nixpkgs/nixos-unstable";
-    nixos-stable.url = "nixpkgs/nixos-22.11";
+    nixos-stable.url = "nixpkgs/nixos-unstable";
     secrets = {
       url = "git+ssh://git@hera.m-0.eu/config-secrets";
       inputs.nixpkgs.follows = "";

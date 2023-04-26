@@ -104,7 +104,7 @@
     };
     theme = {
       name = "Catppuccin-Mocha-Compact-Blue-Dark";
-      package = pkgs.unstable.catppuccin-gtk.override {
+      package = pkgs.catppuccin-gtk.override {
         variant = "mocha";
         size = "compact";
         tweaks = ["rimless"];

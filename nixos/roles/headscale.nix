@@ -1,4 +1,4 @@
-flake-inputs: {
+{
   config,
   lib,
   ...
@@ -8,12 +8,6 @@ flake-inputs: {
   zone = "maralorn.de";
   derp_port = 3479;
 in {
-  disabledModules = [
-    "services/networking/headscale.nix"
-  ];
-  imports = [
-    "${flake-inputs.nixos-unstable}/nixos/modules/services/networking/headscale.nix"
-  ];
   m-0.monitoring = [
     {
       name = "hera-headscale";

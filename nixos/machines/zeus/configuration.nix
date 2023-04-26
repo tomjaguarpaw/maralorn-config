@@ -4,8 +4,6 @@ flake-inputs: {
   lib,
   ...
 }: let
-  wireguard = import ../../../common/wireguard.nix;
-  inherit (config.m-0) hosts prefix;
   inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
 in {
   imports = [
