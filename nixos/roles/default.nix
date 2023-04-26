@@ -164,6 +164,8 @@ in {
     }
     // builtins.listToAttrs (map makeConfig hosts);
 
+  systemd.oomd.enableRootSlice = true;
+
   services = {
     logind.killUserProcesses = false;
     journald.extraConfig = "SystemMaxUse=5G";

@@ -42,6 +42,12 @@
       fsType = "vfat";
     };
   };
+  zramSwap.enable = true;
+  swapDevices = [
+    {
+      device = "/dev/mapper/system-swap";
+    }
+  ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   nix.settings.max-jobs = lib.mkDefault 8;
