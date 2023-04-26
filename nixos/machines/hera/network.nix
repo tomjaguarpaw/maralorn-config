@@ -7,7 +7,12 @@
   inherit (config.m-0) hosts;
 in {
   boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
+  m-0.tailscale-routes = "fd42:ccc:da:64::/64,172.20.64.0/24";
   networking = {
+    nftables.ruleset = ''
+      table ip nixos-nat { chain post { iifname tailscale0 oifname tinc.cdark.net masquerade comment "snat queries to hackspace";};}
+      table ip6 nixos-nat { chain post { iifname tailscale0 oifname tinc.cdark.net masquerade comment "snat queries to hackspace";};}
+    '';
     hostName = "hera";
     domain = "m-0.eu";
     interfaces.ens18 = {
@@ -49,6 +54,7 @@ in {
     };
     nat = {
       enable = true;
+      enableIPv6 = true;
       externalInterface = "ens18";
       internalInterfaces = ["bridge"];
     };
