@@ -190,21 +190,32 @@ when' cond result = if cond then result else pure Nothing
 playerCTLFormat :: String
 playerCTLFormat = "@{{status}} {{title}} | {{album}} | {{artist}}"
 
-playerModule :: Module (Maybe Text)
-playerModule = \var ->
-  let update_lines =
-        mapM_
-          ( updateVarIfChanged var
-              . runIdentity
-              . withColor white
-              . Text.replace "@Stopped" "⏹"
-              . Text.replace "@Playing" "▶"
-              . Text.replace "@Paused" "⏸"
-              . Text.intercalate "\n"
-              . filter (not . Text.null)
-              . Text.splitOn " | "
-              . decodeUtf8
-          )
+playerModule :: FilePath -> Module (Maybe Text)
+playerModule = \home var ->
+  let process_update = \host ->
+        updateVarIfChanged var
+          . runIdentity
+          . withColor white
+          . Text.replace "@Stopped" "⏹"
+          . Text.replace "@Playing" "▶"
+          . Text.replace "@Paused" "⏸"
+          . Text.intercalate "\n"
+          . filter (not . Text.null)
+          . (maybeToList host <>)
+          . Text.splitOn " | "
+          . decodeUtf8
+      update_lines = mapM_ \update -> do
+        mpdris_config <-
+          Exception.try @Exception.IOException $
+            readFileBS [i|#{home}/.config/mpDris2/mpDris2.conf|]
+        let host =
+              find (/= "::")
+                . mapMaybe (Text.stripPrefix "host = ")
+                . lines
+                . decodeUtf8
+                . fromRight ""
+                $ mpdris_config
+        process_update host update
    in forever $
         playerctl "metadata" "-F" "-f" playerCTLFormat
           |> Shh.readInputLines update_lines
@@ -231,7 +242,7 @@ oldmain = do
             appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
             when' (not $ null appointments) $
               withColor magenta (Text.unlines appointments)
-        , playerModule
+        , playerModule home
         , simpleModule oneSecond $ do
             mode <- read_mode
             unread <-
@@ -293,11 +304,11 @@ oldmain = do
             host_name <- ByteStringChar.strip <$> readFileBS "/etc/hostname"
             let scan = do
                   current_commit <- readFileBS (git_dir </> "config/.git/refs/heads/main")
-                  system_commit <- Exception.try do readFileBS "/run/current-system/config-commit"
+                  system_commit <- Exception.try @Exception.IOException do readFileBS "/run/current-system/config-commit"
                   modes_commit <- Exception.try do readFileBS (modes_dir </> "config-commit")
                   current_system <- readlink "/run/current-system" |> captureTrim
                   current_modes <- readlink modes_dir |> captureTrim
-                  let stale_config :: Either Exception.IOException ByteString -> Bool = \case
+                  let stale_config = \case
                         (Right commit) | commit == current_commit -> False
                         _ -> True
                       system_stale = stale_config system_commit
@@ -311,7 +322,7 @@ oldmain = do
                   if system_stale
                     then when (commit_change || system_change) do
                       say "Eval system config …"
-                      next_system <- nix "eval" "--raw" ([i|/home/maralorn/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel.drvPath|] :: String) |> captureTrim
+                      next_system <- nix "eval" "--raw" ([i|#{home}/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel.drvPath|] :: String) |> captureTrim
                       say "System eval finished."
                       diff_is_small <- diffIsSmall next_system current_system
                       atomically $ writeTVar system_dirty_var (not diff_is_small)
@@ -319,7 +330,7 @@ oldmain = do
                   if modes_stale
                     then when (commit_change || modes_change) do
                       say "Eval home config …"
-                      next_modes <- nix "eval" "--raw" ([i|/home/maralorn/git/config\#homeModes.#{host_name}.drvPath|] :: String) |> captureTrim
+                      next_modes <- nix "eval" "--raw" ([i|#{home}/git/config\#homeModes.#{host_name}.drvPath|] :: String) |> captureTrim
                       say "Home eval finished."
                       diff_is_small <- diffIsSmall next_modes current_modes
                       atomically $ writeTVar modes_dirty_var (not diff_is_small)
@@ -336,7 +347,7 @@ oldmain = do
             onUpdate mode_var $ updateVarIfChanged var . runIdentity . withColor blue . show
         , simpleModule (1 * oneSecond) do
             now <- Time.getCurrentTime
-            notifications <- processNotifications . fromRight "" <$> Exception.try @Exception.IOException (readFileBS [i|/home/maralorn/.notifications/#{Time.formatTime Time.defaultTimeLocale "%Y-%m-%d" now}.log|])
+            notifications <- processNotifications . fromRight "" <$> Exception.try @Exception.IOException (readFileBS [i|#{home}/.notifications/#{Time.formatTime Time.defaultTimeLocale "%Y-%m-%d" now}.log|])
             when' (not $ Text.null notifications) $ withColor red (Text.take 24 (Text.drop ((`rem` 15) . round . Time.utctDayTime $ now) "NOTIFICATIONS! NOTIFICATIONS! NOTIFICATIONS!") <> "\n" <> notifications)
         ]
   foldConcurrently_

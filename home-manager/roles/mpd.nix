@@ -37,7 +37,10 @@ in {
     };
     mpdris2 = {
       enable = true;
-      mpd.host = replace_string;
+      mpd = {
+        musicDirectory = lib.mkForce null;
+        host = replace_string;
+      };
     };
   };
   home.packages = [
