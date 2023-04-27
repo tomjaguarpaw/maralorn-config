@@ -117,8 +117,9 @@ in {
     };
 
     "org/gnome/shell/extensions/pop-shell" = {
-      gap-inner = mkUint32 0;
-      gap-outer = mkUint32 0;
+      gap-inner = mkUint32 1;
+      gap-outer = mkUint32 1;
+      active-hint-border-radius = mkUint32 0;
       smart-gaps = true;
       snap-to-grid = true;
       tile-by-default = true;
