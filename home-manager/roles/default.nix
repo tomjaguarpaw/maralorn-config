@@ -16,7 +16,10 @@
 
   news.display = "silent";
 
-  home.stateVersion = "22.05";
+  home = {
+    stateVersion = "22.05";
+    enableNixpkgsReleaseCheck = true;
+  };
 
   programs = {
     nix-index.enable = true;

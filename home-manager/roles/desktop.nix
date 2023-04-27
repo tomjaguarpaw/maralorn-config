@@ -4,6 +4,7 @@
   ...
 }: {
   home = {
+    sessionVariables.NIXOS_OZONE_WL = "1";
     packages = builtins.attrValues {
       zoom = pkgs.zoom-us.overrideAttrs (old: {
         postFixup =
