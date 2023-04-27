@@ -1,7 +1,6 @@
 {
   pkgs,
   config,
-  lib,
   ...
 }: let
   adminCreds =
@@ -34,7 +33,7 @@
   nextcloudConf = hostname: {
     enable = true;
     hostName = hostname;
-    package = pkgs.nextcloud25;
+    package = pkgs.nextcloud26;
     enableBrokenCiphersForSSE = false;
     maxUploadSize = "10g";
     caching = {
