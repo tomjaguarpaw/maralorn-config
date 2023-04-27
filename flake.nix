@@ -2,8 +2,8 @@
   description = "maralorns configuration";
 
   inputs = {
-    nixos-unstable.url = "nixpkgs/d6b863fd9b7bb962e6f9fdf292419a775e772891";
-    nixos-stable.url = "nixpkgs/d6b863fd9b7bb962e6f9fdf292419a775e772891";
+    nixos-unstable.url = "nixpkgs/nixos-unstable";
+    nixos-stable.url = "nixpkgs/nixos-unstable";
     secrets = {
       url = "git+ssh://git@hera.m-0.eu/config-secrets";
       inputs.nixpkgs.follows = "";

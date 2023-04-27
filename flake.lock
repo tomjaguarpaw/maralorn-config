@@ -370,7 +370,7 @@
       },
       "original": {
         "id": "nixpkgs",
-        "rev": "d6b863fd9b7bb962e6f9fdf292419a775e772891",
+        "ref": "nixos-unstable",
         "type": "indirect"
       }
     },
@@ -385,7 +385,7 @@
       },
       "original": {
         "id": "nixpkgs",
-        "rev": "d6b863fd9b7bb962e6f9fdf292419a775e772891",
+        "ref": "nixos-unstable",
         "type": "indirect"
       }
     },
