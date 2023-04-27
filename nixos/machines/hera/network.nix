@@ -10,8 +10,35 @@ in {
   m-0.tailscale-routes = "fd42:ccc:da:64::/64,172.20.64.0/24";
   networking = {
     nftables.ruleset = ''
-      table ip nixos-nat { chain post { iifname tailscale0 oifname tinc.cdark.net masquerade comment "snat queries to hackspace";};}
-      table ip6 nixos-nat { chain post { iifname tailscale0 oifname tinc.cdark.net masquerade comment "snat queries to hackspace";};}
+      table ip nixos-nat {
+      	chain pre {
+      		type nat hook prerouting priority dstnat; policy accept;
+      	}
+
+      	chain post {
+      		type nat hook postrouting priority srcnat; policy accept;
+      		iifname "bridge" oifname "ens18" masquerade comment "from internal interfaces"
+      		iifname "tailscale0" oifname "tinc.cdark.net" masquerade comment "snat queries to hackspace"
+      	}
+
+      	chain out {
+      		type nat hook output priority mangle; policy accept;
+      	}
+      }
+      table ip6 nixos-nat {
+      	chain pre {
+      		type nat hook prerouting priority dstnat; policy accept;
+      	}
+
+      	chain post {
+      		type nat hook postrouting priority srcnat; policy accept;
+      		iifname "tailscale0" oifname "tinc.cdark.net" masquerade comment "snat queries to hackspace"
+      	}
+
+      	chain out {
+      		type nat hook output priority mangle; policy accept;
+      	}
+      }
     '';
     hostName = "hera";
     domain = "m-0.eu";
@@ -52,12 +79,12 @@ in {
         }
       ];
     };
-    nat = {
-      enable = true;
-      enableIPv6 = true;
-      externalInterface = "ens18";
-      internalInterfaces = ["bridge"];
-    };
+    #nat = {
+    #  enable = true;
+    #  enableIPv6 = true;
+    #  externalInterface = "ens18";
+    #  internalInterfaces = ["bridge"];
+    #};
     nameservers = ["213.136.95.10" "2a02:c207::1:53" "2a02:c207::2:53"];
     firewall.allowedTCPPorts = [8666];
     #firewall.allowedUDPPorts = [wireguard.port];
