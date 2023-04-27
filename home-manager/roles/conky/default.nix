@@ -82,6 +82,7 @@ in {
         ''${time %Y-%m-%d KW%V %a %H:%M}
         $color1$hr
         ''${catp /run/user/1000/status-bar}
+        ''${catp /home/maralorn/.persist/scratch}
       '';
       wait = 100;
     };
