@@ -30,6 +30,8 @@ import Shh qualified
 -- import Streamly.Data.Stream.Prelude qualified as Stream
 -- import Streamly.Internal.FileSystem.Event.Linux qualified as FileSystemStream
 -- import Streamly.Unicode.Stream qualified as Unicode
+
+import Data.Set qualified as Set
 import System.Directory (listDirectory)
 import System.Environment (getEnv)
 import System.FilePath ((</>))
@@ -357,6 +359,8 @@ oldmain = do
 
 processNotifications =
   Text.intercalate [i|\n$color1$hr${color \##{red}}\n|]
+    . toList
+    . Set.fromList
     . filter (\x -> not $ any (`Text.isPrefixOf` x) notificationBlockList)
     . filter (not . Text.null)
     . fmap
