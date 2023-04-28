@@ -53,6 +53,10 @@ in {
       toggle-fullscreen = ["<Super>f"];
     };
 
+    "org/gnome/mutter" = {
+      dynamic-workspaces = true;
+    };
+
     "org/gnome/mutter/keybindings" = {
       toggle-tiled-left = [];
       toggle-tiled-right = [];
