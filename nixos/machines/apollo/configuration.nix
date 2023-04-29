@@ -26,7 +26,7 @@ in {
       ];
     })
   ];
-  systemd.services.lenovo_fix.path = [pkgs.kmod];
+  systemd.services.throttled.path = [pkgs.kmod];
 
   environment.systemPackages = [
     pkgs.networkmanagerapplet # For when the gnome dialog sucks in asking for a wifi password.
@@ -38,25 +38,6 @@ in {
     hostName = "apollo";
     domain = "m-0.eu";
     networkmanager.enable = true;
-    #wireguard.interfaces = {
-    #  m0wire = {
-    #    allowedIPsAsRoutes = false;
-    #    ips = ["${hosts.apollo-wg}/112" "${hosts.vpn.apollo}/64"];
-    #    privateKeyFile = config.age.secrets."wireguard/apollo-private".path;
-    #    peers = [
-    #      {
-    #        publicKey = wireguard.pub.hera;
-    #        allowedIPs = ["::/0"];
-    #        # endpoint =
-    #        #  "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
-    #        endpoint = "[${hosts.hera-v4}]:${builtins.toString wireguard.port}";
-    #        presharedKeyFile = config.age.secrets."wireguard/psk".path;
-    #        persistentKeepalive = 25;
-    #      }
-    #    ];
-    #    postSetup = ["${pkgs.iproute}/bin/ip route add ${prefix}::/96 dev m0wire"];
-    #  };
-    #};
   };
 
   services = {
