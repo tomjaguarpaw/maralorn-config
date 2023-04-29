@@ -43,6 +43,8 @@ in {
   };
 
   nix = {
+    nixPath = ["nixpkgs=flake:pkgs"];
+
     registry.pkgs = {
       from = {
         type = "indirect";
