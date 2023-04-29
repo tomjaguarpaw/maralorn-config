@@ -8,7 +8,7 @@ flake-inputs: {
 in {
   imports = [
     (flake-inputs.secrets.lib.vpn "apollo")
-    "${flake-inputs.nixos-hardware}/lenovo/thinkpad/t480s"
+    flake-inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480s
     ./hardware-configuration.nix
     ../../roles
     ../../roles/fonts.nix
