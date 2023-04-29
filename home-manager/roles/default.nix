@@ -80,6 +80,7 @@
       };
       enable = true;
       ignores = [
+        ".direnv"
         ".syncthing*.tmp"
         "*.swp"
         "*.autosave~"
