@@ -25,7 +25,8 @@
       configFile = pkgs.writeText "${name}-newsboat-config" ''
         show-read-feeds no
         show-read-articles no
-        max-items 500
+        max-items 1000
+        miniflux-min-items 1000
         datetime-format "%Y-%m-%d"
         urls-source "miniflux"
         miniflux-url "http://rss.maralorn.de/"
