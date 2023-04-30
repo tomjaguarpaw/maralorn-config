@@ -1,5 +1,6 @@
 module Main (main) where
 
+import Data.Text qualified as Text
 import Data.Time (UTCTime)
 import Data.Time qualified as Time
 import Relude
@@ -10,15 +11,20 @@ import Witch (into)
 timestamp :: UTCTime -> Text
 timestamp = into . Time.formatTime Time.defaultTimeLocale "%Y-%m-%d %H:%M"
 
-mkEntry :: UTCTime -> (Integer, Feed.URI) -> Feed.Entry
-mkEntry now (index, url) =
-  ( Feed.nullEntry
-      url
-      (Feed.TextString url)
-      (timestamp now{Time.utctDayTime = fromInteger (60 * index)})
-  )
-    { Feed.entryLinks = [Feed.nullLink url]
-    }
+mkEntry :: UTCTime -> (Integer, Text) -> Feed.Entry
+mkEntry now (index, line) =
+  let
+    (url : rest) = Text.splitOn "," line
+    title' = Text.intercalate "," rest
+    title = if Text.null title' then url else title'
+   in
+    ( Feed.nullEntry
+        url
+        (Feed.TextString title)
+        (timestamp now{Time.utctDayTime = fromInteger (60 * index)})
+    )
+      { Feed.entryLinks = [Feed.nullLink url]
+      }
 
 main :: IO ()
 main = do
