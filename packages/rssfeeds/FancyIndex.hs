@@ -69,7 +69,7 @@ extractEntryFromTableRow = \row ->
 fetchIndex :: Text -> IO [Entry]
 fetchIndex = \url -> do
   putTextLn [i|fetching #{url} …|]
-  Concurrent.threadDelay 200_000 -- Microseconds
+  Concurrent.threadDelay 20_000 -- Microseconds
   mapMaybe extractEntryFromTableRow
     . List.split (TagSoup.isTagOpenName "tr")
     . dropWhile (not . TagSoup.isTagOpenName "tbody")
@@ -117,12 +117,14 @@ data FeedInfo = MkFeedInfo
 {- | Scrape an nginx fancy index.
  | Create one RSS feed for every subfolder of the given folder.
 -}
+ignores = []
+
 main :: IO ()
 main = do
   [root_dir_str] <- getArgs
   let root_dir = [i|#{root_dir_str}/|]
   folders <- fetchIndex root_dir
-  feeds <- forM folders \entry -> do
+  feeds <- forM (filter (\x -> not $ any (`Text.isInfixOf` x.link) ignores) folders) \entry -> do
     let path = Text.dropAround (== '/') entry.link
     entries <- collectEntries root_dir entry
 
