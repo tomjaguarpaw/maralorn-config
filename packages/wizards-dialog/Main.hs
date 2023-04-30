@@ -17,7 +17,7 @@ import Data.Yaml (decodeFileEither)
 import System.Posix.Daemon (Redirection (DevNull), runDetached)
 import System.Process (callCommand)
 
-import Dialog (Menu (..), MenuEntry (Option, SubMenu), menu, runClearingHaskeline)
+import Dialog (Menu (..), MenuEntry (Option, SubMenu), menu, runHaskeline)
 
 data Command = Run Text | Fork Text deriving (Show)
 
@@ -41,7 +41,7 @@ main = do
   case menuCommand of
     Left err -> print err
     Right a -> do
-      cmd <- runClearingHaskeline $ menu Nothing a
+      cmd <- runHaskeline $ menu Nothing a
       maybe pass runCommand cmd
 
 runCommand :: Command -> IO ()
