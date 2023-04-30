@@ -128,6 +128,7 @@ in {
     ./roles/create-plans.nix
     ./roles/monitor-config
     ./roles/trusted-env.nix
+    ./roles/wine.nix
   ];
   fluffy.default = makeConfig "fluffy" (
     default
