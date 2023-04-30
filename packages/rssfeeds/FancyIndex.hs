@@ -1,5 +1,6 @@
 module Main (main) where
 
+import Control.Concurrent qualified as Concurrent
 import Data.List.Extra qualified as List
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
@@ -66,7 +67,9 @@ extractEntryFromTableRow = \row ->
     <*> (extractTimeFromTableRow row)
 
 fetchIndex :: Text -> IO [Entry]
-fetchIndex = \url ->
+fetchIndex = \url -> do
+  putTextLn [i|fetching #{url} …|]
+  Concurrent.threadDelay 200_000 -- Microseconds
   mapMaybe extractEntryFromTableRow
     . List.split (TagSoup.isTagOpenName "tr")
     . dropWhile (not . TagSoup.isTagOpenName "tbody")
