@@ -15,7 +15,7 @@
     if [[ ! -f "$filename" ]]; then
       ${lib.getExe pkgs.yt-dlp} --embed-subs --embed-metadata --embed-chapters $1
     fi
-    ${lib.getExe pkgs.mpv} "$filename"
+    ${lib.getExe config.programs.mpv.finalPackage} "$filename"
   '';
   commands =
     builtins.mapAttrs (name: {
