@@ -4,7 +4,7 @@
   ...
 }: {
   home = {
-    sessionVariables.NIXOS_OZONE_WL = "1";
+    # This fixes border drawing but makes neo wonky. sessionVariables.NIXOS_OZONE_WL = "1";
     packages = builtins.attrValues {
       zoom = pkgs.zoom-us.overrideAttrs (old: {
         postFixup =
