@@ -14,8 +14,10 @@
     filename="`${lib.getExe pkgs.yt-dlp} -j $link | ${lib.getExe pkgs.jq} -r .filename`"
     if [[ ! -f "$filename" ]]; then
       echo "Prefetching file …"
-      ${lib.getExe pkgs.yt-dlp} --embed-subs --embed-metadata --embed-chapters $1
-      ${lib.getExe pkgs.libnotify} "Download complete" "$filename"
+      ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block \
+        ${lib.getExe pkgs.foot} \
+        sh -c \
+        "${lib.getExe pkgs.yt-dlp} --embed-subs --embed-metadata --embed-chapters \"$1\" && ${lib.getExe pkgs.libnotify} \"Download complete\" \"$filename\""
     else
       echo "File already fetched. Playing …"
       ${lib.getExe config.programs.mpv.finalPackage} "$filename"
