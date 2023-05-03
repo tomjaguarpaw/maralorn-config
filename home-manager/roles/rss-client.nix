@@ -15,7 +15,7 @@
     if [[ ! -f "$filename" ]]; then
       echo "Prefetching file …"
       ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block \
-        ${lib.getExe pkgs.foot} \
+        ${lib.getExe pkgs.foot} -D=~/.volatile/video-downloads \
         sh -c \
         "${lib.getExe pkgs.yt-dlp} --embed-subs --embed-metadata --embed-chapters \"$1\" && ${lib.getExe pkgs.libnotify} \"Download complete\" \"$filename\""
     else
