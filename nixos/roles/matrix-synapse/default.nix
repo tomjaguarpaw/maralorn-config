@@ -98,22 +98,22 @@ in {
           database_type = "psycopg2";
           max_upload_size = "30M";
           dynamic_thumbnails = true;
-          turn_shared_secret = config.services.coturn.static-auth-secret;
-          turn_uris = let
-            turns = "turns:${config.services.coturn.realm}:${
-              toString config.services.coturn.tls-listening-port
-            }";
-            turn = "turn:${config.services.coturn.realm}:${
-              toString config.services.coturn.listening-port
-            }";
-          in [
-            "${turns}?transport=udp"
-            "${turns}?transport=tcp"
-            "${turn}?transport=udp"
-            "${turn}?transport=tcp"
-          ];
-          turn_user_lifetime = "24h";
-          allow_guest_access = true;
+          #turn_shared_secret = config.services.coturn.static-auth-secret;
+          #turn_uris = let
+          #  turns = "turns:${config.services.coturn.realm}:${
+          #    toString config.services.coturn.tls-listening-port
+          #  }";
+          #  turn = "turn:${config.services.coturn.realm}:${
+          #    toString config.services.coturn.listening-port
+          #  }";
+          #in [
+          #  "${turns}?transport=udp"
+          #  "${turns}?transport=tcp"
+          #  "${turn}?transport=udp"
+          #  "${turn}?transport=tcp"
+          #];
+          #turn_user_lifetime = "24h";
+          #allow_guest_access = true;
           logConfig = ''
             version: 1
 
