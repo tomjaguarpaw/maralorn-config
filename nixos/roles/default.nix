@@ -26,6 +26,7 @@ in {
       allowPing = true;
     };
     nftables.enable = true; # Uses firewall variables since 23.05
+    useNetworkd = true;
     useDHCP = false; # enabled per interface
     hosts =
       lib.zipAttrs
@@ -159,6 +160,10 @@ in {
     };
   in
     {
+      "systemd-networkd-wait-online".serviceConfig.ExecStart = [
+        ""
+        "${config.systemd.package}/lib/systemd/systemd-networkd-wait-online --any"
+      ];
       nix-gc.serviceConfig.Type = "oneshot";
       nix-optimise.serviceConfig.Type = "oneshot";
     }

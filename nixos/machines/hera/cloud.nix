@@ -78,34 +78,20 @@
     config = _: {
       imports = [
         ../../roles
-        #pkgs.flake-inputs.self.nixosModules.unstableNFTables
       ];
       nixpkgs = {inherit pkgs;};
 
+      systemd.network.networks."10-wan" = {
+        matchConfig.Name = "eth0";
+        address = ["${v6}/112" "${v4}/24"];
+        routes = [
+          {routeConfig.Gateway = hosts.hera-intern;}
+          {routeConfig.Gateway = hosts.hera-intern-v4;}
+        ];
+      };
+
       networking = {
-        interfaces.eth0 = {
-          ipv6.addresses = [
-            {
-              address = v6;
-              prefixLength = 112;
-            }
-          ];
-          ipv4.addresses = [
-            {
-              address = v4;
-              prefixLength = 24;
-            }
-          ];
-        };
-        nameservers = ["213.136.95.10" "2a02:c207::1:53" "2a02:c207::2:53"];
-        defaultGateway6 = {
-          address = hosts.hera-intern;
-          interface = "eth0";
-        };
-        defaultGateway = {
-          address = hosts.hera-intern-v4;
-          interface = "eth0";
-        };
+        useHostResolvConf = false;
         firewall.allowedTCPPorts = [80 443 9100 9113];
       };
 
