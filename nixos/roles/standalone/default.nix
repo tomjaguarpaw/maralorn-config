@@ -5,18 +5,11 @@
   ...
 }: let
   inherit (pkgs.flake-inputs.self) sourceInfo;
-  s = builtins.substring;
-  formatDate = date: "${s 0 4 date}-${s 4 2 date}-${s 6 2 date}-${s 8 2 date}:${s 10 2 date}";
 in {
   imports = [
     ../vpn.nix
   ];
-  services.getty.greetingLine = "Welcome to NixOS ${config.system.nixos.version} (\m) - \l";
   system = {
-    nixos.label =
-      if sourceInfo ? shortRev
-      then "${config.system.nixos.version}-${formatDate sourceInfo.lastModifiedDate}-${sourceInfo.shortRev}"
-      else "${config.system.nixos.version}-dirty";
     systemBuilderCommands = lib.mkIf (sourceInfo ? rev) ''
       echo ${sourceInfo.rev} > $out/config-commit
     '';
