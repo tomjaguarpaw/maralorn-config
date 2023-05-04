@@ -706,6 +706,26 @@ in {
               type = "custom:mini-graph-card";
               entities = [
                 {
+                  entity = "sensor.${sensor.wohnzimmer}_co2";
+                  name = "CO2";
+                  show_fill = false;
+                }
+              ];
+              show = {
+                labels = true;
+                labels_secondary = "hover";
+              };
+              hours_to_show = 24;
+              update_interval = 30;
+              line_width = 2;
+              hour24 = true;
+              decimals = 1;
+              points_per_hour = 3;
+            })
+            (multiScaleGraphCards {
+              type = "custom:mini-graph-card";
+              entities = [
+                {
                   entity = "sensor.${sensor.wohnzimmer}_temperature";
                   name = "Temperatur";
                   show_fill = false;
@@ -760,26 +780,6 @@ in {
                   label = "An";
                 }
               ];
-            })
-            (multiScaleGraphCards {
-              type = "custom:mini-graph-card";
-              entities = [
-                {
-                  entity = "sensor.${sensor.wohnzimmer}_co2";
-                  name = "CO2";
-                  show_fill = false;
-                }
-              ];
-              show = {
-                labels = true;
-                labels_secondary = "hover";
-              };
-              hours_to_show = 24;
-              update_interval = 30;
-              line_width = 2;
-              hour24 = true;
-              decimals = 1;
-              points_per_hour = 3;
             })
             (multiScaleGraphCards {
               type = "custom:mini-graph-card";
