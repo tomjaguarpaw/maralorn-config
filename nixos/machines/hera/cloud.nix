@@ -43,12 +43,8 @@
     };
     config = {
       dbtype = "pgsql";
-      dbname = "nextcloud";
-      dbuser = "nextcloud";
-      dbhost = "localhost";
       defaultPhoneRegion = "DE";
       adminuser = "maralorn";
-      dbpassFile = builtins.toFile "nextcloud-dbpass" adminCreds.dbpass;
       adminpassFile = builtins.toFile "nextcloud-adminpass" adminCreds.adminpass;
     };
     autoUpdateApps = {
