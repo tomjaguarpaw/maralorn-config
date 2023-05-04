@@ -86,6 +86,10 @@
         ];
       };
 
+      # We only login via nixos-container root-login, so we can override the
+      # warning that we have no ssh or login password configured.
+      users.allowNoPasswordLogin = true;
+
       networking = {
         useHostResolvConf = false;
         firewall.allowedTCPPorts = [80 443 9100 9113];

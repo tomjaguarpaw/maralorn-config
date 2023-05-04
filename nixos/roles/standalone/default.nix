@@ -8,6 +8,7 @@
 in {
   imports = [
     ../vpn.nix
+    ../admin.nix
   ];
   system = {
     systemBuilderCommands = lib.mkIf (sourceInfo ? rev) ''
