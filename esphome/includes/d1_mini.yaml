@@ -1,30 +1,30 @@
-esp8266:
-  board: d1_mini
-
 # https://esphome.io/components/captive_portal.html
 captive_portal:
+
+esp8266:
+  board: d1_mini
 
 i2c:
   # default: sda: GPIO4
   # default: scl: GPIO5
   # default: scan: true
 
-uart:
-  tx_pin: GPIO1
-  rx_pin: GPIO3
-  baud_rate: 9600
-
 light:
-  - platform: binary
+  - id: status_led
     name: ${macsuffix}_status_led
-    id: status_led
     output: light_output
+    platform: binary
 
 output:
   - id: light_output
-    platform: gpio
     pin:
-      number: GPIO2
       inverted: true
+      number: GPIO2
+    platform: gpio
 
-wifi: !include ../../private/esphome-wifi.yaml
+uart:
+  baud_rate: 9600
+  rx_pin: GPIO3
+  tx_pin: GPIO1
+
+wifi: !include /home/maralorn/git/config-secrets/esphome-wifi.yaml
