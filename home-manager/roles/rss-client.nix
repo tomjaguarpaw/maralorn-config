@@ -15,7 +15,10 @@
     filename="`${lib.getExe pkgs.yt-dlp} -j $link | ${lib.getExe pkgs.jq} -r .filename`"
     if [[ ! -f "$filename" ]]; then
       echo "Prefetching file …"
-      ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block \
+      # --user to use the user daemon
+      # --no-block will wait for the unit to be created but not for it to signal succesful start
+      # -G remove the unit immediately after exit, even if it fails
+      ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block -G \
         ${lib.getExe pkgs.foot} -D "${video_dir}" \
         sh -c \
         "${lib.getExe pkgs.yt-dlp} --embed-subs --embed-metadata --embed-chapters \"$1\" && ${lib.getExe pkgs.libnotify} \"Download complete\" \"$filename\""
