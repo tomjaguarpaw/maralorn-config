@@ -5,9 +5,10 @@
   ...
 }: let
   rbw = config.programs.rbw.package;
+  video_dir = "${config.home.homeDirectory}/.volatile/video-downloads";
   download-and-watch = pkgs.writeShellScriptBin "download-and-watch" ''
     set -euo pipefail
-    cd ~/.volatile/video-downloads
+    cd "${video_dir}"
 
     link="''${1:-`${lib.getBin pkgs.wl-clipboard}/bin/wl-paste`}"
 
@@ -15,7 +16,7 @@
     if [[ ! -f "$filename" ]]; then
       echo "Prefetching file …"
       ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block \
-        ${lib.getExe pkgs.foot} -D=~/.volatile/video-downloads \
+        ${lib.getExe pkgs.foot} -D "${video_dir}" \
         sh -c \
         "${lib.getExe pkgs.yt-dlp} --embed-subs --embed-metadata --embed-chapters \"$1\" && ${lib.getExe pkgs.libnotify} \"Download complete\" \"$filename\""
     else
