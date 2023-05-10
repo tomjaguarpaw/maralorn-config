@@ -26,13 +26,10 @@ in {
       ];
     })
   ];
-  systemd.services.throttled.path = [pkgs.kmod];
 
   environment.systemPackages = [
     pkgs.networkmanagerapplet # For when the gnome dialog sucks in asking for a wifi password.
   ];
-
-  services.fprintd.enable = true;
 
   networking = {
     hostName = "apollo";
@@ -40,7 +37,16 @@ in {
     networkmanager.enable = true;
   };
 
+  systemd = {
+    network.wait-online.enable = true;
+    services = {
+      NetworkManager-wait-online.enable = false;
+      throttled.path = [pkgs.kmod];
+    };
+  };
+
   services = {
+    fprintd.enable = true;
     udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness"
       ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/backlight/%k/brightness"
@@ -71,6 +77,5 @@ in {
       }
       // syncthing.declarativeWith ["hera" "zeus" "pegasus"] "/home/maralorn/media";
   };
-  systemd.services.NetworkManager-wait-online.enable = false;
   system.stateVersion = "19.09";
 }

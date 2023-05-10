@@ -142,33 +142,32 @@ in {
       (_: "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt");
   };
 
-  systemd.services = let
-    hosts = builtins.attrNames config.services.nginx.virtualHosts;
-    makeConfig = host: {
-      name = "acme-${host}";
-      value = {
-        serviceConfig = {
-          Restart = "on-failure";
-          RestartSec = 600;
-        };
-        unitConfig = {
-          StartLimitIntervalSec = 2400;
-          StartLimitBurst = 3;
+  systemd = {
+    network.wait-online.anyInterface = true;
+    services = let
+      hosts = builtins.attrNames config.services.nginx.virtualHosts;
+      makeConfig = host: {
+        name = "acme-${host}";
+        value = {
+          serviceConfig = {
+            Restart = "on-failure";
+            RestartSec = 600;
+          };
+          unitConfig = {
+            StartLimitIntervalSec = 2400;
+            StartLimitBurst = 3;
+          };
         };
       };
-    };
-  in
-    {
-      "systemd-networkd-wait-online".serviceConfig.ExecStart = [
-        ""
-        "${config.systemd.package}/lib/systemd/systemd-networkd-wait-online --any"
-      ];
-      nix-gc.serviceConfig.Type = "oneshot";
-      nix-optimise.serviceConfig.Type = "oneshot";
-    }
-    // builtins.listToAttrs (map makeConfig hosts);
+    in
+      {
+        nix-gc.serviceConfig.Type = "oneshot";
+        nix-optimise.serviceConfig.Type = "oneshot";
+      }
+      // builtins.listToAttrs (map makeConfig hosts);
 
-  systemd.oomd.enableRootSlice = true;
+    oomd.enableRootSlice = true;
+  };
 
   services = {
     logind.killUserProcesses = false;
