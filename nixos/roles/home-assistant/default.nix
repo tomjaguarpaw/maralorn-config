@@ -34,7 +34,7 @@ flake-inputs: {
     };
     bad = {
       upper = 60;
-      lower = 50;
+      lower = 52;
     };
   };
   inherit (haLib) triggers actions;
