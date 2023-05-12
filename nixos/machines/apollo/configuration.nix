@@ -38,7 +38,7 @@ in {
   };
 
   systemd = {
-    network.wait-online.enable = true;
+    network.wait-online.enable = false;
     services = {
       NetworkManager-wait-online.enable = false;
       throttled.path = [pkgs.kmod];
