@@ -129,6 +129,7 @@ with lib; {
             "stream"
             "syncthing-hera"
             "tasks"
+            "taskserver"
           ];
           fluffy = ["home" "syncthing-fluffy" "5e"];
           zeus = ["syncthing-zeus"];

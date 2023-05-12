@@ -109,7 +109,7 @@ in {
     borgbackup.jobs = backupJobs;
     taskserver = {
       enable = true;
-      fqdn = "hera.m-0.eu";
+      fqdn = "${config.m-0.virtualHosts.taskserver}";
       listenHost = "::";
       organisations."maralorn.de".users = ["maralorn"];
     };
