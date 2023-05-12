@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  lib,
   ...
 }: let
   fix-tasks = pkgs.writeShellScriptBin "fix-tasks" ''
@@ -13,19 +14,31 @@ in {
     enable = true;
     frequency = "*:0/1";
   };
-  systemd.user.services.watch-tasks = {
-    Unit.Description = "Watch tasks for changes and trigger sync";
-    Service = {
-      ExecStart = toString (
-        pkgs.writeShellScript "watch-vdir" ''
-          while ${pkgs.coreutils}/bin/sleep 1s; do
-            ${pkgs.taskwarrior}/bin/task sync
-            ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete,modify -r ${config.home.homeDirectory}/.task
-          done
-        ''
-      );
+  systemd.user.services = {
+    taskwarrior-sync.Service.ExecStartPre =
+      (pkgs.writeShellScript "ensure-taskwarrior-login" ''
+        set -eu
+        if [[ -z "$(${lib.getExe pkgs.taskwarrior} show taskd.credentials | grep maralorn)" ]]; then
+          yes | /bin/sh <(${lib.getExe pkgs.openssh} root@hera nixos-taskserver user export maralorn.de maralorn)
+        fi
+      '')
+      .outPath;
+    watch-tasks = {
+      Unit.Description = "Watch tasks for changes and trigger sync";
+      Service = {
+        ExecStart =
+          (
+            pkgs.writeShellScript "watch-vdir" ''
+              while ${pkgs.coreutils}/bin/sleep 1s; do
+                ${pkgs.systemd}/bin/systemctl --user start taskwarrior-sync
+                ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete,modify -r ${config.home.homeDirectory}/.task
+              done
+            ''
+          )
+          .outPath;
+      };
+      Install.WantedBy = ["default.target"];
     };
-    Install.WantedBy = ["default.target"];
   };
   home.file = {
     "add-kassandra-notification" = {
@@ -75,11 +88,7 @@ in {
     dataLocation = "${config.home.homeDirectory}/.task";
     config = {
       taskd = {
-        certificate = "${pkgs.flake-inputs.secrets}/taskwarrior/public.cert";
-        credentials = pkgs.privateValue "" "taskwarrior/credentials";
-        ca = "${pkgs.flake-inputs.secrets}/taskwarrior/ca.cert";
-        key = "${pkgs.flake-inputs.secrets}/taskwarrior/private.key";
-        server = "hera.m-0.eu:53589";
+        server = "taskserver.maralorn.de:53589";
       };
     };
     extraConfig = ''
