@@ -76,7 +76,6 @@ in {
     avahi.enable = true;
     home-assistant = {
       enable = true;
-      extraPackages = ps: with ps; [protobuf.dev protobuf.out];
       package = pkgs.home-assistant.overrideAttrs (
         oldAttrs: {
           doInstallCheck = false;
