@@ -288,11 +288,11 @@
         "pre-commit-hooks": []
       },
       "locked": {
-        "lastModified": 1684104883,
-        "narHash": "sha256-a/ElUwtp4BYiy83t5JxNhrpIkLZ/KVjZ8RMOl9UthC4=",
+        "lastModified": 1684242710,
+        "narHash": "sha256-D9CNx1YecBjBw4vjI5g4QH/eg8ufFr9PCxtKb7rDrm0=",
         "ref": "main",
-        "rev": "61082c52bd663dfd9b588dde14d60d023e732316",
-        "revCount": 429,
+        "rev": "5e518388023bd082cec4f49df1093e0ecc03ff8d",
+        "revCount": 431,
         "type": "git",
         "url": "ssh://git@hera.m-0.eu/nix-output-monitor"
       },
