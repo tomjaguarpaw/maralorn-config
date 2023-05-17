@@ -166,7 +166,7 @@ in {
         set sort=threads
         set sort_aux=last-date-received
         set realname="${name}"
-        set from=fill-later
+        set from=malte.ott@maralorn.de
         set use_from=yes
         set fast_reply=yes
         set mailcap_path=${mailcap};
@@ -204,17 +204,17 @@ in {
         ignore *
         unignore from date cc bcc to subject list-unsubscribe
 
-        alias f__0 ${name} <${mail}>
-        ${
-          builtins.concatStringsSep "\n"
-          (
-            lib.imap1 (n: x: "alias f__${toString n} ${name} <${x}>")
-            alternates
-          )
-        }
-        send2-hook '~f fill-later' "push <edit-from><kill-line>f__<complete><search>${mail}<enter>"
         set query_command = "${pkgs.khard}/bin/khard email --parsable %s"
       '';
+      #alias f__0 ${name} <${mail}>
+      #${
+      #  builtins.concatStringsSep "\n"
+      #  (
+      #    lib.imap1 (n: x: "alias f__${toString n} ${name} <${x}>")
+      #    alternates
+      #  )
+      #}
+      #send2-hook '~f fill-later' "push <edit-from><kill-line>f__<complete><search>${mail}<enter>"
     };
   };
 }
