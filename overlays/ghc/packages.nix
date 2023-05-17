@@ -24,12 +24,9 @@ rec {
         cabal-fmt
         stack
         ghcid
-        # ghc-debug-client
-        
-        # eventlog2html
-        
-        # ghc-debug-brick
-        
+        ghc-debug-client
+        eventlog2html
+        ghc-debug-brick
         haskell-language-server
         cabal-install
         dhall
