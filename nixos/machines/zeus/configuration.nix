@@ -152,15 +152,13 @@ in {
   services = {
     snapper = {
       configs.persist = {
-        subvolume = "/disk/persist";
-        extraConfig = ''
-          TIMELINE_MIN_AGE="3600"
-          TIMELINE_LIMIT_WEEKLY="4"
-          TIMELINE_LIMIT_MONTHLY="1"
-          TIMELINE_LIMIT_YEARLY="0"
-          TIMELINE_CREATE="yes"
-          TIMELINE_CLEANUP="yes"
-        '';
+        SUBVOLUME = "/disk/persist";
+        TIMELINE_MIN_AGE = "3600";
+        TIMELINE_LIMIT_WEEKLY = "4";
+        TIMELINE_LIMIT_MONTHLY = "1";
+        TIMELINE_LIMIT_YEARLY = "0";
+        TIMELINE_CREATE = true;
+        TIMELINE_CLEANUP = true;
       };
       cleanupInterval = "15m";
       snapshotInterval = "*:00/3:00";
