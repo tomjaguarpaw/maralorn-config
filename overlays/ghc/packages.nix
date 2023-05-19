@@ -27,6 +27,8 @@ rec {
         ghc-debug-client
         eventlog2html
         ghc-debug-brick
+        nixfmt
+        calligraphy
         haskell-language-server
         cabal-install
         dhall
