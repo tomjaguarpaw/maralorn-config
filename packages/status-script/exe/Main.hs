@@ -277,7 +277,8 @@ oldmain = do
             dirs <- listDirectory git_dir
             dirty <- fmap toText <$> filterM (isDirty . (git_dir </>)) dirs
             atomically $ writeTVar dirty_var dirty
-            when' (not $ null dirty) $ withColor red [i|Dirty: #{Text.intercalate " " dirty}|]
+            mode <- read_mode
+            when' (mode /= Klausur && not (null dirty)) $ withColor red [i|Dirty: #{Text.intercalate " " dirty}|]
         , simpleModule (5 * oneSecond) do
             dirs <- listDirectory git_dir
             unpushed <- fmap toText <$> filterM (isUnpushed . (git_dir </>)) dirs
@@ -289,7 +290,8 @@ oldmain = do
         , simpleModule (5 * oneSecond) $ do
             current_kernel <- readlink "/run/current-system/kernel" |> captureTrim
             booted_kernel <- readlink "/run/booted-system/kernel" |> captureTrim
-            when' (current_kernel /= booted_kernel) $ withColor yellow "Booted kernel stale"
+            mode <- read_mode
+            when' (mode /= Klausur && current_kernel /= booted_kernel) $ withColor yellow "Booted kernel stale"
         , simpleModule (5 * oneSecond) $ do
             mode <- read_mode
             behind <-
