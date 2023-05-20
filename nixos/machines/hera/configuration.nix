@@ -73,22 +73,30 @@ in {
           Type = "oneshot";
         };
       };
+      bump-config = {
+        script = ''
+          ${pkgs.laminar}/bin/laminarc queue bump-config
+        '';
+        serviceConfig = {
+          Type = "oneshot";
+        };
+        startAt = "Sat 04:00";
+      };
       night-routines = {
         script = let
           start = "${pkgs.systemd}/bin/systemctl start";
           container = "${pkgs.nixos-container}/bin/nixos-container run";
+          # ${start} mysql-backup -- only needed for firefox-sync
         in ''
           set -x
           set +e
           ${start} pg_backup
-          ${start} mysql-backup
           ${container} chor-cloud -- ${start} nextcloud-pg-backup
           ${lib.concatMapStringsSep "\n" (name: "${start} ${name}") backupJobNames}
           ${pkgs.coreutils}/bin/rm -rf /var/lib/db-backup-dumps/*
           ${start} synapse-cleanup
           ${start} nix-gc
           ${start} nix-optimise
-          ${pkgs.laminar}/bin/laminarc queue bump-config
         '';
         serviceConfig = {
           Type = "oneshot";
