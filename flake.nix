@@ -3,7 +3,7 @@
 
   inputs = {
     nixos-unstable.url = "nixpkgs/nixos-unstable";
-    nixos-stable.url = "nixpkgs/nixos-unstable";
+    nixos-stable.url = "nixpkgs/release-23.05";
     devenv.url = "github:cachix/devenv/latest";
     secrets = {
       url = "git+ssh://git@hera.m-0.eu/config-secrets";
