@@ -32,8 +32,8 @@ in {
     };
 
   systemd.user.services = let
-    hasImapHost = name: account: account.imap != null;
-    mkWatchService = name: account: {
+    hasImapHost = _name: account: account.imap != null;
+    mkWatchService = name: _account: {
       name = "watch-${name}-maildir";
       value = {
         Unit.Description = "Watch maildir for changes for account ${name}";

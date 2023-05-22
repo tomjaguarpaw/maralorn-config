@@ -57,9 +57,10 @@
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixos-stable";
     };
+    nixos-hardware.url = "nixos-hardware";
   };
 
-  outputs = inputs@{ nixos-hardware, ... }:
+  outputs = inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; }
     (import ./flake-module.nix);
 }

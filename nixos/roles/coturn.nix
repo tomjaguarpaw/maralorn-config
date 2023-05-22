@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 let
   fqdn = "${config.networking.hostName}.${config.networking.domain}";
   key_dir = config.security.acme.certs."${fqdn}".directory;

@@ -1,5 +1,5 @@
 { lib, inputs, ... }: {
-  perSystem = { inputs', system, ... }: {
+  perSystem = { inputs', ... }: {
     _module.args.pkgs = inputs'.nixos-stable.legacyPackages.appendOverlays ([
       (_: _: {
         flake-inputs = inputs;

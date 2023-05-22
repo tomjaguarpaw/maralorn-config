@@ -1,5 +1,5 @@
 { withSystem, lib, inputs, ... }: {
-  flake = withSystem "x86_64-linux" ({ self', pkgs, ... }:
+  flake = withSystem "x86_64-linux" ({ pkgs, ... }:
     let
       flattenAttrs = attrs:
         lib.listToAttrs (lib.flatten (lib.mapAttrsToList (outer_key:

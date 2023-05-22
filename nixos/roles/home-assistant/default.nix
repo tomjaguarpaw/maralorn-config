@@ -1,4 +1,3 @@
-flake-inputs:
 { pkgs, lib, ... }:
 let
   haLib = import ./lib.nix lib;

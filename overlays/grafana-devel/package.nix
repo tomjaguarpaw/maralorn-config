@@ -1,4 +1,4 @@
-{ stdenv, lib, grafana, writeScriptBin, symlinkJoin, writeTextFile, }:
+{ stdenv, grafana, writeScriptBin, symlinkJoin, writeTextFile, }:
 let
   provision = symlinkJoin {
     name = "provision-files";

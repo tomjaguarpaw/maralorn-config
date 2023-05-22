@@ -1,1 +1,1 @@
-self: super: { grafana-devel = self.callPackage ./package.nix { }; }
+self: _super: { grafana-devel = self.callPackage ./package.nix { }; }

@@ -1,4 +1,4 @@
-final: prev:
+final: _prev:
 let
   pkgs = final;
   deps = ps: with ps; [ jinja2 mastodon-py scipy python-dotenv ];

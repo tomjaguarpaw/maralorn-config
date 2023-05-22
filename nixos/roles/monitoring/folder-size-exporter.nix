@@ -1,5 +1,5 @@
 { folders ? [ "/" ] }:
-{ pkgs, lib, ... }:
+{ lib, ... }:
 let textfilesDir = "/var/cache/prometheus-textfiles";
 in {
   services.prometheus.exporters.node.extraFlags =

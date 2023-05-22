@@ -1,12 +1,12 @@
 flake-inputs:
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 let localAddress = "fdc0:1::2";
 in {
   imports = [
-    (import ../../roles/home-assistant flake-inputs)
     (import ../../roles/home-manager.nix flake-inputs)
     ../../roles
     ../../roles/fonts.nix
+    ../../roles/home-assistant
     ../../roles/metal.nix
     ../../roles/standalone
     ../../roles/server

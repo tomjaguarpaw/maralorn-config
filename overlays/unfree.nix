@@ -1,7 +1,7 @@
-self: super:
+final: _prev:
 let
-  unfree = import self.flake-inputs.nixos-stable {
-    inherit (self) system;
+  unfree = import final.flake-inputs.nixos-stable {
+    inherit (final) system;
     config = {
       allowUnfree = true;
       android_sdk.accept_license = true;

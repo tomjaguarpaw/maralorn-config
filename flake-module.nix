@@ -21,7 +21,10 @@
       };
     };
 
-    pre-commit = {
+    pre-commit = let
+      generated_nix_files =
+        [ "packages/.*/default\\.nix" "hardware-configuration\\.nix" ];
+    in {
       pkgs = inputs'.nixos-unstable.legacyPackages;
       check.enable = true;
       settings = {
@@ -36,11 +39,13 @@
           nixfmt.enable = true;
           nil = {
             enable = true;
-            excludes =
-              [ "packages/.*/default\\.nix" "hardware-configuration\\.nix" ];
+            excludes = generated_nix_files;
           };
           #editorconfig-checker.enable = true;
-          #deadnix.enable = true;
+          deadnix = {
+            enable = true;
+            excludes = generated_nix_files;
+          };
           statix.enable = true;
           fourmolu.enable = true;
           shellcheck.enable = true;
