@@ -3,6 +3,7 @@
     inherit (pkgs.xorg) xev;
     inherit (pkgs)
       meld icedtea8_web octave filezilla nix-review gparted grafana-devel;
+    inherit (pkgs.flake-inputs'.devenv.packages) devenv;
   };
   home.file.".editorconfig".text = ''
     # Top-most EditorConfig file
