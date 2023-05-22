@@ -11,7 +11,9 @@ flake-inputs: {
     dehumidifier = humidity;
     heating = "#ff9021";
     temperature = "#7100ff";
+    outside_temperature = "#d4b2ff";
     humidity = "#00bfff";
+    outside_humidity = "#b2ebff";
     window = "#99046c";
     primary = "#858EFF";
   };
@@ -76,18 +78,13 @@ in {
     avahi.enable = true;
     home-assistant = {
       enable = true;
-      package = pkgs.home-assistant.overrideAttrs (
-        oldAttrs: {
-          doInstallCheck = false;
-          patches = (oldAttrs.patches or []) ++ [./warnwetter.patch];
-        }
-      );
       configDir = homeAssistantDir;
       extraComponents = [];
       config = {
         esphome = {};
         default_config = {};
         shopping_list = {};
+        openweathermap = {};
         matrix = {
           homeserver = "https://matrix.maralorn.de";
           username = "@marabot:maralorn.de";
@@ -182,26 +179,14 @@ in {
                 {
                   choose = [
                     {
-                      conditions = [
-                        {
-                          condition = "numeric_state";
-                          entity_id = "sensor.${sensor.bad}_humidity";
-                          above = humidity_threshold.bad.upper;
-                        }
-                      ];
+                      conditions = "{{ state_attr('sensor.${sensor.bad}_dew_point') > max(state_attr('sensor.openweathermap_darmstadt_hourly_dew_point') + 1,12.5)}}";
                       sequence = {
                         service = "switch.turn_on";
                         target.entity_id = "switch.lueftung_bad";
                       };
                     }
                     {
-                      conditions = [
-                        {
-                          condition = "numeric_state";
-                          entity_id = "sensor.${sensor.bad}_humidity";
-                          below = humidity_threshold.bad.lower;
-                        }
-                      ];
+                      conditions = "{{ state_attr('sensor.${sensor.bad}_dew_point') < max(state_attr('sensor.openweathermap_darmstadt_hourly_dew_point') + 0.5,12)}}";
                       sequence = {
                         service = "switch.turn_off";
                         target.entity_id = "switch.lueftung_bad";
@@ -536,6 +521,13 @@ in {
           }
         ];
         input_number = {
+          ambient_co2 = {
+            name = "CO2 in der Atmosphäre";
+            unit_of_measurement = "ppm";
+            min = "400";
+            max = "1000";
+            step = "1";
+          };
           target_temperature_schlafzimmer = {
             name = "Zieltemperatur Schlafzimmer";
             unit_of_measurement = "°C";
@@ -580,12 +572,9 @@ in {
               }
             ];
           }
-        ];
-        weather = [
           {
-            platform = "warnwetter";
-            name = "DWD Darmstadt";
-            station_id = "L886";
+            platform = "dwd_weather_warnings";
+            region_name = 106411000; # Stadt Darmstadt
           }
         ];
         http = {
@@ -632,12 +621,16 @@ in {
               type = "custom:sun-card";
             }
             {
-              type = "weather-forecast";
-              entity = "weather.dwd_darmstadt";
-            }
-            {
               type = "picture";
               image = "https://www.dwd.de/DWD/wetter/radar/radfilm_hes_akt.gif";
+            }
+            {
+              type = "weather-forecast";
+              entity = "weather.openweathermap_darmstadt_hourly";
+            }
+            {
+              type = "weather-forecast";
+              entity = "weather.openweathermap_darmstadt_daily";
             }
             {
               type = "custom:rmv-card";
@@ -682,6 +675,26 @@ in {
               })
           ];
         };
+        graph.outside = {
+          dew_point = {
+            entity = "sensor.openweathermap_darmstadt_hourly_dew_point";
+            name = "Taupunkt draußen";
+            show_fill = false;
+            color = colors.outside_humidity;
+          };
+          humidity = {
+            entity = "sensor.openweathermap_darmstadt_hourly_humidity";
+            name = "Luftfeuchtigkeit draußen";
+            show_fill = false;
+            color = colors.outside_humidity;
+          };
+          temperature = {
+            entity = "sensor.openweathermap_darmstadt_hourly_temperature";
+            name = "Temperatur draußen";
+            show_fill = false;
+            color = colors.outside_temperature;
+          };
+        };
         wohnzimmerstack = {
           type = "vertical-stack";
           cards = [
@@ -709,7 +722,27 @@ in {
                   name = "CO2";
                   show_fill = false;
                 }
+                {
+                  entity = "input_number.ambient_co2";
+                  show_fill = false;
+                  color = colors.warn;
+                }
               ];
+              color_thresholds = [
+                {
+                  value = 0;
+                  color = colors.okay;
+                }
+                {
+                  value = 1000;
+                  color = colors.warn;
+                }
+                {
+                  value = 2000;
+                  color = colors.alert;
+                }
+              ];
+              color_thresholds_transition = "hard";
               show = {
                 labels = true;
                 labels_secondary = "hover";
@@ -730,6 +763,8 @@ in {
                   show_fill = false;
                   color = colors.temperature;
                 }
+                graph.outside.temperature
+                graph.outside.dew_point
                 {
                   entity = "sensor.${sensor.wohnzimmer}_dew_point";
                   name = "Taupunkt";
@@ -789,6 +824,7 @@ in {
                   show_fill = false;
                   color = colors.humidity;
                 }
+                graph.outside.humidity
               ];
               show = {
                 labels = true;
@@ -847,6 +883,7 @@ in {
                   show_fill = false;
                   color = colors.humidity;
                 }
+                graph.outside.humidity
                 {
                   entity = "sensor.kuchenfenster";
                   name = "Fenster";
@@ -890,6 +927,8 @@ in {
                   show_fill = false;
                   color = colors.temperature;
                 }
+                graph.outside.temperature
+                graph.outside.dew_point
                 {
                   entity = "sensor.${sensor.kueche}_dew_point";
                   name = "Temperatur";
@@ -973,6 +1012,8 @@ in {
                   show_fill = false;
                   color = colors.temperature;
                 }
+                graph.outside.temperature
+                graph.outside.dew_point
                 {
                   entity = "sensor.${sensor.schlafzimmer}_dew_point";
                   name = "Taupunkt";
@@ -1038,6 +1079,7 @@ in {
                   show_fill = false;
                   state_adaptive_color = true;
                 }
+                graph.outside.humidity
                 {
                   entity = "sensor.luftentfeuchter";
                   name = "Entfeuchter";
@@ -1140,6 +1182,8 @@ in {
                   show_fill = false;
                   color = colors.temperature;
                 }
+                graph.outside.temperature
+                graph.outside.dew_point
                 {
                   entity = "sensor.${sensor.bad}_dew_point";
                   name = "Taupunkt";
@@ -1177,8 +1221,9 @@ in {
                   entity = "sensor.${sensor.bad}_humidity";
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
-                  state_adaptive_color = true;
+                  color = colors.humidity;
                 }
+                graph.outside.humidity
                 {
                   entity = "sensor.luftung";
                   name = "Lüftung";
