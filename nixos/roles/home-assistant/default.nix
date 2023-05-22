@@ -171,7 +171,7 @@ in {
               choose = [
                 {
                   conditions =
-                    "{{ state_attr('sensor.${sensor.bad}_dew_point') > max(state_attr('sensor.openweathermap_darmstadt_hourly_dew_point') + 1,12.5)}}";
+                    "{{ states('sensor.${sensor.bad}_dew_point')|float > max(states('sensor.openweathermap_darmstadt_hourly_dew_point')|float + 1,12.5)}}";
                   sequence = {
                     service = "switch.turn_on";
                     target.entity_id = "switch.lueftung_bad";
@@ -179,7 +179,7 @@ in {
                 }
                 {
                   conditions =
-                    "{{ state_attr('sensor.${sensor.bad}_dew_point') < max(state_attr('sensor.openweathermap_darmstadt_hourly_dew_point') + 0.5,12)}}";
+                    "{{ states('sensor.${sensor.bad}_dew_point')|float < max(states('sensor.openweathermap_darmstadt_hourly_dew_point')|float + 0.5,12)}}";
                   sequence = {
                     service = "switch.turn_off";
                     target.entity_id = "switch.lueftung_bad";
