@@ -41,7 +41,10 @@
             enable = true;
             excludes = generated_nix_files;
           };
-          #editorconfig-checker.enable = true;
+          editorconfig-checker = {
+            excludes = [ ".*\\.json" ];
+            enable = true;
+          };
           deadnix = {
             enable = true;
             excludes = generated_nix_files;
