@@ -130,7 +130,7 @@
     packages = builtins.attrValues {
       inherit (pkgs)
         go gdb mpc_cli ncmpcpp shfmt astyle nodejs tasksh magic-wormhole nix-top
-        nix-diff matrix-commander upterm lazygit gh ledger aqbanking;
+        matrix-commander upterm lazygit gh ledger aqbanking;
       inherit (pkgs.haskellPackages) hledger hledger-ui hledger-web;
       mytmux = pkgs.writeShellScriptBin "mytmux" ''
         session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
