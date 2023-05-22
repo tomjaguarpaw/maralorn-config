@@ -1,9 +1,11 @@
-flake-inputs: {config, ...}: {
-  imports = [flake-inputs.home-manager.nixosModules.home-manager];
+flake-inputs:
+{ config, ... }: {
+  imports = [ flake-inputs.home-manager.nixosModules.home-manager ];
   home-manager = {
     backupFileExtension = "home-manager-backup";
     useGlobalPkgs = true;
     useUserPackages = true;
-    users.maralorn = (import ../../home-manager/machines.nix).${config.networking.hostName}.default;
+    users.maralorn = (import
+      ../../home-manager/machines.nix).${config.networking.hostName}.default;
   };
 }

@@ -32,13 +32,12 @@
         nixpkgs-22_11.follows = "";
         blobs.follows = "";
       };
-      url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git";
+      url =
+        "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git";
     };
     home-manager = {
       url = "home-manager/master";
-      inputs = {
-        nixpkgs.follows = "";
-      };
+      inputs = { nixpkgs.follows = ""; };
     };
     hexa-nur-packages = {
       url = "github:mweinelt/nur-packages";
@@ -60,6 +59,7 @@
     };
   };
 
-  outputs = inputs @ {nixos-hardware, ...}:
-    inputs.flake-parts.lib.mkFlake {inherit inputs;} (import ./flake-module.nix);
+  outputs = inputs@{ nixos-hardware, ... }:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; }
+    (import ./flake-module.nix);
 }

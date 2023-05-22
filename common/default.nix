@@ -1,9 +1,4 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
+{ config, pkgs, lib, ... }:
 with lib; {
   config = {
     m-0.monitoring = [
@@ -55,8 +50,8 @@ with lib; {
     monitoring = mkOption {
       type = types.listOf (types.submodule {
         options = {
-          name = mkOption {type = types.str;};
-          host = mkOption {type = types.str;};
+          name = mkOption { type = types.str; };
+          host = mkOption { type = types.str; };
           container = mkOption {
             type = types.bool;
             default = false;
@@ -67,18 +62,13 @@ with lib; {
           };
         };
       });
-      default = [];
+      default = [ ];
     };
     headscaleIPs = mkOption {
       type = types.listOf types.string;
-      default = [
-        "100.64.7.0/24"
-        "fd7a:115c:a1e0:77::/64"
-      ];
+      default = [ "100.64.7.0/24" "fd7a:115c:a1e0:77::/64" ];
     };
-    virtualHosts = mkOption {
-      type = types.attrs;
-    };
+    virtualHosts = mkOption { type = types.attrs; };
     hosts = mkOption {
       type = types.attrs;
       default = let
@@ -99,14 +89,7 @@ with lib; {
         # (echo '{' && tailscale status -json | jq -r '.Self,.Peer[] | .DNSName[:-17] + " = { A = \"" + .TailscaleIPs[0] + "\"; AAAA = \"" + .TailscaleIPs[1] + "\";};"' && echo '}') > common/tailscale.nix
         tailscale = import ./tailscale.nix;
         publicAliases = {
-          hera = [
-            "blog"
-            "cloud"
-            "git"
-            "lists"
-            "matrix"
-            "rpg"
-          ];
+          hera = [ "blog" "cloud" "git" "lists" "matrix" "rpg" ];
         };
         aliases = {
           hera = [
@@ -131,9 +114,9 @@ with lib; {
             "tasks"
             "taskserver"
           ];
-          fluffy = ["home" "syncthing-fluffy" "5e"];
-          zeus = ["syncthing-zeus"];
-          apollo = ["syncthing-apollo"];
+          fluffy = [ "home" "syncthing-fluffy" "5e" ];
+          zeus = [ "syncthing-zeus" ];
+          apollo = [ "syncthing-apollo" ];
         };
       };
     };

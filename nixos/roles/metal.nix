@@ -1,5 +1,5 @@
 _: {
-  boot.kernelParams = ["mitigations=off"];
+  boot.kernelParams = [ "mitigations=off" ];
   console.keyMap = "neo";
   security.rtkit.enable = true;
   services = {

@@ -1,4 +1,5 @@
-{pkgs, ...}: let
+{ pkgs, ... }:
+let
   name = "foundryvtt";
   stateDir = "/var/lib/${name}";
   dataDir = "${stateDir}/data";
@@ -13,11 +14,12 @@
     minifyStaticFiles = true;
     updateChannel = "release";
   };
-  declarativeConfigFile = builtins.toFile "foundry-options.json" (builtins.toJSON config);
+  declarativeConfigFile =
+    builtins.toFile "foundry-options.json" (builtins.toJSON config);
 in {
   config = {
     systemd.services."${name}" = {
-      wantedBy = ["multi-user.target"];
+      wantedBy = [ "multi-user.target" ];
       description = "Foundryvtt server";
       preStart = ''
         mkdir -p ${dataDir}
@@ -38,7 +40,8 @@ in {
         DynamicUser = true;
         Restart = "always";
         Environment = "HOME=${stateDir}";
-        ExecStart = "${pkgs.nodejs}/bin/node ${stateDir}/app/resources/app/main.js --dataPath=\"${dataDir}\"";
+        ExecStart = ''
+          ${pkgs.nodejs}/bin/node ${stateDir}/app/resources/app/main.js --dataPath="${dataDir}"'';
       };
     };
     services = {
@@ -60,10 +63,14 @@ in {
                   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                   proxy_set_header X-Forwarded-Proto $scheme;
                   if ($query_string ~ "pw=([A-Za-z]*)") {
-                     add_header Set-Cookie "password=$1; path=/; Max-Age=${toString (365 * 24 * 60 * 60)}; Secure";
+                     add_header Set-Cookie "password=$1; path=/; Max-Age=${
+                       toString (365 * 24 * 60 * 60)
+                     }; Secure";
                      return 303 /;
                   }
-                  if ($http_cookie !~ "password=${pkgs.privateValue "" "foundry-pw"}") {
+                  if ($http_cookie !~ "password=${
+                    pkgs.privateValue "" "foundry-pw"
+                  }") {
                      return 303 /logout;
                   }
                 '';

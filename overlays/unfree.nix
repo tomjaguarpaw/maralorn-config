@@ -1,4 +1,5 @@
-self: super: let
+self: super:
+let
   unfree = import self.flake-inputs.nixos-stable {
     inherit (self) system;
     config = {
@@ -7,5 +8,7 @@ self: super: let
     };
   };
 in {
-  inherit (unfree) discord zoom-us minecraft teamviewer steam androidsdk_9_0 factorio minecraft-server;
+  inherit (unfree)
+    discord zoom-us minecraft teamviewer steam androidsdk_9_0 factorio
+    minecraft-server;
 }

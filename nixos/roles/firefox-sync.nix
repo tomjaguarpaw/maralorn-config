@@ -1,9 +1,4 @@
-{
-  pkgs,
-  lib,
-  config,
-  ...
-}: {
+{ pkgs, lib, config, ... }: {
   services.mysql = {
     enable = true;
     package = pkgs.mariadb;
@@ -11,7 +6,7 @@
 
   services.mysqlBackup = {
     enable = true;
-    databases = ["firefox_syncserver"];
+    databases = [ "firefox_syncserver" ];
     calendar = "";
     singleTransaction = true;
   };

@@ -1,21 +1,16 @@
-flake-inputs: {
-  pkgs,
-  config,
-  lib,
-  ...
-}: let
+flake-inputs:
+{ pkgs, config, lib, ... }:
+let
   certPath = "/var/lib/acme/hera.m-0.eu";
-  nonMailboxDomains = ["lists.maralorn.de"];
+  nonMailboxDomains = [ "lists.maralorn.de" ];
   inherit (config.m-0) hosts virtualHosts;
   rspamd-address = "[::1]:11334";
 in {
-  imports = [flake-inputs.nixos-mailserver.nixosModules.default];
-  m-0.monitoring = [
-    {
-      name = "postfix on hera";
-      host = "hera-intern:9154";
-    }
-  ];
+  imports = [ flake-inputs.nixos-mailserver.nixosModules.default ];
+  m-0.monitoring = [{
+    name = "postfix on hera";
+    host = "hera-intern:9154";
+  }];
 
   services = {
     nginx.virtualHosts.${virtualHosts.rspamd}.locations."/" = {
@@ -33,18 +28,16 @@ in {
     rspamd = {
       workers = {
         controller = {
-          bindSockets = [rspamd-address];
+          bindSockets = [ rspamd-address ];
           extraConfig = ''
             secure_ip = "::1/128 127.0.0.1/32";
           '';
         };
-        normal = {};
+        normal = { };
       };
       locals = {
         "multimap.conf".text = let
-          allow-ip =
-            builtins.toFile "allow-ip.map" ''
-            '';
+          allow-ip = builtins.toFile "allow-ip.map" "";
           allow-host = builtins.toFile "allow-host.map" ''
             ccc.de
             discourse.cloud
@@ -73,12 +66,21 @@ in {
       };
     };
     postfix = {
-      networks = ["[::1]/128" "127.0.0.1/32" "[${config.m-0.prefix}::]/64" "10.0.0.0/24"];
+      networks = [
+        "[::1]/128"
+        "127.0.0.1/32"
+        "[${config.m-0.prefix}::]/64"
+        "10.0.0.0/24"
+      ];
       transport = "email2matrix.maralorn.de smtp:[::1]:2525";
       config = {
         # Allow TLSv1 because we need to be able to receive mail from legacy servers.
-        smtpd_tls_protocols = lib.mkForce "TLSv1.3, TLSv1.2, TLSv1.1, TLSv1, !SSLv2, !SSLv3";
-        virtual_mailbox_domains = lib.mkForce (builtins.toFile "vhosts" (lib.concatStringsSep "\n" (builtins.filter (x: !builtins.elem x nonMailboxDomains) config.mailserver.domains)));
+        smtpd_tls_protocols =
+          lib.mkForce "TLSv1.3, TLSv1.2, TLSv1.1, TLSv1, !SSLv2, !SSLv3";
+        virtual_mailbox_domains = lib.mkForce (builtins.toFile "vhosts"
+          (lib.concatStringsSep "\n"
+            (builtins.filter (x: !builtins.elem x nonMailboxDomains)
+              config.mailserver.domains)));
         smtp_bind_address = hosts.hera-v4;
         smtp_bind_address6 = hosts.hera;
       };
@@ -93,9 +95,16 @@ in {
     enableManageSieve = true;
     fqdn = "hera.m-0.eu";
     rewriteMessageId = true;
-    domains = ["m-0.eu" "maralorn.de" "choreutes.de" "mathechor.de" "lists.maralorn.de" "malte-und-clai.re"];
-    forwards = pkgs.privateValue {} "mail/forwards";
-    loginAccounts = pkgs.privateValue {} "mail/users";
+    domains = [
+      "m-0.eu"
+      "maralorn.de"
+      "choreutes.de"
+      "mathechor.de"
+      "lists.maralorn.de"
+      "malte-und-clai.re"
+    ];
+    forwards = pkgs.privateValue { } "mail/forwards";
+    loginAccounts = pkgs.privateValue { } "mail/users";
     hierarchySeparator = "/";
     certificateScheme = 1;
     certificateFile = "${certPath}/fullchain.pem";

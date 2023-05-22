@@ -1,4 +1,5 @@
-final: prev: let
+final: prev:
+let
   myPkgs = import ./packages.nix;
   inherit (prev.flake-inputs) self;
   inherit (self.lib) selectHaskellPackages;
@@ -9,12 +10,12 @@ final: prev: let
     withHoogle = true;
     packages = p: builtins.attrValues (self.lib.selectHaskellPackages p);
     extraDependencies = p: {
-      libraryHaskellDepends = builtins.attrValues (myPkgs.makeHaskellPackages p // selectHaskellPackages p);
+      libraryHaskellDepends = builtins.attrValues
+        (myPkgs.makeHaskellPackages p // selectHaskellPackages p);
     };
   };
-in
-  {
-    myHaskellScriptPackages = myPkgs.makeHaskellScriptPackages final.haskellPackages;
-    ghcWithPackages = builtins.head shell.nativeBuildInputs;
-  }
-  // selectHaskellPackages hpkgs
+in {
+  myHaskellScriptPackages =
+    myPkgs.makeHaskellScriptPackages final.haskellPackages;
+  ghcWithPackages = builtins.head shell.nativeBuildInputs;
+} // selectHaskellPackages hpkgs

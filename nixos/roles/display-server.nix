@@ -1,15 +1,11 @@
-{
-  lib,
-  pkgs,
-  ...
-}: {
+{ lib, pkgs, ... }: {
   programs = {
     adb.enable = true;
     seahorse.enable = lib.mkForce false;
     dconf.enable = true;
   };
   services = {
-    udev.packages = [pkgs.chrysalis];
+    udev.packages = [ pkgs.chrysalis ];
     pipewire.enable = lib.mkForce false;
     printing = {
       enable = true;
@@ -36,7 +32,7 @@
       core-utilities.enable = lib.mkForce false;
     };
   };
-  environment.gnome.excludePackages = [pkgs.orca pkgs.gnome-tour];
+  environment.gnome.excludePackages = [ pkgs.orca pkgs.gnome-tour ];
   sound.enable = true;
   hardware = {
     pulseaudio = {

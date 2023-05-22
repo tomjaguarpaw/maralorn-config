@@ -1,8 +1,4 @@
-{
-  pkgs,
-  lib,
-  ...
-}: {
+{ pkgs, lib, ... }: {
   systemd.user.services.status-script = {
     Unit.Description = "Status Script";
     Service = {
@@ -10,6 +6,6 @@
       Restart = "always";
       RestartSec = "10s";
     };
-    Install.WantedBy = ["graphical-session.target"];
+    Install.WantedBy = [ "graphical-session.target" ];
   };
 }

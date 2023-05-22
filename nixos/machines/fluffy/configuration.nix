@@ -1,9 +1,6 @@
-flake-inputs: {
-  config,
-  pkgs,
-  lib,
-  ...
-}: let
+flake-inputs:
+{ config, pkgs, lib, ... }:
+let
   wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts;
   localAddress = "fdc0:1::2";
@@ -20,12 +17,12 @@ in {
     ./hardware-configuration.nix
   ];
 
-  age.identityPaths = ["/disk/persist/etc/ssh/ssh_host_ed25519_key"];
+  age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
 
   fileSystems = let
-    btrfsOptions = {options = ["compress=zstd" "autodefrag" "noatime"];};
+    btrfsOptions = { options = [ "compress=zstd" "autodefrag" "noatime" ]; };
   in {
-    "/disk" = {neededForBoot = true;} // btrfsOptions;
+    "/disk" = { neededForBoot = true; } // btrfsOptions;
     "/nix" = btrfsOptions;
   };
 
@@ -52,11 +49,7 @@ in {
   ];
 
   environment.persistence."/disk/persist" = {
-    directories = [
-      "/etc/ssh"
-      "/var/lib/nixos"
-      "/var/lib/tailscale"
-    ];
+    directories = [ "/etc/ssh" "/var/lib/nixos" "/var/lib/tailscale" ];
   };
 
   boot = {
@@ -74,7 +67,8 @@ in {
         keyFile = "/diskkey.bin";
       };
       secrets = {
-        "diskkey.bin" = "/disk/persist/diskkey.bin"; # Key can live on crypted disk, is copied to initrd on install
+        "diskkey.bin" =
+          "/disk/persist/diskkey.bin"; # Key can live on crypted disk, is copied to initrd on install
       };
     };
   };
@@ -100,12 +94,10 @@ in {
       ];
     };
     interfaces.enp1s0 = {
-      ipv6.addresses = [
-        {
-          address = localAddress;
-          prefixLength = 64;
-        }
-      ];
+      ipv6.addresses = [{
+        address = localAddress;
+        prefixLength = 64;
+      }];
       useDHCP = true;
     };
     #wireguard.interfaces = {
@@ -124,32 +116,26 @@ in {
     #  };
     #};
   };
-  programs = {
-    ssh = {
-      startAgent = true;
-    };
-  };
+  programs = { ssh = { startAgent = true; }; };
   hardware.printers = {
     ensureDefaultPrinter = "Klio";
-    ensurePrinters = [
-      {
-        name = "Klio";
-        location = "Wohnzimmer";
-        description = "Klio (Brother MFC-L3750CDW)";
-        deviceUri = "ipp://klio.lo.m-0.eu/ipp";
-        model = "everywhere";
-      }
-    ];
+    ensurePrinters = [{
+      name = "Klio";
+      location = "Wohnzimmer";
+      description = "Klio (Brother MFC-L3750CDW)";
+      deviceUri = "ipp://klio.lo.m-0.eu/ipp";
+      model = "everywhere";
+    }];
   };
   services = {
     borgbackup.repos.hera = {
       path = "/backup/hera-borg-repo";
-      authorizedKeys = pkgs.privateValue ["dummy-key"] "backup-ssh-keys";
+      authorizedKeys = pkgs.privateValue [ "dummy-key" ] "backup-ssh-keys";
     };
     printing = {
       enable = true;
-      allowFrom = ["all"];
-      listenAddresses = ["[${localAddress}]:631"];
+      allowFrom = [ "all" ];
+      listenAddresses = [ "[${localAddress}]:631" ];
       extraConf = "ServerAlias *";
       defaultShared = true;
     };

@@ -1,9 +1,4 @@
-{
-  pkgs,
-  config,
-  lib,
-  ...
-}: {
+{ pkgs, config, lib, ... }: {
   imports = [
     ./zsh
     ./home-options.nix
@@ -69,7 +64,8 @@
     git = {
       aliases = {
         sync = "!git pull -r && git push";
-        cpr = "!f() { git fetch origin refs/pull/$1/head && git checkout FETCH_HEAD; }; f";
+        cpr =
+          "!f() { git fetch origin refs/pull/$1/head && git checkout FETCH_HEAD; }; f";
       };
 
       extraConfig = {
@@ -131,60 +127,33 @@
   };
 
   home = {
-    packages =
-      builtins.attrValues {
-        inherit
-          (pkgs)
-          go
-          gdb
-          mpc_cli
-          ncmpcpp
-          shfmt
-          astyle
-          nodejs
-          tasksh
-          magic-wormhole
-          alejandra
-          nix-top
-          nix-diff
-          matrix-commander
-          upterm
-          lazygit
-          gh
-          ledger
-          aqbanking
-          ;
-        inherit (pkgs.haskellPackages) hledger hledger-ui hledger-web;
-        mytmux = pkgs.writeShellScriptBin "mytmux" ''
-          session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
-          if [[ -n $session ]]; then
-             exec ${pkgs.tmux}/bin/tmux attach -t $session;
-          else
-             exec ${pkgs.tmux}/bin/tmux;
-          fi
-        '';
-      }
-      ++ [
-        (
-          pkgs.writeShellScriptBin "unlock-ssh" ''
-            SSH_ASKPASS="print-ssh-pw" DISPLAY="a" ssh-add < /dev/null
-          ''
-        )
-        (
-          pkgs.writeShellScriptBin "print-ssh-pw"
-          "rbw get ${config.m-0.hostName}.m-0.eu ssh-key"
-        )
-        (
-          pkgs.writeShellScriptBin "dingdingding" (builtins.readFile ./signal.sh)
-        )
-      ];
+    packages = builtins.attrValues {
+      inherit (pkgs)
+        go gdb mpc_cli ncmpcpp shfmt astyle nodejs tasksh magic-wormhole
+        alejandra nix-top nix-diff matrix-commander upterm lazygit gh ledger
+        aqbanking;
+      inherit (pkgs.haskellPackages) hledger hledger-ui hledger-web;
+      mytmux = pkgs.writeShellScriptBin "mytmux" ''
+        session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
+        if [[ -n $session ]]; then
+           exec ${pkgs.tmux}/bin/tmux attach -t $session;
+        else
+           exec ${pkgs.tmux}/bin/tmux;
+        fi
+      '';
+    } ++ [
+      (pkgs.writeShellScriptBin "unlock-ssh" ''
+        SSH_ASKPASS="print-ssh-pw" DISPLAY="a" ssh-add < /dev/null
+      '')
+      (pkgs.writeShellScriptBin "print-ssh-pw"
+        "rbw get ${config.m-0.hostName}.m-0.eu ssh-key")
+      (pkgs.writeShellScriptBin "dingdingding" (builtins.readFile ./signal.sh))
+    ];
     sessionVariables = {
       PATH = "$HOME/.nix-profile/bin:$PATH";
       BROWSER = "firefox";
-      SUDO_ASKPASS = toString (
-        pkgs.writeShellScript "print-sudo-pw"
-        "rbw get ${config.m-0.hostName}.m-0.eu ${config.home.username}"
-      );
+      SUDO_ASKPASS = toString (pkgs.writeShellScript "print-sudo-pw"
+        "rbw get ${config.m-0.hostName}.m-0.eu ${config.home.username}");
     };
   };
 
@@ -208,17 +177,17 @@
     mimeApps = {
       enable = true;
       defaultApplications = {
-        "application/pdf" = ["org.gnome.Evince.desktop"];
-        "x-scheme-handler/http" = ["firefox.desktop"];
-        "x-scheme-handler/https" = ["firefox.desktop"];
-        "x-scheme-handler/chrome" = ["firefox.desktop"];
-        "text/html" = ["firefox.desktop"];
-        "application/x-extension-htm" = ["firefox.desktop"];
-        "application/x-extension-html" = ["firefox.desktop"];
-        "application/x-extension-shtml" = ["firefox.desktop"];
-        "application/xhtml+xml" = ["firefox.desktop"];
-        "application/x-extension-xhtml" = ["firefox.desktop"];
-        "application/x-extension-xht" = ["firefox.desktop"];
+        "application/pdf" = [ "org.gnome.Evince.desktop" ];
+        "x-scheme-handler/http" = [ "firefox.desktop" ];
+        "x-scheme-handler/https" = [ "firefox.desktop" ];
+        "x-scheme-handler/chrome" = [ "firefox.desktop" ];
+        "text/html" = [ "firefox.desktop" ];
+        "application/x-extension-htm" = [ "firefox.desktop" ];
+        "application/x-extension-html" = [ "firefox.desktop" ];
+        "application/x-extension-shtml" = [ "firefox.desktop" ];
+        "application/xhtml+xml" = [ "firefox.desktop" ];
+        "application/x-extension-xhtml" = [ "firefox.desktop" ];
+        "application/x-extension-xht" = [ "firefox.desktop" ];
       };
     };
     userDirs = {

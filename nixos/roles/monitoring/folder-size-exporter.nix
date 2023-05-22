@@ -1,11 +1,9 @@
-{folders ? ["/"]}: {
-  pkgs,
-  lib,
-  ...
-}: let
-  textfilesDir = "/var/cache/prometheus-textfiles";
+{ folders ? [ "/" ] }:
+{ pkgs, lib, ... }:
+let textfilesDir = "/var/cache/prometheus-textfiles";
 in {
-  services.prometheus.exporters.node.extraFlags = ["--collector.textfile.directory /var/cache/prometheus-textfiles"];
+  services.prometheus.exporters.node.extraFlags =
+    [ "--collector.textfile.directory /var/cache/prometheus-textfiles" ];
   systemd = {
     services.folder-size-exporter = {
       description = "Write folder size for promtext exporter";
@@ -23,7 +21,7 @@ in {
       '';
     };
     timers.folder-size-exporter = {
-      wantedBy = ["timers.target"];
+      wantedBy = [ "timers.target" ];
       timerConfig.OnCalendar = "2,8,14,20:00";
     };
   };

@@ -1,8 +1,5 @@
-{
-  pkgs,
-  config,
-  ...
-}: let
+{ pkgs, config, ... }:
+let
   wine_dir = "${config.home.homeDirectory}/.volatile/wine_disk";
   wine = pkgs.wineWowPackages.staging;
 in {
@@ -14,8 +11,6 @@ in {
       STAGING_SHARED_MEMORY = 1;
       WINEESYNC = 1;
     };
-    packages = builtins.attrValues {
-      inherit wine;
-    };
+    packages = builtins.attrValues { inherit wine; };
   };
 }

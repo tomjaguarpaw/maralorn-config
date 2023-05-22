@@ -1,11 +1,6 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
-with lib; let
-  inherit (config.lib) dag;
+{ config, pkgs, lib, ... }:
+with lib;
+let inherit (config.lib) dag;
 in {
   home.activation.report-changes = dag.entryAnywhere ''
      if [[ -n "$oldGenPath" && "$oldGenPath" != "$newGenPath" ]]; then

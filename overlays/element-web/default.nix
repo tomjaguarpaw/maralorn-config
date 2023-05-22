@@ -1,5 +1,5 @@
 final: prev: {
-  element-web = final.runCommand "maralorns-element-web" {} ''
+  element-web = final.runCommand "maralorns-element-web" { } ''
     cp -r ${prev.element-web} $out
     cd $out
     chmod u+w -R $out

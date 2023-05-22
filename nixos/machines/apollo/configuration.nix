@@ -1,10 +1,6 @@
-flake-inputs: {
-  lib,
-  config,
-  pkgs,
-  ...
-}: let
-  inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
+flake-inputs:
+{ lib, config, pkgs, ... }:
+let inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
 in {
   imports = [
     (flake-inputs.secrets.lib.vpn "apollo")
@@ -41,7 +37,7 @@ in {
     network.wait-online.enable = false;
     services = {
       NetworkManager-wait-online.enable = false;
-      throttled.path = [pkgs.kmod];
+      throttled.path = [ pkgs.kmod ];
     };
   };
 
@@ -64,16 +60,15 @@ in {
       cleanupInterval = "15m";
       snapshotInterval = "*:00/3:00";
     };
-    syncthing =
-      {
-        enable = true;
-        group = "users";
-        user = "maralorn";
-        openDefaultPorts = true;
-        cert = config.age.secrets."syncthing/apollo/cert.pem".path;
-        key = config.age.secrets."syncthing/apollo/key.pem".path;
-      }
-      // syncthing.declarativeWith ["hera" "zeus" "pegasus"] "/home/maralorn/media";
+    syncthing = {
+      enable = true;
+      group = "users";
+      user = "maralorn";
+      openDefaultPorts = true;
+      cert = config.age.secrets."syncthing/apollo/cert.pem".path;
+      key = config.age.secrets."syncthing/apollo/key.pem".path;
+    } // syncthing.declarativeWith [ "hera" "zeus" "pegasus" ]
+      "/home/maralorn/media";
   };
   system.stateVersion = "19.09";
 }

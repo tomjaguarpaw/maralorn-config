@@ -1,3 +1,1 @@
-{pkgs, ...}: {
-  services.gpg-agent.pinentryFlavor = "curses";
-}
+{ pkgs, ... }: { services.gpg-agent.pinentryFlavor = "curses"; }

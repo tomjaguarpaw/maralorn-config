@@ -1,10 +1,5 @@
-{
-  lib,
-  pkgs,
-  config,
-  ...
-}: {
-  home.packages = [pkgs.taskwarrior-git];
+{ lib, pkgs, config, ... }: {
+  home.packages = [ pkgs.taskwarrior-git ];
   home.file = {
     "add-git" = {
       target = ".task/hooks/on-add.git";

@@ -1,7 +1,5 @@
 _: {
   dconf.settings = {
-    "org/gnome/desktop/screensaver" = {
-      lock-enabled = false;
-    };
+    "org/gnome/desktop/screensaver" = { lock-enabled = false; };
   };
 }

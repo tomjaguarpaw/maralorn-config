@@ -1,24 +1,26 @@
-{
-  pkgs,
-  lib,
-  config,
-  ...
-}: let
+{ pkgs, lib, config, ... }:
+let
   inherit (lib) types mkOption;
   stateDir = "/var/lib/laminar";
   cfgDir = "${stateDir}/cfg";
   cfg = config.services.laminar;
-  mkTimeoutConf = run_name: {"${lib.removeSuffix ".run" run_name}.conf" = builtins.toFile "timeout.conf" "TIMEOUT=10800";};
-  addTimeouts = cfg_files: cfg_files // {jobs = lib.foldr lib.mergeAttrs cfg_files.jobs (map mkTimeoutConf (builtins.filter (lib.hasSuffix ".run") (lib.attrNames cfg_files.jobs)));};
+  mkTimeoutConf = run_name: {
+    "${lib.removeSuffix ".run" run_name}.conf" =
+      builtins.toFile "timeout.conf" "TIMEOUT=10800";
+  };
+  addTimeouts = cfg_files:
+    cfg_files // {
+      jobs = lib.foldr lib.mergeAttrs cfg_files.jobs (map mkTimeoutConf
+        (builtins.filter (lib.hasSuffix ".run")
+          (lib.attrNames cfg_files.jobs)));
+    };
 in {
   options = {
     services.laminar = {
       cfgFiles = mkOption {
-        type = let
-          valueType = with types; oneOf [path (attrsOf valueType)];
-        in
-          valueType;
-        default = {};
+        type = let valueType = with types; oneOf [ path (attrsOf valueType) ];
+        in valueType;
+        default = { };
         description = ''
           Every entry will be copied to /var/lib/laminar/cfg/<name>
 
@@ -27,7 +29,7 @@ in {
       };
     };
   };
-  imports = [./test-config.nix ./projects.nix];
+  imports = [ ./test-config.nix ./projects.nix ];
   config = {
     services.laminar.cfgFiles = {
       env = builtins.toFile "laminar-env" ''
@@ -50,16 +52,16 @@ in {
       };
     };
     users = {
-      groups.laminar = {};
+      groups.laminar = { };
       users.laminar = {
         group = "laminar";
         home = stateDir;
         isSystemUser = true;
       };
     };
-    environment.systemPackages = [pkgs.laminar];
+    environment.systemPackages = [ pkgs.laminar ];
     systemd.services.laminar = {
-      wantedBy = ["multi-user.target"];
+      wantedBy = [ "multi-user.target" ];
       description = "Laminar continuous integration service";
       serviceConfig = {
         WorkingDirectory = stateDir;
@@ -69,8 +71,10 @@ in {
         Restart = "always";
         LimitNOFILE = "1024000";
       };
-      after = ["network.target"];
-      preStart = "ln -sfT ${pkgs.recursiveLinkFarm "laminar-config-dir" (addTimeouts cfg.cfgFiles)} ${cfgDir}";
+      after = [ "network.target" ];
+      preStart = "ln -sfT ${
+          pkgs.recursiveLinkFarm "laminar-config-dir" (addTimeouts cfg.cfgFiles)
+        } ${cfgDir}";
     };
     services = {
       nginx = {

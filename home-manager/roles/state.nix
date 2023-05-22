@@ -1,8 +1,6 @@
-defaultMode: {
-  lib,
-  config,
-  ...
-}: let
+defaultMode:
+{ lib, config, ... }:
+let
   # Persistent means that files get snapshoted and kept for a month
   # Volatile means that files just lay on the disk
   # Backups are organized independently on this system
@@ -35,8 +33,8 @@ defaultMode: {
     "git"
     "media"
   ];
-  persistentStateFiles = [".chpwd-recent-dirs"];
-  volatileStateFiles = [];
+  persistentStateFiles = [ ".chpwd-recent-dirs" ];
+  volatileStateFiles = [ ];
   volatileStateDirs = [
     ".steam"
     ".local/share/Steam"
@@ -44,21 +42,21 @@ defaultMode: {
     ".cache/nix-output-monitor"
   ];
   mkLine = type: to: from: "${type} ${to} - - - - ${from}";
-  mkEntry = type: persistence: name: let
-    target = "/disk/${persistence}/maralorn/${name}";
-  in [(mkLine "L+" "${home}/${name}" target) (mkLine type target "")];
+  mkEntry = type: persistence: name:
+    let target = "/disk/${persistence}/maralorn/${name}";
+    in [ (mkLine "L+" "${home}/${name}" target) (mkLine type target "") ];
 in {
-  systemd.user.tmpfiles.rules =
-    lib.concatLists
-    (
-      map (mkEntry "f" "volatile") volatileStateFiles ++ map (mkEntry "d" "volatile") volatileStateDirs ++ map (mkEntry "f" "persist") persistentStateFiles ++ map (mkEntry "d" "persist") persistentStateDirs
-    )
-    ++ [
-      (mkLine "L+" "${home}/.password-store" "git/password-store")
-      (mkLine "L+" "${home}/.volatile" "/disk/volatile/maralorn")
-      (mkLine "L+" "${home}/.persist" "/disk/persist/maralorn")
-      (mkLine "f" "${home}/.mode" defaultMode)
-      (mkLine "f" "${home}/.config/lazygit/state.yml" "startuppopupversion: 5")
-      (mkLine "d" "${home}/.cache/mutt" "")
-    ];
+  systemd.user.tmpfiles.rules = lib.concatLists
+    (map (mkEntry "f" "volatile") volatileStateFiles
+      ++ map (mkEntry "d" "volatile") volatileStateDirs
+      ++ map (mkEntry "f" "persist") persistentStateFiles
+      ++ map (mkEntry "d" "persist") persistentStateDirs) ++ [
+        (mkLine "L+" "${home}/.password-store" "git/password-store")
+        (mkLine "L+" "${home}/.volatile" "/disk/volatile/maralorn")
+        (mkLine "L+" "${home}/.persist" "/disk/persist/maralorn")
+        (mkLine "f" "${home}/.mode" defaultMode)
+        (mkLine "f" "${home}/.config/lazygit/state.yml"
+          "startuppopupversion: 5")
+        (mkLine "d" "${home}/.cache/mutt" "")
+      ];
 }

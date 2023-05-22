@@ -1,5 +1,5 @@
-{pkgs, ...}: {
-  home.packages = [pkgs.ncmpcpp];
+{ pkgs, ... }: {
+  home.packages = [ pkgs.ncmpcpp ];
   home.file.".ncmpcpp/config".text = ''
     ask_before_clearing_playlists=no
     mouse_support = yes

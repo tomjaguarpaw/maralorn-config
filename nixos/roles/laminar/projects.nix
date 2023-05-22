@@ -1,10 +1,6 @@
-{
-  pkgs,
-  lib,
-  config,
-  ...
-}: let
-  path = [pkgs.git pkgs.nix pkgs.gnutar pkgs.gzip pkgs.openssh pkgs.laminar];
+{ pkgs, lib, config, ... }:
+let
+  path = [ pkgs.git pkgs.nix pkgs.gnutar pkgs.gzip pkgs.openssh pkgs.laminar ];
   mkJob = name:
     pkgs.writeShellScript "${name}.run" ''
       set -e

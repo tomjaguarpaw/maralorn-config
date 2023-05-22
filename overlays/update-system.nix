@@ -1,4 +1,5 @@
-final: _: let
+final: _:
+let
   inherit (final) pkgs lib;
   homeDir = "/home/maralorn";
   modeFile = "${homeDir}/.mode";
@@ -24,7 +25,7 @@ final: _: let
       ${lib.getExe pkgs.updateSystem}
       echo "Maintenance finished."
     '';
-    activateMode = pkgs.writeHaskellScript {name = "activate-mode";} ''
+    activateMode = pkgs.writeHaskellScript { name = "activate-mode"; } ''
       wallpaperCmd = "random-wallpaper"
 
       main = do
@@ -33,51 +34,53 @@ final: _: let
         exe ([i|${modeDir}/#{mode}/activate|] :: String)
         whenM (elem wallpaperCmd <$> pathBins) $ exe wallpaperCmd
     '';
-    selectMode =
-      pkgs.writeHaskellScript
-      {
-        name = "select-mode";
-        bins = [
-          pkgs.activateMode
-          pkgs.psmisc
-        ];
-        imports = ["System.Directory qualified as Directory"];
-      } ''
-        main = do
-          [mode] <- getArgs
-          writeFile "${modeFile}" mode
-          activate_mode
-          ignoreFailure $ killall ["GeckoMain", "firefox", ".firefox-wrapped",".electron-wrapped","signal-desktop"]
-      '';
-    updateModes =
-      pkgs.writeHaskellScript
-      {
-        name = "update-modes";
-        bins = [pkgs.activateMode pkgs.git pkgs.nix-output-monitor pkgs.builders-configurator];
-      } ''
-        main = do
-          ${get_hostname}
-          ${get_builders}
-          say [i|Building modes for #{hostname} …|]
-          nom ["build", "--builders", [i|@#{builders}|], [i|${configPath}\#homeModes.#{hostname}|], "-o", "${modeDir}"]
-          activate_mode
-      '';
-    quickUpdateMode =
-      pkgs.writeHaskellScript
-      {
-        name = "quick-update-mode";
-        bins = [pkgs.updateModes pkgs.git pkgs.home-manager pkgs.nix-output-monitor pkgs.builders-configurator];
-      } ''
+    selectMode = pkgs.writeHaskellScript {
+      name = "select-mode";
+      bins = [ pkgs.activateMode pkgs.psmisc ];
+      imports = [ "System.Directory qualified as Directory" ];
+    } ''
+      main = do
+        [mode] <- getArgs
+        writeFile "${modeFile}" mode
+        activate_mode
+        ignoreFailure $ killall ["GeckoMain", "firefox", ".firefox-wrapped",".electron-wrapped","signal-desktop"]
+    '';
+    updateModes = pkgs.writeHaskellScript {
+      name = "update-modes";
+      bins = [
+        pkgs.activateMode
+        pkgs.git
+        pkgs.nix-output-monitor
+        pkgs.builders-configurator
+      ];
+    } ''
+      main = do
+        ${get_hostname}
+        ${get_builders}
+        say [i|Building modes for #{hostname} …|]
+        nom ["build", "--builders", [i|@#{builders}|], [i|${configPath}\#homeModes.#{hostname}|], "-o", "${modeDir}"]
+        activate_mode
+    '';
+    quickUpdateMode = pkgs.writeHaskellScript {
+      name = "quick-update-mode";
+      bins = [
+        pkgs.updateModes
+        pkgs.git
+        pkgs.home-manager
+        pkgs.nix-output-monitor
+        pkgs.builders-configurator
+      ];
+    } ''
 
-        main = do
-          ${get_hostname}
-          ${get_mode}
-          ${get_builders}
-          say [i|Quick switching to mode #{mode} ...|]
-          path <- decodeUtf8 @Text <$> (nom ["build", "--builders", [i|@#{builders}|], "--print-out-paths", "--no-link", [i|${configPath}\#homeConfigurations.#{hostname}-#{mode}.activationPackage|]] |> captureTrim)
-          exe ([i|#{path}/activate|] :: String)
-          update_modes
-      '';
+      main = do
+        ${get_hostname}
+        ${get_mode}
+        ${get_builders}
+        say [i|Quick switching to mode #{mode} ...|]
+        path <- decodeUtf8 @Text <$> (nom ["build", "--builders", [i|@#{builders}|], "--print-out-paths", "--no-link", [i|${configPath}\#homeConfigurations.#{hostname}-#{mode}.activationPackage|]] |> captureTrim)
+        exe ([i|#{path}/activate|] :: String)
+        update_modes
+    '';
     updateSystem = pkgs.writeShellScriptBin "update-system" ''
       set -e
       remote_host=$1
@@ -101,8 +104,4 @@ final: _: let
       on_target $output/bin/switch-to-configuration switch
     '';
   };
-in
-  mode-scripts
-  // {
-    inherit mode-scripts;
-  }
+in mode-scripts // { inherit mode-scripts; }

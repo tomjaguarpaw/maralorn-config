@@ -1,21 +1,15 @@
-{
-  pkgs,
-  config,
-  ...
-}: let
-  adminCreds =
-    pkgs.privateValue
-    {
-      adminpass = "";
-      dbpass = "";
-      adminuser = "";
-    } "nextcloud-admin";
+{ pkgs, config, ... }:
+let
+  adminCreds = pkgs.privateValue {
+    adminpass = "";
+    dbpass = "";
+    adminuser = "";
+  } "nextcloud-admin";
   inherit (config.m-0) hosts;
   certPath = "/var/lib/acme";
   nextcloudServices = hostname: {
     nextcloud-pg-backup = {
-      script = let
-        name = "nextcloud-psql-${hostname}";
+      script = let name = "nextcloud-psql-${hostname}";
       in ''
         ${config.services.postgresql.package}/bin/pg_dump nextcloud > /var/lib/db-backup-dumps/${name}
       '';
@@ -26,8 +20,8 @@
     };
     prometheus-nginx-exporter.serviceConfig.RestartSec = 10;
     nextcloud-setup = {
-      requires = ["postgresql.service" "redis.service"];
-      after = ["postgresql.service" "redis.service"];
+      requires = [ "postgresql.service" "redis.service" ];
+      after = [ "postgresql.service" "redis.service" ];
     };
   };
   nextcloudConf = hostname: {
@@ -45,18 +39,15 @@
       dbtype = "pgsql";
       defaultPhoneRegion = "DE";
       adminuser = "maralorn";
-      adminpassFile = builtins.toFile "nextcloud-adminpass" adminCreds.adminpass;
+      adminpassFile =
+        builtins.toFile "nextcloud-adminpass" adminCreds.adminpass;
     };
     autoUpdateApps = {
       enable = true;
       startAt = "20:30";
     };
   };
-  nextcloud-container = {
-    v6,
-    v4,
-    hostname,
-  }: {
+  nextcloud-container = { v6, v4, hostname, }: {
     bindMounts = {
       "${certPath}" = {
         hostPath = certPath;
@@ -72,17 +63,15 @@
     privateNetwork = true;
     hostBridge = "bridge";
     config = _: {
-      imports = [
-        ../../roles
-      ];
-      nixpkgs = {inherit pkgs;};
+      imports = [ ../../roles ];
+      nixpkgs = { inherit pkgs; };
 
       systemd.network.networks."10-wan" = {
         matchConfig.Name = "eth0";
-        address = ["${v6}/112" "${v4}/24"];
+        address = [ "${v6}/112" "${v4}/24" ];
         routes = [
-          {routeConfig.Gateway = hosts.hera-intern;}
-          {routeConfig.Gateway = hosts.hera-intern-v4;}
+          { routeConfig.Gateway = hosts.hera-intern; }
+          { routeConfig.Gateway = hosts.hera-intern-v4; }
         ];
       };
 
@@ -92,7 +81,7 @@
 
       networking = {
         useHostResolvConf = false;
-        firewall.allowedTCPPorts = [80 443 9100 9113];
+        firewall.allowedTCPPorts = [ 80 443 9100 9113 ];
       };
 
       systemd.services = nextcloudServices hostname;
@@ -104,7 +93,7 @@
         postgresql = {
           enable = true;
           package = pkgs.postgresql_14;
-          ensureDatabases = ["nextcloud"];
+          ensureDatabases = [ "nextcloud" ];
         };
       };
       system.stateVersion = "21.05";
@@ -116,7 +105,7 @@ in {
   services = {
     redis.servers."".enable = true;
     nextcloud = nextcloudConf mainHostName;
-    postgresql.ensureDatabases = ["nextcloud"];
+    postgresql.ensureDatabases = [ "nextcloud" ];
     nginx = {
       enable = true;
       virtualHosts."cloud.maralorn.de" = {
@@ -172,5 +161,5 @@ in {
       v4 = hosts.chor-cloud-intern-v4;
     };
   };
-  users.users.nextcloud.extraGroups = ["nginx"];
+  users.users.nextcloud.extraGroups = [ "nginx" ];
 }

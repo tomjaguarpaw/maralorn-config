@@ -1,65 +1,51 @@
-{
-  pkgs,
-  lib,
-  config,
-  ...
-} @ args: let
+{ pkgs, lib, config, ... }@args:
+let
   hotkeys = pkgs.writeShellScriptBin "hotkeys" ''
-    ${pkgs.wizards-dialog}/bin/hotkeys ${pkgs.writeText "hotkeys.yaml" (builtins.toJSON (import ./hotkeys.nix args))}
+    ${pkgs.wizards-dialog}/bin/hotkeys ${
+      pkgs.writeText "hotkeys.yaml"
+      (builtins.toJSON (import ./hotkeys.nix args))
+    }
   '';
   extensions = builtins.attrValues {
-    inherit
-      (pkgs.gnomeExtensions)
-      appindicator
-      window-is-ready-remover
-      nothing-to-say
-      windownavigator
-      user-themes
-      dash-to-panel
-      removable-drive-menu
-      pop-shell
-      notifications-to-file
-      caffeine
-      ;
+    inherit (pkgs.gnomeExtensions)
+      appindicator window-is-ready-remover nothing-to-say windownavigator
+      user-themes dash-to-panel removable-drive-menu pop-shell
+      notifications-to-file caffeine;
   };
   inherit (lib.hm.gvariant) mkTuple mkUint32;
   font = "Monospace 9";
 in {
-  home.packages = extensions ++ [hotkeys];
+  home.packages = extensions ++ [ hotkeys ];
   services.gpg-agent.pinentryFlavor = "gnome3";
   dconf.settings = {
     "org/gnome/desktop/notifications" = {
       show-banners = false;
       show-in-lock-screen = false;
     };
-    "org/gnome/shell/keybindings" = {
-      "toggle-overview" = [];
-    };
+    "org/gnome/shell/keybindings" = { "toggle-overview" = [ ]; };
     "org/gnome/desktop/wm/keybindings" = {
-      switch-input-source = [];
-      switch-input-source-backward = [];
-      switch-applications = [];
-      switch-applications-backward = [];
-      minimize = [];
-      maximize = [];
-      unmaximize = [];
-      cycle-windows = ["<Super>Tab"];
-      cycle-windows-backward = ["<Shift><Super>Tab"];
-      close = ["<Super>q"];
-      move-to-monitor-down = [];
-      move-to-monitor-left = [];
-      move-to-monitor-right = [];
-      move-to-monitor-up = [];
-      toggle-fullscreen = ["<Super>f"];
+      switch-input-source = [ ];
+      switch-input-source-backward = [ ];
+      switch-applications = [ ];
+      switch-applications-backward = [ ];
+      minimize = [ ];
+      maximize = [ ];
+      unmaximize = [ ];
+      cycle-windows = [ "<Super>Tab" ];
+      cycle-windows-backward = [ "<Shift><Super>Tab" ];
+      close = [ "<Super>q" ];
+      move-to-monitor-down = [ ];
+      move-to-monitor-left = [ ];
+      move-to-monitor-right = [ ];
+      move-to-monitor-up = [ ];
+      toggle-fullscreen = [ "<Super>f" ];
     };
 
-    "org/gnome/mutter" = {
-      dynamic-workspaces = true;
-    };
+    "org/gnome/mutter" = { dynamic-workspaces = true; };
 
     "org/gnome/mutter/keybindings" = {
-      toggle-tiled-left = [];
-      toggle-tiled-right = [];
+      toggle-tiled-left = [ ];
+      toggle-tiled-right = [ ];
     };
 
     "org/gnome/settings-daemon/plugins/color" = {
@@ -73,9 +59,7 @@ in {
       sleep-inactive-ac-type = "suspend";
     };
 
-    "org/gnome/desktop/peripherals/mouse" = {
-      speed = 1;
-    };
+    "org/gnome/desktop/peripherals/mouse" = { speed = 1; };
 
     "org/gnome/desktop/interface" = {
       document-font-name = font;
@@ -88,9 +72,7 @@ in {
       locate-pointer = true;
     };
 
-    "org/gnome/desktop/calendar" = {
-      show-weekdate = true;
-    };
+    "org/gnome/desktop/calendar" = { show-weekdate = true; };
 
     "org/gnome/desktop/wm/preferences" = {
       auto-raise = true;
@@ -108,9 +90,7 @@ in {
       name = "Catppuccin-Mocha-Compact-Blue-Dark";
     };
 
-    "system/locale" = {
-      region = "en_DK.UTF-8";
-    };
+    "system/locale" = { region = "en_DK.UTF-8"; };
 
     "org/gnome/desktop/screensaver" = {
       lock-delay = "0"; # lock screen immediately on screen blank
@@ -129,25 +109,26 @@ in {
       tile-by-default = true;
       active-hint = true;
       hint-color-rgba = "rgba(48, 0, 208,0.5)";
-      tile-enter = ["<Super>t"];
-      tile-move-left-global = ["<Super><Shift>Left"];
-      tile-move-right-global = ["<Super><Shift>Right"];
-      tile-move-up-global = ["<Super><Shift>Up"];
-      tile-move-down-global = ["<Super><Shift>Down"];
-      tile-resize-left = ["n"];
-      tile-resize-right = ["t"];
-      tile-resize-up = ["g"];
-      tile-resize-down = ["r"];
-      pop-workspace-up = [];
-      pop-workspace-down = [];
-      pop-monitor-left = [];
-      pop-monitor-right = [];
-      pop-monitor-up = [];
-      pop-monitor-down = [];
+      tile-enter = [ "<Super>t" ];
+      tile-move-left-global = [ "<Super><Shift>Left" ];
+      tile-move-right-global = [ "<Super><Shift>Right" ];
+      tile-move-up-global = [ "<Super><Shift>Up" ];
+      tile-move-down-global = [ "<Super><Shift>Down" ];
+      tile-resize-left = [ "n" ];
+      tile-resize-right = [ "t" ];
+      tile-resize-up = [ "g" ];
+      tile-resize-down = [ "r" ];
+      pop-workspace-up = [ ];
+      pop-workspace-down = [ ];
+      pop-monitor-left = [ ];
+      pop-monitor-right = [ ];
+      pop-monitor-up = [ ];
+      pop-monitor-down = [ ];
     };
 
     "org/gnome/shell/extensions/dash-to-panel" = {
-      panel-element-positions = ''{"0":[{"element":"showAppsButton","visible":false,"position":"stackedTL"},{"element":"dateMenu","visible":false,"position":"stackedTL"},{"element":"activitiesButton","visible":false,"position":"stackedTL"},{"element":"taskbar","visible":false,"position":"stackedTL"},{"element":"leftBox","visible":false,"position":"stackedTL"},{"element":"centerBox","visible":false,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"},{"element":"desktopButton","visible":false,"position":"stackedBR"}]}'';
+      panel-element-positions = ''
+        {"0":[{"element":"showAppsButton","visible":false,"position":"stackedTL"},{"element":"dateMenu","visible":false,"position":"stackedTL"},{"element":"activitiesButton","visible":false,"position":"stackedTL"},{"element":"taskbar","visible":false,"position":"stackedTL"},{"element":"leftBox","visible":false,"position":"stackedTL"},{"element":"centerBox","visible":false,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"},{"element":"desktopButton","visible":false,"position":"stackedBR"}]}'';
       panel-positions = ''{"0":"LEFT"}'';
       panel-anchors = ''{"0":"END"}'';
       panel-sizes = ''{"0":24}'';
@@ -160,30 +141,34 @@ in {
     };
 
     "org/gnome/desktop/input-sources" = {
-      sources = [(mkTuple ["xkb" "de+neo"])]; # use neo
+      sources = [ (mkTuple [ "xkb" "de+neo" ]) ]; # use neo
       xkb-options = [
         "altwin:swap_lalt_lwin" # swap alt and win
         "lv3:menu_switch" # So that gnome-settings does not set it to ralt
       ];
     };
 
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal" = {
-      binding = "<Super>Return";
-      command = "${config.home.sessionVariables.TERMINAL}";
-      name = "Terminal";
-    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal" =
+      {
+        binding = "<Super>Return";
+        command = "${config.home.sessionVariables.TERMINAL}";
+        name = "Terminal";
+      };
 
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" = {
-      binding = "<Super>space";
-      command = "${config.home.sessionVariables.TERMINAL} ${lib.getExe hotkeys}";
-      name = "Hotkeys";
-    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" =
+      {
+        binding = "<Super>space";
+        command =
+          "${config.home.sessionVariables.TERMINAL} ${lib.getExe hotkeys}";
+        name = "Hotkeys";
+      };
 
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby" = {
-      binding = "<Super>F5";
-      command = "systemctl suspend";
-      name = "Standby";
-    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby" =
+      {
+        binding = "<Super>F5";
+        command = "systemctl suspend";
+        name = "Standby";
+      };
 
     "org/gnome/shell/extensions/nothing-to-say" = {
       icon-visibility = "always";
@@ -195,8 +180,8 @@ in {
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby/"
       ];
-      area-screenshot-clip = ["Print"];
-      screenshot = [];
+      area-screenshot-clip = [ "Print" ];
+      screenshot = [ ];
     };
   };
 }

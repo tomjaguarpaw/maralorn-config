@@ -1,8 +1,5 @@
-{
-  pkgs,
-  config,
-  ...
-}: let
+{ pkgs, config, ... }:
+let
   configPath = "${config.home.homeDirectory}/git/config";
   configGit = "${pkgs.git}/bin/git -C ${configPath}";
 in {
@@ -17,7 +14,7 @@ in {
     timers.refresh-config = {
       Unit.Description = "Fetch config updates";
       Timer.OnCalendar = "*:0/5:0";
-      Install.WantedBy = ["timers.target"];
+      Install.WantedBy = [ "timers.target" ];
     };
   };
 }

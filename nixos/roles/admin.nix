@@ -1,11 +1,8 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}: let
-  openssh.authorizedKeys.keys = pkgs.privateValue [] "ssh-keys";
-  passwordFile = lib.mkIf (config.networking.hostName != "chor-cloud") config.age.secrets.pam-login-password.path;
+{ config, pkgs, lib, ... }:
+let
+  openssh.authorizedKeys.keys = pkgs.privateValue [ ] "ssh-keys";
+  passwordFile = lib.mkIf (config.networking.hostName != "chor-cloud")
+    config.age.secrets.pam-login-password.path;
 in {
   users.users = {
     maralorn = {
@@ -24,6 +21,6 @@ in {
       ];
       inherit openssh passwordFile;
     };
-    root = {inherit openssh passwordFile;};
+    root = { inherit openssh passwordFile; };
   };
 }

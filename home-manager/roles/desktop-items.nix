@@ -1,8 +1,5 @@
-{
-  pkgs,
-  config,
-  ...
-}: let
+{ pkgs, config, ... }:
+let
   simpleDesktopItem = name: command:
     pkgs.makeDesktopItem {
       inherit name;
@@ -19,5 +16,6 @@
   superSimpleDesktopItem = name: simpleDesktopItem name name;
   terminalDesktopItem = name: namedTerminalDesktopItem name name;
 in {
-  home.packages = map superSimpleDesktopItem ["kassandra2"] ++ map terminalDesktopItem ["unlock-ssh"];
+  home.packages = map superSimpleDesktopItem [ "kassandra2" ]
+    ++ map terminalDesktopItem [ "unlock-ssh" ];
 }

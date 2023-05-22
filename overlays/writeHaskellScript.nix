@@ -1,5 +1,5 @@
-final: _: let
-  inherit (final) lib pkgs;
+final: _:
+let inherit (final) lib pkgs;
 in {
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
   # writeHaskell takes a name, an attrset with libraries and haskell version (both optional)
@@ -11,16 +11,10 @@ in {
   #
   #     main = launchMissiles
   #   '';
-  writeHaskell = name: {
-    libraries ? [],
-    ghc ? pkgs.ghc,
-    ghcArgs ? [],
-    ghcEnv ? {},
-  }:
-    pkgs.writers.makeBinWriter
-    {
-      compileScript = let
-        filename = lib.last (builtins.split "/" name);
+  writeHaskell = name:
+    { libraries ? [ ], ghc ? pkgs.ghc, ghcArgs ? [ ], ghcEnv ? { }, }:
+    pkgs.writers.makeBinWriter {
+      compileScript = let filename = lib.last (builtins.split "/" name);
       in ''
         cp $contentPath ${filename}.hs
         ${
@@ -32,18 +26,13 @@ in {
         mv ${filename} $out
         ${pkgs.binutils-unwrapped}/bin/strip --strip-unneeded "$out"
       '';
-    }
-    name;
+    } name;
 
   # writeHaskellBin takes the same arguments as writeHaskell but outputs a directory (like writeScriptBin)
   writeHaskellBin = name: pkgs.writeHaskell "/bin/${name}";
-  writeHaskellScript = {
-    name ? "haskell-script",
-    bins ? [],
-    imports ? [],
-  }: code:
-    pkgs.writeHaskellBin name
-    {
+  writeHaskellScript = { name ? "haskell-script", bins ? [ ], imports ? [ ], }:
+    code:
+    pkgs.writeHaskellBin name {
       ghcArgs = [
         "-threaded"
         "-Wall"
@@ -92,7 +81,7 @@ in {
       -- in the closure.
       loadFromBins (${
         pkgs.haskellList
-        (builtins.map toString (bins ++ [pkgs.coreutils pkgs.nix]))
+        (builtins.map toString (bins ++ [ pkgs.coreutils pkgs.nix ]))
       } :: [String])
 
       main :: IO ()

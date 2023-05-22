@@ -1,74 +1,65 @@
-{
-  pkgs,
-  lib,
-  ...
-}: let
+{ pkgs, lib, ... }:
+let
   dimensions = "20,130";
-  service = name: {
-    extra,
-    text,
-    wait,
-  }: let
-    config-file = builtins.toFile "conky-${name}.conf" ''
-      conky.config = {
-        background = false,
-        border_width = 0,
-        cpu_avg_samples = 2,
-        double_buffer = true,
-        draw_borders = false,
-        draw_graph_borders = false,
-        draw_outline = false,
-        draw_shades = false,
-        extra_newline = false,
-        font = 'CozetteVector:pixelsize=12',
-        gap_y = 1,
-        minimum_height = 5,
-        minimum_width = 2,
-        max_text_width = 25,
-        net_avg_samples = 2,
-        no_buffers = true,
-        out_to_console = false,
-        out_to_ncurses = false,
-        out_to_stderr = false,
-        out_to_x = true,
-        own_window = true,
-        own_window_class = 'Conky',
-        own_window_type = 'panel',
-        own_window_argb_visual = true,
-        own_window_argb_value = 0,
-        show_graph_range = false,
-        show_graph_scale = false,
-        stippled_borders = 0,
-        color0 = 'd9e0ee',
-        color1 = '9999ff',
-        uppercase = false,
-        use_spacer = 'none',
-        use_xft = true,
-        ${extra}
-      }
-      conky.text = [[
-      ${text}
-      ]]
-    '';
-  in {
-    name = "conky-${name}";
-    value = {
-      Unit = {
-        Description = "Run conky ${name}";
-      };
-      Service = {
-        ExecStart =
-          (pkgs.writeShellScript "conky-${name}" ''
+  service = name:
+    { extra, text, wait, }:
+    let
+      config-file = builtins.toFile "conky-${name}.conf" ''
+        conky.config = {
+          background = false,
+          border_width = 0,
+          cpu_avg_samples = 2,
+          double_buffer = true,
+          draw_borders = false,
+          draw_graph_borders = false,
+          draw_outline = false,
+          draw_shades = false,
+          extra_newline = false,
+          font = 'CozetteVector:pixelsize=12',
+          gap_y = 1,
+          minimum_height = 5,
+          minimum_width = 2,
+          max_text_width = 25,
+          net_avg_samples = 2,
+          no_buffers = true,
+          out_to_console = false,
+          out_to_ncurses = false,
+          out_to_stderr = false,
+          out_to_x = true,
+          own_window = true,
+          own_window_class = 'Conky',
+          own_window_type = 'panel',
+          own_window_argb_visual = true,
+          own_window_argb_value = 0,
+          show_graph_range = false,
+          show_graph_scale = false,
+          stippled_borders = 0,
+          color0 = 'd9e0ee',
+          color1 = '9999ff',
+          uppercase = false,
+          use_spacer = 'none',
+          use_xft = true,
+          ${extra}
+        }
+        conky.text = [[
+        ${text}
+        ]]
+      '';
+    in {
+      name = "conky-${name}";
+      value = {
+        Unit = { Description = "Run conky ${name}"; };
+        Service = {
+          ExecStart = (pkgs.writeShellScript "conky-${name}" ''
             ${lib.getExe pkgs.conky} -i ${toString wait} -c ${config-file}
             ${lib.getExe pkgs.conky} -c ${config-file}
-          '')
-          .outPath;
-        Restart = "always";
-        RestartSec = "10s";
+          '').outPath;
+          Restart = "always";
+          RestartSec = "10s";
+        };
+        Install.WantedBy = [ "default.target" ];
       };
-      Install.WantedBy = ["default.target"];
     };
-  };
 in {
   systemd.user.services = lib.mapAttrs' service {
     status = {

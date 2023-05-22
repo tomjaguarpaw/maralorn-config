@@ -1,21 +1,12 @@
-{
-  lib,
-  config,
-  pkgs,
-  ...
-}: let
-  inherit
-    (pkgs.privateValue {
-      gpg = "";
-      name = "";
-      mail = "";
-      alternates = [];
-    } "mail/me")
-    gpg
-    name
-    mail
-    alternates
-    ;
+{ lib, config, pkgs, ... }:
+let
+  inherit (pkgs.privateValue {
+    gpg = "";
+    name = "";
+    mail = "";
+    alternates = [ ];
+  } "mail/me")
+    gpg name mail alternates;
   quick-mail-sync = pkgs.writeShellScriptBin "quick-mail-sync" ''
     ${pkgs.isync}/bin/mbsync hera:INBOX,Code
     ${pkgs.notmuch}/bin/notmuch new
@@ -32,12 +23,13 @@ in {
   };
   systemd.user.timers.mbsync.Timer.RandomizedDelaySec = "10m";
 
-  accounts.email.accounts = lib.recursiveUpdate (pkgs.privateValue {} "mail/accounts") {
-    hera = {
-      passwordCommand = "${pkgs.coreutils}/bin/cat /run/agenix/mail-password";
-      imapnotify.onNotify = lib.getExe quick-mail-sync;
+  accounts.email.accounts =
+    lib.recursiveUpdate (pkgs.privateValue { } "mail/accounts") {
+      hera = {
+        passwordCommand = "${pkgs.coreutils}/bin/cat /run/agenix/mail-password";
+        imapnotify.onNotify = lib.getExe quick-mail-sync;
+      };
     };
-  };
 
   systemd.user.services = let
     hasImapHost = name: account: account.imap != null;
@@ -53,18 +45,17 @@ in {
             done
           '');
         };
-        Install.WantedBy = ["default.target"];
+        Install.WantedBy = [ "default.target" ];
       };
     };
-  in
-    lib.mapAttrs' mkWatchService (lib.filterAttrs hasImapHost config.accounts.email.accounts)
-    // {
-      mbsync.Service = {
-        Environment = "PATH=${lib.makeBinPath [pkgs.rbw pkgs.coreutils]}";
-        Restart = "on-failure";
-        RestartSec = "30s";
-      };
+  in lib.mapAttrs' mkWatchService
+  (lib.filterAttrs hasImapHost config.accounts.email.accounts) // {
+    mbsync.Service = {
+      Environment = "PATH=${lib.makeBinPath [ pkgs.rbw pkgs.coreutils ]}";
+      Restart = "on-failure";
+      RestartSec = "30s";
     };
+  };
 
   programs = {
     msmtp.enable = true;
@@ -78,17 +69,18 @@ in {
         ${pkgs.notmuch}/bin/notmuch tag -spam -- "(not folder:/Junk|Spam|SPAM/) tag:spam"
       '';
       new = {
-        tags = [];
-        ignore = [".isyncuidmap.db"];
+        tags = [ ];
+        ignore = [ ".isyncuidmap.db" ];
       };
       maildir.synchronizeFlags = true;
     };
   };
 
   home = {
-    packages = [quick-mail-sync];
+    packages = [ quick-mail-sync ];
     file = let
-      mutt_alternates = "@maralorn.de " + (builtins.concatStringsSep " " alternates);
+      mutt_alternates = "@maralorn.de "
+        + (builtins.concatStringsSep " " alternates);
       show-sidebar = pkgs.writeText "show-sidebar" ''
         set sidebar_visible=yes
         bind index <up> sidebar-prev
@@ -117,7 +109,9 @@ in {
         audio/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
       '';
       # See: https://unix.stackexchange.com/questions/44358/mutt-mark-as-read-and-delete
-      move-message-macro = key: dir: name: ''macro index,pager ${key} ":set confirmappend=no resolve=no\n<clear-flag>N<save-message>=hera/${dir}\n:set confirmappend=yes resolve=yes\n<next-undeleted>" "move message to ${name}"'';
+      move-message-macro = key: dir: name:
+        ''
+          macro index,pager ${key} ":set confirmappend=no resolve=no\n<clear-flag>N<save-message>=hera/${dir}\n:set confirmappend=yes resolve=yes\n<next-undeleted>" "move message to ${name}"'';
     in {
       ".neomuttrc".text = ''
         set editor = "hx"
@@ -133,7 +127,11 @@ in {
         ${move-message-macro "l" "Move/readlater" "readlater list"}
         macro attach 'V' "<pipe-entry>iconv -c --to-code=UTF8 > ~/.cache/mutt/mail.html<enter><shell-escape>firefox ~/.cache/mutt/mail.html<enter>"
 
-        macro index,pager <F6> "<shell-escape>${pkgs.zsh}/bin/zsh -c '${pkgs.sieve-connect}/bin/sieve-connect -s ${config.accounts.email.accounts.hera.imap.host or ""} -u ${config.accounts.email.accounts.hera.userName or ""} --passwordfd 3 --edit --remotesieve filter 3<<(cat /run/agenix/mail-password)'\n"
+        macro index,pager <F6> "<shell-escape>${pkgs.zsh}/bin/zsh -c '${pkgs.sieve-connect}/bin/sieve-connect -s ${
+          config.accounts.email.accounts.hera.imap.host or ""
+        } -u ${
+          config.accounts.email.accounts.hera.userName or ""
+        } --passwordfd 3 --edit --remotesieve filter 3<<(cat /run/agenix/mail-password)'\n"
         macro index,pager A "<pipe-message>${pkgs.khard}/bin/khard add-email<return>" "add sender to to khard"
 
         set query_format="%4c %t %-70.70a %-70.70n %?e?(%e)?"

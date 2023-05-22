@@ -1,20 +1,18 @@
 let
-  restrictedPages =
-    [
-      "reddit.com"
-      "github.com"
-      "*.ccc.de"
-      "haskell.org"
-      "*.haskell.org"
-      "*.nixos.org"
-      "nixos.org"
-      "matrix.org"
-      "element.io"
-      "youtube.*"
-      "*.element.io"
-      "twitter.com"
-    ]
-    ++ newsPages;
+  restrictedPages = [
+    "reddit.com"
+    "github.com"
+    "*.ccc.de"
+    "haskell.org"
+    "*.haskell.org"
+    "*.nixos.org"
+    "nixos.org"
+    "matrix.org"
+    "element.io"
+    "youtube.*"
+    "*.element.io"
+    "twitter.com"
+  ] ++ newsPages;
   newsPages = [
     "chaos.social"
     "zeit.de"
@@ -33,26 +31,19 @@ let
   ];
 
   makeConfig = hostName: imports: _: {
-    imports = imports ++ [./roles/default.nix];
+    imports = imports ++ [ ./roles/default.nix ];
     m-0.hostName = hostName;
   };
-  makeAutostart = name: {config, ...}: {
-    config.xdg.configFile."autostart/${name}.desktop".source = "${config.home.path}/share/applications/${name}.desktop";
-  };
-  orga-basics = [
-    ./roles/mail.nix
-    ./roles/taskwarrior.nix
-  ];
-  default = [
-    ./roles/on-my-machine.nix
-    ./roles/systemd-exporter.nix
-  ];
-  daily-driver = name: extra: let
-    all =
-      extra
-      ++ orga-basics
-      ++ default
-      ++ [
+  makeAutostart = name:
+    { config, ... }: {
+      config.xdg.configFile."autostart/${name}.desktop".source =
+        "${config.home.path}/share/applications/${name}.desktop";
+    };
+  orga-basics = [ ./roles/mail.nix ./roles/taskwarrior.nix ];
+  default = [ ./roles/on-my-machine.nix ./roles/systemd-exporter.nix ];
+  daily-driver = name: extra:
+    let
+      all = extra ++ orga-basics ++ default ++ [
         (makeAutostart "kassandra2")
         (makeAutostart "unlock-ssh")
         ./roles/beets.nix
@@ -83,46 +74,30 @@ let
         ./roles/wallpaper.nix
         ./roles/zettelkasten.nix
       ];
-    blockServer = import ./roles/block-server.nix;
-  in {
-    klausur = makeConfig name (
-      all
-      ++ [
-        (blockServer restrictedPages)
-      ]
-    );
-    code = makeConfig name (
-      all
-      ++ [
+      blockServer = import ./roles/block-server.nix;
+    in {
+      klausur = makeConfig name (all ++ [ (blockServer restrictedPages) ]);
+      code = makeConfig name (all ++ [
         ./roles/mail-client.nix
         ./roles/chat.nix
         (blockServer newsPages)
-      ]
-    );
-    leisure = makeConfig name (
-      all
-      ++ [
+      ]);
+      leisure = makeConfig name (all ++ [
         ./roles/mail-client.nix
         ./roles/games.nix
         ./roles/chat.nix
         (blockServer newsPages)
-      ]
-    );
-    unrestricted = makeConfig name (
-      all
-      ++ [
+      ]);
+      unrestricted = makeConfig name (all ++ [
         ./roles/mail-client.nix
         ./roles/games.nix
         ./roles/chat.nix
-        (blockServer [])
-      ]
-    );
-  };
+        (blockServer [ ])
+      ]);
+    };
 in {
-  apollo = daily-driver "apollo" [
-    ./roles/battery.nix
-    ./roles/untrusted-env.nix
-  ];
+  apollo =
+    daily-driver "apollo" [ ./roles/battery.nix ./roles/untrusted-env.nix ];
   zeus = daily-driver "zeus" [
     (import ./roles/state.nix "klausur")
     ./roles/create-plans.nix
@@ -130,23 +105,14 @@ in {
     ./roles/trusted-env.nix
     ./roles/wine.nix
   ];
-  fluffy.default = makeConfig "fluffy" (
-    default
-    ++ [
-      ./roles/headless.nix
-      (import ./roles/state.nix "default")
-    ]
-  );
-  hera.default = makeConfig "hera" (
-    default
-    ++ orga-basics
-    ++ [
-      ./roles/fetch-banking-timer.nix
-      ./roles/weechat
-      ./roles/mail-sort.nix
-      ./roles/mail2rss.nix
-      ./roles/headless-mpd.nix
-      ./roles/headless.nix
-    ]
-  );
+  fluffy.default = makeConfig "fluffy"
+    (default ++ [ ./roles/headless.nix (import ./roles/state.nix "default") ]);
+  hera.default = makeConfig "hera" (default ++ orga-basics ++ [
+    ./roles/fetch-banking-timer.nix
+    ./roles/weechat
+    ./roles/mail-sort.nix
+    ./roles/mail2rss.nix
+    ./roles/headless-mpd.nix
+    ./roles/headless.nix
+  ]);
 }

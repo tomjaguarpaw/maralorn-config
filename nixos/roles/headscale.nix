@@ -1,20 +1,15 @@
-{
-  config,
-  lib,
-  ...
-}: let
+{ config, lib, ... }:
+let
   inherit (config.m-0) hosts;
   domain = "headscale.maralorn.de";
   zone = "maralorn.de";
   derp_port = 3479;
 in {
-  m-0.monitoring = [
-    {
-      name = "hera-headscale";
-      host = "[::1]:9098";
-    }
-  ];
-  networking.firewall.allowedUDPPorts = [derp_port];
+  m-0.monitoring = [{
+    name = "hera-headscale";
+    host = "[::1]:9098";
+  }];
+  networking.firewall.allowedUDPPorts = [ derp_port ];
   services = {
     headscale = {
       enable = true;
@@ -30,28 +25,20 @@ in {
             region_code = "hera";
             region_name = "Hera";
           };
-          urls = [];
+          urls = [ ];
         };
         dns_config = {
           base_domain = "m-0.eu";
-          nameservers = [
-            config.m-0.hosts.tailscale.hera.AAAA
-            "9.9.9.9"
-          ];
-          domains = [zone];
-          extra_records = lib.concatLists (lib.concatLists (lib.mapAttrsToList (
-              host: ips: (
-                map (alias:
-                  lib.mapAttrsToList
-                  (type: value: {
-                    name = "${alias}.${zone}";
-                    inherit type value;
-                  })
-                  (lib.filterAttrs (_: addr: addr != "") ips))
-                (hosts.aliases.${host} or [])
-              )
-            )
-            hosts.tailscale));
+          nameservers = [ config.m-0.hosts.tailscale.hera.AAAA "9.9.9.9" ];
+          domains = [ zone ];
+          extra_records = lib.concatLists (lib.concatLists (lib.mapAttrsToList
+            (host: ips:
+              (map (alias:
+                lib.mapAttrsToList (type: value: {
+                  name = "${alias}.${zone}";
+                  inherit type value;
+                }) (lib.filterAttrs (_: addr: addr != "") ips))
+                (hosts.aliases.${host} or [ ]))) hosts.tailscale));
         };
         logtail.enabled = false;
         metrics_listen_addr = "[::1]:9098";
@@ -63,11 +50,12 @@ in {
       forceSSL = true;
       enableACME = true;
       locations."/" = {
-        proxyPass = "http://localhost:${toString config.services.headscale.port}";
+        proxyPass =
+          "http://localhost:${toString config.services.headscale.port}";
         proxyWebsockets = true;
       };
     };
   };
 
-  environment.systemPackages = [config.services.headscale.package];
+  environment.systemPackages = [ config.services.headscale.package ];
 }

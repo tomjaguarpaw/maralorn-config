@@ -1,8 +1,4 @@
-{
-  config,
-  pkgs,
-  ...
-}: {
+{ config, pkgs, ... }: {
   environment.systemPackages = let
     # script from:
     # https://nixos.org/manual/nixos/stable/index.html#module-postgresql

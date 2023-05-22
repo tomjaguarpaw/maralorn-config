@@ -1,10 +1,6 @@
-flake-inputs: {
-  config,
-  pkgs,
-  lib,
-  ...
-}: let
-  inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
+flake-inputs:
+{ config, pkgs, lib, ... }:
+let inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
 in {
   imports = [
     (flake-inputs.secrets.lib.vpn "zeus")
@@ -17,20 +13,20 @@ in {
     ../../roles/standalone
   ];
 
-  age.identityPaths = ["/disk/persist/etc/ssh/ssh_host_ed25519_key"];
+  age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
 
   nix.distributedBuilds = false;
 
   fileSystems = let
-    btrfsOptions = {options = ["compress=zstd" "autodefrag" "noatime"];};
+    btrfsOptions = { options = [ "compress=zstd" "autodefrag" "noatime" ]; };
   in {
-    "/disk" = {neededForBoot = true;} // btrfsOptions;
+    "/disk" = { neededForBoot = true; } // btrfsOptions;
     "/boot" = btrfsOptions;
     "/nix" = btrfsOptions;
     "/home/maralorn/.config/pulse" = {
       mountPoint = "/home/maralorn/.config/pulse";
       device = "/disk/persist/maralorn/.config/pulse";
-      options = ["bind"];
+      options = [ "bind" ];
     };
   };
 
@@ -40,7 +36,7 @@ in {
   };
 
   systemd.services."activate-home-manager" = {
-    path = [pkgs.nix pkgs.dbus];
+    path = [ pkgs.nix pkgs.dbus ];
     script = ''
       if [[ -e /home/maralorn/.mode ]]; then
         MODE="$(cat /home/maralorn/.mode)"
@@ -53,9 +49,9 @@ in {
       Type = "oneshot";
       User = "maralorn";
     };
-    wantedBy = ["multi-user.target"];
+    wantedBy = [ "multi-user.target" ];
     # Try to avoid race conditions, when the user get’s logged in before activation was completed.
-    before = ["display-manager.service"];
+    before = [ "display-manager.service" ];
   };
 
   systemd.tmpfiles.rules = [
@@ -76,27 +72,23 @@ in {
       "/var/lib/tailscale"
       "/root/.ssh"
     ];
-    users.maralorn.directories = [
-      ".cache/rbw"
-      ".factorio"
-    ];
+    users.maralorn.directories = [ ".cache/rbw" ".factorio" ];
   };
 
   boot = {
     loader = {
-      efi = {
-        efiSysMountPoint = "/boot/efi";
-      };
+      efi = { efiSysMountPoint = "/boot/efi"; };
       grub = {
         # Enabled by default
         device = "nodev"; # Don‘t write masterboot under efi
-        efiInstallAsRemovable = true; # Make loader discoverable by filename on efidisk without needing to write efivars to system
+        efiInstallAsRemovable =
+          true; # Make loader discoverable by filename on efidisk without needing to write efivars to system
         efiSupport = true;
         enableCryptodisk = true;
         backgroundColor = "#000000";
       };
     };
-    kernelParams = ["amdgpu.cik_support=1"];
+    kernelParams = [ "amdgpu.cik_support=1" ];
     initrd = {
       luks.devices."crypted-nixos" = {
         # device defined in hardware-configuration.nix
@@ -107,7 +99,8 @@ in {
         "amdgpu" # For earlier and better framebuffer
       ];
       secrets = {
-        "diskkey.bin" = "/disk/persist/diskkey.bin"; # Key can live on crypted disk, is copied to initrd on install
+        "diskkey.bin" =
+          "/disk/persist/diskkey.bin"; # Key can live on crypted disk, is copied to initrd on install
       };
     };
   };
@@ -118,12 +111,10 @@ in {
     networkmanager.enable = false;
     interfaces.enp34s0 = {
       useDHCP = true;
-      ipv6.addresses = [
-        {
-          address = "fdc0:1::4";
-          prefixLength = 64;
-        }
-      ];
+      ipv6.addresses = [{
+        address = "fdc0:1::4";
+        prefixLength = 64;
+      }];
     };
     firewall.allowedTCPPorts = [
       6600 # mpd
@@ -167,17 +158,16 @@ in {
     # firewallFilter = "-i m0wire -p tcp -m tcp -m multiport --dports 9100,9558";
     # openFirewall = lib.mkForce false;
     #};
-    syncthing =
-      {
-        enable = true;
-        group = "users";
-        user = "maralorn";
-        openDefaultPorts = true;
-        configDir = "/disk/persist/syncthing";
-        cert = config.age.secrets."syncthing/zeus/cert.pem".path;
-        key = config.age.secrets."syncthing/zeus/key.pem".path;
-      }
-      // syncthing.declarativeWith ["hera" "apollo" "pegasus"] "/disk/persist/maralorn/media";
+    syncthing = {
+      enable = true;
+      group = "users";
+      user = "maralorn";
+      openDefaultPorts = true;
+      configDir = "/disk/persist/syncthing";
+      cert = config.age.secrets."syncthing/zeus/cert.pem".path;
+      key = config.age.secrets."syncthing/zeus/key.pem".path;
+    } // syncthing.declarativeWith [ "hera" "apollo" "pegasus" ]
+      "/disk/persist/maralorn/media";
     #minecraft-server = {
     #  enable = true;
     #  openFirewall = true;
@@ -194,7 +184,7 @@ in {
       support32Bit = true;
       tcp = {
         enable = true;
-        anonymousClients.allowedIpRanges = ["127.0.0.1" "::1"];
+        anonymousClients.allowedIpRanges = [ "127.0.0.1" "::1" ];
       };
     };
   };
