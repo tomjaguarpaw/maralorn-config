@@ -121,10 +121,7 @@ in {
       }
       {
         name = "nix";
-        formatter = {
-          command = "alejandra";
-          args = [ "-q" ];
-        };
+        formatter.command = "nixfmt";
       }
     ];
   };

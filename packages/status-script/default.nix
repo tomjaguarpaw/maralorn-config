@@ -1,5 +1,5 @@
 { mkDerivation, async, base, bytestring, directory, exceptions, filepath, lib
-, relude, say, shh, stm, string-interpolate, time, }:
+, relude, say, shh, stm, string-interpolate, time }:
 mkDerivation {
   pname = "status-script";
   version = "0.1.0.0";

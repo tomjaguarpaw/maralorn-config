@@ -1,5 +1,5 @@
 { mkDerivation, aeson, ansi-terminal, base, daemons, haskeline, lib, process
-, relude, text, witch, wizards, yaml, }:
+, relude, text, witch, wizards, yaml }:
 mkDerivation {
   pname = "wizards-dialog";
   version = "0.1.0.0";

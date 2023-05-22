@@ -21,7 +21,7 @@ let
             ${lib.getExe hpkgs.cabal2nix} . > fresh-default.nix
             cp ${cleanSource}/default.nix .
             chmod u+w default.nix
-            ${lib.getExe stable-pkgs.alejandra} -q fresh-default.nix default.nix
+            ${lib.getExe unstable-pkgs.nixfmt} fresh-default.nix default.nix
             ${stable-pkgs.diffutils}/bin/diff -w default.nix fresh-default.nix
             echo "default.nix confirmed to be up-to-date."
           '';

@@ -1,7 +1,7 @@
 { mkDerivation, aeson-schemas, async, base, clock, containers, esqueleto
 , exceptions, graphql-client, http-client, lib, matrix-client, monad-logger, mtl
 , persistent, persistent-sqlite, random, relude, resourcet, time, typed-process
-, yaml, }:
+, yaml }:
 mkDerivation {
   pname = "nixpkgs-bot";
   version = "0.1.0.0";
