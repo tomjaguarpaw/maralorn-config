@@ -1,4 +1,4 @@
-{ lib, pkgs, config, ... }:
+{ pkgs, ... }:
 let
   battery-watch = pkgs.writeHaskellScript {
     name = "battery-watch";

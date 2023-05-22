@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{
   m-0.server.initSSHKey = "/var/boot-ssh-key";
 
   boot = {

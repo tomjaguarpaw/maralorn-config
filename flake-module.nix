@@ -1,4 +1,4 @@
-{ inputs, config, ... }: {
+{ inputs, ... }: {
   imports = [
     inputs.pre-commit-hooks.flakeModule
     ./nixos/flake-module.nix
@@ -34,7 +34,11 @@
         hooks = {
           hlint.enable = true;
           nixfmt.enable = true;
-          #nil.enable = true;
+          nil = {
+            enable = true;
+            excludes =
+              [ "packages/.*/default\\.nix" "hardware-configuration\\.nix" ];
+          };
           #editorconfig-checker.enable = true;
           #deadnix.enable = true;
           statix.enable = true;

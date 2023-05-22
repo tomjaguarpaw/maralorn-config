@@ -1,4 +1,3 @@
-{ config, ... }:
 let
   makeProbe = module: targets: {
     job_name = "blackbox ${module}";

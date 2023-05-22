@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 let
   simpleDesktopItem = name: command:
     pkgs.makeDesktopItem {

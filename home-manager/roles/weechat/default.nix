@@ -1,5 +1,4 @@
 { lib, pkgs, config, ... }:
-with lib;
 let
   weechat = pkgs.wrapWeechat pkgs.weechat-unwrapped {
     configure = { availablePlugins, ... }: {

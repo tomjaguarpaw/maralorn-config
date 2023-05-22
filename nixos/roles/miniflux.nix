@@ -1,6 +1,6 @@
 { pkgs, config, lib, ... }:
 let
-  inherit (config.m-0) privateListenAddresses virtualHosts;
+  inherit (config.m-0) virtualHosts;
   address = "[::1]:8100";
 in {
   services = {

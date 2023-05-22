@@ -1,6 +1,4 @@
-{ pkgs, config, ... }: {
-  #imports = [ modules/go-neb.nix ];
-
+{ pkgs, ... }: {
   services.go-neb = {
     enable = true;
     baseUrl = "http://localhost";

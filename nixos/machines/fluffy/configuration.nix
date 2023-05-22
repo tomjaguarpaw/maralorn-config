@@ -1,9 +1,6 @@
 flake-inputs:
 { config, pkgs, lib, ... }:
-let
-  wireguard = import ../../../common/wireguard.nix;
-  inherit (config.m-0) hosts;
-  localAddress = "fdc0:1::2";
+let localAddress = "fdc0:1::2";
 in {
   imports = [
     (import ../../roles/home-assistant flake-inputs)

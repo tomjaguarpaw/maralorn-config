@@ -1,4 +1,4 @@
-{ lib, config, ... }: {
+{ config, ... }: {
   services.unbound = {
     resolveLocalQueries = false;
     enable = true;

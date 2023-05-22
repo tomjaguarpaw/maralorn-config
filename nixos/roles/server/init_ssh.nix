@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, lib, ... }:
 with lib; {
   options = { m-0.server.initSSHKey = mkOption { type = types.path; }; };
 

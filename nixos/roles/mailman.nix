@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, ... }:
 let
   hostname = "lists.maralorn.de";
   lists = pkgs.privateValue { } "mail/lists";

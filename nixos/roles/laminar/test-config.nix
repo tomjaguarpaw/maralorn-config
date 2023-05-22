@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, ... }:
 let
   bins = lib.attrValues {
     inherit (pkgs) git nix gnutar xz gzip openssh laminar builders-configurator;

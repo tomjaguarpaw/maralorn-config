@@ -6,7 +6,7 @@ let
     mail = "";
     alternates = [ ];
   } "mail/me")
-    gpg name mail alternates;
+    gpg name alternates;
   quick-mail-sync = pkgs.writeShellScriptBin "quick-mail-sync" ''
     ${pkgs.isync}/bin/mbsync hera:INBOX,Code
     ${pkgs.notmuch}/bin/notmuch new

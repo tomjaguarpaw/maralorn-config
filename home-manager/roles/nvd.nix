@@ -1,5 +1,4 @@
-{ config, pkgs, lib, ... }:
-with lib;
+{ config, pkgs, ... }:
 let inherit (config.lib) dag;
 in {
   home.activation.report-changes = dag.entryAnywhere ''
