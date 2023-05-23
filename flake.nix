@@ -3,20 +3,12 @@
 
   inputs = {
     nixos-unstable.url = "nixpkgs/nixos-unstable";
-    nixos-stable.url = "nixpkgs/release-23.05";
-    devenv.url = "github:cachix/devenv/latest";
+    nixos-stable.url = "nixpkgs/nixos-23.05";
     secrets = {
       url = "git+ssh://git@hera.m-0.eu/config-secrets";
       inputs.nixpkgs.follows = "";
     };
     flake-parts.inputs.nixpkgs-lib.follows = "nixos-unstable";
-    emanote = {
-      url = "github:srid/emanote";
-      inputs = {
-        flake-parts.follows = "flake-parts";
-        nixpkgs.follows = "";
-      };
-    };
     nix-output-monitor = {
       inputs = {
         flake-utils.follows = "pre-commit-hooks/flake-utils";

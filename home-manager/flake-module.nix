@@ -13,8 +13,16 @@
           inherit pkgs;
           modules = [
             config
-            inputs.emanote.homeManagerModule
             inputs.nix-index-database.hmModules.nix-index
+            # Emanote has a ton of dependencies which I don’t want to pull
+            # into this flake, so instead of depending on the flake I just load the one file
+            # I need.
+            (builtins.fetchurl {
+              url =
+                "https://raw.githubusercontent.com/srid/emanote/4a70855684099939bd8adbddec5c76b092f06643/nix/home-manager-module.nix";
+              sha256 =
+                "sha256:10llmlngq85hyj3gga0dx0aws4nairbcad373bm1sr7gnb65krik";
+            })
           ];
         });
       buildModesForHost = host: modes:
