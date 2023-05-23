@@ -1144,7 +1144,7 @@ in {
                   color = colors.okay;
                 }
                 {
-                  value = 14;
+                  value = 14.5;
                   color = colors.warn;
                 }
                 {
@@ -1201,21 +1201,6 @@ in {
                 labels = true;
                 labels_secondary = "hover";
               };
-              color_thresholds = [
-                {
-                  value = 0;
-                  color = colors.okay;
-                }
-                {
-                  value = humidity_threshold.bad.lower;
-                  color = colors.warn;
-                }
-                {
-                  value = humidity_threshold.bad.upper;
-                  color = colors.alert;
-                }
-              ];
-              color_thresholds_transition = "hard";
               lower_bound_secondary = 0;
               upper_bound_secondary = 1;
               hour24 = true;
