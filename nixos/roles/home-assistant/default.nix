@@ -167,11 +167,14 @@ in {
             alias = "Lüftungssteuerung Bad";
             trigger =
               [ (triggers.stateTrigger "sensor.${sensor.bad}_humidity") ];
-            action = [{
+            action = let
+              capped_outside =
+                "max(states('sensor.openweathermap_darmstadt_hourly_dew_point')|float,13)";
+            in [{
               choose = [
                 {
                   conditions =
-                    "{{ states('sensor.${sensor.bad}_dew_point')|float > max(states('sensor.openweathermap_darmstadt_hourly_dew_point')|float + 1,12.5)}}";
+                    "{{ states('sensor.${sensor.bad}_dew_point')|float > ${capped_outside} + 2}}";
                   sequence = {
                     service = "switch.turn_on";
                     target.entity_id = "switch.lueftung_bad";
@@ -179,7 +182,7 @@ in {
                 }
                 {
                   conditions =
-                    "{{ states('sensor.${sensor.bad}_dew_point')|float < max(states('sensor.openweathermap_darmstadt_hourly_dew_point')|float + 0.5,12)}}";
+                    "{{ states('sensor.${sensor.bad}_dew_point')|float < ${capped_outside} + 1}}";
                   sequence = {
                     service = "switch.turn_off";
                     target.entity_id = "switch.lueftung_bad";
@@ -1137,9 +1140,23 @@ in {
                   entity = "sensor.${sensor.bad}_dew_point";
                   name = "Taupunkt";
                   show_fill = false;
-                  color = colors.humidity;
                 }
               ];
+              color_thresholds = [
+                {
+                  value = 0;
+                  color = colors.okay;
+                }
+                {
+                  value = 14;
+                  color = colors.warn;
+                }
+                {
+                  value = 15;
+                  color = colors.alert;
+                }
+              ];
+              color_thresholds_transition = "hard";
               show = {
                 labels = true;
                 labels_secondary = "hover";
