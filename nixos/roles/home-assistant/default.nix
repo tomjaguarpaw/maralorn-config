@@ -33,7 +33,7 @@ let
     };
     bad = {
       upper = 60;
-      lower = 52;
+      lower = 55;
     };
   };
   inherit (haLib) triggers actions;
@@ -167,14 +167,13 @@ in {
             alias = "Lüftungssteuerung Bad";
             trigger =
               [ (triggers.stateTrigger "sensor.${sensor.bad}_humidity") ];
-            action = let
-              capped_outside =
-                "max(states('sensor.openweathermap_darmstadt_hourly_dew_point')|float,13)";
-            in [{
+            action = [{
               choose = [
                 {
                   conditions =
-                    "{{ states('sensor.${sensor.bad}_dew_point')|float > ${capped_outside} + 2}}";
+                    "{{ states('sensor.${sensor.bad}_dew_point')|float > states('sensor.openweathermap_darmstadt_hourly_dew_point')|float(0) + 2 and states('sensor.${sensor.bad}_humidity')|float > ${
+                      toString humidity_threshold.bad.upper
+                    } }}";
                   sequence = {
                     service = "switch.turn_on";
                     target.entity_id = "switch.lueftung_bad";
@@ -182,7 +181,9 @@ in {
                 }
                 {
                   conditions =
-                    "{{ states('sensor.${sensor.bad}_dew_point')|float < ${capped_outside} + 1}}";
+                    "{{ states('sensor.${sensor.bad}_dew_point')|float < states('sensor.openweathermap_darmstadt_hourly_dew_point')|float(0) + 1 or states('sensor.${sensor.bad}_humidity')|float < ${
+                      toString humidity_threshold.bad.lower
+                    } }}";
                   sequence = {
                     service = "switch.turn_off";
                     target.entity_id = "switch.lueftung_bad";
@@ -1140,23 +1141,9 @@ in {
                   entity = "sensor.${sensor.bad}_dew_point";
                   name = "Taupunkt";
                   show_fill = false;
+                  color = colors.humidity;
                 }
               ];
-              color_thresholds = [
-                {
-                  value = 0;
-                  color = colors.okay;
-                }
-                {
-                  value = 14;
-                  color = colors.warn;
-                }
-                {
-                  value = 15;
-                  color = colors.alert;
-                }
-              ];
-              color_thresholds_transition = "hard";
               show = {
                 labels = true;
                 labels_secondary = "hover";
@@ -1187,7 +1174,6 @@ in {
                   entity = "sensor.${sensor.bad}_humidity";
                   name = "Luftfeuchtigkeit";
                   show_fill = false;
-                  color = colors.humidity;
                 }
                 graph.outside.humidity
                 {
