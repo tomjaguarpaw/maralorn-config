@@ -31,6 +31,10 @@ let
       upper = 60;
       lower = 58;
     };
+    bad = {
+      upper = 60;
+      lower = 52;
+    };
   };
   inherit (haLib) triggers actions;
   fenster = map (name: "binary_sensor.${name}") [
@@ -178,7 +182,7 @@ in {
                 }
                 {
                   conditions =
-                    "{{ states('sensor.${sensor.bad}_dew_point')|float < ${capped_outside} + 1.5}}";
+                    "{{ states('sensor.${sensor.bad}_dew_point')|float < ${capped_outside} + 1}}";
                   sequence = {
                     service = "switch.turn_off";
                     target.entity_id = "switch.lueftung_bad";
