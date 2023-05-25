@@ -51,8 +51,6 @@ in {
         "https://hera.m-0.eu"
 
         "https://cloud.mathechor.de"
-        "https://mathechor.de"
-        "https://www.mathechor.de"
 
         "https://alerts.maralorn.de"
         "https://blog.maralorn.de"

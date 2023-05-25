@@ -26,6 +26,5 @@ in {
     "haskell-taskwarrior.run" = mkJob "haskell-taskwarrior";
     "nix-output-monitor.run" = mkJob "nix-output-monitor";
     "hochzeitsseite.run" = mkJob "hochzeitsseite";
-    "mathechor.de.run" = mkJob "mathechor.de";
   };
 }
