@@ -22,7 +22,6 @@ in {
     ../../roles/headscale.nix
     ../../roles/laminar
     ../../roles/mailman.nix
-    ../../roles/mathechor.de.nix
     ../../roles/matrix-synapse
     ../../roles/miniflux.nix
     ../../roles/monitoring
