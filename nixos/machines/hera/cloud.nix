@@ -137,7 +137,7 @@ in {
           };
         };
         extraConfig = ''
-          more_set_headers "Content-Security-Policy: frame-ancestors 'self' https://*.mathechor.de";
+          more_set_headers "Content-Security-Policy: frame-ancestors 'self' https://mathechor.de";
         '';
       };
     };
