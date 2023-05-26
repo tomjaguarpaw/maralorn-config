@@ -8,9 +8,17 @@ let
   '';
   extensions = builtins.attrValues {
     inherit (pkgs.gnomeExtensions)
-      appindicator window-is-ready-remover nothing-to-say windownavigator
-      user-themes dash-to-panel removable-drive-menu pop-shell
-      notifications-to-file caffeine;
+      appindicator # For tray icons
+      caffeine # This extension disables autoscreensaver on fullscreen and offers a manual toggle
+      dash-to-panel # To move menu
+      hide-minimized nothing-to-say # Microphone status tray icon
+      notifications-to-file # For my statusbarscript
+      pop-shell # For tiling
+      removable-drive-menu # Show usb sticks
+      user-themes # shell-theme
+      window-is-ready-remover # less annoying notifications
+      windownavigator # numbers for navigation in overview
+    ;
   };
   inherit (lib.hm.gvariant) mkTuple mkUint32;
   font = "Monospace 9";
@@ -128,13 +136,20 @@ in {
 
     "org/gnome/shell/extensions/dash-to-panel" = {
       panel-element-positions = ''
-        {"0":[{"element":"showAppsButton","visible":false,"position":"stackedTL"},{"element":"dateMenu","visible":false,"position":"stackedTL"},{"element":"activitiesButton","visible":false,"position":"stackedTL"},{"element":"taskbar","visible":false,"position":"stackedTL"},{"element":"leftBox","visible":false,"position":"stackedTL"},{"element":"centerBox","visible":false,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"},{"element":"desktopButton","visible":false,"position":"stackedBR"}]}'';
+        {"0":[{"element":"showAppsButton","visible":false,"position":"stackedTL"},{"element":"dateMenu","visible":false,"position":"centerMonitor"},{"element":"activitiesButton","visible":false,"position":"stackedTL"},{"element":"taskbar","visible":true,"position":"stackedBR"},{"element":"leftBox","visible":false,"position":"stackedTL"},{"element":"centerBox","visible":false,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"},{"element":"desktopButton","visible":false,"position":"stackedBR"}]}
+      '';
+      appicon-margin = 0;
+      appicon-padding = 4;
+      dot-position = "LEFT";
       panel-positions = ''{"0":"LEFT"}'';
       panel-anchors = ''{"0":"END"}'';
       panel-sizes = ''{"0":24}'';
-      tray-padding = 0;
-      status-icon-padding = 4;
+      tray-padding = 2;
+      show-favorites = false;
+      show-running-apps = true;
+      status-icon-padding = 2;
       leftbox-size = 13;
+      hide-overview-on-startup = true;
       tray-size = 13;
       trans-use-custom-opacity = true;
       trans-panel-opacity = 0.0;
