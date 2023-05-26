@@ -104,11 +104,15 @@ in [
     };
   }
   {
-    Passmenu = {
-      Password = "sh -c '(rbw-fzf | wl-copy) && ${
+    Passmenu = let
+      copy-password = cmd:
+        "sh -c '(${cmd} | wl-copy) && ${
           lib.getExe pkgs.termdown
         } -T \"Clearing password in\" -f term 20 && wl-copy -c'";
-      "OTP" = "sh -c 'rbw-totp-fzf | wl-copy'";
+    in {
+      Unlock = copy-password "rbw get bitwarden";
+      Password = copy-password "rbw-fzf";
+      "OTP" = copy-password "rbw-totp-fzf";
     };
   }
   {

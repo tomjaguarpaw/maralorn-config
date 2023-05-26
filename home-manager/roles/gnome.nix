@@ -36,7 +36,7 @@ in {
       switch-input-source-backward = [ ];
       switch-applications = [ ];
       switch-applications-backward = [ ];
-      minimize = [ ];
+      minimize = [ "<Super>h" ];
       maximize = [ ];
       unmaximize = [ ];
       cycle-windows = [ "<Super>Tab" ];
