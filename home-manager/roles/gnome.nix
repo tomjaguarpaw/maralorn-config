@@ -11,7 +11,7 @@ let
       appindicator # For tray icons
       caffeine # This extension disables autoscreensaver on fullscreen and offers a manual toggle
       dash-to-panel # To move menu
-      hide-minimized nothing-to-say # Microphone status tray icon
+      nothing-to-say # Microphone status tray icon
       notifications-to-file # For my statusbarscript
       pop-shell # For tiling
       removable-drive-menu # Show usb sticks
