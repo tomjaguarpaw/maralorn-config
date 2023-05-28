@@ -14,6 +14,9 @@ in {
     taskwarrior-sync.Service.ExecStartPre =
       (pkgs.writeShellScript "ensure-taskwarrior-login" ''
         set -eu
+        export PATH=${
+          lib.makeBinPath [ pkgs.taskwarrior pkgs.coreutils pkgs.gnugrep ]
+        }
         if [[ -z "$(${
           lib.getExe pkgs.taskwarrior
         } show taskd.credentials | grep maralorn)" ]]; then
