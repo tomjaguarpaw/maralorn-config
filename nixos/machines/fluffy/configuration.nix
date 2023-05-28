@@ -189,7 +189,8 @@ in {
         locations."/".proxyPass = "http://localhost:3000/";
       };
     };
-    grafana = {
+    grafana = let dashboards = ./dashboards;
+    in {
       enable = true;
       settings = {
         "auth.anonymous" = {
@@ -200,11 +201,28 @@ in {
         users.default_theme = "dark";
         "auth.basic".enabled = false;
         server.domain = virtualHosts."graphs";
+        dashboards.default_home_dashboard_path =
+          "${dashboards}/accounting.json";
       };
       provision = {
         enable = true;
-        datasources.settings.datasources = [ ];
-        dashboards.settings.providers = [ ];
+        datasources.settings.datasources = [{
+          type = "postgres";
+          isDefault = true;
+          name = "Postgres";
+          url = "localhost:5432";
+          user = "grafana";
+          uid = "accounting";
+          secureJsonData.password = "geheim";
+          jsonData = {
+            database = "accounting";
+            sslmode = "disable";
+          };
+        }];
+        dashboards.settings.providers = [{
+          name = "Static dashboards";
+          options.path = dashboards;
+        }];
       };
     };
   };
