@@ -1,6 +1,8 @@
 flake-inputs:
-{ pkgs, ... }:
-let localAddress = "fdc0:1::2";
+{ pkgs, config, ... }:
+let
+  localAddress = "fdc0:1::2";
+  inherit (config.m-0) virtualHosts;
 in {
   imports = [
     (import ../../roles/home-manager.nix flake-inputs)
@@ -163,6 +165,47 @@ in {
       };
       cleanupInterval = "15m";
       snapshotInterval = "*:00/3:00";
+    };
+    postgresql = {
+      enable = true;
+      package = pkgs.postgresql_15;
+      ensureDatabases = [ "accounting" ];
+      ensureUsers = [
+        {
+          name = "maralorn";
+          #ensurePermissions = { "DATABASE accounting" = "ALL PRIVILEGES"; };
+        }
+        {
+          name = "grafana";
+          #ensurePermissions = {
+          #  "balances" = "SELECT";
+          #};
+        }
+      ];
+    };
+    nginx = {
+      enable = true;
+      virtualHosts.${virtualHosts."graphs"} = {
+        locations."/".proxyPass = "http://localhost:3000/";
+      };
+    };
+    grafana = {
+      enable = true;
+      settings = {
+        "auth.anonymous" = {
+          org_role = "Admin";
+          enabled = true;
+        };
+        security.allow_embedding = true;
+        users.default_theme = "dark";
+        "auth.basic".enabled = false;
+        server.domain = virtualHosts."graphs";
+      };
+      provision = {
+        enable = true;
+        datasources.settings.datasources = [ ];
+        dashboards.settings.providers = [ ];
+      };
     };
   };
 

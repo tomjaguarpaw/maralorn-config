@@ -39,7 +39,7 @@ in {
       settings = {
         "auth.anonymous".enabled = true;
         security.allow_embedding = true;
-        users.default_theme = "light";
+        users.default_theme = "dark";
         "auth.basic".enabled = false;
         dashboards.default_home_dashboard_path =
           "${dashboards}/health-status.json";
