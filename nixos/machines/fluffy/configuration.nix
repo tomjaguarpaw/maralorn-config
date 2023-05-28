@@ -1,8 +1,6 @@
 flake-inputs:
-{ pkgs, config, ... }:
-let
-  localAddress = "fdc0:1::2";
-  inherit (config.m-0) virtualHosts;
+{ pkgs, ... }:
+let localAddress = "fdc0:1::2";
 in {
   imports = [
     (import ../../roles/home-manager.nix flake-inputs)
@@ -14,6 +12,7 @@ in {
     ../../roles/server
     ../../roles/5etools.nix
     ./hardware-configuration.nix
+    ./graphs.nix
   ];
 
   age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
@@ -99,23 +98,8 @@ in {
       }];
       useDHCP = true;
     };
-    #wireguard.interfaces = {
-    #  m0wire = {
-    #    ips = ["${hosts.vpn.fluffy}/64"];
-    #    privateKeyFile = "/disk/persist/wireguard-private-key";
-    #    peers = [
-    #      {
-    #        publicKey = wireguard.pub.hera;
-    #        allowedIPs = ["${hosts.vpn.prefix}::/64"];
-    #        endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
-    #        presharedKeyFile = config.age.secrets."wireguard/psk".path;
-    #        persistentKeepalive = 25;
-    #      }
-    #    ];
-    #  };
-    #};
   };
-  programs = { ssh = { startAgent = true; }; };
+  programs.ssh.startAgent = true;
   hardware.printers = {
     ensureDefaultPrinter = "Klio";
     ensurePrinters = [{
@@ -165,65 +149,6 @@ in {
       };
       cleanupInterval = "15m";
       snapshotInterval = "*:00/3:00";
-    };
-    postgresql = {
-      enable = true;
-      package = pkgs.postgresql_15;
-      ensureDatabases = [ "accounting" ];
-      ensureUsers = [
-        {
-          name = "maralorn";
-          #ensurePermissions = { "DATABASE accounting" = "ALL PRIVILEGES"; };
-        }
-        {
-          name = "grafana";
-          #ensurePermissions = {
-          #  "balances" = "SELECT";
-          #};
-        }
-      ];
-    };
-    nginx = {
-      enable = true;
-      virtualHosts.${virtualHosts."graphs"} = {
-        locations."/".proxyPass = "http://localhost:3000/";
-      };
-    };
-    grafana = let dashboards = ./dashboards;
-    in {
-      enable = true;
-      settings = {
-        "auth.anonymous" = {
-          org_role = "Admin";
-          enabled = true;
-        };
-        security.allow_embedding = true;
-        users.default_theme = "dark";
-        "auth.basic".enabled = false;
-        server.domain = virtualHosts."graphs";
-        dashboards.default_home_dashboard_path =
-          "${dashboards}/accounting.json";
-      };
-      provision = {
-        enable = true;
-        datasources.settings.datasources = [{
-          type = "postgres";
-          isDefault = true;
-          name = "Postgres";
-          url = "localhost:5432";
-          user = "grafana";
-          uid = "accounting";
-          secureJsonData.password = "geheim";
-          jsonData = {
-            database = "accounting";
-            sslmode = "disable";
-          };
-        }];
-        dashboards.settings.providers = [{
-          name = "Static dashboards";
-          options.path = dashboards;
-        }];
-      };
     };
   };
 
