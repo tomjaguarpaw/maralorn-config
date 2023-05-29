@@ -1,7 +1,19 @@
-
 {
   "annotations": {
-    "list": [ ]
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
@@ -121,22 +133,39 @@
             "limit": 50
           },
           "table": "balances"
-        }
-      ],
-      "title": "Konten",
-      "transformations": [
+        },
         {
-          "id": "calculateField",
-          "options": {
-            "mode": "reduceRow",
-            "reduce": {
-              "include": [],
-              "reducer": "sum"
-            },
-            "replaceFields": false
+          "datasource": {
+            "type": "postgres",
+            "uid": "accounting"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "SELECT date as time, account as metric, amount FROM balances WHERE account LIKE 'Aktiva' ORDER BY time",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
           }
         }
       ],
+      "title": "Konten",
+      "transformations": [],
       "transparent": true,
       "type": "timeseries"
     },
