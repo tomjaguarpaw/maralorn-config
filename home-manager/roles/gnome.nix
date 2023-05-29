@@ -1,6 +1,6 @@
 { pkgs, lib, config, ... }@args:
 let
-  hotkeys = pkgs.writeShellScriptBin "hotkeys" ''
+  hotkeys = pkgs.writeShellScriptBin "my-hotkeys" ''
     ${pkgs.wizards-dialog}/bin/hotkeys ${
       pkgs.writeText "hotkeys.yaml"
       (builtins.toJSON (import ./hotkeys.nix args))
