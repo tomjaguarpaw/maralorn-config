@@ -22,6 +22,102 @@
   "liveNow": false,
   "panels": [
     {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "title": "Konten",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "accounting"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "unit": "suffix:€"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 9,
+        "x": 0,
+        "y": 1
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "accounting"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT amount, replace(replace(account,'Aktiva:Konten:',''),':',' -> ') as metric, date as time from balances WHERE account SIMILAR TO 'Aktiva:Konten:%:(Claire|Malte|Hauptkonto|Rücklagen|Wertpapiere)' ORDER BY date;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Verteilung",
+      "type": "piechart"
+    },
+    {
       "datasource": {
         "type": "postgres",
         "uid": "accounting"
@@ -84,10 +180,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
-        "y": 0
+        "h": 8,
+        "w": 15,
+        "x": 9,
+        "y": 1
       },
       "id": 1,
       "options": {
@@ -97,7 +193,7 @@
           ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -164,9 +260,8 @@
           }
         }
       ],
-      "title": "Konten",
+      "title": "Zeitverlauf",
       "transformations": [],
-      "transparent": true,
       "type": "timeseries"
     },
     {
@@ -235,7 +330,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 9
       },
       "id": 3,
       "options": {
@@ -283,9 +378,8 @@
           "table": "balances"
         }
       ],
-      "title": "Konten",
+      "title": "Einnahmen und Ausgaben",
       "transformations": [],
-      "transparent": true,
       "type": "timeseries"
     },
     {
@@ -354,7 +448,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 21
       },
       "id": 2,
       "options": {
@@ -402,13 +496,12 @@
           "table": "balances"
         }
       ],
-      "title": "Konten",
+      "title": "Diskrepanzen",
       "transformations": [],
-      "transparent": true,
       "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": false,
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -416,7 +509,7 @@
     "list": []
   },
   "time": {
-    "from": "now-2y",
+    "from": "now/y",
     "to": "now"
   },
   "timepicker": {},
