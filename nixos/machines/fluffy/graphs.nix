@@ -1,16 +1,15 @@
 { pkgs, config, ... }:
-let
-  inherit (config.m-0) virtualHosts;
-  pw = pkgs.privateValue "" "fluffy-grafana-postgres-pw";
+let inherit (config.m-0) virtualHosts;
 in {
   systemd.services.setup-accounting-db = {
     script = ''
       set -ex
+      pw=$(cat ${config.age.secrets."grafana-postgres-pw".path})
       ${config.services.postgresql.package}/bin/psql -d accounting << EOF
       CREATE TABLE IF NOT EXISTS balances (account text, date date, amount numeric(11,2));
       GRANT ALL ON balances TO maralorn;
       GRANT SELECT ON balances TO grafana;
-      ALTER ROLE grafana PASSWORD '${pw}';
+      ALTER ROLE grafana PASSWORD '$pw';
       EOF
     '';
     serviceConfig = {
@@ -58,7 +57,8 @@ in {
           url = "localhost:5432";
           user = "grafana";
           uid = "accounting";
-          secureJsonData.password = pw;
+          secureJsonData.password =
+            "$__file{${config.age.secrets."grafana-postgres-pw".path}}";
           jsonData = {
             database = "accounting";
             sslmode = "disable";
