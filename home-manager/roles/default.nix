@@ -142,6 +142,7 @@
       '';
     } ++ [
       (pkgs.writeShellScriptBin "unlock-ssh" ''
+        ssh-add <(rbw get "Git SSH Signingkey")
         SSH_ASKPASS="print-ssh-pw" DISPLAY="a" ssh-add < /dev/null
       '')
       (pkgs.writeShellScriptBin "print-ssh-pw"
