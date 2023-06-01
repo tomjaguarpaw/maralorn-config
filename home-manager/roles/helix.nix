@@ -95,7 +95,7 @@ in {
         auto-save = true;
       };
     };
-    languages = [
+    languages.language = [
       {
         name = "haskell";
         config.languageServerHaskell.formattingProvider = "fourmolu";
