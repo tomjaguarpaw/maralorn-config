@@ -29,7 +29,7 @@
         "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git";
     };
     home-manager = {
-      url = "home-manager/master";
+      url = "home-manager/release-23.05";
       inputs = { nixpkgs.follows = ""; };
     };
     hexa-nur-packages = {
