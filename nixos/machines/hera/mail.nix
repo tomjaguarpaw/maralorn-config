@@ -106,7 +106,7 @@ in {
     forwards = pkgs.privateValue { } "mail/forwards";
     loginAccounts = pkgs.privateValue { } "mail/users";
     hierarchySeparator = "/";
-    certificateScheme = 1;
+    certificateScheme = "manual";
     certificateFile = "${certPath}/fullchain.pem";
     keyFile = "${certPath}/key.pem";
     policydSPFExtraConfig = ''
