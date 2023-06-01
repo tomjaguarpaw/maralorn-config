@@ -4,13 +4,9 @@
       Unit.Description = "Fetch banking";
       Service = {
         Type = "oneshot";
-        Environment = "PATH=${
-            lib.makeBinPath [ pkgs.coreutils pkgs.git pkgs.pass pkgs.gnupg ]
-          }";
-        ExecStart = toString (pkgs.writeShellScript "fetch-banking" ''
-          cd ~/git/buchhaltung
-          exec ${pkgs.nix}/bin/nix develop -c ${pkgs.nix}/bin/nix run ".#autoupdate"
-        '');
+        Environment = "PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.git ]}";
+        WorkingDirectory = "%h/git/buchhaltung";
+        ExecStart = "${lib.getExe pkgs.nix} develop -c unsupervised-update";
       };
     };
     timers.fetch-banking = {

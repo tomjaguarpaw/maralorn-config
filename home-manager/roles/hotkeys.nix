@@ -82,7 +82,8 @@ in [
       Config = edit_dir "~/git/config";
       Files = fork "nautilus";
       Accounting = {
-        Update = "nix run ./git/buchhaltung#update";
+        Update =
+          "sh -c 'cd ~/git/buchhaltung; nix develop -c interactive-update'";
         Display =
           "hledger -f ~/git/buchhaltung/buchhaltung.journal ui -- --watch --theme=terminal -X€ -t -E";
       };
