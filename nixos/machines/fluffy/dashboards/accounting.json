@@ -775,7 +775,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT date as time, account as metric, amount FROM balances WHERE account LIKE 'Aktiva:Umbuchung' OR account LIKE 'Aktiva:Saldokorrektur:%' ORDER BY time",
+          "rawSql": "SELECT date as time, account as metric, amount FROM flat_balances WHERE account LIKE 'Aktiva:Umbuchung' OR account LIKE 'Aktiva:Saldokorrektur:%' ORDER BY time",
           "refId": "A",
           "sql": {
             "columns": [
