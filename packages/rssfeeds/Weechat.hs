@@ -140,30 +140,25 @@ yesterday = T.addDays (negate 1) . today
 timestamp :: T.UTCTime -> Text
 timestamp = toText . T.formatTime T.defaultTimeLocale "%Y-%m-%d %H:%M"
 
-blockList :: [Text]
-blockList =
-  [ "#buchhaltung"
-  , "#ci-monitoring"
-  , "#fluffy warnung"
-  , "#general"
-  , "#haskell"
-  , "#hledger"
-  , "#home manager"
-  , "#krebs"
-  , "#nix _ nixos"
-  , "#nix _ nixpkgs _ nixos dev"
-  , "#nix offtopic"
-  , "#agenix"
-  , "#devenv"
-  , "#ema apps"
-  , "#hercules ci"
-  , "#nixos-mailserver"
+allowList :: [Text]
+allowList =
+  [ "chaos-darmstadt"
+  , "infra"
+  , "balkon"
+  , "vorstand"
+  , "nix da"
+  , "nix haskell"
+  , "nixos de"
+  , "#ea"
+  , "haskell-language-server"
+  , "lounge"
+  , "lesswrong"
   ]
 
 logToFeedEntry :: T.UTCTime -> Log -> Maybe Entry
 logToFeedEntry now =
   \Log{logchannel, logserver, messages = reverse . takeWhile (not . is_me) . reverse . filter msgFilter -> messages} ->
-    if not (null messages || logchannel `elem` blockList) && Text.isPrefixOf "#" logchannel
+    if not (null messages) && any (Text.isInfixOf logchannel) allowList
       then
         Just
           ( nullEntry
