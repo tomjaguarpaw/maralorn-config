@@ -285,7 +285,7 @@ main = Notify.withManager \watch_manager -> do
                 let code_event =
                       notmuch_update
                         <&> \case
-                          mode' | mode' >= Code -> \callback -> liftIO do
+                          Code -> \callback -> liftIO do
                             response <- notmuch "count" "folder:hera/Code" |> captureTrim
                             callback response
                           _ -> \callback -> liftIO $ callback "0"
