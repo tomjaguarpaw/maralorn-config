@@ -1,4 +1,6 @@
-module Main (main) where
+{-# LANGUAGE ImpredicativeTypes #-}
+
+module Main (main, green) where
 
 import Control.Concurrent qualified as Concurrent
 import Control.Concurrent.Async qualified as Async
@@ -6,13 +8,10 @@ import Control.Concurrent.STM qualified as STM
 import Control.Exception (catch, onException)
 import Control.Exception qualified as Exception
 
--- import Control.Monad.Catch (MonadCatch)
--- import Data.ByteString qualified as ByteString
 import Data.ByteString.Char8 qualified as ByteStringChar
 import Data.ByteString.Lazy qualified as LBS
 import Data.ByteString.Lazy.Char8 qualified as LBSC
 
--- import Data.IntMap.Strict qualified as IntMap
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Data.Time qualified as Time
@@ -22,28 +21,30 @@ import Say (say, sayErr)
 import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, readInputLines, (&>), (|>))
 import Shh qualified
 
--- import Streamly.Data.Array (Array)
--- import Streamly.Data.Array qualified as Array
--- import Streamly.Data.Fold (Fold)
--- import Streamly.Data.Fold qualified as Fold
--- import Streamly.Data.Stream.Prelude (MonadAsync, Stream)
--- import Streamly.Data.Stream.Prelude qualified as Stream
--- import Streamly.Internal.FileSystem.Event.Linux qualified as FileSystemStream
--- import Streamly.Unicode.Stream qualified as Unicode
-
+import Control.Concurrent qualified as Conc
 import Data.Set qualified as Set
+import Reflex qualified as R
+import Reflex.Host.Headless qualified as R
 import System.Directory (listDirectory)
 import System.Environment (getEnv)
 import System.FilePath ((</>))
 
--- import System.IO.Unsafe qualified as Unsafe
+infixl 9 %
+(%) :: (a -> b) -> (b -> c) -> a -> c
+f % g = g . f
+
+infixl 9 %>
+(%>) :: Functor f => (a -> f b) -> (b -> c) -> a -> f c
+f %> g = fmap g . f
+
+infixl 9 %>>
+(%>>) :: (Functor g, Functor f) => (a -> f (g b)) -> (b -> c) -> a -> f (g c)
+f %>> g = fmap (fmap g) . f
 
 data Mode = Klausur | Orga | Communication | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
 load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq"]
-
-main = oldmain
-
+missingExecutables :: IO [FilePath]
 modes :: [Mode]
 modes = enumFrom Klausur
 
@@ -52,8 +53,6 @@ getMode home = do
   let mode_file = home </> ".mode"
   name <- decodeUtf8 . ByteStringChar.strip <$> readFileBS mode_file `onException` sayErr [i|File #{mode_file} not found.|]
   maybe (sayErr [i|Unknown mode #{name}|] >> error [i|Unknown mode #{name}|]) pure $ find (\mode -> name == Text.toLower (show mode)) modes
-
--- home = "/home/maralorn"
 
 -- modeFile = home </> ".mode"
 
@@ -111,7 +110,9 @@ newtype Var a = MkVar
   { value :: TVar (a, Unique.Unique)
   }
 
+getUnique :: Var a -> STM Unique.Unique
 getUnique = fmap snd . readTVar . value
+getVal :: Var a -> STM a
 getVal = fmap fst . readTVar . value
 
 newVar :: a -> IO (Var a)
@@ -119,21 +120,27 @@ newVar initial_value = do
   unique <- Unique.newUnique
   MkVar <$> newTVarIO (initial_value, unique)
 
-newMaybeVar :: IO (Var (Maybe a))
-newMaybeVar = newVar Nothing
+data Module a = OldModule ((a -> IO ()) -> IO Void) | Module (forall t m. R.MonadHeadlessApp t m => m (R.Event t a, IO ()))
 
-type Vars = [Var (Maybe Text)]
-type Module a = Var a -> IO Void
-
+separator :: Text
 separator = "\n$color1$hr\n"
 
-writeVars :: Vars -> IO Void
-writeVars vars = onUpdatesMono vars do
-  outputs <- atomically $ mapM getVal vars
-  writeFileText "/run/user/1000/status-bar" $
-    Text.intercalate separator $
-      reverse $
-        catMaybes outputs
+writeVars :: R.MonadHeadlessApp t m => [R.Event t (Maybe Text)] -> m ()
+writeVars vars = do
+  writeEvent <-
+    vars
+      & mapM
+        ( R.holdDyn Nothing
+            >=> R.holdUniqDyn
+            %>> (: [])
+        )
+      %> mconcat
+      %> R.updated
+      %>> catMaybes
+      %>> reverse
+      %>> Text.intercalate separator
+      %>> writeFileText "/run/user/1000/status-bar"
+  R.performEvent_ writeEvent
 
 data AnyVar where
   AVar :: Var a -> AnyVar
@@ -156,16 +163,18 @@ onUpdates vars action = go []
     action
     go next_uniques
 
-runModules :: [Module (Maybe Text)] -> IO ()
+runModules :: R.MonadHeadlessApp t m => [Module (Maybe Text)] -> m ()
 runModules modules = do
   (vars, actions) <-
-    unzip <$> forM modules \module' -> do
-      var <- newMaybeVar
-      pure (var, module' var)
-  foldConcurrently_ (writeVars vars : actions)
-
-foldConcurrently_ :: Foldable f => f (IO a) -> IO ()
-foldConcurrently_ = Async.mapConcurrently_ id
+    unzip <$> forM modules \case
+      OldModule module' -> do
+        (event, trigger) <- R.newTriggerEvent
+        pure (event, void $ module' trigger)
+      Module module' -> do
+        (event, action) <- module'
+        pure (event, action)
+  void $ liftIO $ Conc.forkIO $ Async.mapConcurrently_ id actions
+  writeVars vars
 
 oneSecond :: Int
 oneSecond = 1000000
@@ -179,9 +188,12 @@ updateVarIfChanged var@MkVar{value} new_value = do
       writeTVar value (new_value, new_unique)
 
 simpleModule :: Eq a => Int -> IO a -> Module a
-simpleModule delay action var = forever do
-  updateVarIfChanged var =<< action
-  Concurrent.threadDelay delay
+simpleModule delay action = Module do
+  tick <-
+    R.tickLossyFromPostBuildTime (realToFrac delay / realToFrac oneSecond)
+      <&> fmap (const $ liftIO action)
+  event <- R.performEvent tick
+  pure (event, pass)
 
 withColor :: Monad m => Text -> Text -> m (Maybe Text)
 withColor color content = pure $ Just [i|${color \##{color}}#{content}|]
@@ -193,53 +205,65 @@ playerCTLFormat :: String
 playerCTLFormat = "@{{status}} {{title}} | {{album}} | {{artist}}"
 
 playerModule :: FilePath -> Module (Maybe Text)
-playerModule = \home var ->
-  let process_update = \host ->
-        updateVarIfChanged var
-          . runIdentity
-          . withColor white
-          . Text.replace "@Stopped" "⏹"
-          . Text.replace "@Playing" "▶"
-          . Text.replace "@Paused" "⏸"
-          . Text.intercalate "\n"
-          . filter (not . Text.null)
-          . (maybeToList host <>)
-          . Text.splitOn " | "
-          . decodeUtf8
-      update_lines = mapM_ \update -> do
+playerModule = \home -> Module do
+  (event, trigger) <- R.newTriggerEvent
+  let update_lines = mapM_ \update -> do
         mpdris_config <-
-          Exception.try @Exception.IOException $
-            readFileBS [i|#{home}/.config/mpDris2/mpDris2.conf|]
+          [i|#{home}/.config/mpDris2/mpDris2.conf|]
+            & readFileBS
+              % Exception.try @Exception.IOException
         let host =
-              find (/= "::")
-                . mapMaybe (Text.stripPrefix "host = ")
-                . lines
-                . decodeUtf8
-                . fromRight ""
-                $ mpdris_config
-        process_update host update
-   in forever $
-        playerctl "metadata" "-F" "-f" playerCTLFormat
-          |> Shh.readInputLines update_lines
+              mpdris_config
+                & fromRight ""
+                  % decodeUtf8
+                  % lines
+                  % mapMaybe (Text.stripPrefix "host = ")
+                  % find (/= "::")
+        update
+          & decodeUtf8
+            % Text.splitOn " | "
+            % (maybeToList host <>)
+            % filter (Text.null % not)
+            % Text.intercalate "\n"
+            % Text.replace "@Stopped" "⏹"
+            % Text.replace "@Playing" "▶"
+            % Text.replace "@Paused" "⏸"
+            % withColor white
+            % runIdentity
+            % trigger
+      listenToPlayer =
+        forever $
+          playerctl "metadata" "-F" "-f" playerCTLFormat
+            |> Shh.readInputLines update_lines
+  pure (event, listenToPlayer)
 
-black = "6E6C7E"
+red :: Text
 red = "F28FAD"
+green :: String
 green = "ABE9B3"
+yellow :: Text
 yellow = "FAE3B0"
+blue :: Text
 blue = "96CDFB"
+magenta :: Text
 magenta = "F5C2E7"
+cyan :: Text
 cyan = "89DCEB"
+white :: Text
 white = "D9E0EE"
 
-oldmain :: IO ()
-oldmain = do
+main :: IO ()
+main = do
+  Nothing <-
+    missingExecutables
+      <&> nonEmpty
   home <- getEnv "HOME"
   let git_dir = home </> "git"
       modes_dir = home </> ".volatile" </> "modes"
   mode_var <- newVar Unrestricted
   dirty_var <- newTVarIO []
   let read_mode = fst <$> readTVarIO (value mode_var)
-      modules =
+      modules :: [Module (Maybe Text)] =
         [ simpleModule (5 * oneSecond) $ do
             appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
             when' (not $ null appointments) $
@@ -299,7 +323,7 @@ oldmain = do
                 then tryCmd (git "--no-optional-locks" "-C" (git_dir </> "config") "log" "--oneline" "origin/main" "^main")
                 else pure ""
             when' (not $ LBS.null behind) $ withColor yellow [i|Config #{show (length (LBSC.lines behind))} commits behind.|]
-        , \var -> do
+        , OldModule \var -> do
             commit_var <- newTVarIO ""
             system_var <- newTVarIO ""
             modes_var <- newTVarIO ""
@@ -342,23 +366,26 @@ oldmain = do
                   system_dirty <- readTVarIO system_dirty_var
                   modes_dirty <- readTVarIO modes_dirty_var
                   when' (system_dirty || modes_dirty) $ withColor yellow [i|Current #{case (system_dirty,modes_dirty) of (True, True) -> "home and system"; (True, _) -> "system"; _ -> "home"} stale|]
-            var & simpleModule oneSecond do
+            forever do
               Concurrent.threadDelay (4 * oneSecond)
               dirty <- elem "config" <$> readTVarIO dirty_var
               mode <- read_mode
-              if dirty || mode == Klausur then pure Nothing else scan
-        , \var ->
-            onUpdate mode_var $ updateVarIfChanged var . runIdentity . withColor blue . show
+              var =<< if dirty || mode == Klausur then pure Nothing else scan
+        , OldModule $ \var ->
+            onUpdate mode_var $ var . runIdentity . withColor blue . show
         , simpleModule (1 * oneSecond) do
             now <- Time.getCurrentTime
             notifications <- processNotifications . fromRight "" <$> Exception.try @Exception.IOException (readFileBS [i|#{home}/.notifications/#{Time.formatTime Time.defaultTimeLocale "%Y-%m-%d" now}.log|])
             when' (not $ Text.null notifications) $ withColor red (Text.take 24 (Text.drop ((`rem` 15) . round . Time.utctDayTime $ now) "NOTIFICATIONS! NOTIFICATIONS! NOTIFICATIONS!") <> "\n" <> notifications)
         ]
-  foldConcurrently_
-    [ void $ simpleModule oneSecond (getMode home) mode_var
-    , runModules modules
-    ]
+  R.runHeadlessApp do
+    void $ liftIO $ Conc.forkIO $ forever do
+      updateVarIfChanged mode_var =<< getMode home
+      Concurrent.threadDelay oneSecond
+    runModules modules
+    pure R.never -- We have no exit condition.
 
+processNotifications :: ByteString -> Text
 processNotifications =
   Text.intercalate [i|\n$color1$hr${color \##{red}}\n|]
     . toList
@@ -384,8 +411,10 @@ processNotifications =
     . decodeUtf8
     . ByteStringChar.strip
 
+notificationBlockList :: [Text]
 notificationBlockList = ["Automatic suspend", "Auto suspend"]
 
+diffIsSmall :: LBSC.ByteString -> LBSC.ByteString -> IO Bool
 diffIsSmall = \pathA pathB -> (== "[]") <$> (nix_diff "--json" [pathA, pathB] |> jq ".inputsDiff.inputDerivationDiffs" |> captureTrim)
 
 ---- | Drain first stream exactly once, second stream as often as you want!

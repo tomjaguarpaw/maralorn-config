@@ -15,9 +15,7 @@ build-type:    Simple
 -- extra-source-files:
 
 common warnings
-  ghc-options:
-    -threaded -with-rtsopts=-maxN4 -Wall -Wno-missing-signatures
-    -Wno-unused-top-binds -Wno-type-defaults
+  ghc-options: -threaded -with-rtsopts=-maxN4 -Wall -Wno-type-defaults
 
 executable status-script
   import:             warnings
@@ -42,6 +40,7 @@ executable status-script
     , directory
     , exceptions
     , filepath
+    , reflex
     , relude
     , say
     , shh
