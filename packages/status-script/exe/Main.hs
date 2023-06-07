@@ -186,6 +186,10 @@ when' cond result = if cond then result else pure Nothing
 playerCTLFormat :: String
 playerCTLFormat = "@{{status}} {{title}} | {{album}} | {{artist}}"
 
+performEventThreaded :: R.MonadHeadlessApp t m => R.Event t a -> (a -> IO b) -> m (R.Event t b)
+performEventThreaded event action = do
+  undefined
+
 playerModule :: forall t m. R.MonadHeadlessApp t m => FilePath -> Module t m (Maybe Text)
 playerModule home = Module do
   (event, trigger) <- R.newTriggerEvent
