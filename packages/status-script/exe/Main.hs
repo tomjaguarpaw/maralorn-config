@@ -42,6 +42,10 @@ infixl 9 %>>
 (%>>) :: (Functor g, Functor f) => (a -> f (g b)) -> (b -> c) -> a -> f (g c)
 f %>> g = fmap (fmap g) . f
 
+infixl 1 <<&>>
+(<<&>>) :: (Functor g, Functor f) => f (g a) -> (a -> b) -> f (g b)
+x <<&>> g = fmap (fmap g) x
+
 data Mode = Klausur | Orga | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
 load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq"]
@@ -82,23 +86,19 @@ watchFile watch_manager dir file = do
 watchFileContents :: R.MonadHeadlessApp t m => Notify.WatchManager -> FilePath -> FilePath -> m (R.Event t Text)
 watchFileContents watch_manager dir file = do
   event_event <- watchFile watch_manager dir file
-  content_event <-
-    event_event
-      & fmap (const process_event)
-        % R.performEventAsync
-  stored_event <- R.holdDyn Nothing content_event
-  R.holdUniqDyn stored_event <&> R.updated % R.fmapMaybe id
- where
-  process_event callback = liftIO do
+  content_event <- performEventThreaded event_event \_ ->
     readFileBS (dir </> file)
       & Exception.try @Exception.IOException
-      %> either
+      <&> either
         (const Nothing)
         ( ByteStringChar.strip
             % decodeUtf8Strict @Text
             % hush
         )
-      >>= callback
+  stored_event <- R.holdDyn Nothing content_event
+  R.holdUniqDyn stored_event
+    <&> R.updated
+      % R.fmapMaybe id
 
 isDirty :: String -> IO Bool
 isDirty gitDir = ((/= "") <$> (git "--no-optional-locks" "-C" gitDir "status" "--porcelain" |> captureTrim)) `catch` (\(_ :: SomeException) -> pure True)
@@ -156,18 +156,15 @@ oneSecond = 1000000
 
 simpleModule :: forall t m a. (R.MonadHeadlessApp t m, Eq a) => Int -> IO a -> Module t m a
 simpleModule delay action = eventModule do
-  tick <-
-    tickEvent delay
-      <&> fmap (const \callback -> liftIO (action >>= callback))
-  R.performEventAsync tick
+  tick <- tickEvent delay
+  performEventThreaded tick $ const action
 
 simpleModeModule :: forall t m a. (R.MonadHeadlessApp t m, Eq a) => Int -> R.Dynamic t Mode -> (Mode -> IO a) -> Module t m a
 simpleModeModule delay mode action = eventModule do
   tick <-
     tickEvent delay
       <&> (\event -> R.leftmost [R.updated mode, R.tag (R.current mode) event])
-      %> (\mode' callback -> liftIO (action mode' >>= callback))
-  R.performEventAsync tick
+  performEventThreaded tick action
 
 tickEvent :: R.MonadHeadlessApp t m => Int -> m (R.Event t ())
 tickEvent delay =
@@ -186,9 +183,26 @@ when' cond result = if cond then result else pure Nothing
 playerCTLFormat :: String
 playerCTLFormat = "@{{status}} {{title}} | {{album}} | {{artist}}"
 
+data EventRunnerState a = Idle | Running | NextWaiting a
+
+-- Call IO action in a separate thread. If multiple events fire never run two actions in parallel and if more than one action queues up, only run the latest.
 performEventThreaded :: R.MonadHeadlessApp t m => R.Event t a -> (a -> IO b) -> m (R.Event t b)
 performEventThreaded event action = do
-  undefined
+  runnerState <- liftIO $ newTVarIO Idle
+  R.performEventAsync $
+    event <&> \input callback -> liftIO do
+      let runner input' = do
+            action input' >>= callback
+            next_input <- atomically $ STM.stateTVar runnerState \case
+              Idle -> error "Runner should not be in idle state when finishing"
+              Running -> (Nothing, Idle)
+              NextWaiting next_input -> (Just next_input, Running)
+            next_input & maybe pass runner
+      run <- atomically $ STM.stateTVar runnerState \case
+        Idle -> (True, Running)
+        Running -> (False, NextWaiting input)
+        NextWaiting{} -> (False, NextWaiting input)
+      when run $ void $ Async.async $ runner input
 
 playerModule :: forall t m. R.MonadHeadlessApp t m => FilePath -> Module t m (Maybe Text)
 playerModule home = Module do
@@ -262,40 +276,38 @@ main = Notify.withManager \watch_manager -> do
                 withColor magenta (Text.unlines appointments)
           , playerModule home
           , eventModule do
-              let unread_event =
-                    notmuch_update
-                      <&> \case
-                        mode' | mode' >= Orga -> \callback -> liftIO $ do
-                          response <- notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
-                          callback response
-                        _ -> \callback -> liftIO $ callback "0"
-              R.performEventAsync
-                unread_event
-                <&> fmap \unread -> runIdentity $ when' (unread /= "0") $ withColor red [i|Unread: #{unread}|]
-          , eventModule
-              do
-                let inbox_event =
-                      notmuch_update
-                        <&> \case
-                          mode' | mode' >= Leisure -> \callback -> liftIO do
-                            response <- notmuch "count" "folder:hera/Inbox" |> captureTrim
-                            callback response
-                          _ -> \callback -> liftIO $ callback "0"
-                R.performEventAsync
-                  inbox_event
-                  <&> fmap \inbox -> runIdentity $ when' (inbox /= "0") $ withColor yellow [i|Inbox: #{inbox}|]
-          , eventModule
-              do
-                let code_event =
-                      notmuch_update
-                        <&> \case
-                          Code -> \callback -> liftIO do
-                            response <- notmuch "count" "folder:hera/Code" |> captureTrim
-                            callback response
-                          _ -> \callback -> liftIO $ callback "0"
-                R.performEventAsync
-                  code_event
-                  <&> fmap \code_mails -> runIdentity $ when' (code_mails /= "0") $ withColor blue [i|Code Mails: #{code_mails}|]
+              performEventThreaded
+                notmuch_update
+                \case
+                  mode' | mode' >= Orga -> notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
+                  _ -> pure "0"
+                <<&>> \unread ->
+                  [i|Unread: #{unread}|]
+                    & withColor red
+                    & when' (unread /= "0")
+                    & runIdentity
+          , eventModule do
+              performEventThreaded
+                notmuch_update
+                \case
+                  mode' | mode' >= Leisure -> notmuch "count" "folder:hera/Inbox" |> captureTrim
+                  _ -> pure "0"
+                <<&>> \inbox ->
+                  [i|Inbox: #{inbox}|]
+                    & withColor yellow
+                    & when' (inbox /= "0")
+                    & runIdentity
+          , eventModule do
+              performEventThreaded
+                notmuch_update
+                \case
+                  Code -> notmuch "count" "folder:hera/Code" |> captureTrim
+                  _ -> pure "0"
+                <<&>> \code_mails ->
+                  [i|Code Mails: #{code_mails}|]
+                    & withColor blue
+                    & when' (code_mails /= "0")
+                    & runIdentity
           , simpleModeModule (5 * oneSecond) mode \mode' -> do
               code_updates <- case mode' of
                 Code ->
