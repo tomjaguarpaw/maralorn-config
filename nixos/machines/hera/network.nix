@@ -7,7 +7,7 @@ in {
   m-0.tailscale-routes = "fd42:ccc:da:64::/64,172.20.64.0/24";
   systemd.network.networks."10-wan" = {
     matchConfig.Name = "ens18";
-    address = [ "213.136.94.190/24" "${hosts.hera}/128" ];
+    address = [ "${hosts.hera.A}/24" "${hosts.hera.AAAA}/128" ];
     routes = [
       { routeConfig.Gateway = "213.136.94.1"; }
       { routeConfig.Gateway = "fe80::1"; }

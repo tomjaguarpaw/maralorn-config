@@ -81,8 +81,8 @@ in {
           (lib.concatStringsSep "\n"
             (builtins.filter (x: !builtins.elem x nonMailboxDomains)
               config.mailserver.domains)));
-        smtp_bind_address = hosts.hera-v4;
-        smtp_bind_address6 = hosts.hera;
+        smtp_bind_address = hosts.hera.A;
+        smtp_bind_address6 = hosts.hera.AAAA;
       };
     };
   };

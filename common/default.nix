@@ -76,9 +76,10 @@ with lib; {
         hera-p = "${p}::3";
         v4-p = "10.0.0";
       in {
-        hera = "${p}::1";
-
-        hera-v4 = "213.136.94.190";
+        hera = {
+          AAAA = "${p}::1";
+          A = "213.136.94.190";
+        };
 
         hera-intern = "${hera-p}:1";
         chor-cloud = "${hera-p}:b";

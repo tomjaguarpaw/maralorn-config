@@ -24,9 +24,10 @@ in {
     useNetworkd = true;
     useDHCP = false; # enabled per interface
     hosts = lib.zipAttrs (lib.mapAttrsToList (host: ip:
-      if builtins.typeOf ip == "set" then
-        { }
-      else {
+      if builtins.typeOf ip == "set" then {
+        ${ip.AAAA or null} = "${host} ${host}.m-0.eu";
+        ${ip.A or null} = "${host} ${host}.m-0.eu";
+      } else {
         "${ip}" = "${host} ${host}.m-0.eu";
       }) config.m-0.hosts ++ lib.mapAttrsToList (host: ips:
         let
