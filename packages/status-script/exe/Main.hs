@@ -49,7 +49,7 @@ x <<&>> g = fmap (fmap g) x
 
 data Mode = Klausur | Orga | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
-load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq", "fd"]
+load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq"]
 
 missingExecutables :: IO [FilePath]
 modes :: [Mode]
@@ -281,10 +281,12 @@ main = Notify.withManager \watch_manager -> do
     let git_dirs_event' =
           git_dirs_event <&> \dirs -> do
             dir_update_events <- forM dirs \dir -> do
-              sub_dirs <-
-                liftIO (fd "-td" "." (git_dir </> dir) |> captureTrim)
-                  <&> decodeUtf8 % String.lines
-              dir_events <- forM ((git_dir </> dir) : sub_dirs) \sub_dir -> watchDir watch_manager sub_dir False (const True)
+              -- sub_dirs <-
+              --  liftIO (fd "-d2" "-td" "." (git_dir </> dir) |> captureTrim)
+              --    <&> decodeUtf8
+              --      % String.lines
+              --      % take 100
+              dir_events <- forM [git_dir </> dir] \sub_dir -> watchDir watch_manager sub_dir False (const True)
               git_dir_event <- watchDir watch_manager (git_dir </> dir </> ".git") False (const True)
               git_refs_event <- watchDir watch_manager (git_dir </> dir </> ".git/refs") True (const True)
               pure $
