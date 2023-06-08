@@ -74,9 +74,7 @@ watchDir watch_manager path recursive predicate = do
   R.newEventWithLazyTriggerWithOnComplete \callback -> do
     finish_callback <- newEmptyTMVarIO
     void $ Async.async do
-      say [i|Setting up watches for #{path}|]
       cb <- watch watch_manager path predicate (`callback` pass)
-      say [i|Set up watches for #{path}|]
       atomically $ putTMVar finish_callback cb
     pure $ void $ Async.async $ join $ atomically $ takeTMVar finish_callback
 
@@ -282,7 +280,6 @@ main = Notify.withManager \watch_manager -> do
     git_dirs_event <- performEventThreaded git_dir_change \_ -> listDirectory git_dir
     let git_dirs_event' =
           git_dirs_event <&> \dirs -> do
-            start' <- R.getPostBuild
             dir_update_events <- forM dirs \dir -> do
               sub_dirs <-
                 liftIO (fd "-td" "." (git_dir </> dir) |> captureTrim)
@@ -294,10 +291,9 @@ main = Notify.withManager \watch_manager -> do
                 mconcat (void <$> dir_events)
                   <> void git_dir_event
                   <> void git_refs_event
-                  <> start'
                   $> [dir]
             pure $ mconcat dir_update_events
-    git_dir_events <- R.switchDyn <$> R.networkHold (pure R.never) git_dirs_event'
+    git_dir_events <- (<> git_dirs_event) . R.switchDyn <$> R.networkHold (pure R.never) git_dirs_event'
     let modules =
           [ simpleModule (5 * oneSecond) $ do
               appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
