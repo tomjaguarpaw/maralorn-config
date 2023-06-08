@@ -282,11 +282,14 @@ main = Notify.withManager \watch_manager -> do
     let git_dirs_event' =
           git_dirs_event <&> \dirs -> do
             start' <- R.getPostBuild
-            dir_update_events <- forM dirs \dir ->
-              watchDir watch_manager (git_dir </> dir) False (const True)
-                <&> void
-                <&> (<> start')
-                <&> fmap (const [dir])
+            dir_update_events <- forM dirs \dir -> do
+              root_event <- watchDir watch_manager (git_dir </> dir) False (const True)
+              git_dir_event <- watchDir watch_manager (git_dir </> dir </> ".git") False (const True)
+              pure $
+                void root_event
+                  <> void git_dir_event
+                  <> start'
+                  $> [dir]
             pure $ mconcat dir_update_events
     git_dir_events <- R.switchDyn <$> R.networkHold (pure R.never) git_dirs_event'
     let modules =
