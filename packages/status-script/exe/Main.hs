@@ -25,6 +25,7 @@ import Data.List qualified as String
 import Data.Set qualified as Set
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
+import Reflex.Network qualified as R
 import System.Directory (listDirectory)
 import System.Environment (getEnv)
 import System.FSNotify qualified as Notify
@@ -69,8 +70,14 @@ hush = \case
 watchDir :: R.MonadHeadlessApp t m => Notify.WatchManager -> FilePath -> Bool -> Notify.ActionPredicate -> m (R.Event t Notify.Event)
 watchDir watch_manager path recursive predicate = do
   let watch = if recursive then Notify.watchTree else Notify.watchDir
-  R.newEventWithLazyTriggerWithOnComplete \callback ->
-    watch watch_manager path predicate (`callback` pass)
+  R.newEventWithLazyTriggerWithOnComplete \callback -> do
+    finish_callback <- newEmptyTMVarIO
+    void $ Async.async do
+      say [i|Setting up watches for #{path}|]
+      cb <- watch watch_manager path predicate (`callback` pass)
+      say [i|Set up watches for #{path}|]
+      atomically $ putTMVar finish_callback cb
+    pure $ void $ Async.async $ join $ atomically $ takeTMVar finish_callback
 
 watchFile :: R.MonadHeadlessApp t m => Notify.WatchManager -> FilePath -> FilePath -> m (R.Event t ())
 watchFile watch_manager dir file = do
@@ -269,6 +276,19 @@ main = Notify.withManager \watch_manager -> do
     notmuch_update <-
       watchFile watch_manager (home </> "Maildir/.notmuch/xapian") "flintlock"
         <&> mk_mode_event
+    start <- R.getPostBuild
+    git_dir_change <- (start <>) . void <$> watchDir watch_manager git_dir False (const True)
+    git_dirs_event <- performEventThreaded git_dir_change \_ -> listDirectory git_dir
+    let git_dirs_event' =
+          git_dirs_event <&> \dirs -> do
+            start' <- R.getPostBuild
+            dir_update_events <- forM dirs \dir ->
+              watchDir watch_manager (git_dir </> dir) False (const True)
+                <&> void
+                <&> (<> start')
+                <&> fmap (const [dir])
+            pure $ mconcat dir_update_events
+    git_dir_events <- R.switchDyn <$> R.networkHold (pure R.never) git_dirs_event'
     let modules =
           [ simpleModule (5 * oneSecond) $ do
               appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
@@ -321,15 +341,27 @@ main = Notify.withManager \watch_manager -> do
                     %> fromMaybe 0
                 _ -> pure 0
               when' (code_updates /= 0) $ withColor cyan [i|Code Updates: #{code_updates}|]
-          , simpleModeModule (5 * oneSecond) mode \mode' -> do
-              dirs <- listDirectory git_dir
-              dirty <- fmap toText <$> filterM (isDirty . (git_dir </>)) dirs
-              atomically $ writeTVar dirty_var dirty
-              when' (mode' /= Klausur && not (null dirty)) $ withColor red [i|Dirty: #{Text.intercalate " " dirty}|]
-          , simpleModule (5 * oneSecond) do
-              dirs <- listDirectory git_dir
-              unpushed <- fmap toText <$> filterM (isUnpushed . (git_dir </>)) dirs
-              when' (not $ null unpushed) do withColor yellow [i|Unpushed: #{Text.intercalate " " unpushed}|]
+          , eventModule do
+              dirty_updates <- performEventThreaded git_dir_events \dirs -> do
+                now_dirty <- Set.fromList . fmap toText <$> filterM (isDirty . (git_dir </>)) dirs
+                pure (Set.difference (Set.fromList (fmap toText dirs)) now_dirty, now_dirty)
+              set_of_dirties <- R.foldDyn (\(now_clean, now_dirty) dirty -> Set.union now_dirty (Set.difference dirty now_clean)) mempty dirty_updates
+              void $ performEventThreaded (R.updated set_of_dirties) \dirty_dirs -> atomically $ writeTVar dirty_var (toList dirty_dirs)
+              pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs ->
+                [i|Dirty: #{Text.intercalate " " (toList dirty_dirs)}|]
+                  & withColor red
+                  & when' (mode' /= Klausur && not (Set.null dirty_dirs))
+                  & runIdentity
+          , eventModule do
+              dirty_updates <- performEventThreaded git_dir_events \dirs -> do
+                now_dirty <- Set.fromList . fmap toText <$> filterM (isUnpushed . (git_dir </>)) dirs
+                pure (Set.difference (Set.fromList (fmap toText dirs)) now_dirty, now_dirty)
+              set_of_dirties <- R.foldDyn (\(now_clean, now_dirty) dirty -> Set.union now_dirty (Set.difference dirty now_clean)) mempty dirty_updates
+              pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs ->
+                [i|Unpushed: #{Text.intercalate " " (toList dirty_dirs)}|]
+                  & withColor yellow
+                  & when' (mode' /= Klausur && not (Set.null dirty_dirs))
+                  & runIdentity
           , simpleModule (5 * oneSecond) do
               let hosts = ["hera", "fluffy"]
               unreachable_hosts <- flip filterM hosts \host -> isLeft <$> (Shh.tryFailure do (exe "/run/wrappers/bin/ping" "-c" "1" (toString host)) &> Shh.devNull)
