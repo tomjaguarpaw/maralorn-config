@@ -45,7 +45,7 @@ let
     status-script = cleanCabalPackage ./status-script {
       overrides = _: {
         buildDepends = builtins.attrValues {
-          inherit (stable-pkgs) git khal playerctl notmuch jq tailscale;
+          inherit (stable-pkgs) git khal playerctl notmuch jq tailscale fd;
           inherit (unstable-pkgs) nix nix-diff;
         };
       };

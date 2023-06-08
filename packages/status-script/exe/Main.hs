@@ -49,7 +49,8 @@ x <<&>> g = fmap (fmap g) x
 
 data Mode = Klausur | Orga | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
-load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq"]
+load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq", "fd"]
+
 missingExecutables :: IO [FilePath]
 modes :: [Mode]
 modes = enumFrom Klausur
@@ -283,11 +284,14 @@ main = Notify.withManager \watch_manager -> do
           git_dirs_event <&> \dirs -> do
             start' <- R.getPostBuild
             dir_update_events <- forM dirs \dir -> do
-              root_event <- watchDir watch_manager (git_dir </> dir) False (const True)
+              sub_dirs <-
+                liftIO (fd "-td" "." (git_dir </> dir) |> captureTrim)
+                  <&> decodeUtf8 % String.lines
+              dir_events <- forM ((git_dir </> dir) : sub_dirs) \sub_dir -> watchDir watch_manager sub_dir False (const True)
               git_dir_event <- watchDir watch_manager (git_dir </> dir </> ".git") False (const True)
               git_refs_event <- watchDir watch_manager (git_dir </> dir </> ".git/refs") True (const True)
               pure $
-                void root_event
+                mconcat (void <$> dir_events)
                   <> void git_dir_event
                   <> void git_refs_event
                   <> start'
