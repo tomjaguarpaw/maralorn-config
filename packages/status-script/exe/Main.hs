@@ -285,9 +285,11 @@ main = Notify.withManager \watch_manager -> do
             dir_update_events <- forM dirs \dir -> do
               root_event <- watchDir watch_manager (git_dir </> dir) False (const True)
               git_dir_event <- watchDir watch_manager (git_dir </> dir </> ".git") False (const True)
+              git_refs_event <- watchDir watch_manager (git_dir </> dir </> ".git/refs") True (const True)
               pure $
                 void root_event
                   <> void git_dir_event
+                  <> void git_refs_event
                   <> start'
                   $> [dir]
             pure $ mconcat dir_update_events
