@@ -1,6 +1,7 @@
-{ pkgs, config, ... }:
+{ pkgs, config, lib, ... }:
 let
   stateDirectory = "/var/lib/nixpkgs-bot";
+  releases = [ "22.11" "23.05" ];
   configFile = {
     server = "https://matrix.maralorn.de";
     database = "${stateDirectory}/state.sqlite";
@@ -9,7 +10,7 @@ let
       owner = "NixOS";
       name = "nixpkgs";
     };
-    branches = {
+    branches = builtins.zipAttrsWith (_: lib.flatten) ([{
       "staging" = [ "staging-next" ];
       "staging-next" = [ "master" ];
       "haskell-updates" = [ "master" ];
@@ -17,12 +18,13 @@ let
       "nixpkgs-unstable" = [ ];
       "nixos-unstable-small" = [ "nixos-unstable" ];
       "nixos-unstable" = [ ];
-      "staging-22.11" = [ "staging-next-22.11" ];
-      "staging-next-22.11" = [ "release-22.11" ];
-      "release-22.11" = [ "nixos-22.11-small" ];
-      "nixos-22.11-small" = [ "nixos-22.11" ];
-      "nixos-22.11" = [ ];
-    };
+    }] ++ map (release: {
+      "staging-${release}" = [ "staging-next-${release}" ];
+      "staging-next-${release}" = [ "release-${release}" ];
+      "release-${release}" = [ "nixos-${release}-small" ];
+      "nixos-${release}-small" = [ "nixos-${release}" ];
+      "nixos-${release}" = [ ];
+    }) releases);
   };
 in {
   systemd.services.nixpkgs-bot = {
