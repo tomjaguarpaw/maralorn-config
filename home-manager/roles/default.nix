@@ -131,7 +131,12 @@
       inherit (pkgs)
         go gdb mpc_cli ncmpcpp shfmt astyle nodejs tasksh magic-wormhole nix-top
         matrix-commander upterm lazygit gh ledger aqbanking;
-      inherit (pkgs.haskellPackages) hledger hledger-ui hledger-web;
+      inherit (pkgs.haskellPackages)
+        hledger hledger-ui hledger-web releaser cabal-fmt stack ghcid nixfmt
+        cabal-install pandoc hlint cabal2nix nix-derivation;
+      inherit (pkgs.unstableHaskellPackages)
+        haskell-language-server ghc-debug-client eventlog2html ghc-debug-brick
+        calligraphy;
       mytmux = pkgs.writeShellScriptBin "mytmux" ''
         session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
         if [[ -n $session ]]; then

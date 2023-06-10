@@ -11,7 +11,7 @@ let
     packages = p: builtins.attrValues (self.lib.selectHaskellPackages p);
     extraDependencies = p: {
       libraryHaskellDepends = builtins.attrValues
-        (myPkgs.makeHaskellPackages p // selectHaskellPackages p);
+        (myPkgs.makeHaskellScriptPackages p // selectHaskellPackages p);
     };
   };
 in {
