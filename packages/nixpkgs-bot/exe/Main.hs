@@ -123,7 +123,7 @@ unwrapMatrixErrorT action = do
       liftIO $ Exception.throwIO matrix_error
     Right response -> pure response
 
-unwrapMatrixError :: MonadIO m => Matrix.MatrixIO a -> m a
+unwrapMatrixError :: (MonadIO m) => Matrix.MatrixIO a -> m a
 unwrapMatrixError = liftIO . unwrapMatrixErrorT
 
 git :: Config -> [String] -> Process.ProcessConfig () () ()
@@ -273,8 +273,8 @@ getMissingAuthorSubscriptions pr_key author = do
           ^. AuthorSubscriptionGithubLogin
           ==. SQL.val author
           SQL.&&. author_sub
-          ^. AuthorSubscriptionUser
-          `notIn` SQL.subSelectList users_subscribed_to_this_pr
+            ^. AuthorSubscriptionUser
+            `notIn` SQL.subSelectList users_subscribed_to_this_pr
       )
     pure author_sub
   pure $ fmap (authorSubscriptionUser . Persist.entityVal) author_subs
@@ -470,9 +470,9 @@ deleteUnusedQueries = SQL.delete do
         sub <- SQL.from $ SQL.table @Subscription
         pure (sub ^. SubscriptionUser)
       &&. (query ^. QueryUser)
-      `notIn` SQL.subList_select do
-        sub <- SQL.from $ SQL.table @AuthorSubscription
-        pure (sub ^. AuthorSubscriptionUser)
+        `notIn` SQL.subList_select do
+          sub <- SQL.from $ SQL.table @AuthorSubscription
+          pure (sub ^. AuthorSubscriptionUser)
 
 leaveEmptyRooms :: App ()
 leaveEmptyRooms = do

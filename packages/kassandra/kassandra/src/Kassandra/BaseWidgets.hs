@@ -10,11 +10,11 @@ import Reflex qualified as R
 import Reflex.Dom qualified as D
 import Relude.Extra.Bifunctor (secondF)
 
-br :: D.DomBuilder t m => m ()
+br :: (D.DomBuilder t m) => m ()
 br = D.el "br" pass
 
 stateWidget ::
-  Widget t m =>
+  (Widget t m) =>
   state ->
   (state -> m (R.Event t a, R.Event t state)) ->
   m (R.Event t a)
@@ -24,9 +24,9 @@ stateWidget initialState widget = do
  where
   stateToWorkflow = D.Workflow . secondF (fmap stateToWorkflow) . widget
 
-icon :: Widget t m => Text -> Text -> m ()
+icon :: (Widget t m) => Text -> Text -> m ()
 icon cssClass = D.elClass "i" ("material-icons icon " <> cssClass) . D.text
 
-button :: Widget t m => Text -> m () -> m (R.Event t ())
+button :: (Widget t m) => Text -> m () -> m (R.Event t ())
 button cssClass =
   fmap (D.domEvent D.Click . fst) . D.elClass' "span" ("button " <> cssClass)

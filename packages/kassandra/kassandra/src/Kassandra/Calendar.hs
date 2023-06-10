@@ -60,7 +60,7 @@ sortEventTimes lhs rhs = case (lhs, rhs) of
   (SimpleEvent startTimeLhs _, AllDayEvent startDayRhs _) -> case compare (tzTimeDay startTimeLhs) startDayRhs of EQ -> GT; a -> a
   (_, _) -> EQ
 
-switchToCurrentZone :: MonadIO m => ZonedTime -> m ZonedTime
+switchToCurrentZone :: (MonadIO m) => ZonedTime -> m ZonedTime
 switchToCurrentZone time = do
   let inUtc = zonedTimeToUTC time
   zone <- liftIO $ getTimeZone inUtc

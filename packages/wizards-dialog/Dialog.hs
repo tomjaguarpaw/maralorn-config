@@ -108,7 +108,7 @@ menu = runMenu True
     promptLabel :: (Char, MenuEntry a) -> [Char]
     promptLabel (c, option) = toUpper c : (": " <> getLabel option)
 
-confirm :: Character :<: m => Text -> Wizard m Bool
+confirm :: (Character :<: m) => Text -> Wizard m Bool
 confirm prompt =
   menu Nothing $ Menu prompt [Option "Yes" True, Option "No" False]
 
@@ -135,8 +135,8 @@ getLineWithDefaultAndSuggestions prompt startInput completions =
     match = filter (isInfixOf $ reverse before)
   prewritten = fromMaybe "" startInput
 
-runHaskeline :: MonadIO m => Wizard Haskeline a -> m (Maybe a)
+runHaskeline :: (MonadIO m) => Wizard Haskeline a -> m (Maybe a)
 runHaskeline = liftIO . runInputT defaultSettings . run
 
-runClearingHaskeline :: MonadIO m => Wizard Haskeline a -> m (Maybe a)
+runClearingHaskeline :: (MonadIO m) => Wizard Haskeline a -> m (Maybe a)
 runClearingHaskeline = liftIO . runInputT defaultSettings . runClearing . run

@@ -45,7 +45,7 @@ import Reflex.Dom qualified as D
 
 data AdhocContext = NoContext | AgendaEvent Text CalendarList | AgendaList Text (Set Text)
 
-selectWidget :: StandardWidget t m r e => DefinitionElement -> m ()
+selectWidget :: (StandardWidget t m r e) => DefinitionElement -> m ()
 selectWidget definitionElement = do
   (dragEl, _) <- D.elClass' "span" "button" $ icon "" "filter_list"
   selectStateB <- toggleContainElement definitionElement <<$>> R.current <$> getSelectState
@@ -55,14 +55,14 @@ selectWidget definitionElement = do
   toggleContainElement entry selectedTasks =
     Seq.findIndexL (== entry) selectedTasks & maybe (selectedTasks |> entry) (`Seq.deleteAt` selectedTasks)
 
-listElementWidget :: StandardWidget t m r e => AdhocContext -> ListItem -> m ()
+listElementWidget :: (StandardWidget t m r e) => AdhocContext -> ListItem -> m ()
 listElementWidget context = \case
   TaskwarriorTask uuid -> uuidWidget taskTreeWidget (pure uuid)
   AdHocTask t -> adhocTaskWidget t context
   HabiticaTask _ -> error "HabiticaTasks are not yet supported"
   Mail _ -> error "Mails are not yet supported"
 
-configListWidget :: forall t m r e. StandardWidget t m r e => AdhocContext -> Text -> Maybe Natural -> m ()
+configListWidget :: forall t m r e. (StandardWidget t m r e) => AdhocContext -> Text -> Maybe Natural -> m ()
 configListWidget context name limit = do
   D.text name >> br
   namedListQueries <- getAppState ^. mapping (#uiConfig % mapping #configuredLists)
@@ -72,7 +72,7 @@ configListWidget context name limit = do
   f (NamedListQuery x query) | x == name = Just query
   f _ = Nothing
 
-queryWidget :: StandardWidget t m r e => AdhocContext -> ListQuery -> m ()
+queryWidget :: (StandardWidget t m r e) => AdhocContext -> ListQuery -> m ()
 queryWidget context els = smartSimpleList ((>> br) . definitionElementWidget context) (pure els)
 
 tasksToShow :: Text -> TaskState -> Seq TaskInfos
@@ -81,7 +81,7 @@ tasksToShow tag = filter inList . fromList . HashMap.elems
   inList :: TaskInfos -> Bool
   inList ((^. #task) -> task) = tag `Set.member` (task ^. #tags) && has (#status % #_Pending) task
 
-definitionElementWidget :: StandardWidget t m r e => AdhocContext -> DefinitionElement -> m ()
+definitionElementWidget :: (StandardWidget t m r e) => AdhocContext -> DefinitionElement -> m ()
 definitionElementWidget context el = do
   selectWidget el
   el & \case
@@ -107,7 +107,7 @@ definitionElementWidget context el = do
     (HabiticaList list) -> D.text "HabiticaList not implemented"
     Mails -> D.text "Mails not implemented"
 
-adhocTaskWidget :: StandardWidget t m r e => Text -> AdhocContext -> m ()
+adhocTaskWidget :: (StandardWidget t m r e) => Text -> AdhocContext -> m ()
 adhocTaskWidget description = \case
   AgendaEvent uid calendarList -> do
     changeDoneStatus <- checkBox (completed calendarList)
@@ -124,5 +124,5 @@ adhocTaskWidget description = \case
   checkBox completed = if description `Set.member` completed then (False <$) <$> button "" (D.text "[x]") else (True <$) <$> button "" (D.text "[ ]")
   text = D.text [i| #{description}|]
 
-tellList :: StandardWidget t m r e => Text -> D.Event t CalendarList -> m ()
+tellList :: (StandardWidget t m r e) => Text -> D.Event t CalendarList -> m ()
 tellList uid listEvent = tellSingleton $ (_Typed @AppStateChange % _Typed @DataChange #) . SetEventList uid <$> listEvent

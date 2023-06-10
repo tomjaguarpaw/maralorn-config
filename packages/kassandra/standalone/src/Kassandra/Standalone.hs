@@ -64,7 +64,7 @@ standalone = do
         =<< backendSelector (backends config)
 
 standaloneWidget ::
-  WidgetJSM t m =>
+  (WidgetJSM t m) =>
   TQueue LocalBackendRequest ->
   R.Dynamic t (NamedBackend StandaloneAccount) ->
   m (R.Dynamic t (Maybe (StateProvider t m)))

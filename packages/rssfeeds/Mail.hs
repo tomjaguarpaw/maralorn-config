@@ -208,7 +208,7 @@ processMessage msg = do
         <$> tryRight (mapLeft ("Could not decode message " <>) $ decode textPart)
   pure $ Message{date, headers = hdrs, body = either TextBody id msgEither}
 
-tryHdr :: MonadIO m => ByteString -> Notmuch.Message n a -> m (Maybe Text)
+tryHdr :: (MonadIO m) => ByteString -> Notmuch.Message n a -> m (Maybe Text)
 tryHdr h msg =
   ((\x -> if x /= "" then Just x else Nothing) . decodeUtf8 =<<)
     <$> Notmuch.messageHeader h msg

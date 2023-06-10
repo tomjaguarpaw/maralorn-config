@@ -34,7 +34,7 @@ import Reflex.Dom qualified as D
 tellSelected :: (MonadIO m, WriteApp t m e) => R.Event t (Seq DefinitionElement) -> m ()
 tellSelected = tellSingleton . fmap (_Typed @AppStateChange % _Typed @SelectState #) <=< logRShow Info
 
-insertArea :: StandardWidget t m r e => R.Dynamic t (Seq DefinitionElement) -> m () -> m (R.Event t (NESeq DefinitionElement))
+insertArea :: (StandardWidget t m r e) => R.Dynamic t (Seq DefinitionElement) -> m () -> m (R.Event t (NESeq DefinitionElement))
 insertArea blacklistD areaW = do
   selectStateD <- getSelectState
   let dropActive = do
@@ -53,7 +53,7 @@ insertArea blacklistD areaW = do
   R.switchHold R.never evEv
 
 taskDropArea ::
-  StandardWidget t m r e =>
+  (StandardWidget t m r e) =>
   R.Dynamic t (Seq UUID) ->
   m () ->
   (R.Event t (NESeq TaskInfos) -> R.Event t (NESeq Task)) ->
@@ -72,7 +72,7 @@ taskDropArea blacklistD areaW handler = do
       <$> handler droppedTaskEvent
 
 childDropArea ::
-  StandardWidget t m r e =>
+  (StandardWidget t m r e) =>
   SortPosition t ->
   R.Dynamic t (Seq UUID) ->
   m () ->

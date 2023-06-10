@@ -13,7 +13,7 @@ import Kassandra.Types (WidgetIO)
 import Reflex qualified as R
 
 localBackendWidget ::
-  WidgetIO t m =>
+  (WidgetIO t m) =>
   TQueue LocalBackendRequest ->
   NamedBackend UserConfig ->
   m (R.Dynamic t (Maybe (StateProvider t m)))
