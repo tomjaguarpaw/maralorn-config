@@ -78,6 +78,7 @@
       ignores = [
         ".direnv"
         ".syncthing*.tmp"
+        ".helix"
         "*.swp"
         "*.autosave~"
         "*.aux"
