@@ -138,6 +138,8 @@
         haskell-language-server releaser ghc-debug-client eventlog2html
         ghc-debug-brick nixfmt calligraphy cabal-fmt hledger hledger-ui
         hledger-web;
+      threadscope = pkgs.haskell.lib.unmarkBroken
+        (pkgs.haskell.lib.doJailbreak pkgs.unstableHaskellPackages.threadscope);
       mytmux = pkgs.writeShellScriptBin "mytmux" ''
         session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
         if [[ -n $session ]]; then
