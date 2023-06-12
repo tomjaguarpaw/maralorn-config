@@ -135,7 +135,7 @@
       inherit (pkgs.haskellPackages)
         stack ghcid cabal-install pandoc hlint cabal2nix nix-derivation;
       inherit (pkgs.unstableHaskellPackages)
-        haskell-language-server releaser ghc-debug-client eventlog2html
+        haskell-language-server releaser ghc-debug-client eventlog2html fourmolu
         ghc-debug-brick nixfmt calligraphy cabal-fmt hledger hledger-ui
         hledger-web;
       threadscope = pkgs.haskell.lib.unmarkBroken
