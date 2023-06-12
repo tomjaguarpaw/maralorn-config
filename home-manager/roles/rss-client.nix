@@ -69,6 +69,11 @@ in {
           ${commands.software-updates}/bin/software-updates -x reload
         '');
         Restart = "on-failure";
+        RestartSec = "1h";
+      };
+      Unit = {
+        StartLimitIntervalSec = "12h";
+        StartLimitBurst = 10;
       };
     };
     timers.update-software-feeds = {
