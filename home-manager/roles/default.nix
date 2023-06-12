@@ -131,7 +131,7 @@
     packages = builtins.attrValues {
       inherit (pkgs)
         go gdb mpc_cli ncmpcpp shfmt astyle nodejs tasksh magic-wormhole nix-top
-        matrix-commander upterm lazygit gh ledger aqbanking;
+        matrix-commander upterm lazygit gh ledger aqbanking graphia;
       inherit (pkgs.haskellPackages)
         stack ghcid cabal-install pandoc hlint cabal2nix nix-derivation;
       inherit (pkgs.unstableHaskellPackages)
