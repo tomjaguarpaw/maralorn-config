@@ -153,12 +153,14 @@ allowList =
   , "haskell-language-server"
   , "lounge"
   , "lesswrong"
+  , "zsh"
+  , "🏕️ camp"
   ]
 
 logToFeedEntry :: T.UTCTime -> Log -> Maybe Entry
 logToFeedEntry now =
   \Log{logchannel, logserver, messages = reverse . takeWhile (not . is_me) . reverse . filter msgFilter -> messages} ->
-    if not (null messages) && any (Text.isInfixOf logchannel) allowList
+    if not (null messages) && any (`Text.isInfixOf` logchannel) allowList
       then
         Just
           ( nullEntry
