@@ -24,10 +24,11 @@
     pre-commit = let
       generated_nix_files =
         [ "packages/.*/default\\.nix" "hardware-configuration\\.nix" ];
-    in {
+    in rec {
       pkgs = inputs'.nixos-unstable.legacyPackages;
       check.enable = true;
       settings = {
+        tools.fourmolu = lib.mkForce pkgs.haskellPackages.fourmolu;
         settings.ormolu.defaultExtensions = [
           "TypeApplications"
           "BangPatterns"
@@ -50,7 +51,7 @@
             excludes = generated_nix_files;
           };
           statix.enable = true;
-          fourmolu.enable = true;
+          fourmolu = { enable = true; };
           shellcheck.enable = true;
           cabal-fmt.enable = true;
           dhall-format.enable = true;
