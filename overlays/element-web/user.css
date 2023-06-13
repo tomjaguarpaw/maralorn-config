@@ -2,14 +2,12 @@
    display: none !important;
 }
 
-
 span, div {
    font-size: 12px !important;
    font-family: CozetteVector, Twemoji !important;
    -webkit-font-smoothing: none !important;
 }
 
-
-.mx_RoomSublist[aria-label="Rooms"] .mx_RoomTile {
+[aria-label="Rooms"] ~ .mx_RoomSublist_resizeBox {
    display: none !important;
 }
