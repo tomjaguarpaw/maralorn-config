@@ -106,7 +106,7 @@ getIsExpanded ::
   (Widget t m, HaveTaskTree t m r) => UUID -> m (R.Dynamic t Bool)
 getIsExpanded uuid = R.holdUniqDyn . fmap (member uuid) =<< getExpandedTasks
 
-getExpandedTasks :: (HaveTaskTree t m r) => m (TaskTreeState t)
+getExpandedTasks :: HaveTaskTree t m r => m (TaskTreeState t)
 getExpandedTasks = asks (^. typed)
 
 getAppState :: (MonadReader r m, HasType (AppState t) r) => m (AppState t)

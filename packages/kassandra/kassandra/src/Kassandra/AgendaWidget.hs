@@ -29,7 +29,7 @@ import Kassandra.Types (StandardWidget, Widget, getAppState)
 import Reflex qualified as R
 import Reflex.Dom qualified as D
 
-agendaWidget :: (StandardWidget t m r e) => m ()
+agendaWidget :: StandardWidget t m r e => m ()
 agendaWidget = do
   appState <- getAppState
   let calendarEvents = appState ^. #calendarEvents
@@ -56,7 +56,7 @@ agendaWidget = do
           br
           calendarListWidget uid todoList
 
-calendarListWidget :: (StandardWidget t m r e) => Text -> CalendarList -> m ()
+calendarListWidget :: StandardWidget t m r e => Text -> CalendarList -> m ()
 calendarListWidget uid calendarList = do
   listWithGaps widget gapWidget (pure (entries calendarList))
   newTaskEvent <- createTextWidget (button "selector" $ D.text "New Task")
@@ -78,7 +78,7 @@ calendarListWidget uid calendarList = do
    where
     updateOnList upd = (#entries %~ upd . Seq.filter (isNothing . flip NESeq.elemIndexL toInsert)) calendarList
 
-printEventTime :: (Widget t m) => EventTime -> m ()
+printEventTime :: Widget t m => EventTime -> m ()
 printEventTime (SimpleEvent start end) = do
   showstart <- switchToCurrentZone (start ^. #time)
   showend <- switchToCurrentZone (end ^. #time)

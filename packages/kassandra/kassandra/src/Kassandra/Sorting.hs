@@ -96,9 +96,9 @@ maxOrder = -minOrder
 minDist = 10 ** (-6)
 minTouchedDist = 10 ** (-3)
 
-tasksSorted :: (Show a) => Double -> Seq (a, SortState) -> Bool
+tasksSorted :: Show a => Double -> Seq (a, SortState) -> Bool
 tasksSorted = isSortedOn (newValue . (^. _2))
-isSortedOn :: (Show a) => (a -> Double) -> Double -> Seq a -> Bool
+isSortedOn :: Show a => (a -> Double) -> Double -> Seq a -> Bool
 isSortedOn f delta = \case
   IsEmpty -> True
   IsNonEmpty (_ :<|| IsEmpty) -> True
@@ -169,7 +169,7 @@ insertBefore list toInsert = \case
 type InsertEvent t = R.Event t (NESeq Task, Maybe UUID)
 
 saveSorting ::
-  (R.Reflex t) =>
+  R.Reflex t =>
   R.Behavior t SortMode ->
   R.Behavior t (Seq Task) ->
   InsertEvent t ->

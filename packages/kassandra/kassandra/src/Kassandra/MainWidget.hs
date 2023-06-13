@@ -40,7 +40,7 @@ import Kassandra.Util (lookupTasks, stillTodo, tellNewTask)
 import Reflex qualified as R
 import Reflex.Dom qualified as D
 
-mainWidget :: (WidgetIO t m) => StateProvider t m -> m ()
+mainWidget :: WidgetIO t m => StateProvider t m -> m ()
 mainWidget stateProvider = do
   -- TODO: Use ui Config
   liftIO $ setLogLevel $ Just Info
@@ -72,7 +72,7 @@ mainWidget stateProvider = do
       stateChanges <- logR Info (\a -> [i|StateChange: #{a}|]) stateChanges'
   pass
 
-infoFooter :: (StandardWidget t m r e) => m ()
+infoFooter :: StandardWidget t m r e => m ()
 infoFooter = D.divClass "footer" $ do
   selectedState <- getSelectState
   D.dyn_ $
@@ -92,7 +92,7 @@ infoFooter = D.divClass "footer" $ do
             completed = countTasks #_Completed taskList
          in [i|#{pending} pending and #{completed} completed tasks. Kassandra-ToDo-Management|]
 
-taskDiagnosticsWidget :: (StandardWidget t m r e) => m ()
+taskDiagnosticsWidget :: StandardWidget t m r e => m ()
 taskDiagnosticsWidget = do
   tasks <- getTasks
   D.dynText $ do
@@ -109,7 +109,7 @@ taskDiagnosticsWidget = do
         Just uuid -> "Found a loop for uuid " <> show uuid
         Nothing -> "" -- everything fine
 
-widgets :: (StandardWidget t m r e) => Seq (Text, m ())
+widgets :: StandardWidget t m r e => Seq (Text, m ())
 widgets =
   fromList
     [ ("Agenda", agendaWidget)
@@ -118,7 +118,7 @@ widgets =
     , ("Logs", logWidget)
     ]
 
-widgetSwitcher :: forall t m r e. (StandardWidget t m r e) => m ()
+widgetSwitcher :: forall t m r e. StandardWidget t m r e => m ()
 widgetSwitcher = do
   uiConfigD <- getAppState ^. mapping #uiConfig
   D.el "div" . D.dyn_ $ uiConfigD <&> withUIConfig
@@ -159,7 +159,7 @@ filterInbox now tasks events =
       && not (taskInfos ^. #blocked)
       && not ((taskInfos ^. #uuid) `Set.member` scheduledEvents)
 
-getInboxTasks :: (StandardWidget t m r e) => m (D.Dynamic t (Seq TaskInfos))
+getInboxTasks :: StandardWidget t m r e => m (D.Dynamic t (Seq TaskInfos))
 getInboxTasks = do
   appState <- getAppState
   timeDyn <- zonedTimeToUTC <<$>> getTime
@@ -167,7 +167,7 @@ getInboxTasks = do
   tasks <- getTasks
   R.holdUniqDyn $ filterInbox <$> timeDyn <*> tasks <*> calendarEvents
 
-nextWidget :: (StandardWidget t m r e) => m ()
+nextWidget :: StandardWidget t m r e => m ()
 nextWidget = do
   inboxTasks <- getInboxTasks
   unsortedTasks <-

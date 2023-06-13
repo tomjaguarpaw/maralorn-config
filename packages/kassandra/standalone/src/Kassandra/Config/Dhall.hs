@@ -70,7 +70,7 @@ instance FromDhall LocalBackend
 instance FromDhall TaskwarriorOption
 instance FromDhall UserConfig
 instance FromDhall AccountConfig
-instance (FromDhall b) => FromDhall (NamedBackend b)
+instance FromDhall b => FromDhall (NamedBackend b)
 
 postComposeMayDecoder :: Text -> (a -> Maybe b) -> Decoder a -> Decoder b
 postComposeMayDecoder err f dec =
@@ -83,7 +83,7 @@ instance FromDhall UUID where
   autoWith =
     postComposeMayDecoder "Text was no valid UUID" UUID.fromText . autoWith
 
-instance (FromDhall a) => FromDhall (NonEmpty a) where
+instance FromDhall a => FromDhall (NonEmpty a) where
   autoWith = postComposeMayDecoder "List was empty" nonEmpty . autoWith
 
 instance FromDhall (PasswordHash Argon2) where
@@ -96,10 +96,10 @@ data DhallLoadConfig = DhallLoadConfig
   }
   deriving stock (Show, Eq, Ord)
 
-dhallType :: forall a. (FromDhall a) => Text
+dhallType :: forall a. FromDhall a => Text
 dhallType = fromRight "" . validationToEither $ pretty <$> expected (auto @a)
 
-loadDhallConfig :: (FromDhall a) => DhallLoadConfig -> Maybe Text -> IO a
+loadDhallConfig :: FromDhall a => DhallLoadConfig -> Maybe Text -> IO a
 loadDhallConfig loadConfig givenConfigFile = do
   let defFile = defaultFile loadConfig
       defConf = defaultConfig loadConfig
@@ -112,9 +112,9 @@ loadDhallConfig loadConfig givenConfigFile = do
       ]
   input auto $ maybe defConf (\name -> [i|(#{defConf}) // #{name}|]) filename
 
-doesPathExist :: (ToString a) => a -> IO Bool
+doesPathExist :: ToString a => a -> IO Bool
 doesPathExist (fromFilePath . toString -> (FsPath path)) = doesFileExist path
 
-firstJustM :: (Monad m) => [m (Maybe a)] -> m (Maybe a)
+firstJustM :: Monad m => [m (Maybe a)] -> m (Maybe a)
 firstJustM [] = pure Nothing
 firstJustM (a : as) = a >>= \x -> if isJust x then pure x else firstJustM as

@@ -27,14 +27,14 @@ frontend =
     , _frontend_body = void $ D.prerender pass frontendBody
     }
 
-frontendBody :: (WidgetJSM t m) => m ()
+frontendBody :: WidgetJSM t m => m ()
 frontendBody =
   D.dyn_ . fmap (maybe pass mainWidget)
     =<< remoteBackendWidget (wrap D.never) Nothing
 
 css = cssAsText (static @"MaterialIcons-Regular-Outlined.otf")
 
-frontendHead :: (ObeliskWidget js t route m) => m ()
+frontendHead :: ObeliskWidget js t route m => m ()
 frontendHead = do
   D.el "title" $ D.text "Kassandra 2 Webversion"
   D.elAttr "style" mempty . D.text $ css

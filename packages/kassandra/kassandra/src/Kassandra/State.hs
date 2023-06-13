@@ -40,7 +40,7 @@ type StateProvider t m = R.Event t (NESeq DataChange) -> m (R.Dynamic t DataStat
 
 type ClientSocket t m = R.Event t (NESeq SocketRequest) -> m (R.Dynamic t (R.Event t SocketMessage))
 
-makeStateProvider :: forall t m. (WidgetIO t m) => ClientSocket t m -> StateProvider t m
+makeStateProvider :: forall t m. WidgetIO t m => ClientSocket t m -> StateProvider t m
 makeStateProvider clientSocket dataChangeEvents = do
   let fanEvent :: (b -> Maybe a) -> R.Event t (NESeq b) -> R.Event t (NESeq a)
       fanEvent decons = R.fmapMaybe (nonEmptySeq . mapMaybe decons . toSeq)
@@ -63,13 +63,13 @@ makeStateProvider clientSocket dataChangeEvents = do
   tasksStateDyn <- buildTaskInfosMap <<$>> holdTasks (localChanges <> ((^? #_TaskUpdates) <$?> remoteChanges))
   pure (DataState <$> tasksStateDyn <*> uiConfig <*> calendarData)
 
-createToChangeEvent :: (WidgetIO t m) => D.Event t (NESeq (Text, Task -> Task)) -> m (D.Event t (NESeq Task))
+createToChangeEvent :: WidgetIO t m => D.Event t (NESeq (Text, Task -> Task)) -> m (D.Event t (NESeq Task))
 createToChangeEvent = R.performEvent . fmap (liftIO . mapM (\(desc, properties) -> properties <$> createTask desc))
 
-holdTasks :: (WidgetIO t m) => R.Event t (NESeq Task) -> m (R.Dynamic t (HashMap UUID Task))
+holdTasks :: WidgetIO t m => R.Event t (NESeq Task) -> m (R.Dynamic t (HashMap UUID Task))
 holdTasks = R.foldDyn foldTasks mempty
 
-foldTasks :: (Foldable t) => t Task -> HashMap UUID Task -> HashMap UUID Task
+foldTasks :: Foldable t => t Task -> HashMap UUID Task -> HashMap UUID Task
 foldTasks = flip (foldr (\task -> HashMap.insert (task ^. #uuid) task))
 
 buildChildrenMap :: HashMap a Task -> HashMap UUID (Seq a)

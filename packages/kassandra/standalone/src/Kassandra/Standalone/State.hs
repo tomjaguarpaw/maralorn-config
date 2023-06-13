@@ -46,16 +46,16 @@ import Kassandra.LocalBackend (
   userConfig,
  )
 
-foldToSeq :: (Monad m) => SerialT m a -> m (Seq a)
+foldToSeq :: Monad m => SerialT m a -> m (Seq a)
 foldToSeq = S.foldl' (|>) mempty
 
-waitTillFalse :: (MonadIO m) => TVar Bool -> m ()
+waitTillFalse :: MonadIO m => TVar Bool -> m ()
 waitTillFalse boolTvar = (atomically . whenM (readTVar boolTvar)) retry
 concurrentWhileTrue :: TVar Bool -> IO a -> IO ()
 concurrentWhileTrue boolTvar action = race_ action (waitTillFalse boolTvar)
 lookupTMap :: (Ord k, MonadIO f) => k -> TVar (Map k a) -> f (Maybe a)
 lookupTMap key tvarMap = Map.lookup key <$> readTVarIO tvarMap
-insertOrAddTMap :: (Ord k) => k -> e -> TVar (Map k (Seq e)) -> STM Bool
+insertOrAddTMap :: Ord k => k -> e -> TVar (Map k (Seq e)) -> STM Bool
 insertOrAddTMap key entry tvarMap =
   stateTVar tvarMap \theMap ->
     second (\x -> Map.insert key x theMap) $
@@ -95,7 +95,7 @@ handleRequest req cache mapVar =
       , say "Client registered on backend"
       ]
 
-removeClientFromMap :: (MonadIO m) => LocalBackendRequest -> TVar ClientMap -> m ()
+removeClientFromMap :: MonadIO m => LocalBackendRequest -> TVar ClientMap -> m ()
 removeClientFromMap req mapVar = atomically (modifyTVar' mapVar updateMap)
  where
   key = localBackend . userConfig $ req

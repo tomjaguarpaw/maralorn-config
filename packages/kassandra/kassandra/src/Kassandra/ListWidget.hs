@@ -37,7 +37,7 @@ listsWidget = do
     buttons <- D.dyn $ mapM listButton <$> lists
     buttonSum <- R.switchHold R.never $ R.leftmost . toList <$> buttons
     R.holdDyn Nothing (Just <$> buttonSum)
-  listButton :: (Widget t m) => Text -> m (R.Event t Text)
+  listButton :: Widget t m => Text -> m (R.Event t Text)
   listButton tag =
     fmap ((tag <$) . D.domEvent D.Click . fst)
       . D.elClass' "a" "selector"
@@ -45,7 +45,7 @@ listsWidget = do
       $ tag
 
 listWidget ::
-  forall t m r e. (StandardWidget t m r e) => R.Dynamic t Text -> m ()
+  forall t m r e. StandardWidget t m r e => R.Dynamic t Text -> m ()
 listWidget list = D.dyn_ (innerRenderList <$> list)
  where
   innerRenderList :: Text -> m ()

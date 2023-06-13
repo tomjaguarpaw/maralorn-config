@@ -36,7 +36,7 @@ infixl 9 %
 f % g = g . f
 
 infixl 9 %>
-(%>) :: (Functor f) => (a -> f b) -> (b -> c) -> a -> f c
+(%>) :: Functor f => (a -> f b) -> (b -> c) -> a -> f c
 f %> g = fmap g . f
 
 infixl 9 %>>
@@ -55,7 +55,7 @@ missingExecutables :: IO [FilePath]
 modes :: [Mode]
 modes = enumFrom Klausur
 
-getMode :: (R.MonadHeadlessApp t m) => Notify.WatchManager -> FilePath -> m (R.Dynamic t Mode)
+getMode :: R.MonadHeadlessApp t m => Notify.WatchManager -> FilePath -> m (R.Dynamic t Mode)
 getMode watch_manager home = do
   content_event <- watchFileContents watch_manager home ".mode"
   R.holdDyn Klausur $
@@ -68,7 +68,7 @@ hush = \case
   Left _ -> Nothing
   Right x -> Just x
 
-watchDir :: (R.MonadHeadlessApp t m) => Notify.WatchManager -> FilePath -> Bool -> Notify.ActionPredicate -> m (R.Event t Notify.Event)
+watchDir :: R.MonadHeadlessApp t m => Notify.WatchManager -> FilePath -> Bool -> Notify.ActionPredicate -> m (R.Event t Notify.Event)
 watchDir watch_manager path recursive predicate = do
   let watch = if recursive then Notify.watchTree else Notify.watchDir
   R.newEventWithLazyTriggerWithOnComplete \callback -> do
@@ -78,7 +78,7 @@ watchDir watch_manager path recursive predicate = do
       atomically $ putTMVar finish_callback cb
     pure $ void $ Async.async $ join $ atomically $ takeTMVar finish_callback
 
-watchFile :: (R.MonadHeadlessApp t m) => Notify.WatchManager -> FilePath -> FilePath -> m (R.Event t ())
+watchFile :: R.MonadHeadlessApp t m => Notify.WatchManager -> FilePath -> FilePath -> m (R.Event t ())
 watchFile watch_manager dir file = do
   start <- R.getPostBuild
   watchDir
@@ -89,7 +89,7 @@ watchFile watch_manager dir file = do
     <&> void
       % (<> start)
 
-watchFileContents :: (R.MonadHeadlessApp t m) => Notify.WatchManager -> FilePath -> FilePath -> m (R.Event t Text)
+watchFileContents :: R.MonadHeadlessApp t m => Notify.WatchManager -> FilePath -> FilePath -> m (R.Event t Text)
 watchFileContents watch_manager dir file = do
   event_event <- watchFile watch_manager dir file
   content_event <- performEventThreaded event_event \_ ->
@@ -121,13 +121,13 @@ data Module t m a
   = OldModule ((a -> IO ()) -> IO Void)
   | Module (m (R.Event t a, IO ()))
 
-eventModule :: forall t m a. (R.MonadHeadlessApp t m) => m (R.Event t a) -> Module t m a
+eventModule :: forall t m a. R.MonadHeadlessApp t m => m (R.Event t a) -> Module t m a
 eventModule = \event_action -> Module $ fmap (,pass) event_action
 
 separator :: Text
 separator = "\n$color1$hr\n"
 
-writeVars :: (R.MonadHeadlessApp t m) => [R.Event t (Maybe Text)] -> m ()
+writeVars :: R.MonadHeadlessApp t m => [R.Event t (Maybe Text)] -> m ()
 writeVars vars = do
   writeEvent <-
     vars
@@ -144,7 +144,7 @@ writeVars vars = do
       %>> writeFileText "/run/user/1000/status-bar"
   R.performEvent_ writeEvent
 
-runModules :: (R.MonadHeadlessApp t m) => [Module t m (Maybe Text)] -> m ()
+runModules :: R.MonadHeadlessApp t m => [Module t m (Maybe Text)] -> m ()
 runModules modules = do
   (vars, actions) <-
     unzip <$> forM modules \case
@@ -172,18 +172,18 @@ simpleModeModule delay mode action = eventModule do
       <&> (\event -> R.leftmost [R.updated mode, R.tag (R.current mode) event])
   performEventThreaded tick action
 
-tickEvent :: (R.MonadHeadlessApp t m) => Int -> m (R.Event t ())
+tickEvent :: R.MonadHeadlessApp t m => Int -> m (R.Event t ())
 tickEvent delay =
   R.tickLossyFromPostBuildTime (realToFrac delay / realToFrac oneSecond)
     <&> void
 
-withColor :: (Monad m) => Text -> Text -> m (Maybe Text)
+withColor :: Monad m => Text -> Text -> m (Maybe Text)
 withColor color content = pure $ Just (withColor' color content)
 
 withColor' :: Text -> Text -> Text
 withColor' color content = [i|${color \##{color}}#{content}|]
 
-when' :: (Monad m) => Bool -> m (Maybe a) -> m (Maybe a)
+when' :: Monad m => Bool -> m (Maybe a) -> m (Maybe a)
 when' cond result = if cond then result else pure Nothing
 
 playerCTLFormat :: String
@@ -192,7 +192,7 @@ playerCTLFormat = "@{{status}} {{title}} | {{album}} | {{artist}}"
 data EventRunnerState a = Idle | Running | NextWaiting a
 
 -- Call IO action in a separate thread. If multiple events fire never run two actions in parallel and if more than one action queues up, only run the latest.
-performEventThreaded :: (R.MonadHeadlessApp t m) => R.Event t a -> (a -> IO b) -> m (R.Event t b)
+performEventThreaded :: R.MonadHeadlessApp t m => R.Event t a -> (a -> IO b) -> m (R.Event t b)
 performEventThreaded event action = do
   runnerState <- liftIO $ newTVarIO Idle
   R.performEventAsync $
@@ -210,7 +210,7 @@ performEventThreaded event action = do
         NextWaiting{} -> (False, NextWaiting input)
       when run $ void $ Async.async $ runner input
 
-playerModule :: forall t m. (R.MonadHeadlessApp t m) => FilePath -> Module t m (Maybe Text)
+playerModule :: forall t m. R.MonadHeadlessApp t m => FilePath -> Module t m (Maybe Text)
 playerModule home = Module do
   (event, trigger) <- R.newTriggerEvent
   pure (event, listenToPlayer trigger)

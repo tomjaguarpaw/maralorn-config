@@ -26,7 +26,7 @@ myParseTime ((^. unpacked) -> t) =
     $ t
 
 inputDateWidget ::
-  forall t m. (Widget t m) => ZonedTime -> m (R.Event t (Maybe ZonedTime))
+  forall t m. Widget t m => ZonedTime -> m (R.Event t (Maybe ZonedTime))
 inputDateWidget time = do
   textMayEvent <-
     editText @t @m . myFormatTime $ time :: m (R.Event t (Maybe Text))
@@ -43,7 +43,7 @@ inputDateWidget time = do
 
 dateSelectionWidget ::
   forall t m r e.
-  (StandardWidget t m r e) =>
+  StandardWidget t m r e =>
   Text ->
   Maybe UTCTime ->
   m (R.Event t (Maybe UTCTime))
@@ -79,7 +79,7 @@ selectTimeWidget label time False = do
   pure (R.never, True <$ editEvent)
 
 showTime ::
-  forall t m. (Widget t m) => Text -> Maybe ZonedTime -> m (R.Event t ())
+  forall t m. Widget t m => Text -> Maybe ZonedTime -> m (R.Event t ())
 showTime label = maybe create showWithButton
  where
   showWithButton time = do

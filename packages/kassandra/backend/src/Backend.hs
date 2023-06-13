@@ -30,7 +30,7 @@ serveSnaplet :: ((R BackendRoute -> Snap ()) -> IO b) -> IO ()
 serveSnaplet serve = do
   config <- readConfig Nothing
   backendRequestQueue <- newTQueueIO
-  let backendSnaplet :: (MonadSnap m) => R BackendRoute -> m ()
+  let backendSnaplet :: MonadSnap m => R BackendRoute -> m ()
       backendSnaplet = \case
         BackendRouteSocket :/ (_, params) -> serveWebsocket config backendRequestQueue params
         BackendRouteMissing :/ () -> pass
@@ -39,7 +39,7 @@ serveSnaplet serve = do
     (serve backendSnaplet)
 
 serveWebsocket ::
-  (MonadSnap m) =>
+  MonadSnap m =>
   BackendConfig ->
   TQueue LocalBackendRequest ->
   Map Text (Maybe Text) ->

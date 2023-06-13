@@ -43,7 +43,7 @@ loginStateKey = "LoginState"
 
 remoteBackendWidget ::
   forall t m.
-  (WidgetJSM t m) =>
+  WidgetJSM t m =>
   CloseEvent t ->
   Maybe (RemoteBackend PasswordConfig) ->
   m (R.Dynamic t (Maybe (StateProvider t m)))
@@ -129,11 +129,11 @@ remoteBackendWidget closeEvent mayBackend = D.divClass "remoteBackend" $ do
 
 data WebSocketState = WebSocketError Text | Connecting deriving stock (Show)
 
-getStorage :: (WidgetJSM t m) => m Storage
+getStorage :: WidgetJSM t m => m Storage
 getStorage = getLocalStorage =<< currentWindowUnchecked
 
 webClientSocket ::
-  (WidgetJSM t m) => CloseEvent t -> RemoteBackend Text -> m (ClientSocket t m)
+  WidgetJSM t m => CloseEvent t -> RemoteBackend Text -> m (ClientSocket t m)
 webClientSocket closeEvent backend@RemoteBackend{url, user, password} = do
   refreshEvent <- button "selector" $ D.text "Refresh Tasks"
   let wsUrl = maybe "ws://localhost:8000" ("ws" <>) $ stripPrefix "http" url -- TODO: Warn user about missing http

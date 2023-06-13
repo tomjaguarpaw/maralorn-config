@@ -8,7 +8,7 @@ import Reflex qualified as R
 import Reflex.Dom qualified as D
 
 backendSelector ::
-  (Widget t m) => NonEmpty (NamedBackend a) -> m (R.Dynamic t (NamedBackend a))
+  Widget t m => NonEmpty (NamedBackend a) -> m (R.Dynamic t (NamedBackend a))
 backendSelector backends = D.el "div" $ do
   buttons <- forM backends $ \backend -> do
     fmap ((backend <$) . D.domEvent D.Click . fst)
