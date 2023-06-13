@@ -1,0 +1,11 @@
+--- RoomList.js	1985-10-26 09:15:00.000000000 +0100
++++ RoomList-patched.js	2023-06-14 01:06:20.088073928 +0200
+@@ -358,7 +358,7 @@
+           // filter to only notification rooms (and our current active room so we can index properly)
+           listRooms = listRooms.filter(r => {
+             const state = _RoomNotificationStateStore.RoomNotificationStateStore.instance.getRoomState(r);
+-            return state.room.roomId === roomId || state.isUnread;
++            return state.room.roomId === roomId || state.hasUnreadCount;
+           });
+         }
+         rooms.push(...listRooms);
