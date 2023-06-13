@@ -11,7 +11,7 @@ let
       done;
       echo
       echo "Ping successful; Entering disk encryption password"
-      ${config.programs.rbw.package}/bin/rbw get ${passwordName} | (ssh -4 root@${hostName} -o UserKnownHostsFile=${knownHosts} cryptsetup-askpass && echo "Unlocking of ${name} successful" || echo "Unlocking of ${name} failed")
+      ${config.programs.rbw.package}/bin/rbw get ${passwordName} | ssh -4 root@${hostName} -o UserKnownHostsFile=${knownHosts} cryptsetup-askpass
     '';
   unlocker = [{
     name = "hera";
