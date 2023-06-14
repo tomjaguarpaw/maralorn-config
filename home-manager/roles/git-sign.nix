@@ -13,7 +13,6 @@ in {
         builtins.toFile "git-ssh-allowedSignersFile" ''
           mail@maralorn.de ${signing-key}
         '';
-      log.showSignature = true;
     };
   };
 }
