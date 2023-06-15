@@ -1,0 +1,11 @@
+--- RoomList.tsx	2023-06-15 02:17:23.491678727 +0200
++++ RoomList-patched.tsx	2023-06-15 02:16:23.155333048 +0200
+@@ -517,7 +517,7 @@
+                 // filter to only notification rooms (and our current active room so we can index properly)
+                 listRooms = listRooms.filter((r) => {
+                     const state = RoomNotificationStateStore.instance.getRoomState(r);
+-                    return state.room.roomId === roomId || state.isUnread;
++                    return state.room.roomId === roomId || state.hasUnreadCount;
+                 });
+             }
+ 
