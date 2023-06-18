@@ -1,4 +1,6 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs, config, ... }: {
+  users.users.maralorn.passwordFile =
+    config.age.secrets.pam-short-password.path;
   programs = {
     adb.enable = true;
     seahorse.enable = lib.mkForce false;

@@ -2,7 +2,7 @@
 let
   openssh.authorizedKeys.keys = pkgs.privateValue [ ] "ssh-keys";
   passwordFile = lib.mkIf (config.networking.hostName != "chor-cloud")
-    config.age.secrets.pam-login-password.path;
+    (lib.mkDefault config.age.secrets.pam-long-password.path);
 in {
   users.users = {
     maralorn = {
