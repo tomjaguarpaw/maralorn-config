@@ -14,6 +14,8 @@
   home = {
     stateVersion = "22.05";
     enableNixpkgsReleaseCheck = true;
+    file.".face".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/media/images/my_avatar_for_circular.jpg";
   };
 
   programs = {
