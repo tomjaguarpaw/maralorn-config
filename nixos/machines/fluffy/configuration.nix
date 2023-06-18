@@ -11,6 +11,7 @@ in {
     ../../roles/standalone
     ../../roles/server
     ../../roles/5etools.nix
+    ../../roles/forgejo.nix
     ./hardware-configuration.nix
     ./graphs.nix
   ];
@@ -47,8 +48,11 @@ in {
   ];
 
   environment.persistence."/disk/persist" = {
-    directories = [ "/etc/ssh" "/var/lib/nixos" "/var/lib/tailscale" ];
+    directories =
+      [ "/etc/ssh" "/var/lib/nixos" "/var/lib/tailscale" "/var/lib/forgejo" ];
   };
+
+  services.nix-serve.enable = true;
 
   boot = {
     loader = {
