@@ -65,6 +65,8 @@ in {
     acceptTerms = true;
   };
 
+  security.pam.services."login".failDelay.enable = true;
+
   users = {
     defaultUserShell = pkgs.zsh;
     mutableUsers = false;
