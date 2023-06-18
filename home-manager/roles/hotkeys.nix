@@ -19,7 +19,7 @@ in [
   {
     Research = {
       Zotero = fork "zotero";
-      Open = fork "evince ~/git/promotion/out/print.pdf";
+      Open = fork "evince ~/git/promotion/out/thesis.pdf";
       Build = "sh -c 'cd ~/git/promotion; nix run'";
       Directory =
         fork "${config.home.sessionVariables.TERMINAL} -D ~/git/promotion";
