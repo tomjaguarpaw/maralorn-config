@@ -10,11 +10,9 @@ let
     inherit (pkgs.gnomeExtensions)
       appindicator # For tray icons
       caffeine # This extension disables autoscreensaver on fullscreen and offers a manual toggle
-      dash-to-panel # To move menu
-      hide-minimized # better minimizing
       nothing-to-say # Microphone status tray icon
       notifications-to-file # For my statusbarscript
-      pop-shell # For tiling
+      material-shell # For tiling
       removable-drive-menu # Show usb sticks
       user-themes # shell-theme
       window-is-ready-remover # less annoying notifications
@@ -25,13 +23,35 @@ let
   font = "Monospace 9";
 in {
   home.packages = extensions ++ [ hotkeys ];
+
   services.gpg-agent.pinentryFlavor = "gnome3";
+
   dconf.settings = {
     "org/gnome/desktop/notifications" = {
       show-banners = false;
       show-in-lock-screen = false;
     };
-    "org/gnome/shell/keybindings" = { "toggle-overview" = [ ]; };
+
+    "org/gnome/shell/extensions/materialshell/bindings" = {
+      cycle-tiling-layout = [ "<Super>c" ];
+      next-window = [ "<Super>e" ];
+      previous-window = [ "<Super>i" ];
+      move-window-left = [ "<Shift><Super>i" ];
+      move-window-right = [ "<Shift><Super>e" ];
+    };
+
+    "org/gnome/shell/extensions/materialshell/theme" = {
+      panel-opacity = 0;
+      focus-effect = "border";
+    };
+
+    "org/gnome/shell/extensions/materialshell/layouts" = {
+      grid = true;
+      default-layout = "grid";
+    };
+
+    "org/gnome/shell/keybindings" = { toggle-overview = [ ]; };
+
     "org/gnome/desktop/wm/keybindings" = {
       switch-input-source = [ ];
       switch-input-source-backward = [ ];
