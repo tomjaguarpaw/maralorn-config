@@ -28,9 +28,9 @@ let
           out_to_x = true,
           own_window = true,
           own_window_class = 'Conky',
-          own_window_type = 'panel',
+          own_window_type = 'dock',
           own_window_argb_visual = true,
-          own_window_argb_value = 0,
+          own_window_argb_value = 200,
           show_graph_range = false,
           show_graph_scale = false,
           stippled_borders = 0,
@@ -67,7 +67,8 @@ in {
         alignment = 'top_left',
         text_buffer_size = 2047,
         update_interval = 0.25,
-        gap_x = 1,
+        gap_y = 50,
+        gap_x = 50,
       '';
       text = ''
         ''${time %Y-%m-%d KW%V %a %H:%M}
@@ -80,7 +81,7 @@ in {
     monitor = {
       extra = ''
         alignment = 'bottom_left',
-        gap_x = 23,
+        gap_x = 50,
         update_interval = 5.0,
       '';
       text = ''
