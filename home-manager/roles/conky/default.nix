@@ -68,7 +68,7 @@ in {
         text_buffer_size = 2047,
         update_interval = 0.25,
         gap_y = 50,
-        gap_x = 1,
+        gap_x = 50,
       '';
       text = ''
         ''${time %Y-%m-%d KW%V %a %H:%M}
@@ -81,7 +81,7 @@ in {
     monitor = {
       extra = ''
         alignment = 'bottom_right',
-        gap_x = 1,
+        gap_x = 50,
         update_interval = 5.0,
       '';
       text = ''

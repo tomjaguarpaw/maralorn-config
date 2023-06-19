@@ -45,6 +45,7 @@ in {
       panel-icon-color = true;
       panel-icon-style = "application";
       focus-effect = "border";
+      vertical-panel-position = "right";
     };
 
     "org/gnome/shell/extensions/materialshell/layouts" = {
