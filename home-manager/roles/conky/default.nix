@@ -64,11 +64,11 @@ in {
   systemd.user.services = lib.mapAttrs' service {
     status = {
       extra = ''
-        alignment = 'top_left',
+        alignment = 'top_right',
         text_buffer_size = 2047,
         update_interval = 0.25,
         gap_y = 50,
-        gap_x = 50,
+        gap_x = 1,
       '';
       text = ''
         ''${time %Y-%m-%d KW%V %a %H:%M}
@@ -80,8 +80,8 @@ in {
     };
     monitor = {
       extra = ''
-        alignment = 'bottom_left',
-        gap_x = 50,
+        alignment = 'bottom_right',
+        gap_x = 1,
         update_interval = 5.0,
       '';
       text = ''
