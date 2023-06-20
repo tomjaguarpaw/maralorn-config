@@ -49,10 +49,10 @@
           }
         ];
       };
+    };
       nodev."/" = {
         fsType = "tmpfs";
         mountOptions = [ "defaults" "mode=755" ];
       };
-    };
   };
 }
