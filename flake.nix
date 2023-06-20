@@ -4,6 +4,7 @@
   inputs = {
     nixos-unstable.url = "nixpkgs/nixos-unstable";
     nixos-stable.url = "nixpkgs/nixos-23.05";
+    disko.url = "github:nix-community/disko";
     secrets = {
       url = "git+ssh://git@hera.m-0.eu/config-secrets";
       inputs.nixpkgs.follows = "";

@@ -18,11 +18,8 @@ in {
 
   age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
 
-  fileSystems = let
-    btrfsOptions = { options = [ "compress=zstd" "autodefrag" "noatime" ]; };
-  in {
-    "/disk" = { neededForBoot = true; } // btrfsOptions;
-    "/nix" = btrfsOptions;
+  disko.devices = pkgs.callPackage ./disko-config.nix {
+    device = "/dev/disk/by-id/ata-Samsung_SSD_870_QVO_4TB_S5STNJ0W103706V";
   };
 
   environment.etc = {
@@ -60,17 +57,6 @@ in {
         device = "nodev";
         efiSupport = true;
         efiInstallAsRemovable = true;
-      };
-    };
-    initrd = {
-      luks.devices."crypted-nixos" = {
-        # device defined in hardware-configuration.nix
-        allowDiscards = true;
-        keyFile = "/diskkey.bin";
-      };
-      secrets = {
-        "diskkey.bin" =
-          "/disk/persist/diskkey.bin"; # Key can live on crypted disk, is copied to initrd on install
       };
     };
   };
