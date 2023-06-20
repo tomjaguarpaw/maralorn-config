@@ -40,6 +40,24 @@
         "url": "ssh://git@git.darmstadt.ccc.de/cdark.net/hosts.git"
       }
     },
+    "disko": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1687134796,
+        "narHash": "sha256-gjBAkEtNPMQzqK4IHjTQBUv3VhggszOHLJbhXZy0OVQ=",
+        "owner": "nix-community",
+        "repo": "disko",
+        "rev": "4823509bb3b014dc85abefc13efcfa076d36338a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "disko",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -195,7 +213,7 @@
     "nix-serve-ng": {
       "inputs": {
         "flake-compat": "flake-compat",
-        "nixpkgs": "nixpkgs",
+        "nixpkgs": "nixpkgs_2",
         "utils": "utils"
       },
       "locked": {
@@ -296,6 +314,22 @@
     },
     "nixpkgs": {
       "locked": {
+        "lastModified": 1686582075,
+        "narHash": "sha256-vtflsfKkHtF8IduxDNtbme4cojiqvlvjp5QNYhvoHXc=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "7e63eed145566cca98158613f3700515b4009ce3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
         "lastModified": 1679914480,
         "narHash": "sha256-OPe1+y7YicrWOu9IOKA8fEyVzV7Gw5oXAcm4/hQ4Qjo=",
         "owner": "NixOS",
@@ -334,6 +368,7 @@
     },
     "root": {
       "inputs": {
+        "disko": "disko",
         "flake-parts": "flake-parts",
         "hexa-nur-packages": "hexa-nur-packages",
         "home-manager": "home-manager",

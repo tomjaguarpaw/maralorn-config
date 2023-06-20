@@ -10,7 +10,7 @@
               inputs.secrets.nixosModules.default
               inputs.impermanence.nixosModules.impermanence
               inputs.nix-serve-ng.nixosModules.default
-              inputs.disko.nixosModules.default
+              inputs.disko.nixosModules.disko
             ];
           };
       in lib.genAttrs machines makeSystem);
