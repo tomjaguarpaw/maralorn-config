@@ -50,9 +50,9 @@
         ];
       };
     };
-      nodev."/" = {
-        fsType = "tmpfs";
-        mountOptions = [ "defaults" "mode=755" ];
-      };
+    nodev."/" = {
+      fsType = "tmpfs";
+      mountOptions = [ "defaults" "mode=755" ];
+    };
   };
 }

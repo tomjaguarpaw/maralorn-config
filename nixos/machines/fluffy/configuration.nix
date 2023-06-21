@@ -15,8 +15,8 @@ in {
     ./hardware-configuration.nix
     ./graphs.nix
     (import ./disko-config.nix {
-    device = "/dev/disk/by-id/ata-Samsung_SSD_870_QVO_4TB_S5STNJ0W103706V";
-  })
+      device = "/dev/disk/by-id/ata-Samsung_SSD_870_QVO_4TB_S5STNJ0W103706V";
+    })
 
   ];
 
