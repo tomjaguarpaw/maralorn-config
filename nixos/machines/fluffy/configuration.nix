@@ -54,11 +54,16 @@ in {
   services.nix-serve.enable = true;
 
   boot = {
+    initrd.network.ssh.enable = true;
     loader = {
+      efi.efiSysMountPoint = "/efi";
       grub = {
-        device = "nodev";
         efiSupport = true;
         efiInstallAsRemovable = true;
+        mirroredBoots = [{
+          devices = ["nodev"];
+          path = "/efi";
+        }];
       };
     };
   };
