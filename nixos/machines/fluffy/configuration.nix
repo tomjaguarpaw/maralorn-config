@@ -10,8 +10,6 @@ in {
     ../../roles/metal.nix
     ../../roles/standalone
     ../../roles/server
-    ../../roles/5etools.nix
-    ../../roles/forgejo.nix
   ] ++ flake-inputs.self.nixFromDirs [ ../../modules/fluffy ];
 
   age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
