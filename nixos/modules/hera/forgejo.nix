@@ -5,10 +5,12 @@ in {
     package = pkgs.forgejo;
     enable = true;
     stateDir = "/var/lib/forgejo";
-    settings.server = {
-      ROOT_URL = "http://code.maralorn.de";
-      HTTP_PORT = 3787;
-      DISABLE_REGISTRATION = true;
+    settings = {
+      server = {
+        ROOT_URL = "https://code.maralorn.de";
+        HTTP_PORT = 3787;
+      };
+      service.DISABLE_REGISTRATION = true;
     };
     appName = "code.maralorn.de";
     database.type = "postgres";
