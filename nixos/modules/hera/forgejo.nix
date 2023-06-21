@@ -8,11 +8,14 @@ in {
     settings.server = {
       ROOT_URL = "http://code.maralorn.de";
       HTTP_PORT = 3787;
+      DISABLE_REGISTRATION = true;
     };
     appName = "code.maralorn.de";
     database.type = "postgres";
   };
   services.nginx.virtualHosts.${virtualHosts."code"} = {
+    forceSSL = true;
+    enableACME = true;
     locations."/".proxyPass = "http://localhost:${
         toString config.services.gitea.settings.server.HTTP_PORT
       }";
