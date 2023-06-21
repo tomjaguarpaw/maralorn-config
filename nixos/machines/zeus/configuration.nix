@@ -9,8 +9,10 @@ in {
     ../../roles
     ../../roles/fonts.nix
     ../../roles/metal.nix
-    ../../roles/display-server.nix
     ../../roles/standalone
+  ] ++ flake-inputs.self.nixFromDirs [
+    ../../modules/zeus
+    ../../modules/clients
   ];
 
   age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
@@ -35,25 +37,6 @@ in {
     machine-id.source = "/disk/persist/machine-id";
   };
 
-  systemd.services."activate-home-manager" = {
-    path = [ pkgs.nix pkgs.dbus ];
-    script = ''
-      if [[ -e /home/maralorn/.mode ]]; then
-        MODE="$(cat /home/maralorn/.mode)"
-      else
-        MODE="klausur"
-      fi
-      /disk/volatile/maralorn/modes/$MODE/activate
-    '';
-    serviceConfig = {
-      Type = "oneshot";
-      User = "maralorn";
-    };
-    wantedBy = [ "multi-user.target" ];
-    # Try to avoid race conditions, when the user get’s logged in before activation was completed.
-    before = [ "display-manager.service" ];
-  };
-
   systemd.tmpfiles.rules = [
     "d /disk/persist/root 700 root root - -"
     "z / 755 - - - -"
@@ -75,71 +58,6 @@ in {
     users.maralorn.directories = [ ".cache/rbw" ".factorio" ];
   };
 
-  boot = {
-    loader = {
-      efi = { efiSysMountPoint = "/boot/efi"; };
-      grub = {
-        # Enabled by default
-        device = "nodev"; # Don‘t write masterboot under efi
-        efiInstallAsRemovable =
-          true; # Make loader discoverable by filename on efidisk without needing to write efivars to system
-        efiSupport = true;
-        enableCryptodisk = true;
-        backgroundColor = "#000000";
-      };
-    };
-    kernelParams = [ "amdgpu.cik_support=1" ];
-    initrd = {
-      luks.devices."crypted-nixos" = {
-        # device defined in hardware-configuration.nix
-        allowDiscards = true;
-        keyFile = "/diskkey.bin";
-      };
-      kernelModules = [
-        "amdgpu" # For earlier and better framebuffer
-      ];
-      secrets = {
-        "diskkey.bin" =
-          "/disk/persist/diskkey.bin"; # Key can live on crypted disk, is copied to initrd on install
-      };
-    };
-  };
-
-  networking = {
-    hostName = "zeus";
-    domain = "lo.m-0.eu";
-    networkmanager.enable = false;
-    interfaces.enp34s0 = {
-      useDHCP = true;
-      ipv6.addresses = [{
-        address = "fdc0:1::4";
-        prefixLength = 64;
-      }];
-    };
-    firewall.allowedTCPPorts = [
-      6600 # mpd
-    ];
-    firewall.allowedUDPPorts = [
-      34197 # factorio
-    ];
-    #wireguard.interfaces = {
-    #  m0wire = {
-    #    allowedIPsAsRoutes = false;
-    #    ips = ["${hosts.zeus-wg}/112" "${hosts.vpn.zeus}/64"];
-    #    privateKeyFile = config.age.secrets."wireguard/zeus-private".path;
-    #    peers = [
-    #      {
-    #        publicKey = wireguard.pub.hera;
-    #        allowedIPs = ["::/0"];
-    #        endpoint = "[${hosts.hera-wg-host}]:${builtins.toString wireguard.port}";
-    #        presharedKeyFile = config.age.secrets."wireguard/psk".path;
-    #        persistentKeepalive = 25;
-    #      }
-    #    ];
-    #    postSetup = ["${pkgs.iproute}/bin/ip route add ${prefix}::/96 dev m0wire"];
-    #  };
-    #};
-  };
   services = {
     snapper = {
       configs.persist = {

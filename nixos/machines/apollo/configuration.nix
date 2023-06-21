@@ -11,7 +11,6 @@ in {
     ../../roles/boot-key.nix
     ../../roles/standalone
     ../../roles/metal.nix
-    ../../roles/display-server.nix
     (import ../../roles/monitoring/folder-size-exporter.nix {
       folders = [
         "/"
@@ -21,7 +20,7 @@ in {
         "/home/maralorn/git"
       ];
     })
-  ];
+  ] ++ flake-inputs.self.nixFromDirs [ ../../modules/clients ];
 
   environment.systemPackages = [
     pkgs.networkmanagerapplet # For when the gnome dialog sucks in asking for a wifi password.
@@ -29,7 +28,6 @@ in {
 
   networking = {
     hostName = "apollo";
-    domain = "m-0.eu";
     networkmanager.enable = true;
   };
 
@@ -42,7 +40,6 @@ in {
   };
 
   services = {
-    fprintd.enable = true;
     udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness"
       ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/backlight/%k/brightness"

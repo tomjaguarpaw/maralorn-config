@@ -7,6 +7,18 @@
     ./overlays/flake-module.nix
   ];
   systems = [ "x86_64-linux" ];
+  flake.nixFromDirs = let
+    nixFromDir = dir:
+      builtins.concatLists (builtins.attrValues (builtins.mapAttrs
+        (name: path_type:
+          if path_type == "regular" && builtins.match ".*\\.nix" name
+          != null then
+            [ (import "${dir}/${name}") ]
+          else if path_type == "directory" then
+            nixFromDir "${dir}/${name}"
+          else
+            [ ]) (builtins.readDir dir)));
+  in builtins.concatMap nixFromDir;
   perSystem = { inputs', lib, config, pkgs, ... }: {
     devShells = {
       default =

@@ -42,7 +42,9 @@
     },
     "disko": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": [
+          "nixos-stable"
+        ]
       },
       "locked": {
         "lastModified": 1687134796,
@@ -274,22 +276,6 @@
         "id": "nixpkgs",
         "ref": "nixos-unstable",
         "type": "indirect"
-      }
-    },
-    "nixpkgs": {
-      "locked": {
-        "lastModified": 1686582075,
-        "narHash": "sha256-vtflsfKkHtF8IduxDNtbme4cojiqvlvjp5QNYhvoHXc=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "7e63eed145566cca98158613f3700515b4009ce3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
       }
     },
     "pre-commit-hooks": {

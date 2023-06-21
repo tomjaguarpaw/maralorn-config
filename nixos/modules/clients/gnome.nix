@@ -1,18 +1,9 @@
-{ lib, pkgs, config, ... }: {
-  users.users.maralorn.passwordFile =
-    config.age.secrets.pam-short-password.path;
+{ lib, pkgs, ... }: {
   programs = {
-    adb.enable = true;
     seahorse.enable = lib.mkForce false;
     dconf.enable = true;
   };
   services = {
-    udev.packages = [ pkgs.chrysalis ];
-    pipewire.enable = lib.mkForce false;
-    printing = {
-      enable = true;
-      clientConf = "ServerName fluffy.lo.m-0.eu";
-    };
     xserver = {
       enable = true;
       displayManager = {
@@ -35,11 +26,4 @@
     };
   };
   environment.gnome.excludePackages = [ pkgs.orca pkgs.gnome-tour ];
-  sound.enable = true;
-  hardware = {
-    pulseaudio = {
-      package = pkgs.pulseaudioFull;
-      enable = true;
-    };
-  };
 }
