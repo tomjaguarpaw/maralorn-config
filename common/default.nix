@@ -115,7 +115,7 @@ with lib; {
             "tasks"
             "taskserver"
           ];
-          fluffy = [ "home" "code" "cache" "syncthing-fluffy" "5e" "graphs" ];
+          fluffy = [ "home" "cache" "syncthing-fluffy" "5e" "graphs" ];
           zeus = [ "syncthing-zeus" ];
           apollo = [ "syncthing-apollo" ];
         };

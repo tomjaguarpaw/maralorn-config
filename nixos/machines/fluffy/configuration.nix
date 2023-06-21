@@ -36,10 +36,8 @@ in {
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
 
-  environment.persistence."/disk/persist" = {
-    directories =
-      [ "/etc/ssh" "/var/lib/nixos" "/var/lib/tailscale" "/var/lib/forgejo" ];
-  };
+  environment.persistence."/disk/persist".directories =
+    [ "/etc/ssh" "/var/lib/nixos" "/var/lib/tailscale" ];
 
   networking = {
     hostName = "fluffy";
