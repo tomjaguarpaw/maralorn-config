@@ -12,7 +12,7 @@ in {
       };
       service.DISABLE_REGISTRATION = true;
     };
-    appName = "code.maralorn.de";
+    appName = "Forgejo";
     database.type = "postgres";
   };
   services.nginx.virtualHosts.${virtualHosts."code"} = {
