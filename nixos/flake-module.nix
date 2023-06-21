@@ -9,7 +9,6 @@
               (import (./. + "/machines/${name}/configuration.nix") inputs)
               inputs.secrets.nixosModules.default
               inputs.impermanence.nixosModules.impermanence
-              inputs.nix-serve-ng.nixosModules.default
               inputs.disko.nixosModules.disko
             ];
           };

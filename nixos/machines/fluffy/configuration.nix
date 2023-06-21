@@ -52,6 +52,7 @@ in {
   };
 
   services.nix-serve = {
+    package = pkgs.nix-serve-ng;
     enable = true;
     bindAddress = "localhost";
     secretKeyFile = config.age.secrets.nix-serve-secret-key.path;

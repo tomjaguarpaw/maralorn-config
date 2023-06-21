@@ -10,7 +10,6 @@
       inputs.nixpkgs.follows = "";
     };
     flake-parts.inputs.nixpkgs-lib.follows = "nixos-unstable";
-    nix-serve-ng.url = "github:aristanetworks/nix-serve-ng";
     nix-output-monitor = {
       inputs = {
         flake-utils.follows = "pre-commit-hooks/flake-utils";
