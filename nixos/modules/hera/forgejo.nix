@@ -9,7 +9,8 @@ in {
       ROOT_URL = "http://code.maralorn.de";
       HTTP_PORT = 3787;
     };
-    appName = "maralorns code";
+    appName = "code.maralorn.de";
+    database.type = "postgres";
   };
   services.nginx.virtualHosts.${virtualHosts."code"} = {
     locations."/".proxyPass = "http://localhost:${
@@ -18,6 +19,5 @@ in {
     extraConfig = ''
       client_max_body_size 0;
     '';
-
   };
 }

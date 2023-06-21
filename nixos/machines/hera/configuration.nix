@@ -50,7 +50,8 @@ in {
         "/var/vmail"
       ];
     })
-  ];
+  ] ++ flake-inputs.self.nixFromDirs [ ../../modules/hera ];
+
   m-0.monitoring = [{
     name = "hera";
     host = "hera-intern:9100";
