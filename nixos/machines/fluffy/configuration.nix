@@ -20,6 +20,8 @@ in {
 
   ];
 
+  fileSystems."/disk/persist".neededForBoot = true;
+
   age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
 
   environment.etc = {
