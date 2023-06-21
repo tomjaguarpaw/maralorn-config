@@ -14,13 +14,13 @@ in {
     ../../roles/forgejo.nix
     ./hardware-configuration.nix
     ./graphs.nix
+    (import ./disko-config.nix {
+    device = "/dev/disk/by-id/ata-Samsung_SSD_870_QVO_4TB_S5STNJ0W103706V";
+  })
+
   ];
 
   age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
-
-  disko.devices = pkgs.callPackage ./disko-config.nix {
-    device = "/dev/disk/by-id/ata-Samsung_SSD_870_QVO_4TB_S5STNJ0W103706V";
-  };
 
   environment.etc = {
     nixos.source = "/disk/persist/maralorn/git/config";
