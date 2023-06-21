@@ -1,5 +1,5 @@
 flake-inputs:
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 let localAddress = "fdc0:1::2";
 in {
   imports = [
@@ -51,7 +51,16 @@ in {
       [ "/etc/ssh" "/var/lib/nixos" "/var/lib/tailscale" "/var/lib/forgejo" ];
   };
 
-  services.nix-serve.enable = true;
+  services.nix-serve = {
+    enable = true;
+    bindAddress = "localhost";
+    secretKeyFile = config.age.secrets.nix-serve-secret-key.path;
+  };
+
+  services.nginx.virtualHosts.${
+    config.m-0.virtualHosts."cache"
+  }.locations."/".proxyPass =
+    "http://[::1]:${toString config.services.nix-serve.port}";
 
   boot = {
     initrd.network.ssh.enable = true;

@@ -49,15 +49,19 @@ in {
 
   nix = {
     # Extra Option which is on by default: allow-import-from-derivation = true
-    extraOptions = ''
-      experimental-features = nix-command flakes repl-flake
-      fallback = true
-      auto-optimise-store = true
-      builders-use-substitutes = true
-      keep-derivations = true
-      keep-outputs = true
-      warn-dirty = false
-    '';
+    settings = {
+      substituters = lib.mkIf (config.networking.hostName != "fluffy")
+        [ "http://cache.maralorn.de" ];
+      trusted-public-keys =
+        [ "cache.maralorn.de:nul5zddJUyqgWvtcailq5WMdnqWXMmSY/JOxumIvTdU=" ];
+      experimental-features = [ "nix-command" "flakes" "repl-flake" ];
+      fallback = true;
+      auto-optimise-store = true;
+      builders-use-substitutes = true;
+      keep-derivations = true;
+      keep-outputs = true;
+      warn-dirty = false;
+    };
   };
 
   security.acme = {
