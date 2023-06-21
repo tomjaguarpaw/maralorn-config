@@ -61,5 +61,5 @@ in {
     };
   };
 
-  programs = { mtr.enable = true; };
+  programs.mtr.enable = true;
 }
