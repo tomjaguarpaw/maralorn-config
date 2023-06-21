@@ -11,7 +11,7 @@
     nixFromDir = dir:
       builtins.concatLists (builtins.attrValues (builtins.mapAttrs
         (name: path_type:
-          if path_type == "regular" && builtins.match ".*\\.nix" name
+          if path_type == "regular" && builtins.match "[^_].*\\.nix" name
           != null then
             [ (import "${dir}/${name}") ]
           else if path_type == "directory" then

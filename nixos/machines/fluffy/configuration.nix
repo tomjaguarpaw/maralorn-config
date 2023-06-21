@@ -1,5 +1,5 @@
 flake-inputs:
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 let localAddress = "fdc0:1::2";
 in {
   imports = [
@@ -12,15 +12,7 @@ in {
     ../../roles/server
     ../../roles/5etools.nix
     ../../roles/forgejo.nix
-    ./hardware-configuration.nix
-    ./graphs.nix
-    (import ./disko-config.nix {
-      device = "/dev/disk/by-id/ata-Samsung_SSD_870_QVO_4TB_S5STNJ0W103706V";
-    })
-
-  ];
-
-  fileSystems."/disk/persist".neededForBoot = true;
+  ] ++ flake-inputs.self.nixFromDirs [ ../../modules/fluffy ];
 
   age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
 
@@ -49,40 +41,6 @@ in {
   environment.persistence."/disk/persist" = {
     directories =
       [ "/etc/ssh" "/var/lib/nixos" "/var/lib/tailscale" "/var/lib/forgejo" ];
-  };
-
-  services.nix-serve = {
-    package = pkgs.haskell.lib.overrideCabal pkgs.nix-serve-ng {
-      src = pkgs.fetchFromGitHub {
-        repo = "nix-serve-ng";
-        owner = "aristanetworks";
-        rev = "dabf46d65d8e3be80fa2eacd229eb3e621add4bd";
-        hash = "sha256-SoJJ3rMtDMfUzBSzuGMY538HDIj/s8bPf8CjIkpqY2w=";
-      };
-    };
-    enable = true;
-    bindAddress = "localhost";
-    secretKeyFile = config.age.secrets.nix-serve-secret-key.path;
-  };
-
-  services.nginx.virtualHosts.${
-    config.m-0.virtualHosts."cache"
-  }.locations."/".proxyPass =
-    "http://[::1]:${toString config.services.nix-serve.port}";
-
-  boot = {
-    initrd.network.ssh.enable = true;
-    loader = {
-      efi.efiSysMountPoint = "/efi";
-      grub = {
-        efiSupport = true;
-        efiInstallAsRemovable = true;
-        mirroredBoots = [{
-          devices = [ "nodev" ];
-          path = "/efi";
-        }];
-      };
-    };
   };
 
   networking = {
