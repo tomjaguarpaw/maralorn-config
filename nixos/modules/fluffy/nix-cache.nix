@@ -1,14 +1,7 @@
 { pkgs, config, ... }: {
 
   services.nix-serve = {
-    package = pkgs.haskell.lib.overrideCabal pkgs.nix-serve-ng {
-      src = pkgs.fetchFromGitHub {
-        repo = "nix-serve-ng";
-        owner = "aristanetworks";
-        rev = "dabf46d65d8e3be80fa2eacd229eb3e621add4bd";
-        hash = "sha256-SoJJ3rMtDMfUzBSzuGMY538HDIj/s8bPf8CjIkpqY2w=";
-      };
-    };
+    package = pkgs.nix-serve-ng;
     enable = true;
     bindAddress = "localhost";
     secretKeyFile = config.age.secrets.nix-serve-secret-key.path;
