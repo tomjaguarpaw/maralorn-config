@@ -10,7 +10,7 @@ in {
     script = ''
       cd /var/www/5etools
       if [[ -d ".git" ]]; then
-         ${lib.getExe pkgs.git} pull
+         ${lib.getExe pkgs.git} pull -r
       else
          ${
            lib.getExe pkgs.git
