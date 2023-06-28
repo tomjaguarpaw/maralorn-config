@@ -8,16 +8,17 @@ let
       git clone git@localhost:${name} .
       git show -q --oneline
       export REMOTE_FLAG="--builders @$(${pkgs.builders-configurator}/bin/builders-configurator)"
-      export FLAGS="$REMOTE_FLAGS -o /var/cache/gc-links/$JOB"
       if [[ -e "flake.nix" ]]; then
         echo "Flake detected."
         echo "Running 'flake check'"
-        ${pkgs.nix}/bin/nix flake check $REMOTE_FLAG
+        ${lib.getExe pkgs.nix} flake check $REMOTE_FLAG
         echo "Running 'nix build'"
-        ${pkgs.nix}/bin/nix build $FLAGS
+        ${lib.getExe pkgs.nix} build $REMOTE_FLAG
+        ${lib.getExe pkgs.archive-nix-path} ./result
       else
         echo "Building default.nix"
-        nix-build $FLAGS
+        nix-build $REMOTE_FLAG
+        ${lib.getExe pkgs.archive-nix-path} ./result
       fi
     '';
 in {

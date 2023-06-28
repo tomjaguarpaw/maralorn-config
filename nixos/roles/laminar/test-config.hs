@@ -19,7 +19,7 @@ import Say
 import Shh
 import System.Environment (getEnv)
 
-load Absolute ["laminarc", "git", "nix", "builders-configurator"]
+load Absolute ["laminarc", "git", "nix", "builders-configurator", "archive-nix-path"]
 
 repo = "git@hera.m-0.eu:nixos-config"
 
@@ -35,7 +35,8 @@ main = do
   say "Running checks"
   builders <- builders_configurator |> captureTrim
   nix "flake" "check" "--builders" ([i|@#{builders}|] :: String) "--accept-flake-config" "-L"
-  nix ["build", ".#checks.x86_64-linux.system-checks", "-o", "/var/cache/gc-links/test-config", "--builders", [i|@#{builders}|], "--accept-flake-config", "-L"]
+  nix ["build", ".#checks.x86_64-linux.system-checks", "--builders", [i|@#{builders}|], "--accept-flake-config", "-L"]
+  archive_nix_path "./result"
   say "Checks succeeded"
   when (branch == "main") $ do
     say [i|Deploying new config to localhost.|]
