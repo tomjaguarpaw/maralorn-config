@@ -35,7 +35,7 @@ let
         nix_copy_closure "--to" "fluffy" paths |!> readInputLines (mapM_ $ BS.toStrict <&> \case
           line | BSC.isInfixOf " from " line -> BS.putStr "c"
           line | BSC.isInfixOf " to " line -> BS.putStr "u"
-          line -> BSC.putStrLn line)
+          line -> mapM_ BSC.putStrLn ["", line])
         BSC.putStrLn ""
         now <- Time.getZonedTime
         let timestamp =  Time.formatTime Time.defaultTimeLocale "%F-%T" now
