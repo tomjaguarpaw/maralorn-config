@@ -42,7 +42,7 @@ let
         now <- Time.getZonedTime
         let timestamp =  Time.formatTime Time.defaultTimeLocale "%F-%T" now
         paths & mapM_ \path -> do
-            let gc_root = [i|/disk/volatile/nix-gc-roots/#{drop 44 path}-#{timestamp}|] :: String
+            let gc_root = [i|/disk/volatile/nix-gc-roots/#{timestamp}-#{drop 44 path}|] :: String
             putLine [i|Setting gc-root #{gc_root}|]
             ssh "fluffy" "nix" "build" "-o" gc_root path
     '';
