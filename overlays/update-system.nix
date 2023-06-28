@@ -16,6 +16,34 @@ let
     builders <- builders_configurator |> captureTrim
   '';
   mode-scripts = {
+    archive-nix-path = pkgs.writeHaskellScript {
+      name = "archive-nix-path";
+      bins = [ pkgs.nix pkgs.openssh ];
+      imports = [ "Data.Time qualified as Time" "Data.List qualified as List" ];
+    } ''
+      main = do
+        links <- getArgs
+        when (null links) do
+          say "Usage: archive-nix-path <tag> <installables…>"
+          exitFailure
+        say "Collecting paths to upload"
+        paths :: [String] <- fmap decodeUtf8 <$> (nix "path-info" links |> captureLines)
+        when (null paths) do
+          say "Found no paths to upload."
+          exitFailure
+        say [i|Uploading the following paths to fluffy:\n  #{List.intercalate "\n  " paths}|]
+        nix_copy_closure "--to" "fluffy" paths |!> readInputLines (mapM_ $ BS.toStrict <&> \case
+          line | BSC.isInfixOf " from " line -> BS.putStr "c"
+          line | BSC.isInfixOf " to " line -> BS.putStr "u"
+          line -> BSC.putStrLn line)
+        BSC.putStrLn ""
+        now <- Time.getZonedTime
+        let timestamp =  Time.formatTime Time.defaultTimeLocale "%F-%T" now
+        paths & mapM_ \path -> do
+            let gc_root = [i|/disk/volatile/nix-gc-roots/#{drop 44 path}-#{timestamp}|] :: String
+            say [i|Setting gc-root #{gc_root}|]
+            ssh "fluffy" "nix" "build" "-o" gc_root path
+    '';
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
       ${configGit} pull --ff-only
@@ -52,6 +80,7 @@ let
         pkgs.git
         pkgs.nix-output-monitor
         pkgs.builders-configurator
+        pkgs.archive-nix-path
       ];
     } ''
       main = do
@@ -60,6 +89,7 @@ let
         say [i|Building modes for #{hostname} …|]
         nom ["build", "--builders", [i|@#{builders}|], [i|${configPath}\#homeModes.#{hostname}|], "-o", "${modeDir}"]
         activate_mode
+        archive_nix_path "${modeDir}"
     '';
     quickUpdateMode = pkgs.writeHaskellScript {
       name = "quick-update-mode";
@@ -102,6 +132,7 @@ let
       fi
       on_target ${pkgs.nix}/bin/nix-env -p /nix/var/nix/profiles/system --set $output
       on_target $output/bin/switch-to-configuration switch
+      archive-nix-path $output
     '';
   };
 in mode-scripts // { inherit mode-scripts; }
