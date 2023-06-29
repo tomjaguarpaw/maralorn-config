@@ -18,7 +18,11 @@ let
   mode-scripts = {
     archive-nix-path = pkgs.writeHaskellScript {
       name = "archive-nix-path";
-      bins = [ pkgs.nixVersions.nix_2_13 pkgs.openssh ];
+      bins = [
+        # nix-copy-closure is buggy in nix 2.15
+        pkgs.nixVersions.nix_2_13
+        pkgs.openssh
+      ];
       imports = [ "Data.Time qualified as Time" "Data.List qualified as List" ];
     } ''
       main = do
