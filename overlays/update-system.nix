@@ -18,13 +18,13 @@ let
   mode-scripts = {
     archive-nix-path = pkgs.writeHaskellScript {
       name = "archive-nix-path";
-      bins = [ pkgs.nix pkgs.openssh ];
+      bins = [ pkgs.nixVersions.nix_2_13 pkgs.openssh ];
       imports = [ "Data.Time qualified as Time" "Data.List qualified as List" ];
     } ''
       main = do
         links <- getArgs
         when (null links) do
-          say "Usage: archive-nix-path <tag> <installables…>"
+          say "Usage: archive-nix-path <installables…>"
           exitFailure
         say "Collecting paths to upload"
         paths :: [String] <- fmap decodeUtf8 <$> (nix "path-info" links |> captureLines)
@@ -36,15 +36,15 @@ let
         let putChar char = writeIORef need_newline True >> BS.putStr char
             putLine line = whenM (readIORef need_newline) (BSC.putStrLn "") >> BSC.putStrLn line
         nix_copy_closure "--to" "fluffy" paths |!> readInputLines (mapM_ $ BS.toStrict <&> \case
-          line | BSC.isInfixOf " from " line -> putChar "s"
-          line | BSC.isInfixOf " to " line -> putChar "u"
+          line | BSC.isInfixOf "' from '" line -> putChar "s"
+          line | BSC.isInfixOf "' to '" line -> putChar "u"
           line -> putLine line)
         now <- Time.getZonedTime
         let timestamp =  Time.formatTime Time.defaultTimeLocale "%F-%T" now
         paths & mapM_ \path -> do
-            let gc_root = [i|/disk/volatile/nix-gc-roots/#{timestamp}-#{drop 44 path}|] :: String
-            putLine [i|Setting gc-root #{gc_root}|]
-            ssh "fluffy" "nix" "build" "-o" gc_root path
+          let gc_root = [i|/disk/volatile/nix-gc-roots/#{timestamp}-#{drop 44 path}|] :: String
+          putLine [i|Setting gc-root #{gc_root}|]
+          ssh "fluffy" "nix" "build" "-o" gc_root path
     '';
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e

@@ -81,7 +81,7 @@ in {
       -- in the closure.
       loadFromBins (${
         pkgs.haskellList
-        (builtins.map toString (bins ++ [ pkgs.coreutils pkgs.nix ]))
+        (builtins.map toString ([ pkgs.coreutils pkgs.nix ] ++ bins))
       } :: [String])
 
       main :: IO ()
