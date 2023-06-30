@@ -101,7 +101,6 @@ with lib; {
             "cloud"
             "element"
             "fdroid"
-            "firefox-sync"
             "git"
             "lists"
             "matrix"
@@ -116,7 +115,8 @@ with lib; {
             "taskserver"
             "code"
           ];
-          fluffy = [ "home" "cache" "syncthing-fluffy" "5e" "graphs" ];
+          fluffy =
+            [ "firefox-sync" "home" "cache" "syncthing-fluffy" "5e" "graphs" ];
           zeus = [ "syncthing-zeus" ];
           apollo = [ "syncthing-apollo" ];
         };

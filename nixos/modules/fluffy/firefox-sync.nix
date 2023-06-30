@@ -15,7 +15,6 @@
     firefox-syncserver = {
       enable = true;
       secrets = config.age.secrets.firefox-syncserver-secrets.path;
-      logLevel = "trace";
       database = {
         name = "firefox_syncserver";
         createLocally = true;
@@ -25,14 +24,6 @@
         hostname = "firefox-sync.maralorn.de";
         capacity = 1;
         enableNginx = true;
-        enableTLS = true;
-      };
-    };
-    nginx = {
-      enable = true;
-      virtualHosts."firefox-sync.maralorn.de" = {
-        forceSSL = true;
-        enableACME = true;
       };
     };
   };
