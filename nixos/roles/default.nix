@@ -65,7 +65,11 @@ in {
   };
 
   security.acme = {
-    defaults.email = "security@maralorn.de";
+    defaults = {
+      dnsProvider = "inwx";
+      credentialsFile = config.age.secrets.inwx_credentials.path;
+      email = "security@maralorn.de";
+    };
     acceptTerms = true;
   };
 
