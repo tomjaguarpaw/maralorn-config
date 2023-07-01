@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 let
   haLib = import ./lib.nix lib;
   colors = rec {
@@ -1267,27 +1267,14 @@ in {
         ];
       };
     };
-    nginx = {
-      enable = true;
-      virtualHosts = {
-        "home.lo.m-0.eu" = {
-          serverAliases = [ "home.vpn.m-0.eu" "home.maralorn.de" "home" ];
-          extraConfig = "proxy_buffering off;";
-          locations."/" = {
-            proxyPass = "http://[::1]:8123";
-            proxyWebsockets = true;
-          };
-          locations."/custom/" = { alias = "/run/hass/"; };
+    nginx.virtualHosts.${config.m-0.virtualHosts.home} = {
+      extraConfig = "proxy_buffering off;";
+      locations = {
+        "/" = {
+          proxyPass = "http://[::1]:8123";
+          proxyWebsockets = true;
         };
-        "fluffy.maralorn.de" = {
-          default = true;
-          locations."/".extraConfig =
-            "return 301 http://home.maralorn.de$request_uri;";
-        };
-        "fluffy.lo.m-0.eu" = {
-          locations."/".extraConfig =
-            "return 301 http://home.lo.m-0.eu$request_uri;";
-        };
+        "/custom/" = { alias = "/run/hass/"; };
       };
     };
   };

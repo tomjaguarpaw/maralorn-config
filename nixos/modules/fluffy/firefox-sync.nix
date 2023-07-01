@@ -27,13 +27,5 @@
         enableNginx = true;
       };
     };
-    nginx.virtualHosts.${config.m-0.virtualHosts.firefox-sync} = {
-      enableACME = true;
-      forceSSL = true;
-    };
-  };
-  security.acme.certs.${config.m-0.virtualHosts.firefox-sync} = {
-    dnsProvider = "inwx";
-    webroot = null;
   };
 }

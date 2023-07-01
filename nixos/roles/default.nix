@@ -51,7 +51,7 @@ in {
     # Extra Option which is on by default: allow-import-from-derivation = true
     settings = {
       substituters = lib.mkIf (config.networking.hostName != "fluffy")
-        [ "http://cache.maralorn.de" ];
+        [ "https://cache.maralorn.de" ];
       trusted-public-keys =
         [ "cache.maralorn.de:nul5zddJUyqgWvtcailq5WMdnqWXMmSY/JOxumIvTdU=" ];
       experimental-features = [ "nix-command" "flakes" "repl-flake" ];
@@ -71,6 +71,10 @@ in {
       email = "security@maralorn.de";
     };
     acceptTerms = true;
+    certs = lib.genAttrs (builtins.attrValues config.m-0.virtualHosts) (_: {
+      webroot = null;
+      dnsProvider = "inwx";
+    });
   };
 
   security.pam.services."login".failDelay.enable = true;
@@ -133,17 +137,19 @@ in {
       nginx = { inherit (config.services.nginx) enable; };
     };
     nginx = {
-      virtualHosts = lib.genAttrs (map (name: "${name}.maralorn.de")
-        (builtins.filter
-          (name: !(builtins.elem name hosts.publicAliases.${hostName} or [ ]))
-          (hosts.aliases.${hostName} or [ ]))) (_: {
-            extraConfig = ''
+      enable = config.m-0.virtualHosts != { };
+      virtualHosts = lib.genAttrs (builtins.attrValues config.m-0.virtualHosts)
+        (name: {
+          forceSSL = true;
+          enableACME = true;
+          extraConfig = lib.mkIf
+            (builtins.elem name hosts.publicAliases.${hostName} or [ ]) ''
               satisfy any;
               ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};")
               config.m-0.headscaleIPs}
               deny all;
             '';
-          });
+        });
       statusPage = true;
       recommendedOptimisation = true;
       recommendedGzipSettings = true;

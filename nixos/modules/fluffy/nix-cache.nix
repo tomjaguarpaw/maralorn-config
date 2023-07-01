@@ -1,14 +1,13 @@
 { pkgs, config, ... }: {
 
-  services.nix-serve = {
-    package = pkgs.nix-serve-ng;
-    enable = true;
-    bindAddress = "localhost";
-    secretKeyFile = config.age.secrets.nix-serve-secret-key.path;
+  services = {
+    nix-serve = {
+      package = pkgs.nix-serve-ng;
+      enable = true;
+      bindAddress = "localhost";
+      secretKeyFile = config.age.secrets.nix-serve-secret-key.path;
+    };
+    nginx.virtualHosts.${config.m-0.virtualHosts.cache}.locations."/".proxyPass =
+      "http://[::1]:${toString config.services.nix-serve.port}";
   };
-
-  services.nginx.virtualHosts.${
-    config.m-0.virtualHosts."cache"
-  }.locations."/".proxyPass =
-    "http://[::1]:${toString config.services.nix-serve.port}";
 }
