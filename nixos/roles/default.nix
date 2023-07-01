@@ -137,7 +137,7 @@ in {
       nginx = { inherit (config.services.nginx) enable; };
     };
     nginx = {
-      enable = config.m-0.virtualHosts != { };
+      enable = lib.mkDefault (config.m-0.virtualHosts != { });
       virtualHosts = lib.genAttrs (builtins.attrValues config.m-0.virtualHosts)
         (name: {
           forceSSL = true;

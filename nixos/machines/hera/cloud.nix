@@ -87,7 +87,10 @@ let
       systemd.services = nextcloudServices hostname;
       services = {
         nextcloud = nextcloudConf hostname;
-        nginx.appendHttpConfig = "access_log off;";
+        nginx = {
+          enable = true;
+          appendHttpConfig = "access_log off;";
+        };
         redis.servers."".enable = true;
 
         postgresql = {
