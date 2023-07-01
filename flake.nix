@@ -41,7 +41,8 @@
       inputs.nixpkgs.follows = "nixos-unstable";
     };
     pre-commit-hooks = {
-      url = "github:cachix/pre-commit-hooks.nix";
+      url =
+        "github:maralorn/pre-commit-hooks.nix/f41c6e84f3a31d7415a293765d29244902bcf99d";
       inputs = {
         flake-compat.follows = "";
         gitignore.follows = "";

@@ -287,16 +287,17 @@
         "nixpkgs-stable": []
       },
       "locked": {
-        "lastModified": 1686668298,
-        "narHash": "sha256-AADh9NqHh6X2LOem4BvI7oCkMm+JPCSCE7iIw5nn0VA=",
-        "owner": "cachix",
+        "lastModified": 1688224196,
+        "narHash": "sha256-W3MxNWT1jVQhvKm93be57Bgd6DMg48j8NvNLyYiqL40=",
+        "owner": "maralorn",
         "repo": "pre-commit-hooks.nix",
-        "rev": "5b6b54d3f722aa95cbf4ddbe35390a0af8c0015a",
+        "rev": "f41c6e84f3a31d7415a293765d29244902bcf99d",
         "type": "github"
       },
       "original": {
-        "owner": "cachix",
+        "owner": "maralorn",
         "repo": "pre-commit-hooks.nix",
+        "rev": "f41c6e84f3a31d7415a293765d29244902bcf99d",
         "type": "github"
       }
     },

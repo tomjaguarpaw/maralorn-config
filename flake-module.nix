@@ -36,11 +36,10 @@
     pre-commit = let
       generated_nix_files =
         [ "packages/.*/default\\.nix" "hardware-configuration\\.nix" ];
-    in rec {
+    in {
       pkgs = inputs'.nixos-unstable.legacyPackages;
       check.enable = true;
       settings = {
-        tools.fourmolu = lib.mkForce pkgs.haskellPackages.fourmolu;
         settings.ormolu.defaultExtensions = [
           "TypeApplications"
           "BangPatterns"
