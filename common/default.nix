@@ -99,8 +99,6 @@ with lib; {
             "blog"
             "ci"
             "cloud"
-            "element"
-            "fdroid"
             "git"
             "lists"
             "matrix"
@@ -109,9 +107,7 @@ with lib; {
             "rspamd"
             "rss"
             "stats"
-            "stream"
             "syncthing-hera"
-            "tasks"
             "taskserver"
             "code"
           ];
