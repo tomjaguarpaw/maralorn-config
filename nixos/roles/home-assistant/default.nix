@@ -1274,7 +1274,7 @@ in {
           proxyPass = "http://[::1]:8123";
           proxyWebsockets = true;
         };
-        "/custom/" = { alias = "/run/hass/"; };
+        "/custom/".alias = "/run/hass/";
       };
     };
   };
