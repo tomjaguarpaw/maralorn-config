@@ -140,6 +140,7 @@ in [
       { Signal = fork "signal-desktop"; }
       { Zoom = with-mic-check "zoom"; }
       { Telegram = fork "telegram-desktop"; }
+      { Rocket = fork "rocketchat-desktop"; }
       { Discord = with-mic-check "Discord"; }
       { Tmate = "tmate"; }
     ];
