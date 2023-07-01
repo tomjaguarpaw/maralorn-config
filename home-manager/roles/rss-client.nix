@@ -39,7 +39,7 @@ let
         miniflux-min-items 1000
         datetime-format "%Y-%m-%d"
         urls-source "miniflux"
-        miniflux-url "http://rss.maralorn.de/"
+        miniflux-url "https://rss.maralorn.de/"
         miniflux-login "${user}"
         miniflux-passwordeval "${lib.getExe rbw} get rss.maralorn.de ${user}"
         ${config}
