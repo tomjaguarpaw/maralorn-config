@@ -229,7 +229,7 @@ playerModule home = Module do
         % Text.replace "@Stopped" "⏹"
         % Text.replace "@Playing" "▶"
         % Text.replace "@Paused" "⏸"
-        % ("\n$alignr" <>)
+        % ("\n${alignr}" <>)
         % withColor white
         % runIdentity
         % trigger
@@ -307,7 +307,7 @@ main = Notify.withManager \watch_manager -> do
           , simpleModule (5 * oneSecond) $ do
               appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
               when' (not $ null appointments) $
-                withColor magenta ("\n$alignr" <> Text.intercalate " " appointments)
+                withColor magenta ("\n${alignr}" <> Text.intercalate " " appointments)
           , playerModule home
           , eventModule do
               performEventThreaded

@@ -29,7 +29,7 @@ let
           own_window_class = 'Conky',
           own_window_type = 'dock',
           own_window_argb_visual = true,
-          own_window_argb_value = 200,
+          own_window_argb_value = 0,
           show_graph_range = false,
           show_graph_scale = false,
           stippled_borders = 0,
