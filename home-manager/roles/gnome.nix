@@ -41,7 +41,8 @@ in {
     };
 
     "org/gnome/shell/extensions/materialshell/theme" = {
-      panel-opacity = 90;
+      panel-opacity = 70;
+      surface-opacity = 70;
       panel-icon-color = true;
       panel-icon-style = "application";
       focus-effect = "border";
