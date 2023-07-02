@@ -125,7 +125,7 @@ eventModule :: forall t m a. R.MonadHeadlessApp t m => m (R.Event t a) -> Module
 eventModule = \event_action -> Module $ fmap (,pass) event_action
 
 separator :: Text
-separator = "\n$color1$hr\n"
+separator = " "
 
 writeVars :: R.MonadHeadlessApp t m => [R.Event t (Maybe Text)] -> m ()
 writeVars vars = do
@@ -225,17 +225,20 @@ playerModule home = Module do
         % Text.splitOn " | "
         % (get_host mpdris_config <>)
         % filter (Text.null % not)
-        % Text.intercalate "\n"
+        % Text.intercalate " "
         % Text.replace "@Stopped" "⏹"
         % Text.replace "@Playing" "▶"
         % Text.replace "@Paused" "⏸"
+        % ("\n$alignr" <>)
         % withColor white
         % runIdentity
         % trigger
   listenToPlayer = \trigger ->
     forever $
-      playerctl "metadata" "-F" "-f" playerCTLFormat
-        |> Shh.readInputLines (update_lines trigger)
+      Exception.try @Exception.IOException
+        ( playerctl "metadata" "-F" "-f" playerCTLFormat
+            |> Shh.readInputLines (update_lines trigger)
+        )
   get_host =
     fromRight ""
       % decodeUtf8
@@ -297,10 +300,14 @@ main = Notify.withManager \watch_manager -> do
             pure $ mconcat dir_update_events
     git_dir_events <- (<> git_dirs_event) . R.switchDyn <$> R.networkHold (pure R.never) git_dirs_event'
     let modules =
-          [ simpleModule (5 * oneSecond) $ do
+          [ simpleModule (1 * oneSecond) do
+              now <- Time.getCurrentTime
+              notifications <- processNotifications . fromRight "" <$> Exception.try @Exception.IOException (readFileBS [i|#{home}/.notifications/#{Time.formatTime Time.defaultTimeLocale "%Y-%m-%d" now}.log|])
+              when' (not $ Text.null notifications) $ withColor red ("\n" <> notifications)
+          , simpleModule (5 * oneSecond) $ do
               appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
               when' (not $ null appointments) $
-                withColor magenta (Text.unlines appointments)
+                withColor magenta ("\n$alignr" <> Text.intercalate " " appointments)
           , playerModule home
           , eventModule do
               performEventThreaded
@@ -435,17 +442,13 @@ main = Notify.withManager \watch_manager -> do
                 <&> show
                   % withColor blue
                   % runIdentity
-          , simpleModule (1 * oneSecond) do
-              now <- Time.getCurrentTime
-              notifications <- processNotifications . fromRight "" <$> Exception.try @Exception.IOException (readFileBS [i|#{home}/.notifications/#{Time.formatTime Time.defaultTimeLocale "%Y-%m-%d" now}.log|])
-              when' (not $ Text.null notifications) $ withColor red (Text.take 24 (Text.drop ((`rem` 15) . round . Time.utctDayTime $ now) "NOTIFICATIONS! NOTIFICATIONS! NOTIFICATIONS!") <> "\n" <> notifications)
           ]
     runModules modules
     pure R.never -- We have no exit condition.
 
 processNotifications :: ByteString -> Text
 processNotifications =
-  Text.intercalate [i|\n$color1$hr${color \##{red}}\n|]
+  Text.intercalate [i|\n${color \##{red}}|]
     . toList
     . Set.fromList
     . filter (\x -> not $ any (`Text.isPrefixOf` x) notificationBlockList)
@@ -462,7 +465,7 @@ processNotifications =
       ( flip \line -> \case
           [] -> [line]
           messages | Text.isInfixOf "|" line -> line : messages
-          last_message : rest_of_messages -> last_message <> "\n" <> line : rest_of_messages
+          last_message : rest_of_messages -> last_message <> " " <> line : rest_of_messages
       )
       []
     . lines

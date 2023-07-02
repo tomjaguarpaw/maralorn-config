@@ -1,6 +1,6 @@
 { pkgs, lib, ... }:
 let
-  dimensions = "20,130";
+  dimensions = "20,40";
   service = name:
     { extra, text, wait, }:
     let
@@ -19,7 +19,6 @@ let
           gap_y = 1,
           minimum_height = 5,
           minimum_width = 2,
-          max_text_width = 25,
           net_avg_samples = 2,
           no_buffers = true,
           out_to_console = false,
@@ -67,34 +66,38 @@ in {
         alignment = 'top_right',
         text_buffer_size = 2047,
         update_interval = 0.25,
-        gap_y = 50,
-        gap_x = 50,
+        gap_y = 1,
+        gap_x = 100,
       '';
-      text = ''
-        ''${time %Y-%m-%d KW%V %a %H:%M}
-        $color1$hr
-        ''${catp /run/user/1000/status-bar}
-        ''${catp /home/maralorn/.persist/scratch}
-      '';
+      text = "$alignr\${catp /run/user/1000/status-bar}";
       wait = 100;
     };
     monitor = {
       extra = ''
         alignment = 'bottom_right',
-        gap_x = 50,
+        gap_x = 1,
+        gap_y = 250,
         update_interval = 5.0,
       '';
       text = ''
-        ''${execi 60 cal}
         $color1
-        CPU: $color0$cpu%
+        CPU:
+        $color0$cpu%
         $color1''${cpugraph cpu0 ${dimensions}}
-        RAM: $color0$mem $memperc%
+        RAM:
+        $color0$mem
+        $memperc%
         $color1''${memgraph ${dimensions}}
-        Up: $color0''${upspeed ''${gw_iface}}
+        Up:
+        $color0''${upspeed ''${gw_iface}}
         $color1''${upspeedgraph ''${gw_iface} ${dimensions} $color1 $color1 5242880}
-        Down: $color0''${downspeed ''${gw_iface}}
+        Down:
+        $color0''${downspeed ''${gw_iface}}
         $color1''${downspeedgraph ''${gw_iface} ${dimensions} $color1 $color1 12107200}
+        $color0''${time %Y}
+        ''${time %m-%d}
+        ''${time KW%V}
+        ''${time %a}
       '';
       wait = 5;
     };
