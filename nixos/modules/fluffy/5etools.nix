@@ -9,8 +9,8 @@ in {
   systemd.services.update-5etools = {
     script = ''
       cd /var/www/5etools
-      ${lib.getExe pkgs.git} config --global user.email "mail@maralorn.de"
-      ${lib.getExe pkgs.git} config --global user.name "maralorn"
+      ${lib.getExe pkgs.git} config user.email "mail@maralorn.de"
+      ${lib.getExe pkgs.git} config user.name "maralorn"
       if [[ -d ".git" ]]; then
          ${lib.getExe pkgs.git} pull -r
       else
