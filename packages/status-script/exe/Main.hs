@@ -234,8 +234,9 @@ playerModule home = Module do
         % runIdentity
         % trigger
   listenToPlayer = \trigger ->
-    forever $
-      Exception.try @Exception.IOException
+    forever do
+      Conc.threadDelay oneSecond
+      ignoreFailure
         ( playerctl "metadata" "-F" "-f" playerCTLFormat
             |> Shh.readInputLines (update_lines trigger)
         )
