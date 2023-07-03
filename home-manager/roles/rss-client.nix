@@ -27,6 +27,9 @@ let
     else
       echo "File already fetched. Playing …"
       ${lib.getExe config.programs.mpv.finalPackage} "$filename"
+      echo "Enter 'y' to delete $filename:"
+      read delete
+      if [[ "$delete" == "y" ]] then rm "$filename"; fi
     fi
   '';
   commands = builtins.mapAttrs (name:
