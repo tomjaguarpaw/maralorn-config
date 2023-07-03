@@ -1,6 +1,6 @@
 { pkgs, lib, ... }:
 let
-  dimensions = "20,40";
+  dimensions = "20,47";
   service = name:
     { extra, text, wait, }:
     let
@@ -67,14 +67,14 @@ in {
         text_buffer_size = 2047,
         update_interval = 0.25,
         gap_y = 1,
-        gap_x = 100,
+        gap_x = 48,
       '';
       text = "$alignr\${catp /run/user/1000/status-bar}";
       wait = 100;
     };
     monitor = {
       extra = ''
-        alignment = 'bottom_right',
+        alignment = 'bottom_left',
         gap_x = 1,
         gap_y = 300,
         update_interval = 5.0,
@@ -95,7 +95,7 @@ in {
         $color0''${downspeed ''${gw_iface}}
         $color1''${downspeedgraph ''${gw_iface} ${dimensions} $color1 $color1 12107200}
         $color0''${time %Y}
-        ''${time %m-%d}
+        ''${time %d. %b}
         ''${time KW%V}
         ''${time %a}
       '';

@@ -46,12 +46,24 @@ in {
       panel-icon-color = true;
       panel-icon-style = "application";
       focus-effect = "border";
-      vertical-panel-position = "right";
+      vertical-panel-position = "left";
+    };
+
+    "org/gnome/shell/extensions/materialshell/tweaks" = {
+      cycle-through-windows = true;
+      cycle-through-workspaces = true;
+      enable-persistence = false;
     };
 
     "org/gnome/shell/extensions/materialshell/layouts" = {
       grid = true;
       default-layout = "grid";
+      half-horizontal = true;
+      half-vertical = true;
+      ratio-value = 0.4;
+      simple = true;
+      simple-horizontal = true;
+      simple-vertical = true;
     };
 
     "org/gnome/shell/keybindings" = { toggle-overview = [ ]; };
