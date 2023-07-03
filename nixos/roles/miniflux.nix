@@ -16,11 +16,13 @@ in {
       };
     };
     nginx.virtualHosts.${virtualHosts.rss} = {
-      locations."/" = {
-        proxyPass = "http://${address}";
-        proxyWebsockets = true;
+      locations = {
+        "/" = {
+          proxyPass = "http://${address}";
+          proxyWebsockets = true;
+        };
+        "/own/".alias = "/var/www/rss/";
       };
-      locations."/own/" = { alias = "/var/www/rss/"; };
     };
   };
   systemd.services = {
@@ -54,13 +56,13 @@ in {
       script = ''
         ${
           lib.getExe pkgs.curl
-        } -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header ${virtualHosts.rss}/v1/feeds/refresh
+        } -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header https://${virtualHosts.rss}/v1/feeds/refresh
         ${
           lib.getExe pkgs.curl
-        } -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-watchfeeds ${virtualHosts.rss}/v1/feeds/refresh
+        } -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-watchfeeds https://${virtualHosts.rss}/v1/feeds/refresh
         ${
           lib.getExe pkgs.curl
-        } -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-softwareupdates ${virtualHosts.rss}/v1/feeds/refresh
+        } -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-softwareupdates https://${virtualHosts.rss}/v1/feeds/refresh
       '';
       after = [ "mastodon-digest.service" ];
       requires = [ "mastodon-digest.service" ];
