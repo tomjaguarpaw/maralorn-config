@@ -76,7 +76,7 @@ in {
       extra = ''
         alignment = 'bottom_right',
         gap_x = 1,
-        gap_y = 250,
+        gap_y = 300,
         update_interval = 5.0,
       '';
       text = ''
