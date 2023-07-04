@@ -1,4 +1,8 @@
-{ lib, ... }: {
+{
+  lib,
+  ...
+}:
+{
   options = {
     m-0 = {
       hostName = lib.mkOption { type = lib.types.str; };

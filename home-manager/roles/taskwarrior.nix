@@ -1,10 +1,16 @@
-{ pkgs, config, lib, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 let
   fix-tasks = pkgs.writeShellScriptBin "fix-tasks" ''
     sed 's/depends.*open.*\([0-9a-f]\{8\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{12\}\).*close[^ ]* /depends:"\1" /' -i ~/.task/*.data
     sed 's/dep_\[[^ ]* //' -i ~/.task/*.data
   '';
-in {
+in
+{
   home.packages = [ fix-tasks ];
   services.taskwarrior-sync = {
     enable = true;
@@ -15,7 +21,11 @@ in {
       (pkgs.writeShellScript "ensure-taskwarrior-login" ''
         set -eu
         export PATH=${
-          lib.makeBinPath [ pkgs.taskwarrior pkgs.coreutils pkgs.gnugrep ]
+          lib.makeBinPath [
+            pkgs.taskwarrior
+            pkgs.coreutils
+            pkgs.gnugrep
+          ]
         }
         if [[ -z "$(${
           lib.getExe pkgs.taskwarrior
@@ -28,12 +38,13 @@ in {
     watch-tasks = {
       Unit.Description = "Watch tasks for changes and trigger sync";
       Service = {
-        ExecStart = (pkgs.writeShellScript "watch-vdir" ''
-          while ${pkgs.coreutils}/bin/sleep 1s; do
-            ${pkgs.systemd}/bin/systemctl --user start taskwarrior-sync
-            ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete,modify -r ${config.home.homeDirectory}/.task
-          done
-        '').outPath;
+        ExecStart =
+          (pkgs.writeShellScript "watch-vdir" ''
+            while ${pkgs.coreutils}/bin/sleep 1s; do
+              ${pkgs.systemd}/bin/systemctl --user start taskwarrior-sync
+              ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete,modify -r ${config.home.homeDirectory}/.task
+            done
+          '').outPath;
       };
       Install.WantedBy = [ "default.target" ];
     };
@@ -59,33 +70,43 @@ in {
       target = ".task/hooks/on-modify.habitica-points";
       executable = true;
       source = "${
-          pkgs.writeHaskellScript {
-            name = "habitica-points";
-            bins = [ pkgs.curl pkgs.jq pkgs.libnotify ];
-            imports = [ "Data.Aeson" ];
-          } ''
+          pkgs.writeHaskellScript
+            {
+              name = "habitica-points";
+              bins = [
+                pkgs.curl
+                pkgs.jq
+                pkgs.libnotify
+              ];
+              imports = [ "Data.Aeson" ];
+            }
+            ''
 
-            data Task = Task { status :: Text } deriving (Generic, FromJSON)
+              data Task = Task { status :: Text } deriving (Generic, FromJSON)
 
-            main = do
-              oldTask <- getLine
-              newTask <- getLine
-              let oldStatus = maybe "unknown" status (decode (encodeUtf8 oldTask))
-                  newStatus = maybe "unknown" status (decode (encodeUtf8 newTask))
-              when (oldStatus /= "completed" && newStatus == "completed") $ do
-                result :: String <- curl "-XPOST" "-H" "x-api-user: dbd97aba-8b6b-4649-9dd4-dad284333925" "-H" "x-api-key: ${
-                  pkgs.privateValue "" "habitica-token"
-                }" "https://habitica.com/api/v3/tasks/6e95cccd-06e1-466c-b871-643dff31423c/score/up" |> jq "-c" ".data._tmp" |> captureTrim <&> decodeUtf8
-                notify_send "Task Completed!" result
-              putTextLn newTask
-          ''
+              main = do
+                oldTask <- getLine
+                newTask <- getLine
+                let oldStatus = maybe "unknown" status (decode (encodeUtf8 oldTask))
+                    newStatus = maybe "unknown" status (decode (encodeUtf8 newTask))
+                when (oldStatus /= "completed" && newStatus == "completed") $ do
+                  result :: String <- curl "-XPOST" "-H" "x-api-user: dbd97aba-8b6b-4649-9dd4-dad284333925" "-H" "x-api-key: ${
+                    pkgs.privateValue "" "habitica-token"
+                  }" "https://habitica.com/api/v3/tasks/6e95cccd-06e1-466c-b871-643dff31423c/score/up" |> jq "-c" ".data._tmp" |> captureTrim <&> decodeUtf8
+                  notify_send "Task Completed!" result
+                putTextLn newTask
+            ''
         }/bin/habitica-points";
     };
   };
   programs.taskwarrior = {
     enable = true;
     dataLocation = "${config.home.homeDirectory}/.task";
-    config = { taskd = { server = "taskserver.maralorn.de:53589"; }; };
+    config = {
+      taskd = {
+        server = "taskserver.maralorn.de:53589";
+      };
+    };
     extraConfig = ''
       alias.inbox=+PENDING -TAGGED limit:1
       alias.inboxall=+PENDING -TAGGED

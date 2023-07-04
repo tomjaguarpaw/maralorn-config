@@ -1,25 +1,28 @@
-{ pkgs, ... }: {
+{
+  pkgs,
+  ...
+}:
+{
   services.go-neb = {
     enable = true;
     baseUrl = "http://localhost";
     config = {
-      clients = [{
+      clients = [ {
         UserId = "@marabot:maralorn.de";
         AccessToken = pkgs.privateValue "" "matrix/marabot-token";
         HomeServerUrl = "https://matrix.maralorn.de";
         Sync = true;
         AutoJoinRooms = true;
         DisplayName = "marabot";
-      }];
+      } ];
       realms = [ ];
       sessions = [ ];
-      services = [{
+      services = [ {
         ID = "alertmanager_service";
         Type = "alertmanager";
         UserId = "@marabot:maralorn.de";
         Config = {
-          webhook_url =
-            "http://localhost:4050/services/hooks/YWxlcnRtYW5hZ2VyX3NlcnZpY2UK";
+          webhook_url = "http://localhost:4050/services/hooks/YWxlcnRtYW5hZ2VyX3NlcnZpY2UK";
           rooms = {
             "!negVsngnYOmXYCLKiO:maralorn.de" = {
               text_template = ''
@@ -31,7 +34,7 @@
             };
           };
         };
-      }];
+      } ];
     };
   };
 }

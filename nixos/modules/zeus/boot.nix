@@ -1,12 +1,13 @@
 {
   boot = {
     loader = {
-      efi = { efiSysMountPoint = "/boot/efi"; };
+      efi = {
+        efiSysMountPoint = "/boot/efi";
+      };
       grub = {
         # Enabled by default
         device = "nodev"; # Don‘t write masterboot under efi
-        efiInstallAsRemovable =
-          true; # Make loader discoverable by filename on efidisk without needing to write efivars to system
+        efiInstallAsRemovable = true; # Make loader discoverable by filename on efidisk without needing to write efivars to system
         efiSupport = true;
         enableCryptodisk = true;
         backgroundColor = "#000000";
@@ -23,8 +24,7 @@
         "amdgpu" # For earlier and better framebuffer
       ];
       secrets = {
-        "diskkey.bin" =
-          "/disk/persist/diskkey.bin"; # Key can live on crypted disk, is copied to initrd on install
+        "diskkey.bin" = "/disk/persist/diskkey.bin"; # Key can live on crypted disk, is copied to initrd on install
       };
     };
   };

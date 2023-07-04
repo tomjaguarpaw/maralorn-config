@@ -1,6 +1,13 @@
-{ pkgs, ... }: {
+{
+  pkgs,
+  ...
+}:
+{
   systemd.services."activate-home-manager" = {
-    path = [ pkgs.nix pkgs.dbus ];
+    path = [
+      pkgs.nix
+      pkgs.dbus
+    ];
     script = ''
       if [[ -e /home/maralorn/.mode ]]; then
         MODE="$(cat /home/maralorn/.mode)"

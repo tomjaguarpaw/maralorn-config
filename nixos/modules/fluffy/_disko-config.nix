@@ -1,4 +1,8 @@
-{ device, ... }: {
+{
+  device,
+  ...
+}:
+{
   disko.devices = {
     disk.system = {
       type = "disk";
@@ -39,10 +43,21 @@
                 extraArgs = [ "-f" ]; # Override existing partition
                 subvolumes = {
                   # Mountpoints inferred from subvolume name
-                  "/disk" = { mountOptions = [ "compress=zstd" ]; };
-                  "/disk/persist" = { mountOptions = [ "compress=zstd" ]; };
-                  "/disk/volatile" = { mountOptions = [ "compress=zstd" ]; };
-                  "/nix" = { mountOptions = [ "compress=zstd" "noatime" ]; };
+                  "/disk" = {
+                    mountOptions = [ "compress=zstd" ];
+                  };
+                  "/disk/persist" = {
+                    mountOptions = [ "compress=zstd" ];
+                  };
+                  "/disk/volatile" = {
+                    mountOptions = [ "compress=zstd" ];
+                  };
+                  "/nix" = {
+                    mountOptions = [
+                      "compress=zstd"
+                      "noatime"
+                    ];
+                  };
                 };
               };
             };
@@ -52,7 +67,10 @@
     };
     nodev."/" = {
       fsType = "tmpfs";
-      mountOptions = [ "defaults" "mode=755" ];
+      mountOptions = [
+        "defaults"
+        "mode=755"
+      ];
     };
   };
 }

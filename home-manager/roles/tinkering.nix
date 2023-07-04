@@ -1,9 +1,20 @@
-{ pkgs, ... }: {
+{
+  pkgs,
+  ...
+}:
+{
   home.packages = builtins.attrValues {
     inherit (pkgs.xorg) xev;
     inherit (pkgs)
-      meld icedtea8_web octave filezilla nix-review gparted grafana-devel
-      httpie;
+      meld
+      icedtea8_web
+      octave
+      filezilla
+      nix-review
+      gparted
+      grafana-devel
+      httpie
+    ;
   };
   home.file.".editorconfig".text = ''
     # Top-most EditorConfig file

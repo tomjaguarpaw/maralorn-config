@@ -6,10 +6,10 @@
       grub = {
         efiSupport = true;
         efiInstallAsRemovable = true;
-        mirroredBoots = [{
+        mirroredBoots = [ {
           devices = [ "nodev" ];
           path = "/efi";
-        }];
+        } ];
       };
     };
   };

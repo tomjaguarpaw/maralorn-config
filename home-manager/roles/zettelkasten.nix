@@ -1,4 +1,9 @@
-{ config, pkgs, ... }: {
+{
+  config,
+  pkgs,
+  ...
+}:
+{
   services.emanote = {
     enable = true;
     # host = "127.0.0.1"; # default listen address is 127.0.0.1

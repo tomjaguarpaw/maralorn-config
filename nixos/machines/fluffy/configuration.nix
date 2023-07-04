@@ -1,16 +1,24 @@
 flake-inputs:
-{ pkgs, ... }:
-let localAddress = "fdc0:1::2";
-in {
-  imports = [
-    (import ../../roles/home-manager.nix flake-inputs)
-    ../../roles
-    ../../roles/fonts.nix
-    ../../roles/home-assistant
-    ../../roles/metal.nix
-    ../../roles/standalone
-    ../../roles/server
-  ] ++ flake-inputs.self.nixFromDirs [ ../../modules/fluffy ];
+{
+  pkgs,
+  ...
+}:
+let
+  localAddress = "fdc0:1::2";
+in
+{
+  imports =
+    [
+      (import ../../roles/home-manager.nix flake-inputs)
+      ../../roles
+      ../../roles/fonts.nix
+      ../../roles/home-assistant
+      ../../roles/metal.nix
+      ../../roles/standalone
+      ../../roles/server
+    ]
+    ++ flake-inputs.self.nixFromDirs [ ../../modules/fluffy ]
+  ;
 
   age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
 
@@ -36,8 +44,11 @@ in {
     "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
   ];
 
-  environment.persistence."/disk/persist".directories =
-    [ "/etc/ssh" "/var/lib/nixos" "/var/lib/tailscale" ];
+  environment.persistence."/disk/persist".directories = [
+    "/etc/ssh"
+    "/var/lib/nixos"
+    "/var/lib/tailscale"
+  ];
 
   networking = {
     hostName = "fluffy";
@@ -51,32 +62,33 @@ in {
         80 # http
         631 # cups
       ];
-      allowedTCPPortRanges = [
-        # also ftp
-        {
-          from = 51000;
-          to = 51999;
-        }
-      ];
+      allowedTCPPortRanges =
+        [
+          # also ftp
+          {
+            from = 51000;
+            to = 51999;
+          }
+        ];
     };
     interfaces.enp1s0 = {
-      ipv6.addresses = [{
+      ipv6.addresses = [ {
         address = localAddress;
         prefixLength = 64;
-      }];
+      } ];
       useDHCP = true;
     };
   };
   programs.ssh.startAgent = true;
   hardware.printers = {
     ensureDefaultPrinter = "Klio";
-    ensurePrinters = [{
+    ensurePrinters = [ {
       name = "Klio";
       location = "Wohnzimmer";
       description = "Klio (Brother MFC-L3750CDW)";
       deviceUri = "ipp://klio.lo.m-0.eu/ipp";
       model = "everywhere";
-    }];
+    } ];
   };
   services = {
     borgbackup.repos.hera = {

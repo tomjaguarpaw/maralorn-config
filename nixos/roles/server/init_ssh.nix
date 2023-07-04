@@ -1,6 +1,12 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  ...
+}:
 with lib; {
-  options = { m-0.server.initSSHKey = mkOption { type = types.path; }; };
+  options = {
+    m-0.server.initSSHKey = mkOption { type = types.path; };
+  };
 
   config = {
     boot.initrd = {

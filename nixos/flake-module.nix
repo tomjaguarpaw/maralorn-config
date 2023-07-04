@@ -1,9 +1,20 @@
-{ withSystem, lib, inputs, ... }: {
+{
+  withSystem,
+  lib,
+  inputs,
+  ...
+}:
+{
   flake = {
-    nixosConfigurations = withSystem "x86_64-linux" ({ pkgs, ... }:
+    nixosConfigurations = withSystem "x86_64-linux" (
+      {
+        pkgs,
+        ...
+      }:
       let
         machines = builtins.attrNames (builtins.readDir ./machines);
-        makeSystem = name:
+        makeSystem =
+          name:
           pkgs.nixos {
             imports = [
               (import (./. + "/machines/${name}/configuration.nix") inputs)
@@ -11,7 +22,10 @@
               inputs.impermanence.nixosModules.impermanence
               inputs.disko.nixosModules.disko
             ];
-          };
-      in lib.genAttrs machines makeSystem);
+          }
+        ;
+      in
+      lib.genAttrs machines makeSystem
+    );
   };
 }

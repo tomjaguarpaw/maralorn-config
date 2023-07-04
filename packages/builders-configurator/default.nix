@@ -1,5 +1,17 @@
-{ mkDerivation, base, containers, effectful, effectful-th, lib, relude, say, shh
-, string-interpolate, text, witch }:
+{
+  mkDerivation,
+  base,
+  containers,
+  effectful,
+  effectful-th,
+  lib,
+  relude,
+  say,
+  shh,
+  string-interpolate,
+  text,
+  witch,
+}:
 mkDerivation {
   pname = "builders-configurator";
   version = "0.1.0.0";

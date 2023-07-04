@@ -1,7 +1,19 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 let
-  path = [ pkgs.git pkgs.nix pkgs.gnutar pkgs.gzip pkgs.openssh pkgs.laminar ];
-  mkJob = name:
+  path = [
+    pkgs.git
+    pkgs.nix
+    pkgs.gnutar
+    pkgs.gzip
+    pkgs.openssh
+    pkgs.laminar
+  ];
+  mkJob =
+    name:
     pkgs.writeShellScript "${name}.run" ''
       set -e
       export PATH=${lib.makeBinPath path}:$PATH
@@ -20,8 +32,10 @@ let
         nix-build $REMOTE_FLAG
         ${lib.getExe pkgs.archive-nix-path} ./result
       fi
-    '';
-in {
+    ''
+  ;
+in
+{
   services.laminar.cfgFiles.jobs = {
     "blog.run" = mkJob "blog";
     "haskell-taskwarrior.run" = mkJob "haskell-taskwarrior";

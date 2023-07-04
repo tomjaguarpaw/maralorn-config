@@ -1,4 +1,8 @@
-{ pkgs, ... }: {
+{
+  pkgs,
+  ...
+}:
+{
   home.packages = [ pkgs.taskwarrior-git ];
   home.file = {
     "add-git" = {

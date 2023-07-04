@@ -1,6 +1,12 @@
-{ pkgs, config, ... }:
-let inherit (config.m-0) virtualHosts;
-in {
+{
+  pkgs,
+  config,
+  ...
+}:
+let
+  inherit (config.m-0) virtualHosts;
+in
+{
   services.gitea = {
     package = pkgs.forgejo;
     enable = true;

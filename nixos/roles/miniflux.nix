@@ -1,17 +1,21 @@
-{ pkgs, config, lib, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 let
   inherit (config.m-0) virtualHosts;
   address = "[::1]:8100";
-in {
+in
+{
   services = {
     miniflux = {
       enable = true;
       adminCredentialsFile = config.age.secrets.miniflux-admin-credentials.path;
       config = {
-        POLLING_FREQUENCY =
-          "525600"; # We don‘t want polling so we set this to a year.
-        BATCH_SIZE =
-          "1000"; # To make sure that all feeds can get refreshed. Default is 100, which is probably fine.
+        POLLING_FREQUENCY = "525600"; # We don‘t want polling so we set this to a year.
+        BATCH_SIZE = "1000"; # To make sure that all feeds can get refreshed. Default is 100, which is probably fine.
         LISTEN_ADDR = address;
       };
     };
@@ -48,8 +52,9 @@ in {
       '';
       serviceConfig = {
         Type = "oneshot";
-        LoadCredential =
-          [ "mastodon-auth-env:${config.age.secrets.mastodon-auth-env.path}" ];
+        LoadCredential = [
+          "mastodon-auth-env:${config.age.secrets.mastodon-auth-env.path}"
+        ];
       };
     };
     refresh-miniflux = {

@@ -1,4 +1,9 @@
-{ pkgs, config, ... }: {
+{
+  pkgs,
+  config,
+  ...
+}:
+{
 
   services = {
     nix-serve = {
@@ -7,7 +12,8 @@
       bindAddress = "localhost";
       secretKeyFile = config.age.secrets.nix-serve-secret-key.path;
     };
-    nginx.virtualHosts.${config.m-0.virtualHosts.cache}.locations."/".proxyPass =
-      "http://[::1]:${toString config.services.nix-serve.port}";
+    nginx.virtualHosts.${config.m-0.virtualHosts.cache}.locations."/".proxyPass = "http://[::1]:${
+        toString config.services.nix-serve.port
+      }";
   };
 }

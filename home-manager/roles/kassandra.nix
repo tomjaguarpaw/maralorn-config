@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  ...
+}:
 let
   dhallFiles = pkgs.runCommand "kassandra-config-src" { } ''
     mkdir $out
@@ -8,15 +11,13 @@ let
   '';
   backend = pkgs.dhallPackages.buildDhallPackage {
     name = "kassandra-backend-config";
-    code =
-      "${dhallFiles}/backend.dhall : (${dhallFiles}/types.dhall).BackendConfig";
+    code = "${dhallFiles}/backend.dhall : (${dhallFiles}/types.dhall).BackendConfig";
     source = true;
     dependencies = [ pkgs.dhallPackages.Prelude ];
   };
   standalone = pkgs.dhallPackages.buildDhallPackage {
     name = "kassandra-standalone-config";
-    code =
-      "${dhallFiles}/config.dhall : (${dhallFiles}/types.dhall).StandaloneConfig";
+    code = "${dhallFiles}/config.dhall : (${dhallFiles}/types.dhall).StandaloneConfig";
     source = true;
     dependencies = [ pkgs.dhallPackages.Prelude ];
   };
@@ -24,7 +25,8 @@ let
     "backend.dhall" = "${backend}/source.dhall";
     "config.dhall" = "${standalone}/source.dhall";
   };
-in {
+in
+{
   xdg.configFile.kassandra.source = dhallResult.out;
   home.packages = [ pkgs.kassandra-standalone ];
 }

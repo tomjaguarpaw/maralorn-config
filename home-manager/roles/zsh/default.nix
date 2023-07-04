@@ -1,4 +1,8 @@
-{ pkgs, ... }: {
+{
+  pkgs,
+  ...
+}:
+{
   programs.zsh = {
     enable = true;
     enableAutosuggestions = true;
@@ -25,10 +29,10 @@
       enable = true;
       plugins = [ "colored-man-pages" ];
     };
-    plugins = [{
+    plugins = [ {
       name = "zsh-nix-shell";
       file = "nix-shell.plugin.zsh";
       src = "${pkgs.zsh-nix-shell}/share/zsh-nix-shell";
-    }];
+    } ];
   };
 }

@@ -1,6 +1,12 @@
-{ pkgs, config, ... }:
-let inherit (config.m-0) virtualHosts;
-in {
+{
+  pkgs,
+  config,
+  ...
+}:
+let
+  inherit (config.m-0) virtualHosts;
+in
+{
   systemd.services.setup-accounting-db = {
     script = ''
       set -ex
@@ -28,7 +34,10 @@ in {
       enable = true;
       package = pkgs.postgresql_15;
       ensureDatabases = [ "accounting" ];
-      ensureUsers = [ { name = "maralorn"; } { name = "grafana"; } ];
+      ensureUsers = [
+        { name = "maralorn"; }
+        { name = "grafana"; }
+      ];
     };
     nginx = {
       enable = true;
@@ -36,42 +45,46 @@ in {
         locations."/".proxyPass = "http://localhost:3000/";
       };
     };
-    grafana = let dashboards = ./dashboards;
-    in {
-      enable = true;
-      settings = {
-        "auth.anonymous" = {
-          org_role = "Admin";
-          enabled = true;
-        };
-        security.allow_embedding = true;
-        users.default_theme = "dark";
-        "auth.basic".enabled = false;
-        server.domain = virtualHosts."graphs";
-        dashboards.default_home_dashboard_path =
-          "${dashboards}/accounting.json";
-      };
-      provision = {
+    grafana =
+      let
+        dashboards = ./dashboards;
+      in
+      {
         enable = true;
-        datasources.settings.datasources = [{
-          type = "postgres";
-          isDefault = true;
-          name = "Postgres";
-          url = "localhost:5432";
-          user = "grafana";
-          uid = "accounting";
-          secureJsonData.password =
-            "$__file{${config.age.secrets."grafana-postgres-pw".path}}";
-          jsonData = {
-            database = "accounting";
-            sslmode = "disable";
+        settings = {
+          "auth.anonymous" = {
+            org_role = "Admin";
+            enabled = true;
           };
-        }];
-        dashboards.settings.providers = [{
-          name = "Static dashboards";
-          options.path = dashboards;
-        }];
-      };
-    };
+          security.allow_embedding = true;
+          users.default_theme = "dark";
+          "auth.basic".enabled = false;
+          server.domain = virtualHosts."graphs";
+          dashboards.default_home_dashboard_path = "${dashboards}/accounting.json";
+        };
+        provision = {
+          enable = true;
+          datasources.settings.datasources = [ {
+            type = "postgres";
+            isDefault = true;
+            name = "Postgres";
+            url = "localhost:5432";
+            user = "grafana";
+            uid = "accounting";
+            secureJsonData.password = "$__file{${
+                config.age.secrets."grafana-postgres-pw".path
+              }}";
+            jsonData = {
+              database = "accounting";
+              sslmode = "disable";
+            };
+          } ];
+          dashboards.settings.providers = [ {
+            name = "Static dashboards";
+            options.path = dashboards;
+          } ];
+        };
+      }
+    ;
   };
 }

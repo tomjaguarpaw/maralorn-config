@@ -1,8 +1,13 @@
-{ config, ... }: {
+{
+  config,
+  ...
+}:
+{
   services = {
     prometheus = {
-      alertmanagers =
-        [{ static_configs = [{ targets = [ "localhost:9093" ]; }]; }];
+      alertmanagers = [ {
+        static_configs = [ { targets = [ "localhost:9093" ]; } ];
+      } ];
       alertmanager = {
         enable = true;
         listenAddress = "0.0.0.0";
@@ -15,13 +20,12 @@
             repeat_interval = "168h";
             receiver = "alerts";
           };
-          receivers = [{
+          receivers = [ {
             name = "alerts";
-            webhook_configs = [{
-              url =
-                "${config.services.go-neb.baseUrl}:4050/services/hooks/YWxlcnRtYW5hZ2VyX3NlcnZpY2U";
-            }];
-          }];
+            webhook_configs = [ {
+              url = "${config.services.go-neb.baseUrl}:4050/services/hooks/YWxlcnRtYW5hZ2VyX3NlcnZpY2U";
+            } ];
+          } ];
         };
       };
     };

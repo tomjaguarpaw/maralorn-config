@@ -1,9 +1,13 @@
-{ pkgs, lib, config, ... }@args:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}@args:
 let
   hotkeys = pkgs.writeShellScriptBin "my-hotkeys" ''
     ${pkgs.wizards-dialog}/bin/hotkeys ${
-      pkgs.writeText "hotkeys.yaml"
-      (builtins.toJSON (import ./hotkeys.nix args))
+      pkgs.writeText "hotkeys.yaml" (builtins.toJSON (import ./hotkeys.nix args))
     }
   '';
   extensions = builtins.attrValues {
@@ -21,7 +25,8 @@ let
   };
   inherit (lib.hm.gvariant) mkTuple mkUint32;
   font = "Monospace 9";
-in {
+in
+{
   home.packages = extensions ++ [ hotkeys ];
 
   services.gpg-agent.pinentryFlavor = "gnome3";
@@ -66,7 +71,9 @@ in {
       simple-vertical = true;
     };
 
-    "org/gnome/shell/keybindings" = { toggle-overview = [ ]; };
+    "org/gnome/shell/keybindings" = {
+      toggle-overview = [ ];
+    };
 
     "org/gnome/desktop/wm/keybindings" = {
       switch-input-source = [ ];
@@ -86,7 +93,9 @@ in {
       toggle-fullscreen = [ "<Super>f" ];
     };
 
-    "org/gnome/mutter" = { dynamic-workspaces = true; };
+    "org/gnome/mutter" = {
+      dynamic-workspaces = true;
+    };
 
     "org/gnome/mutter/keybindings" = {
       toggle-tiled-left = [ ];
@@ -104,7 +113,9 @@ in {
       sleep-inactive-ac-type = "suspend";
     };
 
-    "org/gnome/desktop/peripherals/mouse" = { speed = 1; };
+    "org/gnome/desktop/peripherals/mouse" = {
+      speed = 1;
+    };
 
     "org/gnome/desktop/interface" = {
       document-font-name = font;
@@ -117,7 +128,9 @@ in {
       locate-pointer = true;
     };
 
-    "org/gnome/desktop/calendar" = { show-weekdate = true; };
+    "org/gnome/desktop/calendar" = {
+      show-weekdate = true;
+    };
 
     "org/gnome/desktop/wm/preferences" = {
       auto-raise = true;
@@ -135,7 +148,9 @@ in {
       name = "Catppuccin-Mocha-Compact-Blue-Dark";
     };
 
-    "system/locale" = { region = "en_DK.UTF-8"; };
+    "system/locale" = {
+      region = "en_DK.UTF-8";
+    };
 
     "org/gnome/desktop/screensaver" = {
       lock-delay = "0"; # lock screen immediately on screen blank
@@ -193,34 +208,35 @@ in {
     };
 
     "org/gnome/desktop/input-sources" = {
-      sources = [ (mkTuple [ "xkb" "de+neo" ]) ]; # use neo
+      sources = [
+        (mkTuple [
+          "xkb"
+          "de+neo"
+        ])
+      ]; # use neo
       xkb-options = [
         "altwin:swap_lalt_lwin" # swap alt and win
         "lv3:menu_switch" # So that gnome-settings does not set it to ralt
       ];
     };
 
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal" =
-      {
-        binding = "<Super>Return";
-        command = "${config.home.sessionVariables.TERMINAL}";
-        name = "Terminal";
-      };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal" = {
+      binding = "<Super>Return";
+      command = "${config.home.sessionVariables.TERMINAL}";
+      name = "Terminal";
+    };
 
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" =
-      {
-        binding = "<Super>space";
-        command =
-          "${config.home.sessionVariables.TERMINAL} ${lib.getExe hotkeys}";
-        name = "Hotkeys";
-      };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/hotkeys" = {
+      binding = "<Super>space";
+      command = "${config.home.sessionVariables.TERMINAL} ${lib.getExe hotkeys}";
+      name = "Hotkeys";
+    };
 
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby" =
-      {
-        binding = "<Super>F5";
-        command = "systemctl suspend";
-        name = "Standby";
-      };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/standby" = {
+      binding = "<Super>F5";
+      command = "systemctl suspend";
+      name = "Standby";
+    };
 
     "org/gnome/shell/extensions/nothing-to-say" = {
       icon-visibility = "always";

@@ -1,4 +1,8 @@
-{ pkgs, config, ... }:
+{
+  pkgs,
+  config,
+  ...
+}:
 let
   gw2dir = "${config.home.homeDirectory}/.volatile/GW2";
   wine = pkgs.wineWowPackages.staging;
@@ -20,8 +24,7 @@ let
     export WINEESYNC=1
   '';
   dxvk = fetchTarball {
-    url =
-      "https://github.com/doitsujin/dxvk/releases/download/v1.7.2/dxvk-1.7.2.tar.gz";
+    url = "https://github.com/doitsujin/dxvk/releases/download/v1.7.2/dxvk-1.7.2.tar.gz";
     sha256 = "07q9fsrvjq2ndnhd93000jw89bkaw6hdi2yhl4d6j8n4ak71r8pv";
   };
   gw2installdxvk = pkgs.writeShellScriptBin "gw2-install-dxvk" ''
@@ -46,14 +49,21 @@ let
     cd "${gw2dir}/data/drive_c/Program Files/Guild Wars 2"
     ${wine}/bin/wine64 ./Gw2-64.exe $@ -autologin
   '';
-in {
+in
+{
   home.packages = builtins.attrValues {
     factorio = pkgs.factorio.override {
       username = "maralorn";
       token = pkgs.privateValue "" "factorio";
     };
     inherit (pkgs) # steam minetest
-      minecraft;
-    inherit gw2run gw2setup wine gw2installdxvk;
+      minecraft
+    ;
+    inherit
+      gw2run
+      gw2setup
+      wine
+      gw2installdxvk
+    ;
   };
 }

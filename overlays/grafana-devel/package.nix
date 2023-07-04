@@ -1,4 +1,10 @@
-{ stdenv, grafana, writeScriptBin, symlinkJoin, writeTextFile, }:
+{
+  stdenv,
+  grafana,
+  writeScriptBin,
+  symlinkJoin,
+  writeTextFile,
+}:
 let
   provision = symlinkJoin {
     name = "provision-files";
@@ -8,14 +14,14 @@ let
         destination = "/dashboards/default.yaml";
         text = builtins.toJSON {
           apiVersion = 1;
-          providers = [{
+          providers = [ {
             name = "Static dashboards";
             folder = "";
             options.path = ../../nixos/roles/monitoring/grafana-dashboards;
             orgId = 1;
             type = "file";
             updateIntervalSeconds = 60;
-          }];
+          } ];
         };
       })
       (writeTextFile {
@@ -23,7 +29,7 @@ let
         destination = "/datasources/default.yaml";
         text = builtins.toJSON {
           apiVersion = 1;
-          datasources = [{
+          datasources = [ {
             access = "proxy";
             basicAuth = null;
             basicAuthPassword = null;
@@ -41,12 +47,13 @@ let
             user = null;
             version = 1;
             withCredentials = false;
-          }];
+          } ];
         };
       })
     ];
   };
-in writeScriptBin "grafana-devel" ''
+in
+writeScriptBin "grafana-devel" ''
   #! ${stdenv.shell}
   set -ex
   DIR=$(mktemp -d)

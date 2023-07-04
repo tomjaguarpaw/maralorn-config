@@ -7,8 +7,16 @@ let
       android_sdk.accept_license = true;
     };
   };
-in {
+in
+{
   inherit (unfree)
-    discord zoom-us minecraft teamviewer steam androidsdk_9_0 factorio
-    minecraft-server;
+    discord
+    zoom-us
+    minecraft
+    teamviewer
+    steam
+    androidsdk_9_0
+    factorio
+    minecraft-server
+  ;
 }

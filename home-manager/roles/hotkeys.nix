@@ -1,10 +1,16 @@
-{ pkgs, config, lib, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 let
   fork = cmd: "fork ${cmd}";
   edit_dir = dir: "sh -c 'cd ${dir}; hx ${dir}'";
-  with-mic-check = cmd:
-    fork "sh -c '${config.home.sessionVariables.TERMINAL} mic-check; ${cmd}'";
-in [
+  with-mic-check =
+    cmd: fork "sh -c '${config.home.sessionVariables.TERMINAL} mic-check; ${cmd}'";
+in
+[
   {
     Orga = [
       { Kassandra = fork "kassandra2"; }
@@ -21,8 +27,7 @@ in [
       Zotero = fork "zotero";
       Open = fork "evince ~/git/promotion/out/thesis.pdf";
       Build = "sh -c 'cd ~/git/promotion; nix run'";
-      Directory =
-        fork "${config.home.sessionVariables.TERMINAL} -D ~/git/promotion";
+      Directory = fork "${config.home.sessionVariables.TERMINAL} -D ~/git/promotion";
       Edit = edit_dir "~/git/promotion";
     };
   }
@@ -34,28 +39,32 @@ in [
     };
   }
   {
-    SSH = let ssh = host: "ssh ${host}";
-    in [
-      { "hera via vpn" = ssh "hera.vpn.m-0.eu"; }
-      { "fluffy via vpn" = ssh "fluffy.vpn.m-0.eu"; }
-      { remote-builder = ssh "phoibe.cased.de"; }
-      { ag = ssh "ag-forward"; }
-      { mathe-gateway = ssh "gw"; }
-      { backup-server = ssh "borg.cysec.de"; }
-      { shells = ssh "shells"; }
-      { "bach (ved)" = ssh "bach.vocalensemble-darmstadt.de"; }
-      {
-        "nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net shell";
-      }
-      { "fluffy via local network" = ssh "fluffy.lo.m-0.eu"; }
-      { "hera via public v4" = ssh "hera-v4"; }
-      { "TU Tunnel" = "sshuttle --python python3.9 -r gw 130.83.0.0/16"; }
-    ];
+    SSH =
+      let
+        ssh = host: "ssh ${host}";
+      in
+      [
+        { "hera via vpn" = ssh "hera.vpn.m-0.eu"; }
+        { "fluffy via vpn" = ssh "fluffy.vpn.m-0.eu"; }
+        { remote-builder = ssh "phoibe.cased.de"; }
+        { ag = ssh "ag-forward"; }
+        { mathe-gateway = ssh "gw"; }
+        { backup-server = ssh "borg.cysec.de"; }
+        { shells = ssh "shells"; }
+        { "bach (ved)" = ssh "bach.vocalensemble-darmstadt.de"; }
+        { "nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net shell"; }
+        { "fluffy via local network" = ssh "fluffy.lo.m-0.eu"; }
+        { "hera via public v4" = ssh "hera-v4"; }
+        { "TU Tunnel" = "sshuttle --python python3.9 -r gw 130.83.0.0/16"; }
+      ]
+    ;
   }
   {
     Sound =
-      let mpdclient = host: "sh -c 'switch-mpd ${host}; ncmpcpp -h ${host}'";
-      in [
+      let
+        mpdclient = host: "sh -c 'switch-mpd ${host}; ncmpcpp -h ${host}'";
+      in
+      [
         { "Play/Pause" = "${pkgs.playerctl}/bin/playerctl play-pause"; }
         { "MPD lokal" = mpdclient "::"; }
         { "Lautstärke" = "ncpamixer"; }
@@ -75,17 +84,16 @@ in [
         { "MPD Lounge" = mpdclient "lounge.w17.io"; }
         { "MPD Kitchen" = mpdclient "kitchen.w17.io"; }
         { "MPD Space" = mpdclient "burbon.w17.io"; }
-      ];
+      ]
+    ;
   }
   {
     Apps = {
       Config = edit_dir "~/git/config";
       Files = fork "nautilus";
       Accounting = {
-        Update =
-          "sh -c 'cd ~/git/buchhaltung; nix develop -c interactive-update'";
-        Display =
-          "hledger -f ~/git/buchhaltung/buchhaltung.journal ui -- --watch --theme=terminal -X€ -t -E";
+        Update = "sh -c 'cd ~/git/buchhaltung; nix develop -c interactive-update'";
+        Display = "hledger -f ~/git/buchhaltung/buchhaltung.journal ui -- --watch --theme=terminal -X€ -t -E";
       };
       Games = {
         GW2 = fork "gw2";
@@ -105,20 +113,27 @@ in [
     };
   }
   {
-    Passmenu = let
-      copy-password = cmd:
-        "sh -c '(${cmd} | wl-copy) && ${
-          lib.getExe pkgs.termdown
-        } -T \"Clearing password in\" -f term 20 && wl-copy -c'";
-    in {
-      Unlock = copy-password "rbw get bitwarden";
-      Password = copy-password "rbw-fzf";
-      "OTP" = copy-password "rbw-totp-fzf";
-    };
+    Passmenu =
+      let
+        copy-password =
+          cmd:
+          "sh -c '(${cmd} | wl-copy) && ${
+            lib.getExe pkgs.termdown
+          } -T \"Clearing password in\" -f term 20 && wl-copy -c'"
+        ;
+      in
+      {
+        Unlock = copy-password "rbw get bitwarden";
+        Password = copy-password "rbw-fzf";
+        "OTP" = copy-password "rbw-totp-fzf";
+      }
+    ;
   }
   {
-    "Select Mode" = lib.mapAttrs (name: _: "select-mode ${name}")
-      (import ../machines.nix).${config.m-0.hostName};
+    "Select Mode" =
+      lib.mapAttrs (name: _: "select-mode ${name}")
+        (import ../machines.nix).${config.m-0.hostName}
+    ;
   }
   {
     Communication = [

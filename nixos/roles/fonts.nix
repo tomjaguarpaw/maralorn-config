@@ -1,17 +1,46 @@
-{ config, pkgs, lib, ... }: {
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+{
   fonts = {
     fontconfig = {
       enable = true;
       cache32Bit = true;
       defaultFonts =
-        let unicode-fallback = [ "Noto Sans Symbols" "Noto Sans Symbols2" ];
-        in {
+        let
+          unicode-fallback = [
+            "Noto Sans Symbols"
+            "Noto Sans Symbols2"
+          ];
+        in
+        {
           monospace =
-            [ "Symbols Nerd Font Mono" "CozetteVector" "Noto Sans Mono" ]
-            ++ unicode-fallback;
-          sansSerif = [ "B612" "Noto Sans" ] ++ unicode-fallback;
-          serif = [ "Libertinus Serif" "Noto Serif" ] ++ unicode-fallback;
-        };
+            [
+              "Symbols Nerd Font Mono"
+              "CozetteVector"
+              "Noto Sans Mono"
+            ]
+            ++ unicode-fallback
+          ;
+          sansSerif =
+            [
+              "B612"
+              "Noto Sans"
+            ]
+            ++ unicode-fallback
+          ;
+          serif =
+            [
+              "Libertinus Serif"
+              "Noto Serif"
+            ]
+            ++ unicode-fallback
+          ;
+        }
+      ;
     };
     fonts = builtins.attrValues {
       inherit (pkgs)
@@ -36,7 +65,8 @@
         spleen
         # Great if you need 8 px font, also nice on 12px.
 
-        gohufont tewi-font
+        gohufont
+        tewi-font
         # Too wide tracking: curie
 
         scientifica
@@ -54,16 +84,24 @@
         noto-fonts
         # for unicode fallback
 
-        nerdfonts;
+        nerdfonts
+      ;
     };
   };
 
   # create a cache of the font sources, often slow internet connections make it painful to
   # re-download them after a few months
-  environment.etc = let
-    # fonts with src attributes
-    font_sources = map (v: v.src) (lib.filter (v: v ? src) config.fonts.fonts);
-  in builtins.listToAttrs (lib.imap0 (n: source:
-    lib.nameValuePair "src-cache/fonts/${toString n}" { inherit source; })
-    font_sources);
+  environment.etc =
+    let
+      # fonts with src attributes
+      font_sources = map (v: v.src) (lib.filter (v: v ? src) config.fonts.fonts);
+    in
+    builtins.listToAttrs (
+      lib.imap0
+        (
+          n: source: lib.nameValuePair "src-cache/fonts/${toString n}" { inherit source; }
+        )
+        font_sources
+    )
+  ;
 }

@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }: {
+{
+  lib,
+  pkgs,
+  ...
+}:
+{
   programs = {
     seahorse.enable = lib.mkForce false;
     dconf.enable = true;
@@ -25,5 +30,8 @@
       core-utilities.enable = lib.mkForce false;
     };
   };
-  environment.gnome.excludePackages = [ pkgs.orca pkgs.gnome-tour ];
+  environment.gnome.excludePackages = [
+    pkgs.orca
+    pkgs.gnome-tour
+  ];
 }

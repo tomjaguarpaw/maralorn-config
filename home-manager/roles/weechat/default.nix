@@ -1,15 +1,30 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 let
   weechat = pkgs.wrapWeechat pkgs.weechat-unwrapped {
-    configure = { availablePlugins, ... }: {
-      plugins = builtins.attrValues (availablePlugins // {
-        python = availablePlugins.python.withPackages
-          (_: [ pkgs.weechatScripts.weechat-matrix ]);
-      });
-      scripts = [ pkgs.weechatScripts.weechat-matrix ];
-    };
+    configure =
+      {
+        availablePlugins,
+        ...
+      }:
+      {
+        plugins = builtins.attrValues (
+          availablePlugins // {
+            python = availablePlugins.python.withPackages (
+              _: [ pkgs.weechatScripts.weechat-matrix ]
+            );
+          }
+        );
+        scripts = [ pkgs.weechatScripts.weechat-matrix ];
+      }
+    ;
   };
-in {
+in
+{
   home.file = {
     python_plugins = {
       target = ".weechat/python";
@@ -75,13 +90,16 @@ in {
         [look]
         human_buffer_names = on
         [server]
-        ${lib.concatStringsSep "\n" (lib.mapAttrsToList
-          (server: serverConfig: ''
-            ${server}.address = "${serverConfig.address}"
-            ${server}.autoconnect = on
-            ${server}.username = "${serverConfig.user}"
-            ${server}.password = "${serverConfig.password}"
-          '') (pkgs.privateValue { } "weechat/matrix"))}
+        ${lib.concatStringsSep "\n" (
+          lib.mapAttrsToList
+            (server: serverConfig: ''
+              ${server}.address = "${serverConfig.address}"
+              ${server}.autoconnect = on
+              ${server}.username = "${serverConfig.user}"
+              ${server}.password = "${serverConfig.password}"
+            '')
+            (pkgs.privateValue { } "weechat/matrix")
+        )}
       '';
     };
   };
@@ -103,8 +121,7 @@ in {
         Unit.Description = "Weechat Tmux Session";
         Service = {
           Type = "forking";
-          ExecStart =
-            "${pkgs.tmux}/bin/tmux -L weechat -2 new-session -d -s irc -n weechat '${weechat}/bin/weechat'";
+          ExecStart = "${pkgs.tmux}/bin/tmux -L weechat -2 new-session -d -s irc -n weechat '${weechat}/bin/weechat'";
           Restart = "always";
         };
         Install.WantedBy = [ "default.target" ];

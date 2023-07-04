@@ -9,16 +9,12 @@
   maintenance_work_mem = "320 MB";
   huge_pages = "off";
   effective_cache_size = "3 GB";
-  effective_io_concurrency =
-    100; # concurrent IO only really activated if OS supports posix_fadvise function;
-  random_page_cost =
-    1.25; # speed of random disk access relative to sequential access (1.0);
+  effective_io_concurrency = 100; # concurrent IO only really activated if OS supports posix_fadvise function;
+  random_page_cost = 1.25; # speed of random disk access relative to sequential access (1.0);
   # Monitoring;
-  shared_preload_libraries =
-    "pg_stat_statements"; # per statement resource usage stats;
+  shared_preload_libraries = "pg_stat_statements"; # per statement resource usage stats;
   track_io_timing = "on"; # measure exact block IO times;
-  track_functions =
-    "pl"; # track execution times of pl-language procedures if any;
+  track_functions = "pl"; # track execution times of pl-language procedures if any;
   # Replication;
   wal_level = "replica"; # consider using at least "replica";
   max_wal_senders = 0;
@@ -32,8 +28,7 @@
 
   # WAL writing;
   wal_compression = "on";
-  wal_buffers =
-    -1; # auto-tuned by Postgres till maximum of segment size (16MB by default);
+  wal_buffers = -1; # auto-tuned by Postgres till maximum of segment size (16MB by default);
   wal_writer_delay = "200ms";
   wal_writer_flush_after = "1MB";
 

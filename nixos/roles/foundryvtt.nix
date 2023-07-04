@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  ...
+}:
 let
   name = "foundryvtt";
   stateDir = "/var/lib/${name}";
@@ -14,9 +17,11 @@ let
     minifyStaticFiles = true;
     updateChannel = "release";
   };
-  declarativeConfigFile =
-    builtins.toFile "foundry-options.json" (builtins.toJSON config);
-in {
+  declarativeConfigFile = builtins.toFile "foundry-options.json" (
+    builtins.toJSON config
+  );
+in
+{
   config = {
     systemd.services."${name}" = {
       wantedBy = [ "multi-user.target" ];
@@ -68,9 +73,7 @@ in {
                      }; Secure";
                      return 303 /;
                   }
-                  if ($http_cookie !~ "password=${
-                    pkgs.privateValue "" "foundry-pw"
-                  }") {
+                  if ($http_cookie !~ "password=${pkgs.privateValue "" "foundry-pw"}") {
                      return 303 /logout;
                   }
                 '';

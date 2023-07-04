@@ -1,4 +1,8 @@
-{ pkgs, ... }: {
+{
+  pkgs,
+  ...
+}:
+{
   home.packages = [ pkgs.firefox ];
   home.sessionVariables = {
     # So that electron can open firefox links. See

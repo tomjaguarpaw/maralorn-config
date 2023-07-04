@@ -1,10 +1,20 @@
-{ pkgs, lib, ... }: {
+{
+  pkgs,
+  lib,
+  ...
+}:
+{
   systemd.user = {
     services.fetch-banking = {
       Unit.Description = "Fetch banking";
       Service = {
         Type = "oneshot";
-        Environment = "PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.git ]}";
+        Environment = "PATH=${
+            lib.makeBinPath [
+              pkgs.coreutils
+              pkgs.git
+            ]
+          }";
         WorkingDirectory = "%h/git/buchhaltung";
         ExecStart = "${lib.getExe pkgs.nix} develop -c unsupervised-update";
       };

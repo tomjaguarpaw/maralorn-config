@@ -1,26 +1,36 @@
 flake-inputs:
-{ lib, config, pkgs, ... }:
-let inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
-in {
-  imports = [
-    (flake-inputs.secrets.lib.vpn "apollo")
-    flake-inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480s
-    ./hardware-configuration.nix
-    ../../roles
-    ../../roles/fonts.nix
-    ../../roles/boot-key.nix
-    ../../roles/standalone
-    ../../roles/metal.nix
-    (import ../../roles/monitoring/folder-size-exporter.nix {
-      folders = [
-        "/"
-        "/home"
-        "/home/maralorn"
-        "/home/maralorn/media"
-        "/home/maralorn/git"
-      ];
-    })
-  ] ++ flake-inputs.self.nixFromDirs [ ../../modules/clients ];
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
+let
+  inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
+in
+{
+  imports =
+    [
+      (flake-inputs.secrets.lib.vpn "apollo")
+      flake-inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480s
+      ./hardware-configuration.nix
+      ../../roles
+      ../../roles/fonts.nix
+      ../../roles/boot-key.nix
+      ../../roles/standalone
+      ../../roles/metal.nix
+      (import ../../roles/monitoring/folder-size-exporter.nix {
+        folders = [
+          "/"
+          "/home"
+          "/home/maralorn"
+          "/home/maralorn/media"
+          "/home/maralorn/git"
+        ];
+      })
+    ]
+    ++ flake-inputs.self.nixFromDirs [ ../../modules/clients ]
+  ;
 
   environment.systemPackages = [
     pkgs.networkmanagerapplet # For when the gnome dialog sucks in asking for a wifi password.
@@ -64,8 +74,13 @@ in {
       openDefaultPorts = true;
       cert = config.age.secrets."syncthing/apollo/cert.pem".path;
       key = config.age.secrets."syncthing/apollo/key.pem".path;
-    } // syncthing.declarativeWith [ "hera" "zeus" "pegasus" ]
-      "/home/maralorn/media";
+    } // syncthing.declarativeWith
+        [
+          "hera"
+          "zeus"
+          "pegasus"
+        ]
+        "/home/maralorn/media";
   };
   system.stateVersion = "19.09";
 }

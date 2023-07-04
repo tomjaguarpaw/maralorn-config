@@ -1,12 +1,18 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  ...
+}:
 let
   nur = pkgs.flake-inputs'.hexa-nur-packages.packages;
 
-  mkLovelaceModule = name: {
-    url = "custom/${name}.js?${nur.hassLovelaceModules."${name}".version}";
-    type = "module";
-  };
-in {
+  mkLovelaceModule =
+    name: {
+      url = "custom/${name}.js?${nur.hassLovelaceModules."${name}".version}";
+      type = "module";
+    }
+  ;
+in
+{
   systemd.tmpfiles.rules = [
     # Lovelace Cards
     "d /run/hass 0700 nginx nginx"

@@ -1,8 +1,11 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 let
   src = pkgs.fetchurl {
-    url =
-      "https://github.com/zgoat/goatcounter/releases/download/v2.0.4/goatcounter-v2.0.4-linux-amd64.gz";
+    url = "https://github.com/zgoat/goatcounter/releases/download/v2.0.4/goatcounter-v2.0.4-linux-amd64.gz";
     sha256 = "1h7hv5lk2gm3klbfbgwfa7xn31az9zmlryd8bqqq38lp5r56cpb4";
   };
   goatcounter-bin = pkgs.runCommand "goatcounter-bin" { } ''
@@ -11,7 +14,8 @@ let
     chmod +x $out/bin/goatcounter
   '';
   goatcounter-token = pkgs.privateValue "" "goatcounter-token";
-in {
+in
+{
   environment.systemPackages = [ goatcounter-bin ];
   users = {
     users.goatcounter = {
@@ -22,10 +26,12 @@ in {
   };
   services.postgresql = {
     enable = true;
-    ensureUsers = [{
+    ensureUsers = [ {
       name = "goatcounter";
-      ensurePermissions = { "DATABASE goatcounter" = "ALL PRIVILEGES"; };
-    }];
+      ensurePermissions = {
+        "DATABASE goatcounter" = "ALL PRIVILEGES";
+      };
+    } ];
     ensureDatabases = [ "goatcounter" ];
   };
   services.nginx = {
@@ -47,8 +53,7 @@ in {
       after = [ "postgresql.service" ];
       serviceConfig = {
         User = "goatcounter";
-        ExecStart =
-          "${goatcounter-bin}/bin/goatcounter serve -db 'postgresql://host=/run/postgresql dbname=goatcounter' -listen *:8081 -tls http -automigrate";
+        ExecStart = "${goatcounter-bin}/bin/goatcounter serve -db 'postgresql://host=/run/postgresql dbname=goatcounter' -listen *:8081 -tls http -automigrate";
         WatchdogSignal = "SIGTERM";
         WatchdogSec = "20m";
         Restart = "always";

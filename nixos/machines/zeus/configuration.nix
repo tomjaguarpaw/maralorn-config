@@ -1,36 +1,55 @@
 flake-inputs:
-{ config, pkgs, lib, ... }:
-let inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
-in {
-  imports = [
-    (flake-inputs.secrets.lib.vpn "zeus")
-    "${flake-inputs.nixos-hardware}/common/gpu/amd/sea-islands"
-    ./hardware-configuration.nix
-    ../../roles
-    ../../roles/fonts.nix
-    ../../roles/metal.nix
-    ../../roles/standalone
-  ] ++ flake-inputs.self.nixFromDirs [
-    ../../modules/zeus
-    ../../modules/clients
-  ];
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+let
+  inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
+in
+{
+  imports =
+    [
+      (flake-inputs.secrets.lib.vpn "zeus")
+      "${flake-inputs.nixos-hardware}/common/gpu/amd/sea-islands"
+      ./hardware-configuration.nix
+      ../../roles
+      ../../roles/fonts.nix
+      ../../roles/metal.nix
+      ../../roles/standalone
+    ]
+    ++ flake-inputs.self.nixFromDirs [
+      ../../modules/zeus
+      ../../modules/clients
+    ]
+  ;
 
   age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
 
   nix.distributedBuilds = false;
 
-  fileSystems = let
-    btrfsOptions = { options = [ "compress=zstd" "autodefrag" "noatime" ]; };
-  in {
-    "/disk" = { neededForBoot = true; } // btrfsOptions;
-    "/boot" = btrfsOptions;
-    "/nix" = btrfsOptions;
-    "/home/maralorn/.config/pulse" = {
-      mountPoint = "/home/maralorn/.config/pulse";
-      device = "/disk/persist/maralorn/.config/pulse";
-      options = [ "bind" ];
-    };
-  };
+  fileSystems =
+    let
+      btrfsOptions = {
+        options = [
+          "compress=zstd"
+          "autodefrag"
+          "noatime"
+        ];
+      };
+    in
+    {
+      "/disk" = { neededForBoot = true; } // btrfsOptions;
+      "/boot" = btrfsOptions;
+      "/nix" = btrfsOptions;
+      "/home/maralorn/.config/pulse" = {
+        mountPoint = "/home/maralorn/.config/pulse";
+        device = "/disk/persist/maralorn/.config/pulse";
+        options = [ "bind" ];
+      };
+    }
+  ;
 
   environment.etc = {
     nixos.source = "/disk/persist/maralorn/git/config";
@@ -55,7 +74,10 @@ in {
       "/var/lib/tailscale"
       "/root/.ssh"
     ];
-    users.maralorn.directories = [ ".cache/rbw" ".factorio" ];
+    users.maralorn.directories = [
+      ".cache/rbw"
+      ".factorio"
+    ];
   };
 
   services = {
@@ -84,8 +106,13 @@ in {
       configDir = "/disk/persist/syncthing";
       cert = config.age.secrets."syncthing/zeus/cert.pem".path;
       key = config.age.secrets."syncthing/zeus/key.pem".path;
-    } // syncthing.declarativeWith [ "hera" "apollo" "pegasus" ]
-      "/disk/persist/maralorn/media";
+    } // syncthing.declarativeWith
+        [
+          "hera"
+          "apollo"
+          "pegasus"
+        ]
+        "/disk/persist/maralorn/media";
     #minecraft-server = {
     #  enable = true;
     #  openFirewall = true;
@@ -102,7 +129,10 @@ in {
       support32Bit = true;
       tcp = {
         enable = true;
-        anonymousClients.allowedIpRanges = [ "127.0.0.1" "::1" ];
+        anonymousClients.allowedIpRanges = [
+          "127.0.0.1"
+          "::1"
+        ];
       };
     };
   };

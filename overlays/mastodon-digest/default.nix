@@ -1,7 +1,15 @@
 final: _prev:
 let
   pkgs = final;
-  deps = ps: with ps; [ jinja2 mastodon-py scipy python-dotenv ];
+  deps =
+    ps:
+    with ps; [
+      jinja2
+      mastodon-py
+      scipy
+      python-dotenv
+    ]
+  ;
   python-env = pkgs.python3.withPackages deps;
   src = pkgs.fetchFromGitHub {
     owner = "hodgesmr";
@@ -17,7 +25,8 @@ let
     cp -r default no-boosts
     cp ${./index.html.jinja} no-boosts/index.html.jinja
   '';
-in {
+in
+{
   mastodon_digest = pkgs.writeShellApplication {
     name = "mastodon_digest";
     runtimeInputs = [ python-env ];

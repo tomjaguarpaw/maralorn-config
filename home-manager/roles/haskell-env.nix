@@ -1,4 +1,8 @@
-{ pkgs, ... }: {
+{
+  pkgs,
+  ...
+}:
+{
   systemd.user.services.hoogle = {
     Unit.Description = "Hoogle server";
     Install.WantedBy = [ "graphical-session.target" ];

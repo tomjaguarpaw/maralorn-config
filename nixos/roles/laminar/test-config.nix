@@ -1,40 +1,67 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 let
   bins = lib.attrValues {
     inherit (pkgs)
-      git nix gnutar xz gzip openssh laminar builders-configurator
-      archive-nix-path;
+      git
+      nix
+      gnutar
+      xz
+      gzip
+      openssh
+      laminar
+      builders-configurator
+      archive-nix-path
+    ;
   };
   standardPath = lib.makeBinPath bins;
   systems = builtins.attrNames (builtins.readDir ../../machines);
   homes = lib.attrNames (import ../../../home-manager/machines.nix);
-  #deployCommand = "${pkgs.writeShellScript "deploy-system-config"
-  #  "${pkgs.systemd}/bin/systemctl start --no-block update-config"}";
-in {
+in
+#deployCommand = "${pkgs.writeShellScript "deploy-system-config"
+#  "${pkgs.systemd}/bin/systemctl start --no-block update-config"}";
+{
   services.laminar.cfgFiles.jobs = {
-    "test-config.run" = let
-      test-config = pkgs.writeHaskell "test-config" {
-        libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
-        ghcEnv = {
-          HOMES = lib.concatStringsSep " " homes;
-          SYSTEMS = lib.concatStringsSep " " systems;
-          #DEPLOY = deployCommand;
-          PATH = "${standardPath}:$PATH";
-        };
-        ghcArgs = [ "-threaded" ];
-      } (builtins.readFile ./test-config.hs);
-    in pkgs.writeShellScript "test-config" ''
-      FLAGS="" PATH=${standardPath}:$PATH ${test-config}
-    '';
-    "bump-config.run" = let
-      bump-config = pkgs.writeHaskell "bump-config" {
-        libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
-        ghcEnv.PATH = "${standardPath}:$PATH";
-        ghcArgs = [ "-threaded" ];
-      } (builtins.readFile ./bump-config.hs);
-    in pkgs.writeShellScript "bump-config" ''
-      PATH=${standardPath}:$PATH ${bump-config}
-    '';
+    "test-config.run" =
+      let
+        test-config =
+          pkgs.writeHaskell "test-config"
+            {
+              libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
+              ghcEnv = {
+                HOMES = lib.concatStringsSep " " homes;
+                SYSTEMS = lib.concatStringsSep " " systems;
+                #DEPLOY = deployCommand;
+                PATH = "${standardPath}:$PATH";
+              };
+              ghcArgs = [ "-threaded" ];
+            }
+            (builtins.readFile ./test-config.hs)
+        ;
+      in
+      pkgs.writeShellScript "test-config" ''
+        FLAGS="" PATH=${standardPath}:$PATH ${test-config}
+      ''
+    ;
+    "bump-config.run" =
+      let
+        bump-config =
+          pkgs.writeHaskell "bump-config"
+            {
+              libraries = builtins.attrValues pkgs.myHaskellScriptPackages;
+              ghcEnv.PATH = "${standardPath}:$PATH";
+              ghcArgs = [ "-threaded" ];
+            }
+            (builtins.readFile ./bump-config.hs)
+        ;
+      in
+      pkgs.writeShellScript "bump-config" ''
+        PATH=${standardPath}:$PATH ${bump-config}
+      ''
+    ;
   };
   #security.sudo.extraRules = let allowedCommands = [ deployCommand ];
   #in [{

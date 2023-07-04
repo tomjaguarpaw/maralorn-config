@@ -1,7 +1,17 @@
-{ pkgs, config, lib, ... }:
-let inherit (pkgs.flake-inputs.self) sourceInfo;
-in {
-  imports = [ ../vpn.nix ../admin.nix ];
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+let
+  inherit (pkgs.flake-inputs.self) sourceInfo;
+in
+{
+  imports = [
+    ../vpn.nix
+    ../admin.nix
+  ];
   system = {
     systemBuilderCommands = lib.mkIf (sourceInfo ? rev) ''
       echo ${sourceInfo.rev} > $out/config-commit
@@ -21,8 +31,7 @@ in {
     kernel.sysctl."fs.inotify.max_user_watches" = 204800;
   };
 
-  security.sudo.extraConfig =
-    "\n    Defaults timestamp_type=global, timestamp_timeout=15\n  ";
+  security.sudo.extraConfig = "\n    Defaults timestamp_type=global, timestamp_timeout=15\n  ";
 
   services.openssh = {
     enable = true;
@@ -39,7 +48,10 @@ in {
       };
       flake = pkgs.flake-inputs.nixos-unstable;
     };
-    settings.trusted-users = [ "maralorn" "laminar" ];
+    settings.trusted-users = [
+      "maralorn"
+      "laminar"
+    ];
     optimise = {
       dates = [ ];
       automatic = true;
@@ -48,9 +60,11 @@ in {
 
   environment = {
     systemPackages = [ pkgs.updateSystem ];
-    etc."nix/machines".source = toString (pkgs.runCommand "nix-machines" { } ''
-      cp $(${pkgs.builders-configurator}/bin/builders-configurator ${config.networking.hostName} --without-connection) $out
-    '');
+    etc."nix/machines".source = toString (
+      pkgs.runCommand "nix-machines" { } ''
+        cp $(${pkgs.builders-configurator}/bin/builders-configurator ${config.networking.hostName} --without-connection) $out
+      ''
+    );
   };
 
   nix = {

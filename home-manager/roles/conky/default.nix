@@ -1,8 +1,17 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 let
   dimensions = "20,47";
-  service = name:
-    { extra, text, wait, }:
+  service =
+    name:
+    {
+      extra,
+      text,
+      wait,
+    }:
     let
       config-file = builtins.toFile "conky-${name}.conf" ''
         conky.config = {
@@ -44,22 +53,28 @@ let
         ${text}
         ]]
       '';
-    in {
+    in
+    {
       name = "conky-${name}";
       value = {
-        Unit = { Description = "Run conky ${name}"; };
+        Unit = {
+          Description = "Run conky ${name}";
+        };
         Service = {
-          ExecStart = (pkgs.writeShellScript "conky-${name}" ''
-            ${lib.getExe pkgs.conky} -i ${toString wait} -c ${config-file}
-            ${lib.getExe pkgs.conky} -c ${config-file}
-          '').outPath;
+          ExecStart =
+            (pkgs.writeShellScript "conky-${name}" ''
+              ${lib.getExe pkgs.conky} -i ${toString wait} -c ${config-file}
+              ${lib.getExe pkgs.conky} -c ${config-file}
+            '').outPath;
           Restart = "always";
           RestartSec = "10s";
         };
         Install.WantedBy = [ "default.target" ];
       };
-    };
-in {
+    }
+  ;
+in
+{
   systemd.user.services = lib.mapAttrs' service {
     status = {
       extra = ''

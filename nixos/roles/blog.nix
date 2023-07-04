@@ -15,7 +15,9 @@
               add_header Cache-Control "public";
             '';
           };
-          "/" = { tryFiles = "$uri $uri.html $uri/index.html =404"; };
+          "/" = {
+            tryFiles = "$uri $uri.html $uri/index.html =404";
+          };
         };
         extraConfig = ''
           error_page 404 /not-found.html;
