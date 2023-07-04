@@ -24,8 +24,8 @@ let
            (decodeUtf8 -> current) <- gsettings "get" "org.gnome.desktop.background" "picture-uri" |> captureTrim
            let new = [i|file:///${wallPapers}/#{mode}/#{file}|] :: String
            when (new /= current) $ do
-             gsettings "set" "org.gnome.desktop.background" "picture-uri" new
-             gsettings "set" "org.gnome.desktop.screensaver" "picture-uri" new
+             gsettings "set" "org.gnome.desktop.background" "picture-uri-dark" new
+             gsettings "set" "org.gnome.desktop.screensaver" "picture-uri-dark" new
       ''
   ;
 in
