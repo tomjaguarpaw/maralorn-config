@@ -95,20 +95,28 @@ in
         update_interval = 5.0,
       '';
       text = ''
+        ''${if_match $cpu > 20}
         $color1
         CPU:
         $color0$cpu%
         $color1''${cpugraph cpu0 ${dimensions}}
+        $endif
+        ''${if_match $memperc > 50}
         RAM:
         $color0$mem
         $memperc%
         $color1''${memgraph ${dimensions}}
+        $endif
+        ''${if_match ''${upspeedf ''${gw_iface}} > 1024}
         Up:
         $color0''${upspeed ''${gw_iface}}
         $color1''${upspeedgraph ''${gw_iface} ${dimensions} $color1 $color1 5242880}
+        $endif
+        ''${if_match ''${downspeedf ''${gw_iface}} > 1024}
         Down:
         $color0''${downspeed ''${gw_iface}}
         $color1''${downspeedgraph ''${gw_iface} ${dimensions} $color1 $color1 12107200}
+        $endif
         $color0''${time %Y}
         ''${time %d. %b}
         ''${time KW%V}
