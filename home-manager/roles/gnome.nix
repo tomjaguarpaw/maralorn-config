@@ -119,6 +119,7 @@ in
 
     "org/gnome/desktop/interface" = {
       document-font-name = font;
+      color-scheme = "prefer-dark";
       font-name = font;
       monospace-font-name = font;
       font-antialiasing = "grayscale";
