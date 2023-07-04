@@ -1,4 +1,9 @@
-{ pkgs, config, ... }: {
+{
+  pkgs,
+  config,
+  ...
+}:
+{
   imports = [
     ./zsh
     ./home-options.nix
@@ -14,8 +19,10 @@
   home = {
     stateVersion = "22.05";
     enableNixpkgsReleaseCheck = true;
-    file.".face".source = config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/media/images/my_avatar_for_circular.jpg";
+    file.".face".source =
+      config.lib.file.mkOutOfStoreSymlink
+        "${config.home.homeDirectory}/media/images/my_avatar_for_circular.jpg"
+    ;
   };
 
   programs = {
@@ -66,8 +73,7 @@
     git = {
       aliases = {
         sync = "!git pull -r && git push";
-        cpr =
-          "!f() { git fetch origin refs/pull/$1/head && git checkout FETCH_HEAD; }; f";
+        cpr = "!f() { git fetch origin refs/pull/$1/head && git checkout FETCH_HEAD; }; f";
       };
 
       extraConfig = {
@@ -130,39 +136,80 @@
   };
 
   home = {
-    packages = builtins.attrValues {
-      inherit (pkgs)
-        go gdb mpc_cli ncmpcpp shfmt astyle nodejs tasksh magic-wormhole nix-top
-        matrix-commander upterm lazygit gh ledger aqbanking graphia
-        rocketchat-desktop;
-      inherit (pkgs.haskellPackages)
-        stack ghcid cabal-install pandoc hlint cabal2nix nix-derivation;
-      inherit (pkgs.unstableHaskellPackages)
-        haskell-language-server releaser ghc-debug-client eventlog2html fourmolu
-        ghc-debug-brick nixfmt calligraphy cabal-fmt hledger hledger-ui
-        hledger-web threadscope;
-      mytmux = pkgs.writeShellScriptBin "mytmux" ''
-        session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
-        if [[ -n $session ]]; then
-           exec ${pkgs.tmux}/bin/tmux attach -t $session;
-        else
-           exec ${pkgs.tmux}/bin/tmux;
-        fi
-      '';
-    } ++ [
-      (pkgs.writeShellScriptBin "unlock-ssh" ''
-        ssh-add <(rbw get "Git SSH Signingkey")
-        SSH_ASKPASS="print-ssh-pw" DISPLAY="a" ssh-add < /dev/null
-      '')
-      (pkgs.writeShellScriptBin "print-ssh-pw"
-        "rbw get ${config.m-0.hostName}.m-0.eu ssh-key")
-      (pkgs.writeShellScriptBin "dingdingding" (builtins.readFile ./signal.sh))
-    ];
+    packages =
+      builtins.attrValues {
+        inherit (pkgs)
+          mpc_cli
+          ncmpcpp
+          magic-wormhole
+          nix-top
+          matrix-commander
+          upterm
+          lazygit
+          gh
+        ;
+        inherit (pkgs)
+          go
+          gdb
+          shfmt
+          astyle
+          nodejs
+          tasksh
+          ledger
+          aqbanking
+          graphia
+          nixfmt
+        ;
+        inherit (pkgs.haskellPackages)
+          stack
+          ghcid
+          cabal-install
+          pandoc
+          hlint
+          cabal2nix
+          nix-derivation
+        ;
+        inherit (pkgs.unstableHaskellPackages)
+          haskell-language-server
+          releaser
+          ghc-debug-client
+          eventlog2html
+          fourmolu
+          ghc-debug-brick
+          calligraphy
+          cabal-fmt
+          hledger
+          hledger-ui
+          hledger-web
+          threadscope
+        ;
+        mytmux = pkgs.writeShellScriptBin "mytmux" ''
+          session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
+          if [[ -n $session ]]; then
+             exec ${pkgs.tmux}/bin/tmux attach -t $session;
+          else
+             exec ${pkgs.tmux}/bin/tmux;
+          fi
+        '';
+      }
+      ++ [
+        (pkgs.writeShellScriptBin "unlock-ssh" ''
+          ssh-add <(rbw get "Git SSH Signingkey")
+          SSH_ASKPASS="print-ssh-pw" DISPLAY="a" ssh-add < /dev/null
+        '')
+        (pkgs.writeShellScriptBin "print-ssh-pw"
+          "rbw get ${config.m-0.hostName}.m-0.eu ssh-key"
+        )
+        (pkgs.writeShellScriptBin "dingdingding" (builtins.readFile ./signal.sh))
+      ]
+    ;
     sessionVariables = {
       PATH = "$HOME/.nix-profile/bin:$PATH";
       BROWSER = "firefox";
-      SUDO_ASKPASS = toString (pkgs.writeShellScript "print-sudo-pw"
-        "rbw get ${config.m-0.hostName}.m-0.eu ${config.home.username}");
+      SUDO_ASKPASS = toString (
+        pkgs.writeShellScript "print-sudo-pw"
+          "rbw get ${config.m-0.hostName}.m-0.eu ${config.home.username}"
+      );
     };
   };
 

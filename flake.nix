@@ -8,6 +8,7 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixos-stable";
     };
+    nixfmt.url = "github:piegamesde/nixfmt/rfc101-style";
     secrets = {
       url = "git+ssh://git@hera.m-0.eu/config-secrets";
       inputs.nixpkgs.follows = "";
@@ -29,20 +30,20 @@
         nixpkgs-22_11.follows = "";
         blobs.follows = "";
       };
-      url =
-        "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git";
+      url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git";
     };
     home-manager = {
       url = "home-manager/release-23.05";
-      inputs = { nixpkgs.follows = ""; };
+      inputs = {
+        nixpkgs.follows = "";
+      };
     };
     hexa-nur-packages = {
       url = "github:mweinelt/nur-packages";
       inputs.nixpkgs.follows = "nixos-unstable";
     };
     pre-commit-hooks = {
-      url =
-        "github:maralorn/pre-commit-hooks.nix/f41c6e84f3a31d7415a293765d29244902bcf99d";
+      url = "github:maralorn/pre-commit-hooks.nix/f41c6e84f3a31d7415a293765d29244902bcf99d";
       inputs = {
         flake-compat.follows = "";
         gitignore.follows = "";
@@ -58,7 +59,8 @@
     nixos-hardware.url = "nixos-hardware";
   };
 
-  outputs = inputs:
-    inputs.flake-parts.lib.mkFlake { inherit inputs; }
-    (import ./flake-module.nix);
+  outputs =
+    inputs:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } (import ./flake-module.nix)
+  ;
 }

@@ -4,7 +4,12 @@ final: _prev: {
   nix-output-monitor = final.flake-inputs'.nix-output-monitor.packages.default;
   inherit (final.unstable)
     nil # Because old nil with new nix does not get cached.
-    forgejo;
+    forgejo
+  ;
   nix = final.nixVersions.nix_2_16;
-
+  nixfmt = final.lib.getBin (
+    final.haskell.lib.overrideCabal final.unstableHaskellPackages.nixfmt (
+      _: { src = final.flake-inputs.nixfmt; }
+    )
+  );
 }
