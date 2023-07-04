@@ -449,12 +449,12 @@ in
                   )
                   fenster
               ;
-              #condition = {
-              #  condition = "numeric_state";
-              #  entity_id = "weather.dwd_darmstadt";
-              #  attribute = "temperature";
-              #  below = 15;
-              #};
+              condition = {
+                condition = "numeric_state";
+                entity_id = "sensor.openweathermap_darmstadt_hourly_temperature";
+                attribute = "temperature";
+                below = 16;
+              };
               action = [
                 (actions.notify
                   "{{ trigger.to_state.name }} ist seit mehr als ${minutes} Minuten offen."
