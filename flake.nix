@@ -8,7 +8,15 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixos-stable";
     };
-    nixfmt.url = "github:piegamesde/nixfmt/rfc101-style";
+    nixfmt = {
+      url = "github:piegamesde/nixfmt/rfc101-style";
+      inputs = {
+        flake-compat.follows = "";
+        flake-utils.follows = "pre-commit-hooks/flake-utils";
+        nixpkgs.follows = "";
+        nixpkgs-stable.follows = "";
+      };
+    };
     secrets = {
       url = "git+ssh://git@hera.m-0.eu/config-secrets";
       inputs.nixpkgs.follows = "";
@@ -28,6 +36,7 @@
         utils.follows = "";
         nixpkgs.follows = "";
         nixpkgs-22_11.follows = "";
+        nixpkgs-23_05.follows = "";
         blobs.follows = "";
       };
       url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git";
@@ -43,7 +52,7 @@
       inputs.nixpkgs.follows = "nixos-unstable";
     };
     pre-commit-hooks = {
-      url = "github:maralorn/pre-commit-hooks.nix/f41c6e84f3a31d7415a293765d29244902bcf99d";
+      url = "github:cachix/pre-commit-hooks.nix";
       inputs = {
         flake-compat.follows = "";
         gitignore.follows = "";
