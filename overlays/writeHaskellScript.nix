@@ -65,12 +65,15 @@ in {
       import Shh
       import Relude
       import Say
-      import qualified Relude.Unsafe as Unsafe
-      import qualified Data.ByteString.Lazy as LBS
-      import qualified Data.ByteString.Lazy.Char8 as LBSC
-      import qualified Data.ByteString as BS
-      import qualified Data.ByteString.Char8 as BSC
-      import qualified Data.Text as Text
+      import Relude.Unsafe qualified as Unsafe
+      import Data.ByteString.Lazy qualified as LBS
+      import Data.ByteString.Lazy.Char8 qualified as LBSC
+      import Data.ByteString qualified as BS
+      import Data.ByteString.Char8 qualified as BSC
+      import Data.Text qualified as Text
+      import Data.Time qualified as Time
+      import Data.List qualified as List
+      import Data.String qualified as String
       import System.Environment (setEnv)
       import Control.Exception (bracket, try)
       import Data.String.Interpolate (i)

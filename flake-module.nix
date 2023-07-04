@@ -24,8 +24,8 @@
       default =
         pkgs.mkShell { shellHook = config.pre-commit.installationScript; };
     };
-    checks = {
-      system-checks = pkgs.recursiveLinkFarm "all-configs" {
+    packages = {
+      all-configs = pkgs.recursiveLinkFarm "all-configs" {
         nixos-configurations =
           lib.mapAttrs (_: config: config.config.system.build.toplevel)
           inputs.self.nixosConfigurations;

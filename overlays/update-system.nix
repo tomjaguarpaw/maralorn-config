@@ -117,28 +117,49 @@ let
         exe ([i|#{path}/activate|] :: String)
         update_modes
     '';
-    updateSystem = pkgs.writeShellScriptBin "update-system" ''
-      set -e
-      remote_host=$1
-      host=''${remote_host:-$(hostname)}
-      echo "Building configuration for $host …"
-      output=$(nom build --builders @$(builders-configurator) $HOME/git/config#nixosConfigurations.$host.config.system.build.toplevel --no-link --print-out-paths)
-      if [[ -z "$remote_host" ]]; then
-        on_target() {
-          /run/wrappers/bin/sudo -A $@
-        }
-      else
-        on_target() {
-          ${pkgs.lib.getExe pkgs.openssh} root@$host $@
-        }
-        echo "Uploading derivation to $host …"
-        ${final.lib.getExe pkgs.nix} copy --derivation $output --to ssh://$host
-        echo "Uploading configuration to $host …"
-        ${final.lib.getExe pkgs.nix} copy $output --to ssh://$host
-      fi
-      on_target ${pkgs.nix}/bin/nix-env -p /nix/var/nix/profiles/system --set $output
-      on_target $output/bin/switch-to-configuration switch
-      archive-nix-path $output
+    updateSystem = pkgs.writeHaskellScript {
+      name = "update-system";
+      bins = [
+        # nix-copy-closure is buggy in nix 2.15
+        pkgs.nixVersions.nix_2_13
+        pkgs.openssh
+        pkgs.archive-nix-path
+        pkgs.builders-configurator
+        pkgs.nix-output-monitor
+        pkgs.iputils
+      ];
+    } ''
+      deploy :: Maybe String -> IO ()
+      deploy remote_host = do
+        ${get_hostname}
+        let host = fromMaybe (decodeUtf8 hostname) remote_host
+            is_remote = host /= decodeUtf8 hostname
+        say [i|Building configuration for #{host} …|]
+        ${get_builders}
+        path <- decodeUtf8 @String <$> (nom ["build", "--builders", [i|@#{builders}|], "--print-out-paths", "--no-link", [i|${configPath}\#nixosConfigurations.#{host}.config.system.build.toplevel|]] |> captureTrim)
+        on_target <- is_remote & \case
+          True -> do
+            say [i|Uploading derivation to #{host} …|]
+            nix "copy" "--derivation" path "--to" ([i|ssh://#{host}|] :: String)
+            say [i|Uploading configuration to #{host} …|]
+            nix "copy" path "--to" ([i|ssh://#{host}|] :: String)
+            pure (ssh ([i|root@#{host}|] :: String))
+          False -> pure (exe "/run/wrappers/bin/sudo" "-A")
+        on_target ["nix-env", "-p", "/nix/var/nix/profiles/system", "--set", path]
+        on_target [[i|#{path}/bin/switch-to-configuration|], "switch"]
+        archive_nix_path path
+
+      is_reachable host = do
+        ping_result <- tryFailure (ping "-W0.5" "-c1" host &> devNull)
+        ping_result & \case
+          Left _ -> say [i|#{host} not reachable. skipping.|] >> pure False
+          Right _ -> pure True
+
+      main = getArgs >>= \case
+        [] -> deploy Nothing
+        hosts -> (if hosts == ["all"] then ["apollo", "zeus", "fluffy", "hera"] else hosts)
+          & filterM is_reachable
+          >>= mapM_ (deploy . Just)
     '';
   };
 in mode-scripts // { inherit mode-scripts; }

@@ -38,7 +38,7 @@ main = do
   say "Running checks"
   builders <- builders_configurator |> captureTrim
   nix "flake" "check" "--builders" ([i|@#{builders}|] :: String) "--accept-flake-config" "-L"
-  nix ["build", ".#checks.x86_64-linux.system-checks", "--builders", [i|@#{builders}|], "--accept-flake-config", "-L"]
+  nix ["build", ".#all-configs", "--builders", [i|@#{builders}|], "--accept-flake-config", "-L"]
   archive_nix_path "./result"
   say "Checks succeeded"
   -- when (branch == "main") $ do
