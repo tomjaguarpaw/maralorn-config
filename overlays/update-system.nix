@@ -137,6 +137,7 @@ let
         say [i|Building configuration for #{host} …|]
         ${get_builders}
         path <- decodeUtf8 @String <$> (nom ["build", "--builders", [i|@#{builders}|], "--print-out-paths", "--no-link", [i|${configPath}\#nixosConfigurations.#{host}.config.system.build.toplevel|]] |> captureTrim)
+        archive_nix_path path
         on_target <- is_remote & \case
           True -> do
             say [i|Uploading derivation to #{host} …|]
@@ -147,7 +148,6 @@ let
           False -> pure (exe "/run/wrappers/bin/sudo" "-A")
         on_target ["nix-env", "-p", "/nix/var/nix/profiles/system", "--set", path]
         on_target [[i|#{path}/bin/switch-to-configuration|], "switch"]
-        archive_nix_path path
 
       is_reachable host = do
         ping_result <- tryFailure (ping "-W0.5" "-c1" host &> devNull)
