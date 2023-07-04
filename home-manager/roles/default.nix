@@ -140,9 +140,7 @@
       inherit (pkgs.unstableHaskellPackages)
         haskell-language-server releaser ghc-debug-client eventlog2html fourmolu
         ghc-debug-brick nixfmt calligraphy cabal-fmt hledger hledger-ui
-        hledger-web;
-      threadscope = pkgs.haskell.lib.unmarkBroken
-        (pkgs.haskell.lib.doJailbreak pkgs.unstableHaskellPackages.threadscope);
+        hledger-web threadscope;
       mytmux = pkgs.writeShellScriptBin "mytmux" ''
         session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
         if [[ -n $session ]]; then
