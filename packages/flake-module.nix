@@ -37,8 +37,8 @@ let
             ${lib.getExe hpkgs.cabal2nix} . > fresh-default.nix
             cp ${cleanSource}/default.nix .
             chmod u+w default.nix
-            ${lib.getExe unstable-pkgs.nixfmt} fresh-default.nix default.nix
-            ${stable-pkgs.diffutils}/bin/diff -w default.nix fresh-default.nix
+            ${lib.getExe hpkgs.nixfmt} fresh-default.nix default.nix
+            ${stable-pkgs.diffutils}/bin/diff -uw default.nix fresh-default.nix
             echo "default.nix confirmed to be up-to-date."
           '';
         } // overrides old
@@ -47,13 +47,18 @@ let
     ]
   ;
   haskellPackagesOverlay =
-    final: _prev:
+    final: prev:
     lib.mapAttrs (_: package: package final) myHaskellPackages // {
       streamly = final.streamly_0_9_0;
+      nixfmt = overrideCabal (_: { src = inputs.nixfmt; }) prev.nixfmt;
     }
   ;
   selectHaskellPackages =
-    attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages;
+    attrs:
+    lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages // {
+      inherit (attrs) nixfmt;
+    }
+  ;
   myHaskellPackages = {
     wizards-dialog = cleanCabalPackage ./wizards-dialog { };
     rssfeeds = cleanCabalPackage ./rssfeeds { };

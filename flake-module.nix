@@ -67,7 +67,7 @@
           pkgs = inputs'.nixos-unstable.legacyPackages;
           check.enable = true;
           settings = {
-            tools.nixfmt = lib.mkForce pkgs.nixfmt;
+            tools.nixfmt = lib.mkForce (lib.getBin pkgs.nixfmt);
             settings.ormolu.defaultExtensions = [
               "TypeApplications"
               "BangPatterns"

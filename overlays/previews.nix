@@ -7,9 +7,4 @@ final: _prev: {
     forgejo
   ;
   nix = final.nixVersions.nix_2_16;
-  nixfmt = final.lib.getBin (
-    final.haskell.lib.overrideCabal final.unstableHaskellPackages.nixfmt (
-      _: { src = final.flake-inputs.nixfmt; }
-    )
-  );
 }
