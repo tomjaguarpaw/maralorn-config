@@ -50,8 +50,8 @@ in
       surface-opacity = 70;
       panel-icon-color = true;
       panel-icon-style = "application";
-      theme = "dark";
-      primary-color = "#000047";
+      theme = "primary";
+      primary-color = "#1d03a3";
       focus-effect = "border";
       vertical-panel-position = "left";
     };
