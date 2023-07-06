@@ -18,7 +18,7 @@
       };
     };
     secrets = {
-      url = "git+ssh://git@hera.m-0.eu/config-secrets";
+      url = "git+ssh://gitea@code.maralorn.de/maralorn/config-secrets";
       inputs.nixpkgs.follows = "";
     };
     flake-parts.inputs.nixpkgs-lib.follows = "nixos-unstable";

@@ -352,17 +352,17 @@
         "nixpkgs": []
       },
       "locked": {
-        "lastModified": 1688226365,
-        "narHash": "sha256-EHOrcyLl/kQSWI+0e0bhnX+wOMSGJHnsVzULqP4rlyA=",
+        "lastModified": 1688600027,
+        "narHash": "sha256-1wnMe2DCZB19GTiDawSbO/PzKydBMwN6rTR3NFgiR98=",
         "ref": "refs/heads/main",
-        "rev": "310b8b6587a4b44a2fc6595422a5c913d5b09c8d",
-        "revCount": 239,
+        "rev": "cf660660d683d5485f3362c9cf31e02558bfe23d",
+        "revCount": 241,
         "type": "git",
-        "url": "ssh://git@hera.m-0.eu/config-secrets"
+        "url": "ssh://gitea@code.maralorn.de/maralorn/config-secrets"
       },
       "original": {
         "type": "git",
-        "url": "ssh://git@hera.m-0.eu/config-secrets"
+        "url": "ssh://gitea@code.maralorn.de/maralorn/config-secrets"
       }
     },
     "systems": {
