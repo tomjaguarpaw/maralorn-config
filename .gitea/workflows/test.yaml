@@ -1,0 +1,12 @@
+name: Nix build
+on: [push]
+run-name: Test and build flake
+jobs:
+  nix-build:
+    runs-on: nix
+    env:
+        HOME: .
+    steps:
+      - uses: actions/checkout@v3
+      - run: nix flake check --builders $(builders-configurator fluffy) --log-format raw
+      - run: nix build --builders $(builders-configurator fluffy) --log-format raw .#all-configs
