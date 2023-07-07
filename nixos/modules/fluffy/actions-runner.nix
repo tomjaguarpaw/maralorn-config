@@ -12,17 +12,18 @@
     labels = [ "nix:host" ];
     hostPackages = builtins.attrValues {
       inherit (pkgs)
+        archive-nix-path
         bash
+        builders-configurator
         coreutils
         curl
         gawk
         gitMinimal
         gnused
-        nodejs
-        wget
         nix
-        archive-nix-path
-        builders-configurator
+        nodejs
+        openssh
+        wget
       ;
     };
   };
