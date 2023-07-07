@@ -108,6 +108,7 @@
         "__pycache__"
         ".hledger-web_client_session_key.aes"
         ".nix-gc-roots"
+        "result"
       ];
       userEmail = "mail@maralorn.de";
       userName = "maralorn";
