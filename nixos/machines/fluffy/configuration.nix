@@ -60,6 +60,7 @@ in
       allowedTCPPorts = [
         21 # ftp for scanner
         80 # http
+        443 # https
         631 # cups
       ];
       allowedTCPPortRanges =
