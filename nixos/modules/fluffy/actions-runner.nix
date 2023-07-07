@@ -1,24 +1,14 @@
 {
   config,
-  pkgs,
   ...
 }:
 {
-  services.gitea-actions-runner.instances.fluffy = {
+  virtualisation.podman.enable = true;
+  services.gitea-actions-runner.instances.${config.networking.hostName} = {
     enable = true;
-    name = "fluffy";
+    name = config.networking.hostName;
     url = "https://code.maralorn.de";
     tokenFile = config.age.secrets.forgejo-runner-token.path;
-    labels = [ "nix:host" ];
-    hostPackages = builtins.attrValues {
-      inherit (pkgs)
-        bash
-        coreutils
-        curl
-        gitMinimal
-        wget
-        nix
-      ;
-    };
+    labels = [ "ubuntu-latest:docker:catthehacker/ubuntu:act-latest" ];
   };
 }
