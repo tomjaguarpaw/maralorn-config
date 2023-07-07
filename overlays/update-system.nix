@@ -33,6 +33,7 @@ let
         ''
           main = do
             links <- getArgs
+            ${get_hostname}
             when (null links) do
               say "Usage: archive-nix-path <installables…>"
               exitFailure
@@ -41,20 +42,21 @@ let
             when (null paths) do
               say "Found no paths to upload."
               exitFailure
-            say [i|Uploading the following paths to fluffy:\n  #{List.intercalate "\n  " paths}|]
             need_newline <- newIORef False
             let putChar char = writeIORef need_newline True >> BS.putStr char
                 putLine line = whenM (readIORef need_newline) (BSC.putStrLn "") >> BSC.putStrLn line
-            nix_copy_closure "--to" "fluffy" paths |!> readInputLines (mapM_ $ BS.toStrict <&> \case
-              line | BSC.isInfixOf "' from '" line -> putChar "s"
-              line | BSC.isInfixOf "' to '" line -> putChar "u"
-              line -> putLine line)
+            when (hostname /= "fluffy") do
+              say [i|Uploading the following paths to fluffy:\n  #{List.intercalate "\n  " paths}|]
+              nix_copy_closure "--to" "fluffy" paths |!> readInputLines (mapM_ $ BS.toStrict <&> \case
+                line | BSC.isInfixOf "' from '" line -> putChar "s"
+                line | BSC.isInfixOf "' to '" line -> putChar "u"
+                line -> putLine line)
             now <- Time.getZonedTime
             let timestamp =  Time.formatTime Time.defaultTimeLocale "%F-%T" now
             paths & mapM_ \path -> do
               let gc_root = [i|/disk/volatile/nix-gc-roots/#{timestamp}-#{drop 44 path}|] :: String
               putLine [i|Setting gc-root #{gc_root}|]
-              ssh "fluffy" "nix" "build" "-o" gc_root path
+              (if hostname == "fluffy" then exe else ssh "fluffy") ["nix", "build", "-o", gc_root, path]
         ''
     ;
     maintenance = pkgs.writeShellScriptBin "maintenance" ''

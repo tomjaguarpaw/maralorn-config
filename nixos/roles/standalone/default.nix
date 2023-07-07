@@ -48,10 +48,7 @@ in
       };
       flake = pkgs.flake-inputs.nixos-unstable;
     };
-    settings.trusted-users = [
-      "maralorn"
-      "laminar"
-    ];
+    settings.trusted-users = [ "maralorn" ];
     optimise = {
       dates = [ ];
       automatic = true;
