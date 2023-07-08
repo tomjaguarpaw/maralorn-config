@@ -63,10 +63,6 @@ in
     );
   };
 
-  programs.ssh.knownHosts = lib.mapAttrs hosts.aliases (
-    _: aliases: { extraHostNames = map (alias: "${alias}.maralorn.de") aliases; }
-  );
-
   m-0 = {
     virtualHosts = lib.genAttrs (hosts.aliases.${hostName} or [ ]) (
       name: "${name}.maralorn.de"
@@ -265,6 +261,11 @@ in
     ssh = {
       extraConfig = pkgs.privateValue "" "ssh-config";
       startAgent = true;
+      knownHosts =
+        lib.mapAttrs
+          (_: aliases: { extraHostNames = map (alias: "${alias}.maralorn.de") aliases; })
+          hosts.aliases
+      ;
     };
     zsh = {
       enable = true;
