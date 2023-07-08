@@ -63,6 +63,10 @@ in
     );
   };
 
+  programs.ssh.knownHosts = lib.mapAttrs hosts.aliases (
+    _: aliases: { extraHostNames = map (alias: "${alias}.maralorn.de") aliases; }
+  );
+
   m-0 = {
     virtualHosts = lib.genAttrs (hosts.aliases.${hostName} or [ ]) (
       name: "${name}.maralorn.de"

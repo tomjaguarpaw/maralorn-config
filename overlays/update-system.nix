@@ -56,7 +56,7 @@ let
             paths & mapM_ \path -> do
               let gc_root = [i|/disk/volatile/nix-gc-roots/#{timestamp}-#{drop 44 path}|] :: String
               putLine [i|Setting gc-root #{gc_root}|]
-              (if hostname == "fluffy" then exe else ssh "fluffy") ["nix", "build", "-o", gc_root, path]
+              ssh "fluffy" "nix" "build" "-o" gc_root path
         ''
     ;
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
