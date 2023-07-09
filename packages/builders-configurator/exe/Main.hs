@@ -10,10 +10,9 @@ import Effectful (Eff, Effect, (:>))
 import Effectful qualified as Eff
 import Effectful.Dispatch.Dynamic qualified as Eff
 import Effectful.TH (makeEffect)
+import Network.HTTP.Req qualified as Req
 import Relude
 import Say (say)
-import Shh ((&!>), (&>))
-import Shh qualified
 import System.IO qualified as IO
 import Witch (into)
 
@@ -77,12 +76,17 @@ runWithoutConnectivity = Eff.interpret $ \_ -> \case
 
 runWithPing :: Eff.IOE :> es => Eff (Ping : es) a -> Eff es a
 runWithPing = Eff.interpret $ \_ -> \case
-  CheckConnectivity host_name -> do
-    liftIO $ ping `Exception.catch` \(_ :: Shh.Failure) -> pure False
-   where
-    ping = do
-      Shh.exe ["/run/wrappers/bin/ping", into @String (sshHostToDNS host_name), "-c1", "-w1"] &> Shh.devNull &!> Shh.devNull
-      pure True
+  CheckConnectivity host_name -> liftIO $ Exception.handle (\(_ :: SomeException) -> pure True) do
+    let reqUrl = Req.http (sshHostToDNS host_name)
+    response <- (Req.runReq Req.defaultHttpConfig $ Req.req Req.GET reqUrl Req.NoReqBody Req.lbsResponse (Req.responseTimeout 500_000))
+    let status = Req.responseStatusCode response
+    pure $ status >= 200 && status < 300
+
+----,  liftIO $ ping `Exception.catch` \(_ :: Shh.Failure) -> pure False
+----, where
+----,  ping = do
+----,    Shh.exe ["/run/wrappers/bin/ping", into @String (sshHostToDNS host_name), "-c1", "-w1"] &> Shh.devNull &!> Shh.devNull
+----,    pure True
 
 sshHostToDNS :: Text -> Text
 sshHostToDNS = \case

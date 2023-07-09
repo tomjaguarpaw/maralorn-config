@@ -39,8 +39,8 @@ executable builders-configurator
     , effectful
     , effectful-th
     , relude
+    , req
     , say
-    , shh
     , string-interpolate
     , text
     , witch

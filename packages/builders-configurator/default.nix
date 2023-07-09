@@ -6,8 +6,8 @@
   effectful-th,
   lib,
   relude,
+  req,
   say,
-  shh,
   string-interpolate,
   text,
   witch,
@@ -24,8 +24,8 @@ mkDerivation {
     effectful
     effectful-th
     relude
+    req
     say
-    shh
     string-interpolate
     text
     witch
