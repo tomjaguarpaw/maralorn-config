@@ -28,7 +28,7 @@ in
       ../../roles/go-neb.nix
       ../../roles/goatcounter.nix
       ../../roles/headscale.nix
-      ../../roles/laminar
+      # ../../roles/laminar
       ../../roles/mailman.nix
       ../../roles/matrix-synapse
       ../../roles/miniflux.nix
@@ -82,15 +82,15 @@ in
         Type = "oneshot";
       };
     };
-    bump-config = {
-      script = ''
-        ${pkgs.laminar}/bin/laminarc queue bump-config
-      '';
-      serviceConfig = {
-        Type = "oneshot";
-      };
-      startAt = "Sat 04:00";
-    };
+    #bump-config = {
+    #  script = ''
+    #    ${pkgs.laminar}/bin/laminarc queue bump-config
+    #  '';
+    #  serviceConfig = {
+    #    Type = "oneshot";
+    #  };
+    #  startAt = "Sat 04:00";
+    #};
     night-routines = {
       script =
         let
