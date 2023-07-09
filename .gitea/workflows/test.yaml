@@ -4,10 +4,26 @@ run-name: Test and build flake
 jobs:
   nix-build:
     runs-on: nix
+    strategy:
+       matrix:
+         attribute:
+           - nixosConfigurations.zeus.config.system.build.toplevel
+           - nixosConfigurations.apollo.config.system.build.toplevel
+           - nixosConfigurations.hera.config.system.build.toplevel
+           - nixosConfigurations.fluffy.config.system.build.toplevel
+           - homeModes.zeus
+           - homeModes.apollo
     env:
         HOME: .
     steps:
       - uses: actions/checkout@v3
-      - run: nix flake check --builders $(builders-configurator fluffy) --log-format raw
-      - run: nix build --builders $(builders-configurator fluffy) --log-format raw .#all-configs
-      - run: archive-nix-path ./result
+      - run: nix build --builders $(builders-configurator fluffy) --log-format raw .#{{ matrix.attribute }} -v
+      - run: archive-nix-path
+  nix-flake-check:
+    runs-on: nix
+    env:
+        HOME: .
+    steps:
+      - uses: actions/checkout@v3
+      - run: nix flake check --builders $(builders-configurator fluffy) --log-format raw -v
+      - run: archive-nix-path
