@@ -1,9 +1,16 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }:
 {
+  programs.ssh.extraConfig = lib.mkBefore ''
+    Match localuser gitea-runner
+      IdentityFile /var/lib/gitea-runner/forgejo-runner-key
+    Match localuser gitea-runner host fluffy
+      User ci-upload-user
+  '';
   services.gitea-actions-runner.instances.${config.networking.hostName} = {
     enable = true;
     name = config.networking.hostName;
