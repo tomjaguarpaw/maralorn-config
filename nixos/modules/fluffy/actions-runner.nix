@@ -11,6 +11,7 @@
     Match localuser gitea-runner host fluffy
       User ci-upload-user
   '';
+  nix.settings.trusted-users = [ "gitea-runner" ];
   services.gitea-actions-runner.instances.${config.networking.hostName} = {
     enable = true;
     name = config.networking.hostName;
