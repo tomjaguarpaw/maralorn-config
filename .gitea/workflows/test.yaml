@@ -17,7 +17,7 @@ jobs:
         HOME: .
     steps:
       - uses: actions/checkout@v3
-      - run: nix build --builders $(builders-configurator fluffy) --log-format raw .${{ matrix.attribute }} -v
+      - run: nix build --builders $(builders-configurator fluffy) --log-format raw .#${{ matrix.attribute }} -v
       - run: archive-nix-path
   nix-flake-check:
     runs-on: nix
