@@ -46,15 +46,6 @@
       devShells = {
         default = pkgs.mkShell { shellHook = config.pre-commit.installationScript; };
       };
-      packages = {
-        all-configs = pkgs.recursiveLinkFarm "all-configs" {
-          nixos-configurations =
-            lib.mapAttrs (_: config: config.config.system.build.toplevel)
-              inputs.self.nixosConfigurations
-          ;
-          home-manager-configurations = inputs.self.homeModes;
-        };
-      };
 
       pre-commit =
         let
