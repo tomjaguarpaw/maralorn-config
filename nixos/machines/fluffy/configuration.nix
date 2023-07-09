@@ -17,7 +17,10 @@ in
       ../../roles/standalone
       ../../roles/server
     ]
-    ++ flake-inputs.self.nixFromDirs [ ../../modules/fluffy ]
+    ++ flake-inputs.self.nixFromDirs [
+      ../../modules/fluffy
+      ../../modules/standalone
+    ]
   ;
 
   age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
