@@ -261,11 +261,6 @@ in
     ssh = {
       extraConfig = pkgs.privateValue "" "ssh-config";
       startAgent = true;
-      knownHosts =
-        lib.mapAttrs
-          (_: aliases: { extraHostNames = map (alias: "${alias}.maralorn.de") aliases; })
-          hosts.aliases
-      ;
     };
     zsh = {
       enable = true;
