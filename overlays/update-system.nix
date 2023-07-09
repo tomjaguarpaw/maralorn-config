@@ -32,11 +32,10 @@ let
         }
         ''
           main = do
-            links <- getArgs
+            links <- getArgs <&> \case
+               [] -> ["./result"]
+               x -> x
             ${get_hostname}
-            when (null links) do
-              say "Usage: archive-nix-path <installables…>"
-              exitFailure
             say "Collecting paths to upload"
             paths :: [String] <- fmap decodeUtf8 <$> (nix "path-info" links |> captureLines)
             when (null paths) do
