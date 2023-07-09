@@ -10,3 +10,4 @@ jobs:
       - uses: actions/checkout@v3
       - run: nix flake check --builders $(builders-configurator fluffy) --log-format raw
       - run: nix build --builders $(builders-configurator fluffy) --log-format raw .#all-configs
+      - run: archive-nix-path ./result
