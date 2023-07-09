@@ -17,7 +17,12 @@ jobs:
         HOME: .
     steps:
       - uses: actions/checkout@v3
-      - run: nix build --builders $(builders-configurator fluffy) --log-format raw .#${{ matrix.attribute }} -v
+      - name: Configuring remote builders
+        run: |
+          mkdir -p ~/.config/nix
+          cp $(builders-configurator) ~/.config/nix/machines
+          echo "builders = @$(pwd)/.config/nix/machines" >> ~/.config/nix/nix.conf
+      - run: nix build --log-format bar-with-logs .#${{ matrix.attribute }} -v
       - run: archive-nix-path
   nix-flake-check:
     runs-on: nix
@@ -25,4 +30,9 @@ jobs:
         HOME: .
     steps:
       - uses: actions/checkout@v3
-      - run: nix flake check --builders $(builders-configurator fluffy) --log-format raw -v
+      - name: Configuring remote builders
+        run: |
+          mkdir -p ~/.config/nix
+          cp $(builders-configurator) ~/.config/nix/machines
+          echo "builders = @$(pwd)/.config/nix/machines" >> ~/.config/nix/nix.conf
+      - run: nix flake check --log-format bar-with-logs -v
