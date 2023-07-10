@@ -5,6 +5,11 @@
   ...
 }:
 {
+  environment.persistence."/disk/persist".files = [
+    "/var/lib/private/gitea-runner/fluffy/.labels"
+    "/var/lib/private/gitea-runner/fluffy/.runner"
+    "/var/lib/private/gitea-runner/forgejo-runner-key"
+  ];
   programs.ssh.extraConfig = lib.mkBefore ''
     Match localuser gitea-runner
       IdentityFile /var/lib/gitea-runner/forgejo-runner-key
