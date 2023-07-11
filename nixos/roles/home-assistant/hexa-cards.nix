@@ -5,12 +5,10 @@
 let
   nur = pkgs.flake-inputs'.hexa-nur-packages.packages;
 
-  mkLovelaceModule =
-    name: {
-      url = "custom/${name}.js?${nur.hassLovelaceModules."${name}".version}";
-      type = "module";
-    }
-  ;
+  mkLovelaceModule = name: {
+    url = "custom/${name}.js?${nur.hassLovelaceModules."${name}".version}";
+    type = "module";
+  };
 in
 {
   systemd.tmpfiles.rules = [

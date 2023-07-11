@@ -9,14 +9,12 @@ let
   stateDir = "/var/lib/laminar";
   cfgDir = "${stateDir}/cfg";
   cfg = config.services.laminar;
-  mkTimeoutConf =
-    run_name: {
-      "${lib.removeSuffix ".run" run_name}.conf" =
-        builtins.toFile "timeout.conf"
-          "TIMEOUT=10800"
-      ;
-    }
-  ;
+  mkTimeoutConf = run_name: {
+    "${lib.removeSuffix ".run" run_name}.conf" =
+      builtins.toFile "timeout.conf"
+        "TIMEOUT=10800"
+    ;
+  };
   addTimeouts =
     cfg_files:
     cfg_files // {

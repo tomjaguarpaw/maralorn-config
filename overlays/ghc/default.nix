@@ -9,15 +9,13 @@ let
   shell = hpkgs.shellFor {
     withHoogle = true;
     packages = p: builtins.attrValues (self.lib.selectHaskellPackages p);
-    extraDependencies =
-      p: {
-        libraryHaskellDepends = builtins.attrValues (
-          myPkgs.makeHaskellScriptPackages p // selectHaskellPackages p // {
-            inherit (p) ghc-debug-client;
-          }
-        );
-      }
-    ;
+    extraDependencies = p: {
+      libraryHaskellDepends = builtins.attrValues (
+        myPkgs.makeHaskellScriptPackages p // selectHaskellPackages p // {
+          inherit (p) ghc-debug-client;
+        }
+      );
+    };
   };
 in
 {

@@ -191,21 +191,19 @@ in
     services =
       let
         hosts = builtins.attrNames config.services.nginx.virtualHosts;
-        makeConfig =
-          host: {
-            name = "acme-${host}";
-            value = {
-              serviceConfig = {
-                Restart = "on-failure";
-                RestartSec = 600;
-              };
-              unitConfig = {
-                StartLimitIntervalSec = 2400;
-                StartLimitBurst = 3;
-              };
+        makeConfig = host: {
+          name = "acme-${host}";
+          value = {
+            serviceConfig = {
+              Restart = "on-failure";
+              RestartSec = 600;
             };
-          }
-        ;
+            unitConfig = {
+              StartLimitIntervalSec = 2400;
+              StartLimitBurst = 3;
+            };
+          };
+        };
       in
       {
         nix-gc.serviceConfig.Type = "oneshot";

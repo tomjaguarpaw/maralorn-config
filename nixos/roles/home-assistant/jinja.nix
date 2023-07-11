@@ -3,26 +3,24 @@ let
   inherit (builtins) foldl';
 in
 rec {
-  case =
-    default: attrs: ''
-      {% if ${
-        lib.concatStringsSep
-          ''
+  case = default: attrs: ''
+    {% if ${
+      lib.concatStringsSep
+        ''
 
-            {% elseif ''
-          (
-            lib.mapAttrsToList
-              (condition: result: ''
-                ${condition} %}
-                  ${result}'')
-              attrs
-          )
-      }
-      {% else %}
-        ${default}
-      {% endif %}
-    ''
-  ;
+          {% elseif ''
+        (
+          lib.mapAttrsToList
+            (condition: result: ''
+              ${condition} %}
+                ${result}'')
+            attrs
+        )
+    }
+    {% else %}
+      ${default}
+    {% endif %}
+  '';
   if' =
     condition: ifTrue: ifFalse:
     case ifFalse { "${condition}" = ifTrue; }

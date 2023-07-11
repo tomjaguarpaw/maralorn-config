@@ -6,13 +6,11 @@ rec {
   jinja = import ./jinja.nix lib;
   tap_actions =
     let
-      fromServiceAction =
-        action: {
-          action = "call-service";
-          inherit (action) service;
-          service_data = action.data or { } // { inherit (action) entity_id; };
-        }
-      ;
+      fromServiceAction = action: {
+        action = "call-service";
+        inherit (action) service;
+        service_data = action.data or { } // { inherit (action) entity_id; };
+      };
     in
     {
       setMode = mode: option: fromServiceAction (actions.setMode mode option);
@@ -20,29 +18,23 @@ rec {
     }
   ;
   actions = {
-    notify =
-      message: {
-        service = "notify.matrix";
-        data = {
-          inherit message;
-        };
-      }
-    ;
-    cycleMode =
-      mode: {
-        service = "input_select.select_next";
-        entity_id = util.modeSelectEntity mode;
-      }
-    ;
-    setMode =
-      mode: option: {
-        service = "input_select.select_option";
-        data = {
-          inherit option;
-        };
-        entity_id = util.modeSelectEntity mode;
-      }
-    ;
+    notify = message: {
+      service = "notify.matrix";
+      data = {
+        inherit message;
+      };
+    };
+    cycleMode = mode: {
+      service = "input_select.select_next";
+      entity_id = util.modeSelectEntity mode;
+    };
+    setMode = mode: option: {
+      service = "input_select.select_option";
+      data = {
+        inherit option;
+      };
+      entity_id = util.modeSelectEntity mode;
+    };
   };
   util = rec {
     mkIcon = name: "mdi:${name}";
@@ -54,22 +46,18 @@ rec {
       mode: option: "binary_sensor.${modeBinarySensorName mode option}";
   };
   triggers = rec {
-    stateTrigger =
-      entity_id: {
-        platform = "state";
-        inherit entity_id;
-      }
-    ;
+    stateTrigger = entity_id: {
+      platform = "state";
+      inherit entity_id;
+    };
     modeSwitchTrigger = mode: stateTrigger (util.modeSelectEntity mode);
   };
   conditions = {
-    modeIs =
-      mode: state: {
-        condition = "state";
-        entity_id = util.modeSelectEntity mode;
-        inherit state;
-      }
-    ;
+    modeIs = mode: state: {
+      condition = "state";
+      entity_id = util.modeSelectEntity mode;
+      inherit state;
+    };
   };
   modules = rec {
     mkHAConfig = attrs: { services.home-assistant.config = attrs; };
@@ -92,14 +80,12 @@ rec {
     modeSwitcher =
       mode:
       let
-        mkEntity =
-          optionName: option: {
-            entity = util.modeBinarySensorEntity mode optionName;
-            name = option.title;
-            inherit (option) icon;
-            tap_action = tap_actions.setMode mode optionName;
-          }
-        ;
+        mkEntity = optionName: option: {
+          entity = util.modeBinarySensorEntity mode optionName;
+          name = option.title;
+          inherit (option) icon;
+          tap_action = tap_actions.setMode mode optionName;
+        };
       in
       {
         type = "glance";
@@ -111,8 +97,9 @@ rec {
     ;
   };
   templates = rec {
-    binarySensor =
-      state: attrs: { binary_sensor = [ ({ inherit state; } // attrs) ]; };
+    binarySensor = state: attrs: {
+      binary_sensor = [ ({ inherit state; } // attrs) ];
+    };
     binarySensorFromCondition =
       condition: binarySensor (jinja.if' condition "1" "0");
     binarySensorForMode =

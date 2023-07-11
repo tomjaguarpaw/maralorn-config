@@ -33,12 +33,10 @@ let
     "zdf.de"
   ];
 
-  makeConfig =
-    hostName: imports: _: {
-      imports = imports ++ [ ./roles/default.nix ];
-      m-0.hostName = hostName;
-    }
-  ;
+  makeConfig = hostName: imports: _: {
+    imports = imports ++ [ ./roles/default.nix ];
+    m-0.hostName = hostName;
+  };
   makeAutostart =
     name:
     {

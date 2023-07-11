@@ -37,7 +37,8 @@ let
       if [[ "$delete" == "y" ]] then rm "$filename"; fi
     fi
   '';
-  commands = builtins.mapAttrs
+  commands =
+    builtins.mapAttrs
       (
         name:
         {
@@ -77,9 +78,10 @@ let
             browser "${lib.getExe download-and-watch} %u"
           '';
         };
-      } // {
-        inherit download-and-watch;
-      };
+      }
+    // {
+      inherit download-and-watch;
+    };
 in
 {
   systemd.user = {

@@ -6,12 +6,10 @@
     declarativeWith =
       hosts: path:
       let
-        mkFolder =
-          name: {
-            path = "${path}/${name}";
-            devices = hosts;
-          }
-        ;
+        mkFolder = name: {
+          path = "${path}/${name}";
+          devices = hosts;
+        };
         devices =
           pkgs.lib.mapAttrs
             (name: conf: conf // { addresses = [ "tcp6://${name}.vpn.m-0.eu" ]; })

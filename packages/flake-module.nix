@@ -69,22 +69,20 @@ let
     nixpkgs-bot = cleanCabalPackage ./nixpkgs-bot { };
     builders-configurator = cleanCabalPackage ./builders-configurator { };
     status-script = cleanCabalPackage ./status-script {
-      overrides =
-        _: {
-          buildDepends = builtins.attrValues {
-            inherit (stable-pkgs)
-              git
-              khal
-              playerctl
-              notmuch
-              jq
-              tailscale
-              fd
-            ;
-            inherit (unstable-pkgs) nix nix-diff;
-          };
-        }
-      ;
+      overrides = _: {
+        buildDepends = builtins.attrValues {
+          inherit (stable-pkgs)
+            git
+            khal
+            playerctl
+            notmuch
+            jq
+            tailscale
+            fd
+          ;
+          inherit (unstable-pkgs) nix nix-diff;
+        };
+      };
     };
   };
   hpkgs = unstable-pkgs.haskellPackages.override {

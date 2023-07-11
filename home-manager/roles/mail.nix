@@ -49,25 +49,23 @@ in
   systemd.user.services =
     let
       hasImapHost = _name: account: account.imap != null;
-      mkWatchService =
-        name: _account: {
-          name = "watch-${name}-maildir";
-          value = {
-            Unit.Description = "Watch maildir for changes for account ${name}";
-            Service = {
-              ExecStart = toString (
-                pkgs.writeShellScript "watch-${name}-maildir" ''
-                  while ${pkgs.coreutils}/bin/sleep 1s; do
-                    ${lib.getExe quick-mail-sync}
-                    ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete -r ${maildir}/${name}/Inbox ${maildir}/${name}/Code
-                  done
-                ''
-              );
-            };
-            Install.WantedBy = [ "default.target" ];
+      mkWatchService = name: _account: {
+        name = "watch-${name}-maildir";
+        value = {
+          Unit.Description = "Watch maildir for changes for account ${name}";
+          Service = {
+            ExecStart = toString (
+              pkgs.writeShellScript "watch-${name}-maildir" ''
+                while ${pkgs.coreutils}/bin/sleep 1s; do
+                  ${lib.getExe quick-mail-sync}
+                  ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete -r ${maildir}/${name}/Inbox ${maildir}/${name}/Code
+                done
+              ''
+            );
           };
-        }
-      ;
+          Install.WantedBy = [ "default.target" ];
+        };
+      };
     in
     lib.mapAttrs' mkWatchService (
       lib.filterAttrs hasImapHost config.accounts.email.accounts
