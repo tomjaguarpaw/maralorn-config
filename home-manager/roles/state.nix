@@ -17,6 +17,7 @@ let
     ".config/Signal"
     ".config/discord"
     ".config/gh"
+    ".config/tea"
     ".contacts"
     ".gnupg"
     ".config/mpv/watch_later"

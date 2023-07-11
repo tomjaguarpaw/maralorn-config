@@ -14,6 +14,7 @@
       gparted
       grafana-devel
       httpie
+      tea
     ;
   };
   home.file.".editorconfig".text = ''
