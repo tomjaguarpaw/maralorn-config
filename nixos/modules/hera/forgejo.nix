@@ -18,6 +18,10 @@ in
         HTTP_PORT = 3787;
       };
       service.DISABLE_REGISTRATION = true;
+      ui = {
+        DEFAULT_THEME = "codeberg-auto";
+        THEMES = "forgejo-auto,forgejo-light,forgejo-dark,auto,gitea,arc-green,codeberg-auto,codeberg-light,codeberg-dark";
+      };
     };
     appName = "Forgejo";
     database.type = "postgres";
