@@ -59,7 +59,10 @@ in
         ];
       })
     ]
-    ++ flake-inputs.self.nixFromDirs [ ../../modules/hera ]
+    ++ flake-inputs.self.nixFromDirs [
+      ../../modules/hera
+      ../../modules/not-home
+    ]
   ;
 
   m-0.monitoring = [ {

@@ -29,7 +29,10 @@ in
         ];
       })
     ]
-    ++ flake-inputs.self.nixFromDirs [ ../../modules/clients ]
+    ++ flake-inputs.self.nixFromDirs [
+      ../../modules/clients
+      ../../modules/not-home
+    ]
   ;
 
   environment.systemPackages = [

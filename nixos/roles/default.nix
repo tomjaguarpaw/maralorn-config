@@ -72,9 +72,6 @@ in
   nix = {
     # Extra Option which is on by default: allow-import-from-derivation = true
     settings = {
-      substituters = lib.mkIf (config.networking.hostName != "fluffy") [
-        "https://cache.maralorn.de"
-      ];
       trusted-public-keys = [
         "cache.maralorn.de:nul5zddJUyqgWvtcailq5WMdnqWXMmSY/JOxumIvTdU="
       ];
