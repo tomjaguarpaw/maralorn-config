@@ -82,7 +82,7 @@ in
         text_buffer_size = 2047,
         update_interval = 0.25,
         gap_y = 1,
-        gap_x = 48,
+        gap_x = 150,
       '';
       text = "$alignr\${catp /run/user/1000/status-bar}";
       wait = 100;
