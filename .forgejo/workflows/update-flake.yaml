@@ -1,0 +1,22 @@
+name: update-flake-lock
+on:
+  workflow_dispatch: # allows manual triggering
+  schedule:
+    - cron: '0 0 * * 6' # runs weekly on Saturday at 00:00
+
+jobs:
+  lockfile:
+    runs-on: nix
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configuring remote builders
+        run: |
+          mkdir -p ~/.config/nix
+          cp $(builders-configurator) ~/.config/nix/machines
+          echo "builders = @$(pwd)/.config/nix/machines" >> ~/.config/nix/nix.conf
+      - name: Update flake.lock
+        uses: https://github.com/DeterminateSystems/update-flake-lock@v19
+        with:
+          pr-title: "Update flake.lock" # Title of PR to be created
+          pr-labels: |                  # Labels to be set on the PR
+            merge
