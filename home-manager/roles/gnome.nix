@@ -57,8 +57,6 @@ in
     };
 
     "org/gnome/shell/extensions/materialshell/tweaks" = {
-      cycle-through-windows = true;
-      cycle-through-workspaces = true;
       enable-persistence = false;
     };
 
