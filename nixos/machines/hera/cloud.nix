@@ -45,7 +45,7 @@ let
   nextcloudConf = hostname: {
     enable = true;
     hostName = hostname;
-    package = pkgs.nextcloud26;
+    package = pkgs.nextcloud27;
     enableBrokenCiphersForSSE = false;
     maxUploadSize = "10g";
     caching = {
