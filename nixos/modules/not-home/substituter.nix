@@ -1,7 +1,1 @@
-{
-  lib,
-  ...
-}:
-{
-  nix.settings.substituters = lib.mkAfter [ "https://cache.maralorn.de" ];
-}
+{ nix.settings.substituters = [ "https://cache.maralorn.de?priority=100" ]; }
