@@ -49,12 +49,12 @@ in
         "bach.vocalensemble-darmstadt.de:25"
         "hera.m-0.eu:25"
       ])
-      (makeProbe "http" [
-        "hera.m-0.eu"
-        "home.maralorn.de"
-        "rss.maralorn.de"
-        "analytics.maralorn.de"
-      ])
+      (makeProbe "http" (
+        [ "hera.m-0.eu" ]
+        ++ map (name: "http://${name}.maralorn.de") (
+          builtins.concatLists (builtins.attrValues config.m-0.hosts.aliases)
+        )
+      ))
       (makeProbe "https" (
         [
           "https://hera.m-0.eu"
