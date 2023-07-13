@@ -38,6 +38,7 @@ in
       ../../roles/server/init_ssh.nix
       ../../roles/standalone
       ../../roles/unbound.nix
+      ../../roles/update-postgres.nix
       ./boot.nix
       ./cloud.nix
       ./hardware-configuration.nix
@@ -98,14 +99,12 @@ in
       script =
         let
           start = "${pkgs.systemd}/bin/systemctl start";
-          container = "${pkgs.nixos-container}/bin/nixos-container run";
         in
         # ${start} mysql-backup -- only needed for firefox-sync
         ''
           set -x
           set +e
           ${start} pg_backup
-          ${container} chor-cloud -- ${start} nextcloud-pg-backup
           ${lib.concatMapStringsSep "\n" (name: "${start} ${name}") backupJobNames}
           ${pkgs.coreutils}/bin/rm -rf /var/lib/db-backup-dumps/*
           ${start} synapse-cleanup

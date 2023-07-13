@@ -12,7 +12,7 @@
       # 2) run this script
       # 3) bump postgres; rebuild
       # 4) run analyze_new_cluster.sh; delete_old_cluster.sh from the database dir.
-      toVersion = "14"; # Bump this when there is a new version.
+      toVersion = "15"; # Bump this when there is a new version.
       new_package = "postgresql_${toVersion}";
     in
     [
