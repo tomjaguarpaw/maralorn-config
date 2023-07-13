@@ -80,69 +80,57 @@ with lib; {
     virtualHosts = mkOption { type = types.attrs; };
     hosts = mkOption {
       type = types.attrs;
-      default =
-        let
-          p = config.m-0.prefix;
-          hera-p = "${p}::3";
-          v4-p = "10.0.0";
-        in
-        {
-          hera = {
-            AAAA = "${p}::1";
-            A = "213.136.94.190";
-          };
+      default = {
+        hera = {
+          AAAA = "${config.m-0.prefix}::1";
+          A = "213.136.94.190";
+        };
 
-          hera-intern = "${hera-p}:1";
-          chor-cloud = "${hera-p}:b";
-
-          hera-intern-v4 = "${v4-p}.1";
-          chor-cloud-intern-v4 = "${v4-p}.3";
-          # generate with:
-          # (echo '{' && tailscale status -json | jq -r '.Self,.Peer[] | .DNSName[:-17] + " = { A = \"" + .TailscaleIPs[0] + "\"; AAAA = \"" + .TailscaleIPs[1] + "\";};"' && echo '}') > common/tailscale.nix
-          tailscale = import ./tailscale.nix;
-          publicAliases = {
-            hera = [
-              "blog"
-              "cloud"
-              "git"
-              "code"
-              "lists"
-              "matrix"
-              "rpg"
-            ];
-          };
-          aliases = {
-            hera = [
-              "alerts"
-              "analytics"
-              "blog"
-              "ci"
-              "cloud"
-              "git"
-              "lists"
-              "matrix"
-              "monitoring"
-              "rpg"
-              "rspamd"
-              "rss"
-              "stats"
-              "syncthing-hera"
-              "taskserver"
-              "code"
-            ];
-            fluffy = [
-              "firefox-sync"
-              "home"
-              "cache"
-              "syncthing-fluffy"
-              "5e"
-              "graphs"
-            ];
-            zeus = [ "syncthing-zeus" ];
-            apollo = [ "syncthing-apollo" ];
-          };
-        }
-      ;
+        # generate with:
+        # (echo '{' && tailscale status -json | jq -r '.Self,.Peer[] | .DNSName[:-17] + " = { A = \"" + .TailscaleIPs[0] + "\"; AAAA = \"" + .TailscaleIPs[1] + "\";};"' && echo '}') > common/tailscale.nix
+        tailscale = import ./tailscale.nix;
+        publicAliases = {
+          hera = [
+            "blog"
+            "cloud"
+            "git"
+            "code"
+            "lists"
+            "matrix"
+            "rpg"
+          ];
+        };
+        aliases = {
+          hera = [
+            "alerts"
+            "analytics"
+            "blog"
+            "ci"
+            "cloud"
+            "git"
+            "lists"
+            "matrix"
+            "monitoring"
+            "rpg"
+            "rspamd"
+            "rss"
+            "stats"
+            "syncthing-hera"
+            "taskserver"
+            "code"
+          ];
+          fluffy = [
+            "firefox-sync"
+            "home"
+            "cache"
+            "syncthing-fluffy"
+            "5e"
+            "graphs"
+          ];
+          zeus = [ "syncthing-zeus" ];
+          apollo = [ "syncthing-apollo" ];
+        };
+      };
     };
   };
 }

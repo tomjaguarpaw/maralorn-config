@@ -1,10 +1,8 @@
 {
-  pkgs,
   config,
   ...
 }:
 let
-  #wireguard = import ../../../common/wireguard.nix;
   inherit (config.m-0) hosts;
 in
 {
@@ -55,35 +53,11 @@ in
     '';
     hostName = "hera";
     domain = "m-0.eu";
-    interfaces.ens18.proxyARP = true;
-    bridges.bridge.interfaces = [ ];
-    interfaces.bridge = {
-      proxyARP = true;
-      ipv6.addresses = [ {
-        address = hosts.hera-intern;
-        prefixLength = 112;
-      } ];
-      ipv4.addresses = [ {
-        address = "10.0.0.1";
-        prefixLength = 24;
-      } ];
-    };
     nameservers = [
       "213.136.95.10"
       "2a02:c207::1:53"
       "2a02:c207::2:53"
     ];
     firewall.allowedTCPPorts = [ 8666 ];
-  };
-
-  services.ndppd = {
-    enable = true;
-    configFile = pkgs.writeText "ndppd.conf" ''
-      proxy ens18 {
-        rule ${config.m-0.prefix}::/64 {
-          static
-        }
-      }
-    '';
   };
 }
