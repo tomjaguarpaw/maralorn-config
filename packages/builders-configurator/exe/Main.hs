@@ -82,12 +82,6 @@ runWithPing = Eff.interpret $ \_ -> \case
     let status = Req.responseStatusCode response
     pure $ status >= 200 && status < 300
 
-----,  liftIO $ ping `Exception.catch` \(_ :: Shh.Failure) -> pure False
-----, where
-----,  ping = do
-----,    Shh.exe ["/run/wrappers/bin/ping", into @String (sshHostToDNS host_name), "-c1", "-w1"] &> Shh.devNull &!> Shh.devNull
-----,    pure True
-
 sshHostToDNS :: Text -> Text
 sshHostToDNS = \case
   b | b == zeusBuilder -> "zeus.vpn.m-0.eu"
