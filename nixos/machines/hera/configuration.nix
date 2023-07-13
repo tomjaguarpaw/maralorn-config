@@ -68,7 +68,7 @@ in
 
   m-0.monitoring = [ {
     name = "hera";
-    host = "hera-intern:9100";
+    host = "hera:9100";
   } ];
 
   systemd.services = {

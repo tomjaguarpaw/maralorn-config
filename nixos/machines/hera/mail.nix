@@ -15,7 +15,7 @@ in
   imports = [ flake-inputs.nixos-mailserver.nixosModules.default ];
   m-0.monitoring = [ {
     name = "postfix on hera";
-    host = "hera-intern:9154";
+    host = "hera:9154";
   } ];
 
   services = {

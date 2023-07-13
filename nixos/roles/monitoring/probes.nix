@@ -33,6 +33,10 @@ let
   };
 in
 {
+  config,
+  ...
+}:
+{
   services.prometheus = {
     exporters.blackbox = {
       enable = true;
@@ -51,27 +55,21 @@ in
         "rss.maralorn.de"
         "analytics.maralorn.de"
       ])
-      (makeProbe "https" [
-        "https://hera.m-0.eu"
+      (makeProbe "https" (
+        [
+          "https://hera.m-0.eu"
 
-        "https://cloud.mathechor.de"
+          "https://hochzeit.malte-und-clai.re"
 
-        "https://alerts.maralorn.de"
-        "https://blog.maralorn.de"
-        "https://ci.maralorn.de"
-        "https://cloud.maralorn.de"
-        #"https://firefox-sync.maralorn.de"
-        "https://matrix.maralorn.de"
-        "https://monitoring.maralorn.de"
-        "https://rpg.maralorn.de"
-        "https://stats.maralorn.de"
-        "https://hochzeit.malte-und-clai.re"
-
-        "https://wiki.vocalensemble-darmstadt.de"
-        "https://lists.vocalensemble-darmstadt.de"
-        "https://cloud.vocalensemble-darmstadt.de"
-        "https://www.vocalensemble-darmstadt.de"
-      ])
+          "https://wiki.vocalensemble-darmstadt.de"
+          "https://lists.vocalensemble-darmstadt.de"
+          "https://cloud.vocalensemble-darmstadt.de"
+          "https://www.vocalensemble-darmstadt.de"
+        ]
+        ++ map (name: "https://${name}.maralorn.de") (
+          builtins.concatLists (builtins.attrValues config.m-0.hosts.aliases)
+        )
+      ))
     ];
   };
 }
