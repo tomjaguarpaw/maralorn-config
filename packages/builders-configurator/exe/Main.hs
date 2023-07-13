@@ -76,7 +76,7 @@ runWithoutConnectivity = Eff.interpret $ \_ -> \case
 
 runWithPing :: Eff.IOE :> es => Eff (Ping : es) a -> Eff es a
 runWithPing = Eff.interpret $ \_ -> \case
-  CheckConnectivity host_name -> liftIO $ Exception.handle (\(_ :: SomeException) -> pure True) do
+  CheckConnectivity host_name -> liftIO $ Exception.handle (\(_ :: SomeException) -> pure False) do
     let reqUrl = Req.http (sshHostToDNS host_name)
     response <- (Req.runReq Req.defaultHttpConfig $ Req.req Req.GET reqUrl Req.NoReqBody Req.lbsResponse (Req.responseTimeout 500_000))
     let status = Req.responseStatusCode response
