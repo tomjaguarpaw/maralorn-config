@@ -18,8 +18,8 @@ in
       ../../roles/server
     ]
     ++ flake-inputs.self.nixFromDirs [
-      ../../modules/fluffy
-      ../../modules/standalone
+      ../../modules/athene
+      ../../modules/all
     ]
   ;
 

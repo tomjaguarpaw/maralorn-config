@@ -22,6 +22,7 @@ in
     ++ flake-inputs.self.nixFromDirs [
       ../../modules/zeus
       ../../modules/clients
+      ../../modules/all
     ]
   ;
 

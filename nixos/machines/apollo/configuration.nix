@@ -32,6 +32,7 @@ in
     ++ flake-inputs.self.nixFromDirs [
       ../../modules/clients
       ../../modules/not-home
+      ../../modules/all
     ]
   ;
 

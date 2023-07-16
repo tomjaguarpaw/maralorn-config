@@ -63,6 +63,7 @@ in
     ++ flake-inputs.self.nixFromDirs [
       ../../modules/hera
       ../../modules/not-home
+      ../../modules/all
     ]
   ;
 
