@@ -46,7 +46,9 @@ let
                 putLine line = whenM (readIORef need_newline) (BSC.putStrLn "") >> BSC.putStrLn line
             when (hostname /= "fluffy") do
               say [i|Uploading the following paths to fluffy:\n  #{List.intercalate "\n  " paths}|]
-              nix_copy_closure "--to" "fluffy" paths |!> readInputLines (mapM_ $ BS.toStrict <&> \case
+              (do 
+                nix_copy_closure "--to" "fluffy" paths --derivation
+                nix_copy_closure "--to" "fluffy" paths) |!> readInputLines (mapM_ $ BS.toStrict <&> \case
                 line | BSC.isInfixOf "' from '" line -> putChar "s"
                 line | BSC.isInfixOf "' to '" line -> putChar "u"
                 line -> putLine line)
