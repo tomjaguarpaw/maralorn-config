@@ -71,62 +71,65 @@ in
     host = "hera:9100";
   } ];
 
-  systemd.services = {
-    pg_backup = {
-      script =
-        lib.concatMapStringsSep "\n"
-          (
-            name:
-            "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}"
-          )
-          config.services.postgresql.ensureDatabases
-      ;
-      serviceConfig = {
-        User = "postgres";
-        Type = "oneshot";
-      };
-    };
-    #bump-config = {
-    #  script = ''
-    #    ${pkgs.laminar}/bin/laminarc queue bump-config
-    #  '';
-    #  serviceConfig = {
-    #    Type = "oneshot";
-    #  };
-    #  startAt = "Sat 04:00";
-    #};
-    night-routines = {
-      script =
-        let
-          start = "${pkgs.systemd}/bin/systemctl start";
-        in
-        # ${start} mysql-backup -- only needed for firefox-sync
-        ''
-          set -x
-          set +e
-          ${start} pg_backup
-          ${lib.concatMapStringsSep "\n" (name: "${start} ${name}") backupJobNames}
-          ${pkgs.coreutils}/bin/rm -rf /var/lib/db-backup-dumps/*
-          ${start} synapse-cleanup
-          ${start} nix-gc
-          ${start} nix-optimise
-        ''
-      ;
-      serviceConfig = {
-        Type = "oneshot";
-      };
-      startAt = "03:00";
-    };
-  } // lib.listToAttrs (
-    map
-      (name: {
-        inherit name;
-        value = {
-          serviceConfig.Type = "oneshot";
+  systemd.services =
+    {
+      pg_backup = {
+        script =
+          lib.concatMapStringsSep "\n"
+            (
+              name:
+              "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}"
+            )
+            config.services.postgresql.ensureDatabases
+        ;
+        serviceConfig = {
+          User = "postgres";
+          Type = "oneshot";
         };
-      })
-      backupJobNames
-  );
+      };
+      #bump-config = {
+      #  script = ''
+      #    ${pkgs.laminar}/bin/laminarc queue bump-config
+      #  '';
+      #  serviceConfig = {
+      #    Type = "oneshot";
+      #  };
+      #  startAt = "Sat 04:00";
+      #};
+      night-routines = {
+        script =
+          let
+            start = "${pkgs.systemd}/bin/systemctl start";
+          in
+          # ${start} mysql-backup -- only needed for firefox-sync
+          ''
+            set -x
+            set +e
+            ${start} pg_backup
+            ${lib.concatMapStringsSep "\n" (name: "${start} ${name}") backupJobNames}
+            ${pkgs.coreutils}/bin/rm -rf /var/lib/db-backup-dumps/*
+            ${start} synapse-cleanup
+            ${start} nix-gc
+            ${start} nix-optimise
+          ''
+        ;
+        serviceConfig = {
+          Type = "oneshot";
+        };
+        startAt = "03:00";
+      };
+    }
+    // lib.listToAttrs (
+      map
+        (name: {
+          inherit name;
+          value = {
+            serviceConfig.Type = "oneshot";
+          };
+        })
+        backupJobNames
+    )
+  ;
   services = {
     postgresql = {
       enable = true;
@@ -139,20 +142,23 @@ in
       listenHost = "::";
       organisations."maralorn.de".users = [ "maralorn" ];
     };
-    syncthing = {
-      enable = true;
-      group = "nginx";
-      user = "maralorn";
-      openDefaultPorts = true;
-      cert = config.age.secrets."syncthing/hera/cert.pem".path;
-      key = config.age.secrets."syncthing/hera/key.pem".path;
-    } // syncthing.declarativeWith
+    syncthing =
+      {
+        enable = true;
+        group = "nginx";
+        user = "maralorn";
+        openDefaultPorts = true;
+        cert = config.age.secrets."syncthing/hera/cert.pem".path;
+        key = config.age.secrets."syncthing/hera/key.pem".path;
+      }
+      // syncthing.declarativeWith
         [
           "apollo"
           "zeus"
           "pegasus"
         ]
-        "/media";
+        "/media"
+    ;
   };
   systemd.tmpfiles.rules = [ "Z /media 0770 maralorn nginx - -" ];
   nix.sshServe = {

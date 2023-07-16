@@ -69,7 +69,8 @@ in
     in
     lib.mapAttrs' mkWatchService (
       lib.filterAttrs hasImapHost config.accounts.email.accounts
-    ) // {
+    )
+    // {
       mbsync.Service = {
         Environment = "PATH=${
             lib.makeBinPath [

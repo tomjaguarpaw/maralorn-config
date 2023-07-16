@@ -17,28 +17,19 @@
           ];
         in
         {
-          monospace =
-            [
-              "Symbols Nerd Font Mono"
-              "CozetteVector"
-              "Noto Sans Mono"
-            ]
-            ++ unicode-fallback
-          ;
-          sansSerif =
-            [
-              "B612"
-              "Noto Sans"
-            ]
-            ++ unicode-fallback
-          ;
-          serif =
-            [
-              "Libertinus Serif"
-              "Noto Serif"
-            ]
-            ++ unicode-fallback
-          ;
+          monospace = [
+            "Symbols Nerd Font Mono"
+            "CozetteVector"
+            "Noto Sans Mono"
+          ] ++ unicode-fallback;
+          sansSerif = [
+            "B612"
+            "Noto Sans"
+          ] ++ unicode-fallback;
+          serif = [
+            "Libertinus Serif"
+            "Noto Serif"
+          ] ++ unicode-fallback;
         }
       ;
     };

@@ -44,26 +44,26 @@ let
         path = "~/.calendars/${name}/";
         fileext = ".ics";
       };
-      "storage ${remoteName}" = {
-        inherit type;
-        inherit url;
-      } // (
-        if (type == "caldav") then
-          {
-            inherit username;
-            "password.fetch" =
-              [
+      "storage ${remoteName}" =
+        {
+          inherit type;
+          inherit url;
+        }
+        // (
+          if (type == "caldav") then
+            {
+              inherit username;
+              "password.fetch" = [
                 "command"
                 (lib.getExe config.programs.rbw.package)
                 "get"
-              ]
-              ++ passwordPath
-            ;
-            read_only = readOnly;
-          }
-        else
-          { }
-      );
+              ] ++ passwordPath;
+              read_only = readOnly;
+            }
+          else
+            { }
+        )
+      ;
     }
   ;
   mkAddressbook =
@@ -98,14 +98,11 @@ let
       "storage ${remoteName}" = {
         type = "carddav";
         inherit url username;
-        "password.fetch" =
-          [
-            "command"
-            (lib.getExe config.programs.rbw.package)
-            "get"
-          ]
-          ++ passwordPath
-        ;
+        "password.fetch" = [
+          "command"
+          (lib.getExe config.programs.rbw.package)
+          "get"
+        ] ++ passwordPath;
         read_only = readOnly;
       };
     }

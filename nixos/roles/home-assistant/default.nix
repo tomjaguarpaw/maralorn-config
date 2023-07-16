@@ -442,7 +442,8 @@ in
                 map
                   (
                     name:
-                    triggers.stateTrigger name // {
+                    triggers.stateTrigger name
+                    // {
                       to = "on";
                       for = "00:${minutes}:00";
                     }

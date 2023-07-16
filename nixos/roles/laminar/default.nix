@@ -17,7 +17,8 @@ let
   };
   addTimeouts =
     cfg_files:
-    cfg_files // {
+    cfg_files
+    // {
       jobs = lib.foldr lib.mergeAttrs cfg_files.jobs (
         map mkTimeoutConf (
           builtins.filter (lib.hasSuffix ".run") (lib.attrNames cfg_files.jobs)

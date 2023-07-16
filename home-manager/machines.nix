@@ -1,21 +1,18 @@
 let
-  restrictedPages =
-    [
-      "reddit.com"
-      "github.com"
-      "*.ccc.de"
-      "haskell.org"
-      "*.haskell.org"
-      "*.nixos.org"
-      "nixos.org"
-      "matrix.org"
-      "element.io"
-      "youtube.*"
-      "*.element.io"
-      "twitter.com"
-    ]
-    ++ newsPages
-  ;
+  restrictedPages = [
+    "reddit.com"
+    "github.com"
+    "*.ccc.de"
+    "haskell.org"
+    "*.haskell.org"
+    "*.nixos.org"
+    "nixos.org"
+    "matrix.org"
+    "element.io"
+    "youtube.*"
+    "*.element.io"
+    "twitter.com"
+  ] ++ newsPages;
   newsPages = [
     "chaos.social"
     "zeit.de"

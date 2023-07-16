@@ -41,21 +41,24 @@ let
             ${stable-pkgs.diffutils}/bin/diff -uw default.nix fresh-default.nix
             echo "default.nix confirmed to be up-to-date."
           '';
-        } // overrides old
+        }
+        // overrides old
       ))
       hpkgs.buildFromCabalSdist
     ]
   ;
   haskellPackagesOverlay =
     final: prev:
-    lib.mapAttrs (_: package: package final) myHaskellPackages // {
+    lib.mapAttrs (_: package: package final) myHaskellPackages
+    // {
       streamly = final.streamly_0_9_0;
       nixfmt = overrideCabal (_: { src = inputs.nixfmt; }) prev.nixfmt;
     }
   ;
   selectHaskellPackages =
     attrs:
-    lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages // {
+    lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages
+    // {
       inherit (attrs) nixfmt;
     }
   ;

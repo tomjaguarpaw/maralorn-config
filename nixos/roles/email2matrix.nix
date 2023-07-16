@@ -23,20 +23,23 @@ let
       Matrix = {
         Mappings = [
           (
-            default_mailbox // {
+            default_mailbox
+            // {
               MailboxName = "notify";
               MatrixRoomId = "!kTKVQjRwxjaoMQmcve:maralorn.de";
             }
           )
           (
-            default_mailbox // {
+            default_mailbox
+            // {
               MailboxName = "subjects";
               MatrixRoomId = "!kTKVQjRwxjaoMQmcve:maralorn.de";
               IgnoreBody = true;
             }
           )
           (
-            default_mailbox // {
+            default_mailbox
+            // {
               MailboxName = "weather";
               MatrixRoomId = "!ELeFcSrHXgMqOmwnxg:maralorn.de";
             }

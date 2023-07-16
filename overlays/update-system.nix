@@ -190,6 +190,4 @@ let
     ;
   };
 in
-mode-scripts // {
-  inherit mode-scripts;
-}
+mode-scripts // { inherit mode-scripts; }

@@ -40,7 +40,9 @@ in
       };
     in
     {
-      "/disk" = { neededForBoot = true; } // btrfsOptions;
+      "/disk" = {
+        neededForBoot = true;
+      } // btrfsOptions;
       "/boot" = btrfsOptions;
       "/nix" = btrfsOptions;
       "/home/maralorn/.config/pulse" = {
@@ -98,21 +100,24 @@ in
     # firewallFilter = "-i m0wire -p tcp -m tcp -m multiport --dports 9100,9558";
     # openFirewall = lib.mkForce false;
     #};
-    syncthing = {
-      enable = true;
-      group = "users";
-      user = "maralorn";
-      openDefaultPorts = true;
-      configDir = "/disk/persist/syncthing";
-      cert = config.age.secrets."syncthing/zeus/cert.pem".path;
-      key = config.age.secrets."syncthing/zeus/key.pem".path;
-    } // syncthing.declarativeWith
+    syncthing =
+      {
+        enable = true;
+        group = "users";
+        user = "maralorn";
+        openDefaultPorts = true;
+        configDir = "/disk/persist/syncthing";
+        cert = config.age.secrets."syncthing/zeus/cert.pem".path;
+        key = config.age.secrets."syncthing/zeus/key.pem".path;
+      }
+      // syncthing.declarativeWith
         [
           "hera"
           "apollo"
           "pegasus"
         ]
-        "/disk/persist/maralorn/media";
+        "/disk/persist/maralorn/media"
+    ;
     #minecraft-server = {
     #  enable = true;
     #  openFirewall = true;

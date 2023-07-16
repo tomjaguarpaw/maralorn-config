@@ -3,11 +3,14 @@
   ...
 }:
 let
-  script = (pkgs.recursiveLinkFarm "autosave.lua" {
-    "share/mpv/scripts/autosave.lua" = ./autosave.lua;
-  }) // {
-    scriptName = "autosave.lua";
-  };
+  script =
+    (pkgs.recursiveLinkFarm "autosave.lua" {
+      "share/mpv/scripts/autosave.lua" = ./autosave.lua;
+    })
+    // {
+      scriptName = "autosave.lua";
+    }
+  ;
 in
 {
   programs.mpv = {

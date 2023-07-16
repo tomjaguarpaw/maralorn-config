@@ -13,7 +13,8 @@ let
       }:
       {
         plugins = builtins.attrValues (
-          availablePlugins // {
+          availablePlugins
+          // {
             python = availablePlugins.python.withPackages (
               _: [ pkgs.weechatScripts.weechat-matrix ]
             );

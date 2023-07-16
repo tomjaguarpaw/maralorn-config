@@ -81,7 +81,8 @@ let
       }
     // {
       inherit download-and-watch;
-    };
+    }
+  ;
 in
 {
   systemd.user = {

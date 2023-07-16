@@ -24,13 +24,10 @@ in
         ExecStart =
           pkgs.writeHaskell "synapse-cleanup"
             {
-              libraries =
-                builtins.attrValues pkgs.myHaskellScriptPackages
-                ++ [
-                  pkgs.haskellPackages.postgresql-simple
-                  pkgs.haskellPackages.HTTP
-                ]
-              ;
+              libraries = builtins.attrValues pkgs.myHaskellScriptPackages ++ [
+                pkgs.haskellPackages.postgresql-simple
+                pkgs.haskellPackages.HTTP
+              ];
               ghcEnv.PATH = "${
                   lib.makeBinPath [
                     pkgs.matrix-synapse-tools.rust-synapse-compress-state
@@ -108,7 +105,8 @@ in
               "matrix/server-secrets"
           ;
         in
-        server-secrets // {
+        server-secrets
+        // {
           enable_metrics = true;
           serve_server_wellknown = true;
           inherit server_name;

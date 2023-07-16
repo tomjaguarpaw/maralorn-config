@@ -9,7 +9,9 @@ rec {
       fromServiceAction = action: {
         action = "call-service";
         inherit (action) service;
-        service_data = action.data or { } // { inherit (action) entity_id; };
+        service_data = action.data or { } // {
+          inherit (action) entity_id;
+        };
       };
     in
     {
