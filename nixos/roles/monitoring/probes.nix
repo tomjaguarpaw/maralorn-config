@@ -52,7 +52,7 @@ in
       (makeProbe "http" (
         [ "hera.m-0.eu" ]
         ++ map (name: "http://${name}.maralorn.de") (
-          builtins.concatLists (builtins.attrValues config.m-0.hosts.aliases)
+          config.m-0.hosts.aliases.fluffy ++ config.m-0.hosts.aliases.hera
         )
       ))
       (makeProbe "https" (
@@ -66,9 +66,16 @@ in
           "https://cloud.vocalensemble-darmstadt.de"
           "https://www.vocalensemble-darmstadt.de"
         ]
-        ++ map (name: "https://${name}.maralorn.de") (
-          builtins.concatLists (builtins.attrValues config.m-0.hosts.aliases)
-        )
+        ++
+          map
+            (
+              name:
+              if name == "cache" then
+                "https://cache.maralorn.de/nix-cache-info"
+              else
+                "https://${name}.maralorn.de/"
+            )
+            (config.m-0.hosts.aliases.fluffy ++ config.m-0.hosts.aliases.hera)
       ))
     ];
   };
