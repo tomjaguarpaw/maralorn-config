@@ -34,6 +34,7 @@ let
 in
 {
   config,
+  lib,
   ...
 }:
 {
@@ -66,16 +67,11 @@ in
           "https://cloud.vocalensemble-darmstadt.de"
           "https://www.vocalensemble-darmstadt.de"
         ]
-        ++
-          map
-            (
-              name:
-              if name == "cache" then
-                "https://cache.maralorn.de/nix-cache-info"
-              else
-                "https://${name}.maralorn.de/"
-            )
-            (config.m-0.hosts.aliases.fluffy ++ config.m-0.hosts.aliases.hera)
+        ++ lib.pipe (config.m-0.hosts.aliases.fluffy ++ config.m-0.hosts.aliases.hera) [
+          (builtins.filter (name: name != "cache"))
+          (map (name: "https://${name}.maralorn.de/"))
+        ]
+
       ))
     ];
   };
