@@ -83,15 +83,7 @@ let
         myFilters :: [(Text,Text)]
         myFilters = [${
           lib.concatStringsSep "," (
-            builtins.map
-              (
-                {
-                  filter,
-                  target,
-                }:
-                ''("${filter}","${target}")''
-              )
-              myFilters
+            builtins.map ({ filter, target, }: ''("${filter}","${target}")'') myFilters
           )
         }]
 

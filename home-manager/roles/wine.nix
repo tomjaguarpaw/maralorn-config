@@ -1,8 +1,4 @@
-{
-  pkgs,
-  config,
-  ...
-}:
+{ pkgs, config, ... }:
 let
   wine_dir = "${config.home.homeDirectory}/.volatile/wine_disk";
   wine = pkgs.wineWowPackages.staging;

@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 let
   name = "foundryvtt";
   stateDir = "/var/lib/${name}";

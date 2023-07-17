@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 let
   locations."/".extraConfig = "return 301 https://blog.maralorn.de$request_uri;";
 in

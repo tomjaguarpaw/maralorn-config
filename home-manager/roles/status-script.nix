@@ -1,8 +1,4 @@
-{
-  pkgs,
-  lib,
-  ...
-}:
+{ pkgs, lib, ... }:
 {
   systemd.user.services.status-script = {
     Unit.Description = "Status Script";

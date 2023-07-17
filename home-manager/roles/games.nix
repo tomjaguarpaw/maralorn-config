@@ -1,8 +1,4 @@
-{
-  pkgs,
-  config,
-  ...
-}:
+{ pkgs, config, ... }:
 let
   gw2dir = "${config.home.homeDirectory}/.volatile/GW2";
   wine = pkgs.wineWowPackages.staging;

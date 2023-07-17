@@ -1,7 +1,4 @@
-{
-  device,
-  ...
-}:
+{ device, ... }:
 {
   disko.devices = {
     disk.system = {

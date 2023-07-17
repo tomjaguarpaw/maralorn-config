@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 let
   calendars = pkgs.privateValue [ ] "calendars";
 in

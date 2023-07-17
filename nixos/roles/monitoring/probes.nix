@@ -32,11 +32,7 @@ let
     ];
   };
 in
-{
-  config,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 {
   services.prometheus = {
     exporters.blackbox = {

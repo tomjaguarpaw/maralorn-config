@@ -7,10 +7,7 @@
 {
   flake = {
     nixosConfigurations = withSystem "x86_64-linux" (
-      {
-        pkgs,
-        ...
-      }:
+      { pkgs, ... }:
       let
         machines = builtins.attrNames (builtins.readDir ./machines);
         makeSystem =

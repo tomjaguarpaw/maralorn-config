@@ -1,8 +1,5 @@
 flake-inputs:
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 let
   localAddress = "fdc0:1::2";
 in

@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 let
   simpleDesktopItem =
     name: command:
@@ -24,6 +21,7 @@ let
   terminalDesktopItem = name: namedTerminalDesktopItem name name;
 in
 {
-  home.packages = map superSimpleDesktopItem [ "kassandra2" ]
+  home.packages =
+    map superSimpleDesktopItem [ "kassandra2" ]
     ++ map terminalDesktopItem [ "unlock-ssh" ];
 }

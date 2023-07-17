@@ -6,10 +6,7 @@
 }:
 {
   flake = withSystem "x86_64-linux" (
-    {
-      pkgs,
-      ...
-    }:
+    { pkgs, ... }:
     let
       flattenAttrs =
         attrs:

@@ -1,8 +1,4 @@
-{
-  lib,
-  pkgs,
-  ...
-}:
+{ lib, pkgs, ... }:
 {
   services.pipewire.enable = lib.mkForce false;
   sound.enable = true;

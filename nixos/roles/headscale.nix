@@ -1,8 +1,4 @@
-{
-  config,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 let
   inherit (config.m-0) hosts;
   domain = "headscale.maralorn.de";

@@ -1,9 +1,5 @@
 list:
-{
-  pkgs,
-  lib,
-  ...
-}:
+{ pkgs, lib, ... }:
 {
   systemd.user.services.blockserver = {
     Unit.Description = "Serve a blocklist";

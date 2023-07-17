@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 let
   language-servers = {
     inherit (pkgs.nodePackages)

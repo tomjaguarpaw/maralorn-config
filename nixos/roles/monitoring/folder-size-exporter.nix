@@ -1,10 +1,7 @@
 {
   folders ? [ "/" ],
 }:
-{
-  lib,
-  ...
-}:
+{ lib, ... }:
 let
   textfilesDir = "/var/cache/prometheus-textfiles";
 in

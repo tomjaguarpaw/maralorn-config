@@ -1,8 +1,5 @@
 flake-inputs:
-{
-  config,
-  ...
-}:
+{ config, ... }:
 {
   imports = [ flake-inputs.home-manager.nixosModules.home-manager ];
   home-manager = {

@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 let
   script =
     (pkgs.recursiveLinkFarm "autosave.lua" {

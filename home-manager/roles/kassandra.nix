@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 let
   dhallFiles = pkgs.runCommand "kassandra-config-src" { } ''
     mkdir $out

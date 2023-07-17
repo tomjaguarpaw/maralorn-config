@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 {
   home.packages = [ pkgs.khard ];
   xdg.configFile."khard/khard.conf".text = ''

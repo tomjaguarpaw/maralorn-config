@@ -1,8 +1,4 @@
-{
-  lib,
-  config,
-  ...
-}:
+{ lib, config, ... }:
 {
   programs.ssh.knownHosts =
     lib.mapAttrs

@@ -6,10 +6,7 @@
 }:
 with obelisk;
 project ./. (
-  {
-    pkgs,
-    ...
-  }:
+  { pkgs, ... }:
   let
     inherit (pkgs.haskell.lib)
       markUnbroken

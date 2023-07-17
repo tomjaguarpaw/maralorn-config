@@ -1,8 +1,4 @@
-{
-  pkgs,
-  config,
-  ...
-}:
+{ pkgs, config, ... }:
 {
   home = {
     # This fixes border drawing but makes neo wonky. sessionVariables.NIXOS_OZONE_WL = "1";

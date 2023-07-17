@@ -1,8 +1,4 @@
-{
-  pkgs,
-  config,
-  ...
-}:
+{ pkgs, config, ... }:
 let
   pythia-path = "${config.home.homeDirectory}/documents/pythia";
   pythia = pkgs.writeShellScriptBin "pythia" ''

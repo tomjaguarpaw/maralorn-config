@@ -1,14 +1,7 @@
-{
-  lib,
-  inputs,
-  ...
-}:
+{ lib, inputs, ... }:
 {
   perSystem =
-    {
-      inputs',
-      ...
-    }:
+    { inputs', ... }:
     {
       _module.args.pkgs = inputs'.nixos-stable.legacyPackages.appendOverlays (
         [

@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 {
   home.packages = [ pkgs.ncmpcpp ];
   home.file.".ncmpcpp/config".text = ''

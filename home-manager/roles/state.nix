@@ -1,9 +1,5 @@
 defaultMode:
-{
-  lib,
-  config,
-  ...
-}:
+{ lib, config, ... }:
 let
   # Persistent means that files get snapshoted and kept for a month
   # Volatile means that files just lay on the disk

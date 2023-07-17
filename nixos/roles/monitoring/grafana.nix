@@ -1,8 +1,4 @@
-{
-  pkgs,
-  lib,
-  ...
-}:
+{ pkgs, lib, ... }:
 let
   heading = name: link: ''<h2><a href=\"${link}\">${name}</a></h2>'';
   badge = src: link: ''<a href=\"${link}\">\n  <img src=\"${src}\">\n</a>'';

@@ -1,8 +1,4 @@
-{
-  pkgs,
-  config,
-  ...
-}:
+{ pkgs, config, ... }:
 let
   configPath = "${config.home.homeDirectory}/git/config";
   configGit = "${pkgs.git}/bin/git -C ${configPath}";

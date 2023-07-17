@@ -36,10 +36,7 @@ let
   };
   makeAutostart =
     name:
-    {
-      config,
-      ...
-    }:
+    { config, ... }:
     {
       config.xdg.configFile."autostart/${name}.desktop".source = "${config.home.path}/share/applications/${name}.desktop";
     }

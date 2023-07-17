@@ -1,7 +1,4 @@
-{
-  config,
-  ...
-}:
+{ config, ... }:
 {
   services.unbound = {
     resolveLocalQueries = false;

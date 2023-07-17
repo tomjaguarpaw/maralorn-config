@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 {
   systemd.user = {
     services.prometheus-systemd-exporter = {

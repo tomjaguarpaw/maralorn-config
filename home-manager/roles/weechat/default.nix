@@ -7,10 +7,7 @@
 let
   weechat = pkgs.wrapWeechat pkgs.weechat-unwrapped {
     configure =
-      {
-        availablePlugins,
-        ...
-      }:
+      { availablePlugins, ... }:
       {
         plugins = builtins.attrValues (
           availablePlugins

@@ -1,8 +1,4 @@
-{
-  lib,
-  inputs,
-  ...
-}:
+{ lib, inputs, ... }:
 let
   stable-pkgs = inputs.nixos-stable.legacyPackages.x86_64-linux;
   unstable-pkgs = inputs.nixos-unstable.legacyPackages.x86_64-linux;
