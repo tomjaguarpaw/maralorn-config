@@ -13,8 +13,7 @@ let
         lib.concatLists (
           lib.mapAttrsToList (dirName: linkToPath (path ++ [ dirName ])) fileOrDir
         )
-    )
-  ;
+    );
 in
 {
   recursiveLinkFarm = name: files: final.linkFarm name (linkToPath [ ] files);

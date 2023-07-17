@@ -11,8 +11,7 @@ let
     config:
     (pkgs.formats.ini { }).generate "vdirsyncer-config" (
       lib.mapAttrs (_: lib.mapAttrs (_: builtins.toJSON)) config
-    )
-  ;
+    );
   mkCalendar =
     {
       name,
@@ -62,8 +61,7 @@ let
             }
           else
             { }
-        )
-      ;
+        );
     }
   ;
   mkAddressbook =

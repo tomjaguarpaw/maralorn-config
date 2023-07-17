@@ -7,8 +7,7 @@ let
         dbpass = "";
         adminuser = "";
       }
-      "nextcloud-admin"
-  ;
+      "nextcloud-admin";
   nextcloudServices = hostname: {
     nextcloud-pg-backup = {
       script =

@@ -25,6 +25,5 @@
           map importOverlay overlays
         )
       );
-    }
-  ;
+    };
 }

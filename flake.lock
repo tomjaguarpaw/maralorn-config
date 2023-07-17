@@ -223,11 +223,11 @@
         "nixpkgs-stable": []
       },
       "locked": {
-        "lastModified": 1689506737,
-        "narHash": "sha256-lmZHyykXV8KDY3NmCz4RwjMb/rhHCURRvQy+3+oBRv0=",
+        "lastModified": 1689600788,
+        "narHash": "sha256-t53ODUyfHyDcCNhjEWfKBxU0M+TxtasuRf2dwaweKWw=",
         "owner": "piegamesde",
         "repo": "nixfmt",
-        "rev": "92bf45a1857655944662bdd5f883727c3c6e559a",
+        "rev": "3434fdbff9fb3434e5e6b38aedf6c95673c2c065",
         "type": "github"
       },
       "original": {

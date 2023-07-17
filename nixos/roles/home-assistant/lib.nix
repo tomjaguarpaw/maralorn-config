@@ -108,7 +108,6 @@ rec {
       mode: option:
       binarySensorFromCondition (jinja.isState (util.modeSelectEntity mode) option) {
         name = util.modeBinarySensorName mode option;
-      }
-    ;
+      };
   };
 }

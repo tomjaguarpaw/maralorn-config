@@ -119,8 +119,7 @@ in
           cmd:
           "sh -c '(${cmd} | wl-copy) && ${
             lib.getExe pkgs.termdown
-          } -T \"Clearing password in\" -f term 20 && wl-copy -c'"
-        ;
+          } -T \"Clearing password in\" -f term 20 && wl-copy -c'";
       in
       {
         Unlock = copy-password "rbw get bitwarden";
@@ -132,8 +131,7 @@ in
   {
     "Select Mode" =
       lib.mapAttrs (name: _: "select-mode ${name}")
-        (import ../machines.nix).${config.m-0.hostName}
-    ;
+        (import ../machines.nix).${config.m-0.hostName};
   }
   {
     Communication = [

@@ -41,8 +41,7 @@ in
           ''
         ;
       }
-      name
-  ;
+      name;
 
   # writeHaskellBin takes the same arguments as writeHaskell but outputs a directory (like writeScriptBin)
   writeHaskellBin = name: pkgs.writeHaskell "/bin/${name}";
@@ -119,6 +118,5 @@ in
 
         main :: IO ()
         ${code}
-      ''
-  ;
+      '';
 }

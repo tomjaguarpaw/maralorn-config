@@ -19,8 +19,7 @@
               inputs.impermanence.nixosModules.impermanence
               inputs.disko.nixosModules.disko
             ];
-          }
-        ;
+          };
       in
       lib.genAttrs machines makeSystem
     );

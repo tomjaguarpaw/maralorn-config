@@ -70,6 +70,5 @@
 
   outputs =
     inputs:
-    inputs.flake-parts.lib.mkFlake { inherit inputs; } (import ./flake-module.nix)
-  ;
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } (import ./flake-module.nix);
 }

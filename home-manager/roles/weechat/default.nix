@@ -18,8 +18,7 @@ let
           }
         );
         scripts = [ pkgs.weechatScripts.weechat-matrix ];
-      }
-    ;
+      };
   };
 in
 {

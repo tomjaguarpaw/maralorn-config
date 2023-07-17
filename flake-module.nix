@@ -26,8 +26,7 @@
               )
               (builtins.readDir dir)
           )
-        )
-      ;
+        );
     in
     builtins.concatMap nixFromDir
   ;
@@ -88,6 +87,5 @@
           };
         }
       ;
-    }
-  ;
+    };
 }

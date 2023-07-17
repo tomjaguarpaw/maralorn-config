@@ -28,8 +28,7 @@ let
         nix-build $REMOTE_FLAG
         ${lib.getExe pkgs.archive-nix-path} ./result
       fi
-    ''
-  ;
+    '';
 in
 {
   services.laminar.cfgFiles.jobs = {

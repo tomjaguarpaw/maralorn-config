@@ -51,8 +51,7 @@ let
               let gc_root = [i|/disk/volatile/nix-gc-roots/#{timestamp}-#{drop 44 path}|] :: String
               say [i|Setting gc-root #{gc_root}|]
               ssh "fluffy" "nix" "build" "-o" gc_root path
-        ''
-    ;
+        '';
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
       ${configGit} pull --ff-only
@@ -87,8 +86,7 @@ let
             writeFile "${modeFile}" mode
             activate_mode
             ignoreFailure $ killall ["GeckoMain", "firefox", ".firefox-wrapped",".electron-wrapped","signal-desktop"]
-        ''
-    ;
+        '';
     updateModes =
       pkgs.writeHaskellScript
         {
@@ -109,8 +107,7 @@ let
             nom ["build", "--builders", [i|@#{builders}|], [i|${configPath}\#homeModes.#{hostname}|], "-o", "${modeDir}"]
             activate_mode
             archive_nix_path "${modeDir}"
-        ''
-    ;
+        '';
     quickUpdateMode =
       pkgs.writeHaskellScript
         {
@@ -133,8 +130,7 @@ let
             path <- decodeUtf8 @Text <$> (nom ["build", "--builders", [i|@#{builders}|], "--print-out-paths", "--no-link", [i|${configPath}\#homeConfigurations.#{hostname}-#{mode}.activationPackage|]] |> captureTrim)
             exe ([i|#{path}/activate|] :: String)
             update_modes
-        ''
-    ;
+        '';
     updateSystem =
       pkgs.writeHaskellScript
         {
@@ -181,8 +177,7 @@ let
             hosts -> (if hosts == ["all"] then ["apollo", "zeus", "fluffy", "hera"] else hosts)
               & filterM is_reachable
               >>= mapM_ (deploy . Just)
-        ''
-    ;
+        '';
   };
 in
 mode-scripts // { inherit mode-scripts; }

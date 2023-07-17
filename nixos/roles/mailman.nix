@@ -53,8 +53,7 @@ in
                   Bei Fragen und wenn Du keine E-Mails von dieser Liste mehr bekommen möchtest wende Dich an ${admin}.
                 '';
               };
-            }).outPath
-        ;
+            }).outPath;
       };
     };
     postfix = {

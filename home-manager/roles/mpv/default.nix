@@ -6,8 +6,7 @@ let
     })
     // {
       scriptName = "autosave.lua";
-    }
-  ;
+    };
 in
 {
   programs.mpv = {

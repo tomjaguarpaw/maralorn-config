@@ -23,8 +23,7 @@ in
       ../../modules/zeus
       ../../modules/clients
       ../../modules/all
-    ]
-  ;
+    ];
 
   age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
 
@@ -117,8 +116,7 @@ in
           "apollo"
           "pegasus"
         ]
-        "/disk/persist/maralorn/media"
-    ;
+        "/disk/persist/maralorn/media";
     #minecraft-server = {
     #  enable = true;
     #  openFirewall = true;

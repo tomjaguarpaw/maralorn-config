@@ -32,8 +32,7 @@ let
                 | otherwise = pass
            action
            threadDelay $ (interval - (minute `mod` interval)) * 60 * 1000000
-      ''
-  ;
+      '';
 in
 {
   systemd.user.services.night-shutdown = {

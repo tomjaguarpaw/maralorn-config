@@ -5,8 +5,7 @@ let
   job =
     name:
     badge "https://ci.maralorn.de/badge/${name}.svg"
-      "https://ci.maralorn.de/jobs/${name}"
-  ;
+      "https://ci.maralorn.de/jobs/${name}";
   badges = lib.concatStringsSep "\\n" [
     (heading "ci.maralorn.de" "https://ci.maralorn.de")
     (job "test-config")

@@ -35,8 +35,7 @@ in
               };
               ghcArgs = [ "-threaded" ];
             }
-            (builtins.readFile ./test-config.hs)
-        ;
+            (builtins.readFile ./test-config.hs);
       in
       pkgs.writeShellScript "test-config" ''
         FLAGS="" PATH=${standardPath}:$PATH ${test-config}
@@ -51,8 +50,7 @@ in
               ghcEnv.PATH = "${standardPath}:$PATH";
               ghcArgs = [ "-threaded" ];
             }
-            (builtins.readFile ./bump-config.hs)
-        ;
+            (builtins.readFile ./bump-config.hs);
       in
       pkgs.writeShellScript "bump-config" ''
         PATH=${standardPath}:$PATH ${bump-config}

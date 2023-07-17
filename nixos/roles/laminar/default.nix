@@ -12,8 +12,7 @@ let
   mkTimeoutConf = run_name: {
     "${lib.removeSuffix ".run" run_name}.conf" =
       builtins.toFile "timeout.conf"
-        "TIMEOUT=10800"
-    ;
+        "TIMEOUT=10800";
   };
   addTimeouts =
     cfg_files:
@@ -38,8 +37,7 @@ in
               oneOf [
                 path
                 (attrsOf valueType)
-              ]
-            ;
+              ];
           in
           valueType
         ;

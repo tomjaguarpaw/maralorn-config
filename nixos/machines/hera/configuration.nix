@@ -64,8 +64,7 @@ in
       ../../modules/hera
       ../../modules/not-home
       ../../modules/all
-    ]
-  ;
+    ];
 
   m-0.monitoring = [ {
     name = "hera";
@@ -81,8 +80,7 @@ in
               name:
               "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}"
             )
-            config.services.postgresql.ensureDatabases
-        ;
+            config.services.postgresql.ensureDatabases;
         serviceConfig = {
           User = "postgres";
           Type = "oneshot";
@@ -129,8 +127,7 @@ in
           };
         })
         backupJobNames
-    )
-  ;
+    );
   services = {
     postgresql = {
       enable = true;
@@ -158,8 +155,7 @@ in
           "zeus"
           "pegasus"
         ]
-        "/media"
-    ;
+        "/media";
   };
   systemd.tmpfiles.rules = [ "Z /media 0770 maralorn nginx - -" ];
   nix.sshServe = {

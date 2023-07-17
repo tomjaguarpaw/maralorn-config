@@ -43,8 +43,7 @@ in
           passwordCommand = "${pkgs.coreutils}/bin/cat /run/agenix/mail-password";
           imapnotify.onNotify = lib.getExe quick-mail-sync;
         };
-      }
-  ;
+      };
 
   systemd.user.services =
     let
@@ -139,8 +138,7 @@ in
         move-message-macro =
           key: dir: name:
           ''
-            macro index,pager ${key} ":set confirmappend=no resolve=no\n<clear-flag>N<save-message>=hera/${dir}\n:set confirmappend=yes resolve=yes\n<next-undeleted>" "move message to ${name}"''
-        ;
+            macro index,pager ${key} ":set confirmappend=no resolve=no\n<clear-flag>N<save-message>=hera/${dir}\n:set confirmappend=yes resolve=yes\n<next-undeleted>" "move message to ${name}"'';
       in
       {
         ".neomuttrc".text = ''

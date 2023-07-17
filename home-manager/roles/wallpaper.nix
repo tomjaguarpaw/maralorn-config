@@ -22,8 +22,7 @@ let
            when (new /= current) $ do
              gsettings "set" "org.gnome.desktop.background" "picture-uri-dark" new
              gsettings "set" "org.gnome.desktop.screensaver" "picture-uri" new
-      ''
-  ;
+      '';
 in
 {
   home.packages = [ randomWallpaper ];

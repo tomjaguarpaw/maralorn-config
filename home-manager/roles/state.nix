@@ -44,8 +44,7 @@ let
   ];
   mkLine =
     type: to: from:
-    "${type} ${to} - - - - ${from}"
-  ;
+    "${type} ${to} - - - - ${from}";
   mkEntry =
     type: persistence: name:
     let
@@ -72,6 +71,5 @@ in
       (mkLine "f" "${home}/.mode" defaultMode)
       (mkLine "f" "${home}/.config/lazygit/state.yml" "startuppopupversion: 5")
       (mkLine "d" "${home}/.cache/mutt" "")
-    ]
-  ;
+    ];
 }

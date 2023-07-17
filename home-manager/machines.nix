@@ -39,8 +39,7 @@ let
     { config, ... }:
     {
       config.xdg.configFile."autostart/${name}.desktop".source = "${config.home.path}/share/applications/${name}.desktop";
-    }
-  ;
+    };
   orga-basics = [
     ./roles/mail.nix
     ./roles/taskwarrior.nix

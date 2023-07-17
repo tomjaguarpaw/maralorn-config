@@ -41,8 +41,7 @@ let
             say [i|Building default.nix #{show target} to /var/www/#{deploy}|]
             bracket (checkout path) (rm "-rf") $ \repoDir -> withCurrentDirectory repoDir $ nix_build "-o" ([i|/var/www/#{deploy}|] :: String) target
             say "Done"
-      ''
-  ;
+      '';
   cgitrc = ''
     enable-git-config=1
     remove-suffix=1

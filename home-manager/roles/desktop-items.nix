@@ -6,8 +6,7 @@ let
       inherit name;
       desktopName = name;
       exec = command;
-    }
-  ;
+    };
   namedTerminalDesktopItem =
     name: command:
     pkgs.makeDesktopItem {
@@ -15,8 +14,7 @@ let
       desktopName = name;
       exec = command;
       terminal = true;
-    }
-  ;
+    };
   superSimpleDesktopItem = name: simpleDesktopItem name name;
   terminalDesktopItem = name: namedTerminalDesktopItem name name;
 in

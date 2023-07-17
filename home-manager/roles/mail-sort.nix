@@ -20,8 +20,7 @@ let
         stupidLists = [ ];
         notifications = [ ];
       }
-      "mail/filters"
-  ;
+      "mail/filters";
   maildir = config.accounts.email.maildirBasePath;
   # mhdr -h List-ID -d Maildir/hera/Archiv/unsortiert | sort | sed 's/^.*<\(.*\)>$/\1/' | uniq | xargs -I '{}' sh -c "notmuch count List:{} | sed 's/$/: {}/'" | sort
   # To find candidates
@@ -83,7 +82,7 @@ let
         myFilters :: [(Text,Text)]
         myFilters = [${
           lib.concatStringsSep "," (
-            builtins.map ({ filter, target, }: ''("${filter}","${target}")'') myFilters
+            builtins.map ({ filter, target }: ''("${filter}","${target}")'') myFilters
           )
         }]
 
@@ -120,8 +119,7 @@ let
            applicableFilters <- catMaybes <$> forConcurrently (listFilters <> myFilters <> toFilters) findFilterMail
            for_ applicableFilters executeFilterMail
            reScan
-      ''
-  ;
+      '';
 in
 {
   services.mbsync = {

@@ -36,8 +36,7 @@ in
                 }:$PATH";
               ghcArgs = [ "-threaded" ];
             }
-            (builtins.readFile ./synapse-cleanup.hs)
-        ;
+            (builtins.readFile ./synapse-cleanup.hs);
         User = "matrix-synapse";
         Type = "oneshot";
       };
@@ -102,8 +101,7 @@ in
                 registration_shared_secret = "";
                 macaroon_secret_key = "";
               }
-              "matrix/server-secrets"
-          ;
+              "matrix/server-secrets";
         in
         server-secrets
         // {

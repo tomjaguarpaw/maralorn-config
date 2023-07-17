@@ -6,8 +6,7 @@ let
         "workDay" = "pass";
         "weekend" = "pass";
       }
-      "plans"
-  ;
+      "plans";
   createPlans =
     pkgs.writeHaskellScript
       {
@@ -29,8 +28,7 @@ let
                 ${plans.weekend}
               else do
                 ${plans.workDay}
-      ''
-  ;
+      '';
   sync = "${lib.getExe pkgs.vdirsyncer} sync nextcloud_calendar/planung";
 in
 {

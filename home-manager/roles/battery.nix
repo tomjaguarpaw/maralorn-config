@@ -60,8 +60,7 @@ let
           | otherwise = Nothing
          where
           myNote = blankNote { body = Just $ Text [i|#{currentLevel}% remaining.|]}
-      ''
-  ;
+      '';
 in
 {
   systemd.user = {

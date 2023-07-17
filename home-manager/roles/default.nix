@@ -17,8 +17,7 @@
     enableNixpkgsReleaseCheck = true;
     file.".face".source =
       config.lib.file.mkOutOfStoreSymlink
-        "${config.home.homeDirectory}/media/images/my_avatar_for_circular.jpg"
-    ;
+        "${config.home.homeDirectory}/media/images/my_avatar_for_circular.jpg";
   };
 
   programs = {
@@ -198,8 +197,7 @@
           "rbw get ${config.m-0.hostName}.m-0.eu ssh-key"
         )
         (pkgs.writeShellScriptBin "dingdingding" (builtins.readFile ./signal.sh))
-      ]
-    ;
+      ];
     sessionVariables = {
       PATH = "$HOME/.nix-profile/bin:$PATH";
       BROWSER = "firefox";

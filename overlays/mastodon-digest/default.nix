@@ -8,8 +8,7 @@ let
       mastodon-py
       scipy
       python-dotenv
-    ]
-  ;
+    ];
   python-env = pkgs.python3.withPackages deps;
   src = pkgs.fetchFromGitHub {
     owner = "hodgesmr";

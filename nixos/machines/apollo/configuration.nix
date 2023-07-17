@@ -33,8 +33,7 @@ in
       ../../modules/clients
       ../../modules/not-home
       ../../modules/all
-    ]
-  ;
+    ];
 
   environment.systemPackages = [
     pkgs.networkmanagerapplet # For when the gnome dialog sucks in asking for a wifi password.
@@ -86,8 +85,7 @@ in
           "zeus"
           "pegasus"
         ]
-        "/home/maralorn/media"
-    ;
+        "/home/maralorn/media";
   };
   system.stateVersion = "19.09";
 }

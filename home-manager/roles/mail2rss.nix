@@ -29,8 +29,7 @@ let
            writeOutput files |> mrefile "${config.accounts.email.maildirBasePath}/hera/Archiv/unsortiert"
            mbsync "-a"
            notmuch "new" "--quiet"
-      ''
-  ;
+      '';
 in
 {
   systemd.user = {

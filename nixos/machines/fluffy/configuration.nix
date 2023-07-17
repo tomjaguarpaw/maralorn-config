@@ -17,8 +17,7 @@ in
     ++ flake-inputs.self.nixFromDirs [
       ../../modules/athene
       ../../modules/all
-    ]
-  ;
+    ];
 
   age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
 

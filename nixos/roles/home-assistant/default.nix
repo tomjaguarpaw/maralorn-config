@@ -366,8 +366,7 @@ in
                     2000
                     2500
                     3000
-                  ]
-              ;
+                  ];
               action = [
                 (actions.notify
                   "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }} ppm."
@@ -394,8 +393,7 @@ in
                     2
                     1
                     0
-                  ]
-              ;
+                  ];
               action = [
                 (actions.notify
                   "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%."
@@ -448,8 +446,7 @@ in
                       for = "00:${minutes}:00";
                     }
                   )
-                  fenster
-              ;
+                  fenster;
               condition = {
                 condition = "numeric_state";
                 entity_id = "sensor.openweathermap_darmstadt_hourly_temperature";
@@ -609,8 +606,7 @@ in
                     inherit entity;
                     icon = "mdi:broadcast-off";
                   })
-                  switches
-              ;
+                  switches;
               state_filter = [ "unavailable" ];
             }
             {

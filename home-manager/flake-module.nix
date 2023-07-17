@@ -24,8 +24,7 @@
               )
               attrs
           )
-        )
-      ;
+        );
       machines = import ./machines.nix;
       buildHomeManager =
         config:
@@ -42,8 +41,7 @@
               sha256 = "sha256:10llmlngq85hyj3gga0dx0aws4nairbcad373bm1sr7gnb65krik";
             })
           ];
-        })
-      ;
+        });
       buildModesForHost =
         host: modes:
         (pkgs.recursiveLinkFarm "${host}-modes" (
@@ -61,8 +59,7 @@
                   old.buildCommand
               ;
             }
-          )
-      ;
+          );
     in
     {
       homeConfigurations = lib.mapAttrs (_: buildHomeManager) (flattenAttrs machines);

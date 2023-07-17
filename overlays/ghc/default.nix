@@ -23,8 +23,7 @@ in
 {
   myHaskellScriptPackages =
     myPkgs.makeHaskellScriptPackages
-      final.haskellPackages
-  ;
+      final.haskellPackages;
   ghcWithPackages = builtins.head shell.nativeBuildInputs;
 }
 // selectHaskellPackages hpkgs

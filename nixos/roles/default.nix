@@ -179,8 +179,7 @@ in
           "GIT_SSL_CAINFO"
           "SSL_CERT_FILE"
         ]
-        (_: "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt")
-    ;
+        (_: "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt");
   };
 
   systemd = {
@@ -241,8 +240,7 @@ in
                 ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};")
                   config.m-0.headscaleIPs}
                 deny all;
-              ''
-          ;
+              '';
         }
       );
       statusPage = true;
