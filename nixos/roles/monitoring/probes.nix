@@ -48,9 +48,10 @@ in
       ])
       (makeProbe "http" (
         [ "hera.m-0.eu" ]
-        ++ map (name: "http://${name}.maralorn.de") (
-          config.m-0.hosts.aliases.fluffy ++ config.m-0.hosts.aliases.hera
-        )
+        ++ lib.pipe (config.m-0.hosts.aliases.fluffy ++ config.m-0.hosts.aliases.hera) [
+          (builtins.filter (name: name != "cache"))
+          (map (name: "http://${name}.maralorn.de/"))
+        ]
       ))
       (makeProbe "https" (
         [
