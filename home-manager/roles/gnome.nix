@@ -51,7 +51,7 @@ in
       panel-icon-color = true;
       panel-icon-style = "application";
       theme = "primary";
-      primary-color = "#1d03a3";
+      primary-color = "#775df7";
       focus-effect = "border";
       vertical-panel-position = "left";
     };
