@@ -85,7 +85,7 @@ let
             [mode] <- getArgs
             writeFile "${modeFile}" mode
             activate_mode
-            gnome_session_quit --no-prompt
+            gnome_session_quit "--no-prompt"
         '';
     updateModes =
       pkgs.writeHaskellScript
