@@ -75,7 +75,7 @@ let
         {
           name = "select-mode";
           bins = [
-            pkgs.activateMode
+            pkgs.gnome.gnome-session
             pkgs.psmisc
           ];
           imports = [ "System.Directory qualified as Directory" ];
@@ -85,7 +85,7 @@ let
             [mode] <- getArgs
             writeFile "${modeFile}" mode
             activate_mode
-            ignoreFailure $ killall ["GeckoMain", "firefox", ".firefox-wrapped",".electron-wrapped","signal-desktop"]
+            gnome_session_quit --no-prompt
         '';
     updateModes =
       pkgs.writeHaskellScript
