@@ -76,7 +76,7 @@ let
           name = "select-mode";
           bins = [
             pkgs.gnome.gnome-session
-            pkgs.psmisc
+            pkgs.activateMode
           ];
           imports = [ "System.Directory qualified as Directory" ];
         }
