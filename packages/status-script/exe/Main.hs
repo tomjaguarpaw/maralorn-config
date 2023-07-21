@@ -362,21 +362,23 @@ main = Notify.withManager \watch_manager -> do
                 pure (Set.difference (Set.fromList (fmap toText dirs)) now_dirty, now_dirty)
               set_of_dirties <- R.foldDyn (\(now_clean, now_dirty) dirty -> Set.union now_dirty (Set.difference dirty now_clean)) mempty dirty_updates
               void $ performEventThreaded (R.updated set_of_dirties) \dirty_dirs -> atomically $ writeTVar dirty_var (toList dirty_dirs)
-              pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs ->
-                [i|Dirty: #{Text.intercalate " " (toList dirty_dirs)}|]
-                  & withColor red
-                  & when' (mode' /= Klausur && not (Set.null dirty_dirs))
-                  & runIdentity
+              pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs' ->
+                let dirty_dirs = (if (mode' == Klausur) then Set.filter (== "promotion") else id) dirty_dirs'
+                 in [i|Dirty: #{Text.intercalate " " (toList dirty_dirs)}|]
+                      & withColor red
+                      & when' (not (Set.null dirty_dirs))
+                      & runIdentity
           , eventModule do
               dirty_updates <- performEventThreaded git_dir_events \dirs -> do
                 now_dirty <- Set.fromList . fmap toText <$> filterM (isUnpushed . (git_dir </>)) dirs
                 pure (Set.difference (Set.fromList (fmap toText dirs)) now_dirty, now_dirty)
               set_of_dirties <- R.foldDyn (\(now_clean, now_dirty) dirty -> Set.union now_dirty (Set.difference dirty now_clean)) mempty dirty_updates
-              pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs ->
-                [i|Unpushed: #{Text.intercalate " " (toList dirty_dirs)}|]
-                  & withColor yellow
-                  & when' (mode' /= Klausur && not (Set.null dirty_dirs))
-                  & runIdentity
+              pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs' ->
+                let dirty_dirs = (if (mode' == Klausur) then Set.filter (== "promotion") else id) dirty_dirs'
+                 in [i|Unpushed: #{Text.intercalate " " (toList dirty_dirs)}|]
+                      & withColor yellow
+                      & when' (not (Set.null dirty_dirs))
+                      & runIdentity
           , simpleModule (5 * oneSecond) do
               let hosts = ["hera", "fluffy"]
               unreachable_hosts <- flip filterM hosts \host -> isLeft <$> (Shh.tryFailure do (exe "/run/wrappers/bin/ping" "-c" "1" (toString host)) &> Shh.devNull)
