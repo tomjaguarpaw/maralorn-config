@@ -64,8 +64,7 @@
             } -login-server https://headscale.maralorn.de ${options}
           fi
 
-        ''
-      ;
+        '';
     };
   };
 }

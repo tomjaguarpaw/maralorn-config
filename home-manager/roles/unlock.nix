@@ -20,8 +20,7 @@ let
       echo
       echo "Ping successful; Entering disk encryption password"
       ${config.programs.rbw.package}/bin/rbw get ${passwordName} | ssh -4 root@${hostName} -o UserKnownHostsFile=${knownHosts} cryptsetup-askpass
-    ''
-  ;
+    '';
   unlocker = [ {
     name = "hera";
     hostName = "hera.m-0.eu";

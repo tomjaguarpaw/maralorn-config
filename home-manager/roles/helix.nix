@@ -99,8 +99,7 @@ in
               "move_char_right"
             ];
           };
-        }
-      ;
+        };
       editor = {
         whitespace.render = {
           space = "all";

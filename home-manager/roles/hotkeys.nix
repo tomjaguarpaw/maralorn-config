@@ -56,8 +56,7 @@ in
         { "fluffy via local network" = ssh "fluffy.lo.m-0.eu"; }
         { "hera via public v4" = ssh "hera-v4"; }
         { "TU Tunnel" = "sshuttle --python python3.9 -r gw 130.83.0.0/16"; }
-      ]
-    ;
+      ];
   }
   {
     Sound =
@@ -84,8 +83,7 @@ in
         { "MPD Lounge" = mpdclient "lounge.w17.io"; }
         { "MPD Kitchen" = mpdclient "kitchen.w17.io"; }
         { "MPD Space" = mpdclient "burbon.w17.io"; }
-      ]
-    ;
+      ];
   }
   {
     Apps = {
@@ -125,8 +123,7 @@ in
         Unlock = copy-password "rbw get bitwarden";
         Password = copy-password "rbw-fzf";
         "OTP" = copy-password "rbw-totp-fzf";
-      }
-    ;
+      };
   }
   {
     "Select Mode" =

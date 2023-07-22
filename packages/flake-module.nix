@@ -41,8 +41,7 @@ let
         // overrides old
       ))
       hpkgs.buildFromCabalSdist
-    ]
-  ;
+    ];
   haskellPackagesOverlay =
     final: prev:
     lib.mapAttrs (_: package: package final) myHaskellPackages

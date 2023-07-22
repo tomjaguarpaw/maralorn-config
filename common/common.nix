@@ -29,7 +29,6 @@
           books = mkFolder "books";
           tmp = mkFolder "tmp";
         };
-      }
-    ;
+      };
   };
 }

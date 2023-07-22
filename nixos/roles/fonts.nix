@@ -30,8 +30,7 @@
             "Libertinus Serif"
             "Noto Serif"
           ] ++ unicode-fallback;
-        }
-      ;
+        };
     };
     fonts = builtins.attrValues {
       inherit (pkgs)
@@ -93,6 +92,5 @@
           n: source: lib.nameValuePair "src-cache/fonts/${toString n}" { inherit source; }
         )
         font_sources
-    )
-  ;
+    );
 }

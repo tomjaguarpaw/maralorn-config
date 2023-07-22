@@ -117,8 +117,7 @@ let
           (blockServer [ ])
         ]
       );
-    }
-  ;
+    };
 in
 {
   apollo = daily-driver "apollo" [

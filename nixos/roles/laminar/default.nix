@@ -39,8 +39,7 @@ in
                 (attrsOf valueType)
               ];
           in
-          valueType
-        ;
+          valueType;
         default = { };
         description = ''
           Every entry will be copied to /var/lib/laminar/cfg/<name>

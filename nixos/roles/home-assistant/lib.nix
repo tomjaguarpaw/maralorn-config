@@ -17,8 +17,7 @@ rec {
     {
       setMode = mode: option: fromServiceAction (actions.setMode mode option);
       cycleMode = mode: fromServiceAction (actions.cycleMode mode);
-    }
-  ;
+    };
   actions = {
     notify = message: {
       service = "notify.matrix";
@@ -75,8 +74,7 @@ rec {
           name = mode.title;
         } // attrs;
         template = builtins.map (templates.binarySensorForMode mode) options;
-      }
-    ;
+      };
   };
   cards = {
     modeSwitcher =
@@ -95,8 +93,7 @@ rec {
         columns = builtins.length (builtins.attrNames mode.options);
         show_state = false;
         entities = lib.mapAttrsToList mkEntity mode.options;
-      }
-    ;
+      };
   };
   templates = rec {
     binarySensor = state: attrs: {

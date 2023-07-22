@@ -241,7 +241,6 @@ in
         #  )
         #}
         #send2-hook '~f fill-later' "push <edit-from><kill-line>f__<complete><search>${mail}<enter>"
-      }
-    ;
+      };
   };
 }

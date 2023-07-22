@@ -53,8 +53,7 @@ let
     [
       (mkLine "L+" "${home}/${name}" target)
       (mkLine type target "")
-    ]
-  ;
+    ];
 in
 {
   systemd.user.tmpfiles.rules =

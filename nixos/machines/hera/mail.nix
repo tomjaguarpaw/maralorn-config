@@ -70,8 +70,7 @@ in
               map = "${allow-host}";
               description = "Submitting host RDNS listed in local allow list";
             }
-          ''
-        ;
+          '';
       };
     };
     postfix = {

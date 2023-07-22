@@ -65,8 +65,7 @@ in
         {
           transport_maps = lmtp;
           local_recipient_maps = lmtp;
-        }
-      ;
+        };
     };
     nginx.virtualHosts."${hostname}" = {
       enableACME = true;

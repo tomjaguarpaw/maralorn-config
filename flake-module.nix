@@ -28,8 +28,7 @@
           )
         );
     in
-    builtins.concatMap nixFromDir
-  ;
+    builtins.concatMap nixFromDir;
   perSystem =
     {
       inputs',
@@ -85,7 +84,6 @@
               dhall-format.enable = true;
             };
           };
-        }
-      ;
+        };
     };
 }

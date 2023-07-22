@@ -33,6 +33,5 @@
           --old-bindir $OLDBIN --new-bindir $NEWBIN \
           "$@"
       '')
-    ]
-  ;
+    ];
 }

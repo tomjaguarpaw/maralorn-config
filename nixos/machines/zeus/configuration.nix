@@ -50,8 +50,7 @@ in
         device = "/disk/persist/maralorn/.config/pulse";
         options = [ "bind" ];
       };
-    }
-  ;
+    };
 
   environment.etc = {
     nixos.source = "/disk/persist/maralorn/git/config";

@@ -19,8 +19,7 @@ list:
             }
           }";
         Restart = "always";
-      }
-    ;
+      };
     Install.WantedBy = [ "default.target" ];
   };
 }

@@ -67,8 +67,7 @@ let
         };
         Install.WantedBy = [ "default.target" ];
       };
-    }
-  ;
+    };
 in
 {
   systemd.user.services = lib.mapAttrs' service {

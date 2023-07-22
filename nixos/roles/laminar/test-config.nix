@@ -39,8 +39,7 @@ in
       in
       pkgs.writeShellScript "test-config" ''
         FLAGS="" PATH=${standardPath}:$PATH ${test-config}
-      ''
-    ;
+      '';
     "bump-config.run" =
       let
         bump-config =
@@ -54,8 +53,7 @@ in
       in
       pkgs.writeShellScript "bump-config" ''
         PATH=${standardPath}:$PATH ${bump-config}
-      ''
-    ;
+      '';
   };
   #security.sudo.extraRules = let allowedCommands = [ deployCommand ];
   #in [{

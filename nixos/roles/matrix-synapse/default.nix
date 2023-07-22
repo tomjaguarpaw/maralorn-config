@@ -57,8 +57,7 @@ in
             ''
               add_header Content-Type application/json;
               return 200 '${builtins.toJSON server}';
-            ''
-          ;
+            '';
           "/.well-known/matrix/client".extraConfig =
             let
               client."m.homeserver".base_url = "https://${hostName}";
@@ -67,8 +66,7 @@ in
               add_header Content-Type application/json;
               add_header Access-Control-Allow-Origin *;
               return 200 '${builtins.toJSON client}';
-            ''
-          ;
+            '';
         };
       };
       virtualHosts."${hostName}" = {

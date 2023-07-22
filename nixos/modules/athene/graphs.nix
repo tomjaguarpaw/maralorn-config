@@ -80,7 +80,6 @@ in
             options.path = dashboards;
           } ];
         };
-      }
-    ;
+      };
   };
 }

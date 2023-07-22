@@ -110,8 +110,7 @@ in
             ${start} synapse-cleanup
             ${start} nix-gc
             ${start} nix-optimise
-          ''
-        ;
+          '';
         serviceConfig = {
           Type = "oneshot";
         };

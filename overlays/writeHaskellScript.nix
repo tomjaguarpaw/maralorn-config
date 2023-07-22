@@ -38,8 +38,7 @@ in
             } ${filename}.hs
             mv ${filename} $out
             ${pkgs.binutils-unwrapped}/bin/strip --strip-unneeded "$out"
-          ''
-        ;
+          '';
       }
       name;
 

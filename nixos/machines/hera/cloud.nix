@@ -16,8 +16,7 @@ let
         in
         ''
           ${config.services.postgresql.package}/bin/pg_dump nextcloud > /var/lib/db-backup-dumps/${name}
-        ''
-      ;
+        '';
       serviceConfig = {
         User = "nextcloud";
         Type = "oneshot";

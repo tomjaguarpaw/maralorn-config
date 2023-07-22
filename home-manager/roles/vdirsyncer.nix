@@ -62,8 +62,7 @@ let
           else
             { }
         );
-    }
-  ;
+    };
   mkAddressbook =
     {
       name,
@@ -103,8 +102,7 @@ let
         ] ++ passwordPath;
         read_only = readOnly;
       };
-    }
-  ;
+    };
 in
 {
   xdg.configFile."vdirsyncer/config".source = mkConfig (

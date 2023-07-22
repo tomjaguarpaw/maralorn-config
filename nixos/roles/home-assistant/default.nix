@@ -686,8 +686,7 @@ in
                   };
                 })
               ];
-            }
-          ;
+            };
           graph.outside = {
             dew_point = {
               entity = "sensor.openweathermap_darmstadt_hourly_dew_point";
@@ -1329,8 +1328,7 @@ in
               ];
             }
           ];
-        }
-      ;
+        };
     };
     nginx.virtualHosts.${config.m-0.virtualHosts.home} = {
       extraConfig = "proxy_buffering off;";
