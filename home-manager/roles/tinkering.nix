@@ -9,7 +9,6 @@
       filezilla
       nix-review
       gparted
-      grafana-devel
       httpie
       tea
     ;
