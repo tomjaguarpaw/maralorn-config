@@ -7,7 +7,10 @@
         enable = true;
         user = "maralorn";
       };
-      sddm.enable = true;
+      sddm = {
+        enable = true;
+        autoLogin.relogin = true;
+      };
     };
   };
 }

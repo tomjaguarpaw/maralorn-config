@@ -75,7 +75,7 @@ let
         {
           name = "select-mode";
           bins = [
-            pkgs.gnome.gnome-session
+            pkgs.hyprland
             pkgs.activateMode
           ];
           imports = [ "System.Directory qualified as Directory" ];
@@ -85,7 +85,7 @@ let
             [mode] <- getArgs
             writeFile "${modeFile}" mode
             activate_mode
-            gnome_session_quit "--no-prompt"
+            hyprctl "dispatch" "exit"
         '';
     updateModes =
       pkgs.writeHaskellScript

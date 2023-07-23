@@ -28,7 +28,11 @@ in
       decoration.blur = false;
       "$mod" = "SUPER";
       windowrulev2 = [ "float,class:launcher" ];
-      exec = [ "hyprpaper" ];
+      exec = [
+        "hyprpaper"
+        "unlock-ssh"
+        "kassandra2"
+      ];
       bind = [
         "$mod, RETURN, exec, ${config.home.sessionVariables.TERMINAL}"
         "$mod, space, exec, ${config.home.sessionVariables.TERMINAL} -oapp-id=launcher ${
