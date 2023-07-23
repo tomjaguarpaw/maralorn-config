@@ -1,3 +1,4 @@
+flake-inputs:
 let
   restrictedPages = [
     "reddit.com"
@@ -42,7 +43,7 @@ let
     };
   orga-basics = [
     ./roles/mail.nix
-    ./roles/taskwarrior.nix
+    #./roles/taskwarrior.nix
   ];
   default = [
     ./roles/on-my-machine.nix
@@ -59,13 +60,12 @@ let
           (makeAutostart "kassandra2")
           (makeAutostart "unlock-ssh")
           ./roles/beets.nix
-          ./roles/bitwarden.nix
-          ./roles/conky
+          #./roles/conky
           ./roles/desktop-items.nix
           ./roles/desktop.nix
           ./roles/firefox.nix
           ./roles/git-sign.nix
-          ./roles/gnome.nix
+          #./roles/gnome.nix
           ./roles/haskell-env.nix
           ./roles/kassandra.nix
           ./roles/khal.nix
@@ -77,15 +77,16 @@ let
           ./roles/mpv
           #./roles/night-shutdown.nix
           ./roles/pythia.nix
-          ./roles/refresh-config.nix
+          #./roles/refresh-config.nix
           ./roles/research.nix
           ./roles/status-script.nix
           ./roles/terminal.nix
           ./roles/tinkering.nix
           ./roles/vdirsyncer.nix
-          ./roles/wallpaper.nix
+          #./roles/wallpaper.nix
           ./roles/zettelkasten.nix
         ]
+        ++ flake-inputs.self.nixFromDirs [ ./modules/clients ]
       ;
       blockServer = import ./roles/block-server.nix;
     in

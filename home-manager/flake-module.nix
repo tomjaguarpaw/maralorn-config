@@ -25,7 +25,7 @@
               attrs
           )
         );
-      machines = import ./machines.nix;
+      machines = import ./machines.nix inputs;
       buildHomeManager =
         config:
         (inputs.home-manager.lib.homeManagerConfiguration {

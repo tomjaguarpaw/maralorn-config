@@ -7,6 +7,7 @@ flake-inputs:
     useGlobalPkgs = true;
     useUserPackages = true;
     users.maralorn =
-      (import ../../home-manager/machines.nix).${config.networking.hostName}.default;
+      (import ../../home-manager/machines.nix flake-inputs)
+      .${config.networking.hostName}.default;
   };
 }

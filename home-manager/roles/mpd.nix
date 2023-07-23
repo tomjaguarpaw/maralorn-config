@@ -39,8 +39,8 @@ in
       network.listenAddress = "::";
       extraConfig = ''
         audio_output {
-          type "pulse"
-          name "Pulseaudio"
+          type "pipewire"
+          name "PipeWire"
         }
       '';
     };

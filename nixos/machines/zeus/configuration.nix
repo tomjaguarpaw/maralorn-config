@@ -128,16 +128,16 @@ in
       enable = true;
       driSupport32Bit = true; # for gw2
     };
-    pulseaudio = {
-      support32Bit = true;
-      tcp = {
-        enable = true;
-        anonymousClients.allowedIpRanges = [
-          "127.0.0.1"
-          "::1"
-        ];
-      };
-    };
+    #pulseaudio = {
+    #  support32Bit = true;
+    #  tcp = {
+    #    enable = true;
+    #    anonymousClients.allowedIpRanges = [
+    #      "127.0.0.1"
+    #      "::1"
+    #    ];
+    #  };
+    #};
   };
   system.stateVersion = "21.05";
 }

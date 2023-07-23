@@ -125,11 +125,11 @@ in
         "OTP" = copy-password "rbw-totp-fzf";
       };
   }
-  {
-    "Select Mode" =
-      lib.mapAttrs (name: _: "select-mode ${name}")
-        (import ../machines.nix).${config.m-0.hostName};
-  }
+  #{
+  #  "Select Mode" =
+  #    lib.mapAttrs (name: _: "select-mode ${name}")
+  #      (import ./machines.nix {}).${config.m-0.hostName};
+  #i}
   {
     Communication = [
       { Matrix = fork "element-desktop"; }
