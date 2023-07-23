@@ -266,9 +266,10 @@ white = "D9E0EE"
 
 main :: IO ()
 main = Notify.withManager \watch_manager -> do
-  Nothing <-
+  missing <-
     missingExecutables
       <&> nonEmpty
+  whenJust missing \missing' -> say [i|missing executables #{missing'}|]
   home <- getEnv "HOME"
   let git_dir = home </> "git"
       modes_dir = home </> ".volatile" </> "modes"

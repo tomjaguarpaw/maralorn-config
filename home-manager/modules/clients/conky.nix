@@ -32,7 +32,7 @@ let
           out_to_x = true,
           own_window = true,
           own_window_class = 'Conky',
-          own_window_type = 'dock',
+          own_window_type = 'panel',
           own_window_argb_visual = true,
           own_window_argb_value = 0,
           show_graph_range = false,
@@ -77,7 +77,7 @@ in
         text_buffer_size = 2047,
         update_interval = 0.25,
         gap_y = 1,
-        gap_x = 150,
+        gap_x = 1,
       '';
       text = "$alignr\${catp /run/user/1000/status-bar}";
       wait = 100;
@@ -86,7 +86,7 @@ in
       extra = ''
         alignment = 'bottom_left',
         gap_x = 1,
-        gap_y = 300,
+        gap_y = 1,
         update_interval = 5.0,
       '';
       text = ''
@@ -116,6 +116,7 @@ in
         ''${time %d. %b}
         ''${time KW%V}
         ''${time %a}
+        ''${time %H:%M}
       '';
       wait = 5;
     };
