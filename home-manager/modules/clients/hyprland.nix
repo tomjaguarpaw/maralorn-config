@@ -53,6 +53,12 @@ in
         "SUPER_SHIFT, down, movewindow, d"
         "$mod, f, fullscreen"
         "$mod, t, togglefloating"
+        "$mod, g, togglegroup"
+        "$mod, Tab, changegroupactive"
+        "$mod, Prior, workspace, -1"
+        "$mod, Next, workspace, +1"
+        "SUPER_SHIFT, Prior, movetoworkspace, -1"
+        "SUPER_SHIFT, Next, movetoworkspace, +1"
       ];
       bindm = [
         "$mod,mouse:272,movewindow"
