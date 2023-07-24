@@ -28,10 +28,11 @@ in
       decoration.blur = false;
       "$mod" = "SUPER";
       windowrulev2 = [ "float,class:launcher" ];
-      exec = [
+      exec-once = [
         "hyprpaper"
         "unlock-ssh"
         "kassandra2"
+        "random-wallpaper"
       ];
       bind = [
         "$mod, RETURN, exec, ${config.home.sessionVariables.TERMINAL}"
