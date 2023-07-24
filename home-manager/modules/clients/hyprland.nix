@@ -29,10 +29,13 @@ in
       "$mod" = "SUPER";
       windowrulev2 = [ "float,class:launcher" ];
       exec-once = [
-        "hyprpaper"
+        (lib.getExe pkgs.hyprpaper)
         "unlock-ssh"
-        "kassandra2"
-        "random-wallpaper"
+        (lib.getExe pkgs.kassandra)
+        (pkgs.writeShellScript "wallpaper" ''
+          sleep 1s
+          ${lib.getExe pkgs.randomWallpaper}
+        '')
       ];
       bind = [
         "$mod, RETURN, exec, ${config.home.sessionVariables.TERMINAL}"
