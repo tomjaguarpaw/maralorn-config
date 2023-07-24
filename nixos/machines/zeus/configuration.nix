@@ -45,11 +45,6 @@ in
       } // btrfsOptions;
       "/boot" = btrfsOptions;
       "/nix" = btrfsOptions;
-      "/home/maralorn/.config/pulse" = {
-        mountPoint = "/home/maralorn/.config/pulse";
-        device = "/disk/persist/maralorn/.config/pulse";
-        options = [ "bind" ];
-      };
     };
 
   environment.etc = {
@@ -63,8 +58,6 @@ in
     "d /disk/persist/home/maralorn 700 maralorn users - -"
     "d /disk/volatile/home/maralorn 700 maralorn users - -"
     "Z /home/maralorn - maralorn users - -"
-    # "d /disk/persist/minecraft 700 minecraft minecraft - -"
-    #"d /var/lib/misc 755 - - - -"
   ];
 
   environment.persistence."/disk/persist" = {
@@ -78,6 +71,7 @@ in
     users.maralorn.directories = [
       ".cache/rbw"
       ".factorio"
+      ".local/state/wireplumber"
     ];
   };
 
