@@ -27,7 +27,12 @@ in
       };
       decoration.blur = false;
       "$mod" = "SUPER";
-      windowrulev2 = [ "float,class:launcher" ];
+      windowrulev2 = [
+        "float,class:launcher"
+        "nofocus,class:Conky"
+        "noborder,class:Conky"
+        "pin,class:Conky"
+      ];
       exec-once = [
         (lib.getExe pkgs.hyprpaper)
         "unlock-ssh"
