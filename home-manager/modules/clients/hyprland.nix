@@ -50,6 +50,10 @@ in
         "$mod, f, fullscreen"
         "$mod, t, togglefloating"
       ];
+      bindm = [
+        "$mod,mouse:272,movewindow"
+        "$mod,mouse:273,resizewindow"
+      ];
 
       monitor = [ ",preferred,auto,1" ];
     };
