@@ -23,7 +23,7 @@ let
       # -G remove the unit immediately after exit, even if it fails
       ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block -G \
         ${lib.getExe pkgs.foot} -D "${video_dir}" \
-        sh -c \
+        /bin/sh -c \
         "${
           lib.getExe pkgs.yt-dlp
         } --embed-subs --embed-metadata --embed-chapters \"$1\" && ${
