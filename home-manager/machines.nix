@@ -125,13 +125,15 @@ in
     ./roles/battery.nix
     ./roles/untrusted-env.nix
   ];
-  zeus = daily-driver "zeus" [
-    (import ./roles/state.nix "klausur")
-    ./roles/create-plans.nix
-    ./roles/monitor-config
-    ./roles/trusted-env.nix
-    ./roles/wine.nix
-  ];
+  zeus = daily-driver "zeus" (
+    [
+      (import ./roles/state.nix "klausur")
+      ./roles/create-plans.nix
+      ./roles/monitor-config
+      ./roles/trusted-env.nix
+    ]
+    ++ flake-inputs.self.nixFromDirs [ ./modules/zeus ]
+  );
   fluffy.default = makeConfig "fluffy" (
     default
     ++ [

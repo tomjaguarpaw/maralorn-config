@@ -63,15 +63,21 @@ in
   environment.persistence."/disk/persist" = {
     directories = [
       "/etc/ssh"
-      "/var/lib/nixos"
-      "/var/lib/bluetooth"
-      "/var/lib/tailscale"
+      "/var/lib/nixos" # Nixos has state to track userids
+      "/var/lib/bluetooth" # Bluetooth pairing date
+      "/var/lib/tailscale" # VPN login state
       "/root/.ssh"
     ];
     users.maralorn.directories = [
-      ".cache/rbw"
-      ".factorio"
-      ".local/state/wireplumber"
+      ".cache/rbw" # Save user login
+      "Games"
+    ];
+  };
+  environment.persistence."/disk/volatile" = {
+    users.maralorn.directories = [
+      ".factorio" # Factorio save games and login
+      ".config/heroic" # Login data
+      ".local/state/wireplumber" # For volume levels
     ];
   };
 
@@ -89,10 +95,6 @@ in
       cleanupInterval = "15m";
       snapshotInterval = "*:00/3:00";
     };
-    #prometheus.exporters.node = {
-    # firewallFilter = "-i m0wire -p tcp -m tcp -m multiport --dports 9100,9558";
-    # openFirewall = lib.mkForce false;
-    #};
     syncthing =
       {
         enable = true;
@@ -115,22 +117,6 @@ in
     #  openFirewall = true;
     #  eula = true;
     #  dataDir = "/disk/persist/minecraft";
-    #};
-  };
-  hardware = {
-    opengl = {
-      enable = true;
-      driSupport32Bit = true; # for gw2
-    };
-    #pulseaudio = {
-    #  support32Bit = true;
-    #  tcp = {
-    #    enable = true;
-    #    anonymousClients.allowedIpRanges = [
-    #      "127.0.0.1"
-    #      "::1"
-    #    ];
-    #  };
     #};
   };
   system.stateVersion = "21.05";
