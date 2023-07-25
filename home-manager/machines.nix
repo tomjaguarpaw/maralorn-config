@@ -43,7 +43,7 @@ let
     };
   orga-basics = [
     ./roles/mail.nix
-    #./roles/taskwarrior.nix
+    ./roles/taskwarrior.nix
   ];
   default = [
     ./roles/on-my-machine.nix
@@ -60,12 +60,9 @@ let
           (makeAutostart "kassandra2")
           (makeAutostart "unlock-ssh")
           ./roles/beets.nix
-          #./roles/conky
-          ./roles/desktop-items.nix
           ./roles/desktop.nix
           ./roles/firefox.nix
           ./roles/git-sign.nix
-          #./roles/gnome.nix
           ./roles/haskell-env.nix
           ./roles/kassandra.nix
           ./roles/khal.nix
@@ -77,7 +74,7 @@ let
           ./roles/mpv
           #./roles/night-shutdown.nix
           ./roles/pythia.nix
-          #./roles/refresh-config.nix
+          ./roles/refresh-config.nix
           ./roles/research.nix
           ./roles/status-script.nix
           ./roles/terminal.nix
@@ -129,7 +126,6 @@ in
     [
       (import ./roles/state.nix "klausur")
       ./roles/create-plans.nix
-      ./roles/monitor-config
       ./roles/trusted-env.nix
     ]
     ++ flake-inputs.self.nixFromDirs [ ./modules/zeus ]

@@ -1,4 +1,9 @@
-{ pkgs, config, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 {
   imports = [
     ./zsh
@@ -192,6 +197,9 @@
         (pkgs.writeShellScriptBin "unlock-ssh" ''
           ssh-add <(rbw get "Git SSH Signingkey")
           SSH_ASKPASS="print-ssh-pw" DISPLAY="a" ssh-add < /dev/null
+          ${
+            lib.getBin pkgs.dbus
+          }/bin/dbus-update-activation-environment --systemd SSH_AUTH_SOCK
         '')
         (pkgs.writeShellScriptBin "print-ssh-pw"
           "rbw get ${config.m-0.hostName}.m-0.eu ssh-key"
@@ -213,12 +221,10 @@
     inherit (config.home) sessionVariables;
   };
 
-  services = {
-    gpg-agent = {
-      enable = true;
-      defaultCacheTtl = 31536000; # 1year
-      maxCacheTtl = 31536000; # 1year
-    };
+  services.gpg-agent = {
+    enable = true;
+    defaultCacheTtl = 31536000; # 1year
+    maxCacheTtl = 31536000; # 1year
   };
 
   xdg = {
