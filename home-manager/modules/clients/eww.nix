@@ -106,7 +106,6 @@ in
             (label :text "''${workspaces}''${current_workspace}" :visible false)
             (for workspace in workspaces
               (box :class "component ''${workspace.id == current_workspace ? "current" : ""} ''${workspace.windows > 0 ? "occupied" : "empty"}"
-                (label :text "''${workspace.id}")
                 (label :class "comment" :text "''${workspace.windows}")
               )
             )
