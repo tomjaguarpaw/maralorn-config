@@ -27,7 +27,7 @@ in
       };
       general = {
         gaps_in = 3;
-        gaps_out = 50;
+        gaps_out = 10;
       };
       decoration.blur = false;
       "$mod" = "SUPER";

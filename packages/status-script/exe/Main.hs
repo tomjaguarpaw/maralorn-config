@@ -1,4 +1,5 @@
 {-# LANGUAGE ImpredicativeTypes #-}
+{-# LANGUAGE OverloadedRecordDot #-}
 
 module Main (main) where
 
@@ -14,7 +15,6 @@ import Data.ByteString.Lazy.Char8 qualified as LBSC
 
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
-import Data.Time qualified as Time
 import Relude
 import Say (say)
 import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, readInputLines, (&>), (|>))
@@ -124,10 +124,7 @@ data Module t m a
 eventModule :: forall t m a. R.MonadHeadlessApp t m => m (R.Event t a) -> Module t m a
 eventModule = \event_action -> Module $ fmap (,pass) event_action
 
-separator :: Text
-separator = " "
-
-writeVars :: R.MonadHeadlessApp t m => [R.Event t (Maybe Text)] -> m ()
+writeVars :: R.MonadHeadlessApp t m => [R.Event t (Maybe Component)] -> m ()
 writeVars vars = do
   writeEvent <-
     vars
@@ -140,11 +137,22 @@ writeVars vars = do
       %> R.updated
       %>> catMaybes
       %>> reverse
-      %>> Text.intercalate separator
+      %>> fmap
+        ( \component ->
+            let
+              color = component.color
+              content = reflow (if component.small then 15 else 10) component.content
+              small = if component.small then "true" else "false"
+             in
+              [i|{"color":"#{color}","content":["#{Text.intercalate "\", \"" content}"],"small":#{small}}|]
+        )
+      %>> Text.intercalate ","
+      %>> (<> "]")
+      %>> ("[" <>)
       %>> writeFileText "/run/user/1000/status-bar"
   R.performEvent_ writeEvent
 
-runModules :: R.MonadHeadlessApp t m => [Module t m (Maybe Text)] -> m ()
+runModules :: R.MonadHeadlessApp t m => [Module t m (Maybe Component)] -> m ()
 runModules modules = do
   (vars, actions) <-
     unzip <$> forM modules \case
@@ -177,11 +185,18 @@ tickEvent delay =
   R.tickLossyFromPostBuildTime (realToFrac delay / realToFrac oneSecond)
     <&> void
 
-withColor :: Monad m => Text -> Text -> m (Maybe Text)
+withColor :: Monad m => Text -> Text -> m (Maybe Component)
 withColor color content = pure $ Just (withColor' color content)
 
-withColor' :: Text -> Text -> Text
-withColor' color content = [i|${color \##{color}}#{content}|]
+withColor' :: Text -> Text -> Component
+withColor' color content = MkComponent{color, content, small = False}
+
+data Component = MkComponent
+  { color :: Text
+  , content :: Text
+  , small :: Bool
+  }
+  deriving (Eq)
 
 when' :: Monad m => Bool -> m (Maybe a) -> m (Maybe a)
 when' cond result = if cond then result else pure Nothing
@@ -210,7 +225,7 @@ performEventThreaded event action = do
         NextWaiting{} -> (False, NextWaiting input)
       when run $ void $ Async.async $ runner input
 
-playerModule :: forall t m. R.MonadHeadlessApp t m => FilePath -> Module t m (Maybe Text)
+playerModule :: forall t m. R.MonadHeadlessApp t m => FilePath -> Module t m (Maybe Component)
 playerModule home = Module do
   (event, trigger) <- R.newTriggerEvent
   pure (event, listenToPlayer trigger)
@@ -225,13 +240,13 @@ playerModule home = Module do
         % Text.splitOn " | "
         % (get_host mpdris_config <>)
         % filter (Text.null % not)
-        % Text.intercalate " | "
+        % Text.unlines
         % Text.replace "@Stopped" "⏹"
         % Text.replace "@Playing" "▶"
         % Text.replace "@Paused" "⏸"
-        % ("\n${alignr}" <>)
         % withColor white
         % runIdentity
+        % fmap (\x -> x{small = True})
         % trigger
   listenToPlayer = \trigger ->
     forever do
@@ -263,6 +278,28 @@ cyan :: Text
 cyan = "89DCEB"
 white :: Text
 white = "D9E0EE"
+
+reflow :: Int -> Text -> [Text]
+reflow width =
+  Text.lines
+    % map (reflowLine width)
+    % join
+
+reflowLine :: Int -> Text -> [Text]
+reflowLine width =
+  words
+    % foldl' go (Nothing, [])
+    % \case
+      (Just last_line, rest) -> reverse (last_line : rest)
+      (Nothing, rest) -> reverse rest
+ where
+  go (Nothing, rest) word | Text.length word < width = (Just word, rest)
+  go (Nothing, rest) too_long_word = go (Nothing, (Text.take width too_long_word : rest)) (Text.drop width too_long_word)
+  go (Just line, rest) word
+    | new_line <- line <> " " <> word
+    , Text.length new_line < width =
+        (Just new_line, rest)
+  go (Just line, rest) word = go (Nothing, line : rest) word
 
 main :: IO ()
 main = Notify.withManager \watch_manager -> do
@@ -302,14 +339,14 @@ main = Notify.withManager \watch_manager -> do
             pure $ mconcat dir_update_events
     git_dir_events <- (<> git_dirs_event) . R.switchDyn <$> R.networkHold (pure R.never) git_dirs_event'
     let modules =
-          [ simpleModule (1 * oneSecond) do
-              now <- Time.getCurrentTime
-              notifications <- processNotifications . fromRight "" <$> Exception.try @Exception.IOException (readFileBS [i|#{home}/.notifications/#{Time.formatTime Time.defaultTimeLocale "%Y-%m-%d" now}.log|])
-              when' (not $ Text.null notifications) $ withColor red ("\n" <> notifications)
-          , simpleModule (5 * oneSecond) $ do
+          [ --  simpleModule (1 * oneSecond) do
+            --    now <- Time.getCurrentTime
+            --    notifications <- processNotifications . fromRight "" <$> Exception.try @Exception.IOException (readFileBS [i|#{home}/.notifications/#{Time.formatTime Time.defaultTimeLocale "%Y-%m-%d" now}.log|])
+            --    when' (not $ Text.null notifications) $ withColor red ("\n" <> notifications)
+            simpleModule (5 * oneSecond) $ do
               appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
               when' (not $ null appointments) $
-                withColor magenta ("\n${alignr}" <> Text.intercalate " | " appointments)
+                withColor magenta (unlines appointments) <<&>> \x -> x{small = True}
           , playerModule home
           , eventModule do
               performEventThreaded
@@ -365,7 +402,7 @@ main = Notify.withManager \watch_manager -> do
               void $ performEventThreaded (R.updated set_of_dirties) \dirty_dirs -> atomically $ writeTVar dirty_var (toList dirty_dirs)
               pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs' ->
                 let dirty_dirs = (if (mode' == Klausur) then Set.filter (== "promotion") else id) dirty_dirs'
-                 in [i|Dirty: #{Text.intercalate " " (toList dirty_dirs)}|]
+                 in [i|Dirty: #{Text.unwords (toList dirty_dirs)}|]
                       & withColor red
                       & when' (not (Set.null dirty_dirs))
                       & runIdentity
@@ -376,7 +413,7 @@ main = Notify.withManager \watch_manager -> do
               set_of_dirties <- R.foldDyn (\(now_clean, now_dirty) dirty -> Set.union now_dirty (Set.difference dirty now_clean)) mempty dirty_updates
               pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs' ->
                 let dirty_dirs = (if (mode' == Klausur) then Set.filter (== "promotion") else id) dirty_dirs'
-                 in [i|Unpushed: #{Text.intercalate " " (toList dirty_dirs)}|]
+                 in [i|Unpushed: #{Text.unwords (toList dirty_dirs)}|]
                       & withColor yellow
                       & when' (not (Set.null dirty_dirs))
                       & runIdentity
