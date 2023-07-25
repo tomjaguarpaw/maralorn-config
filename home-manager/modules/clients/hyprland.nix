@@ -26,8 +26,9 @@ in
         kb_options = "altwin:swap_lalt_lwin"; # swap alt and win
       };
       general = {
-        gaps_in = 3;
-        gaps_out = 10;
+        gaps_in = 2;
+        gaps_out = 4;
+        "col.inactive_border" = "0x00000000";
       };
       decoration.blur = false;
       "$mod" = "SUPER";
