@@ -1,3 +1,4 @@
+{ pkgs, ... }:
 {
 
   hardware.opengl = {
@@ -7,4 +8,6 @@
     driSupport = true;
     driSupport32Bit = true; # for gw2
   };
+
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 }

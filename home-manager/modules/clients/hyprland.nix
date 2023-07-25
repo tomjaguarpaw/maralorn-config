@@ -12,7 +12,11 @@ let
   '';
 in
 {
-  home.packages = [ hotkeys ];
+  home.packages = [
+    hotkeys
+    pkgs.slurp
+    pkgs.grim
+  ];
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
@@ -64,12 +68,12 @@ in
         "$mod, Next, workspace, +1"
         "SUPER_SHIFT, Prior, movetoworkspace, -1"
         "SUPER_SHIFT, Next, movetoworkspace, +1"
+        "$mod, Print, execr, grim -g $(slurp)"
       ];
       bindm = [
         "$mod,mouse:272,movewindow"
         "$mod,mouse:273,resizewindow"
       ];
-
       monitor = [ ",preferred,auto,1" ];
     };
   };
