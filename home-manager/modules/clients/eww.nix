@@ -74,9 +74,9 @@ in
         .component {
           color: #ffffff;
           background: $background;
-          border-radius: 0.2em;
-          padding: 0.4em;
-          margin: 0.5em;
+          border-radius: 0.3em;
+          padding: 0.3em;
+          margin: 0.3em;
         }
         .current {
           background: $background-lighter;
@@ -102,11 +102,11 @@ in
         (defpoll time :interval "5s" `date +'{"year":"%Y","month":"%m","day":"%d","week":"%V","week_day":"%a","hour":"%H","minute":"%M"}'`)
 
         (defwidget workspaces []
-          (box :orientation "vertical"
+          (box :orientation "horizontal"
             (label :text "''${workspaces}''${current_workspace}" :visible false)
             (for workspace in workspaces
               (box :class "component ''${workspace.id == current_workspace ? "current" : ""} ''${workspace.windows > 0 ? "occupied" : "empty"}"
-                (label :class "comment" :text "''${workspace.windows}")
+                (label :text "''${arraylength(workspaces) < 4 ? workspace.windows : ""}")
               )
             )
           )
@@ -130,8 +130,12 @@ in
           )
         )
 
+        (defwidget bottom []
+           (box :orientation "vertical" :space-evenly false :valign "end" (workspaces) (time))
+        )
+
         (defwidget sidebar []
-          (centerbox :orientation "vertical" :space-evenly false (status) (workspaces) (time))
+          (centerbox :orientation "vertical" :space-evenly false (status) "" (bottom))
         )
 
         (defwindow bar
