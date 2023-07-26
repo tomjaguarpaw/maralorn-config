@@ -16,7 +16,7 @@ import Data.ByteString.Lazy.Char8 qualified as LBSC
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Relude
-import Say (say)
+import Say (say, sayErr)
 import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, readInputLines, (&>), (|>))
 import Shh qualified
 
@@ -149,7 +149,7 @@ writeVars vars = do
       %>> Text.intercalate ","
       %>> (<> "]")
       %>> ("[" <>)
-      %>> writeFileText "/run/user/1000/status-bar"
+      %>> say
   R.performEvent_ writeEvent
 
 runModules :: R.MonadHeadlessApp t m => [Module t m (Maybe Component)] -> m ()
@@ -306,7 +306,7 @@ main = Notify.withManager \watch_manager -> do
   missing <-
     missingExecutables
       <&> nonEmpty
-  whenJust missing \missing' -> say [i|missing executables #{missing'}|]
+  whenJust missing \missing' -> sayErr [i|missing executables #{missing'}|]
   home <- getEnv "HOME"
   let git_dir = home </> "git"
       modes_dir = home </> ".volatile" </> "modes"
@@ -457,17 +457,17 @@ main = Notify.withManager \watch_manager -> do
                           <*> (STM.stateTVar modes_var \previous_modes -> (previous_modes /= current_modes, current_modes))
                     if system_stale
                       then when (commit_change || system_change) do
-                        say "Eval system config …"
+                        sayErr "Eval system config …"
                         next_system <- nix "eval" "--raw" ([i|#{home}/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel.drvPath|] :: String) |> captureTrim
-                        say "System eval finished."
+                        sayErr "System eval finished."
                         diff_is_small <- diffIsSmall next_system current_system
                         atomically $ writeTVar system_dirty_var (not diff_is_small)
                       else atomically do writeTVar system_dirty_var False
                     if modes_stale
                       then when (commit_change || modes_change) do
-                        say "Eval home config …"
+                        sayErr "Eval home config …"
                         next_modes <- nix "eval" "--raw" ([i|#{home}/git/config\#homeModes.#{host_name}.drvPath|] :: String) |> captureTrim
-                        say "Home eval finished."
+                        sayErr "Home eval finished."
                         diff_is_small <- diffIsSmall next_modes current_modes
                         atomically $ writeTVar modes_dirty_var (not diff_is_small)
                       else atomically do writeTVar modes_dirty_var False

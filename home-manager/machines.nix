@@ -74,9 +74,9 @@ let
           ./roles/mpv
           #./roles/night-shutdown.nix
           ./roles/pythia.nix
-          ./roles/refresh-config.nix
+          #./roles/refresh-config.nix
           ./roles/research.nix
-          ./roles/status-script.nix
+          #./roles/status-script.nix
           ./roles/terminal.nix
           ./roles/tinkering.nix
           ./roles/vdirsyncer.nix

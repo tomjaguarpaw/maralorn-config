@@ -1,0 +1,76 @@
+(deflisten status :initial "[]" "status-script")
+
+(deflisten workspaces :initial "[]" "bash scripts/get-workspaces.sh")
+
+(deflisten current_workspace :initial "1" "bash scripts/get-active-workspace.sh")
+
+(defpoll time :interval "5s" `date +'{"year":"%Y","month":"%m","day":"%d","week":"%V","week_day":"%a","hour":"%H","minute":"%M"}'`)
+
+(defpoll alerts :interval "1m" "curl https://alerts.maralorn.de/api/v1/alerts")
+
+(defwidget workspaces []
+  (box :orientation "horizontal"
+    (label :text "${workspaces}${current_workspace}" :visible false)
+    (for workspace in workspaces
+      (box :class "component ${workspace.id == current_workspace ? "current" : ""} ${workspace.windows > 0 ? "occupied" : "empty"}"
+        (label :text "${arraylength(workspaces) < 4 ? workspace.windows : ""}")
+      )
+    )
+  )
+)
+
+(defwidget time []
+  (box :class "component time" :orientation "vertical" :valign "end" :space-evenly false
+    "${time.year}-${time.month}-${time.day}"
+    "KW${time.week} ${time.week_day}"
+    "${time.hour}:${time.minute}"
+  )
+)
+
+(defwidget status []
+  (box :orientation "vertical" :space-evenly false
+    (for message in status
+      (box :style "color: #${message.color};" :class "component ${message.small ? "small" : ""}" :orientation "vertical"
+        (for line in {message.content} (label :text "${line}"))
+      )
+    )
+    (for alert in {alerts.data != [] ? [1] : []}
+      (box :class "component" (image :path "icons/cloud-alert-outline.png") (label :text "${arraylength(alerts.data)}"))
+    )
+  )
+)
+
+(defwidget bottom []
+   (box :orientation "vertical" :space-evenly false :valign "end" (workspaces) (time))
+)
+
+(defwidget sidebar []
+  (centerbox :orientation "vertical" (status) "" (bottom))
+)
+
+(defwindow overlay
+  :monitor 0
+  :stacking "overlay"
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "100%"
+                      :height "100%"
+                      :anchor "top left")
+  (info-overlay)
+)
+
+(defwidget info-overlay []
+  (box :class "overlay" "foo")
+)
+
+(defwindow bar
+  :monitor 0
+  :exclusive true
+  :focusable false
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "100px"
+                      :height "100%"
+                      :anchor "right center")
+  (sidebar)
+)

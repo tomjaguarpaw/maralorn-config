@@ -64,6 +64,7 @@ in
         "$mod, f, fullscreen"
         "$mod, t, togglefloating"
         "$mod, g, togglegroup"
+        "$mod, p, pin"
         "$mod, Tab, changegroupactive"
         "$mod, Prior, workspace, e-1"
         "$mod, Next, workspace, e+1"

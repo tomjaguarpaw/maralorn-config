@@ -1,0 +1,46 @@
+* {
+  all: unset;
+}
+
+$background: #151f3d;
+$background-darker: #0d0f1c;
+$background-darker-80: #0d0f1ce0;
+$background-secondary: #323035;
+$background-lighter: #152f6d;
+
+.time {
+  font-weight: bold;
+}
+
+.small {
+  font-family: CozetteVector;
+  font-size: 12px;
+}
+
+.component {
+  color: #ffffff;
+  background: $background;
+  border-radius: 0.3em;
+  padding: 0.3em;
+  margin: 0.3em;
+}
+
+.current {
+  background: $background-lighter;
+}
+
+.empty {
+  color: #aaaaaa;
+}
+
+.bar {
+  background: transparent;
+}
+
+.comment {
+  color: #888888;
+}
+
+.overlay {
+  background: rgba($background,0.1);
+}
