@@ -259,6 +259,7 @@ playerModule home = Module do
         % Text.replace "@Stopped" "⏹"
         % Text.replace "@Playing" "▶"
         % Text.replace "@Paused" "⏸"
+        % Text.replace "\"" ""
         % withColor white
         % runIdentity
         % fmap (\x -> x{small = True})
