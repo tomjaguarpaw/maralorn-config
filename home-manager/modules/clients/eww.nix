@@ -24,6 +24,7 @@
             pkgs.curl
             pkgs.openssh
             pkgs.gitMinimal
+            pkgs.nix
             config.programs.rbw.package
           ]
         }";
