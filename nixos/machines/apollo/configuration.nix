@@ -33,6 +33,7 @@ in
       ../../modules/clients
       ../../modules/not-home
       ../../modules/all
+      ../../modules/apollo
     ];
 
   environment.systemPackages = [

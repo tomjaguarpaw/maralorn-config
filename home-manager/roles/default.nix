@@ -195,7 +195,7 @@
       }
       ++ [
         (pkgs.writeShellScriptBin "unlock-ssh" ''
-          if rbw unlocked; then killall rbw-agent; fi
+          if ! rbw unlocked; then killall rbw-agent; fi
           ssh-add <(rbw get "Git SSH Signingkey")
           SSH_ASKPASS="print-ssh-pw" DISPLAY="a" ssh-add < /dev/null
           ${

@@ -40,12 +40,15 @@ in
       ];
       exec-once = [
         (lib.getExe pkgs.hyprpaper)
-        "unlock-ssh"
         (lib.getExe pkgs.kassandra)
         (pkgs.writeShellScript "wallpaper" ''
           sleep 1s
           ${lib.getExe pkgs.randomWallpaper}
         '')
+      ];
+      exec = [
+        "unlock-ssh"
+        "systemctl --user restart eww"
       ];
       bind = [
         "$mod, RETURN, exec, ${config.home.sessionVariables.TERMINAL}"
@@ -72,7 +75,7 @@ in
         "SUPER_SHIFT, Next, movetoworkspace, +1"
         "$mod, Print, execr, grim -g $(slurp)"
       ];
-      bindr = [ "SUPER, SUPER_L, execr, eww close overlay || eww open overlay" ];
+      bindr = [ "SUPER, SUPER_L, exec, eww open overlay --toggle" ];
       binde = [
         "SUPER_ALT, Left, resizeactive, -10 0"
         "SUPER_ALT, Right, resizeactive, 10 0"

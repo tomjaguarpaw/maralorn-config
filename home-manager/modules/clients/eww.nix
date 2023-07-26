@@ -33,7 +33,6 @@
       Restart = "always";
       RestartSec = "10s";
     };
-    Install.WantedBy = [ "graphical-session.target" ];
   };
   programs.eww = {
     enable = true;

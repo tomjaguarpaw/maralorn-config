@@ -6,6 +6,7 @@
 }:
 let
   fork = cmd: "fork ${cmd}";
+  term = cmd: "fork foot ${cmd}";
   edit_dir = dir: "sh -c 'cd ${dir}; hx ${dir}'";
   with-mic-check =
     cmd: fork "sh -c '${config.home.sessionVariables.TERMINAL} mic-check; ${cmd}'";
@@ -14,11 +15,11 @@ in
   {
     Orga = [
       { Kassandra = fork "kassandra2"; }
-      { Kalendar = "ikhal"; }
+      { Kalendar = term "ikhal"; }
       { Habitica = fork "firefox https://habitica.com"; }
-      { Tasks = "tasksh"; }
-      { Meditate = "meditate"; }
-      { Pythia = "pythia"; }
+      { Tasks = term "tasksh"; }
+      { Meditate = term "meditate"; }
+      { Pythia = term "pythia"; }
       { Notes = edit_dir "~/git/notes"; }
     ];
   }
@@ -36,6 +37,8 @@ in
       Shutdown = "systemctl poweroff";
       Suspend = "systemctl suspend";
       Reboot = "systemctl reboot";
+      Logout = "hyprctl dispatch exit";
+      "Reload Hyprland" = "hyrpctl reload";
     };
   }
   {
@@ -90,14 +93,12 @@ in
       Config = edit_dir "~/git/config";
       Files = fork "nautilus";
       Accounting = {
-        Update = "sh -c 'cd ~/git/buchhaltung; nix develop -c interactive-update'";
-        Display = "hledger -f ~/git/buchhaltung/buchhaltung.journal ui -- --watch --theme=terminal -X€ -t -E";
+        Update = term "sh -c 'cd ~/git/buchhaltung; nix develop -c interactive-update'";
+        Display =
+          term
+            "hledger -f ~/git/buchhaltung/buchhaltung.journal ui -- --watch --theme=terminal -X€ -t -E";
       };
-      Games = {
-        GW2 = fork "gw2";
-        Steam = fork "steam";
-        Minecraft = fork "minecraft-launcher";
-      };
+      Games = fork "heroic";
     };
   }
   {
@@ -105,19 +106,15 @@ in
       Browser = fork "firefox";
       "Private Browser" = fork "firefox --private-window";
       Chromium = fork "chromium";
-      "Software-Updates" = "software-updates";
-      News = "news";
-      Watchfeeds = "watchfeeds";
+      "Software-Updates" = term "software-updates";
+      News = term "news";
+      Watchfeeds = term "watchfeeds";
     };
   }
   {
     Passmenu =
       let
-        copy-password =
-          cmd:
-          "sh -c '(${cmd} | wl-copy) && ${
-            lib.getExe pkgs.termdown
-          } -T \"Clearing password in\" -f term 20 && wl-copy -c'";
+        copy-password = cmd: "sh -c '(${cmd} | wl-copy -o)'";
       in
       {
         Unlock = copy-password "rbw get bitwarden";
@@ -138,9 +135,9 @@ in
       { Matrix = fork "element-desktop"; }
       {
         Mail = {
-          Open = "neomutt";
-          Inbox = "neomutt -f ~/Maildir/hera/Inbox";
-          Code = "neomutt -f ~/Maildir/hera/Code";
+          Open = term "neomutt";
+          Inbox = term "neomutt -f ~/Maildir/hera/Inbox";
+          Code = term "neomutt -f ~/Maildir/hera/Code";
         };
       }
       {
