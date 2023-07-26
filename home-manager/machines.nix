@@ -35,12 +35,6 @@ let
     imports = imports ++ [ ./roles/default.nix ];
     m-0.hostName = hostName;
   };
-  makeAutostart =
-    name:
-    { config, ... }:
-    {
-      config.xdg.configFile."autostart/${name}.desktop".source = "${config.home.path}/share/applications/${name}.desktop";
-    };
   orga-basics = [
     ./roles/mail.nix
     ./roles/taskwarrior.nix
@@ -57,8 +51,6 @@ let
         ++ orga-basics
         ++ default
         ++ [
-          (makeAutostart "kassandra2")
-          (makeAutostart "unlock-ssh")
           ./roles/beets.nix
           ./roles/desktop.nix
           ./roles/firefox.nix
