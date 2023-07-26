@@ -1,5 +1,7 @@
 {-# LANGUAGE ImpredicativeTypes #-}
 {-# LANGUAGE OverloadedRecordDot #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE NoFieldSelectors #-}
 
 module Main (main) where
 
@@ -22,6 +24,7 @@ import Shh qualified
 
 import Control.Concurrent qualified as Conc
 import Data.List qualified as String
+import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
@@ -137,19 +140,26 @@ writeVars vars = do
       %> R.updated
       %>> catMaybes
       %>> reverse
-      %>> fmap
-        ( \component ->
-            let
-              color = component.color
-              content = reflow (if component.small then 15 else 10) component.content
-              small = if component.small then "true" else "false"
-             in
-              [i|{"color":"#{color}","content":["#{Text.intercalate "\", \"" content}"],"small":#{small}}|]
-        )
-      %>> Text.intercalate ","
-      %>> (<> "]")
-      %>> ("[" <>)
-      %>> say
+      %>> \components -> do
+        let list_components =
+              components & mapMaybe \case
+                MkComponent{..} ->
+                  let
+                    content' = reflow (if small then 15 else 10) content
+                    small' = if small then "true" else "false"
+                   in
+                    Just [i|{"color":"#{color}","content":["#{Text.intercalate "\", \"" content'}"],"small":#{small'}}|]
+                _ -> Nothing
+            custom_components =
+              components & mapMaybe \case
+                CustomData{..} ->
+                  let
+                    map_to_json = Map.toList % map (\(key, val) -> [i|"#{key}":#{val}|]) % Text.intercalate ","
+                   in
+                    Just [i|"#{name}":{#{map_to_json values}}|]
+                _ -> Nothing
+            all_components = [i|"components":[#{Text.intercalate "," list_components}]|] : custom_components
+        say [i|{#{Text.intercalate "," all_components}}|]
   R.performEvent_ writeEvent
 
 runModules :: R.MonadHeadlessApp t m => [Module t m (Maybe Component)] -> m ()
@@ -191,11 +201,16 @@ withColor color content = pure $ Just (withColor' color content)
 withColor' :: Text -> Text -> Component
 withColor' color content = MkComponent{color, content, small = False}
 
-data Component = MkComponent
-  { color :: Text
-  , content :: Text
-  , small :: Bool
-  }
+data Component
+  = MkComponent
+      { color :: Text
+      , content :: Text
+      , small :: Bool
+      }
+  | CustomData
+      { name :: Text
+      , values :: Map Text Text
+      }
   deriving (Eq)
 
 when' :: Monad m => Bool -> m (Maybe a) -> m (Maybe a)
@@ -402,10 +417,11 @@ main = Notify.withManager \watch_manager -> do
               void $ performEventThreaded (R.updated set_of_dirties) \dirty_dirs -> atomically $ writeTVar dirty_var (toList dirty_dirs)
               pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs' ->
                 let dirty_dirs = (if (mode' == Klausur) then Set.filter (== "promotion") else id) dirty_dirs'
-                 in [i|Dirty: #{Text.unwords (toList dirty_dirs)}|]
-                      & withColor red
-                      & when' (not (Set.null dirty_dirs))
-                      & runIdentity
+                 in Just $
+                      CustomData
+                        { name = "dirty"
+                        , values = Map.singleton "repos" (show (toList dirty_dirs))
+                        }
           , eventModule do
               dirty_updates <- performEventThreaded git_dir_events \dirs -> do
                 now_dirty <- Set.fromList . fmap toText <$> filterM (isUnpushed . (git_dir </>)) dirs
@@ -413,10 +429,11 @@ main = Notify.withManager \watch_manager -> do
               set_of_dirties <- R.foldDyn (\(now_clean, now_dirty) dirty -> Set.union now_dirty (Set.difference dirty now_clean)) mempty dirty_updates
               pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs' ->
                 let dirty_dirs = (if (mode' == Klausur) then Set.filter (== "promotion") else id) dirty_dirs'
-                 in [i|Unpushed: #{Text.unwords (toList dirty_dirs)}|]
-                      & withColor yellow
-                      & when' (not (Set.null dirty_dirs))
-                      & runIdentity
+                 in Just $
+                      CustomData
+                        { name = "unpushed"
+                        , values = Map.singleton "repos" (show (toList dirty_dirs))
+                        }
           , simpleModule (5 * oneSecond) do
               let hosts = ["hera", "fluffy"]
               unreachable_hosts <- flip filterM hosts \host -> isLeft <$> (Shh.tryFailure do (exe "/run/wrappers/bin/ping" "-c" "1" (toString host)) &> Shh.devNull)

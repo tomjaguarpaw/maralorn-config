@@ -29,10 +29,16 @@
 
 (defwidget status []
   (box :orientation "vertical" :space-evenly false
-    (for message in status
+    (for message in {status.components}
       (box :style "color: #${message.color};" :class "component ${message.small ? "small" : ""}" :orientation "vertical"
         (for line in {message.content} (label :text "${line}"))
       )
+    )
+    (for unpushed in {status.unpushed.repos != [] ? [1] : []}
+      (box :class "component" (image :path "icons/source-repository.png") (image :path "icons/upload-off-outline.png") (label :text "${arraylength(status.unpushed.repos)}"))
+    )
+    (for dirty in {status.dirty.repos != [] ? [1] : []}
+      (box :class "component" (image :path "icons/source-repository.png") (image :path "icons/liquid-spot.png") (label :text "${arraylength(status.dirty.repos)}"))
     )
     (for alert in {alerts.data != [] ? [1] : []}
       (box :class "component" (image :path "icons/cloud-alert-outline.png") (label :text "${arraylength(alerts.data)}"))
@@ -60,7 +66,17 @@
 )
 
 (defwidget info-overlay []
-  (box :class "overlay" "foo")
+  (box :class "overlay"
+    (box :valign "center" :halign "center" :orientation "vertical" :space-evenly false
+      (for unpushed in {status.unpushed.repos}
+        (box :class "component" (image :path "icons/source-repository.png") (image :path "icons/upload-off-outline.png") (label :text unpushed))
+      )
+      (for dirty in {status.dirty.repos}
+        (box :class "component" (image :path "icons/source-repository.png") (image :path "icons/liquid-spot.png") (label :text dirty))
+      )
+      (box :class "component" (calendar))
+    )
+  )
 )
 
 (defwindow bar

@@ -70,11 +70,14 @@ in
         "$mod, Next, workspace, e+1"
         "SUPER_SHIFT, Prior, movetoworkspace, -1"
         "SUPER_SHIFT, Next, movetoworkspace, +1"
+        "$mod, Print, execr, grim -g $(slurp)"
+      ];
+      bindr = [ "SUPER, SUPER_L, execr, eww close overlay || eww open overlay" ];
+      binde = [
         "SUPER_ALT, Left, resizeactive, -10 0"
         "SUPER_ALT, Right, resizeactive, 10 0"
         "SUPER_ALT, Up, resizeactive, 0 -10"
         "SUPER_ALT, Down, resizeactive, 0 10"
-        "$mod, Print, execr, grim -g $(slurp)"
       ];
       bindm = [
         "$mod,mouse:272,movewindow"
