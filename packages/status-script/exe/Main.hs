@@ -498,41 +498,10 @@ main = Notify.withManager \watch_manager -> do
                 var =<< if dirty then pure Nothing else scan
           , eventModule . pure $
               mk_mode_event R.never
-                <&> show
-                  % withColor blue
-                  % runIdentity
+                <&> \mode' -> Just $ CustomData{name = "mode", values = Map.singleton "mode" [i|"#{show mode'}"|]}
           ]
     runModules modules
     pure R.never -- We have no exit condition.
-
-processNotifications :: ByteString -> Text
-processNotifications =
-  Text.intercalate [i|\n${color \##{red}}|]
-    . toList
-    . Set.fromList
-    . filter (\x -> not $ any (`Text.isPrefixOf` x) notificationBlockList)
-    . filter (not . Text.null)
-    . fmap
-      ( Text.replace "&gt;" ">"
-          . Text.replace "&lt;" "<"
-          . Text.replace "#" "\\#"
-          . Text.intercalate ":${color0} "
-      )
-    . filter (\x -> length x >= 2)
-    . fmap (filter (not . Text.null) . drop 3 . Text.splitOn "|")
-    . foldl'
-      ( flip \line -> \case
-          [] -> [line]
-          messages | Text.isInfixOf "|" line -> line : messages
-          last_message : rest_of_messages -> last_message <> " " <> line : rest_of_messages
-      )
-      []
-    . lines
-    . decodeUtf8
-    . ByteStringChar.strip
-
-notificationBlockList :: [Text]
-notificationBlockList = ["Automatic suspend", "Auto suspend"]
 
 diffIsSmall :: LBSC.ByteString -> LBSC.ByteString -> IO Bool
 diffIsSmall = \pathA pathB -> (== "[]") <$> (nix_diff "--json" [pathA, pathB] |> jq ".inputsDiff.inputDerivationDiffs" |> captureTrim)
