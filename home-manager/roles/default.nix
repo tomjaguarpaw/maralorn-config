@@ -195,6 +195,7 @@
       }
       ++ [
         (pkgs.writeShellScriptBin "unlock-ssh" ''
+          if rbw unlocked; then killall rbw-agent; fi
           ssh-add <(rbw get "Git SSH Signingkey")
           SSH_ASKPASS="print-ssh-pw" DISPLAY="a" ssh-add < /dev/null
           ${
@@ -209,6 +210,7 @@
     sessionVariables = {
       PATH = "$HOME/.nix-profile/bin:$PATH";
       BROWSER = "firefox";
+      SSH_AUTH_SOCK = "/run/user/1000/ssh-agent";
       SUDO_ASKPASS = toString (
         pkgs.writeShellScript "print-sudo-pw"
           "rbw get ${config.m-0.hostName}.m-0.eu ${config.home.username}"
