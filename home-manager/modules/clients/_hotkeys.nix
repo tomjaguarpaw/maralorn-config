@@ -38,6 +38,7 @@ in
       Suspend = "systemctl suspend";
       Reboot = "systemctl reboot";
       Logout = "hyprctl dispatch exit";
+      Lock = "swaylock";
       "Reload Hyprland" = "hyrpctl reload";
     };
   }
@@ -98,7 +99,17 @@ in
           term
             "hledger -f ~/git/buchhaltung/buchhaltung.journal ui -- --watch --theme=terminal -X€ -t -E";
       };
-      Games = fork "heroic";
+      Games = {
+        "Heroic Launcher" = fork "heroic";
+        "Steam Lanucher" = fork "steam";
+        "The Witcher 3" = fork "xdg-open heroic://launch/gog/1495134320";
+        "Baldurs Gate 3" = fork "steam steam://rungameid/1086940";
+        "Guild Wars 2" =
+          fork
+            "xdg-open heroic://launch/sideload/9gC1jhFqE9cV2xNz43ciaE";
+        "Minecraft" = fork "prismlauncher";
+        "Factorio" = fork "factorio";
+      };
     };
   }
   {

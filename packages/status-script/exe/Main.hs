@@ -50,7 +50,7 @@ infixl 1 <<&>>
 (<<&>>) :: (Functor g, Functor f) => f (g a) -> (a -> b) -> f (g b)
 x <<&>> g = fmap (fmap g) x
 
-data Mode = Klausur | Orga | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
+data Mode = Klausur | Orga | Code | Gaming | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
 load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq"]
 
@@ -379,7 +379,7 @@ main = Notify.withManager \watch_manager -> do
               performEventThreaded
                 notmuch_update
                 \case
-                  mode' | mode' >= Leisure -> notmuch "count" "folder:hera/Inbox" |> captureTrim
+                  mode' | mode' >= Orga -> notmuch "count" "folder:hera/Inbox" |> captureTrim
                   _ -> pure "0"
                 <<&>> \inbox ->
                   [i|Inbox: #{inbox}|]

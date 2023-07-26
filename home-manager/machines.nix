@@ -64,15 +64,13 @@ let
           ./roles/mpclient.nix
           ./roles/mpd.nix
           ./roles/mpv
-          #./roles/night-shutdown.nix
+          ./roles/night-shutdown.nix
           ./roles/pythia.nix
           #./roles/refresh-config.nix
           ./roles/research.nix
-          #./roles/status-script.nix
           ./roles/terminal.nix
           ./roles/tinkering.nix
           ./roles/vdirsyncer.nix
-          #./roles/wallpaper.nix
           ./roles/zettelkasten.nix
         ]
         ++ flake-inputs.self.nixFromDirs [ ./modules/clients ]
@@ -89,39 +87,47 @@ let
           (blockServer newsPages)
         ]
       );
-      leisure = makeConfig name (
+      orga = makeConfig name (
         all
         ++ [
           ./roles/mail-client.nix
-          ./roles/games.nix
           ./roles/chat.nix
-          (blockServer newsPages)
+          (blockServer restrictedPages)
         ]
       );
       unrestricted = makeConfig name (
         all
         ++ [
           ./roles/mail-client.nix
-          ./roles/games.nix
           ./roles/chat.nix
           (blockServer [ ])
         ]
       );
-    };
+    }
+    // (
+      if name == "zeus" then
+        {
+          gaming = makeConfig name (
+            all
+            ++ [
+              ./roles/mail-client.nix
+              ./roles/chat.nix
+              (blockServer newsPages)
+            ]
+            ++ flake-inputs.self.nixFromDirs [ ./modules/gaming ]
+          );
+        }
+      else
+        { }
+    )
+  ;
 in
 {
-  apollo = daily-driver "apollo" [
-    ./roles/battery.nix
-    ./roles/untrusted-env.nix
+  apollo = daily-driver "apollo" [ ./roles/battery.nix ];
+  zeus = daily-driver "zeus" [
+    (import ./roles/state.nix "klausur")
+    ./roles/create-plans.nix
   ];
-  zeus = daily-driver "zeus" (
-    [
-      (import ./roles/state.nix "klausur")
-      ./roles/create-plans.nix
-      ./roles/trusted-env.nix
-    ]
-    ++ flake-inputs.self.nixFromDirs [ ./modules/zeus ]
-  );
   fluffy.default = makeConfig "fluffy" (
     default
     ++ [
@@ -137,7 +143,6 @@ in
       ./roles/weechat
       ./roles/mail-sort.nix
       ./roles/mail2rss.nix
-      ./roles/headless-mpd.nix
       ./roles/headless.nix
     ]
   );

@@ -1,11 +1,6 @@
 { pkgs, config, ... }:
 {
   home.sessionVariables.TERMINAL = "${pkgs.foot}/bin/foot";
-  home.packages = [
-    (pkgs.recursiveLinkFarm "fake-gnome-terminal" {
-      "bin/gnome-terminal" = config.home.sessionVariables.TERMINAL;
-    })
-  ];
   programs.foot = {
     settings = {
       main = {
