@@ -9,5 +9,7 @@
     driSupport32Bit = true; # for gw2
   };
 
+  programs.steam.enable = true;
+
   boot.kernelPackages = pkgs.linuxPackages_latest;
 }

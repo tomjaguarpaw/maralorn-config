@@ -15,6 +15,7 @@ in
     minecraft
     teamviewer
     steam
+    steamPackages
     androidsdk_9_0
     factorio
     minecraft-server
