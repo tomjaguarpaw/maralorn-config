@@ -21,8 +21,8 @@ in
     enable = true;
     settings = {
       input = {
-        kb_layout = "de";
-        kb_variant = "neo";
+        kb_layout = "de,de";
+        kb_variant = "neo,";
         kb_options = "altwin:swap_lalt_lwin"; # swap alt and win
       };
       general = {

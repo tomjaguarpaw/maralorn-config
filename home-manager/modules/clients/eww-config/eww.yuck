@@ -2,6 +2,8 @@
 
 (deflisten workspaces :initial "[]" "bash scripts/get-workspaces.sh")
 
+(deflisten keymap :initial "German (Neo 2)" "bash scripts/get-keymap.sh")
+
 (deflisten current_workspace :initial "1" "bash scripts/get-active-workspace.sh")
 
 (defpoll time :interval "5s" `date +'{"year":"%Y","month":"%m","day":"%d","week":"%V","week_day":"%a","hour":"%H","minute":"%M"}'`)
@@ -51,6 +53,9 @@
     )
     (for ssh in {ssh-agent == "" ? [1] : []}
       (box :class "component" (image :path "icons/lock-alert.png") (label :text "ssh"))
+    )
+    (for keyboard in {keymap != "German (Neo 2)" ? [1] : []}
+      (box :class "component small" (image :path "icons/keyboard.png") (label :text keymap))
     )
   )
 )

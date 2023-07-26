@@ -13,6 +13,11 @@ let
 in
 [
   {
+    "M: Toggle Keyboard Layout" =
+      fork
+        "hyprctl switchxkblayout keyboardio-model-100-keyboard next";
+  }
+  {
     Orga = [
       { Kassandra = fork "kassandra2"; }
       { Kalendar = term "ikhal"; }
