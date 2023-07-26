@@ -23,6 +23,7 @@
             pkgs.status-script
             pkgs.curl
             pkgs.openssh
+            pkgs.gitMinimal
             config.programs.rbw.package
           ]
         }";
@@ -35,7 +36,7 @@
   };
   programs.eww = {
     enable = true;
-    package = pkgs.eww-wayland;
+    package = pkgs.callPackage ./_eww-package.nix { withWayland = true; };
     configDir = ./eww-config;
   };
 }
