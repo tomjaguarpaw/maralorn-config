@@ -6,7 +6,7 @@
 
 (defpoll time :interval "5s" `date +'{"year":"%Y","month":"%m","day":"%d","week":"%V","week_day":"%a","hour":"%H","minute":"%M"}'`)
 
-(defpoll alerts :interval "1m" "curl https://alerts.maralorn.de/api/v1/alerts")
+(defpoll alerts :interval "1m"  `curl https://alerts.maralorn.de/api/v1/alerts | jq '.data | map(select(.status.state != "suppressed"))'`)
 
 (defpoll ssh-agent :interval "5s" "ssh-add -L")
 
@@ -43,8 +43,8 @@
     (for unpushed in {arraylength(status.unpushed.repos) + arraylength(status.dirty.repos) > 0 ? [1] : []}
       (box :class "component" (image :path "icons/git.png") (label :text "${arraylength(status.unpushed.repos) + arraylength(status.dirty.repos)}"))
     )
-    (for alert in {alerts.data != [] ? [1] : []}
-      (box :class "component" (image :path "icons/cloud-alert.png") (label :text "${arraylength(alerts.data)}"))
+    (for alert in {status.mode.mode != "Klausur" && alerts != [] ? [1] : []}
+      (box :class "component" (image :path "icons/cloud-alert.png") (label :text "${arraylength(alerts)}"))
     )
     (for rbwfile in {rbw ? [] : [1]}
       (box :class "component" (image :path "icons/lock-alert.png") (label :text "rbw"))
@@ -78,15 +78,15 @@
   (box :class "overlay"
     (box :valign "center" :halign "center" :orientation "vertical" :space-evenly false
       (for unpushed in {status.unpushed.repos}
-        (box :class "component" (image :path "icons/git.png") (image :path "icons/unpushed.png") (label :text unpushed))
+        (box :class "component" :spacing 10 :space-evenly false (image :path "icons/git.png") (image :path "icons/unpushed.png") (label :hexpand true :halign "center" :text unpushed))
       )
       (for dirty in {status.dirty.repos}
-        (box :class "component" (image :path "icons/git.png") (image :path "icons/dirty.png") (label :text dirty))
+        (box :class "component" :spacing 10 :space-evenly false (image :path "icons/git.png") (image :path "icons/dirty.png") (label :hexpand true :halign "center" :text dirty))
       )
-      (for alert in {alerts.data}
-        (box :class "component" (image :path "icons/cloud-alert.png") (label :text {alert.annotations.description}))
+      (for alert in {alerts}
+        (box :class "component" :spacing 10 :space-evenly false (image :path "icons/cloud-alert.png") (label  :hexpand true :halign "center" :text {alert.annotations.description}))
       )
-      (box :class "component" (calendar))
+      (box :class "component" :halign "center" (calendar))
     )
   )
 )
