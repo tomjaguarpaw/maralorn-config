@@ -30,6 +30,10 @@ in
         gaps_out = 4;
         "col.inactive_border" = "0x00000000";
       };
+      misc = {
+        disable_hyprland_logo = true;
+        disable_splash_rendering = true;
+      };
       decoration.blur = false;
       "$mod" = "SUPER";
       windowrulev2 = [
@@ -38,16 +42,10 @@ in
         "noborder,class:Conky"
         "pin,class:Conky"
       ];
-      exec-once = [
-        (lib.getExe pkgs.hyprpaper)
-        (lib.getExe pkgs.kassandra)
-        (pkgs.writeShellScript "wallpaper" ''
-          sleep 1s
-          ${lib.getExe pkgs.randomWallpaper}
-        '')
-      ];
+      exec-once = [ (lib.getExe pkgs.kassandra) ];
       exec = [
         "unlock-ssh"
+        "systemctl --user restart wallpaper"
         "systemctl --user restart eww"
       ];
       bind = [

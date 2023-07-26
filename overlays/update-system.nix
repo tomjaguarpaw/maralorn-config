@@ -3,7 +3,6 @@ let
   inherit (final) pkgs lib;
   homeDir = "/home/maralorn";
   modeFile = "${homeDir}/.mode";
-  wallPapers = "${homeDir}/media/images/wallpapers";
   modeDir = "${homeDir}/.volatile/modes";
   configPath = "${homeDir}/git/config";
   configGit = "${lib.getExe pkgs.git} -C ${configPath}";
@@ -17,25 +16,6 @@ let
     builders <- builders_configurator |> captureTrim
   '';
   mode-scripts = {
-    randomWallpaper =
-      pkgs.writeHaskellScript
-        {
-          name = "random-wallpaper";
-          imports = [ "System.Random" ];
-          bins = [
-            pkgs.coreutils
-            pkgs.hyprland
-          ];
-        }
-        ''
-          main = do
-             mode <- cat "${modeFile}" |> captureTrim
-             (lines . decodeUtf8 -> files) <- ls ([i|${wallPapers}/#{mode}|] :: String) |> captureTrim
-             ((files Unsafe.!!) -> file) <- getStdRandom $ randomR (0, length files - 1)
-             let new = [i|${wallPapers}/#{mode}/#{file}|] :: String
-             hyprctl "hyprpaper" "preload" new
-             hyprctl "hyprpaper" "wallpaper" ([i|DP-2,#{new}|] :: String)
-        '';
     archive-nix-path =
       pkgs.writeHaskellScript
         {
@@ -82,13 +62,10 @@ let
       echo "Maintenance finished."
     '';
     activateMode = pkgs.writeHaskellScript { name = "activate-mode"; } ''
-      wallpaperCmd = "random-wallpaper"
-
       main = do
         ${get_mode}
         say [i|Switching to mode #{mode}...|]
         exe ([i|${modeDir}/#{mode}/activate|] :: String)
-        whenM (elem wallpaperCmd <$> pathBins) $ exe wallpaperCmd
     '';
     selectMode =
       pkgs.writeHaskellScript

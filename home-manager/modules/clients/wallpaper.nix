@@ -1,30 +1,41 @@
-{ pkgs, lib, ... }:
 {
-  home.packages = [
-    pkgs.randomWallpaper
-    pkgs.hyprpaper
-  ];
-
-  xdg.configFile."hypr/hyprpaper.conf".text = "\n     preload = /home/maralorn/media/images/wallpapers/code/raf,750x1000,075,t,101010 01c5ca27c6.u3.jpg\n     wallpaper = ,/home/maralorn/media/images/wallpapers/code/raf,750x1000,075,t,101010 01c5ca27c6.u3.jpg\n  ";
-
-  systemd.user = {
-    services.random-wallpaper = {
-      Unit = {
-        Description = "Random Wallpaper";
-      };
-      Service = {
-        ExecStart = lib.getExe pkgs.randomWallpaper;
-        Type = "oneshot";
-      };
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+let
+  inherit (config.home) homeDirectory;
+  modeFile = "${homeDirectory}/.mode";
+  wallPapers = "${homeDirectory}/media/images/wallpapers";
+  hyprpaperConfig = "${homeDirectory}/.config/hypr/hyprpaper.conf";
+  wallpaper-daemon =
+    pkgs.writeHaskellScript
+      {
+        name = "wallpaper-daemon";
+        imports = [ "System.Random" ];
+        bins = [
+          pkgs.coreutils
+          pkgs.hyprpaper
+        ];
+      }
+      ''
+        main = do
+           mode <- cat "${modeFile}" |> captureTrim
+           (lines . decodeUtf8 -> files) <- ls ([i|${wallPapers}/#{mode}|] :: String) |> captureTrim
+           ((files Unsafe.!!) -> file) <- getStdRandom $ randomR (0, length files - 1)
+           let new = [i|${wallPapers}/#{mode}/#{file}|] :: Text
+           writeFile "${hyprpaperConfig}" [i|preload = #{new}\nwallpaper = ,#{new}|];
+           hyprpaper
+      '';
+in
+{
+  systemd.user.services.wallpaper = {
+    Unit = {
+      Description = "Wallpaper Daemon";
     };
-    timers.random-wallpaper = {
-      Timer = {
-        OnCalendar = "*:00/30:00";
-        OnActiveSec = 1;
-      };
-      Install = {
-        WantedBy = [ "timers.target" ];
-      };
+    Service = {
+      ExecStart = lib.getExe wallpaper-daemon;
     };
   };
 }
