@@ -5,7 +5,7 @@
     enableAutosuggestions = true;
     enableCompletion = true;
     history = {
-      path = "$HOME/.persist/.zsh_history";
+      path = "$HOME/.zsh_history";
       extended = true;
       ignoreDups = true;
       share = true;

@@ -6,7 +6,7 @@
 }:
 let
   rbw = config.programs.rbw.package;
-  video_dir = "${config.home.homeDirectory}/.volatile/video-downloads";
+  video_dir = "${config.home.homeDirectory}/Videos";
   download-and-watch = pkgs.writeShellScriptBin "download-and-watch" ''
     set -euo pipefail
     cd "${video_dir}"

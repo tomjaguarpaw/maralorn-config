@@ -81,7 +81,7 @@ in
           "apollo"
           "pegasus"
         ]
-        "/disk/persist/maralorn/media";
+        "/disk/persist/home/maralorn/media";
     #minecraft-server = {
     #  enable = true;
     #  openFirewall = true;
