@@ -83,6 +83,9 @@
       (for dirty in {status.dirty.repos}
         (box :class "component" (image :path "icons/git.png") (image :path "icons/dirty.png") (label :text dirty))
       )
+      (for alert in {alerts.data}
+        (box :class "component" (image :path "icons/cloud-alert.png") (label :text {alert.annotations.description}))
+      )
       (box :class "component" (calendar))
     )
   )
