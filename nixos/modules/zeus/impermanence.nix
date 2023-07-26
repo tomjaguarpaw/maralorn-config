@@ -17,6 +17,7 @@
         ".factorio" # Factorio save games and login
         ".gnupg"
         ".local/share/Mumble"
+        ".local/share/PrismLauncher"
         ".local/share/Steam"
         ".local/share/TelegramDesktop"
         ".local/share/direnv"
