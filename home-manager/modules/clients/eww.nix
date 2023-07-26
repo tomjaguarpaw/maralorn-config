@@ -22,6 +22,8 @@
             pkgs.bash
             pkgs.status-script
             pkgs.curl
+            pkgs.openssh
+            config.programs.rbw.package
           ]
         }";
       ExecStart = "${lib.getExe config.programs.eww.package} daemon --no-daemonize";
