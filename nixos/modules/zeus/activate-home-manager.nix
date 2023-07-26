@@ -10,8 +10,9 @@
         MODE="$(cat /home/maralorn/.mode)"
       else
         MODE="klausur"
+        echo klausur > /home/maralorn/.mode
       fi
-      /disk/volatile/maralorn/modes/$MODE/activate
+      /disk/volatile/home/maralorn/.volatile/modes/$MODE/activate
     '';
     serviceConfig = {
       Type = "oneshot";

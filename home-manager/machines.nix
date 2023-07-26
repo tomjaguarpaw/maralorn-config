@@ -64,7 +64,7 @@ let
           ./roles/mpclient.nix
           ./roles/mpd.nix
           ./roles/mpv
-          ./roles/night-shutdown.nix
+          #./roles/night-shutdown.nix
           ./roles/pythia.nix
           #./roles/refresh-config.nix
           ./roles/research.nix
@@ -124,17 +124,8 @@ let
 in
 {
   apollo = daily-driver "apollo" [ ./roles/battery.nix ];
-  zeus = daily-driver "zeus" [
-    (import ./roles/state.nix "klausur")
-    ./roles/create-plans.nix
-  ];
-  fluffy.default = makeConfig "fluffy" (
-    default
-    ++ [
-      ./roles/headless.nix
-      (import ./roles/state.nix "default")
-    ]
-  );
+  zeus = daily-driver "zeus" [ ./roles/create-plans.nix ];
+  fluffy.default = makeConfig "fluffy" (default ++ [ ./roles/headless.nix ]);
   hera.default = makeConfig "hera" (
     default
     ++ orga-basics

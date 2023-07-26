@@ -32,7 +32,6 @@
         ".zoom"
         ".zotero/zotero"
         "Games"
-        "Videos"
         "Maildir"
         "git"
         "media"
@@ -45,6 +44,7 @@
   };
   environment.persistence."/disk/volatile" = {
     users.maralorn.directories = [
+      "Videos"
       ".cache/kassandra"
       ".cache/nix-output-monitor"
       ".volatile"
