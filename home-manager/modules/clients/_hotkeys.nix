@@ -7,7 +7,7 @@
 let
   fork = cmd: "fork ${cmd}";
   term = cmd: "fork foot ${cmd}";
-  edit_dir = dir: "sh -c 'cd ${dir}; hx ${dir}'";
+  edit_dir = dir: term "sh -c 'cd ${dir}; hx ${dir}'";
   with-mic-check =
     cmd: fork "sh -c '${config.home.sessionVariables.TERMINAL} mic-check; ${cmd}'";
 in
@@ -27,7 +27,7 @@ in
     Research = {
       Zotero = fork "zotero";
       Open = fork "evince ~/git/promotion/out/thesis.pdf";
-      Build = "sh -c 'cd ~/git/promotion; nix run .# -- watch'";
+      Build = term "sh -c 'cd ~/git/promotion; nix run .# -- watch'";
       Directory = fork "${config.home.sessionVariables.TERMINAL} -D ~/git/promotion";
       Edit = edit_dir "~/git/promotion";
     };
