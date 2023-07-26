@@ -17,14 +17,8 @@ in
     ++ flake-inputs.self.nixFromDirs [
       ../../modules/athene
       ../../modules/all
+      ../../modules/impermanent
     ];
-
-  age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
-
-  environment.etc = {
-    nixos.source = "/disk/persist/maralorn/git/config";
-    machine-id.source = "/disk/persist/machine-id";
-  };
 
   systemd.services = {
     ensure-printers.serviceConfig.SuccessExitStatus = "0 1";
@@ -32,21 +26,12 @@ in
 
   systemd.tmpfiles.rules = [
     "d /backup 700 borg borg - -"
-    "d /disk/persist/root 700 root root - -"
-    "d /disk/persist/root/.ssh 700 root root - -"
     "d /disk/persist/maralorn 700 maralorn users - -"
     "d /home/maralorn/.config 700 maralorn users - -"
     "z / 755 - - - -"
     "Z /home/maralorn - maralorn users - -"
     "d /disk/volatile/maralorn 700 maralorn users - -"
     "d /tmp/scans/scans 777 ftp ftp - -"
-    "L+ /root/.ssh - - - - /disk/persist/root/.ssh"
-  ];
-
-  environment.persistence."/disk/persist".directories = [
-    "/etc/ssh"
-    "/var/lib/nixos"
-    "/var/lib/tailscale"
   ];
 
   networking = {

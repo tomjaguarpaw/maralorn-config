@@ -23,9 +23,8 @@ in
       ../../modules/zeus
       ../../modules/clients
       ../../modules/all
+      ../../modules/impermanent
     ];
-
-  age.identityPaths = [ "/disk/persist/etc/ssh/ssh_host_ed25519_key" ];
 
   nix.distributedBuilds = false;
 
@@ -47,39 +46,10 @@ in
       "/nix" = btrfsOptions;
     };
 
-  environment.etc = {
-    nixos.source = "/disk/persist/maralorn/git/config";
-    machine-id.source = "/disk/persist/machine-id";
-  };
-
   systemd.tmpfiles.rules = [
-    "d /disk/persist/root 700 root root - -"
     "z / 755 - - - -"
-    "d /disk/persist/home/maralorn 700 maralorn users - -"
-    "d /disk/volatile/home/maralorn 700 maralorn users - -"
     "Z /home/maralorn - maralorn users - -"
   ];
-
-  environment.persistence."/disk/persist" = {
-    directories = [
-      "/etc/ssh"
-      "/var/lib/nixos" # Nixos has state to track userids
-      "/var/lib/bluetooth" # Bluetooth pairing date
-      "/var/lib/tailscale" # VPN login state
-      "/root/.ssh"
-    ];
-    users.maralorn.directories = [
-      ".cache/rbw" # Save user login
-      "Games"
-    ];
-  };
-  environment.persistence."/disk/volatile" = {
-    users.maralorn.directories = [
-      ".factorio" # Factorio save games and login
-      ".config/heroic" # Login data
-      ".local/state/wireplumber" # For volume levels
-    ];
-  };
 
   services = {
     snapper = {
