@@ -168,5 +168,5 @@ in
       Close = "ssh door@burbon.w17.io close";
     };
   }
-  { "Clear Notifications" = "sh -c 'rm -r ~/.notifications/*'"; }
+  { "Dismiss last notification" = "makoctl dismiss"; }
 ]
