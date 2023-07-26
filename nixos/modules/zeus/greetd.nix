@@ -1,7 +1,11 @@
+{ pkgs, ... }:
 {
   # autologin
   services.greetd.settings.default_session = {
     user = "maralorn";
-    command = "Hyprland";
+    command = pkgs.writeShellScript "launch-hyprland" ''
+      rm -rf /tmp/hypr
+      exec Hyprland
+    '';
   };
 }
