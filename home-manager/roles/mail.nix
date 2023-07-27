@@ -142,6 +142,7 @@ in
       in
       {
         ".neomuttrc".text = ''
+          startup-hook 'echo `mkdir -p ~/.cache/mutt`'
           set editor = "hx"
           alternative_order text/plain text/html
           auto_view text/*
