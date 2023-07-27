@@ -28,7 +28,9 @@
             config.programs.rbw.package
           ]
         }";
-      ExecStart = "${lib.getExe config.programs.eww.package} daemon --no-daemonize";
+      ExecStart = "${
+          lib.getExe config.programs.eww.package
+        } daemon --no-daemonize --restart";
       ExecStartPost = "${lib.getExe config.programs.eww.package} open bar";
       Restart = "always";
       RestartSec = "10s";
