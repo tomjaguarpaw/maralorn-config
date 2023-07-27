@@ -45,7 +45,7 @@
     (for unpushed in {arraylength(status.unpushed.repos) + arraylength(status.dirty.repos) > 0 ? [1] : []}
       (box :class "component" (image :path "icons/git.png") (label :text "${arraylength(status.unpushed.repos) + arraylength(status.dirty.repos)}"))
     )
-    (for alert in {status.mode.mode != "Klausur" && alerts != [] ? [1] : []}
+    (for alert in {status.mode.mode != "Klausur" && arraylength(alerts) > 0 ? [1] : []}
       (box :class "component" (image :path "icons/cloud-alert.png") (label :text "${arraylength(alerts)}"))
     )
     (for rbwfile in {rbw ? [] : [1]}
