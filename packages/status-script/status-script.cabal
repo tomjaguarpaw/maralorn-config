@@ -34,6 +34,7 @@ executable status-script
     TemplateHaskell
 
   build-depends:
+    , aeson
     , async
     , base                ^>=4.16.4.0
     , bytestring
@@ -41,6 +42,7 @@ executable status-script
     , exceptions
     , filepath
     , fsnotify
+    , network
     , reflex
     , relude
     , say

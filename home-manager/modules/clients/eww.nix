@@ -6,34 +6,63 @@
 }:
 {
 
-  systemd.user.services.eww = {
-    Unit = {
-      X-Restart-Triggers = [ "${config.programs.eww.configDir}" ];
-      Description = "EWW";
+  systemd.user.services = {
+    status-script = {
+      Unit = {
+        Description = "status-script";
+      };
+      Service = {
+        Environment = "PATH=${
+            lib.makeBinPath [
+              pkgs.coreutils
+              pkgs.hyprland
+              pkgs.jq
+              pkgs.socat
+              pkgs.bash
+              pkgs.status-script
+              pkgs.curl
+              pkgs.openssh
+              pkgs.gitMinimal
+              pkgs.nix
+              config.programs.rbw.package
+            ]
+          }";
+        ExecStart = lib.getExe pkgs.status-script;
+        Restart = "always";
+        RestartSec = "10s";
+      };
     };
+    eww = {
+      Unit = {
+        X-Restart-Triggers = [ "${config.programs.eww.configDir}" ];
+        Description = "EWW";
+        Wants = [ "status-script.service" ];
+        After = [ "status-script.service" ];
+      };
 
-    Service = {
-      Environment = "PATH=${
-          lib.makeBinPath [
-            pkgs.coreutils
-            pkgs.hyprland
-            pkgs.jq
-            pkgs.socat
-            pkgs.bash
-            pkgs.status-script
-            pkgs.curl
-            pkgs.openssh
-            pkgs.gitMinimal
-            pkgs.nix
-            config.programs.rbw.package
-          ]
-        }";
-      ExecStart = "${
-          lib.getExe config.programs.eww.package
-        } daemon --no-daemonize --restart";
-      ExecStartPost = "${lib.getExe config.programs.eww.package} open bar";
-      Restart = "always";
-      RestartSec = "10s";
+      Service = {
+        Environment = "PATH=${
+            lib.makeBinPath [
+              pkgs.coreutils
+              pkgs.hyprland
+              pkgs.jq
+              pkgs.socat
+              pkgs.bash
+              pkgs.curl
+              pkgs.openssh
+              pkgs.gitMinimal
+              pkgs.nix
+              pkgs.jaq
+              config.programs.rbw.package
+            ]
+          }";
+        ExecStart = "${
+            lib.getExe config.programs.eww.package
+          } daemon --no-daemonize --restart";
+        ExecStartPost = "${lib.getExe config.programs.eww.package} open bar";
+        Restart = "always";
+        RestartSec = "10s";
+      };
     };
   };
   programs.eww = {

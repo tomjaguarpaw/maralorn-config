@@ -1,5 +1,6 @@
 {
   mkDerivation,
+  aeson,
   async,
   base,
   bytestring,
@@ -8,6 +9,7 @@
   filepath,
   fsnotify,
   lib,
+  network,
   reflex,
   relude,
   say,
@@ -23,6 +25,7 @@ mkDerivation {
   isLibrary = false;
   isExecutable = true;
   executableHaskellDepends = [
+    aeson
     async
     base
     bytestring
@@ -30,6 +33,7 @@ mkDerivation {
     exceptions
     filepath
     fsnotify
+    network
     reflex
     relude
     say

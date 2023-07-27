@@ -1,17 +1,14 @@
-(deflisten status :initial "[]" "status-script")
-
-(deflisten workspaces :initial "[]" "bash scripts/get-workspaces.sh")
-
-(deflisten keymap :initial "German (Neo 2)" "bash scripts/get-keymap.sh")
-
+(deflisten status            :initial "[]" "bash scripts/listen.sh components")
+(deflisten mode              :initial ""   "bash scripts/listen.sh mode")
+(deflisten warnings          :initial "[]" "bash scripts/listen.sh warnings")
+(deflisten warninggroups     :initial "[]" "bash scripts/listen.sh warninggroups")
+(deflisten workspaces        :initial "[]" "bash scripts/get-workspaces.sh")
+(deflisten keymap            :initial "German (Neo 2)" "bash scripts/get-keymap.sh")
 (deflisten current_workspace :initial "1" "bash scripts/get-active-workspace.sh")
 
 (defpoll time :interval "5s" `date +'{"year":"%Y","month":"%m","day":"%d","week":"%V","week_day":"%a","hour":"%H","minute":"%M"}'`)
-
 (defpoll alerts :interval "1m"  `curl https://alerts.maralorn.de/api/v1/alerts | jq '.data | map(select(.status.state != "suppressed"))'`)
-
 (defpoll ssh-agent :interval "5s" "ssh-add -L")
-
 (defpoll rbw :interval "5s" "if rbw unlocked; then echo true; else echo false; fi")
 
 (defwidget workspaces []
@@ -27,36 +24,36 @@
 
 (defwidget time []
   (box :class "component time" :orientation "vertical" :valign "end" :space-evenly false
-    "${time.year}-${time.month}-${time.day}"
-    "KW${time.week} ${time.week_day}"
-    "${time.hour}:${time.minute}"
+    {formattime(EWW_TIME, "%F")}
+    {formattime(EWW_TIME, "KW%V %a")}
+    {formattime(EWW_TIME, "%H:%M")}
   )
 )
 
 (defwidget status []
   (box :orientation "vertical" :space-evenly false
-    (label :text "${alerts}${rbw}${ssh-agent}" :visible false)
-    (box :class "component" (image :path "icons/${status.mode.mode}.png"))
-    (for message in {status.components}
+    (label :text "${alerts}${rbw}${ssh-agent}${mode}${warnings}${warninggroups}${status}" :visible false)
+    (box :class "component" (image :path "icons/${mode}.png"))
+    (box :orientation "vertical" :space-evenly false (for message in status
       (box :style "color: #${message.color};" :class "component ${message.small ? "small" : ""}" :orientation "vertical"
         (for line in {message.content} (label :text "${line}"))
-      )
+    ))
     )
-    (for unpushed in {arraylength(status.unpushed.repos) + arraylength(status.dirty.repos) > 0 ? [1] : []}
-      (box :class "component" (image :path "icons/git.png") (label :text "${arraylength(status.unpushed.repos) + arraylength(status.dirty.repos)}"))
-    )
-    (for alert in {status.mode.mode != "Klausur" && arraylength(alerts) > 0 ? [1] : []}
+    (box :orientation "vertical" :space-evenly false (for group in warninggroups
+      (box :class "component" (image :path "icons/${group.name}.png") {group.count})
+    ))
+    (box :orientation "vertical" :space-evenly false (for alert in {mode != "Klausur" && arraylength(alerts) > 0 ? [1] : []}
       (box :class "component" (image :path "icons/cloud-alert.png") (label :text "${arraylength(alerts)}"))
-    )
-    (for rbwfile in {rbw ? [] : [1]}
+    ))
+    (box :orientation "vertical" :space-evenly false (for rbwfile in {rbw ? [] : [1]}
       (box :class "component" (image :path "icons/lock-alert.png") (label :text "rbw"))
-    )
-    (for ssh in {ssh-agent == "" ? [1] : []}
+    ))
+    (box :orientation "vertical" :space-evenly false (for ssh in {ssh-agent == "" ? [1] : []}
       (box :class "component" (image :path "icons/lock-alert.png") (label :text "ssh"))
-    )
-    (for keyboard in {keymap != "German (Neo 2)" ? [1] : []}
+    ))
+    (box :orientation "vertical" :space-evenly false (for keyboard in {keymap != "German (Neo 2)" ? [1] : []}
       (box :class "component small" (image :path "icons/keyboard.png") (label :text keymap))
-    )
+    ))
   )
 )
 
@@ -81,18 +78,22 @@
 
 (defwidget info-overlay []
   (box :class "overlay"
-    (box :valign "center" :halign "center" :orientation "vertical" :space-evenly false
-      (for unpushed in {status.unpushed.repos}
-        (box :class "component" :spacing 10 :space-evenly false (image :path "icons/git.png") (image :path "icons/unpushed.png") (label :hexpand true :halign "center" :text unpushed))
-      )
-      (for dirty in {status.dirty.repos}
-        (box :class "component" :spacing 10 :space-evenly false (image :path "icons/git.png") (image :path "icons/dirty.png") (label :hexpand true :halign "center" :text dirty))
-      )
-      (for alert in {alerts}
-        (box :class "component" :spacing 10 :space-evenly false (image :path "icons/cloud-alert.png") (label  :hexpand true :halign "center" :text {alert.annotations.description}))
+    (centerbox :halign "center" :orientation "vertical"
+      (box :orientation "vertical" :space-evenly false
+        (for warning in {warnings}
+          (box :class "component" :spacing 10 :space-evenly false
+            (image :path "icons/${warning.group}.png")
+            (for subgroup in {(warning.subgroup ?: "") != "" ? [warning.subgroup] : []}
+              (image :path "icons/${subgroup}.png")
+            )
+            (label :hexpand true :halign "center" :text {warning.description}))
+        )
+        (for alert in {alerts}
+          (box :class "component" :spacing 10 :space-evenly false (image :path "icons/cloud-alert.png") (label  :hexpand true :halign "center" :text {alert.annotations.description}))
+        )
       )
       (box :class "component" :halign "center" (calendar))
-      (box :class "component"  :spacing 10 :space-evenly false (image :path "icons/disk.png") "/disk" "${round(EWW_DISK["/disk"].used/1024/1024/1024,1)}GB / ${round(EWW_DISK["/disk"].total/1024/1024/1024,1)}GB" (overlay (circular-progress :start-at 75 :width 60 :height 60 :thickness 4 :value {EWW_DISK["/disk"].used_perc}) "${round(EWW_DISK["/disk"].used_perc,1)}%"))
+      (box :class "component" :valign "end" :spacing 10 :space-evenly false (image :path "icons/disk.png") "/disk" "${round(EWW_DISK["/disk"].used/1024/1024/1024,1)}GB / ${round(EWW_DISK["/disk"].total/1024/1024/1024,1)}GB" (overlay (circular-progress :start-at 75 :width 60 :height 60 :thickness 4 :value {EWW_DISK["/disk"].used_perc}) "${round(EWW_DISK["/disk"].used_perc,1)}%"))
     )
   )
 )

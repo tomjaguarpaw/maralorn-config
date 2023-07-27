@@ -1,5 +1,8 @@
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE ImpredicativeTypes #-}
 {-# LANGUAGE OverloadedRecordDot #-}
+{-# LANGUAGE PartialTypeSignatures #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE NoFieldSelectors #-}
 
@@ -18,13 +21,12 @@ import Data.ByteString.Lazy.Char8 qualified as LBSC
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Relude
-import Say (say, sayErr)
+import Say (sayErr)
 import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, readInputLines, (&>), (|>))
 import Shh qualified
 
 import Control.Concurrent qualified as Conc
 import Data.List qualified as String
-import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
@@ -33,6 +35,57 @@ import System.Directory (listDirectory)
 import System.Environment (getEnv)
 import System.FSNotify qualified as Notify
 import System.FilePath ((</>))
+
+import Data.Aeson qualified as Aeson
+import Data.List.NonEmpty qualified as NonEmpty
+import Network.Socket qualified as Network
+import Network.Socket.ByteString qualified as Network
+import Prelude ()
+
+mkSendToSocketCallback :: FilePath -> IO (ByteString -> IO ())
+mkSendToSocketCallback socket_name = do
+  server_socket <- Network.socket Network.AF_UNIX Network.Stream Network.defaultProtocol
+  Network.bind server_socket (Network.SockAddrUnix socket_name)
+  Network.listen server_socket 5
+  client_socket_var <- newEmptyTMVarIO
+  last_message_var <- newEmptyTMVarIO
+  void $ Conc.forkIO $ forever $ do
+    (client_socket, _) <- Network.accept server_socket
+    (old_socket_may, message_may) <- atomically $ (,) <$> tryTakeTMVar client_socket_var <*> tryReadTMVar last_message_var
+    whenJust old_socket_may Network.close
+    no_error <-
+      message_may & \case
+        Just msg -> send client_socket msg
+        Nothing -> pure True
+    sayErr [i|New connection on #{socket_name}.|]
+    if no_error
+      then atomically $ putTMVar client_socket_var client_socket
+      else Network.close client_socket
+  return \msg -> do
+    client_socket <- atomically $ do
+      void $ tryTakeTMVar last_message_var -- clear
+      putTMVar last_message_var msg
+      takeTMVar client_socket_var
+    no_error <- send client_socket msg
+    if no_error
+      then atomically $ putTMVar client_socket_var client_socket
+      else Network.close client_socket
+ where
+  send socket msg =
+    Exception.try @Exception.IOException (Network.sendAll socket (msg <> "\n")) <&> isRight
+
+broadcastToSocket ::
+  (R.MonadHeadlessApp t m) =>
+  Text ->
+  R.Event t ByteString ->
+  m ()
+broadcastToSocket socket_name event = do
+  -- Listen socket
+  callback <- liftIO $ mkSendToSocketCallback [i|#{socketsDir}/#{socket_name}|]
+  R.performEvent_ $ event <&> (callback >>> liftIO)
+
+socketsDir :: FilePath
+socketsDir = "/run/user/1000/status"
 
 infixl 9 %
 (%) :: (a -> b) -> (b -> c) -> a -> c
@@ -52,7 +105,7 @@ x <<&>> g = fmap (fmap g) x
 
 data Mode = Klausur | Orga | Code | Gaming | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
-load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq"]
+load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq", "mkdir"]
 
 missingExecutables :: IO [FilePath]
 modes :: [Mode]
@@ -149,18 +202,15 @@ writeVars vars = do
                     small' = if small then "true" else "false"
                    in
                     Just [i|{"color":"#{color}","content":["#{Text.intercalate "\", \"" content'}"],"small":#{small'}}|]
-                _ -> Nothing
-            custom_components =
-              components & mapMaybe \case
-                CustomData{..} ->
-                  let
-                    map_to_json = Map.toList % map (\(key, val) -> [i|"#{key}":#{val}|]) % Text.intercalate ","
-                   in
-                    Just [i|"#{name}":{#{map_to_json values}}|]
-                _ -> Nothing
-            all_components = [i|"components":[#{Text.intercalate "," list_components}]|] : custom_components
-        say [i|{#{Text.intercalate "," all_components}}|]
-  R.performEvent_ writeEvent
+        [i|[#{Text.intercalate "," list_components}]|]
+  broadcastToSocket "components" writeEvent
+
+concatEvents :: (R.MonadHeadlessApp t m, Monoid b, Eq b) => [R.Event t b] -> m (R.Event t b)
+concatEvents =
+  mapM (R.holdDyn mempty)
+    %> mconcat
+    >=> R.holdUniqDyn
+    %> R.updated
 
 runModules :: R.MonadHeadlessApp t m => [Module t m (Maybe Component)] -> m ()
 runModules modules = do
@@ -201,17 +251,27 @@ withColor color content = pure $ Just (withColor' color content)
 withColor' :: Text -> Text -> Component
 withColor' color content = MkComponent{color, content, small = False}
 
-data Component
-  = MkComponent
-      { color :: Text
-      , content :: Text
-      , small :: Bool
-      }
-  | CustomData
-      { name :: Text
-      , values :: Map Text Text
-      }
+data Component = MkComponent
+  { color :: Text
+  , content :: Text
+  , small :: Bool
+  }
   deriving (Eq)
+
+data Warning = MkWarning
+  { description :: Text
+  , group :: Text
+  , subgroup :: Maybe Text
+  }
+  deriving stock (Eq, Generic)
+  deriving anyclass (Aeson.ToJSON)
+
+data WarningGroup = MkWarningGroup
+  { name :: Text
+  , count :: Int
+  }
+  deriving stock (Eq, Generic)
+  deriving anyclass (Aeson.ToJSON)
 
 when' :: Monad m => Bool -> m (Maybe a) -> m (Maybe a)
 when' cond result = if cond then result else pure Nothing
@@ -322,6 +382,7 @@ main = Notify.withManager \watch_manager -> do
   missing <-
     missingExecutables
       <&> nonEmpty
+  mkdir "-p" socketsDir
   whenJust missing \missing' -> sayErr [i|missing executables #{missing'}|]
   home <- getEnv "HOME"
   let git_dir = home </> "git"
@@ -410,31 +471,6 @@ main = Notify.withManager \watch_manager -> do
                     %> fromMaybe 0
                 _ -> pure 0
               when' (code_updates /= 0) $ withColor cyan [i|Code Updates: #{code_updates}|]
-          , eventModule do
-              dirty_updates <- performEventThreaded git_dir_events \dirs -> do
-                now_dirty <- Set.fromList . fmap toText <$> filterM (isDirty . (git_dir </>)) dirs
-                pure (Set.difference (Set.fromList (fmap toText dirs)) now_dirty, now_dirty)
-              set_of_dirties <- R.foldDyn (\(now_clean, now_dirty) dirty -> Set.union now_dirty (Set.difference dirty now_clean)) mempty dirty_updates
-              void $ performEventThreaded (R.updated set_of_dirties) \dirty_dirs -> atomically $ writeTVar dirty_var (toList dirty_dirs)
-              pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs' ->
-                let dirty_dirs = (if (mode' == Klausur) then Set.filter (== "promotion") else id) dirty_dirs'
-                 in Just $
-                      CustomData
-                        { name = "dirty"
-                        , values = Map.singleton "repos" (show (toList dirty_dirs))
-                        }
-          , eventModule do
-              dirty_updates <- performEventThreaded git_dir_events \dirs -> do
-                now_dirty <- Set.fromList . fmap toText <$> filterM (isUnpushed . (git_dir </>)) dirs
-                pure (Set.difference (Set.fromList (fmap toText dirs)) now_dirty, now_dirty)
-              set_of_dirties <- R.foldDyn (\(now_clean, now_dirty) dirty -> Set.union now_dirty (Set.difference dirty now_clean)) mempty dirty_updates
-              pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs' ->
-                let dirty_dirs = (if (mode' == Klausur) then Set.filter (== "promotion") else id) dirty_dirs'
-                 in Just $
-                      CustomData
-                        { name = "unpushed"
-                        , values = Map.singleton "repos" (show (toList dirty_dirs))
-                        }
           , simpleModule (5 * oneSecond) do
               let hosts = ["hera", "fluffy"]
               unreachable_hosts <- flip filterM hosts \host -> isLeft <$> (Shh.tryFailure do (exe "/run/wrappers/bin/ping" "-c" "1" (toString host)) &> Shh.devNull)
@@ -496,10 +532,51 @@ main = Notify.withManager \watch_manager -> do
                 Concurrent.threadDelay (4 * oneSecond)
                 dirty <- elem "config" <$> readTVarIO dirty_var
                 var =<< if dirty then pure Nothing else scan
-          , eventModule . pure $
-              mk_mode_event R.never
-                <&> \mode' -> Just $ CustomData{name = "mode", values = Map.singleton "mode" [i|"#{show mode'}"|]}
           ]
+    dirty_event <- do
+      dirty_updates <- performEventThreaded git_dir_events \dirs -> do
+        now_dirty <- Set.fromList . fmap toText <$> filterM (isDirty . (git_dir </>)) dirs
+        pure (Set.difference (Set.fromList (fmap toText dirs)) now_dirty, now_dirty)
+      set_of_dirties <- R.foldDyn (\(now_clean, now_dirty) dirty -> Set.union now_dirty (Set.difference dirty now_clean)) mempty dirty_updates
+      void $ performEventThreaded (R.updated set_of_dirties) \dirty_dirs -> atomically $ writeTVar dirty_var (toList dirty_dirs)
+      pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs' ->
+        let dirty_dirs = (if (mode' == Klausur) then Set.filter (== "promotion") else id) dirty_dirs'
+         in toList dirty_dirs <&> \dir ->
+              MkWarning
+                { description = dir
+                , group = "git"
+                , subgroup = Just "dirty"
+                }
+    unpushed_event <- do
+      dirty_updates <- performEventThreaded git_dir_events \dirs -> do
+        now_dirty <- Set.fromList . fmap toText <$> filterM (isUnpushed . (git_dir </>)) dirs
+        pure (Set.difference (Set.fromList (fmap toText dirs)) now_dirty, now_dirty)
+      set_of_dirties <- R.foldDyn (\(now_clean, now_dirty) dirty -> Set.union now_dirty (Set.difference dirty now_clean)) mempty dirty_updates
+      pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs' ->
+        let dirty_dirs = (if (mode' == Klausur) then Set.filter (== "promotion") else id) dirty_dirs'
+         in toList dirty_dirs <&> \dir ->
+              MkWarning
+                { description = dir
+                , group = "git"
+                , subgroup = Just "unpushed"
+                }
+    warnings <- concatEvents [dirty_event, unpushed_event]
+    broadcastToSocket "warnings" (warnings <&> Aeson.encode % toStrict)
+    broadcastToSocket
+      "warninggroups"
+      ( warnings
+          <&> fmap (.group)
+          % NonEmpty.group
+          %> ( \group' ->
+                MkWarningGroup
+                  { name = head group'
+                  , count = length group'
+                  }
+             )
+          % Aeson.encode
+          % toStrict
+      )
+    broadcastToSocket "mode" (mk_mode_event start <&> show)
     runModules modules
     pure R.never -- We have no exit condition.
 
