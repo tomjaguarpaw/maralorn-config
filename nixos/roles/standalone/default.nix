@@ -66,10 +66,7 @@ in
 
   nix = {
     distributedBuilds = lib.mkDefault true;
-    gc = {
-      automatic = false;
-      options = "-d";
-    };
+    gc.options = "-d";
   };
 
   programs.mtr.enable = true;
