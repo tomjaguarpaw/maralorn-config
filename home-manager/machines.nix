@@ -3,6 +3,7 @@ let
   restrictedPages = [
     "reddit.com"
     "github.com"
+    "*.github.io"
     "*.ccc.de"
     "haskell.org"
     "*.haskell.org"
@@ -13,6 +14,8 @@ let
     "youtube.*"
     "*.element.io"
     "twitter.com"
+    "code.maralorn.de"
+    "5e.maralorn.de"
   ] ++ newsPages;
   newsPages = [
     "chaos.social"
