@@ -20,6 +20,7 @@
           receivers = [ {
             name = "alerts";
             webhook_configs = [ {
+              send_resolved = false;
               url = "${config.services.go-neb.baseUrl}:4050/services/hooks/YWxlcnRtYW5hZ2VyX3NlcnZpY2U";
             } ];
           } ];
