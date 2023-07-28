@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 {
   home.sessionVariables.TERMINAL = "${pkgs.foot}/bin/foot";
   programs.foot = {
@@ -10,12 +10,6 @@
             cat ${pkgs.foot.themes}/share/foot/themes/catppuccin > $out
             echo -e "background=000000\nalpha=0.9" >> $out
           '').outPath;
-      };
-      csd = {
-        preferred = "client";
-        size = "0";
-        border-width = "1";
-        color = "ff${config.m-0.colors.accent}";
       };
       mouse = {
         hide-when-typing = "yes";

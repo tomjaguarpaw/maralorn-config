@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 {
   home = {
     # This fixes border drawing but makes neo wonky. sessionVariables.NIXOS_OZONE_WL = "1";
@@ -53,7 +53,6 @@
         pavucontrol
         playerctl
         deluge
-        gmpc
         vlc
         yt-dlp
         spotdl
@@ -76,20 +75,10 @@
         dconf2nix
         chrysalis
       ;
-      inherit (pkgs.gnome)
-        dconf-editor
-        gnome-tweaks
-        adwaita-icon-theme
-        gnome-session
-      ;
+      inherit (pkgs.gnome) dconf-editor;
     };
 
     file.".zprofile".text = ". $HOME/.nix-profile/etc/profile.d/hm-session-vars.sh";
-  };
-  programs.password-store = {
-    package = pkgs.pass-wayland.withExtensions (exts: [ exts.pass-otp ]);
-    enable = true;
-    settings.PASSWORD_STORE_DIR = "${config.home.homeDirectory}/git/password-store";
   };
   gtk = {
     enable = true;
