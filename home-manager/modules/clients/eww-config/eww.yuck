@@ -1,5 +1,5 @@
 (deflisten status            :initial "[]" "bash scripts/listen.sh components")
-(deflisten mode              :initial ""   "bash scripts/listen.sh mode")
+(deflisten mode              :initial "warning"   "bash scripts/listen.sh mode")
 (deflisten warnings          :initial "[]" "bash scripts/listen.sh warnings")
 (deflisten warninggroups     :initial "[]" "bash scripts/listen.sh warninggroups")
 (deflisten players           :initial "[]" "bash scripts/listen.sh players")
@@ -8,9 +8,9 @@
 (deflisten current_workspace :initial "1" "bash scripts/get-active-workspace.sh")
 
 (defpoll time :interval "5s" `date +'{"year":"%Y","month":"%m","day":"%d","week":"%V","week_day":"%a","hour":"%H","minute":"%M"}'`)
-(defpoll alerts :interval "1m"  `curl https://alerts.maralorn.de/api/v1/alerts | jq '.data | map(select(.status.state != "suppressed"))'`)
+(defpoll alerts :interval "1m" :initial "[]" `curl https://alerts.maralorn.de/api/v1/alerts | jq '.data | map(select(.status.state != "suppressed"))'`)
 (defpoll ssh-agent :interval "5s" "ssh-add -L")
-(defpoll rbw :interval "5s" "if rbw unlocked; then echo true; else echo false; fi")
+(defpoll rbw :interval "5s" :initial false "if rbw unlocked; then echo true; else echo false; fi")
 
 (defwidget workspaces []
   (box :orientation "horizontal"
