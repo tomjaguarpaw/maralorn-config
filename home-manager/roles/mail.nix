@@ -20,6 +20,7 @@ let
     alternates
   ;
   quick-mail-sync = pkgs.writeShellScriptBin "quick-mail-sync" ''
+    mkdir -p ~/.cache/mutt
     ${pkgs.isync}/bin/mbsync hera:INBOX,Code
     ${pkgs.notmuch}/bin/notmuch new
   '';
@@ -142,7 +143,6 @@ in
       in
       {
         ".neomuttrc".text = ''
-          startup-hook 'echo `mkdir -p ~/.cache/mutt`'
           set editor = "hx"
           alternative_order text/plain text/html
           auto_view text/*
