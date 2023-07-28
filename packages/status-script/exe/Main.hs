@@ -38,7 +38,6 @@ import System.FSNotify qualified as Notify
 import System.FilePath ((</>))
 
 import Data.Aeson qualified as Aeson
-import Data.ByteString.Lazy.Char8 qualified as LByteStringChar
 import Data.List.NonEmpty qualified as NonEmpty
 import Network.Socket qualified as Network
 import Network.Socket.ByteString qualified as Network
@@ -295,7 +294,7 @@ performEventThreaded event action = do
       when run $ void $ Async.async $ runner input
 
 playerCTLFormat :: String
-playerCTLFormat = [i|{"name":"{{playerName}}", "status":"{{status}}", "title":"{{title}} {{album}} {{artist}}"}|]
+playerCTLFormat = [i|{{playerName}}@@@{{status}}@@@{{title}} | {{album}} | {{artist}}|]
 
 playerModule :: forall t m. R.MonadHeadlessApp t m => FilePath -> m (R.Event t [PlayerState])
 playerModule home = do
@@ -304,7 +303,7 @@ playerModule home = do
   pure event
  where
   update_lines = \trigger -> mapM_ \_ -> do
-    player_states <- LByteStringChar.lines <$> (playerctl "metadata" "-a" "-f" playerCTLFormat |> captureTrim)
+    player_states <- playerctl "metadata" "-a" "-f" playerCTLFormat |> captureTrim
     mpd_host <-
       [i|#{home}/.config/mpDris2/mpDris2.conf|]
         & readFileBS
@@ -318,13 +317,19 @@ playerModule home = do
         %> fromMaybe ""
     trigger $
       player_states
-        & mapMaybe Aeson.decode'
-        & map
-          ( \(player_state :: PlayerState) ->
-              player_state
-                { name = if player_state.name == "mpd" then player_state.name <> mpd_host else player_state.name
-                , title = cleanTitle player_state.title
-                }
+        & decodeUtf8
+        % Text.lines
+        %> Text.splitOn "@@@"
+        % mapMaybe
+          ( \case
+              [name, status, title] ->
+                Just $
+                  MkPlayerState
+                    { name = if name == "mpd" then name <> mpd_host else name
+                    , title = cleanTitle title
+                    , status = status
+                    }
+              _ -> Nothing
           )
   listenToPlayer = \trigger ->
     forever do
@@ -336,12 +341,14 @@ playerModule home = do
 
 cleanTitle :: Text -> Text
 cleanTitle =
-  Text.splitOn "|"
-    % filter (Text.null % not)
-    % Text.unwords
+  Text.replace "\"" ""
     % Text.splitOn " "
     % filter (Text.null % not)
     % Text.unwords
+    % Text.splitOn "|"
+    %> Text.strip
+    % filter (Text.null % not)
+    % Text.intercalate "\\n"
 
 data PlayerState = MkPlayerState
   { name :: Text
