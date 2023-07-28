@@ -38,9 +38,7 @@ in
       "$mod" = "SUPER";
       windowrulev2 = [
         "float,class:launcher"
-        "nofocus,class:Conky"
-        "noborder,class:Conky"
-        "pin,class:Conky"
+        "pin,class:launcher"
       ];
       exec-once = [ (lib.getExe pkgs.kassandra) ];
       exec = [
