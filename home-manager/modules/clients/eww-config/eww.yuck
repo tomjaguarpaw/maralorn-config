@@ -47,11 +47,6 @@
     (box :orientation "vertical" :space-evenly false (for ssh in {ssh-agent == "" ? [1] : []}
       (box :class "component" (image :path "icons/lock-alert.png") (label :text "ssh"))
     ))
-    (box :orientation "vertical" :space-evenly false (for message in status
-      (box :style "color: #${message.color};" :class "component ${message.small ? "small" : ""}" :orientation "vertical"
-        (for line in {message.content} (label :text "${line}"))
-    ))
-    )
     (box :orientation "vertical" :space-evenly false (for keyboard in {keymap != "German (Neo 2)" ? [1] : []}
       (box :class "component small" (image :path "icons/keyboard.png") (label :text keymap))
     ))
@@ -59,7 +54,15 @@
 )
 
 (defwidget bottom []
-   (box :orientation "vertical" :space-evenly false :valign "end" (workspaces) (time))
+   (box :orientation "vertical" :space-evenly false :valign "end"
+      (box :orientation "vertical" :space-evenly false (for message in status
+        (box :style "color: #${message.color};" :class "component ${message.small ? "small" : ""}" :orientation "vertical"
+          (for line in {message.content} (label :text "${line}"))
+        ))
+      )
+     (workspaces)
+     (time)
+   )
 )
 
 (defwidget sidebar []
