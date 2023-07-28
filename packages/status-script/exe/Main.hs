@@ -322,13 +322,14 @@ playerModule home = do
         %> Text.splitOn "@@@"
         % mapMaybe
           ( \case
-              [name, status, title] ->
-                Just $
-                  MkPlayerState
-                    { name = if name == "mpd" then name <> mpd_host else name
-                    , title = cleanTitle title
-                    , status = status
-                    }
+              [name, status, title]
+                | status `elem` ["Playing", "Paused"] ->
+                    Just $
+                      MkPlayerState
+                        { name = if name == "mpd" then name <> mpd_host else name
+                        , title = cleanTitle title
+                        , status = status
+                        }
               _ -> Nothing
           )
   listenToPlayer = \trigger ->
