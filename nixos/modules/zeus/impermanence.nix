@@ -37,10 +37,7 @@
         "git"
         "media"
       ];
-      files = [
-        ".chpwd-recent-dirs"
-        ".zsh_history"
-      ];
+      files = [ ".chpwd-recent-dirs" ];
     };
   };
   environment.persistence."/disk/volatile" = {
