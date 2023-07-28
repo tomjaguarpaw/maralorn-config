@@ -2,6 +2,7 @@
 (deflisten mode              :initial ""   "bash scripts/listen.sh mode")
 (deflisten warnings          :initial "[]" "bash scripts/listen.sh warnings")
 (deflisten warninggroups     :initial "[]" "bash scripts/listen.sh warninggroups")
+(deflisten players           :initial "[]" "bash scripts/listen.sh players")
 (deflisten workspaces        :initial "[]" "bash scripts/get-workspaces.sh")
 (deflisten keymap            :initial "German (Neo 2)" "bash scripts/get-keymap.sh")
 (deflisten current_workspace :initial "1" "bash scripts/get-active-workspace.sh")
@@ -53,6 +54,12 @@
     ))
     (box :orientation "vertical" :space-evenly false (for keyboard in {keymap != "German (Neo 2)" ? [1] : []}
       (box :class "component small" (image :path "icons/keyboard.png") (label :text keymap))
+    ))
+    (box :orientation "vertical" :space-evenly false (for player in players
+      (box :class "component" :orientation "vertical" :space-evenly false :spacing 10
+        (box  :space-evenly false :spacing 10 (image :path "icons/${player.status}.png") (label :hexpand true :halign "center" :text {player.name}))
+        (label :class "small" :width 100 :wrap true :justify "center" :text {player.title})
+      )
     ))
   )
 )

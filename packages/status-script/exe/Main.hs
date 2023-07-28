@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE ImpredicativeTypes #-}
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE PartialTypeSignatures #-}
@@ -37,6 +38,7 @@ import System.FSNotify qualified as Notify
 import System.FilePath ((</>))
 
 import Data.Aeson qualified as Aeson
+import Data.ByteString.Lazy.Char8 qualified as LByteStringChar
 import Data.List.NonEmpty qualified as NonEmpty
 import Network.Socket qualified as Network
 import Network.Socket.ByteString qualified as Network
@@ -173,9 +175,7 @@ isUnpushed gitDir = do
 tryCmd :: Proc a -> IO LBS.ByteString
 tryCmd x = ignoreFailure x |> captureTrim
 
-data Module t m a
-  = OldModule ((a -> IO ()) -> IO Void)
-  | Module (m (R.Event t a, IO ()))
+newtype Module t m a = Module (m (R.Event t a, IO ()))
 
 eventModule :: forall t m a. R.MonadHeadlessApp t m => m (R.Event t a) -> Module t m a
 eventModule = \event_action -> Module $ fmap (,pass) event_action
@@ -216,9 +216,6 @@ runModules :: R.MonadHeadlessApp t m => [Module t m (Maybe Component)] -> m ()
 runModules modules = do
   (vars, actions) <-
     unzip <$> forM modules \case
-      OldModule module' -> do
-        (event, trigger) <- R.newTriggerEvent
-        pure (event, void $ module' trigger)
       Module module' -> do
         (event, action) <- module'
         pure (event, action)
@@ -276,9 +273,6 @@ data WarningGroup = MkWarningGroup
 when' :: Monad m => Bool -> m (Maybe a) -> m (Maybe a)
 when' cond result = if cond then result else pure Nothing
 
-playerCTLFormat :: String
-playerCTLFormat = "@{{status}} {{title}} | {{album}} | {{artist}}"
-
 data EventRunnerState a = Idle | Running | NextWaiting a
 
 -- Call IO action in a separate thread. If multiple events fire never run two actions in parallel and if more than one action queues up, only run the latest.
@@ -300,30 +294,38 @@ performEventThreaded event action = do
         NextWaiting{} -> (False, NextWaiting input)
       when run $ void $ Async.async $ runner input
 
-playerModule :: forall t m. R.MonadHeadlessApp t m => FilePath -> Module t m (Maybe Component)
-playerModule home = Module do
+playerCTLFormat :: String
+playerCTLFormat = [i|{"name":"{{playerName}}", "status":"{{status}}", "title":"{{title}} {{album}} {{artist}}"}|]
+
+playerModule :: forall t m. R.MonadHeadlessApp t m => FilePath -> m (R.Event t [PlayerState])
+playerModule home = do
   (event, trigger) <- R.newTriggerEvent
-  pure (event, listenToPlayer trigger)
+  void $ liftIO $ Conc.forkIO $ listenToPlayer trigger
+  pure event
  where
-  update_lines = \trigger -> mapM_ \update -> do
-    mpdris_config <-
+  update_lines = \trigger -> mapM_ \_ -> do
+    player_states <- LByteStringChar.lines <$> (playerctl "metadata" "-a" "-f" playerCTLFormat |> captureTrim)
+    mpd_host <-
       [i|#{home}/.config/mpDris2/mpDris2.conf|]
         & readFileBS
-          % Exception.try @Exception.IOException
-    update
-      & decodeUtf8
-        % Text.splitOn " | "
-        % (get_host mpdris_config <>)
-        % filter (Text.null % not)
-        % Text.unlines
-        % Text.replace "@Stopped" "⏹"
-        % Text.replace "@Playing" "▶"
-        % Text.replace "@Paused" "⏸"
-        % Text.replace "\"" ""
-        % withColor white
-        % runIdentity
-        % fmap (\x -> x{small = True})
-        % trigger
+        % Exception.try @Exception.IOException
+        %> fromRight ""
+        %> decodeUtf8
+        %> lines
+        %> mapMaybe (Text.stripPrefix "host = ")
+        %> find (/= "::")
+        %> fmap (" " <>)
+        %> fromMaybe ""
+    trigger $
+      player_states
+        & mapMaybe Aeson.decode'
+        & map
+          ( \(player_state :: PlayerState) ->
+              player_state
+                { name = if player_state.name == "mpd" then player_state.name <> mpd_host else player_state.name
+                , title = cleanTitle player_state.title
+                }
+          )
   listenToPlayer = \trigger ->
     forever do
       Conc.threadDelay oneSecond
@@ -331,19 +333,26 @@ playerModule home = Module do
         ( playerctl "metadata" "-F" "-f" playerCTLFormat
             |> Shh.readInputLines (update_lines trigger)
         )
-  get_host =
-    fromRight ""
-      % decodeUtf8
-      % lines
-      % mapMaybe (Text.stripPrefix "host = ")
-      % find (/= "::")
-      % maybeToList
+
+cleanTitle :: Text -> Text
+cleanTitle =
+  Text.splitOn "|"
+    % filter (Text.null % not)
+    % Text.unwords
+    % Text.splitOn " "
+    % filter (Text.null % not)
+    % Text.unwords
+
+data PlayerState = MkPlayerState
+  { name :: Text
+  , status :: Text
+  , title :: Text
+  }
+  deriving stock (Generic)
+  deriving anyclass (Aeson.ToJSON, Aeson.FromJSON)
 
 red :: Text
 red = "F28FAD"
-
--- green :: String
--- green = "ABE9B3"
 yellow :: Text
 yellow = "FAE3B0"
 blue :: Text
@@ -352,8 +361,6 @@ magenta :: Text
 magenta = "F5C2E7"
 cyan :: Text
 cyan = "89DCEB"
-white :: Text
-white = "D9E0EE"
 
 reflow :: Int -> Text -> [Text]
 reflow width =
@@ -424,7 +431,6 @@ main = Notify.withManager \watch_manager -> do
               appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
               when' (not $ null appointments) $
                 withColor magenta (unlines appointments) <<&>> \x -> x{small = True}
-          , playerModule home
           , eventModule do
               performEventThreaded
                 notmuch_update
@@ -583,6 +589,8 @@ main = Notify.withManager \watch_manager -> do
           % toStrict
       )
     broadcastToSocket "mode" (mk_mode_event start <&> show)
+    player_events <- playerModule home
+    broadcastToSocket "players" (player_events <&> Aeson.encode % toStrict)
     runModules modules
     pure R.never -- We have no exit condition.
 
