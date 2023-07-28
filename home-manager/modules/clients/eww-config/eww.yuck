@@ -33,13 +33,8 @@
 
 (defwidget status []
   (box :orientation "vertical" :space-evenly false
-    (label :text "${alerts}${rbw}${ssh-agent}${mode}${warnings}${warninggroups}${status}" :visible false)
+    (label :text "${alerts}${rbw}${ssh-agent}${mode}${warnings}${warninggroups}${status}${players}" :visible false)
     (box :class "component" (image :path "icons/${mode}.png"))
-    (box :orientation "vertical" :space-evenly false (for message in status
-      (box :style "color: #${message.color};" :class "component ${message.small ? "small" : ""}" :orientation "vertical"
-        (for line in {message.content} (label :text "${line}"))
-    ))
-    )
     (box :orientation "vertical" :space-evenly false (for group in warninggroups
       (box :class "component" (image :path "icons/${group.name}.png") {group.count})
     ))
@@ -52,14 +47,13 @@
     (box :orientation "vertical" :space-evenly false (for ssh in {ssh-agent == "" ? [1] : []}
       (box :class "component" (image :path "icons/lock-alert.png") (label :text "ssh"))
     ))
+    (box :orientation "vertical" :space-evenly false (for message in status
+      (box :style "color: #${message.color};" :class "component ${message.small ? "small" : ""}" :orientation "vertical"
+        (for line in {message.content} (label :text "${line}"))
+    ))
+    )
     (box :orientation "vertical" :space-evenly false (for keyboard in {keymap != "German (Neo 2)" ? [1] : []}
       (box :class "component small" (image :path "icons/keyboard.png") (label :text keymap))
-    ))
-    (box :orientation "vertical" :space-evenly false (for player in players
-      (box :class "component" :orientation "vertical" :space-evenly false :spacing 10
-        (box  :space-evenly false :spacing 10 (image :image-width 20 :image-height 20 :path "icons/${player.status}.png") (label :hexpand true :halign "center" :text {player.name}))
-        (label :class "small" :width 100 :wrap true :justify "center" :text {player.title})
-      )
     ))
   )
 )
@@ -69,7 +63,16 @@
 )
 
 (defwidget sidebar []
-  (centerbox :orientation "vertical" (status) "" (bottom))
+  (centerbox :orientation "vertical"
+    (status)
+    (box :orientation "vertical" :space-evenly false (for player in players
+      (box :class "component" :orientation "vertical" :space-evenly false :spacing 10
+        (box  :space-evenly false :spacing 10 (image :image-width 20 :image-height 20 :path "icons/${player.status}.png") (label :hexpand true :halign "center" :text {player.name}))
+        (label :class "small" :width 100 :wrap true :justify "center" :text {player.title})
+      )
+    ))
+    (bottom)
+  )
 )
 
 (defwindow overlay
