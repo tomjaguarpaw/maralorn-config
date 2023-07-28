@@ -57,7 +57,7 @@
     ))
     (box :orientation "vertical" :space-evenly false (for player in players
       (box :class "component" :orientation "vertical" :space-evenly false :spacing 10
-        (box  :space-evenly false :spacing 10 (image :path "icons/${player.status}.png") (label :hexpand true :halign "center" :text {player.name}))
+        (box  :space-evenly false :spacing 10 (image :image-width 20 :image-height 20 :path "icons/${player.status}.png") (label :hexpand true :halign "center" :text {player.name}))
         (label :class "small" :width 100 :wrap true :justify "center" :text {player.title})
       )
     ))
