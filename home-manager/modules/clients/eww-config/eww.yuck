@@ -106,7 +106,26 @@
         )
       )
       (box :class "component" :halign "center" (calendar))
-      (box :class "component" :valign "end" :spacing 10 :space-evenly false (image :path "icons/disk.png") "/disk" "${round(EWW_DISK["/disk"].used/1024/1024/1024,1)}GB / ${round(EWW_DISK["/disk"].total/1024/1024/1024,1)}GB" (overlay (circular-progress :start-at 75 :width 60 :height 60 :thickness 4 :value {EWW_DISK["/disk"].used_perc}) "${round(EWW_DISK["/disk"].used_perc,1)}%"))
+      (box :orientation "vertical" :space-evenly false :valign "end"
+        (box :class "component" :valign "end" :spacing 10 :space-evenly false
+          (image :path "icons/disk.png")
+          "RAM"
+          "${round(EWW_RAM.used_mem/1024/1024/1024,1)}GB / ${round(EWW_RAM.total_mem/1024/1024/1024,1)}GB"
+          (overlay :halign "end" :hexpand true
+            (circular-progress :start-at 75 :width 60 :height 60 :thickness 4 :value {EWW_RAM.used_mem_perc})
+            "${round(EWW_RAM.used_mem_perc,1)}%"
+          )
+        )
+        (box :class "component" :valign "end" :spacing 10 :space-evenly false
+          (image :path "icons/disk.png")
+          "/disk"
+          "${round(EWW_DISK["/disk"].used/1024/1024/1024,1)}GB / ${round(EWW_DISK["/disk"].total/1024/1024/1024,1)}GB"
+          (overlay :halign "end" :hexpand true
+            (circular-progress :start-at 75 :width 60 :height 60 :thickness 4 :value {EWW_DISK["/disk"].used_perc})
+            "${round(EWW_DISK["/disk"].used_perc,1)}%"
+          )
+        )
+      )
     )
   )
 )
