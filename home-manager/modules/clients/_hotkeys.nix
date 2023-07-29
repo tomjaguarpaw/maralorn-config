@@ -50,7 +50,7 @@ in
   {
     SSH =
       let
-        ssh = host: "ssh ${host}";
+        ssh = host: term "ssh ${host}";
       in
       [
         { "hera via vpn" = ssh "hera.vpn.m-0.eu"; }
