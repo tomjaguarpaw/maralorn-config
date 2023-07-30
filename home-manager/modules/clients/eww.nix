@@ -31,6 +31,7 @@
         Restart = "always";
         RestartSec = "10s";
       };
+      Install.WantedBy = [ "graphical-session.target" ];
     };
     eww = {
       Unit = {
@@ -63,6 +64,7 @@
         Restart = "always";
         RestartSec = "10s";
       };
+      Install.WantedBy = [ "graphical-session.target" ];
     };
   };
   programs.eww = {

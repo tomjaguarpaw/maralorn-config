@@ -74,10 +74,10 @@
 (defwidget sidebar []
   (centerbox :orientation "vertical"
     (status)
-    (box :orientation "vertical" :space-evenly false (for player in players
+    (box :orientation "vertical" :space-evenly false (for player in {jq(players,"map(select(.status==\"Playing\"))")}
       (box :class "component" :orientation "vertical" :space-evenly false :spacing 10
         (box  :space-evenly false :spacing 10 (image :image-width 20 :image-height 20 :path "icons/${player.status}.png") (label :hexpand true :halign "center" :text {player.name}))
-        (label :class "small" :width 100 :wrap true :justify "center" :text {player.title})
+        (label :class "small" :width 80 :wrap true :justify "center" :text {player.title})
       )
     ))
     (bottom)
@@ -89,6 +89,12 @@
   (box :class "overlay"
     (centerbox :halign "center" :orientation "vertical"
       (box :orientation "vertical" :space-evenly false
+        (box :orientation "vertical" :space-evenly false (for player in players
+          (box :class "component" :orientation "vertical" :space-evenly false :spacing 10
+            (box  :space-evenly false :spacing 10 (image :image-width 20 :image-height 20 :path "icons/${player.status}.png") (label :hexpand true :halign "center" :text {player.name}))
+            (label :class "small" :justify "left" :hexpand true :halign "start" :text {player.title})
+          )
+        ))
         (for warning in {warnings}
           (box :class "component" :spacing 10 :space-evenly false
             (image :path "icons/${warning.group}.png")
