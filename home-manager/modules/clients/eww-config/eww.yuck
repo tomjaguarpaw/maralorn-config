@@ -53,6 +53,9 @@
     (box :orientation "vertical" :space-evenly false (for keyboard in {keymap != "German (Neo 2)" ? [1] : []}
       (box :class "component small" (image :path "icons/keyboard.png") (label :text keymap))
     ))
+    (box :orientation "vertical" :space-evenly false (for battery in {(EWW_BATTERY.BAT0  ?: "") != "" ? [EWW_BATTERY.BAT0] : []}
+      (box :class "component" (image :path "icons/battery-alert.png") (label :text "${battery.capacity}%"))
+    ))
   )
 )
 
@@ -95,8 +98,11 @@
             (label :hexpand true :halign "center" :text {warning.description}))
         )
         (for alert in {alerts}
-          (box :class "component" :spacing 10 :space-evenly false (image :path "icons/cloud-alert.png") (label  :hexpand true :halign "center" :text {alert.annotations.description}))
+          (box :class "component" :spacing 10 :space-evenly false (image :path "icons/cloud-alert.png") (label :hexpand true :halign "center" :text {alert.annotations.description}))
         )
+        (box :orientation "vertical" :space-evenly false (for battery in {(EWW_BATTERY.BAT0  ?: "") != "" ? [EWW_BATTERY.BAT0] : []}
+          (box :class "component" :space-evenly false (image :path "icons/battery-alert.png") (label :hexpand true :halign "center" :text "${battery.capacity}% ${battery.status}"))
+        ))
       )
       (box :class "component" :halign "center" (calendar))
       (box :orientation "vertical" :space-evenly false :valign "end"
