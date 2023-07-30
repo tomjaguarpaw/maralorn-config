@@ -269,6 +269,17 @@ data WarningGroup = MkWarningGroup
   deriving stock (Eq, Generic)
   deriving anyclass (Aeson.ToJSON)
 
+data Appointment = MkAppointment
+  { start :: Text
+  , end :: Text
+  , title :: Text
+  , description :: Text
+  , location :: Text
+  , calendar :: Text
+  }
+  deriving stock (Eq, Generic)
+  deriving anyclass (Aeson.ToJSON)
+
 when' :: Monad m => Bool -> m (Maybe a) -> m (Maybe a)
 when' cond result = if cond then result else pure Nothing
 
@@ -364,8 +375,6 @@ yellow :: Text
 yellow = "FAE3B0"
 blue :: Text
 blue = "96CDFB"
-magenta :: Text
-magenta = "F5C2E7"
 cyan :: Text
 cyan = "89DCEB"
 
@@ -403,6 +412,7 @@ main = Notify.withManager \watch_manager -> do
       modes_dir = home </> ".volatile" </> "modes"
   dirty_var <- newTVarIO []
   R.runHeadlessApp do
+    five_seconds_tick <- tickEvent (5 * oneSecond)
     mode <- getMode watch_manager home
     let mk_mode_event = \event -> R.leftmost [R.updated mode, R.tag (R.current mode) event]
     notmuch_update <-
@@ -430,15 +440,7 @@ main = Notify.withManager \watch_manager -> do
             pure $ mconcat dir_update_events
     git_dir_events <- (<> git_dirs_event) . R.switchDyn <$> R.networkHold (pure R.never) git_dirs_event'
     let modules =
-          [ --  simpleModule (1 * oneSecond) do
-            --    now <- Time.getCurrentTime
-            --    notifications <- processNotifications . fromRight "" <$> Exception.try @Exception.IOException (readFileBS [i|#{home}/.notifications/#{Time.formatTime Time.defaultTimeLocale "%Y-%m-%d" now}.log|])
-            --    when' (not $ Text.null notifications) $ withColor red ("\n" <> notifications)
-            simpleModule (5 * oneSecond) $ do
-              appointments <- lines . decodeUtf8 <$> tryCmd (khal ["list", "-a", "Standard", "-a", "Planung", "-a", "Uni", "-a", "Maltaire", "now", "2h", "-df", ""])
-              when' (not $ null appointments) $
-                withColor magenta (unlines appointments) <<&>> \x -> x{small = True}
-          , eventModule do
+          [ eventModule do
               performEventThreaded
                 notmuch_update
                 \case
@@ -597,9 +599,52 @@ main = Notify.withManager \watch_manager -> do
       )
     broadcastToSocket "mode" (mk_mode_event start <&> show)
     player_events <- playerModule home
+    appointments_event <- performEventThreaded five_seconds_tick $ const do
+      appointments <-
+        decodeUtf8
+          <$> tryCmd
+            ( khal
+                [ "list"
+                , "-a"
+                , "Standard"
+                , "-a"
+                , "Planung"
+                , "-a"
+                , "Uni"
+                , "-a"
+                , "Maltaire"
+                , "now"
+                , "2h"
+                , "-df"
+                , ""
+                , "-f"
+                , "@=@{start}@@@{end}@@@{title}@@@{description}@@@{location}@@@{calendar}"
+                ]
+            )
+      pure $
+        appointments
+          & Text.splitOn "@=@"
+          %> Text.splitOn "@@@"
+          %>> cleanString
+          % mapMaybe \case
+            [start', end, title, description, location, calendar] ->
+              Just $
+                MkAppointment
+                  { start = start'
+                  , end
+                  , title
+                  , description
+                  , location
+                  , calendar
+                  }
+            _ -> Nothing
+    broadcastToSocket "calendar" (appointments_event <&> Aeson.encode % toStrict)
     broadcastToSocket "players" (player_events <&> Aeson.encode % toStrict)
     runModules modules
     pure R.never -- We have no exit condition.
+
+cleanString :: Text -> Text
+cleanString = Text.replace "\"" "" . Text.intercalate "\\n" . Text.lines . Text.strip
 
 diffIsSmall :: LBSC.ByteString -> LBSC.ByteString -> IO Bool
 diffIsSmall = \pathA pathB -> (== "[]") <$> (nix_diff "--json" [pathA, pathB] |> jq ".inputsDiff.inputDerivationDiffs" |> captureTrim)
