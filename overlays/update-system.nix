@@ -16,6 +16,19 @@ let
     builders <- builders_configurator |> captureTrim
   '';
   mode-scripts = {
+    set-timer = pkgs.writeShellScriptBin "set-timer" ''
+      if ! ${lib.getExe pkgs.jq} . ~/.timers &> /dev/null; then
+        echo [] > ~/.timers
+      fi
+      if [[ "$2" == "" ]]; then
+        new_timers=`${lib.getExe pkgs.jq} "map(select(.name != \"$1\"))" ~/.timers`
+      else
+        new_timers=`${
+          lib.getExe pkgs.jq
+        } "map(select(.name != \"$1\")) + [{name: \"$1\", at:\"$(${pkgs.coreutils}/bin/date +%s -d "$2")\"}]" ~/.timers`
+      fi
+      echo "$new_timers" > ~/.timers
+    '';
     archive-nix-path =
       pkgs.writeHaskellScript
         {

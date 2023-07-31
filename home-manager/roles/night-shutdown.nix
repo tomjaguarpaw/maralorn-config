@@ -12,8 +12,8 @@ let
           "Data.Functor"
         ];
         bins = [
-          pkgs.libnotify
           pkgs.systemd
+          pkgs.set-timer
         ];
       }
       ''
@@ -27,7 +27,7 @@ let
                evening = hour == 0
                night = (hour < 6 && hour >= 1)
                action
-                | evening = notify_send "Shutdown alert!" ([i|Rechner fährt in #{59-minute} Minuten runter.|]::String)
+                | evening = set_timer "shutdown" "01:00"
                 | night = systemctl "poweroff"
                 | otherwise = pass
            action

@@ -42,7 +42,7 @@
       (box :class "component" (image :path "icons/${group.name}.png") {group.count})
     ))
     (box :orientation "vertical" :space-evenly false (for timer in timers
-      (box :class "component" (image :path "icons/timer.png") (box :orientation "vertical" {timer.name} {formattime(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at,EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at > 60*60 ? "%H:%M:%S": "%M:%S","UTC")}))
+      (box :class "component" :space-evenly false (image :path "icons/timer.png") (box :hexpand true :halign "center" :orientation "vertical" {timer.name} {formattime(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at,(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at) > 60*60 ? "%H:%M:%S": "%M:%S","UTC")}))
     ))
     (box :orientation "vertical" :space-evenly false (for alert in {mode != "Klausur" && arraylength(alerts) > 0 ? [1] : []}
       (box :class "component" (image :path "icons/cloud-alert.png") (label :text "${arraylength(alerts)}"))
