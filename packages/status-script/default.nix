@@ -16,6 +16,7 @@
   shh,
   stm,
   string-interpolate,
+  taskwarrior,
   time,
 }:
 mkDerivation {
@@ -40,6 +41,7 @@ mkDerivation {
     shh
     stm
     string-interpolate
+    taskwarrior
     time
   ];
   license = lib.licenses.agpl3Plus;

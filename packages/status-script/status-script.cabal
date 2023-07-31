@@ -49,6 +49,7 @@ executable status-script
     , shh
     , stm
     , string-interpolate
+    , taskwarrior
     , time
 
   hs-source-dirs:     exe
