@@ -50,7 +50,7 @@ getInbox = do
       inhibitedTasks :: HashSet UUID.UUID = foldMap (closure children) (blocked_tasks <> waiting_tasks <> tagged_tasks)
   pure $
     toList tasks
-      & filter \task -> not (HashMap.member task.uuid children) && not (HashSet.member task.uuid inhibitedTasks)
+      & filter \task -> Set.null task.tags && not (HashMap.member task.uuid children) && not (HashSet.member task.uuid inhibitedTasks)
 
 closure :: Hashable a => HashMap a (HashSet a) -> a -> HashSet a
 closure mapping = go
