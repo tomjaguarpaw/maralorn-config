@@ -127,8 +127,15 @@ let
 in
 {
   apollo = daily-driver "apollo" [ ./roles/battery.nix ];
-  zeus = daily-driver "zeus" [ ./roles/create-plans.nix ];
-  fluffy.default = makeConfig "fluffy" (default ++ [ ./roles/headless.nix ]);
+  zeus = daily-driver "zeus" (
+    [ ./roles/create-plans.nix ]
+    ++ flake-inputs.self.nixFromDirs [ ./modules/impermanent ]
+  );
+  fluffy.default = makeConfig "fluffy" (
+    default
+    ++ [ ./roles/headless.nix ]
+    ++ flake-inputs.self.nixFromDirs [ ./modules/impermanent ]
+  );
   hera.default = makeConfig "hera" (
     default
     ++ orga-basics

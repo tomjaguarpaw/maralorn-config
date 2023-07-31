@@ -1,5 +1,4 @@
 {
-
   environment.etc = {
     nixos.source = "/disk/persist/home/maralorn/git/config";
     machine-id.source = "/disk/persist/machine-id";
