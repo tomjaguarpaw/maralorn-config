@@ -523,14 +523,15 @@ main = Notify.withManager \watch_manager -> do
                 , group = "git"
                 , subgroup = Just "unpushed"
                 }
+    tasks_update <- watchFile watch_manager (home </> ".task") "pending.data" <&> mk_mode_event
     inbox_event <-
-      performEventThreaded five_seconds_tick $
+      performEventThreaded tasks_update $
         \case
           Klausur -> pure []
           _ ->
             ( Maralorn.Taskwarrior.getInbox <<&>> \task ->
                 MkWarning
-                  { description = task.description
+                  { description = task.description <> maybe "" (\num -> [i| (#{num})|]) task.id
                   , group = "inbox"
                   , subgroup = Nothing
                   }
