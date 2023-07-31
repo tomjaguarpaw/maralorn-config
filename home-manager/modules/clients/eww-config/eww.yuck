@@ -1,5 +1,5 @@
 (deflisten status            :initial "[]" "bash scripts/listen.sh components")
-(deflisten mode              :initial "warning"   "bash scripts/listen.sh mode")
+(deflisten mode              :initial "warning" "bash scripts/listen.sh mode")
 (deflisten warnings          :initial "[]" "bash scripts/listen.sh warnings")
 (deflisten warninggroups     :initial "[]" "bash scripts/listen.sh warninggroups")
 (deflisten players           :initial "[]" "bash scripts/listen.sh players")

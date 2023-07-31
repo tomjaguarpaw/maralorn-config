@@ -67,9 +67,9 @@ let
           ./roles/mpclient.nix
           ./roles/mpd.nix
           ./roles/mpv
-          #./roles/night-shutdown.nix
+          ./roles/night-shutdown.nix
           ./roles/pythia.nix
-          #./roles/refresh-config.nix
+          ./roles/refresh-config.nix
           ./roles/research.nix
           ./roles/terminal.nix
           ./roles/tinkering.nix
