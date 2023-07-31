@@ -552,7 +552,7 @@ main = Notify.withManager \watch_manager -> do
         notmuch_update
         \case
           Klausur -> pure []
-          _ -> Text.lines . decodeUtf8 <$> (notmuch "search" "folder:hera/Inbox" "+unread" |> captureTrim)
+          _ -> Text.lines . decodeUtf8 <$> (notmuch "search" "folder:hera/Inbox" "tag:unread" |> captureTrim)
         <<&>> fmap
           ( \msg ->
               MkWarning
@@ -566,7 +566,7 @@ main = Notify.withManager \watch_manager -> do
         notmuch_update
         \case
           Klausur -> pure []
-          _ -> Text.lines . decodeUtf8 <$> (notmuch "search" "folder:hera/Inbox" "-unread" |> captureTrim)
+          _ -> Text.lines . decodeUtf8 <$> (notmuch "search" "folder:hera/Inbox" "not" "tag:unread" |> captureTrim)
         <<&>> fmap
           ( \msg ->
               MkWarning
