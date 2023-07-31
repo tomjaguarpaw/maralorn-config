@@ -527,8 +527,7 @@ main = Notify.withManager \watch_manager -> do
     inbox_event <-
       performEventThreaded tasks_update $
         \case
-          Klausur -> pure []
-          _ ->
+          Orga ->
             ( Maralorn.Taskwarrior.getInbox <<&>> \task ->
                 MkWarning
                   { description = task.description <> maybe "" (\num -> [i| (#{num})|]) task.id
@@ -536,6 +535,7 @@ main = Notify.withManager \watch_manager -> do
                   , subgroup = Nothing
                   }
             )
+          _ -> pure []
     let process_notmuch_description =
           Text.splitOn "["
             % drop 1
@@ -565,8 +565,8 @@ main = Notify.withManager \watch_manager -> do
       performEventThreaded
         notmuch_update
         \case
-          Klausur -> pure []
-          _ -> Text.lines . decodeUtf8 <$> (notmuch "search" "folder:hera/Inbox" "not" "tag:unread" |> captureTrim)
+          Orga -> Text.lines . decodeUtf8 <$> (notmuch "search" "folder:hera/Inbox" "not" "tag:unread" |> captureTrim)
+          _ -> pure []
         <<&>> fmap
           ( \msg ->
               MkWarning
