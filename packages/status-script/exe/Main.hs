@@ -613,6 +613,7 @@ main = Notify.withManager \watch_manager -> do
           <$> tryCmd
             ( khal
                 [ "list"
+                , "-o"
                 , "-a"
                 , "Standard"
                 , "-a"
