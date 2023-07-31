@@ -8,14 +8,12 @@
 (deflisten keymap            :initial "German (Neo 2)" "bash scripts/get-keymap.sh")
 (deflisten current_workspace :initial "1" "bash scripts/get-active-workspace.sh")
 
-(defpoll time :interval "5s" `date +'{"year":"%Y","month":"%m","day":"%d","week":"%V","week_day":"%a","hour":"%H","minute":"%M"}'`)
 (defpoll alerts :interval "1m" :initial "[]" `curl https://alerts.maralorn.de/api/v1/alerts | jq '.data | map(select(.status.state != "suppressed"))'`)
 (defpoll ssh-agent :interval "5s" "ssh-add -L")
 (defpoll rbw :interval "5s" :initial false "if rbw unlocked; then echo true; else echo false; fi")
-(defpoll host :interval "1440m" :initial "" "cat /etc/hostname")
+(defpoll host :interval "1440m" :initial "unknown" "cat /etc/hostname")
 (defpoll timers :interval "5s" :initial "[]" "cat ~/.timers")
-
-(defvar disks `{"apollo":["/","/boot/EFI"],"zeus":["/disk"]}`)
+(defvar disks '{"apollo":["/","/boot/EFI"],"zeus":["/disk"],"unknown":[]}')
 
 (defwidget workspaces []
   (box :orientation "horizontal"
@@ -156,6 +154,7 @@
     )
   )
 )
+
 (defwindow overlay
   :monitor 0
   :stacking "overlay"
