@@ -1,12 +1,3 @@
-{-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE ImpredicativeTypes #-}
-{-# LANGUAGE OverloadedRecordDot #-}
-{-# LANGUAGE PartialTypeSignatures #-}
-{-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE NoFieldSelectors #-}
-
 module Main (main) where
 
 import Control.Concurrent qualified as Concurrent

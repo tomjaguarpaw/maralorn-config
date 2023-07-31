@@ -14,29 +14,48 @@ build-type:    Simple
 
 -- extra-source-files:
 
-common warnings
-  ghc-options: -threaded -with-rtsopts=-maxN4 -Wall -Wno-type-defaults
-
-executable status-script
-  import:             warnings
-  main-is:            Main.hs
+common common-config
   default-extensions:
+    NoFieldSelectors
     NoImplicitPrelude
     BlockArguments
+    DeriveAnyClass
+    DerivingStrategies
+    DuplicateRecordFields
     ExtendedDefaultRules
     GADTs
     ImportQualifiedPost
+    ImpredicativeTypes
     LambdaCase
     NamedFieldPuns
+    OverloadedRecordDot
     OverloadedStrings
+    PartialTypeSignatures
     QuasiQuotes
+    RecordWildCards
     ScopedTypeVariables
     TemplateHaskell
 
   build-depends:
+    , base                ^>=4.16.4.0
+    , relude
+    , string-interpolate
+    , taskwarrior
+
+  default-language:   GHC2021
+  ghc-options:        -Wall -Wno-type-defaults
+
+library
+  import:          common-config
+  hs-source-dirs:  lib
+  exposed-modules: Maralorn.Taskwarrior
+
+executable status-script
+  import:         common-config
+  main-is:        Main.hs
+  build-depends:
     , aeson
     , async
-    , base                ^>=4.16.4.0
     , bytestring
     , directory
     , exceptions
@@ -44,13 +63,10 @@ executable status-script
     , fsnotify
     , network
     , reflex
-    , relude
     , say
     , shh
     , stm
-    , string-interpolate
-    , taskwarrior
     , time
 
-  hs-source-dirs:     exe
-  default-language:   GHC2021
+  hs-source-dirs: exe
+  ghc-options:    -threaded -with-rtsopts=-maxN4
