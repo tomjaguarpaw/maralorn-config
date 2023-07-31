@@ -12,7 +12,11 @@ import Data.ByteString.Lazy.Char8 qualified as LBSC
 
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
-import Relude
+import Maralorn.Prelude
+import Maralorn.Taskwarrior qualified
+
+import Taskwarrior.Task qualified
+
 import Say (sayErr)
 import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, readInputLines, (&>), (|>))
 import Shh qualified
@@ -32,7 +36,6 @@ import Data.Aeson qualified as Aeson
 import Data.List.NonEmpty qualified as NonEmpty
 import Network.Socket qualified as Network
 import Network.Socket.ByteString qualified as Network
-import Prelude ()
 
 mkSendToSocketCallback :: FilePath -> IO (ByteString -> IO ())
 mkSendToSocketCallback socket_name = do
@@ -78,23 +81,6 @@ broadcastToSocket socket_name event = do
 
 socketsDir :: FilePath
 socketsDir = "/run/user/1000/status"
-
-infixl 9 %
-(%) :: (a -> b) -> (b -> c) -> a -> c
-f % g = g . f
-
-infixl 9 %>
-(%>) :: Functor f => (a -> f b) -> (b -> c) -> a -> f c
-f %> g = fmap g . f
-
-infixl 9 %>>
-(%>>) :: (Functor g, Functor f) => (a -> f (g b)) -> (b -> c) -> a -> f (g c)
-f %>> g = fmap (fmap g) . f
-
-infixl 1 <<&>>
-(<<&>>) :: (Functor g, Functor f) => f (g a) -> (a -> b) -> f (g b)
-x <<&>> g = fmap (fmap g) x
-
 data Mode = Klausur | Orga | Code | Gaming | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
 load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq", "mkdir"]
@@ -364,8 +350,6 @@ red :: Text
 red = "F28FAD"
 yellow :: Text
 yellow = "FAE3B0"
-blue :: Text
-blue = "96CDFB"
 cyan :: Text
 cyan = "89DCEB"
 
@@ -403,9 +387,9 @@ main = Notify.withManager \watch_manager -> do
       modes_dir = home </> ".volatile" </> "modes"
   dirty_var <- newTVarIO []
   R.runHeadlessApp do
-    five_seconds_tick <- tickEvent (5 * oneSecond)
     mode <- getMode watch_manager home
     let mk_mode_event = \event -> R.leftmost [R.updated mode, R.tag (R.current mode) event]
+    five_seconds_tick <- tickEvent (5 * oneSecond) <&> mk_mode_event
     notmuch_update <-
       watchFile watch_manager (home </> "Maildir/.notmuch/xapian") "flintlock"
         <&> mk_mode_event
@@ -431,40 +415,7 @@ main = Notify.withManager \watch_manager -> do
             pure $ mconcat dir_update_events
     git_dir_events <- (<> git_dirs_event) . R.switchDyn <$> R.networkHold (pure R.never) git_dirs_event'
     let modules =
-          [ eventModule do
-              performEventThreaded
-                notmuch_update
-                \case
-                  mode' | mode' >= Orga -> notmuch "count" "folder:hera/Inbox" "tag:unread" |> captureTrim
-                  _ -> pure "0"
-                <<&>> \unread ->
-                  [i|Unread: #{unread}|]
-                    & withColor red
-                    & when' (unread /= "0")
-                    & runIdentity
-          , eventModule do
-              performEventThreaded
-                notmuch_update
-                \case
-                  mode' | mode' >= Orga -> notmuch "count" "folder:hera/Inbox" |> captureTrim
-                  _ -> pure "0"
-                <<&>> \inbox ->
-                  [i|Inbox: #{inbox}|]
-                    & withColor yellow
-                    & when' (inbox /= "0")
-                    & runIdentity
-          , eventModule do
-              performEventThreaded
-                notmuch_update
-                \case
-                  Code -> notmuch "count" "folder:hera/Code" |> captureTrim
-                  _ -> pure "0"
-                <<&>> \code_mails ->
-                  [i|Code Mails: #{code_mails}|]
-                    & withColor blue
-                    & when' (code_mails /= "0")
-                    & runIdentity
-          , simpleModeModule (5 * oneSecond) mode \mode' -> do
+          [ simpleModeModule (5 * oneSecond) mode \mode' -> do
               code_updates <- case mode' of
                 Code ->
                   exe "software-updates" "-x" "print-unread"
@@ -572,7 +523,72 @@ main = Notify.withManager \watch_manager -> do
                 , group = "git"
                 , subgroup = Just "unpushed"
                 }
-    warnings <- concatEvents [dirty_event, unpushed_event, stale_warning]
+    inbox_event <-
+      performEventThreaded five_seconds_tick $
+        \case
+          Klausur -> pure []
+          _ ->
+            ( Maralorn.Taskwarrior.getInbox <<&>> \task ->
+                MkWarning
+                  { description = task.description
+                  , group = "inbox"
+                  , subgroup = Nothing
+                  }
+            )
+    let process_notmuch_description =
+          Text.splitOn "["
+            % drop 1
+            % Text.intercalate "["
+            % ("[" <>)
+            % Text.splitOn "("
+            % reverse
+            % drop 1
+            % reverse
+            % Text.intercalate "("
+            % Text.replace "\"" ""
+    mail_unread_event <-
+      performEventThreaded
+        notmuch_update
+        \case
+          Klausur -> pure []
+          _ -> Text.lines . decodeUtf8 <$> (notmuch "search" "folder:hera/Inbox" "+unread" |> captureTrim)
+        <<&>> fmap
+          ( \msg ->
+              MkWarning
+                { description = process_notmuch_description msg
+                , group = "inbox"
+                , subgroup = Just "e-mail"
+                }
+          )
+    mail_inbox_event <-
+      performEventThreaded
+        notmuch_update
+        \case
+          Klausur -> pure []
+          _ -> Text.lines . decodeUtf8 <$> (notmuch "search" "folder:hera/Inbox" "-unread" |> captureTrim)
+        <<&>> fmap
+          ( \msg ->
+              MkWarning
+                { description = process_notmuch_description msg
+                , group = "inbox"
+                , subgroup = Just "e-mail-open"
+                }
+          )
+    mail_code_event <-
+      performEventThreaded
+        notmuch_update
+        \case
+          Code -> Text.lines . decodeUtf8 <$> (notmuch "search" "folder:hera/Code" |> captureTrim)
+          _ -> pure []
+        <<&>> fmap
+          ( \msg ->
+              MkWarning
+                { description = process_notmuch_description msg
+                , group = "inbox"
+                , subgroup = Just "Code"
+                }
+          )
+    warnings <- concatEvents [dirty_event, unpushed_event, stale_warning, mail_unread_event, mail_inbox_event, mail_code_event, inbox_event]
     broadcastToSocket "warnings" (warnings <&> Aeson.encode % toStrict)
     broadcastToSocket
       "warninggroups"

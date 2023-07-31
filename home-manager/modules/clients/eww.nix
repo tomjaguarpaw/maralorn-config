@@ -24,6 +24,7 @@
               pkgs.openssh
               pkgs.gitMinimal
               pkgs.nix
+              pkgs.taskwarrior
               config.programs.rbw.package
             ]
           }";

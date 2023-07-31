@@ -13,6 +13,7 @@
 (defpoll ssh-agent :interval "5s" "ssh-add -L")
 (defpoll rbw :interval "5s" :initial false "if rbw unlocked; then echo true; else echo false; fi")
 (defpoll host :interval "1440m" :initial "" "cat /etc/hostname")
+(defpoll timers :interval "5s" :initial "[]" "cat ~/.timers")
 
 (defvar disks `{"apollo":["/","/boot/EFI"],"zeus":["/disk"]}`)
 
@@ -41,6 +42,9 @@
     (box :class "component" (image :path "icons/${mode}.png"))
     (box :orientation "vertical" :space-evenly false (for group in warninggroups
       (box :class "component" (image :path "icons/${group.name}.png") {group.count})
+    ))
+    (box :orientation "vertical" :space-evenly false (for timer in timers
+      (box :class "component" (image :path "icons/timer.png") (box :orientation "vertical" {timer.name} {formattime(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at,EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at > 60*60 ? "%H:%M:%S": "%M:%S","UTC")}))
     ))
     (box :orientation "vertical" :space-evenly false (for alert in {mode != "Klausur" && arraylength(alerts) > 0 ? [1] : []}
       (box :class "component" (image :path "icons/cloud-alert.png") (label :text "${arraylength(alerts)}"))

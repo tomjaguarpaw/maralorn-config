@@ -18,6 +18,7 @@ common common-config
   default-extensions:
     NoFieldSelectors
     NoImplicitPrelude
+    NoImplicitPrelude
     BlockArguments
     DeriveAnyClass
     DerivingStrategies
@@ -37,10 +38,13 @@ common common-config
     TemplateHaskell
 
   build-depends:
+    , aeson
     , base                ^>=4.16.4.0
     , relude
     , string-interpolate
     , taskwarrior
+    , time
+    , uuid
 
   default-language:   GHC2021
   ghc-options:        -Wall -Wno-type-defaults
@@ -48,13 +52,14 @@ common common-config
 library
   import:          common-config
   hs-source-dirs:  lib
-  exposed-modules: Maralorn.Taskwarrior
+  exposed-modules:
+    Maralorn.Prelude
+    Maralorn.Taskwarrior
 
 executable status-script
   import:         common-config
   main-is:        Main.hs
   build-depends:
-    , aeson
     , async
     , bytestring
     , directory
@@ -65,8 +70,8 @@ executable status-script
     , reflex
     , say
     , shh
+    , status-script
     , stm
-    , time
 
   hs-source-dirs: exe
   ghc-options:    -threaded -with-rtsopts=-maxN4
