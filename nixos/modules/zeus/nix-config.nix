@@ -5,7 +5,7 @@
       automatic = true;
     };
     optimise = {
-      dates = [ "weekly" ];
+      dates = [ "daily" ];
     };
   };
 }
