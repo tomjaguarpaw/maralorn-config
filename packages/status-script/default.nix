@@ -28,8 +28,19 @@ mkDerivation {
   isExecutable = true;
   libraryHaskellDepends = [
     aeson
+    async
     base
+    bytestring
+    directory
+    exceptions
+    filepath
+    fsnotify
+    network
+    reflex
     relude
+    say
+    shh
+    stm
     string-interpolate
     taskwarrior
     time

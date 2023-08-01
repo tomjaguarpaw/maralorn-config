@@ -1,6 +1,13 @@
-module Maralorn.Prelude ((%), (%>), (%>>), (<<&>>), module Relude) where
+module Maralorn.Prelude (say, sayErr, hush, (%), (%>), (%>>), (<<&>>), module Relude, i) where
 
+import Data.String.Interpolate (i)
 import Relude
+import Say (say, sayErr)
+
+hush :: Either a1 a2 -> Maybe a2
+hush = \case
+  Left _ -> Nothing
+  Right x -> Just x
 
 infixl 9 %
 (%) :: (a -> b) -> (b -> c) -> a -> c

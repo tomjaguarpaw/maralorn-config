@@ -25,7 +25,7 @@ let
       else
         new_timers=`${
           lib.getExe pkgs.jq
-        } "map(select(.name != \"$1\")) + [{name: \"$1\", at:\"$(${pkgs.coreutils}/bin/date +%s -d "$2")\"}]" ~/.timers`
+        } "map(select(.name != \"$1\")) + [{name: \"$1\", at:$(${pkgs.coreutils}/bin/date +%s -d "$2")}]" ~/.timers`
       fi
       echo "$new_timers" > ~/.timers
     '';

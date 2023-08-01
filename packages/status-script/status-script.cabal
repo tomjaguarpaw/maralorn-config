@@ -39,8 +39,19 @@ common common-config
 
   build-depends:
     , aeson
+    , async
     , base                ^>=4.16.4.0
+    , bytestring
+    , directory
+    , exceptions
+    , filepath
+    , fsnotify
+    , network
+    , reflex
     , relude
+    , say
+    , shh
+    , stm
     , string-interpolate
     , taskwarrior
     , time
@@ -67,26 +78,13 @@ library
     StatusScript.Modules.Player
     StatusScript.Modules.SoftwareFeed
     StatusScript.Modules.Timer
-    StatusScript.Poll
     StatusScript.PublishSocket
+    StatusScript.ReflexUtil
     StatusScript.Warnings
 
 executable status-script
   import:         common-config
   main-is:        Main.hs
-  build-depends:
-    , async
-    , bytestring
-    , directory
-    , exceptions
-    , filepath
-    , fsnotify
-    , network
-    , reflex
-    , say
-    , shh
-    , status-script
-    , stm
-
+  build-depends:  status-script
   hs-source-dirs: exe
   ghc-options:    -threaded -with-rtsopts=-maxN4

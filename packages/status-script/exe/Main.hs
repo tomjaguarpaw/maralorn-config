@@ -22,7 +22,6 @@ import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, loa
 import Shh qualified
 
 import Control.Concurrent qualified as Conc
-import Data.List qualified as String
 import Data.Set qualified as Set
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
@@ -37,50 +36,11 @@ import Data.List.NonEmpty qualified as NonEmpty
 import Network.Socket qualified as Network
 import Network.Socket.ByteString qualified as Network
 
-mkSendToSocketCallback :: FilePath -> IO (ByteString -> IO ())
-mkSendToSocketCallback socket_name = do
-  server_socket <- Network.socket Network.AF_UNIX Network.Stream Network.defaultProtocol
-  Network.bind server_socket (Network.SockAddrUnix socket_name)
-  Network.listen server_socket 5
-  client_socket_var <- newEmptyTMVarIO
-  last_message_var <- newEmptyTMVarIO
-  void $ Conc.forkIO $ forever $ do
-    (client_socket, _) <- Network.accept server_socket
-    (old_socket_may, message_may) <- atomically $ (,) <$> tryTakeTMVar client_socket_var <*> tryReadTMVar last_message_var
-    whenJust old_socket_may Network.close
-    no_error <-
-      message_may & \case
-        Just msg -> send client_socket msg
-        Nothing -> pure True
-    sayErr [i|New connection on #{socket_name}.|]
-    if no_error
-      then atomically $ putTMVar client_socket_var client_socket
-      else Network.close client_socket
-  return \msg -> do
-    client_socket <- atomically $ do
-      void $ tryTakeTMVar last_message_var -- clear
-      putTMVar last_message_var msg
-      takeTMVar client_socket_var
-    no_error <- send client_socket msg
-    if no_error
-      then atomically $ putTMVar client_socket_var client_socket
-      else Network.close client_socket
- where
-  send socket msg =
-    Exception.try @Exception.IOException (Network.sendAll socket (msg <> "\n")) <&> isRight
+import StatusScript.FileWatch qualified as FileWatch
+import StatusScript.Modules.Timer qualified as Timer
+import StatusScript.PublishSocket qualified as PublishSocket
+import StatusScript.ReflexUtil qualified as ReflexUtil
 
-broadcastToSocket ::
-  (R.MonadHeadlessApp t m) =>
-  Text ->
-  R.Event t ByteString ->
-  m ()
-broadcastToSocket socket_name event = do
-  -- Listen socket
-  callback <- liftIO $ mkSendToSocketCallback [i|#{socketsDir}/#{socket_name}|]
-  R.performEvent_ $ event <&> (callback >>> liftIO)
-
-socketsDir :: FilePath
-socketsDir = "/run/user/1000/status"
 data Mode = Klausur | Orga | Code | Gaming | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
 load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq", "mkdir"]
@@ -91,54 +51,11 @@ modes = enumFrom Klausur
 
 getMode :: R.MonadHeadlessApp t m => Notify.WatchManager -> FilePath -> m (R.Dynamic t Mode)
 getMode watch_manager home = do
-  content_event <- watchFileContents watch_manager home ".mode"
+  content_event <- FileWatch.watchFileContents watch_manager home ".mode"
   R.holdDyn Klausur $
     content_event <&> \name ->
       find (\mode -> name == Text.toLower (show mode)) modes
         & fromMaybe (error [i|Unknown mode #{name}|])
-
-hush :: Either a1 a2 -> Maybe a2
-hush = \case
-  Left _ -> Nothing
-  Right x -> Just x
-
-watchDir :: R.MonadHeadlessApp t m => Notify.WatchManager -> FilePath -> Bool -> Notify.ActionPredicate -> m (R.Event t Notify.Event)
-watchDir watch_manager path recursive predicate = do
-  let watch = if recursive then Notify.watchTree else Notify.watchDir
-  R.newEventWithLazyTriggerWithOnComplete \callback -> do
-    finish_callback <- newEmptyTMVarIO
-    void $ Async.async do
-      cb <- watch watch_manager path predicate (`callback` pass)
-      atomically $ putTMVar finish_callback cb
-    pure $ void $ Async.async $ join $ atomically $ takeTMVar finish_callback
-
-watchFile :: R.MonadHeadlessApp t m => Notify.WatchManager -> FilePath -> FilePath -> m (R.Event t ())
-watchFile watch_manager dir file = do
-  start <- R.getPostBuild
-  watchDir
-    watch_manager
-    dir
-    False
-    (Notify.eventPath % String.isSuffixOf file)
-    <&> void
-      % (<> start)
-
-watchFileContents :: R.MonadHeadlessApp t m => Notify.WatchManager -> FilePath -> FilePath -> m (R.Event t Text)
-watchFileContents watch_manager dir file = do
-  event_event <- watchFile watch_manager dir file
-  content_event <- performEventThreaded event_event \_ ->
-    readFileBS (dir </> file)
-      & Exception.try @Exception.IOException
-      <&> either
-        (const Nothing)
-        ( ByteStringChar.strip
-            % decodeUtf8Strict @Text
-            % hush
-        )
-  stored_event <- R.holdDyn Nothing content_event
-  R.holdUniqDyn stored_event
-    <&> R.updated
-      % R.fmapMaybe id
 
 isDirty :: String -> IO Bool
 isDirty gitDir = ((/= "") <$> (git "--no-optional-locks" "-C" gitDir "status" "--porcelain" |> captureTrim)) `catch` (\(_ :: SomeException) -> pure True)
@@ -179,7 +96,7 @@ writeVars vars = do
                    in
                     Just [i|{"color":"#{color}","content":["#{Text.intercalate "\", \"" content'}"],"small":#{small'}}|]
         [i|[#{Text.intercalate "," list_components}]|]
-  broadcastToSocket "components" writeEvent
+  PublishSocket.publish "components" writeEvent
 
 concatEvents :: (R.MonadHeadlessApp t m, Monoid b, Eq b) => [R.Event t b] -> m (R.Event t b)
 concatEvents =
@@ -204,14 +121,14 @@ oneSecond = 1000000
 simpleModule :: forall t m a. (R.MonadHeadlessApp t m, Eq a) => Int -> IO a -> Module t m a
 simpleModule delay action = eventModule do
   tick <- tickEvent delay
-  performEventThreaded tick $ const action
+  ReflexUtil.performEventThreaded tick $ const action
 
 simpleModeModule :: forall t m a. (R.MonadHeadlessApp t m, Eq a) => Int -> R.Dynamic t Mode -> (Mode -> IO a) -> Module t m a
 simpleModeModule delay mode action = eventModule do
   tick <-
     tickEvent delay
       <&> (\event -> R.leftmost [R.updated mode, R.tag (R.current mode) event])
-  performEventThreaded tick action
+  ReflexUtil.performEventThreaded tick action
 
 tickEvent :: R.MonadHeadlessApp t m => Int -> m (R.Event t ())
 tickEvent delay =
@@ -259,27 +176,6 @@ data Appointment = MkAppointment
 
 when' :: Monad m => Bool -> m (Maybe a) -> m (Maybe a)
 when' cond result = if cond then result else pure Nothing
-
-data EventRunnerState a = Idle | Running | NextWaiting a
-
--- Call IO action in a separate thread. If multiple events fire never run two actions in parallel and if more than one action queues up, only run the latest.
-performEventThreaded :: R.MonadHeadlessApp t m => R.Event t a -> (a -> IO b) -> m (R.Event t b)
-performEventThreaded event action = do
-  runnerState <- liftIO $ newTVarIO Idle
-  R.performEventAsync $
-    event <&> \input callback -> liftIO do
-      let runner input' = do
-            action input' >>= callback
-            next_input <- atomically $ STM.stateTVar runnerState \case
-              Idle -> error "Runner should not be in idle state when finishing"
-              Running -> (Nothing, Idle)
-              NextWaiting next_input -> (Just next_input, Running)
-            next_input & maybe pass runner
-      run <- atomically $ STM.stateTVar runnerState \case
-        Idle -> (True, Running)
-        Running -> (False, NextWaiting input)
-        NextWaiting{} -> (False, NextWaiting input)
-      when run $ void $ Async.async $ runner input
 
 playerCTLFormat :: String
 playerCTLFormat = [i|{{playerName}}@@@{{status}}@@@{{title}} | {{album}} | {{artist}}|]
@@ -380,7 +276,7 @@ main = Notify.withManager \watch_manager -> do
   missing <-
     missingExecutables
       <&> nonEmpty
-  mkdir "-p" socketsDir
+  mkdir "-p" PublishSocket.socketsDir
   whenJust missing \missing' -> sayErr [i|missing executables #{missing'}|]
   home <- getEnv "HOME"
   let git_dir = home </> "git"
@@ -391,11 +287,11 @@ main = Notify.withManager \watch_manager -> do
     let mk_mode_event = \event -> R.leftmost [R.updated mode, R.tag (R.current mode) event]
     five_seconds_tick <- tickEvent (5 * oneSecond) <&> mk_mode_event
     notmuch_update <-
-      watchFile watch_manager (home </> "Maildir/.notmuch/xapian") "flintlock"
+      FileWatch.watchFile watch_manager (home </> "Maildir/.notmuch/xapian") "flintlock"
         <&> mk_mode_event
     start <- R.getPostBuild
-    git_dir_change <- (start <>) . void <$> watchDir watch_manager git_dir False (const True)
-    git_dirs_event <- performEventThreaded git_dir_change \_ -> listDirectory git_dir
+    git_dir_change <- (start <>) . void <$> FileWatch.watchDir watch_manager git_dir False (const True)
+    git_dirs_event <- ReflexUtil.performEventThreaded git_dir_change \_ -> listDirectory git_dir
     let git_dirs_event' =
           git_dirs_event <&> \dirs -> do
             dir_update_events <- forM dirs \dir -> do
@@ -404,9 +300,9 @@ main = Notify.withManager \watch_manager -> do
               --    <&> decodeUtf8
               --      % String.lines
               --      % take 100
-              dir_events <- forM [git_dir </> dir] \sub_dir -> watchDir watch_manager sub_dir False (const True)
-              git_dir_event <- watchDir watch_manager (git_dir </> dir </> ".git") False (const True)
-              git_refs_event <- watchDir watch_manager (git_dir </> dir </> ".git/refs") True (const True)
+              dir_events <- forM [git_dir </> dir] \sub_dir -> FileWatch.watchDir watch_manager sub_dir False (const True)
+              git_dir_event <- FileWatch.watchDir watch_manager (git_dir </> dir </> ".git") False (const True)
+              git_refs_event <- FileWatch.watchDir watch_manager (git_dir </> dir </> ".git/refs") True (const True)
               pure $
                 mconcat (void <$> dir_events)
                   <> void git_dir_event
@@ -497,11 +393,11 @@ main = Notify.withManager \watch_manager -> do
       dirty <- elem "config" <$> readTVarIO dirty_var
       stale_trigger =<< if dirty then pure [] else scan
     dirty_event <- do
-      dirty_updates <- performEventThreaded git_dir_events \dirs -> do
+      dirty_updates <- ReflexUtil.performEventThreaded git_dir_events \dirs -> do
         now_dirty <- Set.fromList . fmap toText <$> filterM (isDirty . (git_dir </>)) dirs
         pure (Set.difference (Set.fromList (fmap toText dirs)) now_dirty, now_dirty)
       set_of_dirties <- R.foldDyn (\(now_clean, now_dirty) dirty -> Set.union now_dirty (Set.difference dirty now_clean)) mempty dirty_updates
-      void $ performEventThreaded (R.updated set_of_dirties) \dirty_dirs -> atomically $ writeTVar dirty_var (toList dirty_dirs)
+      void $ ReflexUtil.performEventThreaded (R.updated set_of_dirties) \dirty_dirs -> atomically $ writeTVar dirty_var (toList dirty_dirs)
       pure $ R.updated $ R.ffor2 mode set_of_dirties \mode' dirty_dirs' ->
         let dirty_dirs = (if (mode' == Klausur) then Set.filter (== "promotion") else id) dirty_dirs'
          in toList dirty_dirs <&> \dir ->
@@ -511,7 +407,7 @@ main = Notify.withManager \watch_manager -> do
                 , subgroup = Just "dirty"
                 }
     unpushed_event <- do
-      dirty_updates <- performEventThreaded git_dir_events \dirs -> do
+      dirty_updates <- ReflexUtil.performEventThreaded git_dir_events \dirs -> do
         now_dirty <- Set.fromList . fmap toText <$> filterM (isUnpushed . (git_dir </>)) dirs
         pure (Set.difference (Set.fromList (fmap toText dirs)) now_dirty, now_dirty)
       set_of_dirties <- R.foldDyn (\(now_clean, now_dirty) dirty -> Set.union now_dirty (Set.difference dirty now_clean)) mempty dirty_updates
@@ -523,9 +419,9 @@ main = Notify.withManager \watch_manager -> do
                 , group = "git"
                 , subgroup = Just "unpushed"
                 }
-    tasks_update <- watchFile watch_manager (home </> ".task") "pending.data" <&> mk_mode_event
+    tasks_update <- FileWatch.watchFile watch_manager (home </> ".task") "pending.data" <&> mk_mode_event
     inbox_event <-
-      performEventThreaded tasks_update $
+      ReflexUtil.performEventThreaded tasks_update $
         \case
           Orga ->
             ( Maralorn.Taskwarrior.getInbox <<&>> \task ->
@@ -548,7 +444,7 @@ main = Notify.withManager \watch_manager -> do
             % Text.intercalate "("
             % Text.replace "\"" ""
     mail_unread_event <-
-      performEventThreaded
+      ReflexUtil.performEventThreaded
         notmuch_update
         \case
           Klausur -> pure []
@@ -562,7 +458,7 @@ main = Notify.withManager \watch_manager -> do
                 }
           )
     mail_inbox_event <-
-      performEventThreaded
+      ReflexUtil.performEventThreaded
         notmuch_update
         \case
           Orga -> Text.lines . decodeUtf8 <$> (notmuch "search" "folder:hera/Inbox" "not" "tag:unread" |> captureTrim)
@@ -576,7 +472,7 @@ main = Notify.withManager \watch_manager -> do
                 }
           )
     mail_code_event <-
-      performEventThreaded
+      ReflexUtil.performEventThreaded
         notmuch_update
         \case
           Code -> Text.lines . decodeUtf8 <$> (notmuch "search" "folder:hera/Code" |> captureTrim)
@@ -590,8 +486,8 @@ main = Notify.withManager \watch_manager -> do
                 }
           )
     warnings <- concatEvents [dirty_event, unpushed_event, stale_warning, mail_unread_event, mail_inbox_event, mail_code_event, inbox_event]
-    broadcastToSocket "warnings" (warnings <&> Aeson.encode % toStrict)
-    broadcastToSocket
+    PublishSocket.publishJson "warnings" warnings
+    PublishSocket.publishJson
       "warninggroups"
       ( warnings
           <&> fmap (.group)
@@ -602,12 +498,10 @@ main = Notify.withManager \watch_manager -> do
                   , count = length group'
                   }
              )
-          % Aeson.encode
-          % toStrict
       )
-    broadcastToSocket "mode" (mk_mode_event start <&> show)
+    PublishSocket.publish "mode" (mk_mode_event start <&> show)
     player_events <- playerModule home
-    appointments_event <- performEventThreaded five_seconds_tick $ const do
+    appointments_event <- ReflexUtil.performEventThreaded five_seconds_tick $ const do
       appointments <-
         decodeUtf8
           <$> tryCmd
@@ -647,8 +541,10 @@ main = Notify.withManager \watch_manager -> do
                   , calendar
                   }
             _ -> Nothing
-    broadcastToSocket "calendar" (appointments_event <&> Aeson.encode % toStrict)
-    broadcastToSocket "players" (player_events <&> Aeson.encode % toStrict)
+    PublishSocket.publishJson "calendar" appointments_event
+    PublishSocket.publishJson "players" player_events
+    timer_events <- Timer.timers watch_manager
+    PublishSocket.publishJson "timers" timer_events
     runModules modules
     pure R.never -- We have no exit condition.
 
