@@ -86,7 +86,7 @@ writeVars vars = do
       %> R.updated
       %>> catMaybes
       %>> reverse
-      %>> \components -> do
+      %>> \components ->
         let list_components =
               components & mapMaybe \case
                 MkComponent{..} ->
@@ -95,7 +95,7 @@ writeVars vars = do
                     small' = if small then "true" else "false"
                    in
                     Just [i|{"color":"#{color}","content":["#{Text.intercalate "\", \"" content'}"],"small":#{small'}}|]
-        [i|[#{Text.intercalate "," list_components}]|]
+         in [i|[#{Text.intercalate "," list_components}]|]
   PublishSocket.publish "components" writeEvent
 
 runModules :: R.MonadHeadlessApp t m => [Module t m (Maybe Component)] -> m ()
