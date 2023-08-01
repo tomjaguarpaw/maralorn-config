@@ -147,14 +147,14 @@ in
           alternative_order text/plain text/html
           auto_view text/*
           auto_view message/*
-          unset wait_key
+          set wait_key = false
           color normal default default
 
           ${move-message-macro "a" "Archiv/unsortiert" "archive"}
           ${move-message-macro "s" "Junk" "spam"}
           ${move-message-macro "t" "Move/todo" "todo list"}
           ${move-message-macro "l" "Move/readlater" "readlater list"}
-          macro attach 'V' "<pipe-entry>iconv -c --to-code=UTF8 > ~/.cache/mutt/mail.html<enter><shell-escape>firefox ~/.cache/mutt/mail.html<enter>"
+          macro attach 'V' "<shell-escape>mkdir -p ~/.cache/mutt<enter><pipe-entry>iconv -c --to-code=UTF8 > ~/.cache/mutt/mail.html<enter><shell-escape>firefox ~/.cache/mutt/mail.html<enter>"
 
           macro index,pager <F6> "<shell-escape>${pkgs.zsh}/bin/zsh -c '${pkgs.sieve-connect}/bin/sieve-connect -s ${
             config.accounts.email.accounts.hera.imap.host or ""
