@@ -45,3 +45,19 @@ $background-lighter: #152f6d;
   background: rgba($background,0.1);
   padding: 100px;
 }
+
+@keyframes blinking {
+  0% {
+    background-color:$background;
+  }
+  50% {
+    background-color: #82184f;
+  }
+  100% {
+    background-color:$background;
+  }
+}
+
+.blink {
+  animation: blinking 3s infinite;
+}
