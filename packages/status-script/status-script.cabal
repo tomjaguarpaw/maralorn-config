@@ -55,6 +55,21 @@ library
   exposed-modules:
     Maralorn.Prelude
     Maralorn.Taskwarrior
+    StatusScript.FileWatch
+    StatusScript.Mode
+    StatusScript.Modules.Alerts
+    StatusScript.Modules.BootState
+    StatusScript.Modules.Calendar
+    StatusScript.Modules.ConfigPull
+    StatusScript.Modules.ConfigStale
+    StatusScript.Modules.Git
+    StatusScript.Modules.Mail
+    StatusScript.Modules.Player
+    StatusScript.Modules.SoftwareFeed
+    StatusScript.Modules.Timer
+    StatusScript.Poll
+    StatusScript.PublishSocket
+    StatusScript.Warnings
 
 executable status-script
   import:         common-config
