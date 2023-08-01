@@ -6,10 +6,11 @@
 }:
 let
   fork = cmd: "fork ${cmd}";
-  term = cmd: "fork foot ${cmd}";
-  edit_dir = dir: term "sh -c 'cd ${dir}; hx ${dir}'";
+  term = cmd: fork "foot ${cmd}";
+  edit_dir = dir: term (shell "cd ${dir}; hx ${dir}");
+  shell = cmd: "sh -c '${cmd}'";
   with-mic-check =
-    cmd: fork "sh -c '${config.home.sessionVariables.TERMINAL} mic-check; ${cmd}'";
+    cmd: fork (shell "${config.home.sessionVariables.TERMINAL} mic-check; ${cmd}");
 in
 [
   {
@@ -32,7 +33,7 @@ in
     Research = {
       Zotero = fork "zotero";
       Open = fork "evince ~/git/promotion/out/thesis.pdf";
-      Build = term "sh -c 'cd ~/git/promotion; nix run .# -- watch'";
+      Build = term (shell "cd ~/git/promotion; nix run .# -- watch");
       Directory = fork "${config.home.sessionVariables.TERMINAL} -D ~/git/promotion";
       Edit = edit_dir "~/git/promotion";
     };
@@ -70,7 +71,7 @@ in
   {
     Sound =
       let
-        mpdclient = host: "sh -c 'switch-mpd ${host}; ncmpcpp -h ${host}'";
+        mpdclient = host: shell "switch-mpd ${host}; ncmpcpp -h ${host}";
       in
       [
         { "Play/Pause" = "${pkgs.playerctl}/bin/playerctl play-pause"; }
@@ -99,7 +100,7 @@ in
       Config = edit_dir "~/git/config";
       Files = fork "nautilus";
       Accounting = {
-        Update = term "sh -c 'cd ~/git/buchhaltung; nix develop -c interactive-update'";
+        Update = term (shell "cd ~/git/buchhaltung; nix develop -c interactive-update");
         Display =
           term
             "hledger -f ~/git/buchhaltung/buchhaltung.journal ui -- --watch --theme=terminal -X€ -t -E";
@@ -130,7 +131,7 @@ in
   {
     Passmenu =
       let
-        copy-password = cmd: "sh -c '(${cmd} | wl-copy -o)'";
+        copy-password = cmd: shell "${cmd} | wl-copy -o";
       in
       {
         Unlock = copy-password "rbw get bitwarden";
@@ -182,4 +183,11 @@ in
     };
   }
   { "Dismiss last notification" = "makoctl dismiss"; }
+  {
+    "Pomodoro" = {
+      Start = shell "set-timer Pause; set-timer Pomodoro 25minutes";
+      Pause = shell "set-timer Pomodoro; set-timer Pause 5minutes";
+      Stop = shell "set-timer Pause; set-timer Pomodoro";
+    };
+  }
 ]

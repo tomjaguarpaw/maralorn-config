@@ -93,6 +93,8 @@ menu = runMenu True
           <$> filter isUpper label
             <> filter isLower label
             <> label
+            <> ['a' .. 'z']
+            <> ['0' .. '9']
 
     getLabel :: MenuEntry a -> String
     getLabel (Option label _) = into label
