@@ -10,15 +10,13 @@ import Data.ByteString.Char8 qualified as ByteStringChar
 import Data.ByteString.Lazy qualified as LBS
 import Data.ByteString.Lazy.Char8 qualified as LBSC
 
-import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Maralorn.Prelude
 import Maralorn.Taskwarrior qualified
 
 import Taskwarrior.Task qualified
 
-import Say (sayErr)
-import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, readInputLines, (&>), (|>))
+import Shh (ExecReference (Absolute), Proc, captureTrim, exe, ignoreFailure, load, (&>), (|>))
 import Shh qualified
 
 import Control.Concurrent qualified as Conc
@@ -33,17 +31,19 @@ import System.FilePath ((</>))
 
 import Data.Aeson qualified as Aeson
 import Data.List.NonEmpty qualified as NonEmpty
-import Network.Socket qualified as Network
-import Network.Socket.ByteString qualified as Network
 
 import StatusScript.FileWatch qualified as FileWatch
+import StatusScript.Modules.Audio qualified as Audio
+import StatusScript.Modules.Bluetooth qualified as Bluetooth
+import StatusScript.Modules.Player qualified as Player
 import StatusScript.Modules.Timer qualified as Timer
 import StatusScript.PublishSocket qualified as PublishSocket
+import StatusScript.ReflexUtil (oneSecond)
 import StatusScript.ReflexUtil qualified as ReflexUtil
 
 data Mode = Klausur | Orga | Code | Gaming | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
-load Absolute ["git", "khal", "playerctl", "notmuch", "readlink", "nix", "nix-diff", "jq", "mkdir"]
+Shh.load Shh.Absolute ["git", "khal", "notmuch", "readlink", "nix", "nix-diff", "jq", "mkdir"]
 
 missingExecutables :: IO [FilePath]
 modes :: [Mode]
@@ -98,13 +98,6 @@ writeVars vars = do
         [i|[#{Text.intercalate "," list_components}]|]
   PublishSocket.publish "components" writeEvent
 
-concatEvents :: (R.MonadHeadlessApp t m, Monoid b, Eq b) => [R.Event t b] -> m (R.Event t b)
-concatEvents =
-  mapM (R.holdDyn mempty)
-    %> mconcat
-    >=> R.holdUniqDyn
-    %> R.updated
-
 runModules :: R.MonadHeadlessApp t m => [Module t m (Maybe Component)] -> m ()
 runModules modules = do
   (vars, actions) <-
@@ -114,9 +107,6 @@ runModules modules = do
         pure (event, action)
   void $ liftIO $ Conc.forkIO $ Async.mapConcurrently_ id actions
   writeVars vars
-
-oneSecond :: Int
-oneSecond = 1000000
 
 simpleModule :: forall t m a. (R.MonadHeadlessApp t m, Eq a) => Int -> IO a -> Module t m a
 simpleModule delay action = eventModule do
@@ -177,71 +167,6 @@ data Appointment = MkAppointment
 when' :: Monad m => Bool -> m (Maybe a) -> m (Maybe a)
 when' cond result = if cond then result else pure Nothing
 
-playerCTLFormat :: String
-playerCTLFormat = [i|{{playerName}}@@@{{status}}@@@{{title}} | {{album}} | {{artist}}|]
-
-playerModule :: forall t m. R.MonadHeadlessApp t m => FilePath -> m (R.Event t [PlayerState])
-playerModule home = do
-  (event, trigger) <- R.newTriggerEvent
-  void $ liftIO $ Conc.forkIO $ listenToPlayer trigger
-  pure event
- where
-  update_lines = \trigger -> mapM_ \_ -> do
-    player_states <- playerctl "metadata" "-a" "-f" playerCTLFormat |> captureTrim
-    mpd_host <-
-      [i|#{home}/.config/mpDris2/mpDris2.conf|]
-        & readFileBS
-        % Exception.try @Exception.IOException
-        %> fromRight ""
-        %> decodeUtf8
-        %> lines
-        %> mapMaybe (Text.stripPrefix "host = ")
-        %> find (/= "::")
-        %> fmap (" " <>)
-        %> fromMaybe ""
-    trigger $
-      player_states
-        & decodeUtf8
-        % Text.lines
-        %> Text.splitOn "@@@"
-        % mapMaybe
-          ( \case
-              [name, status, title] ->
-                Just $
-                  MkPlayerState
-                    { name = if name == "mpd" then name <> mpd_host else name
-                    , title = cleanTitle title
-                    , status = status
-                    }
-              _ -> Nothing
-          )
-  listenToPlayer = \trigger ->
-    forever do
-      Conc.threadDelay oneSecond
-      ignoreFailure
-        ( playerctl "metadata" "-F" "-f" playerCTLFormat
-            |> Shh.readInputLines (update_lines trigger)
-        )
-
-cleanTitle :: Text -> Text
-cleanTitle =
-  Text.replace "\"" ""
-    % Text.splitOn " "
-    % filter (Text.null % not)
-    % Text.unwords
-    % Text.splitOn "|"
-    %> Text.strip
-    % filter (Text.null % not)
-    % Text.intercalate "\\n"
-
-data PlayerState = MkPlayerState
-  { name :: Text
-  , status :: Text
-  , title :: Text
-  }
-  deriving stock (Generic)
-  deriving anyclass (Aeson.ToJSON, Aeson.FromJSON)
-
 red :: Text
 red = "F28FAD"
 yellow :: Text
@@ -276,8 +201,8 @@ main = Notify.withManager \watch_manager -> do
   missing <-
     missingExecutables
       <&> nonEmpty
-  mkdir "-p" PublishSocket.socketsDir
   whenJust missing \missing' -> sayErr [i|missing executables #{missing'}|]
+  mkdir "-p" PublishSocket.socketsDir
   home <- getEnv "HOME"
   let git_dir = home </> "git"
       modes_dir = home </> ".volatile" </> "modes"
@@ -485,7 +410,7 @@ main = Notify.withManager \watch_manager -> do
                 , subgroup = Just "Code"
                 }
           )
-    warnings <- concatEvents [dirty_event, unpushed_event, stale_warning, mail_unread_event, mail_inbox_event, mail_code_event, inbox_event]
+    warnings <- ReflexUtil.concatEvents [dirty_event, unpushed_event, stale_warning, mail_unread_event, mail_inbox_event, mail_code_event, inbox_event]
     PublishSocket.publishJson "warnings" warnings
     PublishSocket.publishJson
       "warninggroups"
@@ -500,7 +425,7 @@ main = Notify.withManager \watch_manager -> do
              )
       )
     PublishSocket.publish "mode" (mk_mode_event start <&> show)
-    player_events <- playerModule home
+    player_events <- Player.playerModule home
     appointments_event <- ReflexUtil.performEventThreaded five_seconds_tick $ const do
       appointments <-
         decodeUtf8
@@ -545,6 +470,9 @@ main = Notify.withManager \watch_manager -> do
     PublishSocket.publishJson "players" player_events
     timer_events <- Timer.timers watch_manager
     PublishSocket.publishJson "timers" timer_events
+    audio_event <- Audio.audioUpdateEvent
+    bluetooth_events <- Bluetooth.bluetooth audio_event
+    PublishSocket.publishJson "bluetooth" bluetooth_events
     runModules modules
     pure R.never -- We have no exit condition.
 

@@ -5,6 +5,7 @@
 (deflisten players           :initial "[]" "bash scripts/listen.sh players")
 (deflisten calendar          :initial "[]" "bash scripts/listen.sh calendar")
 (deflisten timers            :initial "[]" "bash scripts/listen.sh timers")
+(deflisten bluetooth         :initial "[]" "bash scripts/listen.sh bluetooth")
 (deflisten workspaces        :initial "[]" "bash scripts/get-workspaces.sh")
 (deflisten keymap            :initial "German (Neo 2)" "bash scripts/get-keymap.sh")
 (deflisten current_workspace :initial "1" "bash scripts/get-active-workspace.sh")
@@ -69,12 +70,15 @@
           (for line in {message.content} (label :text "${line}"))
         ))
       )
+      (box :orientation "vertical" :space-evenly false (for device in bluetooth
+        (box :class "component small" :space-evenly false (image :path "icons/bluetooth.png") (label :width 60 :wrap true :justify "center" :text device))
+      ))
+      (workspaces)
       (box :orientation "vertical" :space-evenly false (for appointment in calendar
         (box :class "component" :orientation "vertical" :space-evenly false :spacing 10
           (label :class "small" :width 80 :wrap true :justify "center" :text {appointment.title})
         )
       ))
-      (workspaces)
       (time)
    )
 )

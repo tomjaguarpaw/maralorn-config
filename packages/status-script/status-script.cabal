@@ -69,6 +69,8 @@ library
     StatusScript.FileWatch
     StatusScript.Mode
     StatusScript.Modules.Alerts
+    StatusScript.Modules.Audio
+    StatusScript.Modules.Bluetooth
     StatusScript.Modules.BootState
     StatusScript.Modules.Calendar
     StatusScript.Modules.ConfigPull

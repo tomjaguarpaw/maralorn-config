@@ -77,6 +77,8 @@ let
             jq
             tailscale
             fd
+            bluez
+            pulseaudio
           ;
           inherit (unstable-pkgs) nix nix-diff;
         };

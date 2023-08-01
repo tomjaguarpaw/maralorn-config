@@ -51,6 +51,7 @@
 
         ncpamixer
         pavucontrol
+        pulseaudio
         playerctl
         deluge
         vlc
