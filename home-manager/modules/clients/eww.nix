@@ -61,7 +61,10 @@
         ExecStart = "${
             lib.getExe config.programs.eww.package
           } daemon --no-daemonize --restart";
-        ExecStartPost = "${lib.getExe config.programs.eww.package} open bar";
+        ExecStartPost = [
+          "${lib.getExe config.programs.eww.package} open bar"
+          "${lib.getExe pkgs.set-timer} foo"
+        ];
         Restart = "always";
         RestartSec = "10s";
       };
