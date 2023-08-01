@@ -45,7 +45,6 @@
       "Videos"
       ".cache/kassandra"
       ".cache/nix-output-monitor"
-      ".volatile"
     ];
   };
 }
