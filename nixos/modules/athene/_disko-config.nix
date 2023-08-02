@@ -37,19 +37,18 @@
               extraOpenArgs = [ "--allow-discards" ];
               content = {
                 type = "btrfs";
-                extraArgs = [ "-f" ]; # Override existing partition
                 subvolumes = {
-                  # Mountpoints inferred from subvolume name
-                  "/disk" = {
-                    mountOptions = [ "compress=zstd" ];
-                  };
+                  "/disk" = { };
                   "/disk/persist" = {
                     mountOptions = [ "compress=zstd" ];
+                    mountpoint = "/disk/persist";
                   };
                   "/disk/volatile" = {
                     mountOptions = [ "compress=zstd" ];
+                    mountpoint = "/disk/volatile";
                   };
                   "/nix" = {
+                    mountpoint = "/nix";
                     mountOptions = [
                       "compress=zstd"
                       "noatime"
