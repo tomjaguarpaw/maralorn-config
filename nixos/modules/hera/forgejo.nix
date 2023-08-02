@@ -18,10 +18,22 @@ in
         DEFAULT_THEME = "codeberg-auto";
         THEMES = "forgejo-auto,forgejo-light,forgejo-dark,auto,gitea,arc-green,codeberg-auto,codeberg-light,codeberg-dark";
       };
+      mailer = {
+        ENABLED = true;
+        FROM = "forgejo@code.maralorn.de";
+        USER = "forgejo@code.maralorn.de";
+        PROTOCOL = "smtps";
+        SMTP_ADDR = "hera.m-0.eu";
+        SMTP_PORT = "465";
+      };
     };
+    mailerPasswordFile = "/run/credentials/gitea.service/forgejo-mail-password";
     appName = "Forgejo";
     database.type = "postgres";
   };
+  systemd.services.gitea.serviceConfig.LoadCredential = [
+    "forgejo-mail-password:${config.age.secrets.forgejo-mail-password.path}"
+  ];
   services.nginx.virtualHosts.${virtualHosts."code"} = {
     forceSSL = true;
     enableACME = true;
