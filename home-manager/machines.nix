@@ -34,7 +34,7 @@ let
     "zdf.de"
   ];
 
-  makeConfig = hostName: imports: _: {
+  makeConfig = hostName: imports: {
     imports = imports ++ [ ./roles/default.nix ];
     m-0.hostName = hostName;
   };
