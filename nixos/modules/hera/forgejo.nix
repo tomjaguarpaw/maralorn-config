@@ -11,21 +11,24 @@ in
       actions.ENABLED = true;
       server = {
         ROOT_URL = "https://code.maralorn.de";
-        HTTP_PORT = 3787;
+        HTTP_PORT = 3787; # Default port was blocked
       };
       service.DISABLE_REGISTRATION = true;
       ui = {
+        # Codeberg theme manually copied into state folder
         DEFAULT_THEME = "codeberg-auto";
         THEMES = "forgejo-auto,forgejo-light,forgejo-dark,auto,gitea,arc-green,codeberg-auto,codeberg-light,codeberg-dark";
       };
       mailer = {
         ENABLED = true;
-        FROM = "forgejo@code.maralorn.de";
+        FROM = "forgejo@code.maralorn.de"; # Could also be "Forgejo <...>" or "Git minion on Hera"
         USER = "forgejo@code.maralorn.de";
         PROTOCOL = "smtps";
         SMTP_ADDR = "hera.m-0.eu";
         SMTP_PORT = "465";
       };
+      # Required for 1.20 compat delete on 23.11
+      packages.CHUNKED_UPLOAD_PATH = "${config.services.gitea.stateDir}/tmp/package-upload";
     };
     mailerPasswordFile = "/run/credentials/gitea.service/forgejo-mail-password";
     appName = "Forgejo";
