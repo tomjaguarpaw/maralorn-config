@@ -54,6 +54,7 @@ common common-config
     , stm
     , string-interpolate
     , taskwarrior
+    , template-haskell
     , time
     , uuid
 
@@ -66,6 +67,7 @@ library
   exposed-modules:
     Maralorn.Prelude
     Maralorn.Taskwarrior
+    StatusScript.CommandUtil
     StatusScript.FileWatch
     StatusScript.Mode
     StatusScript.Modules.Alerts
@@ -77,8 +79,10 @@ library
     StatusScript.Modules.ConfigStale
     StatusScript.Modules.Git
     StatusScript.Modules.Mail
+    StatusScript.Modules.Ping
     StatusScript.Modules.Player
     StatusScript.Modules.SoftwareFeed
+    StatusScript.Modules.Tasks
     StatusScript.Modules.Timer
     StatusScript.PublishSocket
     StatusScript.ReflexUtil

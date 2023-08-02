@@ -1,8 +1,37 @@
-module Maralorn.Prelude (say, sayErr, hush, (%), (%>), (%>>), (<<&>>), module Relude, i) where
+module Maralorn.Prelude (say, sayErr, hush, (%), (%>), (%>>), (<<&>>), module Relude, i, s, t) where
 
 import Data.String.Interpolate (i)
 import Relude
 import Say (say, sayErr)
+
+import Language.Haskell.TH
+import Language.Haskell.TH.Quote (QuasiQuoter (..))
+
+asString :: (String -> Q Exp) -> String -> Q Exp
+asString qq str =
+  [|$(qq str) :: String|]
+
+asText :: (String -> Q Exp) -> String -> Q Exp
+asText qq str =
+  [|$(qq str) :: Text|]
+
+s :: QuasiQuoter
+s =
+  QuasiQuoter
+    { quoteExp = asString $ quoteExp i
+    , quotePat = quotePat i
+    , quoteType = quoteType i
+    , quoteDec = quoteDec i
+    }
+
+t :: QuasiQuoter
+t =
+  QuasiQuoter
+    { quoteExp = asText $ quoteExp i
+    , quotePat = quotePat i
+    , quoteType = quoteType i
+    , quoteDec = quoteDec i
+    }
 
 hush :: Either a1 a2 -> Maybe a2
 hush = \case

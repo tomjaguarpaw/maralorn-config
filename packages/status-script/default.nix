@@ -17,6 +17,7 @@
   stm,
   string-interpolate,
   taskwarrior,
+  template-haskell,
   time,
   uuid,
 }:
@@ -43,6 +44,7 @@ mkDerivation {
     stm
     string-interpolate
     taskwarrior
+    template-haskell
     time
     uuid
   ];
@@ -63,6 +65,7 @@ mkDerivation {
     stm
     string-interpolate
     taskwarrior
+    template-haskell
     time
     uuid
   ];

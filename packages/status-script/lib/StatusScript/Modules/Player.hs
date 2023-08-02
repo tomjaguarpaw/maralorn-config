@@ -8,16 +8,19 @@ import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
 import Shh ((|>))
 import Shh qualified
+import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.ReflexUtil qualified as ReflexUtil
+import System.Environment qualified as Env
 
 Shh.load Shh.Absolute ["playerctl"]
 missingExecutables :: IO [FilePath]
 playerCTLFormat :: String
 playerCTLFormat = [i|{{playerName}}@@@{{status}}@@@{{title}} | {{album}} | {{artist}}|]
 
-playerModule :: forall t m. R.MonadHeadlessApp t m => FilePath -> m (R.Event t [PlayerState])
-playerModule home = do
-  ReflexUtil.reportMissing missingExecutables
+playerModule :: R.MonadHeadlessApp t m => m (R.Event t [PlayerState])
+playerModule = do
+  home <- liftIO $ Env.getEnv "HOME"
+  CommandUtil.reportMissing missingExecutables
   player_event <- ReflexUtil.processLines (playerctl "metadata" "-F" "-f" playerCTLFormat)
   ReflexUtil.performEventThreaded player_event $ const do
     player_states <- playerctl "metadata" "-a" "-f" playerCTLFormat |> Shh.captureTrim

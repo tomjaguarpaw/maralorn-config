@@ -1,4 +1,4 @@
-module StatusScript.ReflexUtil (performEventThreaded, concatEvents, oneSecond, processLines, reportMissing) where
+module StatusScript.ReflexUtil (performEventThreaded, concatEvents, processLines, tickEvent, taggedAndUpdated) where
 
 import Control.Concurrent qualified as Conc
 import Control.Concurrent.Async qualified as Async
@@ -10,6 +10,14 @@ import Shh ((|>))
 import Shh qualified
 
 data EventRunnerState a = Idle | Running | NextWaiting a
+
+tickEvent :: R.MonadHeadlessApp t m => Int -> m (R.Event t ())
+tickEvent delay =
+  R.tickLossyFromPostBuildTime (realToFrac delay)
+    <&> void
+
+taggedAndUpdated :: R.Reflex t => R.Dynamic t a -> R.Event t b -> R.Event t a
+taggedAndUpdated = \dynamic event -> R.leftmost [R.updated dynamic, R.tag (R.current dynamic) event]
 
 oneSecond :: Int
 oneSecond = 1000000
@@ -30,9 +38,6 @@ processLines = \command -> do
       ( command |> Shh.readInputLines (mapM_ (toStrict % trigger))
       )
   pure event
-
-reportMissing :: MonadIO m => IO [FilePath] -> m ()
-reportMissing missing = whenJustM (nonEmpty <$> liftIO missing) \missing' -> sayErr [i|missing executables #{missing'}|]
 
 -- Call IO action in a separate thread. If multiple events fire never run two actions in parallel and if more than one action queues up, only run the latest.
 performEventThreaded :: R.MonadHeadlessApp t m => R.Event t a -> (a -> IO b) -> m (R.Event t b)
