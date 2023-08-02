@@ -174,7 +174,7 @@ in
   }
   { "Monitor (btop)" = "btop"; }
   {
-    "W17" = {
+    W17 = {
       Strichliste = "firefox https://strichliste.w17.io/#!/user/56";
       Hub = "firefox https://hub.w17.io";
       Summer = "ssh door@burbon.w17.io buzzer";
@@ -184,10 +184,13 @@ in
   }
   { "Dismiss last notification" = "makoctl dismiss"; }
   {
-    "Pomodoro" = {
-      Start = shell "set-timer Pause; set-timer Pomodoro 25minutes";
-      Pause = shell "set-timer Pomodoro; set-timer Pause 5minutes";
-      Stop = shell "set-timer Pause; set-timer Pomodoro";
+    Timers = {
+      "Start Pomodoro" = shell "set-timer Pause; set-timer Pomodoro 25minutes";
+      "Pause Pomodoro" = shell "set-timer Pomodoro; set-timer Pause 5minutes";
+      "Stop Pomodoro" = shell "set-timer Pause; set-timer Pomodoro";
+      "Start Tee" = "set-timer Tee 7minutes";
+      "Stop Tee" = "set-timer Tee";
+      "Clear Timers" = shell "echo [] > ~/.timers";
     };
   }
 ]
