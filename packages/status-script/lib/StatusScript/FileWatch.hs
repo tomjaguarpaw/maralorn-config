@@ -1,4 +1,4 @@
-module StatusScript.FileWatch where
+module StatusScript.FileWatch (watchDir, watchFile, watchFileContents) where
 
 import Control.Concurrent.Async qualified as Async
 import Control.Exception qualified as Exception

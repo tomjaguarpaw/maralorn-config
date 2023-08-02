@@ -1,4 +1,4 @@
-module StatusScript.Modules.Audio where
+module StatusScript.Modules.Audio (audioUpdateEvent) where
 
 import Maralorn.Prelude
 import Reflex qualified as R

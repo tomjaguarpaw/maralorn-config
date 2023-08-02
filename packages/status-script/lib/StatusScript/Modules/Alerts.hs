@@ -1,1 +1,1 @@
-module StatusScript.Modules.Alerts where
+module StatusScript.Modules.Alerts () where

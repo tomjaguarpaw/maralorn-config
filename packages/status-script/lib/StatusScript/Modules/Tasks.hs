@@ -1,4 +1,4 @@
-module StatusScript.Modules.Tasks where
+module StatusScript.Modules.Tasks (tasks) where
 
 import Maralorn.Prelude
 import Maralorn.Taskwarrior qualified

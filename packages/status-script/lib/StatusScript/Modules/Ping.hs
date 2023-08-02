@@ -1,4 +1,4 @@
-module StatusScript.Modules.Ping where
+module StatusScript.Modules.Ping (ping) where
 
 import Maralorn.Prelude
 import Reflex qualified as R

@@ -1,4 +1,4 @@
-module StatusScript.Modules.ConfigStale where
+module StatusScript.Modules.ConfigStale (configStale) where
 
 import Control.Concurrent.STM qualified as STM
 import Control.Exception qualified as Exception
@@ -10,6 +10,7 @@ import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
 import Shh ((|>))
 import Shh qualified
+import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Mode (Mode (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
 import StatusScript.Warnings (Warning (..))
@@ -23,6 +24,7 @@ diffIsSmall = \pathA pathB -> (== "[]") <$> (nix_diff "--json" [pathA, pathB] |>
 
 configStale :: R.MonadHeadlessApp t m => R.Dynamic t Mode -> R.Dynamic t (Set Text) -> m (R.Event t [Warning])
 configStale mode dirties = do
+  CommandUtil.reportMissing missingExecutables
   commit_var <- newTVarIO ""
   system_var <- newTVarIO ""
   modes_var <- newTVarIO ""

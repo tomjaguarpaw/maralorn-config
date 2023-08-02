@@ -1,4 +1,4 @@
-module StatusScript.Modules.ConfigPull where
+module StatusScript.Modules.ConfigPull (pullNeeded) where
 
 import Data.ByteString.Lazy.Char8 qualified as LBSC
 import Maralorn.Prelude
@@ -16,6 +16,7 @@ Shh.load Shh.Absolute ["git"]
 missingExecutables :: IO [FilePath]
 pullNeeded :: R.MonadHeadlessApp t m => R.Dynamic t Mode -> m (R.Event t [Warning])
 pullNeeded mode = do
+  CommandUtil.reportMissing missingExecutables
   tick <- ReflexUtil.tickEvent (5 * 60)
   home <- liftIO $ Env.getEnv "HOME"
   ReflexUtil.performEventThreaded (ReflexUtil.taggedAndUpdated mode tick) \case

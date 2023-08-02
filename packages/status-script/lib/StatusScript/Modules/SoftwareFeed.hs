@@ -1,4 +1,4 @@
-module StatusScript.Modules.SoftwareFeed where
+module StatusScript.Modules.SoftwareFeed (softwareFeed) where
 
 import Data.Text qualified as Text
 import Maralorn.Prelude

@@ -1,4 +1,4 @@
-module StatusScript.Modules.Timer where
+module StatusScript.Modules.Timer (timers) where
 
 import Data.Aeson qualified as Aeson
 import Maralorn.Prelude
