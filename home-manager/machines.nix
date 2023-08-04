@@ -106,24 +106,21 @@ let
           (blockServer [ ])
         ]
       );
-    }
-    // (
-      if name == "zeus" then
-        {
-          gaming = makeConfig name (
-            all
-            ++ [
-              ./roles/mail-client.nix
-              ./roles/chat.nix
-              (blockServer newsPages)
-            ]
-            ++ flake-inputs.self.nixFromDirs [ ./modules/gaming ]
-          );
-        }
-      else
-        { }
-    )
-  ;
+      leisure = makeConfig name (
+        all
+        ++ [
+          ./roles/mail-client.nix
+          ./roles/chat.nix
+          (blockServer newsPages)
+        ]
+        ++ (
+          if name == "zeus" then
+            flake-inputs.self.nixFromDirs [ ./modules/gaming ]
+          else
+            [ ]
+        )
+      );
+    };
 in
 {
   apollo = daily-driver "apollo" [ ./roles/battery.nix ];

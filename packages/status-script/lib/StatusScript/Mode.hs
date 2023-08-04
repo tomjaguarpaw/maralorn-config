@@ -8,7 +8,7 @@ import StatusScript.FileWatch qualified as FileWatch
 import System.Environment qualified as Env
 import System.FSNotify qualified as Notify
 
-data Mode = Klausur | Orga | Code | Gaming | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
+data Mode = Klausur | Orga | Code | Leisure | Unrestricted deriving (Eq, Ord, Show, Enum, Bounded)
 
 getMode :: R.MonadHeadlessApp t m => Notify.WatchManager -> m (R.Dynamic t Mode)
 getMode watch_manager = do
