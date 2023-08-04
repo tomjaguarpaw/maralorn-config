@@ -82,7 +82,10 @@ in
         "$mod,mouse:272,movewindow"
         "$mod,mouse:273,resizewindow"
       ];
-      monitor = [ ",preferred,auto,1" ];
+      monitor = [
+        ",highres,auto,1"
+        "HDMI-A-1,highres,auto,1,mirror,DP-3"
+      ];
     };
   };
 }
