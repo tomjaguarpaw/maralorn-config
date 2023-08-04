@@ -78,7 +78,7 @@ let
             tailscale
             fd
             bluez
-            pulseaudio
+            pipewire
           ;
           inherit (unstable-pkgs) nix nix-diff;
         };

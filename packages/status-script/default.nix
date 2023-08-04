@@ -1,6 +1,7 @@
 {
   mkDerivation,
   aeson,
+  aeson-schemas,
   async,
   base,
   bytestring,
@@ -29,6 +30,7 @@ mkDerivation {
   isExecutable = true;
   libraryHaskellDepends = [
     aeson
+    aeson-schemas
     async
     base
     bytestring
@@ -50,6 +52,7 @@ mkDerivation {
   ];
   executableHaskellDepends = [
     aeson
+    aeson-schemas
     async
     base
     bytestring

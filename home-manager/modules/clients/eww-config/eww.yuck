@@ -1,4 +1,3 @@
-(deflisten status            :initial "[]" "bash scripts/listen.sh components")
 (deflisten mode              :initial "warning" "bash scripts/listen.sh mode")
 (deflisten warnings          :initial "[]" "bash scripts/listen.sh warnings")
 (deflisten warninggroups     :initial "[]" "bash scripts/listen.sh warninggroups")
@@ -6,6 +5,7 @@
 (deflisten calendar          :initial "[]" "bash scripts/listen.sh calendar")
 (deflisten timers            :initial "[]" "bash scripts/listen.sh timers")
 (deflisten bluetooth         :initial "[]" "bash scripts/listen.sh bluetooth")
+(deflisten audio             :initial "[]" "bash scripts/listen.sh audio")
 (deflisten workspaces        :initial "[]" "bash scripts/get-workspaces.sh")
 (deflisten keymap            :initial "German (Neo 2)" "bash scripts/get-keymap.sh")
 (deflisten current_workspace :initial "1" "bash scripts/get-active-workspace.sh")
@@ -37,7 +37,7 @@
 
 (defwidget status []
   (box :orientation "vertical" :space-evenly false
-    (label :text "${alerts}${rbw}${ssh-agent}${mode}${warnings}${warninggroups}${status}${players}" :visible false)
+    (label :text "${alerts}${rbw}${ssh-agent}${mode}${warnings}${warninggroups}}${players}" :visible false)
     (box :class "component" (image :path "icons/${mode}.png"))
     (box :orientation "vertical" :space-evenly false (for group in warninggroups
       (box :class "component" (image :path "icons/${group.name}.png") {group.count})
@@ -65,11 +65,11 @@
 
 (defwidget bottom []
    (box :orientation "vertical" :space-evenly false :valign "end"
-      (box :orientation "vertical" :space-evenly false (for message in status
-        (box :style "color: #${message.color};" :class "component ${message.small ? "small" : ""}" :orientation "vertical"
-          (for line in {message.content} (label :text "${line}"))
-        ))
-      )
+      (box :orientation "vertical" :space-evenly false (for endpoint in audio
+        (box :class "component small" :orientation "vertical" :space-evenly false (label :width 60 :justify "center" :text {endpoint.name})
+          (for client in {endpoint.clients} {client.name})
+        )
+      ))
       (box :orientation "vertical" :space-evenly false (for device in bluetooth
         (box :class "component small" :space-evenly false (image :path "icons/bluetooth.png") (label :width 60 :wrap true :justify "center" :text device))
       ))

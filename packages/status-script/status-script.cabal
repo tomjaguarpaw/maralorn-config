@@ -39,6 +39,7 @@ common common-config
 
   build-depends:
     , aeson
+    , aeson-schemas
     , async
     , base                ^>=4.16.4.0
     , bytestring

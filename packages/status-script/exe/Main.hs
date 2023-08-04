@@ -74,6 +74,8 @@ main = Notify.withManager \watch_manager -> do
     timer_events <- Timer.timers watch_manager
     PublishSocket.publishJson "timers" timer_events
     audio_event <- Audio.audioUpdateEvent
-    bluetooth_events <- Bluetooth.bluetooth audio_event
+    bluetooth_events <- Bluetooth.bluetooth (void audio_event)
     PublishSocket.publishJson "bluetooth" bluetooth_events
+    audio_info_event <- Audio.audioInfos audio_event
+    PublishSocket.publishJson "audio" audio_info_event
     pure R.never -- We have no exit condition.
