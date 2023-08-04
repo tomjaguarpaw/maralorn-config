@@ -66,8 +66,9 @@
 (defwidget bottom []
    (box :orientation "vertical" :space-evenly false :valign "end"
       (box :orientation "vertical" :space-evenly false (for endpoint in audio
-        (box :class "component small" :orientation "vertical" :space-evenly false (label :width 60 :justify "center" :text {endpoint.name})
-          (for client in {endpoint.clients} {client.name})
+        (box :class "component small" :orientation "vertical" :space-evenly false
+        (label :width 80 :wrap true :justify "center" :text {endpoint.name})
+          (for client in {endpoint.clients} (label :class "component lighter" :width 70 :wrap true :justify "center" :text {client.name}))
         )
       ))
       (box :orientation "vertical" :space-evenly false (for device in bluetooth

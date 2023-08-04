@@ -25,6 +25,10 @@ $background-lighter: #152f6d;
   margin: 0.3em;
 }
 
+.lighter {
+  background: $background-lighter;
+}
+
 .current {
   background: $background-lighter;
 }
