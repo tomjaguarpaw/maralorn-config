@@ -127,7 +127,7 @@ audioInfos = \trigger_event ->
                             IntMap.lookup source objects
                               >>= ([get|.info|] % fromJSON @(Schema.Object NodeInfo))
                               >>= ([get|.props|] % fromJSON @(Aeson.Object))
-                              >>= (KeyMap.lookup "node.name")
+                              >>= (KeyMap.lookup "application.name")
                               >>= fromJSON @Text
                               <&> \source_name ->
                                 MkAudioClient
