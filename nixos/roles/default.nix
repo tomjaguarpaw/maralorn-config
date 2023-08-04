@@ -114,61 +114,62 @@ in
   environment = {
     systemPackages = builtins.attrValues {
       inherit (pkgs)
+        asciinema
+        bat
+        bind
+        binutils
+        borgbackup
+        btop
+        builders-configurator
+        compsize
+        curl
+        direnv
+        entr
+        exa
+        fd
+        file
+        fzf
         git
         gnumake
-        mkpasswd
-        file
-        wget
-        curl
-        wireguard-tools
         gnupg
-        bind
-        liboping
-        psmisc
-        unzip
-        rename
-        whois
-        lsof
-        parted
-        python3
-        binutils
-        ntfsprogs
-        ventoy-bin
-        htop
         helix
-        btop
-        tree
-        pwgen
-        borgbackup
-        inotifyTools
-        direnv
-        socat
-        nmap
-        ncdu
-        tcpdump
-        tmux
-        tig
-        exa
-        fzf
-        fd
-        sd
-        bat
-        ripgrep
-        ranger
-        pass
-        sshuttle
-        vnstat
-        entr
-        libargon2
-        mblaze
-        niv
-        compsize
-        mediainfo
-        asciinema
-        nix-output-monitor
-        jq
         home-manager
-        builders-configurator
+        htop
+        inotifyTools
+        jq
+        libargon2
+        liboping
+        lsof
+        mblaze
+        mediainfo
+        mkpasswd
+        ncdu
+        niv
+        nix-output-monitor
+        nmap
+        ntfsprogs
+        parted
+        pass
+        psmisc
+        pwgen
+        python3
+        ranger
+        rename
+        ripgrep
+        sd
+        socat
+        sshuttle
+        sysbench
+        tcpdump
+        tig
+        tmux
+        tree
+        unzip
+        ventoy-bin
+        vnstat
+        wget
+        whois
+        wireguard-tools
       ;
       inherit (pkgs.python3Packages) qrcode;
     };
