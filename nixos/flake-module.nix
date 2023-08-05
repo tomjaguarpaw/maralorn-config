@@ -18,6 +18,8 @@
               inputs.secrets.nixosModules.default
               inputs.impermanence.nixosModules.impermanence
               inputs.disko.nixosModules.disko
+              inputs.nixos-mailserver.nixosModules.default
+              inputs.home-manager.nixosModules.home-manager
             ];
           };
       in

@@ -1,4 +1,3 @@
-flake-inputs:
 {
   pkgs,
   config,
@@ -12,7 +11,6 @@ let
   rspamd-address = "[::1]:11334";
 in
 {
-  imports = [ flake-inputs.nixos-mailserver.nixosModules.default ];
   m-0.monitoring = [ {
     name = "postfix on hera";
     host = "hera:9154";
@@ -112,7 +110,6 @@ in
       "m-0.eu"
       "maralorn.de"
       "choreutes.de"
-      "mathechor.de"
       "lists.maralorn.de"
       "malte-und-clai.re"
     ];

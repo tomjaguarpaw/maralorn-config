@@ -17,7 +17,7 @@ in
     [
       (flake-inputs.secrets.lib.vpn "hera")
       (import ../../roles/home-manager.nix flake-inputs)
-      (import ./mail.nix flake-inputs)
+      ./mail.nix
       ../../roles
       ../../roles/blog.nix
       #../../roles/coturn.nix
