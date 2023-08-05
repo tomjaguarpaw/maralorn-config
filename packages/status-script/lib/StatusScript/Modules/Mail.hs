@@ -47,7 +47,7 @@ mail watch_manager mode = do
   events <-
     [ ((/= Klausur), ["folder:hera/Inbox", "tag:unread"], "e-mail")
       , ((== Orga), ["folder:hera/Inbox", "not", "tag:unread"], "e-mail-open")
-      , ((== Code), ["folder:hera/Code", "tag:unread"], "Code")
+      , ((== Code), ["folder:hera/Code"], "Code")
       ]
       & mapM \(on_mode, folder, subgroup) ->
         ReflexUtil.performEventThreaded
