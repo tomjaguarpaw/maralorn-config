@@ -697,7 +697,7 @@ helpMessage = do
       , m "I will inform you, when one of the pull requests you subscribed to reaches one of these branches: " <> branchList
       , mempty
       , m "I have been programmed and am being hosted by " <> mention "@maralorn:maralorn.de" <> m ". Feel free to reach out to him, if you have any problems or suggestions."
-      , m "My code is written in Haskell, is open source under the AGPL license and can be found at " <> link "https://git.maralorn.de/nixos-config/tree/packages/nixpkgs-bot" "git.maralorn.de/nixos-config/tree/packages/nixpkgs-bot" <> m "."
+      , m "My code is written in Haskell, is open source under the AGPL license and can be found at " <> link "https://code.maralorn.de/maralorn/config/src/branch/main/packages/nixpkgs-bot" "code.maralorn.de/maralorn/config/src/branch/main/packages/nixpkgs-bot" <> m "."
       ]
 
 whenTimeIsUp :: (Environment -> IORef Clock.TimeSpec) -> Int64 -> App () -> App ()
