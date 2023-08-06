@@ -5,7 +5,7 @@
     ./nixos/flake-module.nix
     ./home-manager/flake-module.nix
     ./packages/flake-module.nix
-    ./overlays/flake-module.nix
+    ./nixpkgs/flake-module.nix
   ];
   systems = [ "x86_64-linux" ];
   flake.nixFromDirs =

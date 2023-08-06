@@ -13,7 +13,6 @@
               "zoom"
               "discord"
               "steam"
-              "steamcmd"
               "steam-run"
               "steam-original"
               "factorio-alpha"
