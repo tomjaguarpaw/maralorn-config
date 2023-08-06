@@ -15,7 +15,6 @@ let
     "*.element.io"
     "twitter.com"
     "code.maralorn.de"
-    "5e.maralorn.de"
   ] ++ newsPages;
   newsPages = [
     "chaos.social"
