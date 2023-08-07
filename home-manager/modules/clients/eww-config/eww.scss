@@ -33,6 +33,29 @@ $background-lighter: #152f6d;
   background: $background-lighter;
 }
 
+.disabled {
+  color: rgba(255,255,255,0.4);
+}
+
+.disabled progress {
+  background: rgba(255,255,255,0.4);
+}
+
+progress {
+  background: rgba(255,255,255,0.8);
+  min-height: 1px;
+}
+
+progressbar {
+}
+
+progressbar > trough {
+  min-width: 10px;
+  min-height: 1px;
+  background: rgba(255,255,255,0.2);
+}
+
+
 .empty {
   color: #aaaaaa;
 }

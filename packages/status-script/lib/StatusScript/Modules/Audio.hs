@@ -7,8 +7,10 @@ import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Aeson.Schema (get, schema)
 import Data.Aeson.Schema qualified as Schema
 import Data.ByteString.Lazy.Char8 qualified as LazyByteStringChar
+import Data.Foldable qualified as Foldable
 import Data.IntMap.Strict qualified as IntMap
 import Data.IntSet qualified as IntSet
+import Data.Text qualified as Text
 import Maralorn.Prelude hiding (get)
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
@@ -53,9 +55,7 @@ data AudioEndPoint = MkAudioEndPoint
   { name :: Text
   , volume :: Double
   , mute :: Bool
-  , isDefault :: Bool
-  , bTMode :: Maybe Text
-  , audioType :: AudioEndPointType
+  , icons :: [Text]
   , clients :: [AudioClient]
   }
   deriving stock (Generic)
@@ -67,18 +67,13 @@ type PipeWireObject =
   [schema|{
     id: Int,
     type: Text,
-    info: Value
-  }|]
-
-type LinkInfo =
-  [schema|{
-      output-node-id: Int,
-      input-node-id: Int,
-  }|]
-
-type NodeInfo =
-  [schema|{
-    props: Value
+    info: Value,
+    metadata: Maybe (List {
+      key: Text,
+      value: {
+        name: Text
+      }
+    })
   }|]
 
 type PipeWireObjectDelete =
@@ -93,50 +88,100 @@ fromJSON =
     Aeson.Success x -> Just x
     _ -> Nothing
 
-audioInfos :: R.MonadHeadlessApp t m => R.Event t [Aeson.Value] -> m (R.Event t [AudioEndPoint])
-audioInfos = \trigger_event ->
-  R.foldDyn foldPipeWireEvents mempty trigger_event
-    <&> R.updated
-    %> \objects ->
+extractJSON :: Aeson.FromJSON a => [Aeson.Key] -> Value -> Maybe a
+extractJSON = \path obj -> foldlM (\obj' key -> extractOneJSON key obj') obj path >>= fromJSON
+
+extractOneJSON :: Aeson.Key -> Value -> Maybe Value
+extractOneJSON = \key -> fromJSON @(Aeson.Object) >=> KeyMap.lookup key
+
+aliases :: [(Text, Text)]
+aliases = [("Q30", "Overears"), ("USB PnP Audio Device Pro", "USB Mic"), ("Starship/Matisse", "Boxen"), ("HDA ATI HDMI", "TV")]
+
+mkInfos :: IntMap (Schema.Object PipeWireObject) -> [AudioEndPoint]
+mkInfos = \objects ->
+  let
+    get_info :: Aeson.FromJSON a => Int -> [Aeson.Key] -> Maybe a
+    get_info = \id' path ->
+      IntMap.lookup id' objects
+        >>= [get|.info|] % extractJSON path
+    get_name :: Int -> Text
+    get_name id' =
+      let raw = get_info id' ["props", "node.description"] & fromMaybe "unknown"
+       in find (fst % (`Text.isInfixOf` raw)) aliases
+            & fmap snd
+              % fromMaybe raw
+    find_volume :: Int -> Maybe Double
+    find_volume = \id' ->
+      get_info id' ["params", "Props"]
+        <&> mapMaybe (extractJSON ["channelVolumes"])
+        >>= viaNonEmpty head
+        %> Foldable.maximum
+        -- Factors found at https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/blob/master/src/pulse/volume.c#L260
+        -- explained at https://www.robotplanet.dk/audio/audio_gui_design/
+        %> (/ 3.162278)
+        %> (** (1 / 3))
+        %> (* 100)
+    find_mute :: Int -> Maybe Bool
+    find_mute = \id' -> get_info id' ["params", "Props"] <&> mapMaybe (extractJSON ["mute"]) >>= viaNonEmpty head
+    defaults :: [Text]
+    defaults =
+      ( objects
+          & toList
+            % find (\obj -> [get| obj.type |] == "PipeWire:Interface:Metadata")
+          >>= [get|.metadata|]
+      )
+        & fromMaybe []
+        %> [get|.value.name|]
+    links =
       objects
         & toList
         % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Link")
         %> [get|.info|]
-        % mapMaybe (fromJSON @(Schema.Object LinkInfo))
-        %> (\link -> ([get|link.input-node-id|], IntSet.singleton [get|link.output-node-id|]))
+        % mapMaybe (\info -> (,) <$> extractJSON ["input-node-id"] info <*> extractJSON ["output-node-id"] info)
+        %> (second IntSet.singleton)
         % IntMap.fromListWith (<>)
-        % IntMap.toList
-        % mapMaybe \(sink, sources) ->
-          IntMap.lookup sink objects
-            >>= ([get|.info|] % fromJSON @(Schema.Object NodeInfo))
-            >>= ([get|.props|] % fromJSON @(Aeson.Object))
-            >>= (KeyMap.lookup "node.description")
-            >>= fromJSON @Text
-            <&> \name ->
+    endpoints =
+      objects
+        & toList
+        % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Node")
+        % filter ([get|.info|] % extractJSON ["props", "media.class"] % (`elem` [Just "Audio/Sink", Just "Audio/Source"]))
+        %> [get|.id|]
+   in
+    endpoints
+      <&> ( \endpoint ->
               MkAudioEndPoint
-                { name = name
-                , volume = 1
-                , mute = False
-                , isDefault = False
-                , bTMode = Nothing
-                , audioType = Source
+                { name = get_name endpoint
+                , volume = fromMaybe 0 (find_volume endpoint)
+                , mute = fromMaybe False (find_mute endpoint)
+                , -- TODO: Add mute and default icons
+                  icons =
+                    [(if get_info endpoint ["props", "media.class"] == Just "Audio/Source" then "source" else "sink") <> (if fromMaybe False (find_mute endpoint) then "-mute" else "")]
+                      <> ["default" | get_info endpoint ["props", "node.name"] `elem` (defaults <&> Just)]
+                      <> ["bt-headset" | get_info endpoint ["props", "api.bluez5.profile"] == Just "headset-head-unit"]
+                      <> ["bt-music" | get_info endpoint ["props", "api.bluez5.profile"] == Just "a2dp-sink"]
                 , clients =
-                    IntSet.toList sources
+                    IntMap.lookup endpoint links
+                      & maybe [] IntSet.toList
                       & mapMaybe
                         ( \source ->
-                            IntMap.lookup source objects
-                              >>= ([get|.info|] % fromJSON @(Schema.Object NodeInfo))
-                              >>= ([get|.props|] % fromJSON @(Aeson.Object))
-                              >>= (KeyMap.lookup "application.name")
-                              >>= fromJSON @Text
+                            get_info source ["props", "application.name"]
                               <&> \source_name ->
                                 MkAudioClient
                                   { name = source_name
-                                  , volume = 0
-                                  , mute = False
+                                  , volume = fromMaybe 0 (find_volume source)
+                                  , mute = fromMaybe False (find_mute source)
                                   }
                         )
                 }
+          )
+
+--        % filter \endpoint -> length endpoint.clients + length endpoint.icons > 1
+
+audioInfos :: R.MonadHeadlessApp t m => R.Event t [Aeson.Value] -> m (R.Event t [AudioEndPoint])
+audioInfos = \trigger_event ->
+  R.foldDyn foldPipeWireEvents mempty trigger_event
+    <&> R.updated
+    %> mkInfos
 
 foldPipeWireEvents :: [Aeson.Value] -> IntMap (Schema.Object PipeWireObject) -> IntMap (Schema.Object PipeWireObject)
 foldPipeWireEvents = \events start_objects -> foldl' (flip foldPipeWireEvent) start_objects events

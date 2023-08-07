@@ -11,7 +11,6 @@ import System.FSNotify qualified as Notify
 import StatusScript.CommandUtil qualified as ReflexUtil
 import StatusScript.Mode qualified as Mode
 import StatusScript.Modules.Audio qualified as Audio
-import StatusScript.Modules.Bluetooth qualified as Bluetooth
 import StatusScript.Modules.BootState qualified as BootState
 import StatusScript.Modules.Calendar qualified as Calendar
 import StatusScript.Modules.ConfigPull qualified as ConfigPull
@@ -74,8 +73,6 @@ main = Notify.withManager \watch_manager -> do
     timer_events <- Timer.timers watch_manager
     PublishSocket.publishJson "timers" timer_events
     audio_event <- Audio.audioUpdateEvent
-    bluetooth_events <- Bluetooth.bluetooth (void audio_event)
-    PublishSocket.publishJson "bluetooth" bluetooth_events
     audio_info_event <- Audio.audioInfos audio_event
     PublishSocket.publishJson "audio" audio_info_event
     pure R.never -- We have no exit condition.
