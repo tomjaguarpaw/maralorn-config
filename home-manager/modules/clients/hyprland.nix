@@ -71,7 +71,9 @@ in
         "SUPER_SHIFT, Next, movetoworkspace, +1"
         "$mod, Print, execr, grim -g $(slurp)"
       ];
-      bindr = [ "SUPER, SUPER_L, exec, eww open overlay --toggle" ];
+      bindr = [
+        "SUPER, SUPER_L, execr, (makoctl mode -r show; eww close overlay) || (eww open overlay; makoctl mode -a show)"
+      ];
       binde = [
         "SUPER_ALT, Left, resizeactive, -10 0"
         "SUPER_ALT, Right, resizeactive, 10 0"
