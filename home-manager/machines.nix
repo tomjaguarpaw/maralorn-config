@@ -15,9 +15,9 @@ let
     "*.element.io"
     "twitter.com"
     "code.maralorn.de"
+    "chaos.social"
   ] ++ newsPages;
   newsPages = [
-    "chaos.social"
     "zeit.de"
     "heise.de"
     "spiegel.de"
