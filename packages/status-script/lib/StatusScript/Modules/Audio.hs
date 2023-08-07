@@ -68,12 +68,7 @@ type PipeWireObject =
     id: Int,
     type: Text,
     info: Value,
-    metadata: Maybe (List {
-      key: Text,
-      value: {
-        name: Text
-      }
-    })
+    metadata: Maybe List Value
   }|]
 
 type PipeWireObjectDelete =
@@ -125,13 +120,13 @@ mkInfos = \objects ->
     find_mute = \id' -> get_info id' ["params", "Props"] <&> mapMaybe (extractJSON ["mute"]) >>= viaNonEmpty head
     defaults :: [Text]
     defaults =
-      ( objects
-          & toList
-            % find (\obj -> [get| obj.type |] == "PipeWire:Interface:Metadata")
-          >>= [get|.metadata|]
-      )
-        & fromMaybe []
-        %> [get|.value.name|]
+      objects
+        & toList
+          % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Metadata")
+          % mapMaybe [get|.metadata|]
+        & join
+          % filter (extractJSON ["key"] % (`elem` [Just "default.audio.sink", Just "default.audio.source"]))
+          % mapMaybe (extractJSON ["value", "name"])
     links =
       objects
         & toList
@@ -156,9 +151,9 @@ mkInfos = \objects ->
                 , -- TODO: Add mute and default icons
                   icons =
                     [(if get_info endpoint ["props", "media.class"] == Just "Audio/Source" then "source" else "sink") <> (if fromMaybe False (find_mute endpoint) then "-mute" else "")]
-                      <> ["default" | get_info endpoint ["props", "node.name"] `elem` (defaults <&> Just)]
                       <> ["bt-headset" | get_info endpoint ["props", "api.bluez5.profile"] == Just "headset-head-unit"]
                       <> ["bt-music" | get_info endpoint ["props", "api.bluez5.profile"] == Just "a2dp-sink"]
+                      <> ["default" | get_info endpoint ["props", "node.name"] `elem` (defaults <&> Just)]
                 , clients =
                     IntMap.lookup endpoint links
                       & maybe [] IntSet.toList
@@ -174,8 +169,7 @@ mkInfos = \objects ->
                         )
                 }
           )
-
---        % filter \endpoint -> length endpoint.clients + length endpoint.icons > 1
+      & filter \endpoint -> length endpoint.clients + length endpoint.icons > 1
 
 audioInfos :: R.MonadHeadlessApp t m => R.Event t [Aeson.Value] -> m (R.Event t [AudioEndPoint])
 audioInfos = \trigger_event ->

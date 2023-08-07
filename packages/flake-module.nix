@@ -30,7 +30,7 @@ let
           src = cleanSource;
           preConfigure = ''
             echo "Checking that default.nix is up-to-date …"
-            ${lib.getExe hpkgs.cabal2nix} . > fresh-default.nix
+            ${hpkgs.cabal2nix}/bin/cabal2nix . > fresh-default.nix
             cp ${cleanSource}/default.nix .
             chmod u+w default.nix
             ${lib.getExe hpkgs.nixfmt} fresh-default.nix default.nix

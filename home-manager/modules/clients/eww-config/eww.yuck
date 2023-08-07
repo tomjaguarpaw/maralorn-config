@@ -68,13 +68,13 @@
       (box :orientation "vertical" :space-evenly false (for endpoint in audio
         (box :class "component small ${endpoint.mute ? "disabled" : ""}" :orientation "vertical" :space-evenly false
           (box :orientation "horizontal" :space-evenly false
-            (for icon in {endpoint.icons} (image :image-width 18 :image-height 18 :path "icons/${icon}.png"))
-            (label :width 60 :wrap true :justify "center" :text {endpoint.name})
+            (for icon in {endpoint.icons} (image :image-width 14 :image-height 14 :path "icons/${icon}.png"))
+            (label :width 60 :wrap true :justify "center" :hexpand true :text {endpoint.name})
           )
           (progress :value {endpoint.volume})
           (for client in {endpoint.clients}
             (box :class "component lighter ${client.mute ? "disabled" : ""}" :orientation "vertical" :space-evenly false
-              (label :width 60 :wrap true :justify "center" :text {client.name})
+              (label :width 60 :wrap true :justify "center" :hexpand true :text {client.name})
               (progress :value {client.volume})
             )
           )
@@ -195,7 +195,7 @@ ${appointment.description}":""}"
   :focusable false
   :geometry (geometry :x "0%"
                       :y "0%"
-                      :width "100px"
+                      :width "120px"
                       :height "100%"
                       :anchor "left center")
   (sidebar)
