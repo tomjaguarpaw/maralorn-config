@@ -24,4 +24,11 @@ bootState watch_manager mode = do
     _ -> do
       current_kernel <- readlink "/run/current-system/kernel" |> Shh.captureTrim
       booted_kernel <- readlink "/run/booted-system/kernel" |> Shh.captureTrim
-      pure [MkWarning{description = "Booted kernel stale", group = "warning", subgroup = Nothing} | current_kernel /= booted_kernel]
+      pure
+        [ MkWarning
+          { description = Just "Booted kernel stale"
+          , group = "warning"
+          , subgroup = Nothing
+          }
+        | current_kernel /= booted_kernel
+        ]

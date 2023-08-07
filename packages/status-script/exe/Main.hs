@@ -17,6 +17,7 @@ import StatusScript.Modules.ConfigPull qualified as ConfigPull
 import StatusScript.Modules.ConfigStale qualified as ConfigStale
 import StatusScript.Modules.Git qualified as Git
 import StatusScript.Modules.Mail qualified as Mail
+import StatusScript.Modules.Mako qualified as Mako
 import StatusScript.Modules.Ping qualified as Ping
 import StatusScript.Modules.Player qualified as Player
 import StatusScript.Modules.SoftwareFeed qualified as SoftwareFeed
@@ -50,7 +51,8 @@ main = Notify.withManager \watch_manager -> do
     config_stale_event <- ConfigStale.configStale mode dirties
     mail_events <- Mail.mail watch_manager mode
     inbox_events <- Tasks.tasks watch_manager mode
-    warnings <- ReflexUtil.concatEvents [ping_event, software_feed_event, boot_state_event, config_pull_event, git_warnings, config_stale_event, mail_events, inbox_events]
+    notification_events <- Mako.notifications
+    warnings <- ReflexUtil.concatEvents [ping_event, software_feed_event, boot_state_event, config_pull_event, git_warnings, config_stale_event, mail_events, inbox_events, notification_events]
     PublishSocket.publishJson "warnings" warnings
     PublishSocket.publishJson
       "warninggroups"

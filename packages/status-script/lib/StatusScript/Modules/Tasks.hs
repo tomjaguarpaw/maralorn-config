@@ -26,7 +26,7 @@ tasks watch_manager mode = do
       Orga ->
         ( Maralorn.Taskwarrior.getInbox <<&>> \task ->
             MkWarning
-              { description = task.description <> maybe "" (\num -> [i| (#{num})|]) task.id
+              { description = Just (task.description <> maybe "" (\num -> [i| (#{num})|]) task.id)
               , group = "inbox"
               , subgroup = Nothing
               }

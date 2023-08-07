@@ -33,7 +33,7 @@ processNotmuchDescription =
 mkWarning :: Text -> Text -> Warning
 mkWarning = \subgroup msg ->
   MkWarning
-    { description = processNotmuchDescription msg
+    { description = Just (processNotmuchDescription msg)
     , group = "inbox"
     , subgroup = Just subgroup
     }

@@ -71,7 +71,7 @@ configStale mode dirties = do
         modes_dirty <- readTVarIO modes_dirty_var
         let stale_warn = \scope ->
               MkWarning
-                { description = [i|Current #{scope} stale|]
+                { description = Just [i|Current #{scope} stale|]
                 , group = "warning"
                 , subgroup = Nothing
                 }

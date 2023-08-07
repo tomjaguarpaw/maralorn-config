@@ -26,5 +26,12 @@ pullNeeded mode = do
         CommandUtil.tryCmd (git "--no-optional-locks" "-C" (home </> "git" </> "config") "log" "--oneline" "origin/main" "^main")
           <&> LBSC.lines % length
       pure
-        [ MkWarning{description = [i|Config #{behind} commits behind.|], group = "warning", subgroup = Nothing} | 0 < behind
+        [ MkWarning
+          { description =
+              Just
+                [i|Config #{behind} commits behind.|]
+          , group = "warning"
+          , subgroup = Nothing
+          }
+        | 0 < behind
         ]

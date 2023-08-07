@@ -20,6 +20,7 @@ common common-config
     NoImplicitPrelude
     NoImplicitPrelude
     BlockArguments
+    DataKinds
     DeriveAnyClass
     DerivingStrategies
     DuplicateRecordFields
@@ -79,6 +80,7 @@ library
     StatusScript.Modules.ConfigStale
     StatusScript.Modules.Git
     StatusScript.Modules.Mail
+    StatusScript.Modules.Mako
     StatusScript.Modules.Ping
     StatusScript.Modules.Player
     StatusScript.Modules.SoftwareFeed

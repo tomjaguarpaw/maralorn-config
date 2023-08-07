@@ -63,7 +63,7 @@ gitEvents watch_manager mode = do
         let dirty_dirs = (if (mode' == Klausur) then Set.filter (== "promotion") else id) dirties
          in toList dirty_dirs <&> \dir ->
               MkWarning
-                { description = dir
+                { description = Just dir
                 , group = "git"
                 , subgroup = Just subgroup
                 }

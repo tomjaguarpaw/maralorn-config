@@ -78,6 +78,7 @@ let
             tailscale
             fd
             pipewire
+            mako
           ;
           inherit (unstable-pkgs) nix nix-diff;
         };

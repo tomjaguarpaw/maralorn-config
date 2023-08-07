@@ -34,5 +34,12 @@ softwareFeed = \watch_manager mode -> do
         %> fromMaybe 0
         %> \case
           0 -> []
-          n -> [MkWarning{description = [i|Code Updates: #{n}|], group = "warning", subgroup = Nothing}]
+          n ->
+            [ MkWarning
+                { description =
+                    Just [i|Code Updates: #{n}|]
+                , group = "warning"
+                , subgroup = Nothing
+                }
+            ]
     _ -> pure []

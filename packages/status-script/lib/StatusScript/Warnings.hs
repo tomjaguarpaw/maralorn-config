@@ -4,7 +4,7 @@ import Data.Aeson qualified as Aeson
 import Maralorn.Prelude
 
 data Warning = MkWarning
-  { description :: Text
+  { description :: Maybe Text
   , group :: Text
   , subgroup :: Maybe Text
   }
