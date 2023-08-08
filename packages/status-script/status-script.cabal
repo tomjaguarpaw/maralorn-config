@@ -70,6 +70,7 @@ library
     Maralorn.Prelude
     Maralorn.Taskwarrior
     StatusScript.CommandUtil
+    StatusScript.Env
     StatusScript.FileWatch
     StatusScript.Mode
     StatusScript.Modules.Alerts

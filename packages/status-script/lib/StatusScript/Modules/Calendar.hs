@@ -7,6 +7,7 @@ import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
 import Shh qualified
 import StatusScript.CommandUtil qualified as CommandUtil
+import StatusScript.Env (Env (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
 
 Shh.load Shh.Absolute ["khal"]
@@ -23,11 +24,11 @@ data Appointment = MkAppointment
   deriving stock (Eq, Generic)
   deriving anyclass (Aeson.ToJSON)
 
-calendar :: R.MonadHeadlessApp t m => m (R.Event t [Appointment])
-calendar = do
+calendar :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Appointment])
+calendar = \env -> do
   CommandUtil.reportMissing missingExecutables
   tick <- ReflexUtil.tickEvent 5
-  ReflexUtil.performEventThreaded tick $ const do
+  ReflexUtil.performEventThreaded env tick $ const do
     appointments <-
       decodeUtf8
         <$> CommandUtil.tryCmd

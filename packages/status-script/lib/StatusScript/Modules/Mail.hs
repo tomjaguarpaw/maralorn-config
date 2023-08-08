@@ -7,12 +7,11 @@ import Reflex.Host.Headless qualified as R
 import Shh ((|>))
 import Shh qualified
 import StatusScript.CommandUtil qualified as CommandUtil
+import StatusScript.Env (Env (..))
 import StatusScript.FileWatch qualified as FileWatch
 import StatusScript.Mode (Mode (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
 import StatusScript.Warnings (Warning (..))
-import System.Environment qualified as Env
-import System.FSNotify qualified as Notify
 import System.FilePath ((</>))
 
 Shh.load Shh.Absolute ["notmuch"]
@@ -38,12 +37,11 @@ mkWarning = \subgroup msg ->
     , subgroup = Just subgroup
     }
 
-mail :: R.MonadHeadlessApp t m => Notify.WatchManager -> R.Dynamic t Mode -> m (R.Event t [Warning])
-mail watch_manager mode = do
+mail :: R.MonadHeadlessApp t m => Env -> R.Dynamic t Mode -> m (R.Event t [Warning])
+mail env mode = do
   CommandUtil.reportMissing missingExecutables
-  home <- liftIO $ Env.getEnv "HOME"
   notmuch_update <-
-    FileWatch.watchFile watch_manager (home </> "Maildir/.notmuch/xapian") "flintlock"
+    FileWatch.watchFile env (env.homeDir </> "Maildir/.notmuch/xapian") "flintlock"
   events <-
     [ ((/= Klausur), ["folder:hera/Inbox", "tag:unread"], "e-mail")
       , ((== Orga), ["folder:hera/Inbox", "not", "tag:unread"], "e-mail-open")
@@ -51,9 +49,9 @@ mail watch_manager mode = do
       ]
       & mapM \(on_mode, folder, subgroup) ->
         ReflexUtil.performEventThreaded
+          env
           (ReflexUtil.taggedAndUpdated mode notmuch_update)
           \case
-            mode' | on_mode mode' -> Text.lines . decodeUtf8 <$> (notmuch "search" folder |> Shh.captureTrim)
+            mode' | on_mode mode' -> (notmuch "search" folder |> Shh.captureTrim) <&> decodeUtf8 % Text.lines %> mkWarning subgroup
             _ -> pure []
-          <<&>> fmap (mkWarning subgroup)
   ReflexUtil.concatEvents events

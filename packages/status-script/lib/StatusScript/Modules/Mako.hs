@@ -1,4 +1,4 @@
-module StatusScript.Modules.Mako where
+module StatusScript.Modules.Mako (notifications) where
 
 import Data.Aeson (Value)
 import Data.Aeson qualified as Aeson
@@ -10,6 +10,7 @@ import Reflex.Host.Headless qualified as R
 import Shh ((|>))
 import Shh qualified
 import StatusScript.CommandUtil qualified as CommandUtil
+import StatusScript.Env (Env (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
 import StatusScript.Warnings
 
@@ -20,11 +21,11 @@ type MakoList =
 
 Shh.load Shh.Absolute ["makoctl"]
 missingExecutables :: IO [FilePath]
-notifications :: R.MonadHeadlessApp t m => m (R.Event t [Warning])
-notifications = do
+notifications :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Warning])
+notifications = \env -> do
   CommandUtil.reportMissing missingExecutables
   tick <- ReflexUtil.tickEvent 5
-  ReflexUtil.performEventThreaded tick \() ->
+  ReflexUtil.performEventThreaded env tick \_ ->
     makoctl "list"
       |> Shh.captureTrim
       <&> Aeson.decode @(Schema.Object MakoList)

@@ -1,6 +1,5 @@
 module StatusScript.PublishSocket (publish, publishJson, socketsDir) where
 
-import Control.Concurrent qualified as Conc
 import Control.Exception qualified as Exception
 import Data.Aeson qualified as Aeson
 import Maralorn.Prelude
@@ -8,15 +7,16 @@ import Network.Socket qualified as Network
 import Network.Socket.ByteString qualified as Network
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
+import StatusScript.Env (Env (..))
 
-mkSendToSocketCallback :: FilePath -> IO (ByteString -> IO ())
-mkSendToSocketCallback socket_name = do
+mkSendToSocketCallback :: Env -> FilePath -> IO (ByteString -> IO ())
+mkSendToSocketCallback = \env socket_name -> do
   server_socket <- Network.socket Network.AF_UNIX Network.Stream Network.defaultProtocol
   Network.bind server_socket (Network.SockAddrUnix socket_name)
   Network.listen server_socket 5
   client_socket_var <- newEmptyTMVarIO
   last_message_var <- newEmptyTMVarIO
-  void $ Conc.forkIO $ forever $ do
+  env.fork [i|Listening on socket #{socket_name}|] $ forever do
     (client_socket, _) <- Network.accept server_socket
     (old_socket_may, message_may) <- atomically $ (,) <$> tryTakeTMVar client_socket_var <*> tryReadTMVar last_message_var
     whenJust old_socket_may Network.close
@@ -43,20 +43,22 @@ mkSendToSocketCallback socket_name = do
 
 publish ::
   (R.MonadHeadlessApp t m) =>
+  Env ->
   Text ->
   R.Event t ByteString ->
   m ()
-publish socket_name event = do
+publish = \env socket_name event -> do
   -- Listen socket
-  callback <- liftIO $ mkSendToSocketCallback [i|#{socketsDir}/#{socket_name}|]
+  callback <- liftIO $ mkSendToSocketCallback env [i|#{socketsDir}/#{socket_name}|]
   R.performEvent_ $ event <&> (callback >>> liftIO)
 
 publishJson ::
   (R.MonadHeadlessApp t m, Aeson.ToJSON a) =>
+  Env ->
   Text ->
   R.Event t a ->
   m ()
-publishJson name = fmap (Aeson.encode % toStrict) % publish name
+publishJson = \env name -> fmap (Aeson.encode % toStrict) % publish env name
 
 socketsDir :: FilePath
 socketsDir = "/run/user/1000/status"

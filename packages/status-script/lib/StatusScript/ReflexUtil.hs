@@ -1,15 +1,12 @@
 module StatusScript.ReflexUtil (performEventThreaded, concatEvents, processLines, tickEvent, taggedAndUpdated) where
 
 import Control.Concurrent qualified as Conc
-import Control.Concurrent.Async qualified as Async
-import Control.Concurrent.STM qualified as STM
 import Maralorn.Prelude
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
 import Shh ((|>))
 import Shh qualified
-
-data EventRunnerState a = Idle | Running | NextWaiting a
+import StatusScript.Env (Env (..))
 
 tickEvent :: R.MonadHeadlessApp t m => Int -> m (R.Event t ())
 tickEvent delay =
@@ -29,31 +26,24 @@ concatEvents =
     >=> R.holdUniqDyn
     %> R.updated
 
-processLines :: forall t m. R.MonadHeadlessApp t m => Shh.Proc () -> m (R.Event t ByteString)
-processLines = \command -> do
+processLines :: forall t m. R.MonadHeadlessApp t m => Env -> Shh.Proc () -> m (R.Event t ByteString)
+processLines = \env command -> do
   (event, trigger) <- R.newTriggerEvent
-  void $ liftIO $ Conc.forkIO $ forever do
+  liftIO $ env.fork "Processing lines" $ forever do
     Conc.threadDelay oneSecond
     Shh.ignoreFailure
       ( command |> Shh.readInputLines (mapM_ (toStrict % trigger))
       )
+    sayErr "A processLines command failed and will be restarted in a second."
   pure event
 
 -- Call IO action in a separate thread. If multiple events fire never run two actions in parallel and if more than one action queues up, only run the latest.
-performEventThreaded :: R.MonadHeadlessApp t m => R.Event t a -> (a -> IO b) -> m (R.Event t b)
-performEventThreaded event action = do
-  runnerState <- liftIO $ newTVarIO Idle
-  R.performEventAsync $
-    event <&> \input callback -> liftIO do
-      let runner input' = do
-            action input' >>= callback
-            next_input <- atomically $ STM.stateTVar runnerState \case
-              Idle -> error "Runner should not be in idle state when finishing"
-              Running -> (Nothing, Idle)
-              NextWaiting next_input -> (Just next_input, Running)
-            next_input & maybe pass runner
-      run <- atomically $ STM.stateTVar runnerState \case
-        Idle -> (True, Running)
-        Running -> (False, NextWaiting input)
-        NextWaiting{} -> (False, NextWaiting input)
-      when run $ void $ Async.async $ runner input
+performEventThreaded :: R.MonadHeadlessApp t m => Env -> R.Event t a -> (a -> IO b) -> m (R.Event t b)
+performEventThreaded env event action = do
+  runnerState <- liftIO newEmptyTMVarIO
+  (out_event, callback) <- R.newTriggerEvent
+  R.performEvent_ $ event <&> putTMVar runnerState % atomically % liftIO
+  liftIO $ env.fork "performing event threaded" $ forever do
+    input <- atomically $ takeTMVar runnerState
+    action input >>= callback
+  pure out_event

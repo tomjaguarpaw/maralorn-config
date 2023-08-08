@@ -1,5 +1,3 @@
-{-# LANGUAGE DataKinds #-}
-
 module StatusScript.Modules.Audio (audioUpdateEvent, audioInfos) where
 
 import Data.Aeson qualified as Aeson
@@ -16,15 +14,16 @@ import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
 import Shh qualified
 import StatusScript.CommandUtil qualified as CommandUtil
+import StatusScript.Env (Env (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
 
 Shh.load Shh.Absolute ["pw-dump"]
 missingExecutables :: IO [FilePath]
-audioUpdateEvent :: R.MonadHeadlessApp t m => m (R.Event t [Aeson.Value])
-audioUpdateEvent = do
+audioUpdateEvent :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Aeson.Value])
+audioUpdateEvent = \env -> do
   CommandUtil.reportMissing missingExecutables
-  line <- ReflexUtil.processLines (pw_dump "-m")
-  R.foldDyn foldJsonLines ([], Nothing) line <&> R.updated % R.mapMaybe snd
+  line <- ReflexUtil.processLines env (pw_dump "-m")
+  (R.foldDyn foldJsonLines ([], Nothing) line <&> R.updated % R.mapMaybe snd)
 
 foldJsonLines :: ByteString -> ([ByteString], Maybe [Aeson.Value]) -> ([ByteString], Maybe [Aeson.Value])
 foldJsonLines = \next_line -> \case

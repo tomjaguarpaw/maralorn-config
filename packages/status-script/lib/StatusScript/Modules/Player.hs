@@ -9,20 +9,20 @@ import Reflex.Host.Headless qualified as R
 import Shh ((|>))
 import Shh qualified
 import StatusScript.CommandUtil qualified as CommandUtil
+import StatusScript.Env (Env (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
-import System.Environment qualified as Env
 
 Shh.load Shh.Absolute ["playerctl"]
 missingExecutables :: IO [FilePath]
 playerCTLFormat :: String
 playerCTLFormat = [i|{{playerName}}@@@{{status}}@@@{{title}} | {{album}} | {{artist}}|]
 
-playerModule :: R.MonadHeadlessApp t m => m (R.Event t [PlayerState])
-playerModule = do
-  home <- liftIO $ Env.getEnv "HOME"
+playerModule :: R.MonadHeadlessApp t m => Env -> m (R.Event t [PlayerState])
+playerModule = \env -> do
+  let home = env.homeDir
   CommandUtil.reportMissing missingExecutables
-  player_event <- ReflexUtil.processLines (playerctl "metadata" "-F" "-f" playerCTLFormat)
-  ReflexUtil.performEventThreaded player_event $ const do
+  player_event <- ReflexUtil.processLines env (playerctl "metadata" "-F" "-f" playerCTLFormat)
+  ReflexUtil.performEventThreaded env player_event $ const do
     player_states <- playerctl "metadata" "-a" "-f" playerCTLFormat |> Shh.captureTrim
     mpd_host <-
       [i|#{home}/.config/mpDris2/mpDris2.conf|]
