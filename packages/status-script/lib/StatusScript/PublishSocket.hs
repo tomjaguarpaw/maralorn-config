@@ -50,7 +50,7 @@ publish ::
 publish = \env socket_name event -> do
   -- Listen socket
   callback <- liftIO $ mkSendToSocketCallback env [i|#{socketsDir}/#{socket_name}|]
-  R.performEvent_ $ event <&> (callback >>> liftIO)
+  R.performEvent_ $ event <&> (callback % env.fork "publishing to socket" % liftIO)
 
 publishJson ::
   (R.MonadHeadlessApp t m, Aeson.ToJSON a) =>
