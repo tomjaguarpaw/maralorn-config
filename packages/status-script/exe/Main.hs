@@ -109,9 +109,10 @@ main = Notify.withManager \watch_manager -> do
     (end_event, trigger) <- R.newTriggerEvent
     let run_job_queue = do
           (job_name, job) <- atomically $ STM.readTQueue job_queue
+          sayErr [i|Starting job: "#{job_name}"|]
           Async.concurrently_
             run_job_queue
-            ( Exception.catchJust (\e -> if isJust (fromException @Async.AsyncCancelled e) then Nothing else Just e) job \e -> do
+            ( Exception.catchJust (\e -> if isJust (fromException @Async.AsyncCancelled e) then Nothing else Just e) (job >> sayErr [i|Exited job: "#{job_name}|]) \e -> do
                 sayErr [i|In async job "#{job_name}" error: #{e}|]
                 Exception.throwIO e
             )
