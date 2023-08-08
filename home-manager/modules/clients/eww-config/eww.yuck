@@ -115,7 +115,7 @@
             (label :class "small" :justify "left" :hexpand true :halign "start" :text {player.title})
           )
         ))
-        (for warning in {warnings}
+        (for warning in {jq(warnings,"map(select(.description!=null))")}
           (box :class "component" :spacing 10 :space-evenly false
             (image :path "icons/${warning.group}.png")
             (for subgroup in {(warning.subgroup ?: "") != "" ? [warning.subgroup] : []}
