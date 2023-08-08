@@ -80,6 +80,7 @@ main = Notify.withManager \watch_manager -> do
         , mail_events
         , inbox_events
         , notification_events
+        , start $> []
         ]
     PublishSocket.publishJson env "warnings" warnings
     PublishSocket.publishJson
