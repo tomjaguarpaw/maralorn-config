@@ -43,7 +43,7 @@ data AudioClient = MkAudioClient
   , volume :: Double
   , mute :: Bool
   }
-  deriving stock (Generic)
+  deriving stock (Generic, Eq)
   deriving anyclass (Aeson.ToJSON)
 
 data AudioEndPointType = Source | Sink
@@ -57,7 +57,7 @@ data AudioEndPoint = MkAudioEndPoint
   , icons :: [Text]
   , clients :: [AudioClient]
   }
-  deriving stock (Generic)
+  deriving stock (Generic, Eq)
   deriving anyclass (Aeson.ToJSON)
 
 type Value = Aeson.Value
@@ -173,8 +173,9 @@ mkInfos = \objects ->
 audioInfos :: R.MonadHeadlessApp t m => R.Event t [Aeson.Value] -> m (R.Event t [AudioEndPoint])
 audioInfos = \trigger_event ->
   R.foldDyn foldPipeWireEvents mempty trigger_event
+    <<&>> mkInfos
+    >>= R.holdUniqDyn
     <&> R.updated
-    %> mkInfos
 
 foldPipeWireEvents :: [Aeson.Value] -> IntMap (Schema.Object PipeWireObject) -> IntMap (Schema.Object PipeWireObject)
 foldPipeWireEvents = \events start_objects -> foldl' (flip foldPipeWireEvent) start_objects events

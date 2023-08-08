@@ -11,6 +11,7 @@ import System.FSNotify qualified as Notify
 import Control.Concurrent.Async qualified as Async
 import Control.Concurrent.STM qualified as STM
 import Control.Exception qualified as Exception
+import Data.IntMap.Strict qualified as IntMap
 import Data.Time.Clock.POSIX qualified as Time
 import StatusScript.CommandUtil qualified as ReflexUtil
 import StatusScript.Env (Env (..))
@@ -107,14 +108,26 @@ main = Notify.withManager \watch_manager -> do
     audio_info_event <- Audio.audioInfos audio_event
     PublishSocket.publishJson env "audio" audio_info_event
     (end_event, trigger) <- R.newTriggerEvent
+    running_jobs_var <- liftIO $ STM.newTVarIO mempty
     let run_job_queue = do
           (job_name, job) <- atomically $ STM.readTQueue job_queue
-          sayErr [i|Starting job: "#{job_name}"|]
+          running_jobs <- STM.readTVarIO running_jobs_var
+          let job_id = fromMaybe (error "Numbers just keep going …") $ find (`IntMap.notMember` running_jobs) [0 ..]
+          sayErr [i|Starting job #{job_id}: "#{job_name}", running jobs: #{IntMap.size running_jobs}|]
+          atomically $ STM.modifyTVar' running_jobs_var (IntMap.insert job_id job_name)
           Async.concurrently_
             run_job_queue
-            ( Exception.catchJust (\e -> if isJust (fromException @Async.AsyncCancelled e) then Nothing else Just e) (job >> sayErr [i|Exited job: "#{job_name}|]) \e -> do
-                sayErr [i|In async job "#{job_name}" error: #{e}|]
-                Exception.throwIO e
+            ( Exception.catchJust
+                (\e -> if isJust (fromException @Async.AsyncCancelled e) then Nothing else Just e)
+                ( do
+                    job
+                    atomically $ STM.modifyTVar' running_jobs_var (IntMap.delete job_id)
+                    running_jobs <- STM.readTVarIO running_jobs_var
+                    sayErr [i|Exited job #{job_id}: "#{job_name}", running jobs: #{IntMap.size running_jobs}|]
+                )
+                \e -> do
+                  sayErr [i|In async job "#{job_name}" error: #{e}|]
+                  Exception.throwIO e
             )
     void $ liftIO $ Async.async $ Exception.catch run_job_queue \(_ :: SomeException) -> trigger ()
     pure end_event -- We have no exit condition.

@@ -27,7 +27,7 @@ data Appointment = MkAppointment
 calendar :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Appointment])
 calendar = \env -> do
   CommandUtil.reportMissing missingExecutables
-  tick <- ReflexUtil.tickEvent 5
+  tick <- ReflexUtil.tickEvent (5 * 60)
   ReflexUtil.performEventThreaded env tick $ const do
     appointments <-
       decodeUtf8
