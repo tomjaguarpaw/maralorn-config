@@ -27,6 +27,7 @@ in
         SMTP_ADDR = "hera.m-0.eu";
         SMTP_PORT = "465";
       };
+      session.SESSION_LIFE_TIME = 2419200; # 2 weeks
       # Required for 1.20 compat delete on 23.11
       packages.CHUNKED_UPLOAD_PATH = "${config.services.gitea.stateDir}/tmp/package-upload";
     };
