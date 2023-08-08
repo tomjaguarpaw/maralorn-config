@@ -11,6 +11,7 @@ import System.FSNotify qualified as Notify
 import Control.Concurrent.Async qualified as Async
 import Control.Concurrent.STM qualified as STM
 import Control.Exception qualified as Exception
+import Data.Time.Clock.POSIX qualified as Time
 import StatusScript.CommandUtil qualified as ReflexUtil
 import StatusScript.Env (Env (..))
 import StatusScript.Mode qualified as Mode
@@ -54,7 +55,10 @@ main = Notify.withManager \watch_manager -> do
           }
   ReflexUtil.reportMissing missingExecutables
   mkdir "-p" PublishSocket.socketsDir
+  now :: Int <- Time.getPOSIXTime <&> round
   R.runHeadlessApp do
+    start <- R.getPostBuild
+    PublishSocket.publishJson env "uptime" (start $> now)
     mode <- Mode.getMode env
     ping_event <- Ping.ping env
     software_feed_event <- SoftwareFeed.softwareFeed env mode
@@ -91,7 +95,6 @@ main = Notify.withManager \watch_manager -> do
                   }
              )
       )
-    start <- R.getPostBuild
     PublishSocket.publish env "mode" (ReflexUtil.taggedAndUpdated mode start <&> show)
     player_events <- Player.playerModule env
     appointments_event <- Calendar.calendar env
