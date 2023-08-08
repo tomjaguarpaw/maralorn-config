@@ -40,7 +40,7 @@ in
         "float,class:launcher"
         "pin,class:launcher"
       ];
-      exec-once = [ (lib.getExe pkgs.kassandra) ];
+      exec-once = [ (lib.getExe pkgs.kassandra-standalone) ];
       exec = [
         "unlock-ssh"
         "systemctl --user restart wallpaper"
