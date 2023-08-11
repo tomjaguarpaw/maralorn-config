@@ -20,7 +20,7 @@ import System.FilePath ((</>))
 Shh.load Shh.Absolute ["readlink", "nix", "nix-diff", "jq"]
 missingExecutables :: IO [FilePath]
 diffIsSmall :: LBS.ByteString -> LBS.ByteString -> IO Bool
-diffIsSmall = \pathA pathB -> (== "[]") <$> (nix_diff "--json" [pathA, pathB] |> jq ".inputsDiff.inputDerivationDiffs" |> Shh.captureTrim)
+diffIsSmall = \pathA pathB -> CommandUtil.tryCmd (nix_diff "--json" [pathA, pathB] |> jq ".inputsDiff.inputDerivationDiffs") <&> (== "[]")
 
 configStale :: R.MonadHeadlessApp t m => Env -> R.Dynamic t Mode -> R.Dynamic t (Set Text) -> m (R.Event t [Warning])
 configStale env mode dirties = do
@@ -38,8 +38,8 @@ configStale env mode dirties = do
         current_commit <- readFileBS (git_dir </> "config/.git/refs/heads/main")
         system_commit <- Exception.try @Exception.IOException do readFileBS "/run/current-system/config-commit"
         modes_commit <- Exception.try do readFileBS (modes_dir </> "config-commit")
-        current_system <- readlink "/run/current-system" |> Shh.captureTrim
-        current_modes <- readlink modes_dir |> Shh.captureTrim
+        current_system <- CommandUtil.tryCmd (readlink "/run/current-system")
+        current_modes <- CommandUtil.tryCmd (readlink modes_dir)
         let stale_config = \case
               (Right commit) | commit == current_commit -> False
               _ -> True
@@ -54,7 +54,7 @@ configStale env mode dirties = do
         if system_stale
           then when (commit_change || system_change) do
             sayErr "Eval system config …"
-            next_system <- nix "eval" "--raw" [s|#{home}/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel.drvPath|] |> Shh.captureTrim
+            next_system <- CommandUtil.tryCmd $ nix "eval" "--raw" [s|#{home}/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel.drvPath|]
             sayErr "System eval finished."
             diff_is_small <- diffIsSmall next_system current_system
             atomically $ writeTVar system_dirty_var (not diff_is_small)
@@ -62,7 +62,7 @@ configStale env mode dirties = do
         if modes_stale
           then when (commit_change || modes_change) do
             sayErr "Eval home config …"
-            next_modes <- nix "eval" "--raw" [s|#{home}/git/config\#homeModes.#{host_name}.drvPath|] |> Shh.captureTrim
+            next_modes <- CommandUtil.tryCmd $ nix "eval" "--raw" [s|#{home}/git/config\#homeModes.#{host_name}.drvPath|]
             sayErr "Home eval finished."
             diff_is_small <- diffIsSmall next_modes current_modes
             atomically $ writeTVar modes_dirty_var (not diff_is_small)

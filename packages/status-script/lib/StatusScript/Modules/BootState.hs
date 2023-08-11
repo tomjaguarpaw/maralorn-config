@@ -3,7 +3,6 @@ module StatusScript.Modules.BootState (bootState) where
 import Maralorn.Prelude
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
-import Shh ((|>))
 import Shh qualified
 import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
@@ -22,8 +21,8 @@ bootState = \env mode -> do
   ReflexUtil.performEventThreaded env (ReflexUtil.taggedAndUpdated mode (R.leftmost [current_system, booted_system])) \case
     Klausur -> pure []
     _ -> do
-      current_kernel <- readlink "/run/current-system/kernel" |> Shh.captureTrim
-      booted_kernel <- readlink "/run/booted-system/kernel" |> Shh.captureTrim
+      current_kernel <- CommandUtil.tryCmd (readlink "/run/current-system/kernel")
+      booted_kernel <- CommandUtil.tryCmd (readlink "/run/booted-system/kernel")
       pure
         [ MkWarning
           { description = Just "Booted kernel stale"

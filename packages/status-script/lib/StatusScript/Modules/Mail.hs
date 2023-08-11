@@ -4,7 +4,6 @@ import Data.Text qualified as Text
 import Maralorn.Prelude
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
-import Shh ((|>))
 import Shh qualified
 import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
@@ -52,6 +51,11 @@ mail env mode = do
           env
           (ReflexUtil.taggedAndUpdated mode notmuch_update)
           \case
-            mode' | on_mode mode' -> (notmuch "search" folder |> Shh.captureTrim) <&> decodeUtf8 % Text.lines %> mkWarning subgroup
+            mode'
+              | on_mode mode' ->
+                  CommandUtil.tryCmd (notmuch "search" folder)
+                    <&> decodeUtf8
+                    % Text.lines
+                    %> mkWarning subgroup
             _ -> pure []
   ReflexUtil.concatEvents events

@@ -6,7 +6,6 @@ import Data.Text qualified as Text
 import Maralorn.Prelude
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
-import Shh ((|>))
 import Shh qualified
 import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
@@ -23,7 +22,7 @@ playerModule = \env -> do
   CommandUtil.reportMissing missingExecutables
   player_event <- ReflexUtil.processLines env (playerctl "metadata" "-F" "-f" playerCTLFormat)
   ReflexUtil.performEventThreaded env player_event $ const do
-    player_states <- playerctl "metadata" "-a" "-f" playerCTLFormat |> Shh.captureTrim
+    player_states <- CommandUtil.tryCmd (playerctl "metadata" "-a" "-f" playerCTLFormat)
     mpd_host <-
       [i|#{home}/.config/mpDris2/mpDris2.conf|]
         & readFileBS
