@@ -58,7 +58,7 @@
     (box :orientation "vertical" :space-evenly false (for keyboard in {keymap != "German (Neo 2)" ? [1] : []}
       (box :class "component small" (image :path "icons/keyboard.png") (label :text keymap))
     ))
-    (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" ? [EWW_BATTERY.BAT0] : []}
+    (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" && EWW_BATTERY.BAT0.status != "Charging" ? [EWW_BATTERY.BAT0] : []}
       (box :class "component" (image :path "icons/battery-alert.png") (label :text "${battery.capacity}%"))
     ))
   )
