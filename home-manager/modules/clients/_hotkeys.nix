@@ -172,7 +172,7 @@ in
       { Tmate = "tmate"; }
     ];
   }
-  { "Monitor (btop)" = "btop"; }
+  { "Monitor" = "htop"; }
   {
     W17 = {
       Strichliste = "firefox https://strichliste.w17.io/#!/user/56";
