@@ -50,7 +50,6 @@ let
     final: prev:
     lib.mapAttrs (_: package: package final) myHaskellPackages
     // {
-      streamly = final.streamly_0_9_0;
       nixfmt = overrideCabal (_: { src = inputs.nixfmt; }) prev.nixfmt;
     }
   ;
