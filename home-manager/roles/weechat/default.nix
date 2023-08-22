@@ -110,7 +110,9 @@ in
       log2rss = {
         Unit.Description = "weechat2rss";
         Service = {
-          ExecStart = "${pkgs.rssfeeds}/bin/weechat2rss /var/www/rss/chats.xml";
+          ExecStart = "${
+              lib.getBin pkgs.rssfeeds
+            }/bin/weechat2rss /var/www/rss/chats.xml";
           Type = "oneshot";
         };
       };
@@ -118,7 +120,9 @@ in
         Unit.Description = "Weechat Tmux Session";
         Service = {
           Type = "forking";
-          ExecStart = "${pkgs.tmux}/bin/tmux -L weechat -2 new-session -d -s irc -n weechat '${weechat}/bin/weechat'";
+          ExecStart = "${
+              lib.getExe pkgs.tmux
+            } -L weechat -2 new-session -d -s irc -n weechat '${lib.getExe weechat}'";
           Restart = "always";
         };
         Install.WantedBy = [ "default.target" ];
