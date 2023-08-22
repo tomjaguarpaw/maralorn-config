@@ -14,7 +14,7 @@ import StatusScript.Warnings (Warning (..))
 import System.FilePath ((</>))
 
 softwareFeed ::
-  R.MonadHeadlessApp t m =>
+  (R.MonadHeadlessApp t m) =>
   Env ->
   R.Dynamic t Mode ->
   m (R.Event t [Warning])

@@ -52,7 +52,7 @@ getInbox = do
     toList tasks
       & filter \task -> Set.null task.tags && not (HashMap.member task.uuid children) && not (HashSet.member task.uuid inhibitedTasks)
 
-closure :: Hashable a => HashMap a (HashSet a) -> a -> HashSet a
+closure :: (Hashable a) => HashMap a (HashSet a) -> a -> HashSet a
 closure mapping = go
  where
   go = \x ->

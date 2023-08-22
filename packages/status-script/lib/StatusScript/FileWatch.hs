@@ -11,7 +11,7 @@ import StatusScript.ReflexUtil qualified as ReflexUtil
 import System.FSNotify qualified as Notify
 import System.FilePath ((</>))
 
-watchDir :: R.MonadHeadlessApp t m => Env -> FilePath -> Bool -> Notify.ActionPredicate -> m (R.Event t Notify.Event)
+watchDir :: (R.MonadHeadlessApp t m) => Env -> FilePath -> Bool -> Notify.ActionPredicate -> m (R.Event t Notify.Event)
 watchDir env path recursive predicate = do
   let watch = if recursive then Notify.watchTree else Notify.watchDir
   R.newEventWithLazyTriggerWithOnComplete \callback -> do
@@ -21,7 +21,7 @@ watchDir env path recursive predicate = do
       atomically $ putTMVar finish_callback cb
     pure $ env.fork [i|Deactivating watches for dir #{path}|] $ join $ atomically $ takeTMVar finish_callback
 
-watchFile :: R.MonadHeadlessApp t m => Env -> FilePath -> FilePath -> m (R.Event t ())
+watchFile :: (R.MonadHeadlessApp t m) => Env -> FilePath -> FilePath -> m (R.Event t ())
 watchFile env dir file = do
   start <- R.getPostBuild
   watchDir
@@ -32,7 +32,7 @@ watchFile env dir file = do
     <&> void
       % (<> start)
 
-watchFileContents :: R.MonadHeadlessApp t m => Env -> FilePath -> FilePath -> m (R.Event t Text)
+watchFileContents :: (R.MonadHeadlessApp t m) => Env -> FilePath -> FilePath -> m (R.Event t Text)
 watchFileContents env dir file = do
   event_event <- watchFile env dir file
   content_event <- ReflexUtil.performEventThreaded env event_event \_ -> do

@@ -37,7 +37,7 @@ data Severity = Debug | Info | Warning | Error deriving stock (Show, Read, Eq, O
 class ReflexLoggable l where
   useLogString :: (Text -> a -> Text) -> l a -> l a
 
-instance R.Reflex t => ReflexLoggable (R.Dynamic t) where
+instance (R.Reflex t) => ReflexLoggable (R.Dynamic t) where
   useLogString f d =
     let e' = traceEventWith (toString . f "updated Dynamic") $ updated d
         getV0 = do
@@ -45,7 +45,7 @@ instance R.Reflex t => ReflexLoggable (R.Dynamic t) where
           Trace.trace (toString $ f "initialized Dynamic" x) $ return x
      in unsafeBuildDynamic getV0 e'
 
-instance R.Reflex t => ReflexLoggable (R.Event t) where
+instance (R.Reflex t) => ReflexLoggable (R.Event t) where
   useLogString f e = traceEventWith (toString . f "triggered Event") e
 
 logR ::
@@ -108,7 +108,7 @@ traceID = unsafePerformIO . newMVar $ 0
 setLogLevel :: Maybe Severity -> IO ()
 setLogLevel = void . swapMVar logLevel
 
-severeEnough :: MonadIO m => Severity -> m Bool
+severeEnough :: (MonadIO m) => Severity -> m Bool
 severeEnough severity = severeEnough' <$> readMVar logLevel
  where
   severeEnough' (Just minSeverity) | minSeverity <= severity = True

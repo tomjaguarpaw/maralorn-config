@@ -165,7 +165,7 @@ newCache = atomically $ Cache <$> STM.new <*> STM.new <*> STM.new
 
 makeLabels ''Cache
 
-foldToSeq :: Monad m => SerialT m a -> m (Seq a)
+foldToSeq :: (Monad m) => SerialT m a -> m (Seq a)
 foldToSeq = S.foldl' (|>) mempty
 
 setList :: Cache -> Text -> CalendarList -> IO ()
@@ -183,11 +183,11 @@ setList cache uid list = do
       now <- getCurrentTime
       setModificationTime (dropFileName filename) now
  where
-  insertList :: Traversable m => m VCalendar -> Maybe (m VCalendar)
+  insertList :: (Traversable m) => m VCalendar -> Maybe (m VCalendar)
   insertList cals = if modified then Just ret else Nothing
    where
     (ret, modified) = runState (insertListS cals) False
-  insertListS :: Traversable m => m VCalendar -> State Bool (m VCalendar)
+  insertListS :: (Traversable m) => m VCalendar -> State Bool (m VCalendar)
   insertListS = mapM \calendar -> do
     newEvents <- forM (vcEvents calendar) \event ->
       if uidValue (veUID event) == toLazy uid
@@ -222,7 +222,7 @@ unmaskICSText = maybe "" (uncurry f) . LBS.uncons
   w 59 rest = ";" <> unmaskICSText rest
   w _ rest = unmaskICSText rest
 
-tasksFieldName :: IsString t => t
+tasksFieldName :: (IsString t) => t
 tasksFieldName = "X-KASSANDRA-TASKS"
 
 isTasksOther :: OtherProperty -> Bool

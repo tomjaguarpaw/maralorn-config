@@ -12,7 +12,7 @@ import StatusScript.Warnings (Warning (..))
 hosts :: [Text]
 hosts = ["hera", "fluffy"]
 
-ping :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Warning])
+ping :: (R.MonadHeadlessApp t m) => Env -> m (R.Event t [Warning])
 ping = \env -> do
   tick <- ReflexUtil.tickEvent 15
   ReflexUtil.performEventThreaded env tick \_ -> do

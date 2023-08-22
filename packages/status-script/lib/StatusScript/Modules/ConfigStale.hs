@@ -22,7 +22,7 @@ missingExecutables :: IO [FilePath]
 diffIsSmall :: LBS.ByteString -> LBS.ByteString -> IO Bool
 diffIsSmall = \pathA pathB -> CommandUtil.tryCmd (nix_diff "--json" [pathA, pathB] |> jq ".inputsDiff.inputDerivationDiffs") <&> (== "[]")
 
-configStale :: R.MonadHeadlessApp t m => Env -> R.Dynamic t Mode -> R.Dynamic t (Set Text) -> m (R.Event t [Warning])
+configStale :: (R.MonadHeadlessApp t m) => Env -> R.Dynamic t Mode -> R.Dynamic t (Set Text) -> m (R.Event t [Warning])
 configStale env mode dirties = do
   CommandUtil.reportMissing missingExecutables
   commit_var <- newTVarIO ""

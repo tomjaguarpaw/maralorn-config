@@ -43,7 +43,7 @@ infixl 9 %
 f % g = g . f
 
 infixl 9 %>
-(%>) :: Functor f => (a -> f b) -> (b -> c) -> a -> f c
+(%>) :: (Functor f) => (a -> f b) -> (b -> c) -> a -> f c
 f %> g = fmap g . f
 
 infixl 9 %>>

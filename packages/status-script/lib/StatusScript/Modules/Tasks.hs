@@ -13,7 +13,7 @@ import System.FilePath ((</>))
 import Taskwarrior.Task as Task
 
 tasks ::
-  R.MonadHeadlessApp t m =>
+  (R.MonadHeadlessApp t m) =>
   Env ->
   R.Dynamic t Mode ->
   m (R.Event t [Warning])

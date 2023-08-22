@@ -19,7 +19,7 @@ import StatusScript.ReflexUtil qualified as ReflexUtil
 
 Shh.load Shh.Absolute ["pw-dump"]
 missingExecutables :: IO [FilePath]
-audioUpdateEvent :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Aeson.Value])
+audioUpdateEvent :: (R.MonadHeadlessApp t m) => Env -> m (R.Event t [Aeson.Value])
 audioUpdateEvent = \env -> do
   CommandUtil.reportMissing missingExecutables
   line <- ReflexUtil.processLines env (pw_dump "-m")
@@ -76,13 +76,13 @@ type PipeWireObjectDelete =
   info: Maybe Bool
 } |]
 
-fromJSON :: Aeson.FromJSON a => Value -> Maybe a
+fromJSON :: (Aeson.FromJSON a) => Value -> Maybe a
 fromJSON =
   Aeson.fromJSON % \case
     Aeson.Success x -> Just x
     _ -> Nothing
 
-extractJSON :: Aeson.FromJSON a => [Aeson.Key] -> Value -> Maybe a
+extractJSON :: (Aeson.FromJSON a) => [Aeson.Key] -> Value -> Maybe a
 extractJSON = \path obj -> foldlM (\obj' key -> extractOneJSON key obj') obj path >>= fromJSON
 
 extractOneJSON :: Aeson.Key -> Value -> Maybe Value
@@ -94,7 +94,7 @@ aliases = [("Q30", "Overears"), ("USB PnP Audio Device Pro", "USB Mic"), ("Stars
 mkInfos :: IntMap (Schema.Object PipeWireObject) -> [AudioEndPoint]
 mkInfos = \objects ->
   let
-    get_info :: Aeson.FromJSON a => Int -> [Aeson.Key] -> Maybe a
+    get_info :: (Aeson.FromJSON a) => Int -> [Aeson.Key] -> Maybe a
     get_info = \id' path ->
       IntMap.lookup id' objects
         >>= [get|.info|] % extractJSON path
@@ -170,7 +170,7 @@ mkInfos = \objects ->
           )
       & filter \endpoint -> length endpoint.clients + length endpoint.icons > 1
 
-audioInfos :: R.MonadHeadlessApp t m => R.Event t [Aeson.Value] -> m (R.Event t [AudioEndPoint])
+audioInfos :: (R.MonadHeadlessApp t m) => R.Event t [Aeson.Value] -> m (R.Event t [AudioEndPoint])
 audioInfos = \trigger_event ->
   R.foldDyn foldPipeWireEvents mempty trigger_event
     <<&>> mkInfos

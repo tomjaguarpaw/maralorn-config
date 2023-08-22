@@ -14,7 +14,7 @@ import System.FilePath ((</>))
 
 Shh.load Shh.Absolute ["git"]
 missingExecutables :: IO [FilePath]
-pullNeeded :: R.MonadHeadlessApp t m => Env -> R.Dynamic t Mode -> m (R.Event t [Warning])
+pullNeeded :: (R.MonadHeadlessApp t m) => Env -> R.Dynamic t Mode -> m (R.Event t [Warning])
 pullNeeded = \env mode -> do
   CommandUtil.reportMissing missingExecutables
   tick <- ReflexUtil.tickEvent (5 * 60)

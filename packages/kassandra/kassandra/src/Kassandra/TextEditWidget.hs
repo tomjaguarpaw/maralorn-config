@@ -14,17 +14,17 @@ import Kassandra.Types (Widget)
 import Reflex qualified as R
 import Reflex.Dom qualified as D
 
-lineWidget :: Widget t m => Text -> m (R.Event t Text)
+lineWidget :: (Widget t m) => Text -> m (R.Event t Text)
 lineWidget text = enterTextWidget text (showText text)
 
-createTextWidget :: Widget t m => m (R.Event t ()) -> m (R.Event t Text)
+createTextWidget :: (Widget t m) => m (R.Event t ()) -> m (R.Event t Text)
 createTextWidget = enterTextWidget ""
 
-enterTextWidget :: Widget t m => Text -> m (R.Event t ()) -> m (R.Event t Text)
+enterTextWidget :: (Widget t m) => Text -> m (R.Event t ()) -> m (R.Event t Text)
 enterTextWidget text altLabel = stateWidget False (selectWidget text altLabel)
 
 selectWidget ::
-  Widget t m =>
+  (Widget t m) =>
   Text ->
   m (R.Event t ()) ->
   Bool ->
@@ -37,13 +37,13 @@ selectWidget _ altLabel False = do
   pure (R.never, True <$ editEvent)
 
 -- ! Takes a dynamic text and fires an event, when the user wants to edit it.
-showText :: Widget t m => Text -> m (R.Event t ())
+showText :: (Widget t m) => Text -> m (R.Event t ())
 showText text = do
   D.text text
   button "edit slimButton" $ icon "" "edit"
 
 -- ! Prompts the user for a text edit and fires an event, when the user confirms the result. Nothing is cancelation.
-editText :: Widget t m => Text -> m (R.Event t (Maybe Text))
+editText :: (Widget t m) => Text -> m (R.Event t (Maybe Text))
 editText text = D.elClass "span" "activeEdit" $ do
   textinput <-
     D.inputElement $ D.def & lensVL D.inputElementConfig_initialValue .~ text

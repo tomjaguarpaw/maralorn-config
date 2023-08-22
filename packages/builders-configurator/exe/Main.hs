@@ -74,7 +74,7 @@ runWithoutConnectivity :: Eff (Ping : es) a -> Eff es a
 runWithoutConnectivity = Eff.interpret $ \_ -> \case
   CheckConnectivity _ -> pure False
 
-runWithPing :: Eff.IOE :> es => Eff (Ping : es) a -> Eff es a
+runWithPing :: (Eff.IOE :> es) => Eff (Ping : es) a -> Eff es a
 runWithPing = Eff.interpret $ \_ -> \case
   CheckConnectivity host_name -> liftIO $ Exception.handle (\(_ :: SomeException) -> pure False) do
     let reqUrl = Req.http (sshHostToDNS host_name)
@@ -94,7 +94,7 @@ commaList = Text.intercalate ","
 builderLine :: (Text, Natural, Natural) -> Text
 builderLine (hostName, maxJobs, speed_factor) = [i|ssh-ng://#{hostName} #{commaList systems} - #{maxJobs} #{speed_factor} #{commaList supportedFeatures} - -|]
 
-testBuilders :: Ping :> es => [(Text, Reachable)] -> Eff es [Text]
+testBuilders :: (Ping :> es) => [(Text, Reachable)] -> Eff es [Text]
 testBuilders =
   fmap (fmap fst) . filterM \case
     (_, Always) -> pure True
@@ -119,7 +119,7 @@ main = do
         [host', "--force"] -> (into host', False, False)
         [host', "--without-connection"] -> (into host', True, False)
         _ -> error [i|Unknown arguments: #{args}|]
-      builder_tries :: Ping :> es => Eff es [Text]
+      builder_tries :: (Ping :> es) => Eff es [Text]
       builder_tries = testBuilders $ fromMaybe (error [i|#{host} not found in builderConfigs.|]) $ Map.lookup (into host) builderConfigs
   builders <- if allow_empty && host == "zeus" then pure [] else Eff.runEff $ (if withoutConnection then runWithoutConnectivity else runWithPing) builder_tries
   (path, handle) <- IO.openTempFile "/tmp" "machines"

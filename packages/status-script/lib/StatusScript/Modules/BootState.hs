@@ -13,7 +13,7 @@ import StatusScript.Warnings (Warning (..))
 
 Shh.load Shh.Absolute ["readlink"]
 missingExecutables :: IO [FilePath]
-bootState :: R.MonadHeadlessApp t m => Env -> R.Dynamic t Mode -> m (R.Event t [Warning])
+bootState :: (R.MonadHeadlessApp t m) => Env -> R.Dynamic t Mode -> m (R.Event t [Warning])
 bootState = \env mode -> do
   CommandUtil.reportMissing missingExecutables
   current_system <- FileWatch.watchFile env "/run/" "current-system"

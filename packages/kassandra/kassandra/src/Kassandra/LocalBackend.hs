@@ -25,7 +25,7 @@ data LocalBackendRequest = LocalBackendRequest
 makeLabels ''LocalBackendRequest
 
 localClientSocket ::
-  WidgetIO t m =>
+  (WidgetIO t m) =>
   TQueue LocalBackendRequest ->
   UserConfig ->
   m (ClientSocket t m)

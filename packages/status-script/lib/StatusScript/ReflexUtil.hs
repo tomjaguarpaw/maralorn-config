@@ -8,12 +8,12 @@ import Shh ((|>))
 import Shh qualified
 import StatusScript.Env (Env (..))
 
-tickEvent :: R.MonadHeadlessApp t m => Int -> m (R.Event t ())
+tickEvent :: (R.MonadHeadlessApp t m) => Int -> m (R.Event t ())
 tickEvent delay =
   R.tickLossyFromPostBuildTime (realToFrac delay)
     <&> void
 
-taggedAndUpdated :: R.Reflex t => R.Dynamic t a -> R.Event t b -> R.Event t a
+taggedAndUpdated :: (R.Reflex t) => R.Dynamic t a -> R.Event t b -> R.Event t a
 taggedAndUpdated = \dynamic event -> R.leftmost [R.updated dynamic, R.tag (R.current dynamic) event]
 
 oneSecond :: Int
@@ -26,7 +26,7 @@ concatEvents =
     >=> R.holdUniqDyn
     %> R.updated
 
-processLines :: forall t m. R.MonadHeadlessApp t m => Env -> Shh.Proc () -> m (R.Event t ByteString)
+processLines :: forall t m. (R.MonadHeadlessApp t m) => Env -> Shh.Proc () -> m (R.Event t ByteString)
 processLines = \env command -> do
   (event, trigger) <- R.newTriggerEvent
   liftIO $ env.fork "Processing lines" $ forever do
@@ -38,7 +38,7 @@ processLines = \env command -> do
   pure event
 
 -- Call IO action in a separate thread. If multiple events fire never run two actions in parallel and if more than one action queues up, only run the latest.
-performEventThreaded :: R.MonadHeadlessApp t m => Env -> R.Event t a -> (a -> IO b) -> m (R.Event t b)
+performEventThreaded :: (R.MonadHeadlessApp t m) => Env -> R.Event t a -> (a -> IO b) -> m (R.Event t b)
 performEventThreaded env event action = do
   runnerState <- liftIO newEmptyTMVarIO
   (out_event, callback) <- R.newTriggerEvent
