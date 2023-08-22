@@ -1,4 +1,9 @@
-{ pkgs, config, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 let
   pythia-path = "${config.home.homeDirectory}/documents/pythia";
   pythia = pkgs.writeShellScriptBin "pythia" ''
@@ -25,7 +30,7 @@ let
             time.sleep(0.1)
   '';
   fortune = ''
-    ${pkgs.fortune}/bin/fortune | ${run-printslow}
+    ${lib.getExe pkgs.fortune} | ${run-printslow}
     echo
     sleep 5s
   '';
@@ -36,13 +41,13 @@ let
     ${fortune}
     ${fortune}
   '';
-  run-pythia = "${pythia}/bin/pythia";
-  run-printslow = "${printslow}/bin/printslow";
+  run-pythia = lib.getExe pythia;
+  run-printslow = lib.getExe printslow;
   hold = "echo -n '>'; read a;";
-  dong = "${pkgs.mpv}/bin/mpv dong.ogg &> /dev/null &";
+  dong = "${lib.getExe pkgs.mpv} dong.ogg &> /dev/null &";
   meditate = pkgs.writeShellScriptBin "meditate" ''
     cd ${pythia-path}
-    start=`${pkgs.taskwarrior}/bin/task calc now`
+    start=`${lib.getExe pkgs.taskwarrior} calc now`
     mpv background.ogg &> /dev/null &
     ${run-printslow} << EOF
     Hallo Malte,
@@ -96,8 +101,8 @@ let
     ${threefortunes}
     ${dong}
     echo Dauer der Meditation | ${run-printslow}
-    ${pkgs.taskwarrior}/bin/task calc now-$start
-    ${pkgs.taskwarrior}/bin/task gen_id:meditation done
+    ${lib.getExe pkgs.taskwarrior} calc now-$start
+    ${lib.getExe pkgs.taskwarrior} gen_id:meditation done
     ${hold}
     exit
   '';

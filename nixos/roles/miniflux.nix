@@ -48,7 +48,9 @@ in
         ${
           lib.getExe pkgs.mastodon_digest
         } -o /var/www/rss/mastodon/$now-tags -n 24 -t all -f list:4160
-        ${pkgs.rssfeeds}/bin/mastodon2rss /var/www/rss/mastodon.xml /var/www/rss/mastodon
+        ${
+          lib.getBin pkgs.rssfeeds
+        }/bin/mastodon2rss /var/www/rss/mastodon.xml /var/www/rss/mastodon
       '';
       serviceConfig = {
         Type = "oneshot";

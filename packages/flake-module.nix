@@ -2,7 +2,10 @@
 let
   stable-pkgs = inputs.nixos-stable.legacyPackages.x86_64-linux;
   unstable-pkgs = inputs.nixos-unstable.legacyPackages.x86_64-linux;
-  inherit (unstable-pkgs.haskell.lib.compose) overrideCabal;
+  inherit (unstable-pkgs.haskell.lib.compose)
+    overrideCabal
+    enableSeparateBinOutput
+  ;
   includePatterns = [
     ".hs"
     ".cabal"
@@ -37,6 +40,7 @@ let
             ${stable-pkgs.diffutils}/bin/diff -uw default.nix fresh-default.nix
             echo "default.nix confirmed to be up-to-date."
           '';
+          enableSeparateBinOutput = old.isExecutable or false;
         }
         // overrides old
       ))

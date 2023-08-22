@@ -42,7 +42,7 @@ in
         Unit.Description = "Mail to rss exporter";
         Service = {
           Environment = "PATH=${lib.makeBinPath [ pkgs.coreutils ]}";
-          ExecStart = "${mail2rss}/bin/mail2rss";
+          ExecStart = lib.getExe mail2rss;
           Type = "oneshot";
         };
       };

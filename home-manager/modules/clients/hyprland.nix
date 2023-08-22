@@ -6,7 +6,7 @@
 }@args:
 let
   hotkeys = pkgs.writeShellScriptBin "my-hotkeys" ''
-    ${pkgs.wizards-dialog}/bin/hotkeys ${
+    ${lib.getBin pkgs.wizards-dialog}/bin/hotkeys ${
       pkgs.writeText "hotkeys.yaml" (builtins.toJSON (import ./_hotkeys.nix args))
     }
   '';

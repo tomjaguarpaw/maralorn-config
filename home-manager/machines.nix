@@ -34,7 +34,11 @@ let
   ];
 
   makeConfig = hostName: imports: {
-    imports = imports ++ [ ./roles/default.nix ];
+    imports =
+      imports
+      ++ [ ./roles/default.nix ]
+      ++ flake-inputs.self.nixFromDirs [ ./modules/all ]
+    ;
     m-0.hostName = hostName;
   };
   orga-basics = [

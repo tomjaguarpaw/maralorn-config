@@ -1,8 +1,8 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   dhallFiles = pkgs.runCommand "kassandra-config-src" { } ''
     mkdir $out
-    ${pkgs.kassandra-standalone}/bin/kassandra2 print-types > $out/types.dhall
+    ${lib.getExe pkgs.kassandra-standalone} print-types > $out/types.dhall
     ln -s ${./kassandra}/{config,backend}.dhall $out
     ln -s ${pkgs.privateFile "kassandra-uiConfig.dhall"} $out/uiConfig.dhall
   '';

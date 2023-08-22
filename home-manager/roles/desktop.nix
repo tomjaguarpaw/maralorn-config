@@ -28,14 +28,13 @@
       inherit (pkgs.xorg) xbacklight;
       inherit (pkgs)
         # web
-
         chromium
         mumble
         upower
         speedtest-cli
         acpi
-        # tools & office
 
+        # tools & office
         feh
         gimp
         imagemagick
@@ -47,8 +46,9 @@
         abcde
         beets
         zbar
-        # media
+        graphia
 
+        # media
         ncpamixer
         pavucontrol
         pulseaudio
@@ -59,11 +59,8 @@
         spotdl
         ffmpeg
         syncplay
-        esphome
-        # To flash devices
-
-        esptool
-        # provides esptool.py
+        esphome # To flash devices
+        esptool # provides esptool.py
 
         lm_sensors
         xwayland

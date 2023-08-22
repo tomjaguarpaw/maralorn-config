@@ -105,7 +105,7 @@ in
         -- in the closure.
         loadFromBins (${
           pkgs.haskellList (
-            builtins.map toString (
+            map lib.getBin (
               [
                 pkgs.coreutils
                 pkgs.nix

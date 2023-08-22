@@ -11,7 +11,6 @@
     ../../common
     ./unlock.nix
     ./mpclient.nix
-    ./helix.nix
     ./nvd.nix
   ];
 
@@ -140,46 +139,11 @@
           mpc_cli
           ncmpcpp
           magic-wormhole
-          nix-top
           matrix-commander
           upterm
-          lazygit
-          gh
-        ;
-        inherit (pkgs)
-          go
-          gdb
-          shfmt
-          astyle
-          nodejs
           tasksh
           ledger
           aqbanking
-          graphia
-          nixfmt
-        ;
-        inherit (pkgs.haskellPackages)
-          stack
-          ghcid
-          cabal-install
-          pandoc
-          hlint
-          cabal2nix
-          nix-derivation
-        ;
-        inherit (pkgs.unstableHaskellPackages)
-          haskell-language-server
-          releaser
-          ghc-debug-client
-          eventlog2html
-          fourmolu
-          ghc-debug-brick
-          calligraphy
-          cabal-fmt
-          hledger
-          hledger-ui
-          hledger-web
-          threadscope
         ;
         mytmux = pkgs.writeShellScriptBin "mytmux" ''
           session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)

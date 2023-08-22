@@ -8,5 +8,29 @@
       Restart = "always";
     };
   };
-  home.packages = [ pkgs.ghcWithPackages ];
+  home.packages = builtins.attrValues {
+    inherit (pkgs)
+      ghcWithPackages
+      stack
+      ghcid
+      cabal-install
+      cabal2nix
+      pandoc
+      hlint
+      hledger
+      hledger-ui
+      hledger-web
+    ;
+    inherit (pkgs.unstableHaskellPackages)
+      haskell-language-server
+      ghc-debug-client
+      eventlog2html
+      fourmolu
+      ghc-debug-brick
+      calligraphy
+      cabal-fmt
+      threadscope
+      nix-derivation
+    ;
+  };
 }

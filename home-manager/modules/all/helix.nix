@@ -1,34 +1,5 @@
-{ pkgs, ... }:
-let
-  language-servers = {
-    inherit (pkgs.nodePackages)
-      typescript-language-server
-      vscode-json-languageserver-bin
-      vscode-html-languageserver-bin
-      vscode-css-languageserver-bin
-    ;
-    inherit (pkgs.python3Packages) python-lsp-server;
-    inherit (pkgs)
-      rust-analyzer
-      taplo
-      # toml
-
-      nil
-      # nix
-
-      texlab
-      # latex
-
-      lean
-      yaml-language-server
-      ltex-ls
-    ;
-    # languagetool support for markdown
-  };
-in
 {
   home = {
-    packages = builtins.attrValues language-servers;
     sessionVariables = {
       EDITOR = "hx";
       VISUAL = "hx";

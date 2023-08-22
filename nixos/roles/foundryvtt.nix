@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   name = "foundryvtt";
   stateDir = "/var/lib/${name}";
@@ -28,7 +28,9 @@ in
         if [[ -f "${configFile}" ]]; then
           tempfile=$(mktemp)
           cp "${configFile}" "$tempfile"
-          ${pkgs.jq}/bin/jq ".[0] * .[1]" -s "$tempfile" "${declarativeConfigFile}" > "${configFile}"
+          ${
+            lib.getExe pkgs.jq
+          } ".[0] * .[1]" -s "$tempfile" "${declarativeConfigFile}" > "${configFile}"
         else
           cp "${declarativeConfigFile}" "${configFile}"
         fi
@@ -43,7 +45,9 @@ in
         Restart = "always";
         Environment = "HOME=${stateDir}";
         ExecStart = ''
-          ${pkgs.nodejs}/bin/node ${stateDir}/app/resources/app/main.js --dataPath="${dataDir}"'';
+          ${
+            lib.getExe pkgs.nodejs
+          } ${stateDir}/app/resources/app/main.js --dataPath="${dataDir}"'';
       };
     };
     services = {

@@ -149,7 +149,6 @@ in
         nmap
         ntfsprogs
         parted
-        pass
         psmisc
         pwgen
         python3

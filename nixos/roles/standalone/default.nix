@@ -19,7 +19,6 @@ in
   };
 
   boot = {
-    plymouth.enable = true;
     loader = {
       timeout = 1;
       grub = {
@@ -59,7 +58,9 @@ in
     systemPackages = [ pkgs.updateSystem ];
     etc."nix/machines".source = toString (
       pkgs.runCommand "nix-machines" { } ''
-        cp $(${pkgs.builders-configurator}/bin/builders-configurator ${config.networking.hostName} --without-connection) $out
+        cp $(${
+          lib.getExe pkgs.builders-configurator
+        } ${config.networking.hostName} --without-connection) $out
       ''
     );
   };

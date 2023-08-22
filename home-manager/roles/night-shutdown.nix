@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   night-shutdown =
     pkgs.writeHaskellScript
@@ -37,7 +37,7 @@ in
 {
   systemd.user.services.night-shutdown = {
     Unit.Description = "Night Shutdown";
-    Service.ExecStart = "${night-shutdown}/bin/night-shutdown";
+    Service.ExecStart = lib.getExe night-shutdown;
     Install.WantedBy = [ "graphical-session.target" ];
   };
 }
