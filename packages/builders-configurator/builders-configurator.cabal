@@ -34,7 +34,7 @@ executable builders-configurator
     TypeFamilies
 
   build-depends:
-    , base                ^>=4.16.3.0
+    , base
     , containers
     , effectful
     , effectful-th

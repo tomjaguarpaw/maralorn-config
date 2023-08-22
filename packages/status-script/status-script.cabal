@@ -42,7 +42,7 @@ common common-config
     , aeson
     , aeson-schemas
     , async
-    , base                ^>=4.16.4.0
+    , base
     , bytestring
     , directory
     , exceptions
