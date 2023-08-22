@@ -54,6 +54,7 @@
           check.enable = true;
           settings = {
             tools.nixfmt = lib.mkForce (lib.getBin pkgs.nixfmt);
+            excludes = [ "\\.zsh$" ];
             settings.ormolu.defaultExtensions = [
               "TypeApplications"
               "BangPatterns"
