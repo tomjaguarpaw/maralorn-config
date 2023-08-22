@@ -182,18 +182,17 @@
         "pre-commit-hooks": []
       },
       "locked": {
-        "lastModified": 1686493455,
-        "narHash": "sha256-yDmDDWs/kfwWt92C1NlhzdSYTmVAWHM1Wu7uc24h9Io=",
-        "ref": "main",
-        "rev": "0d914af8a7be3c80adc20bc05ba17c1b9d622228",
-        "revCount": 436,
+        "lastModified": 1692708055,
+        "narHash": "sha256-V3cSw4sYhmOf2Jzt9Q1VK/TIdrRp5QKYPW+Q6/ucvjM=",
+        "ref": "refs/heads/main",
+        "rev": "08d7721028129e5786d647b551a9282f256ee91c",
+        "revCount": 438,
         "type": "git",
-        "url": "ssh://git@hera.m-0.eu/nix-output-monitor"
+        "url": "https://code.maralorn.de/maralorn/nix-output-monitor.git"
       },
       "original": {
-        "ref": "main",
         "type": "git",
-        "url": "ssh://git@hera.m-0.eu/nix-output-monitor"
+        "url": "https://code.maralorn.de/maralorn/nix-output-monitor.git"
       }
     },
     "nixdark": {

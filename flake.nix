@@ -28,7 +28,7 @@
         nixpkgs.follows = "nixos-unstable";
         pre-commit-hooks.follows = "";
       };
-      url = "git+ssh://git@hera.m-0.eu/nix-output-monitor?ref=main";
+      url = "git+https://code.maralorn.de/maralorn/nix-output-monitor.git";
     };
     nixos-mailserver = {
       inputs = {
