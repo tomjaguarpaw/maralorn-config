@@ -122,7 +122,7 @@ in
           Type = "forking";
           ExecStart = "${
               lib.getExe pkgs.tmux
-            } -L weechat -2 new-session -d -s irc -n weechat '${lib.getExe weechat}'";
+            } -L weechat -2 new-session -d -s irc -n weechat '${weechat}/bin/weechat'";
           Restart = "always";
         };
         Install.WantedBy = [ "default.target" ];
