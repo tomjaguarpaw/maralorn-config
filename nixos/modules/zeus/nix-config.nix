@@ -1,11 +1,1 @@
-{
-  nix = {
-    gc = {
-      dates = "weekly";
-      automatic = true;
-    };
-    optimise = {
-      dates = [ "daily" ];
-    };
-  };
-}
+{ nix.optimise.dates = [ "daily" ]; }
