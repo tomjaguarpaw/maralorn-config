@@ -1,4 +1,4 @@
-query MergingPullRequest($commit: GitObjectID!, $owner: String!, $name: String!) {
+query MergingPullRequest($commit: GitObjectID!, $m_owner: String!, $m_name: String!) {
   repository(owner: $owner, name: $name) {
     object(oid: $commit) {
       ... on Commit {

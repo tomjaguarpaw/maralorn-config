@@ -14,27 +14,27 @@ import Data.GraphQL.Bootstrap
 import NixpkgsBot.GraphQL.Scalars
 
 {-----------------------------------------------------------------------------
-\* MergingPullRequest
+-- MergingPullRequest
 
 -- result :: Object MergingPullRequestSchema; throws a GraphQL exception on errors
 result <- runQuery MergingPullRequestQuery
   { _commit = ...
-  , _owner = ...
-  , _name = ...
+  , _m_owner = ...
+  , _m_name = ...
   }
 
 -- result :: GraphQLResult (Object MergingPullRequestSchema)
 result <- runQuerySafe MergingPullRequestQuery
   { _commit = ...
-  , _owner = ...
-  , _name = ...
+  , _m_owner = ...
+  , _m_name = ...
   }
 -----------------------------------------------------------------------------}
 
 data MergingPullRequestQuery = MergingPullRequestQuery
   { _commit :: GitObjectID
-  , _owner :: Text
-  , _name :: Text
+  , _m_owner :: Text
+  , _m_name :: Text
   }
   deriving (Show)
 
@@ -77,7 +77,7 @@ instance GraphQLQuery MergingPullRequestQuery where
 
   getQueryText _ =
     [query|
-    query MergingPullRequest($commit: GitObjectID!, $owner: String!, $name: String!) {
+    query MergingPullRequest($commit: GitObjectID!, $m_owner: String!, $m_name: String!) {
       repository(owner: $owner, name: $name) {
         object(oid: $commit) {
           ... on Commit {
@@ -108,12 +108,12 @@ instance GraphQLQuery MergingPullRequestQuery where
   getArgs query =
     object
       [ "commit" .= _commit (query :: MergingPullRequestQuery)
-      , "owner" .= _owner (query :: MergingPullRequestQuery)
-      , "name" .= _name (query :: MergingPullRequestQuery)
+      , "m_owner" .= _m_owner (query :: MergingPullRequestQuery)
+      , "m_name" .= _m_name (query :: MergingPullRequestQuery)
       ]
 
 {-----------------------------------------------------------------------------
-\* PullRequest
+-- PullRequest
 
 -- result :: Object PullRequestSchema; throws a GraphQL exception on errors
 result <- runQuery PullRequestQuery
