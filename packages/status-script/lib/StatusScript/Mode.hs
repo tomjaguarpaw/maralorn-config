@@ -11,13 +11,11 @@ data Mode = Klausur | Orga | Code | Leisure | Unrestricted deriving (Eq, Ord, Sh
 
 getMode :: (R.MonadHeadlessApp t m) => Env -> m (R.Dynamic t Mode)
 getMode env = do
-  content_event <- FileWatch.watchFileContents env env.homeDir ".mode"
-  R.holdDyn
-    Klausur
-    ( content_event <&> \name ->
-        find (\mode -> name == Text.toLower (show mode)) modes
-          & fromMaybe (error [i|Unknown mode #{name}|])
-    )
+  FileWatch.watchFileContents env env.homeDir ".mode" <<&>> \case
+    Nothing -> Klausur
+    Just name ->
+      find (\mode -> name == Text.toLower (show mode)) modes
+        & fromMaybe (error [i|Unknown mode #{name}|])
 
 modes :: [Mode]
 modes = enumFrom Klausur

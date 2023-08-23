@@ -24,30 +24,33 @@ watchDir env path recursive predicate = do
 watchFile :: (R.MonadHeadlessApp t m) => Env -> FilePath -> FilePath -> m (R.Event t ())
 watchFile env dir file = do
   start <- R.getPostBuild
-  watchDir
-    env
-    dir
-    False
-    (Notify.eventPath % List.isSuffixOf file)
-    <&> void
-      % (<> start)
+  event <-
+    watchDir
+      env
+      dir
+      False
+      (Notify.eventPath % List.isSuffixOf file)
+      <&> void
+  pure $ R.leftmost [start, event]
 
-watchFileContents :: (R.MonadHeadlessApp t m) => Env -> FilePath -> FilePath -> m (R.Event t Text)
+watchFileContents :: (R.MonadHeadlessApp t m) => Env -> FilePath -> FilePath -> m (R.Dynamic t (Maybe Text))
 watchFileContents env dir file = do
   event_event <- watchFile env dir file
-  content_event <- ReflexUtil.performEventThreaded env event_event \_ -> do
-    content <-
-      readFileBS (dir </> file)
-        & Exception.try @Exception.IOException
-        <&> either
-          (const Nothing)
-          ( ByteStringChar.strip
-              % decodeUtf8Strict @Text
-              % hush
-          )
-    unless (isJust content) $ sayErr [i|Failed to read #{dir </> file}|]
-    pure content
-  stored_event <- R.holdDyn Nothing content_event
+  let read = do
+        sayErr [i|Reading #{dir </> file}|]
+        content <-
+          readFileBS (dir </> file)
+            & Exception.try @Exception.IOException
+            <&> either
+              (const Nothing)
+              ( ByteStringChar.strip
+                  % decodeUtf8Strict @Text
+                  % hush
+              )
+        sayErr [i|Read: #{content}|]
+        unless (isJust content) $ sayErr [i|Failed to read #{dir </> file}|]
+        pure content
+  content_event <- ReflexUtil.performEventThreaded env event_event (const read)
+  start_val <- liftIO read
+  stored_event <- R.holdDyn start_val content_event
   R.holdUniqDyn stored_event
-    <&> R.updated
-      % R.fmapMaybe id
