@@ -20,7 +20,10 @@ import System.FilePath ((</>))
 Shh.load Shh.Absolute ["readlink", "nix", "nix-diff", "jq"]
 missingExecutables :: IO [FilePath]
 diffIsSmall :: LBS.ByteString -> LBS.ByteString -> IO Bool
-diffIsSmall = \pathA pathB -> CommandUtil.tryCmd (nix_diff "--json" [pathA, pathB] |> jq ".inputsDiff.inputDerivationDiffs") <&> (== "[]")
+diffIsSmall = \pathA pathB ->
+  CommandUtil.tryCmd
+    (nix_diff "--json" [pathA, pathB] |> jq ".inputsDiff.inputDerivationDiffs")
+    <&> (== "[]")
 
 configStale :: (R.MonadHeadlessApp t m) => Env -> R.Dynamic t Mode -> R.Dynamic t (Set Text) -> m (R.Event t [Warning])
 configStale env mode dirties = do
@@ -54,7 +57,12 @@ configStale env mode dirties = do
         if system_stale
           then when (commit_change || system_change) do
             sayErr "Eval system config …"
-            next_system <- CommandUtil.tryCmd $ nix "eval" "--raw" [s|#{home}/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel.drvPath|]
+            next_system <-
+              CommandUtil.tryCmd $
+                nix
+                  "eval"
+                  "--raw"
+                  [s|#{home}/git/config\#nixosConfigurations.#{host_name}.config.system.build.toplevel.drvPath|]
             sayErr "System eval finished."
             diff_is_small <- diffIsSmall next_system current_system
             atomically $ writeTVar system_dirty_var (not diff_is_small)
@@ -62,7 +70,12 @@ configStale env mode dirties = do
         if modes_stale
           then when (commit_change || modes_change) do
             sayErr "Eval home config …"
-            next_modes <- CommandUtil.tryCmd $ nix "eval" "--raw" [s|#{home}/git/config\#homeModes.#{host_name}.drvPath|]
+            next_modes <-
+              CommandUtil.tryCmd $
+                nix
+                  "eval"
+                  "--raw"
+                  [s|#{home}/git/config\#homeModes.#{host_name}.drvPath|]
             sayErr "Home eval finished."
             diff_is_small <- diffIsSmall next_modes current_modes
             atomically $ writeTVar modes_dirty_var (not diff_is_small)

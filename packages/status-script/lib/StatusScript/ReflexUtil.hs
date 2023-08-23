@@ -7,6 +7,7 @@ import Reflex.Host.Headless qualified as R
 import Shh ((|>))
 import Shh qualified
 import StatusScript.Env (Env (..))
+import System.IO.Unsafe qualified as Unsafe
 
 tickEvent :: (R.MonadHeadlessApp t m) => Int -> m (R.Event t ())
 tickEvent delay =
@@ -37,13 +38,26 @@ processLines = \env command -> do
     sayErr "A processLines command failed and will be restarted in a second."
   pure event
 
+{-# NOINLINE runnerCount #-}
+runnerCount :: TVar Int
+runnerCount = Unsafe.unsafePerformIO $ newTVarIO 0
+
 -- Call IO action in a separate thread. If multiple events fire never run two actions in parallel and if more than one action queues up, only run the latest.
 performEventThreaded :: (R.MonadHeadlessApp t m) => Env -> R.Event t a -> (a -> IO b) -> m (R.Event t b)
 performEventThreaded env event action = do
   runnerState <- liftIO newEmptyTMVarIO
   (out_event, callback) <- R.newTriggerEvent
   R.performEvent_ $ event <&> putTMVar runnerState % atomically % liftIO
-  liftIO $ env.fork "performing event threaded" $ forever do
-    input <- atomically $ takeTMVar runnerState
+  liftIO $ env.fork "event performing control thread" $ forever do
+    input <- atomically $ do
+      takeTMVar runnerState
+    count <- atomically $ do
+      modifyTVar' runnerCount (+ 1)
+      readTVar runnerCount
+    say [i|Async event starting to count: #{count}|]
     action input >>= callback
+    count <- atomically $ do
+      modifyTVar' runnerCount (+ (-1))
+      readTVar runnerCount
+    say [i|Async event stopped to count: #{count}|]
   pure out_event

@@ -12,6 +12,7 @@ import Control.Concurrent.Async qualified as Async
 import Control.Concurrent.STM qualified as STM
 import Control.Exception qualified as Exception
 import Data.IntMap.Strict qualified as IntMap
+import Data.Map.Strict qualified as Map
 import Data.Time.Clock.POSIX qualified as Time
 import StatusScript.CommandUtil qualified as ReflexUtil
 import StatusScript.Env (Env (..))
@@ -122,8 +123,8 @@ main = Notify.withManager \watch_manager -> do
                 ( do
                     job
                     atomically $ STM.modifyTVar' running_jobs_var (IntMap.delete job_id)
-                    running_jobs <- STM.readTVarIO running_jobs_var
-                    sayErr [i|Exited job #{job_id}: "#{job_name}", running jobs: #{IntMap.size running_jobs}|]
+                    running_jobs <- STM.readTVarIO running_jobs_var <&> toList %> (,1) % Map.fromListWith (+)
+                    sayErr [i|Exited job #{job_id}: "#{job_name}", running jobs: #{running_jobs}|]
                 )
                 \e -> do
                   sayErr [i|In async job "#{job_name}" error: #{e}|]
