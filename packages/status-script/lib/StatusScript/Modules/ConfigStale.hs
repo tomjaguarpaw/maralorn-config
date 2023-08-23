@@ -21,9 +21,11 @@ configStale env mode dirties = do
       config_dirty = dirties <&> Set.member "config"
   commit_event <- FileWatch.watchFile env (git_dir </> "config/.git/refs/heads") "main"
   system_commit_event <- FileWatch.watchFile env "/run/current-system" "config-commit"
+  system_event <- FileWatch.watchFile env "/run" "current-system"
   modes_commit_event <- FileWatch.watchFile env modes_dir "config-commit"
+  modes_event <- FileWatch.watchFile env (home </> ".volatile") "modes"
   tick <- ReflexUtil.tickEvent 30
-  ReflexUtil.performEventThreaded env (ReflexUtil.taggedAndUpdated ((,) <$> mode <*> config_dirty) (R.leftmost [commit_event, system_commit_event, modes_commit_event, tick])) \case
+  ReflexUtil.performEventThreaded env (ReflexUtil.taggedAndUpdated ((,) <$> mode <*> config_dirty) (R.leftmost [commit_event, system_commit_event, system_event, modes_event, modes_commit_event, tick])) \case
     (Klausur, _) -> pure []
     (_, True) -> pure []
     _ -> do
