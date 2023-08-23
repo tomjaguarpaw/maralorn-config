@@ -35,22 +35,18 @@ watchFile env dir file = do
 
 watchFileContents :: (R.MonadHeadlessApp t m) => Env -> FilePath -> FilePath -> m (R.Dynamic t (Maybe Text))
 watchFileContents env dir file = do
-  event_event <- watchFile env dir file
-  let read = do
-        sayErr [i|Reading #{dir </> file}|]
-        content <-
-          readFileBS (dir </> file)
-            & Exception.try @Exception.IOException
-            <&> either
-              (const Nothing)
-              ( ByteStringChar.strip
-                  % decodeUtf8Strict @Text
-                  % hush
-              )
-        sayErr [i|Read: #{content}|]
-        unless (isJust content) $ sayErr [i|Failed to read #{dir </> file}|]
-        pure content
-  content_event <- ReflexUtil.performEventThreaded env event_event (const read)
   start_val <- liftIO read
+  event_event <- watchFile env dir file
+  content_event <- ReflexUtil.performEventThreaded env event_event (const read)
   stored_event <- R.holdDyn start_val content_event
   R.holdUniqDyn stored_event
+ where
+  read =
+    readFileBS (dir </> file)
+      & Exception.try @Exception.IOException
+      <&> either
+        (const Nothing)
+        ( ByteStringChar.strip
+            % decodeUtf8Strict @Text
+            % hush
+        )
