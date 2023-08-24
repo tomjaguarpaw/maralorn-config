@@ -80,6 +80,7 @@ library
     StatusScript.Modules.ConfigPull
     StatusScript.Modules.ConfigStale
     StatusScript.Modules.Git
+    StatusScript.Modules.IdleState
     StatusScript.Modules.Mail
     StatusScript.Modules.Mako
     StatusScript.Modules.Ping

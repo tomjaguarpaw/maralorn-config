@@ -7,6 +7,7 @@
 (deflisten timers            :initial "[]" "bash scripts/listen.sh timers")
 (deflisten bluetooth         :initial "[]" "bash scripts/listen.sh bluetooth")
 (deflisten audio             :initial "[]" "bash scripts/listen.sh audio")
+(deflisten idle_state        :initial "{at:0,idle:false}" "bash scripts/listen.sh idle_state")
 (deflisten workspaces        :initial "[]" "bash scripts/get-workspaces.sh")
 (deflisten keymap            :initial "German (Neo 2)" "bash scripts/get-keymap.sh")
 (deflisten current_workspace :initial "1" "bash scripts/get-active-workspace.sh")
@@ -66,6 +67,9 @@
 
 (defwidget bottom []
    (box :orientation "vertical" :space-evenly false :valign "end"
+      (box :orientation "vertical" :space-evenly false (for x in {EWW_TIME - idle_state.at > (idle_state.idle ? 60 : 10) ? [""] : []}
+        (box :class "component" :space-evenly false (box :hexpand true :halign "center" :orientation "vertical" {idle_state.idle ? "idle ${formattime(EWW_TIME - idle_state.at - 1,"%M:%S","UTC")}" : "no idle"}))
+      ))
       (box :orientation "vertical" :space-evenly false (for endpoint in audio
         (box :class "component small ${endpoint.mute ? "disabled" : ""}" :orientation "vertical" :space-evenly false
           (box :orientation "horizontal" :space-evenly false

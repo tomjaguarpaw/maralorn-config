@@ -21,6 +21,7 @@ import StatusScript.Modules.Calendar qualified as Calendar
 import StatusScript.Modules.ConfigPull qualified as ConfigPull
 import StatusScript.Modules.ConfigStale qualified as ConfigStale
 import StatusScript.Modules.Git qualified as Git
+import StatusScript.Modules.IdleState qualified as IdleState
 import StatusScript.Modules.Mail qualified as Mail
 import StatusScript.Modules.Mako qualified as Mako
 import StatusScript.Modules.Ping qualified as Ping
@@ -101,6 +102,8 @@ main = Notify.withManager \watch_manager -> do
     appointments_event <- Calendar.calendar env
     PublishSocket.publishJson env "calendar" appointments_event
     PublishSocket.publishJson env "players" player_events
+    idle_events <- IdleState.idleState env
+    PublishSocket.publishJson env "idle_state" idle_events
     timer_events <- Timer.timers env
     PublishSocket.publishJson env "timers" timer_events
     audio_event <- Audio.audioUpdateEvent env

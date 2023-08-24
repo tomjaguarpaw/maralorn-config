@@ -129,7 +129,10 @@ in
   apollo = daily-driver "apollo" [ ];
   zeus = daily-driver "zeus" (
     [ ./roles/create-plans.nix ]
-    ++ flake-inputs.self.nixFromDirs [ ./modules/impermanent ]
+    ++ flake-inputs.self.nixFromDirs [
+      ./modules/impermanent
+      ./modules/zeus
+    ]
   );
   fluffy.default = makeConfig "fluffy" (
     default
