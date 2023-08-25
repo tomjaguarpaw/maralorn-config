@@ -3,7 +3,13 @@
   systemd.user.services.swayidle = {
     Unit.Description = "swayidle";
     Service = {
-      Environment = "PATH=${lib.makeBinPath [ pkgs.coreutils ]}";
+      Environment = "PATH=${
+          lib.makeBinPath [
+            pkgs.coreutils
+            pkgs.hyprland
+            pkgs.systemd
+          ]
+        }";
       ExecStart = pkgs.writeShellScript "my-swayidle" ''
         ${
           lib.getExe pkgs.swayidle
