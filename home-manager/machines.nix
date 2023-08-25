@@ -126,7 +126,10 @@ let
     };
 in
 {
-  apollo = daily-driver "apollo" [ ];
+  apollo = daily-driver "apollo" (
+    flake-inputs.self.nixFromDirs [ ./modules/apollo ]
+  );
+
   zeus = daily-driver "zeus" (
     [ ./roles/create-plans.nix ]
     ++ flake-inputs.self.nixFromDirs [
