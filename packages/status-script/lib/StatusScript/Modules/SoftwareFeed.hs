@@ -7,7 +7,8 @@ import Reflex.Host.Headless qualified as R
 import Shh qualified
 import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
-import StatusScript.FileWatch qualified as FileWatch
+
+-- import StatusScript.FileWatch qualified as FileWatch
 import StatusScript.Mode (Mode (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
 import StatusScript.Warnings (Warning (..))
@@ -19,7 +20,8 @@ softwareFeed ::
   R.Dynamic t Mode ->
   m (R.Event t [Warning])
 softwareFeed = \env mode -> do
-  db_event <- FileWatch.watchFile env (env.homeDir </> ".local/share/newsboat") "software-updates-cache.db"
+  -- db_event <- FileWatch.watchFile env (env.homeDir </> ".local/share/newsboat") "software-updates-cache.db"
+  db_event <- ReflexUtil.tickEvent 3600
   ReflexUtil.performEventThreaded env (ReflexUtil.taggedAndUpdated mode db_event) \case
     Code ->
       Shh.exe (env.homeDir </> ".nix-profile" </> "bin" </> "software-updates") "-x" "print-unread"
