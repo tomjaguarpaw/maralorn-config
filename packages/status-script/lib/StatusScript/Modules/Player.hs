@@ -2,6 +2,7 @@ module StatusScript.Modules.Player (playerModule) where
 
 import Control.Exception qualified as Exception
 import Data.Aeson qualified as Aeson
+import Data.List qualified as List
 import Data.Text qualified as Text
 import Maralorn.Prelude
 import Reflex qualified as R
@@ -57,9 +58,11 @@ cleanTitle =
     % Text.splitOn " "
     % filter (Text.null % not)
     % Text.unwords
+    % Text.replace " - " "|"
     % Text.splitOn "|"
     %> Text.strip
     % filter (Text.null % not)
+    % List.nub
     % Text.intercalate "\\n"
 
 data PlayerState = MkPlayerState
