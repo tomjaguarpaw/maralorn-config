@@ -1,19 +1,22 @@
 { pkgs, lib, ... }:
+let
+  command = "${lib.getExe pkgs.swaylock} -f";
+in
 {
   services.swayidle = {
     events = [
       {
         event = "before-sleep";
-        command = lib.getExe pkgs.swaylock;
+        inherit command;
       }
       {
         event = "lock";
-        command = lib.getExe pkgs.swaylock;
+        inherit command;
       }
     ];
     timeouts = [ {
       timeout = 300;
-      command = lib.getExe pkgs.swaylock;
+      inherit command;
     } ];
   };
 }
