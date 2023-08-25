@@ -70,7 +70,8 @@
       (box :orientation "vertical" :space-evenly false (for x in {EWW_TIME - idle_state.at > (idle_state.idle ? 60 : 15) ? [""] : []}
         (box :class "component" :space-evenly false :orientation "horizontal"
           (image :path "icons/${idle_state.idle ? "idle" : "no-idle"}.png")
-          (box :halign "end" :hexpand true {idle_state.idle ? formattime(EWW_TIME - idle_state.at - 1,"idle %M:%S","UTC") : "idle off"})
+          (box :halign "center" :hexpand true "idle")
+          (box :halign "end" :hexpand true {idle_state.idle ? formattime(EWW_TIME - idle_state.at - 1,"%M:%S","UTC") : "off"})
         )
       ))
       (box :orientation "vertical" :space-evenly false (for endpoint in audio
