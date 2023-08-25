@@ -24,6 +24,7 @@ import StatusScript.Modules.Git qualified as Git
 import StatusScript.Modules.IdleState qualified as IdleState
 import StatusScript.Modules.Mail qualified as Mail
 import StatusScript.Modules.Mako qualified as Mako
+import StatusScript.Modules.Network qualified as Network
 import StatusScript.Modules.Ping qualified as Ping
 import StatusScript.Modules.Player qualified as Player
 import StatusScript.Modules.SoftwareFeed qualified as SoftwareFeed
@@ -106,6 +107,8 @@ main = Notify.withManager \watch_manager -> do
     PublishSocket.publishJson env "idle_state" idle_events
     timer_events <- Timer.timers env
     PublishSocket.publishJson env "timers" timer_events
+    network_events <- Network.networkState env
+    PublishSocket.publishJson env "networks" network_events
     audio_event <- Audio.audioUpdateEvent env
     audio_info_event <- Audio.audioInfos audio_event
     PublishSocket.publishJson env "audio" audio_info_event

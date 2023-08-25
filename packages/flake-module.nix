@@ -2,10 +2,7 @@
 let
   stable-pkgs = inputs.nixos-stable.legacyPackages.x86_64-linux;
   unstable-pkgs = inputs.nixos-unstable.legacyPackages.x86_64-linux;
-  inherit (unstable-pkgs.haskell.lib.compose)
-    overrideCabal
-    enableSeparateBinOutput
-  ;
+  inherit (unstable-pkgs.haskell.lib.compose) overrideCabal;
   includePatterns = [
     ".hs"
     ".cabal"
@@ -73,7 +70,7 @@ let
       overrides = _: {
         buildDepends = builtins.attrValues {
           inherit (stable-pkgs)
-            git
+            gitMinimal
             khal
             playerctl
             notmuch
@@ -82,8 +79,8 @@ let
             fd
             pipewire
             mako
+            networkmanager
           ;
-          inherit (unstable-pkgs) nix nix-diff;
         };
       };
     };

@@ -83,6 +83,7 @@ library
     StatusScript.Modules.IdleState
     StatusScript.Modules.Mail
     StatusScript.Modules.Mako
+    StatusScript.Modules.Network
     StatusScript.Modules.Ping
     StatusScript.Modules.Player
     StatusScript.Modules.SoftwareFeed

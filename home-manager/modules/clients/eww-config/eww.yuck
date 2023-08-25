@@ -7,6 +7,7 @@
 (deflisten timers            :initial "[]" "bash scripts/listen.sh timers")
 (deflisten bluetooth         :initial "[]" "bash scripts/listen.sh bluetooth")
 (deflisten audio             :initial "[]" "bash scripts/listen.sh audio")
+(deflisten networks          :initial "[]" "bash scripts/listen.sh networks")
 (deflisten idle_state        :initial "{\"at\":1000000000000000,\"idle\":false}" "bash scripts/listen.sh idle_state")
 (deflisten workspaces        :initial "[]" "bash scripts/get-workspaces.sh")
 (deflisten keymap            :initial "German (Neo 2)" "bash scripts/get-keymap.sh")
@@ -153,6 +154,14 @@ ${appointment.description}":""}"
         ))
       )
       (box :orientation "vertical" :class "small" :space-evenly false :valign "end"
+        (box :orientation "vertical" :space-evenly false
+          (for network in networks
+            (box :class "component" :spacing 10 :space-evenly false
+              (image :path "icons/network.png")
+              network
+            )
+          )
+        )
         (box :class "component" :valign "end" :spacing 10 :space-evenly false
           (image :path "icons/memory.png")
           "ram"
