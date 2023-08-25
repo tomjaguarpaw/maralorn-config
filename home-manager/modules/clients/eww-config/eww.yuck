@@ -68,7 +68,7 @@
 (defwidget bottom []
    (box :orientation "vertical" :space-evenly false :valign "end"
       (box :orientation "vertical" :space-evenly false (for x in {EWW_TIME - idle_state.at > (idle_state.idle ? 60 : 15) ? [""] : []}
-        (box :class "component small" :space-evenly false :orientation "horizontal"
+        (box :class "component" :space-evenly false :orientation "horizontal"
           (image :path "icons/${idle_state.idle ? "idle" : "no-idle"}.png")
           (box :halign "end" :hexpand true {idle_state.idle ? formattime(EWW_TIME - idle_state.at - 1,"idle %M:%S","UTC") : "idle off"})
         )
