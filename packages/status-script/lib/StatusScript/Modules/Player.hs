@@ -21,7 +21,9 @@ playerModule :: (R.MonadHeadlessApp t m) => Env -> m (R.Event t [PlayerState])
 playerModule = \env -> do
   let home = env.homeDir
   CommandUtil.reportMissing missingExecutables
-  player_event <- ReflexUtil.processLines env (playerctl "metadata" "-F" "-f" playerCTLFormat)
+  player_event <-
+    ReflexUtil.processLines env (playerctl "metadata" "-F" "-f" playerCTLFormat)
+      >>= R.throttle 0.2
   ReflexUtil.performEventThreaded env player_event $ const do
     player_states <- CommandUtil.tryCmd (playerctl "metadata" "-a" "-f" playerCTLFormat)
     mpd_host <-

@@ -33,7 +33,7 @@ gitEvents env mode = do
   start <- R.getPostBuild
   let git_dir = env.homeDir </> "git"
   CommandUtil.reportMissing missingExecutables
-  dir_event <- FileWatch.watchDir env git_dir False (const True)
+  dir_event <- FileWatch.watchDir env git_dir False (const True) >>= R.throttle 0.2
   let git_dir_change = start <> void dir_event
   git_dirs_event <- ReflexUtil.performEventThreaded env git_dir_change \_ -> Directory.listDirectory git_dir
   let git_dirs_event' =
@@ -47,7 +47,7 @@ gitEvents env mode = do
                 <> void git_dir_event
                 <> void git_refs_event
                 $> [dir]
-          pure $ mconcat dir_update_events
+          R.throttle 0.2 $ mconcat dir_update_events
   git_dir_events <- (<> git_dirs_event) . R.switchDyn <$> R.networkHold (pure R.never) git_dirs_event'
   let dirs_matching git_pred = do
         dirty_updates <- ReflexUtil.performEventThreaded env git_dir_events \dirs -> do

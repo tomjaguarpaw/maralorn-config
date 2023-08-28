@@ -42,7 +42,7 @@ watchFile env dir file = do
             _ -> False
       )
       <&> void
-  pure $ R.leftmost [start, event]
+  R.throttle 0.2 (R.leftmost [start, event])
 
 watchFileContents :: (R.MonadHeadlessApp t m) => Env -> FilePath -> FilePath -> m (R.Dynamic t (Maybe Text))
 watchFileContents env dir file = do
