@@ -17,7 +17,12 @@ watchDir env path recursive predicate = do
   R.newEventWithLazyTriggerWithOnComplete \callback -> do
     finish_callback <- newEmptyTMVarIO
     env.fork [i|Activating watches for dir #{path}|] do
-      cb <- watch env.watch_manager path predicate (`callback` pass)
+      cb <-
+        watch
+          env.watch_manager
+          path
+          predicate
+          (`callback` pass)
       atomically $ putTMVar finish_callback cb
     pure $ env.fork [i|Deactivating watches for dir #{path}|] $ join $ atomically $ takeTMVar finish_callback
 
@@ -29,7 +34,13 @@ watchFile env dir file = do
       env
       dir
       False
-      (Notify.eventPath % List.isSuffixOf file)
+      ( \event ->
+          file `List.isSuffixOf` event.eventPath && case event of
+            Notify.Added{} -> True
+            Notify.Modified{} -> True
+            Notify.Removed{} -> True
+            _ -> False
+      )
       <&> void
   pure $ R.leftmost [start, event]
 
