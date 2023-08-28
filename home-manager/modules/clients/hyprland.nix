@@ -42,8 +42,7 @@ in
       ];
       exec = [
         "unlock-ssh"
-        "systemctl --user restart wallpaper"
-        "systemctl --user restart eww"
+        "systemctl --user restart wallpaper eww swayidle"
       ];
       bind = [
         "$mod, RETURN, exec, ${config.home.sessionVariables.TERMINAL}"
