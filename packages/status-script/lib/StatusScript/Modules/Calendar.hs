@@ -28,7 +28,8 @@ calendar :: (R.MonadHeadlessApp t m) => Env -> m (R.Event t [Appointment])
 calendar = \env -> do
   CommandUtil.reportMissing missingExecutables
   tick <- ReflexUtil.tickEvent (5 * 60)
-  ReflexUtil.performEventThreaded env tick $ const do
+  start <- R.getPostBuild
+  ReflexUtil.performEventThreaded env (start <> tick) $ const do
     appointments <-
       decodeUtf8
         <$> CommandUtil.tryCmd
