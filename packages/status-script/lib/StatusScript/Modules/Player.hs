@@ -55,25 +55,29 @@ playerModule = \env -> do
           )
 
 cleanList :: [Text]
-cleanList = map (\x -> [i|(#{x})|]) raw <> map (\x -> [i|[#{x}]|]) raw <> raw
- where
-  raw =
-    [ "Original Television Soundtrack"
-    , "Original Series Soundtrack"
-    , "Original Motion Picture Soundtrack"
-    , "The Original Game Soundtrack"
-    , "Original Game Soundtrack"
-    , "Original Soundtrack"
-    , "Music From The Netflix Original Series"
-    , "Soundtrack from the Netflix Original Series"
-    , "Critical Role Soundtrack"
-    , "Amazon Original Series Soundtrack"
-    ]
+cleanList =
+  [ "\""
+  , "("
+  , ")"
+  , "["
+  , "]"
+  , "Music From The Netflix Original Series"
+  , "Soundtrack from the Netflix Original Series"
+  , "Amazon Original Series Soundtrack"
+  , "Original Motion Picture Soundtrack"
+  , "Original Television Soundtrack"
+  , "Original Series Soundtrack"
+  , "The Original Game Soundtrack"
+  , "Original Game Soundtrack"
+  , "The Original Soundtrack"
+  , "Original Soundtrack"
+  , "Soundtrack"
+  , "OST"
+  ]
 
 cleanTitle :: Text -> Text
 cleanTitle =
-  Text.replace "\"" ""
-    % foldl' (%) id (map (`Text.replace` "") cleanList)
+  foldl' (%) id (map (`Text.replace` "") cleanList)
     % Text.splitOn " "
     % filter (Text.null % not)
     % Text.unwords
