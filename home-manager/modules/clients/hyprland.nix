@@ -1,22 +1,5 @@
+{ config, ... }:
 {
-  pkgs,
-  config,
-  lib,
-  ...
-}@args:
-let
-  hotkeys = pkgs.writeShellScriptBin "my-hotkeys" ''
-    ${lib.getBin pkgs.wizards-dialog}/bin/hotkeys ${
-      pkgs.writeText "hotkeys.yaml" (builtins.toJSON (import ./_hotkeys.nix args))
-    }
-  '';
-in
-{
-  home.packages = [
-    hotkeys
-    pkgs.slurp
-    pkgs.grim
-  ];
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
@@ -46,9 +29,7 @@ in
       ];
       bind = [
         "$mod, RETURN, exec, ${config.home.sessionVariables.TERMINAL}"
-        "$mod, space, exec, ${config.home.sessionVariables.TERMINAL} -oapp-id=launcher ${
-          lib.getExe hotkeys
-        }"
+        "$mod, space, exec, ${config.home.sessionVariables.TERMINAL} -oapp-id=launcher my-hotkeys"
         "$mod, q, killactive"
         "$mod, left, movefocus, l"
         "$mod, right, movefocus, r"
@@ -67,7 +48,7 @@ in
         "$mod, Next, workspace, +1"
         "SUPER_SHIFT, Prior, movetoworkspace, -1"
         "SUPER_SHIFT, Next, movetoworkspace, +1"
-        "$mod, Print, execr, grim -g $(slurp)"
+        ", Print, execr, screenshot"
       ];
       bindr = [
         "SUPER, SUPER_L, execr, (makoctl mode -r show; eww close overlay) || (eww open overlay; makoctl mode -a show)"
