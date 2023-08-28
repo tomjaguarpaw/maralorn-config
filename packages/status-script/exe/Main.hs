@@ -100,9 +100,9 @@ main = Notify.withManager \watch_manager -> do
       )
     PublishSocket.publish env "mode" (ReflexUtil.taggedAndUpdated mode start <&> show)
     player_events <- Player.playerModule env
+    PublishSocket.publishJson env "players" player_events
     appointments_event <- Calendar.calendar env
     PublishSocket.publishJson env "calendar" appointments_event
-    PublishSocket.publishJson env "players" player_events
     idle_events <- IdleState.idleState env
     PublishSocket.publishJson env "idle_state" idle_events
     timer_events <- Timer.timers env
@@ -125,6 +125,6 @@ main = Notify.withManager \watch_manager -> do
                   Exception.throwIO e
             )
     void $ liftIO $ Async.async $ Exception.catch run_job_queue \(_ :: SomeException) -> trigger ()
-    pure end_event -- We have no exit condition.
+    pure end_event
   sayErr "Exiting because of previous errors."
   exitFailure
