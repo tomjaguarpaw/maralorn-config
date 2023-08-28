@@ -18,15 +18,16 @@ tasks ::
   R.Dynamic t Mode ->
   m (R.Event t [Warning])
 tasks env mode = do
-  tasks_update <- FileWatch.watchFile env (env.homeDir </> ".task") "pending.data" <&> ReflexUtil.taggedAndUpdated mode
-  ReflexUtil.performEventThreaded env tasks_update $
-    \case
-      Orga ->
-        ( Maralorn.Taskwarrior.getInbox <<&>> \task ->
-            MkWarning
-              { description = Just (task.description <> maybe "" (\num -> [i| (#{num})|]) task.id)
-              , group = "inbox"
-              , subgroup = Nothing
-              }
-        )
-      _ -> pure []
+  file_event <-
+    FileWatch.watchFile env (env.homeDir </> ".task") "pending.data"
+  let tasks_update = file_event & ReflexUtil.taggedAndUpdated mode
+  ReflexUtil.performEventThreaded env tasks_update \case
+    Orga ->
+      ( Maralorn.Taskwarrior.getInbox <<&>> \task ->
+          MkWarning
+            { description = Just (task.description <> maybe "" (\num -> [i| (#{num})|]) task.id)
+            , group = "inbox"
+            , subgroup = Nothing
+            }
+      )
+    _ -> pure []
