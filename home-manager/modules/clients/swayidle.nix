@@ -22,6 +22,10 @@ in
         resumeCommand = "${lib.getBin pkgs.hyprland}/bin/hyprctl dispatch dpms on";
       }
       {
+        timeout = 595;
+        command = "${lib.getBin pkgs.hyprland}/bin/hyprctl dispatch dpms on";
+      }
+      {
         timeout = 600;
         command = "${lib.getBin pkgs.systemd}/bin/systemctl suspend";
       }
