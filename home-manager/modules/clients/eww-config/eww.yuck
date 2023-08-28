@@ -24,7 +24,7 @@
     (label :text "${workspaces}${current_workspace}" :visible false)
     (for workspace in workspaces
       (box :class "component ${workspace.id == current_workspace ? "current" : ""} ${workspace.windows > 0 ? "occupied" : "empty"}"
-        (label :text "${arraylength(workspaces) < 4 ? workspace.windows : ""}")
+        (label :text "${arraylength(workspaces) < 4 ? workspace.name : ""}")
       )
     )
   )
