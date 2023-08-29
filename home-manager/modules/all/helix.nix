@@ -105,7 +105,6 @@
         language-server.command = "ltex-ls";
         config.ltex.additionalRules = {
           enablePickyRules = true;
-          motherTongue = "de-DE";
           completionEnabled = true;
         };
       }
@@ -119,7 +118,6 @@
         ];
         config.ltex.additionalRules = {
           enablePickyRules = true;
-          motherTongue = "de-DE";
           completionEnabled = true;
         };
       }
