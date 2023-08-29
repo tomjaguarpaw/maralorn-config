@@ -1,9 +1,13 @@
 { pkgs, lib, ... }:
 let
+  idle-timeout = 150;
   write-idle = pkgs.writeShellScript "write-idle" ''
-    echo "{\"at\": $(${
-      lib.getBin pkgs.coreutils
-    }/bin/date +%s), \"idle\": $1}" > ~/.idle_state
+    echo "{\"contents\": $(${lib.getBin pkgs.coreutils}/bin/date +%s -d "-${
+      toString idle-timeout
+    } seconds"), \"tag\": \"Idle\"}" > ~/.idle_state
+  '';
+  write-active = pkgs.writeShellScript "write-active" ''
+    echo "{\"tag\":\"Active\"}" > ~/.idle_state
   '';
 in
 {
@@ -12,9 +16,9 @@ in
     systemdTarget = "graphical-session.target";
     timeouts = [
       {
-        timeout = 1;
-        command = "${write-idle} true";
-        resumeCommand = "${write-idle} false";
+        timeout = idle-timeout;
+        command = write-idle.outPath;
+        resumeCommand = write-active.outPath;
       }
       {
         timeout = 300;
@@ -22,7 +26,7 @@ in
         resumeCommand = "${lib.getBin pkgs.hyprland}/bin/hyprctl dispatch dpms on";
       }
       {
-        timeout = 595;
+        timeout = 599;
         command = "${lib.getBin pkgs.hyprland}/bin/hyprctl dispatch dpms on";
       }
       {

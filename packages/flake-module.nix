@@ -71,6 +71,7 @@ let
         buildDepends = builtins.attrValues {
           inherit (stable-pkgs)
             gitMinimal
+            systemd
             khal
             playerctl
             notmuch
