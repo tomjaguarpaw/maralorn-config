@@ -89,7 +89,7 @@ extractOneJSON :: Aeson.Key -> Value -> Maybe Value
 extractOneJSON = \key -> fromJSON @(Aeson.Object) >=> KeyMap.lookup key
 
 aliases :: [(Text, Text)]
-aliases = [("Q30", "Overears"), ("USB PnP Audio Device Pro", "USB Mic"), ("Starship/Matisse", "Boxen"), ("HDA ATI HDMI", "TV")]
+aliases = [("Q30", "Overears"), ("USB PnP Audio Device Pro", "USB Mic"), ("HDA ATI HDMI", "HDMI")]
 
 mkInfos :: IntMap (Schema.Object PipeWireObject) -> [AudioEndPoint]
 mkInfos = \objects ->
