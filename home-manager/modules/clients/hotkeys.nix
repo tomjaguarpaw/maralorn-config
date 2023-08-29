@@ -76,6 +76,12 @@ let
         in
         [
           { "Play/Pause" = "${pkgs.playerctl}/bin/playerctl play-pause"; }
+          {
+            "Toggle Output Mute" = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
+          }
+          {
+            "Toggle Input Mute" = "${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
+          }
           { "MPD lokal" = mpdclient "::"; }
           { "Lautstärke" = "ncpamixer"; }
           { Pavucontrol = fork "pavucontrol"; }
