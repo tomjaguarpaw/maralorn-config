@@ -103,7 +103,7 @@ main = Notify.withManager \watch_manager -> do
     PublishSocket.publishJson env "players" player_events
     appointments_event <- Calendar.calendar env
     PublishSocket.publishJson env "calendar" appointments_event
-    idle_events <- IdleState.idleState env <&> R.updated
+    idle_events <- IdleState.idleState env >>= ReflexUtil.updatedAndStart
     PublishSocket.publishJson env "idle_state" idle_events
     timer_events <- Timer.timers env
     PublishSocket.publishJson env "timers" timer_events

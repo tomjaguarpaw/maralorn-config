@@ -1,4 +1,4 @@
-module StatusScript.ReflexUtil (performEventThreaded, concatEvents, processLines, tickEvent, taggedAndUpdated) where
+module StatusScript.ReflexUtil (performEventThreaded, concatEvents, processLines, tickEvent, taggedAndUpdated, updatedAndStart) where
 
 import Control.Concurrent qualified as Conc
 import Maralorn.Prelude
@@ -15,6 +15,9 @@ tickEvent delay =
 
 taggedAndUpdated :: (R.Reflex t) => R.Dynamic t a -> R.Event t b -> R.Event t a
 taggedAndUpdated = \dynamic event -> R.leftmost [R.updated dynamic, R.tag (R.current dynamic) event]
+
+updatedAndStart :: (R.MonadHeadlessApp t m) => R.Dynamic t a -> m (R.Event t a)
+updatedAndStart the_dyn = R.getPostBuild <&> taggedAndUpdated the_dyn
 
 oneSecond :: Int
 oneSecond = 1000000

@@ -19,7 +19,7 @@ data IdleState = Off | Active | Idle Int
 idleState :: (R.MonadHeadlessApp t m) => Env -> m (R.Dynamic t IdleState)
 idleState = \env -> do
   service_running_dyn <-
-    ReflexUtil.processLines env (journalctl "--user" "-efu" "swayidle.service") <<&>> \case
+    ReflexUtil.processLines env (journalctl "--user" "-n1" "-fu" "swayidle.service") <<&>> \case
       line | "Stopped" `BS.isInfixOf` line -> Just False
       line | "Started" `BS.isInfixOf` line -> Just True
       _ -> Nothing
