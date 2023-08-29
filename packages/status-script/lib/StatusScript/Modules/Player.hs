@@ -78,6 +78,7 @@ cleanList =
 cleanTitle :: Text -> Text
 cleanTitle =
   foldl' (%) id (map (`Text.replace` "") cleanList)
+    % Text.replace "Season " "S"
     % Text.splitOn " "
     % filter (Text.null % not)
     % Text.unwords
