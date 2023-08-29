@@ -78,7 +78,7 @@ instance GraphQLQuery MergingPullRequestQuery where
   getQueryText _ =
     [query|
     query MergingPullRequest($commit: GitObjectID!, $m_owner: String!, $m_name: String!) {
-      repository(owner: $owner, name: $name) {
+      repository(owner: $m_owner, name: $m_name) {
         object(oid: $commit) {
           ... on Commit {
             associatedPullRequests(first: 10) {
