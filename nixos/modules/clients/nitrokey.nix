@@ -1,1 +1,5 @@
-{ hardware.nitrokey.enable = true; }
+{ pkgs, ... }:
+{
+  hardware.nitrokey.enable = true;
+  environment.systemPackages = [ pkgs.pynitrokey ];
+}

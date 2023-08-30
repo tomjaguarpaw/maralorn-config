@@ -9,13 +9,18 @@
           allowUnfreePredicate =
             pkg:
             builtins.elem (lib.getName pkg) [
-              # Add additional package names here
               "zoom"
               "discord"
               "steam"
               "steam-run"
               "steam-original"
               "factorio-alpha"
+
+              # Needed for pyntitrokey
+              "nrfutil"
+              "pc-ble-driver-py"
+              "pc-ble-driver"
+              "pypemicro"
             ];
         };
         overlays =
