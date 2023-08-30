@@ -1,1 +1,1 @@
-{ pkgs, ... }: { services.udev.packages = [ pkgs.nitrokey-udev-rules ]; }
+{ hardware.nitrokey.enable = true; }
