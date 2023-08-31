@@ -50,7 +50,7 @@ data Config = MkConfig
 loadCredential :: String -> IO Text
 loadCredential name = do
   credentials_directory <- System.getEnv "CREDENTIALS_DIRECTORY"
-  Text.strip . toText <$> readFile (credentials_directory <> "/" <> name)
+  Text.strip . decodeUtf8 <$> readFileBS (credentials_directory <> "/" <> name)
 
 Persist.share
   [Persist.mkPersist Persist.sqlSettings, Persist.mkMigrate "migrateAll"]
@@ -211,7 +211,7 @@ discoverReachedBranches pr merge = do
   set_arrived (pullRequestBase pr)
   check_arrived_in_next (pullRequestBase pr)
  where
-  set_arrived branch = Persist.insert_ (Arrival (PullRequestKey (pullRequestNumber pr)) (BranchKey branch))
+  set_arrived branch = void $ Persist.insertUnique_ (Arrival (PullRequestKey (pullRequestNumber pr)) (BranchKey branch))
   check_arrived_in_next :: Text -> App ()
   check_arrived_in_next branch = do
     next_branches <- fromMaybe [] <$> getEnv (Map.lookup branch . branches . config)
@@ -320,7 +320,7 @@ getPRInfo pr_key = do
 
 ensureSubscriptions :: Persist.Key PullRequest -> Text -> [Text] -> App ()
 ensureSubscriptions pr_key author missing_subscriptions = do
-  forM_ missing_subscriptions \user -> SQL.insert_ (Subscription user pr_key)
+  forM_ missing_subscriptions \user -> void $ Persist.insertUnique_ (Subscription user pr_key)
   pr_msg <- mapM prHTML =<< getPRInfo pr_key
   forM_ pr_msg \msg -> forM_ missing_subscriptions \user ->
     sendMessageToUser user $ m ("Because you are following user " <> author <> " I subscribed you to the pull request ") <> msg
@@ -375,7 +375,7 @@ notifySubscribers branch =
         sub <- SQL.from $ SQL.table @Subscription
         SQL.where_ (sub ^. SubscriptionPullRequest ==. SQL.val pr)
         pure sub
-    unless (null subscriptions) $ Persist.insert_ (Arrival pr (BranchKey branch))
+    unless (null subscriptions) $ void $ Persist.insertUnique_ (Arrival pr (BranchKey branch))
     pure subscriptions
 
 watchRepo :: App ()
@@ -609,7 +609,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
                 notSubbed <- hasAuthorSub author user
                 if notSubbed
                   then do
-                    Persist.insert_ $ AuthorSubscription author user
+                    void $ Persist.insertUnique_ $ AuthorSubscription author user
                     pure $ m $ "I will now track for you all pull requests by " <> user
                   else pure $ m $ "Okay, but you were already subscribed to pull requests by user " <> user
       MkCommand{command, author, args}
@@ -636,7 +636,7 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
             notSubbed <- hasSub author pr_key
             case pr_msg_may of
               Just prMsg | notSubbed -> do
-                Persist.insert_ $ Subscription author pr_key
+                void $ Persist.insertUnique_ $ Subscription author pr_key
                 pure $ m "I will now track for you the pull request " <> prMsg
               Just prMsg -> pure $ m "Okay, but you were already subscribed to pull request " <> prMsg
               Nothing -> pure $ m $ "Can‘t find information about a pull request with number #" <> show number <> "."

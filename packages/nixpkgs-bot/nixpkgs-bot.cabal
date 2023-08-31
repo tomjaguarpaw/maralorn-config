@@ -38,6 +38,7 @@ common common-config
     TupleSections
     TypeApplications
     TypeFamilies
+    TypeOperators
     UndecidableInstances
 
   build-depends:
