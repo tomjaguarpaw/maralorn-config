@@ -1,27 +1,7 @@
-{
-  mkDerivation,
-  base,
-  containers,
-  errors,
-  exceptions,
-  extra,
-  feed,
-  filepath,
-  filepattern,
-  lens,
-  lib,
-  megaparsec,
-  notmuch,
-  optparse-applicative,
-  purebred-email,
-  relude,
-  say,
-  string-interpolate,
-  tagsoup,
-  text,
-  time,
-  witch,
-  wreq,
+{ mkDerivation, base, containers, errors, exceptions, extra, feed
+, filepath, filepattern, lens, lib, megaparsec, notmuch
+, optparse-applicative, purebred-email, relude, say
+, string-interpolate, tagsoup, text, time, witch, wreq
 }:
 mkDerivation {
   pname = "rssfeeds";
@@ -30,27 +10,9 @@ mkDerivation {
   isLibrary = false;
   isExecutable = true;
   executableHaskellDepends = [
-    base
-    containers
-    errors
-    exceptions
-    extra
-    feed
-    filepath
-    filepattern
-    lens
-    megaparsec
-    notmuch
-    optparse-applicative
-    purebred-email
-    relude
-    say
-    string-interpolate
-    tagsoup
-    text
-    time
-    witch
-    wreq
+    base containers errors exceptions extra feed filepath filepattern
+    lens megaparsec notmuch optparse-applicative purebred-email relude
+    say string-interpolate tagsoup text time witch wreq
   ];
   license = "unknown";
 }

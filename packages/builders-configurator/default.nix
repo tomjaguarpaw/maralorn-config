@@ -1,16 +1,5 @@
-{
-  mkDerivation,
-  base,
-  containers,
-  effectful,
-  effectful-th,
-  lib,
-  relude,
-  req,
-  say,
-  string-interpolate,
-  text,
-  witch,
+{ mkDerivation, base, containers, effectful, effectful-th, lib
+, relude, req, say, string-interpolate, text, witch
 }:
 mkDerivation {
   pname = "builders-configurator";
@@ -19,16 +8,8 @@ mkDerivation {
   isLibrary = false;
   isExecutable = true;
   executableHaskellDepends = [
-    base
-    containers
-    effectful
-    effectful-th
-    relude
-    req
-    say
-    string-interpolate
-    text
-    witch
+    base containers effectful effectful-th relude req say
+    string-interpolate text witch
   ];
   license = lib.licenses.agpl3Plus;
   mainProgram = "builders-configurator";

@@ -63,7 +63,11 @@
             ];
             hooks = {
               hlint.enable = true;
-              nixfmt.enable = true;
+              nixfmt = {
+                enable = true;
+                excludes = generated_nix_files;
+              };
+              cabal2nix.enable = true;
               nil = {
                 enable = true;
                 excludes = generated_nix_files;

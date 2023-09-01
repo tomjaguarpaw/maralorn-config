@@ -1,17 +1,5 @@
-{
-  mkDerivation,
-  aeson,
-  ansi-terminal,
-  base,
-  daemons,
-  haskeline,
-  lib,
-  process,
-  relude,
-  text,
-  witch,
-  wizards,
-  yaml,
+{ mkDerivation, aeson, ansi-terminal, base, daemons, haskeline, lib
+, process, relude, text, witch, wizards, yaml
 }:
 mkDerivation {
   pname = "wizards-dialog";
@@ -20,27 +8,11 @@ mkDerivation {
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [
-    ansi-terminal
-    base
-    haskeline
-    process
-    relude
-    text
-    witch
-    wizards
+    ansi-terminal base haskeline process relude text witch wizards
   ];
   executableHaskellDepends = [
-    aeson
-    ansi-terminal
-    base
-    daemons
-    haskeline
-    process
-    relude
-    text
-    witch
-    wizards
-    yaml
+    aeson ansi-terminal base daemons haskeline process relude text
+    witch wizards yaml
   ];
   license = "AGPL";
   mainProgram = "hotkeys";
