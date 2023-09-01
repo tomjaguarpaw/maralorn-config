@@ -7,7 +7,6 @@ let
     ".hs"
     ".cabal"
     "LICENSE"
-    "default.nix"
     "CHANGELOG.md"
   ];
   cleanCabalPackage =
@@ -28,15 +27,6 @@ let
         old:
         {
           src = cleanSource;
-          preConfigure = ''
-            echo "Checking that default.nix is up-to-date …"
-            ${hpkgs.cabal2nix}/bin/cabal2nix . > fresh-default.nix
-            cp ${cleanSource}/default.nix .
-            chmod u+w default.nix
-            ${lib.getExe hpkgs.nixfmt} fresh-default.nix default.nix
-            ${stable-pkgs.diffutils}/bin/diff -uw default.nix fresh-default.nix
-            echo "default.nix confirmed to be up-to-date."
-          '';
           enableSeparateBinOutput = old.isExecutable or false;
         }
         // overrides old
