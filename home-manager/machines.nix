@@ -146,7 +146,6 @@ in
     default
     ++ orga-basics
     ++ [
-      ./roles/fetch-banking-timer.nix
       ./roles/weechat
       ./roles/mail-sort.nix
       ./roles/mail2rss.nix
