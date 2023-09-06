@@ -156,12 +156,12 @@
       }
       ++ [
         (pkgs.writeShellScriptBin "unlock-keys" ''
-          if ! rbw unlocked; then killall rbw-agent; fi
-          rbw unlock
           ssh-add ~/.ssh/id_ed25519_sk
           ${
             lib.getBin pkgs.dbus
           }/bin/dbus-update-activation-environment --systemd SSH_AUTH_SOCK
+          if ! rbw unlocked; then killall rbw-agent; fi
+          rbw unlock
         '')
         (pkgs.writeShellScriptBin "dingdingding" (builtins.readFile ./signal.sh))
       ];
