@@ -1,5 +1,6 @@
 { pkgs, lib, ... }:
 let
+  command = "${lib.getExe pkgs.swaylock} -f";
   idle-timeout = 150;
   write-idle = pkgs.writeShellScript "write-idle" ''
     echo "{\"contents\": $(${lib.getBin pkgs.coreutils}/bin/date +%s -d "-${
@@ -14,6 +15,16 @@ in
   services.swayidle = {
     enable = true;
     systemdTarget = "graphical-session.target";
+    events = [
+      {
+        event = "before-sleep";
+        inherit command;
+      }
+      {
+        event = "lock";
+        inherit command;
+      }
+    ];
     timeouts = [
       {
         timeout = idle-timeout;
