@@ -174,7 +174,7 @@ let
                 say [i|Uploading configuration to #{host} …|]
                 nix "copy" path "--to" ([i|ssh://#{host}|] :: String)
                 pure (ssh ([i|root@#{host}|] :: String))
-              False -> pure (exe "/run/wrappers/bin/sudo" "-A")
+              False -> pure (exe "/run/wrappers/bin/sudo")
             on_target ["nix-env", "-p", "/nix/var/nix/profiles/system", "--set", path]
             on_target [[i|#{path}/bin/switch-to-configuration|], "switch"]
 
