@@ -1,7 +1,12 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   openssh.authorizedKeys.keys = pkgs.privateValue [ ] "ssh-keys";
-  passwordFile = config.age.secrets.pam-long-password.path;
+  passwordFile = lib.mkDefault config.age.secrets.pam-long-password.path;
 in
 {
   users.users = {
