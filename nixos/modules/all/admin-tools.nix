@@ -1,6 +1,11 @@
 { pkgs, ... }:
 {
   environment.systemPackages = builtins.attrValues {
-    inherit (pkgs) usbutils pciutils htop;
+    inherit (pkgs)
+      usbutils
+      pciutils
+      htop
+      pamtester
+    ;
   };
 }
