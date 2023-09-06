@@ -41,10 +41,7 @@ let
     ;
     m-0.hostName = hostName;
   };
-  orga-basics = [
-    ./roles/mail.nix
-    ./roles/taskwarrior.nix
-  ];
+  orga-basics = [ ./roles/mail.nix ];
   default = [
     ./roles/on-my-machine.nix
     ./roles/systemd-exporter.nix

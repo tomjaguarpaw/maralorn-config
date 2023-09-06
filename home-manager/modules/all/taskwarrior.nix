@@ -18,6 +18,8 @@ in
   };
   systemd.user.services = {
     taskwarrior-sync.Service.ExecStartPre =
+      # script has been generated with
+      # ssh root@hera nixos-taskserver user export maralorn.de maralorn
       (pkgs.writeShellScript "ensure-taskwarrior-login" ''
         set -eu
         export PATH=${
@@ -30,9 +32,7 @@ in
         if [[ -z "$(${
           lib.getExe pkgs.taskwarrior
         } show taskd.credentials | grep maralorn)" ]]; then
-          yes | /bin/sh <(${
-            lib.getExe pkgs.openssh
-          } root@hera nixos-taskserver user export maralorn.de maralorn)
+          yes | /bin/sh /run/agenix/taskwarrior-creds-script
         fi
       '').outPath;
     watch-tasks = {
