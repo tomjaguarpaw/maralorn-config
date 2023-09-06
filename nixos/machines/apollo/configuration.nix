@@ -17,7 +17,6 @@ in
       ../../roles
       ../../roles/fonts.nix
       ../../roles/boot-key.nix
-      ../../roles/standalone
       ../../roles/metal.nix
       (import ../../roles/monitoring/folder-size-exporter.nix {
         folders = [

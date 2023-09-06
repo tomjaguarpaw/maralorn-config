@@ -17,7 +17,6 @@ in
       ../../roles
       ../../roles/fonts.nix
       ../../roles/metal.nix
-      ../../roles/standalone
     ]
     ++ flake-inputs.self.nixFromDirs [
       ../../modules/zeus

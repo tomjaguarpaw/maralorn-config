@@ -11,7 +11,6 @@ in
       ../../roles/fonts.nix
       ../../roles/home-assistant
       ../../roles/metal.nix
-      ../../roles/standalone
       ../../roles/server
     ]
     ++ flake-inputs.self.nixFromDirs [

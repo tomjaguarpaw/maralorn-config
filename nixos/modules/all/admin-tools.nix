@@ -8,4 +8,5 @@
       pamtester
     ;
   };
+  programs.mtr.enable = true;
 }

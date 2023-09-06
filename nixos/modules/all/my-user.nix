@@ -1,14 +1,7 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
+{ config, pkgs, ... }:
 let
   openssh.authorizedKeys.keys = pkgs.privateValue [ ] "ssh-keys";
-  passwordFile = lib.mkIf (config.networking.hostName != "chor-cloud") (
-    lib.mkDefault config.age.secrets.pam-long-password.path
-  );
+  passwordFile = config.age.secrets.pam-long-password.path;
 in
 {
   users.users = {

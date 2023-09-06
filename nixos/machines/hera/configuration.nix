@@ -36,7 +36,6 @@ in
       ../../roles/nixpkgs-bot.nix
       ../../roles/server
       ../../roles/server/init_ssh.nix
-      ../../roles/standalone
       ../../roles/unbound.nix
       ../../roles/update-postgres.nix
       ./boot.nix
