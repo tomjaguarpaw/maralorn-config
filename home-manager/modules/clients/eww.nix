@@ -22,7 +22,6 @@
             pkgs.socat
             pkgs.bash
             pkgs.curl
-            pkgs.openssh
             pkgs.gitMinimal
             pkgs.nix
             pkgs.jaq

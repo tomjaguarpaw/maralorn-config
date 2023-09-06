@@ -60,7 +60,6 @@ let
           ./roles/beets.nix
           ./roles/desktop.nix
           ./roles/firefox.nix
-          ./roles/git-sign.nix
           ./roles/haskell-env.nix
           ./roles/kassandra.nix
           ./roles/khal.nix

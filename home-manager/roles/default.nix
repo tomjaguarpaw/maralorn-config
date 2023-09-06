@@ -155,17 +155,14 @@
         '';
       }
       ++ [
-        (pkgs.writeShellScriptBin "unlock-ssh" ''
+        (pkgs.writeShellScriptBin "unlock-keys" ''
           if ! rbw unlocked; then killall rbw-agent; fi
-          ssh-add <(rbw get "Git SSH Signingkey")
-          SSH_ASKPASS="print-ssh-pw" DISPLAY="a" ssh-add < /dev/null
+          rbw unlock
+          ssh-add ~/.ssh/id_ed25519_sk
           ${
             lib.getBin pkgs.dbus
           }/bin/dbus-update-activation-environment --systemd SSH_AUTH_SOCK
         '')
-        (pkgs.writeShellScriptBin "print-ssh-pw"
-          "rbw get ${config.m-0.hostName}.m-0.eu ssh-key"
-        )
         (pkgs.writeShellScriptBin "dingdingding" (builtins.readFile ./signal.sh))
       ];
     sessionVariables = {

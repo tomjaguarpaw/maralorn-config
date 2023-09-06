@@ -1,5 +1,5 @@
 let
-  signing-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIVmGAML5Ap+5RNPqVnWumAVMoY6xbebvS/KfDeqp8lk";
+  signing-key = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIDl0e4VqFH93mCNwbuz5CcbURbHj+b9DdW3RbzRoKPYLAAAADHNzaDptYXJhbG9ybg=="; # maralorn@nitro-key-1
 in
 {
   programs.git = {

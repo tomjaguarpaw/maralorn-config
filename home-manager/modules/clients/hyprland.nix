@@ -23,10 +23,7 @@
         "float,class:launcher"
         "pin,class:launcher"
       ];
-      exec = [
-        "unlock-ssh"
-        "systemctl --user restart wallpaper eww swayidle"
-      ];
+      exec = [ "systemctl --user restart wallpaper eww swayidle" ];
       bind = [
         "$mod, RETURN, exec, ${config.home.sessionVariables.TERMINAL}"
         "$mod, space, exec, ${config.home.sessionVariables.TERMINAL} -oapp-id=launcher my-hotkeys"
