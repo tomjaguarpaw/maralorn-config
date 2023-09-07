@@ -3,6 +3,13 @@
     enable = true;
     settings = {
       gui.skipUnstageLineWarning = true;
+      os = {
+        edit = "hx {{filename}}";
+        editAtLine = "hx {{filename}}:{{line}}";
+        editAtLineAndWait = "hx {{filename}}:{{line}}";
+        editInTerminal = true;
+        openDirInEditor = "hx {{dir}}";
+      };
       customCommands = [
         {
           key = "s";
