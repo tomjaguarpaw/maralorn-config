@@ -26,9 +26,7 @@ let
         /bin/sh -c \
         "${
           lib.getExe pkgs.yt-dlp
-        } --embed-subs --embed-metadata --embed-chapters \"$1\" && ${
-          lib.getExe pkgs.libnotify
-        } \"Download complete\" \"$filename\""
+        } --embed-subs --embed-metadata --embed-chapters \"$1\"
     else
       echo "File already fetched. Playing …"
       ${lib.getExe config.programs.mpv.finalPackage} "$filename"
