@@ -1,5 +1,5 @@
 {
   security.sudo.extraConfig = ''
-    Defaults timestamp_timeout=1
+    Defaults timestamp_timeout=10
   '';
 }
