@@ -29,7 +29,5 @@ let
   } ];
 in
 {
-  config = {
-    home.packages = map makeUnlocker unlocker;
-  };
+  home.packages = map makeUnlocker unlocker;
 }
