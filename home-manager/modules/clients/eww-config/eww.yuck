@@ -98,7 +98,7 @@
 )
 
 (defwidget sidebar []
-  (centerbox :orientation "vertical" :class {touchrequired ? "blink" :""}
+  (centerbox :orientation "vertical" :class {touchrequired ? "nitro" :""}
     (status)
     (box :orientation "vertical" :space-evenly false (for player in {jq(players,"map(select(.status==\"Playing\"))")}
       (box :class "component" :orientation "vertical" :space-evenly false :spacing 10

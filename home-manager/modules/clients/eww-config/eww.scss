@@ -88,3 +88,18 @@ progressbar > trough {
 .blink {
   animation: blinking 1s infinite;
 }
+@keyframes nitroblinking {
+  0% {
+    background-color: rgba(255,255,255,0);
+  }
+  50% {
+    background-color: #33c3e0;
+  }
+  100% {
+    background-color: rgba(255,255,255,0);
+  }
+}
+
+.nitro {
+  animation: nitroblinking 1s infinite;
+}
