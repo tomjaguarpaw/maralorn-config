@@ -61,7 +61,6 @@ let
           ./roles/kassandra.nix
           ./roles/khal.nix
           ./roles/khard.nix
-          ./roles/rss-client.nix
           ./roles/mode-switching.nix
           ./roles/mpclient.nix
           ./roles/mpd.nix
