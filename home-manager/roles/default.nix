@@ -28,26 +28,6 @@
       enable = true;
       enableAliases = true;
     };
-    lazygit = {
-      settings = {
-        gui.skipUnstageLineWarning = true;
-        customCommands = [
-          {
-            key = "s";
-            command = "git sync";
-            context = "global";
-            subprocess = true;
-          }
-          {
-            key = "s";
-            command = "git sync";
-            context = "files";
-            subprocess = true;
-          }
-        ];
-      };
-      enable = true;
-    };
     direnv = {
       enable = true;
       config.global.warn_timeout = "1h";
@@ -119,15 +99,6 @@
         show_program_path = false;
         tree_view = true;
         sort_key = "USER";
-      };
-    };
-    ssh = {
-      controlMaster = "auto";
-      controlPersist = "120";
-      enable = true;
-      matchBlocks = {
-        git-auto.identityFile = "~/.ssh/id_auto_ed25519";
-        "door.w17.io".identityFile = "~/.ssh/door_rsa";
       };
     };
   };
