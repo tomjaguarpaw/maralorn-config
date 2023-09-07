@@ -81,6 +81,7 @@ library
     StatusScript.Modules.ConfigStale
     StatusScript.Modules.Git
     StatusScript.Modules.IdleState
+    StatusScript.Modules.KeyTouch
     StatusScript.Modules.Mail
     StatusScript.Modules.Mako
     StatusScript.Modules.Network

@@ -22,6 +22,7 @@ import StatusScript.Modules.ConfigPull qualified as ConfigPull
 import StatusScript.Modules.ConfigStale qualified as ConfigStale
 import StatusScript.Modules.Git qualified as Git
 import StatusScript.Modules.IdleState qualified as IdleState
+import StatusScript.Modules.KeyTouch qualified as KeyTouch
 import StatusScript.Modules.Mail qualified as Mail
 import StatusScript.Modules.Mako qualified as Mako
 import StatusScript.Modules.Network qualified as Network
@@ -109,6 +110,8 @@ main = Notify.withManager \watch_manager -> do
     PublishSocket.publishJson env "timers" timer_events
     network_events <- Network.networkState env
     PublishSocket.publishJson env "networks" network_events
+    touch_required <- KeyTouch.touchRequired env
+    PublishSocket.publishJson env "touchrequired" (touch_required & R.updated)
     audio_event <- Audio.audioUpdateEvent env
     audio_info_event <- Audio.audioInfos audio_event
     PublishSocket.publishJson env "audio" audio_info_event

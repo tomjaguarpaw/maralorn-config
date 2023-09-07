@@ -8,6 +8,7 @@
 (deflisten bluetooth         :initial "[]" "bash scripts/listen.sh bluetooth")
 (deflisten audio             :initial "[]" "bash scripts/listen.sh audio")
 (deflisten networks          :initial "[]" "bash scripts/listen.sh networks")
+(deflisten touchrequired     :initial "false" "bash scripts/listen.sh touchrequired")
 (deflisten idle_state        :initial "{\"at\":1000000000000000,\"idle\":false}" "bash scripts/listen.sh idle_state")
 (deflisten workspaces        :initial "[]" "bash scripts/get-workspaces.sh")
 (deflisten keymap            :initial "German (Neo 2)" "bash scripts/get-keymap.sh")
@@ -97,7 +98,7 @@
 )
 
 (defwidget sidebar []
-  (centerbox :orientation "vertical"
+  (centerbox :orientation "vertical" :class {touchrequired ? "blink" :""}
     (status)
     (box :orientation "vertical" :space-evenly false (for player in {jq(players,"map(select(.status==\"Playing\"))")}
       (box :class "component" :orientation "vertical" :space-evenly false :spacing 10

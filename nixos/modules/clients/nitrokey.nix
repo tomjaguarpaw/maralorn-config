@@ -1,7 +1,10 @@
 { pkgs, lib, ... }:
 {
   hardware.nitrokey.enable = true;
-  environment.systemPackages = [ pkgs.pynitrokey ];
+  environment.systemPackages = [
+    pkgs.pynitrokey
+    pkgs.yubikey-touch-detector
+  ];
   security.pam = {
     services = {
       login.u2fAuth = true;

@@ -71,6 +71,7 @@ let
             pipewire
             mako
             networkmanager
+            yubikey-touch-detector
           ;
         };
       };
