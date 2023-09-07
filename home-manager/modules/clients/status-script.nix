@@ -21,7 +21,6 @@
       pkgs.bash
       pkgs.status-script
       pkgs.curl
-      pkgs.openssh
       pkgs.gitMinimal
       pkgs.nix
       pkgs.taskwarrior
