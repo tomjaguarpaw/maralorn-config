@@ -72,6 +72,7 @@
           };
         };
       editor = {
+        soft-wrap.enable = true;
         whitespace.render = {
           space = "all";
           tab = "all";

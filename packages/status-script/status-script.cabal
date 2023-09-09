@@ -61,7 +61,9 @@ common common-config
     , uuid
 
   default-language:   GHC2021
-  ghc-options:        -Wall -Wno-type-defaults
+  ghc-options:
+    -Wall -Wno-type-defaults -Wcompat -fno-show-valid-hole-fits
+    -fmax-relevant-binds=0
 
 library
   import:          common-config
