@@ -1,7 +1,9 @@
 { pkgs, lib, ... }:
 {
   services.swayidle = {
-    events = [ {
+    # Here we override the before-sleep eveent
+    # swayidle only runs the last before-sleep command given on the commandline
+    events = lib.mkAfter [ {
       event = "before-sleep";
       command =
         (pkgs.writeShellScript "total-mute" ''
@@ -17,6 +19,7 @@
           }/bin/wc -l); index++)); do
             ${pkgs.pulseaudio}/bin/pactl set-source-mute $index 1;
           done
+          ${lib.getExe pkgs.swaylock} -f
         '').outPath;
     } ];
     timeouts = [ {
