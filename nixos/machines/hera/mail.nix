@@ -79,6 +79,8 @@ in
         "10.0.0.0/24"
       ];
       transport = "email2matrix.maralorn.de smtp:[::1]:2525";
+      virtual = lib.mkForce (pkgs.privateValue "" "mail/virtual-regex");
+      virtualMapType = "regexp";
       config = {
         # Allow TLSv1 because we need to be able to receive mail from legacy servers.
         smtpd_tls_protocols =
@@ -113,7 +115,6 @@ in
       "lists.maralorn.de"
       "malte-und-clai.re"
     ];
-    forwards = pkgs.privateValue { } "mail/forwards";
     loginAccounts = pkgs.privateValue { } "mail/users";
     hierarchySeparator = "/";
     certificateScheme = "manual";
