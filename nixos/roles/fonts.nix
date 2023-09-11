@@ -19,7 +19,7 @@
         {
           monospace = [
             "Symbols Nerd Font Mono"
-            "CozetteVector"
+            "Spleen 6x12"
             "Noto Sans Mono"
           ] ++ unicode-fallback;
           sansSerif = [
