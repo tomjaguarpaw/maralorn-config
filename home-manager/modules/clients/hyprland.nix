@@ -12,6 +12,13 @@
         gaps_in = 2;
         gaps_out = 4;
         "col.inactive_border" = "0x00000000";
+        animation = [
+          "windows,1,3,default"
+          "fade,1,3,default"
+          "border,1,10,default"
+          "borderangle,1,10,default"
+          "workspaces,1,2,default"
+        ];
       };
       misc = {
         disable_hyprland_logo = true;
