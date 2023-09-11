@@ -9,8 +9,8 @@
         kb_options = "altwin:swap_lalt_lwin"; # swap alt and win
       };
       general = {
-        gaps_in = 2;
-        gaps_out = 4;
+        gaps_in = 1;
+        gaps_out = 1;
         "col.inactive_border" = "0x00000000";
         animation = [
           "windows,1,3,default"
