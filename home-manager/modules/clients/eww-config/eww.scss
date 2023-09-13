@@ -18,7 +18,7 @@ $background-lighter: #152f6d;
 
 .component {
   color: #ffffff;
-  background: $background;
+  background: rgba($background,0.8);
   border-radius: 0.7em;
   border: 1px solid #7eaafd;
   box-shadow: 0 0 8px #7eaafd;
@@ -28,6 +28,8 @@ $background-lighter: #152f6d;
 
 .lighter {
   background: $background-lighter;
+  padding: 0.3em;
+  margin: 0.2em;
 }
 
 .current {
