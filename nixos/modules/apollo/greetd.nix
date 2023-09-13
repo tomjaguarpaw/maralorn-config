@@ -2,5 +2,5 @@
 {
   services.greetd.settings.default_session.command = "${
       lib.getExe pkgs.greetd.tuigreet
-    } --time --cmd launch-hyprland --remember";
+    } --time --cmd launch-hyprland --user-menu";
 }
