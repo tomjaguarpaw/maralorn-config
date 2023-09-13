@@ -4,7 +4,7 @@
   font-size: 12px;
 }
 
-$background: #151f3d;
+$background: #000040;
 $background-darker: #0d0f1c;
 $background-darker-80: #0d0f1ce0;
 $background-secondary: #323035;
@@ -68,7 +68,7 @@ progressbar > trough {
 }
 
 .overlay {
-  background: rgba($background,0.1);
+  background: rgba(#000000,0.3);
   padding: 100px;
 }
 

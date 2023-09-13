@@ -1,7 +1,7 @@
 {
   services.mako = {
     enable = true;
-    anchor = "top-left";
+    anchor = "top-right";
     borderRadius = 5;
     borderSize = 0;
     backgroundColor = "#151f3d";

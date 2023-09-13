@@ -113,44 +113,8 @@
 
 (defwidget info-overlay []
   (box :class "overlay"
-    (centerbox :halign "center" :orientation "vertical"
-      (box :orientation "vertical" :space-evenly false
-        (box :orientation "vertical" :space-evenly false (for player in players
-          (box :class "component" :orientation "vertical" :space-evenly false :spacing 10
-            (box  :space-evenly false :spacing 10 (image :image-width 20 :image-height 20 :path "icons/${player.status}.png") (label :hexpand true :halign "center" :text {player.name}))
-            (label :class "small" :justify "left" :hexpand true :halign "start" :text {player.title})
-          )
-        ))
-        (for warning in {jq(warnings,"map(select(.description!=null))")}
-          (box :class "component" :spacing 10 :space-evenly false
-            (image :path "icons/${warning.group}.png")
-            (for subgroup in {(warning.subgroup ?: "") != "" ? [warning.subgroup] : []}
-              (image :path "icons/${subgroup}.png")
-            )
-            (label :hexpand true :halign "center" :text {warning.description}))
-        )
-        (for alert in {alerts}
-          (box :class "component small" :spacing 10 :space-evenly false (image :path "icons/cloud-alert.png") (label :hexpand true :halign "center" :text {alert.annotations.description}))
-        )
-        (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" ? [EWW_BATTERY.BAT0] : []}
-          (box :class "component" :space-evenly false (image :path "icons/battery-alert.png") (label :hexpand true :halign "center" :text "${battery.capacity}% ${battery.status}"))
-        ))
-      )
-      (box :orientation "vertical" :space-evenly false
-        (box :class "component" (calendar))
-        (box :orientation "vertical" :space-evenly false (for appointment in calendar
-          (box :class "component" :orientation "vertical" :space-evenly false
-            (box :style "padding-bottom: 10px;" :space-evenly false (image :path "icons/calendar.png") (label :halign "center" :hexpand true :justify "left" :text {appointment.title}))
-            (label :halign "start" :hexpand true :justify "left" :class "small" :text
-"${appointment.start} → ${appointment.end}${appointment.location != "" ? "
-${appointment.location}":""}${appointment.description != "" ? "
-${appointment.description}":""}"
-            )
-            (label :halign "end" :hexpand true  :justify "right" :class "small" :text {appointment.calendar})
-          )
-        ))
-      )
-      (box :orientation "vertical" :class "small" :space-evenly false :valign "end"
+    (centerbox :orientation "horizontal" :hexpand true
+      (centerbox :orientation "vertical"
         (box :orientation "vertical" :space-evenly false
           (for network in networks
             (box :class "component" :spacing 10 :space-evenly false
@@ -159,33 +123,75 @@ ${appointment.description}":""}"
             )
           )
         )
-        (box :class "component" :valign "end" :spacing 10 :space-evenly false
-          (image :path "icons/memory.png")
-          "ram"
-          "${round(EWW_RAM.used_mem/1024/1024/1024,1)}GB / ${round(EWW_RAM.total_mem/1024/1024/1024,1)}GB"
-          (overlay :halign "end" :hexpand true
-            (circular-progress :start-at 75 :width 60 :height 60 :thickness 4 :value {EWW_RAM.used_mem_perc})
-            "${round(EWW_RAM.used_mem_perc,1)}%"
+        (box :halign "center" :class "component" (calendar))
+        (box :halign "center" :orientation "vertical" :space-evenly false (for appointment in calendar
+          (box :class "component" :orientation "vertical" :space-evenly false
+            (box :style "padding-bottom: 10px;" :space-evenly false (image :path "icons/calendar.png") (label :halign "center" :hexpand true :justify "left" :text {appointment.title}))
+            (label :halign "start" :hexpand true :justify "left" :class "small" :text
+  "${appointment.start} → ${appointment.end}${appointment.location != "" ? "
+  ${appointment.location}":""}${appointment.description != "" ? "
+  ${appointment.description}":""}"
+            )
+            (label :halign "end" :hexpand true :justify "right" :class "small" :text {appointment.calendar})
+          )
+        ))
+      )
+      (centerbox :orientation "vertical"
+        (box :halign "center" :orientation "vertical" :space-evenly false (for player in players
+          (box :class "component" :orientation "vertical" :space-evenly false :spacing 10
+            (box  :space-evenly false :spacing 10 (image :image-width 20 :image-height 20 :path "icons/${player.status}.png") (label :hexpand true :halign "center" :text {player.name}))
+            (label :class "small" :justify "left" :hexpand true :halign "start" :text {player.title})
+          )
+        ))
+        (box :halign "center" :orientation "vertical" :space-evenly false
+          (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" ? [EWW_BATTERY.BAT0] : []}
+            (box :class "component" :space-evenly false (image :path "icons/battery-alert.png") (label :hexpand true :halign "center" :text "${battery.capacity}% ${battery.status}"))
+          ))
+          (for alert in {alerts}
+            (box :class "component small" :spacing 10 :space-evenly false (image :path "icons/cloud-alert.png") (label :hexpand true :halign "center" :text {alert.annotations.description}))
+          )
+          (for warning in {jq(warnings,"map(select(.description!=null))")}
+            (box :class "component" :spacing 10 :space-evenly false
+              (image :path "icons/${warning.group}.png")
+              (for subgroup in {(warning.subgroup ?: "") != "" ? [warning.subgroup] : []}
+                (image :path "icons/${subgroup}.png")
+              )
+              (label :hexpand true :halign "center" :text {warning.description}))
           )
         )
-        (box :class "component" :valign "end" :spacing 10 :space-evenly false
-          (image :path "icons/disk.png")
-          "swap"
-          "${round((EWW_RAM.total_swap - EWW_RAM.free_swap)/1024/1024/1024,1)}GB / ${round(EWW_RAM.total_swap/1024/1024/1024,1)}GB"
-          (overlay :halign "end" :hexpand true
-            (circular-progress :start-at 75 :width 60 :height 60 :thickness 4 :value {100 * (EWW_RAM.total_swap - EWW_RAM.free_swap)/EWW_RAM.total_swap})
-            "${round(100 * (EWW_RAM.total_swap - EWW_RAM.free_swap)/EWW_RAM.total_swap,1)}%"
+        ""
+      )
+      (centerbox :orientation "vertical"
+        ""
+        (box :halign "center" :orientation "vertical" :class "small" :space-evenly false :valign "end"
+          (box :class "component" :valign "end" :spacing 10 :space-evenly false
+            (image :path "icons/memory.png")
+            "ram"
+            "${round(EWW_RAM.used_mem/1024/1024/1024,1)}GB / ${round(EWW_RAM.total_mem/1024/1024/1024,1)}GB"
+            (overlay :halign "end" :hexpand true
+              (circular-progress :start-at 75 :width 60 :height 60 :thickness 4 :value {EWW_RAM.used_mem_perc})
+              "${round(EWW_RAM.used_mem_perc,1)}%"
+            )
           )
-        )
-        (box :orientation "vertical" :space-evenly false
-          (for disk in {disks[host]}
-            (box :class "component" :valign "end" :spacing 10 :space-evenly false
-              (image :path "icons/disk.png")
-              {disk}
-              "${round(EWW_DISK[disk].used/1024/1024/1024,1)}GB / ${round(EWW_DISK[disk].total/1024/1024/1024,1)}GB"
-              (overlay :halign "end" :hexpand true
-                (circular-progress :start-at 75 :width 60 :height 60 :thickness 4 :value {EWW_DISK[disk].used_perc})
-                "${round(EWW_DISK[disk].used_perc,1)}%"
+          (box :class "component" :valign "end" :spacing 10 :space-evenly false
+            (image :path "icons/disk.png")
+            "swap"
+            "${round((EWW_RAM.total_swap - EWW_RAM.free_swap)/1024/1024/1024,1)}GB / ${round(EWW_RAM.total_swap/1024/1024/1024,1)}GB"
+            (overlay :halign "end" :hexpand true
+              (circular-progress :start-at 75 :width 60 :height 60 :thickness 4 :value {100 * (EWW_RAM.total_swap - EWW_RAM.free_swap)/EWW_RAM.total_swap})
+              "${round(100 * (EWW_RAM.total_swap - EWW_RAM.free_swap)/EWW_RAM.total_swap,1)}%"
+            )
+          )
+          (box :orientation "vertical" :space-evenly false
+            (for disk in {disks[host]}
+              (box :class "component" :valign "end" :spacing 10 :space-evenly false
+                (image :path "icons/disk.png")
+                {disk}
+                "${round(EWW_DISK[disk].used/1024/1024/1024,1)}GB / ${round(EWW_DISK[disk].total/1024/1024/1024,1)}GB"
+                (overlay :halign "end" :hexpand true
+                  (circular-progress :start-at 75 :width 60 :height 60 :thickness 4 :value {EWW_DISK[disk].used_perc})
+                  "${round(EWW_DISK[disk].used_perc,1)}%"
+                )
               )
             )
           )
@@ -203,7 +209,7 @@ ${appointment.description}":""}"
                       :y "0%"
                       :width "100%"
                       :height "100%"
-                      :anchor "top right")
+                      :anchor "top left")
   (info-overlay)
 )
 
