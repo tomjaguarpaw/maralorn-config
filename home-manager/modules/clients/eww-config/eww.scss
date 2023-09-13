@@ -19,9 +19,11 @@ $background-lighter: #152f6d;
 .component {
   color: #ffffff;
   background: $background;
-  border-radius: 0.3em;
+  border-radius: 0.7em;
+  border: 1px solid #7eaafd;
+  box-shadow: 0 0 8px #7eaafd;
   padding: 0.3em;
-  margin: 0.3em;
+  margin: 0.4em;
 }
 
 .lighter {
@@ -30,6 +32,8 @@ $background-lighter: #152f6d;
 
 .current {
   background: $background-lighter;
+  border: 1px solid #ffffff;
+  box-shadow: 0 0 10px #ffffff;
 }
 
 .disabled {
