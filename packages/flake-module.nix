@@ -65,12 +65,9 @@ let
             khal
             playerctl
             notmuch
-            jq
             tailscale
-            fd
             pipewire
             mako
-            networkmanager
             yubikey-touch-detector
           ;
         };

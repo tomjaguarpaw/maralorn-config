@@ -14,17 +14,7 @@
 
   config = {
     status-script.env = [
-      pkgs.coreutils
-      pkgs.hyprland
-      pkgs.jq
-      pkgs.socat
-      pkgs.bash
-      pkgs.status-script
-      pkgs.curl
-      pkgs.gitMinimal
-      pkgs.nix
-      pkgs.taskwarrior
-      config.programs.rbw.package
+      pkgs.gnupg # yubikey-touch-detector
     ];
     systemd.user.services.status-script = {
       Unit.Description = "status-script";
