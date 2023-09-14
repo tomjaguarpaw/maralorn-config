@@ -17,7 +17,7 @@
           "fade,1,3,default"
           "border,1,10,default"
           "borderangle,1,10,default"
-          "workspaces,1,5,default,slidevert"
+          "workspaces,1,2,default,slidevert"
         ];
       };
       misc = {
