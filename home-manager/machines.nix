@@ -125,8 +125,7 @@ in
   );
 
   zeus = daily-driver "zeus" (
-    [ ./roles/create-plans.nix ]
-    ++ flake-inputs.self.nixFromDirs [
+    flake-inputs.self.nixFromDirs [
       ./modules/impermanent
       ./modules/zeus
     ]
