@@ -115,7 +115,7 @@
   (box :class "overlay"
     (centerbox :orientation "horizontal" :hexpand true
       (centerbox :orientation "vertical"
-        (box :orientation "vertical" :space-evenly false
+        (box :halign "center" :orientation "vertical" :space-evenly false
           (for network in networks
             (box :class "component" :spacing 10 :space-evenly false
               (image :path "icons/network.png")
