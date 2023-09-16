@@ -1,4 +1,12 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+let
+  lock-command = "${lib.getExe config.programs.swaylock.package} -f";
+in
 {
   services.swayidle = {
     # Here we override the before-sleep eveent
@@ -19,12 +27,12 @@
           }/bin/wc -l); index++)); do
             ${pkgs.pulseaudio}/bin/pactl set-source-mute $index 1;
           done
-          ${lib.getExe pkgs.swaylock} -f
+          ${lock-command}
         '').outPath;
     } ];
     timeouts = [ {
-      timeout = 300;
-      command = "${lib.getExe pkgs.swaylock} -f";
+      timeout = 290;
+      command = lock-command;
     } ];
   };
 }

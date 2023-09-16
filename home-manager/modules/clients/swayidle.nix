@@ -1,6 +1,11 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 let
-  command = "${lib.getExe pkgs.swaylock} -f";
+  command = "${lib.getExe config.programs.swaylock.package} -f";
   idle-timeout = 150;
   write-idle = pkgs.writeShellScript "write-idle" ''
     echo "{\"contents\": $(${lib.getBin pkgs.coreutils}/bin/date +%s -d "-${

@@ -55,12 +55,15 @@
           settings = {
             tools.nixfmt = lib.mkForce (lib.getBin pkgs.nixfmt);
             excludes = [ "\\.zsh$" ];
-            settings.ormolu.defaultExtensions = [
-              "TypeApplications"
-              "BangPatterns"
-              "ImportQualifiedPost"
-              "BlockArguments"
-            ];
+            settings = {
+              ormolu.defaultExtensions = [
+                "TypeApplications"
+                "BangPatterns"
+                "ImportQualifiedPost"
+                "BlockArguments"
+              ];
+              statix.ignore = generated_nix_files;
+            };
             hooks = {
               hlint.enable = true;
               nixfmt = {
