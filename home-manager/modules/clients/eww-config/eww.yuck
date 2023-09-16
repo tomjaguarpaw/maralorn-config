@@ -41,7 +41,7 @@
 (defwidget status []
   (box :orientation "vertical" :space-evenly false
     (label :text "${alerts}${rbw}${mode}${warnings}${warninggroups}}${players}${uptime}${networks}" :visible false)
-    (box :class "component" (image :path "icons/${mode}.png"))
+    (box :class "component" (image :path "icons/${mode}.png") {host})
     (box :orientation "vertical" :space-evenly false (for group in warninggroups
       (box :class "component" (image :path "icons/${group.name}.png") {group.count})
     ))
