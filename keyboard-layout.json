@@ -342,11 +342,7 @@
         "label": {"base": {"full": "Transparent", "1u": " "}},
         "categories": ["blanks"]
       },
-      {
-        "code": 65535,
-        "label": {"base": {"full": "Transparent", "1u": " "}},
-        "categories": ["blanks"]
-      },
+      {"code": 13, "label": {"base": "j", "shifted": "J"}},
       {
         "code": 65535,
         "label": {"base": {"full": "Transparent", "1u": " "}},
@@ -375,12 +371,9 @@
         "categories": ["blanks"]
       },
       {
-        "code": 20546,
-        "label": {
-          "hint": {"full": "Mouse Button", "1u": "M.Btn"},
-          "base": "Right"
-        },
-        "categories": ["mousekeys"]
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
       },
       {
         "code": 18614,
@@ -532,12 +525,9 @@
         "categories": ["blanks"]
       },
       {
-        "code": 20545,
-        "label": {
-          "hint": {"full": "Mouse Button", "1u": "M.Btn"},
-          "base": "Left"
-        },
-        "categories": ["mousekeys"]
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
       },
       {
         "code": 18658,
@@ -640,12 +630,9 @@
         "categories": ["blanks"]
       },
       {
-        "code": 20548,
-        "label": {
-          "hint": {"full": "Mouse Button", "1u": "M.Btn"},
-          "base": "Middle"
-        },
-        "categories": ["mousekeys"]
+        "code": 65535,
+        "label": {"base": {"full": "Transparent", "1u": " "}},
+        "categories": ["blanks"]
       },
       {
         "code": 65535,
@@ -2489,10 +2476,10 @@
       15,
       3,
       15,
-      0,
-      0,
       15,
-      0,
+      15,
+      15,
+      15,
       13,
       13,
       13,
