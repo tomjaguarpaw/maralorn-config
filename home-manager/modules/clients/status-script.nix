@@ -15,6 +15,7 @@
   config = {
     status-script.env = [
       pkgs.gnupg # yubikey-touch-detector
+      pkgs.taskwarrior
     ];
     systemd.user.services.status-script = {
       Unit.Description = "status-script";
