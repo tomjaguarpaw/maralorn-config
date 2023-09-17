@@ -143,18 +143,17 @@ timestamp = toText . T.formatTime T.defaultTimeLocale "%Y-%m-%d %H:%M"
 allowList :: [Text]
 allowList =
   [ "chaos-darmstadt"
-  , "infra"
+  , "🪵 infra"
   , "balkon"
   , "vorstand"
   , "nix da"
-  , "nix haskell"
-  , "nixos de"
+  , "#nix haskell"
+  , "#nixos-de"
   , "#ea"
   , "haskell-language-server"
   , "lounge"
   , "lesswrong"
   , "zsh"
-  , "🏕️ camp"
   ]
 
 logToFeedEntry :: T.UTCTime -> Log -> Maybe Entry
