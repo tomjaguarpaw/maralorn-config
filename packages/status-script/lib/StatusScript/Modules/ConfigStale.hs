@@ -11,6 +11,7 @@ import StatusScript.FileWatch qualified as FileWatch
 import StatusScript.Mode (Mode (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
 import StatusScript.Warnings (Warning (..))
+import System.Directory qualified as Directory
 import System.FilePath ((</>))
 
 configStale :: (R.MonadHeadlessApp t m) => Env -> R.Dynamic t Mode -> R.Dynamic t (Set Text) -> m (R.Event t [Warning])
@@ -19,13 +20,19 @@ configStale env mode dirties = do
       git_dir = home </> "git"
       modes_dir = home </> ".volatile" </> "modes"
       config_dirty = dirties <&> Set.member "config"
+  withModes <- liftIO $ Directory.doesFileExist modes_dir
   commit_event <- FileWatch.watchFile env (git_dir </> "config/.git/refs/heads") "main"
   system_commit_event <- FileWatch.watchFile env "/run/current-system" "config-commit"
   system_event <- FileWatch.watchFile env "/run" "current-system"
-  modes_commit_event <- FileWatch.watchFile env modes_dir "config-commit"
-  modes_event <- FileWatch.watchFile env (home </> ".volatile") "modes"
+  mode_events <-
+    if withModes
+      then do
+        modes_commit_event <- FileWatch.watchFile env modes_dir "config-commit"
+        modes_event <- FileWatch.watchFile env (home </> ".volatile") "modes"
+        pure (R.leftmost [modes_commit_event, modes_event])
+      else pure R.never
   tick <- ReflexUtil.tickEvent 30
-  ReflexUtil.performEventThreaded env (ReflexUtil.taggedAndUpdated ((,) <$> mode <*> config_dirty) (R.leftmost [commit_event, system_commit_event, system_event, modes_event, modes_commit_event, tick])) \case
+  ReflexUtil.performEventThreaded env (ReflexUtil.taggedAndUpdated ((,) <$> mode <*> config_dirty) (R.leftmost [commit_event, system_commit_event, system_event, mode_events, tick])) \case
     (Klausur, _) -> pure []
     (_, True) -> pure []
     _ -> do
