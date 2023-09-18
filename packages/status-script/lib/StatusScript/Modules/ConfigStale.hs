@@ -37,8 +37,6 @@ configStale env mode dirties = do
     (_, True) -> pure []
     _ -> do
       commit <- readFileBS (git_dir </> "config/.git/refs/heads/main") & Exception.try @Exception.IOException %> hush
-      system_commit <- readFileBS "/run/current-system/config-commit" & Exception.try @Exception.IOException %> hush
-      modes_commit <- readFileBS (modes_dir </> "config-commit") & Exception.try @Exception.IOException %> hush
       let is_dirty = \installed_commit -> case (commit, installed_commit) of
             (Nothing, _) -> False
             (Just a, Just b) | ByteStringChar.strip a == ByteStringChar.strip b -> False
@@ -49,4 +47,9 @@ configStale env mode dirties = do
               , group = "warning"
               , subgroup = Nothing
               }
-      pure $ [stale_warn "system" | is_dirty system_commit] <> [stale_warn "home" | is_dirty modes_commit]
+      let compare_commit = \path name -> do
+            deployed_commit <- readFileBS path & Exception.try @Exception.IOException %> hush
+            pure $ [stale_warn name | is_dirty deployed_commit]
+      system <- compare_commit "/run/current-system/config-commit" "system"
+      home_warn <- if withModes then compare_commit (modes_dir </> "config-commit") "home" else pure []
+      pure $ system <> home_warn
