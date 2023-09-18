@@ -168,6 +168,7 @@ let
           Mumble = {
             CDA = with-mic-check "mumble mumble://maralorn@mumble.hax404.de";
             Nixos = with-mic-check "mumble mumble://maralorn@lassul.us/nixos";
+            CCC = with-mic-check "mumble mumble://maralorn@mumble.c3pb.de";
           };
         }
         { Weechat = "weechat"; }
