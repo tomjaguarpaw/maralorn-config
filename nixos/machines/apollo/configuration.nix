@@ -35,22 +35,9 @@ in
       ../../modules/apollo
     ];
 
-  environment.systemPackages = [
-    pkgs.networkmanagerapplet # For when the gnome dialog sucks in asking for a wifi password.
-  ];
+  networking.hostName = "apollo";
 
-  networking = {
-    hostName = "apollo";
-    networkmanager.enable = true;
-  };
-
-  systemd = {
-    network.wait-online.enable = false;
-    services = {
-      NetworkManager-wait-online.enable = false;
-      throttled.path = [ pkgs.kmod ];
-    };
-  };
+  systemd.services.throttled.path = [ pkgs.kmod ];
 
   services = {
     udev.extraRules = ''

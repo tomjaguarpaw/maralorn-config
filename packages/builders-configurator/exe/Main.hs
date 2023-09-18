@@ -23,7 +23,8 @@ nix run pkgs#sysbench -- cpu run
 Host    events/s
 ----------------
 Zeus        5249
-Fluffy      1672
+Hephaistos  3777
+Athene      1672
 Apollo      1112
 Remote       767
 Hera         729
@@ -54,6 +55,7 @@ builderConfigs =
     -- don’t use fluffy as remote builder, it’s not beefy enough
     [ ("hera", [(zeusBuilder, Check), (fluffyBuilder, Check), (remoteBuilder, Always), (nixbuildDotNet, Always)])
     , ("apollo", [(zeusBuilder, Check), (fluffyBuilder, Check), (remoteBuilder, Always), (nixbuildDotNet, Always)])
+    , ("hephaistos", [(zeusBuilder, Check), (fluffyBuilder, Check), (remoteBuilder, Always), (nixbuildDotNet, Always)])
     , ("fluffy", [(zeusBuilder, Check), (remoteBuilder, Always), (nixbuildDotNet, Always)])
     , ("zeus", [(remoteBuilder, Always), (fluffyBuilder, Check), (nixbuildDotNet, Always)])
     ]
