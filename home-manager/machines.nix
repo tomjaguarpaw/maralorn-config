@@ -46,35 +46,34 @@ let
     ./roles/on-my-machine.nix
     ./roles/systemd-exporter.nix
   ];
-  daily = 
-        orga-basics
-        ++ default
-        ++ [
-          ./roles/beets.nix
-          ./roles/desktop.nix
-          ./roles/firefox.nix
-          ./roles/haskell-env.nix
-          ./roles/kassandra.nix
-          ./roles/khal.nix
-          ./roles/khard.nix
-          ./roles/mode-switching.nix
-          ./roles/mpclient.nix
-          ./roles/mpd.nix
-          ./roles/mpv
-          #./roles/night-shutdown.nix
-          ./roles/research.nix
-          ./roles/terminal.nix
-          ./roles/tinkering.nix
-          ./roles/vdirsyncer.nix
-        ]
-        ++ flake-inputs.self.nixFromDirs [ ./modules/clients ];
-      blockServer = import ./roles/block-server.nix;
+  daily =
+    orga-basics
+    ++ default
+    ++ [
+      ./roles/beets.nix
+      ./roles/desktop.nix
+      ./roles/firefox.nix
+      ./roles/haskell-env.nix
+      ./roles/kassandra.nix
+      ./roles/khal.nix
+      ./roles/khard.nix
+      ./roles/mode-switching.nix
+      ./roles/mpclient.nix
+      ./roles/mpd.nix
+      ./roles/mpv
+      #./roles/night-shutdown.nix
+      ./roles/research.nix
+      ./roles/terminal.nix
+      ./roles/tinkering.nix
+      ./roles/vdirsyncer.nix
+    ]
+    ++ flake-inputs.self.nixFromDirs [ ./modules/clients ]
+  ;
+  blockServer = import ./roles/block-server.nix;
   daily-driver =
     name: extra:
     let
-      all =
-        extra ++ daily
-      ;
+      all = extra ++ daily;
     in
     {
       klausur = makeConfig name (all ++ [ (blockServer restrictedPages) ]);
@@ -138,12 +137,13 @@ in
     flake-inputs.self.nixFromDirs [
       ./modules/impermanent
       ./modules/hephaistos
-      ] ++
-        daily ++
-        [ 
-          (blockServer restrictedPages)
-        ]
-      
+    ]
+    ++ daily
+    ++ [
+      ./roles/mail-client.nix
+      ./roles/chat.nix
+      (blockServer restrictedPages)
+    ]
   );
   hera.default = makeConfig "hera" (
     default
