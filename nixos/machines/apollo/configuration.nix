@@ -30,6 +30,7 @@ in
     ]
     ++ flake-inputs.self.nixFromDirs [
       ../../modules/clients
+      ../../modules/laptops
       ../../modules/not-home
       ../../modules/all
       ../../modules/apollo

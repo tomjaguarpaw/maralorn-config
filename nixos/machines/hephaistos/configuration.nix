@@ -17,6 +17,7 @@ flake-inputs:
     ++ flake-inputs.self.nixFromDirs [
       ../../modules/hephaistos
       ../../modules/clients
+      ../../modules/laptops
       ../../modules/not-home
       ../../modules/all
       ../../modules/impermanent
