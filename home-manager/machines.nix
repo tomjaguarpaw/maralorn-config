@@ -46,12 +46,8 @@ let
     ./roles/on-my-machine.nix
     ./roles/systemd-exporter.nix
   ];
-  daily-driver =
-    name: extra:
-    let
-      all =
-        extra
-        ++ orga-basics
+  daily = 
+        orga-basics
         ++ default
         ++ [
           ./roles/beets.nix
@@ -66,16 +62,19 @@ let
           ./roles/mpd.nix
           ./roles/mpv
           #./roles/night-shutdown.nix
-          ./roles/pythia.nix
           ./roles/research.nix
           ./roles/terminal.nix
           ./roles/tinkering.nix
           ./roles/vdirsyncer.nix
-          ./roles/zettelkasten.nix
         ]
-        ++ flake-inputs.self.nixFromDirs [ ./modules/clients ]
-      ;
+        ++ flake-inputs.self.nixFromDirs [ ./modules/clients ];
       blockServer = import ./roles/block-server.nix;
+  daily-driver =
+    name: extra:
+    let
+      all =
+        extra ++ daily
+      ;
     in
     {
       klausur = makeConfig name (all ++ [ (blockServer restrictedPages) ]);
@@ -134,6 +133,17 @@ in
     default
     ++ [ ./roles/headless.nix ]
     ++ flake-inputs.self.nixFromDirs [ ./modules/impermanent ]
+  );
+  hephaistos.default = makeConfig "hephaistos" (
+    flake-inputs.self.nixFromDirs [
+      ./modules/impermanent
+      ./modules/hephaistos
+      ] ++
+        daily ++
+        [ 
+          (blockServer restrictedPages)
+        ]
+      
   );
   hera.default = makeConfig "hera" (
     default
