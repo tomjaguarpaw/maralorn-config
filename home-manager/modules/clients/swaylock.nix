@@ -8,9 +8,7 @@
       indicator-caps-lock = true;
       hide-keyboard-layout = true;
       indicator = true;
-      grace = 10;
       clock = true;
-      fade-in = 10;
       datestr = "${config.m-0.hostName}";
     };
   };
