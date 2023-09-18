@@ -52,24 +52,6 @@
               ":reflow"
             ];
           };
-          insert = common_keys // {
-            up = [
-              "normal_mode"
-              "move_line_up"
-            ];
-            down = [
-              "normal_mode"
-              "move_line_down"
-            ];
-            left = [
-              "normal_mode"
-              "move_char_left"
-            ];
-            right = [
-              "normal_mode"
-              "move_char_right"
-            ];
-          };
         };
       editor = {
         soft-wrap.enable = true;
