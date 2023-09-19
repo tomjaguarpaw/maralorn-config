@@ -23,5 +23,5 @@
       cleanupInterval = "15m";
       snapshotInterval = "*:00/3:00";
     };
-    };
+  };
 }
