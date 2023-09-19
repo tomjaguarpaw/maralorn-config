@@ -153,6 +153,7 @@ in
       ./roles/mail-sort.nix
       ./roles/mail2rss.nix
       ./roles/headless.nix
+      ./roles/headless-mpd.nix
     ]
   );
 }
