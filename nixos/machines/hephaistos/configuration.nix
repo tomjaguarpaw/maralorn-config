@@ -1,11 +1,4 @@
-flake-inputs:
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
-{
+flake-inputs: {
   imports =
     [
       (import ../../roles/home-manager.nix flake-inputs)
@@ -21,6 +14,7 @@ flake-inputs:
       ../../modules/not-home
       ../../modules/all
       ../../modules/impermanent
+      ../../modules/beefs
     ];
 
   networking.hostName = "hephaistos";

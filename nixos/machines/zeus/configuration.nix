@@ -23,9 +23,8 @@ in
       ../../modules/clients
       ../../modules/all
       ../../modules/impermanent
+      ../../modules/beefs
     ];
-
-  nix.distributedBuilds = false;
 
   fileSystems =
     let
