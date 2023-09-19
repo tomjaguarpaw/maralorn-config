@@ -5,7 +5,10 @@
       machine-id.source = "/disk/persist/machine-id";
     };
 
-    persistence."/disk/persist" = {
+    persistence.unsnapshoted.persistentStoragePath = "/disk/volatile";
+
+    persistence.snapshoted = {
+      persistentStoragePath = "/disk/persist";
       directories = [
         "/etc/ssh" # ssh
         "/etc/NetworkManager/system-connections"
@@ -14,11 +17,6 @@
         "/var/lib/bluetooth" # Bluetooth pairing data
         "/var/lib/acme" # Persist CA ceritificates
         "/root/.ssh" # ssh
-      ];
-    };
-    persistence."/disk/volatile" = {
-      users.maralorn.directories = [
-        ".local/state/wireplumber" # For volume levels
       ];
     };
   };

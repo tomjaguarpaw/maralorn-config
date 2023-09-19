@@ -5,7 +5,7 @@
   ...
 }:
 {
-  environment.persistence."/disk/persist".files = [
+  environment.persistence.snapshoted.files = [
     "/var/lib/private/gitea-runner/fluffy/.labels"
     "/var/lib/private/gitea-runner/fluffy/.runner"
     "/var/lib/private/gitea-runner/forgejo-runner-key"

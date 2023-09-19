@@ -8,7 +8,7 @@ let
   inherit (config.m-0) virtualHosts;
 in
 {
-  environment.persistence."/disk/persist".directories = [ "/var/www/5etools" ];
+  environment.persistence.snapshoted.directories = [ "/var/www/5etools" ];
 
   services.nginx.virtualHosts.${
     virtualHosts."5e"
