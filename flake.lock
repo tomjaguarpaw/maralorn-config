@@ -380,11 +380,11 @@
         "rev": "28713300f70a2ef7061df67790873b09ab9fb097",
         "revCount": 270,
         "type": "git",
-        "url": "ssh://gitea@hera.m-0.eu/maralorn/config-secrets"
+        "url": "ssh://gitea@code.maralorn.de/maralorn/config-secrets"
       },
       "original": {
         "type": "git",
-        "url": "ssh://gitea@hera.m-0.eu/maralorn/config-secrets"
+        "url": "ssh://gitea@code.maralorn.de/maralorn/config-secrets"
       }
     },
     "systems": {
