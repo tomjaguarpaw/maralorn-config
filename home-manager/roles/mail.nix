@@ -20,7 +20,7 @@ let
     alternates
   ;
   quick-mail-sync = pkgs.writeShellScriptBin "quick-mail-sync" ''
-    mkdir -p ~/.cache/mutt
+    ${pkgs.coreutils}/bin/mkdir -p ~/.cache/mutt
     ${pkgs.isync}/bin/mbsync hera:INBOX,Code
     ${pkgs.notmuch}/bin/notmuch new
   '';
