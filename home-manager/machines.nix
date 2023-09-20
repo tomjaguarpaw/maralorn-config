@@ -45,6 +45,7 @@ let
   default = [
     ./roles/on-my-machine.nix
     ./roles/systemd-exporter.nix
+    flake-inputs.nix-index-database.hmModules.nix-index
   ];
   daily =
     orga-basics
