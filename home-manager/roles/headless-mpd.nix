@@ -1,8 +1,8 @@
-_: {
+{
   services = {
     mpd = {
       enable = true;
-      network.listenAddress = "::1";
+      network.listenAddress = "::";
       musicDirectory = "/media/audio";
       extraConfig = ''
         audio_output {

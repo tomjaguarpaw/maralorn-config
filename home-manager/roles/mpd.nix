@@ -19,6 +19,8 @@ in
           lib.nameValuePair "${name}.m3u" (builtins.toFile "${name}.m3u" content)
         )
         {
+          "athene" = "http://fluffy.vpn.m-0.eu:8666";
+          "hera" = "http://hera.vpn.m-0.eu:8666";
           "radio-swiss-classic" = "https://stream.srg-ssr.ch/m/rsc_de/aacp_96";
           "radio-swiss-jazz" = "https://stream.srg-ssr.ch/m/rsj/aacp_96";
           "br-klassik" = "http://dispatcher.rndfnk.com/br/brklassik/live/mp3/high";
