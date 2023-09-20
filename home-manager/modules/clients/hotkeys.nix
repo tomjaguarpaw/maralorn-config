@@ -83,8 +83,8 @@ let
             "Toggle Input Mute" = "${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
           }
           { "MPD lokal" = mpdclient "::"; }
-          { "MPD athene" = mpdclient "fluffy.vpn.m-0.eu"; }
-          { "MPD hera" = mpdclient "hera.vpn.m-0.eu"; }
+          { "MPD athene" = mpdclient "fluffy"; }
+          { "MPD hera" = mpdclient "hera"; }
           { "Lautstärke" = "ncpamixer"; }
           { Pavucontrol = fork "pavucontrol"; }
           {
