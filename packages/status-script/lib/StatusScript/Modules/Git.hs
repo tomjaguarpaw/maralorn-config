@@ -1,7 +1,6 @@
 module StatusScript.Modules.Git (gitEvents) where
 
 import Control.Exception qualified as Exception
-import Control.Monad.Catch qualified as Catch
 import Data.ByteString.Lazy qualified as LBS
 import Data.Set qualified as Set
 import Maralorn.Prelude
@@ -42,7 +41,7 @@ gitEvents env mode = do
           dir_update_events <- forM dirs \dir -> do
             dir_events <- forM [git_dir </> dir] \sub_dir -> FileWatch.watchDir env sub_dir False (const True)
             git_dir_event <- FileWatch.watchDir env (git_dir </> dir </> ".git") False (const True)
-            git_refs_event <- Catch.handle (\(_ :: Exception.IOException) -> pure R.never) (FileWatch.watchDir env (git_dir </> dir </> ".git/refs") True (const True))
+            git_refs_event <- FileWatch.watchDir env (git_dir </> dir </> ".git/refs") True (const True)
             pure $
               mconcat (void <$> dir_events)
                 <> void git_dir_event

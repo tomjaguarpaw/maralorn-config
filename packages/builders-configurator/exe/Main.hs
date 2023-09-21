@@ -123,7 +123,7 @@ main = do
         _ -> error [i|Unknown arguments: #{args}|]
       builder_tries :: (Ping :> es) => Eff es [Text]
       builder_tries = testBuilders $ fromMaybe (error [i|#{host} not found in builderConfigs.|]) $ Map.lookup (into host) builderConfigs
-  builders <- if allow_empty && host == "zeus" then pure [] else Eff.runEff $ (if withoutConnection then runWithoutConnectivity else runWithPing) builder_tries
+  builders <- if allow_empty && host `elem` ["zeus", "hephaistos"] then pure [] else Eff.runEff $ (if withoutConnection then runWithoutConnectivity else runWithPing) builder_tries
   (path, handle) <- IO.openTempFile "/tmp" "machines"
   TextIO.hPutStr handle (printBuilders builders)
   IO.hClose handle

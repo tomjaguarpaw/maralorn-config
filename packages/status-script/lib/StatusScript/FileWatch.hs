@@ -17,14 +17,21 @@ watchDir env path recursive predicate = do
   R.newEventWithLazyTriggerWithOnComplete \callback -> do
     finish_callback <- newEmptyTMVarIO
     env.fork [i|Activating watches for dir #{path}|] do
-      cb <-
-        watch
-          env.watch_manager
-          path
-          predicate
-          (`callback` pass)
+      cb <- Exception.handle
+        ( \(e :: Exception.IOException) -> do
+            sayErr [i|Failed to setup watch for #{path}: #{e}|]
+            pure pass
+        )
+        do
+          watch
+            env.watch_manager
+            path
+            predicate
+            (`callback` pass)
       atomically $ putTMVar finish_callback cb
-    pure $ env.fork [i|Deactivating watches for dir #{path}|] $ join $ atomically $ takeTMVar finish_callback
+    pure $ env.fork [i|Deactivating watches for dir #{path}|] $ Exception.handle
+      (\(e :: Exception.IOException) -> sayErr [i|Failed to cleanup watches for #{path}: #{e}|])
+      do join $ atomically $ takeTMVar finish_callback
 
 watchFile :: (R.MonadHeadlessApp t m) => Env -> FilePath -> FilePath -> m (R.Event t ())
 watchFile env dir file = do

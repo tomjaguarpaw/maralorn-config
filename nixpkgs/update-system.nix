@@ -186,7 +186,7 @@ let
 
           main = getArgs >>= \case
             [] -> deploy Nothing
-            hosts -> (if hosts == ["all"] then ["apollo", "zeus", "fluffy", "hera"] else hosts)
+            hosts -> (if hosts == ["all"] then ["apollo", "hephaistos", "zeus", "fluffy", "hera"] else hosts)
               & filterM is_reachable
               >>= mapM_ (deploy . Just)
         '';
