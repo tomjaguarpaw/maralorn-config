@@ -13,11 +13,6 @@ let
     cmd: fork (shell "${config.home.sessionVariables.TERMINAL} mic-check; ${cmd}");
   hotkeys = [
     {
-      "M: Toggle Keyboard Layout" =
-        fork
-          "hyprctl switchxkblayout keyboardio-model-100-keyboard next";
-    }
-    {
       Orga = [
         { Kassandra = fork "kassandra2"; }
         { Kalendar = term "ikhal"; }
@@ -42,9 +37,8 @@ let
         Shutdown = "systemctl poweroff";
         Suspend = "systemctl suspend";
         Reboot = "systemctl reboot";
-        Logout = "hyprctl dispatch exit";
+        Logout = "riverctl exit";
         Lock = "swaylock";
-        "Reload Hyprland" = "hyrpctl reload";
         "Disable Idle daemon" = "systemctl --user stop swayidle";
         "Enable Idle daemon" = "systemctl --user start swayidle";
       };

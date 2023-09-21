@@ -4,7 +4,7 @@
     enable = true;
     package = pkgs.swaylock-effects;
     settings = {
-      image = "~/media/images/lockscreen.jpg";
+      image = "~/.config/wallpaper";
       indicator-caps-lock = true;
       hide-keyboard-layout = true;
       indicator = true;

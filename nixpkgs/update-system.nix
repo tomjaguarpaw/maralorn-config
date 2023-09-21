@@ -87,7 +87,7 @@ let
         {
           name = "select-mode";
           bins = [
-            pkgs.hyprland
+            pkgs.river
             pkgs.activateMode
           ];
           imports = [ "System.Directory qualified as Directory" ];
@@ -97,7 +97,7 @@ let
             [mode] <- getArgs
             writeFile "${modeFile}" mode
             activate_mode
-            hyprctl "dispatch" "exit"
+            riverctl "exit"
         '';
     updateModes =
       pkgs.writeHaskellScript

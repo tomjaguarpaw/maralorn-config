@@ -38,6 +38,7 @@ let
       '';
 in
 {
+  xdg.configFile.wallpaper.source = fallback;
   systemd.user.services.wallpaper = {
     Unit.Description = "Wallpaper Daemon";
     Service.ExecStart = lib.getExe wallpaper-daemon;
