@@ -4,6 +4,7 @@
       ".aqbanking"
       ".cache/rbw" # Save user login
       ".calendars"
+      ".cabal/store"
       ".config/Element"
       ".config/Mumble"
       ".config/Signal"
