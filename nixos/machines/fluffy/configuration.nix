@@ -17,6 +17,7 @@ in
       ../../modules/athene
       ../../modules/all
       ../../modules/impermanent
+      ../../modules/servers
     ];
 
   systemd.services = {

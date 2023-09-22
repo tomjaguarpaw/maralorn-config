@@ -22,20 +22,17 @@ in
       ../../roles/blog.nix
       #../../roles/coturn.nix
       ../../roles/email2matrix.nix
-      #../../roles/firefox-sync.nix
       ../../roles/foundryvtt.nix
       ../../roles/git.nix
       ../../roles/go-neb.nix
       ../../roles/goatcounter.nix
       ../../roles/headscale.nix
-      # ../../roles/laminar
       ../../roles/mailman.nix
       ../../roles/matrix-synapse
       ../../roles/miniflux.nix
       ../../roles/monitoring
       ../../roles/nixpkgs-bot.nix
       ../../roles/server
-      ../../roles/server/init_ssh.nix
       ../../roles/unbound.nix
       ../../roles/update-postgres.nix
       ./boot.nix
@@ -63,6 +60,7 @@ in
       ../../modules/hera
       ../../modules/not-home
       ../../modules/all
+      ../../modules/servers
     ];
 
   m-0.monitoring = [ {
