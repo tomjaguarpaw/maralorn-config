@@ -1,1 +1,1 @@
-{ pkgs, ... }: { home.packages = [ pkgs.tigervnc ]; }
+{ pkgs, ... }: { home.packages = [ pkgs.remmina ]; }
