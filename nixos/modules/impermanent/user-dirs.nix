@@ -12,6 +12,7 @@
       ".config/gh"
       ".config/heroic" # Login data
       ".config/mpv/watch_later"
+      ".config/remmina"
       ".config/tea"
       ".contacts"
       ".factorio" # Factorio save games and login
