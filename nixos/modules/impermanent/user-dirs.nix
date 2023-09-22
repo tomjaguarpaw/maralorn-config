@@ -42,6 +42,8 @@
   environment.persistence.unsnapshoted.users.maralorn.directories = [
     "Videos"
     ".cache/kassandra"
+    ".cache/hie-bios"
+    ".cache/ghcide"
     ".cache/nix-output-monitor"
     ".local/state/wireplumber" # For volume levels
   ];
