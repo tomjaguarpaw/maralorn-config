@@ -63,8 +63,11 @@ let
             now <- Time.getZonedTime
             let timestamp =  Time.formatTime Time.defaultTimeLocale "%F-%T" now
             paths & mapM_ \path -> do
-              let gc_root = [i|/disk/volatile/nix-gc-roots/#{timestamp}-#{drop 44 path}|] :: String
-              say [i|Setting gc-root #{gc_root}|]
+              let name = drop 44 path
+                  gc_root_full = [i|/disk/volatile/nix-gc-roots/#{timestamp}-#{name}|] :: String
+                  gc_root = [i|/disk/volatile/nix-gc-roots/#{name}|] :: String
+              say [i|Setting gc-roots #{gc_root} and #{gc_root}|]
+              ssh "fluffy" "nix" "build" "-o" gc_root_full path
               ssh "fluffy" "nix" "build" "-o" gc_root path
         '';
     maintenance = pkgs.writeShellScriptBin "maintenance" ''

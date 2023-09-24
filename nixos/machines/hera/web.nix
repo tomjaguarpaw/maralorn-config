@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 let
   locations."/".extraConfig = "return 301 https://blog.maralorn.de$request_uri;";
 in
@@ -27,10 +27,18 @@ in
         "maralorn.de" = {
           enableACME = true;
           forceSSL = true;
-          inherit locations;
+          locations = locations // {
+            "/thesis.pdf" = {
+              proxyPass = "http://fluffy.vpn.m-0.eu/thesis.pdf";
+              basicAuthFile = "/run/credentials/nginx.service/melon-pw";
+            };
+          };
         };
       } // pkgs.privateValue { } "extra-sites";
     };
   };
-  systemd.services.nginx.serviceConfig.Restart = "always";
+  systemd.services.nginx.serviceConfig = {
+    Restart = "always";
+    LoadCredential = [ "melon-pw:${config.age.secrets."basic-auth/melon".path}" ];
+  };
 }
