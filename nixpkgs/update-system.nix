@@ -66,7 +66,7 @@ let
               let name = drop 44 path
                   gc_root_full = [i|/disk/volatile/nix-gc-roots/#{timestamp}-#{name}|] :: String
                   gc_root = [i|/disk/volatile/nix-gc-roots/#{name}|] :: String
-              say [i|Setting gc-roots #{gc_root} and #{gc_root}|]
+              say [i|Setting gc-roots #{gc_root} and #{gc_root_full}|]
               ssh "fluffy" "nix" "build" "-o" gc_root_full path
               ssh "fluffy" "nix" "build" "-o" gc_root path
         '';
