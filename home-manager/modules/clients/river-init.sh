@@ -7,24 +7,6 @@
 #        "SUPER_SHIFT, Next, movetoworkspace, +1"
 #        ", Print, execr, screenshot"
 #      ];
-#      bindr = [
-#        "SUPER, SUPER_L, execr, (makoctl mode -r show; eww close overlay) || (eww open overlay; makoctl mode -a show)"
-#      ];
-#      binde = [
-#        "SUPER_ALT, Left, resizeactive, -10 0"
-#        "SUPER_ALT, Right, resizeactive, 10 0"
-#        "SUPER_ALT, Up, resizeactive, 0 -10"
-#        "SUPER_ALT, Down, resizeactive, 0 10"
-#      ];
-#      bindm = [
-#        "$mod,mouse:272,movewindow"
-#        "$mod,mouse:273,resizewindow"
-#      ];
-#      monitor = [
-#        ",highres,auto,1"
-#        "HDMI-A-1,highres,auto,1,mirror,DP-3"
-#      ];
-#    };
 #  };
 
 swaybg -i ~/.config/wallpaper &
@@ -122,7 +104,6 @@ do
 done
 
 # Set background and border color
-riverctl background-color 0x000000
 riverctl border-color-focused 0xffffff
 riverctl border-color-unfocused 0xffffff00
 riverctl border-width 1

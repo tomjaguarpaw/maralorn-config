@@ -30,10 +30,7 @@
         config:
         (inputs.home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
-          modules = [
-            config
-            inputs.nix-index-database.hmModules.nix-index
-          ];
+          modules = [ config ];
         });
       buildModesForHost =
         host: modes:
