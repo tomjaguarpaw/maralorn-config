@@ -12,9 +12,9 @@ let
   );
 in
 {
-  services.kanshi = inject_exec {
+  services.kanshi = {
     enable = true;
-    profiles = {
+    profiles = inject_exec {
       undocked.outputs = [ { criteria = "eDP-1"; } ];
       docked.outputs = [
         {
