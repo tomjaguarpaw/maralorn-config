@@ -39,6 +39,9 @@ function col_count(count, col)
 end
 
 function handle_layout(args)
+	if args.width < 5000 then
+	  cols = 1
+  end
 	local colorder = {}
 	local colwidth = div(args.width,cols)
 	for i = 1, cols do

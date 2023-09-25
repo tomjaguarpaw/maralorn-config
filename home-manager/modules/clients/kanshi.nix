@@ -15,7 +15,10 @@ in
   services.kanshi = {
     enable = true;
     profiles = inject_exec {
-      undocked.outputs = [ { criteria = "eDP-1"; } ];
+      undocked.outputs = [ {
+        criteria = "eDP-1";
+        status = "enable";
+      } ];
       docked.outputs = [
         {
           criteria = "eDP-1";
