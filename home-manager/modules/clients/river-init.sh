@@ -18,6 +18,7 @@ riverctl map normal Super Space spawn "foot my-hotkeys"
 riverctl keyboard-layout -variant neo -options altwin:swap_lalt_lwin de
 
 riverctl map normal Super Q close
+riverctl map normal None Print spawn screenshot
 
 riverctl map normal Super Right focus-view next
 riverctl map normal Super Left focus-view previous
