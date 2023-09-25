@@ -12,7 +12,6 @@
       ".config/gh"
       ".config/heroic" # Login data
       ".config/mpv/watch_later"
-      ".config/remmina"
       ".config/tea"
       ".contacts"
       ".factorio" # Factorio save games and login
@@ -25,6 +24,7 @@
       ".local/share/khal"
       ".local/share/mpd"
       ".local/share/newsboat"
+      ".local/share/remmina"
       ".minecraft"
       ".mozilla/firefox"
       ".ssh"
