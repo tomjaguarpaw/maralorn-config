@@ -17,7 +17,10 @@ let
   custom_configs = {
     connect-app = [ {
       name = "haskell";
-      formatter.command = "ormolu -i";
+      formatter = {
+        command = "ormolu";
+        args = [ "--no-cabal" ];
+      };
     } ];
   };
   project_configs = builtins.zipAttrsWith (_: lib.concatLists) [
