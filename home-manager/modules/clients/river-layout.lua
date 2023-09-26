@@ -39,7 +39,7 @@ function col_count(count, col)
 end
 
 function handle_layout(args)
-	if args.width < 5000 then
+	if args.width < 4500 then
 	  cols = 1
   end
 	local colorder = {}
