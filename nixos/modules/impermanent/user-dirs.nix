@@ -13,6 +13,7 @@
       ".config/heroic" # Login data
       ".config/mpv/watch_later"
       ".config/tea"
+      ".config/remmina" # RDP Client
       ".contacts"
       ".factorio" # Factorio save games and login
       ".gnupg"
@@ -24,7 +25,7 @@
       ".local/share/khal"
       ".local/share/mpd"
       ".local/share/newsboat"
-      ".local/share/remmina"
+      ".local/share/remmina" # RDP Client
       ".minecraft"
       ".mozilla/firefox"
       ".ssh"
