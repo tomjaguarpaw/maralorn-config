@@ -128,7 +128,6 @@
       ++ [
         (pkgs.writeShellScriptBin "unlock-keys" ''
           ssh-add ~/.ssh/id_ed25519_sk-solo-1
-          ssh-add ~/.ssh/id_ed25519_sk-nitro-1
           ${
             lib.getBin pkgs.dbus
           }/bin/dbus-update-activation-environment --systemd SSH_AUTH_SOCK
