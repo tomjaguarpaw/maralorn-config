@@ -1,5 +1,4 @@
 -- You can define your global state here
-local cols = 3
 local maxsubcols = 2
 local maxrows = 2
 
@@ -25,23 +24,25 @@ function div(x,y)
   return math.floor(x / y)
 end
 
-function col_count(count, col)
-		local num = div(count-1,cols)
-
-		if count <= cols and col - 1< count then
-			num = num + 1
-		end
-		if count > cols and cols - ((count - 1) % cols + 1) <= col - 1 then
-			num = num + 1
-		end
-
-		return num
-end
 
 function handle_layout(args)
 	if args.width < 4500 then
-	  cols = 1
+	  local cols = 1
+	else
+    local cols = 3
   end
+	function col_count(count, col)
+			local num = div(count-1,cols)
+
+			if count <= cols and col - 1< count then
+				num = num + 1
+			end
+			if count > cols and cols - ((count - 1) % cols + 1) <= col - 1 then
+				num = num + 1
+			end
+
+			return num
+	end
 	local colorder = {}
 	local colwidth = div(args.width,cols)
 	for i = 1, cols do
