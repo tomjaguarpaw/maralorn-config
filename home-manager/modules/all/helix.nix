@@ -19,7 +19,10 @@ let
       name = "haskell";
       formatter = {
         command = "ormolu";
-        args = [ "--no-cabal" ];
+        args = [
+          "--stdin-input-file"
+          "/home/maralorn/git/connect-app/import/src/Import/Common.hs"
+        ];
       };
     } ];
   };
