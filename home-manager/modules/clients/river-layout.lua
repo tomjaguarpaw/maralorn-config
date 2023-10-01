@@ -28,7 +28,7 @@ end
 function handle_layout(args)
   local cols = 3
 	if args.width < 4500 then
-	  local cols = 1
+	  cols = 1
   end
 	function col_count(count, col)
 			local num = div(count-1,cols)
