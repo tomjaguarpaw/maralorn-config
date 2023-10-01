@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, withSystem, ... }:
 {
   imports = [
     inputs.pre-commit-hooks.flakeModule
@@ -8,27 +8,39 @@
     ./nixpkgs/flake-module.nix
   ];
   systems = [ "x86_64-linux" ];
-  flake.nixFromDirs =
-    let
-      nixFromDir =
-        dir:
-        builtins.concatLists (
-          builtins.attrValues (
-            builtins.mapAttrs
-              (
-                name: path_type:
-                if path_type == "regular" && builtins.match "[^_].*\\.nix" name != null then
-                  [ (import "${dir}/${name}") ]
-                else if path_type == "directory" then
-                  nixFromDir "${dir}/${name}"
-                else
-                  [ ]
-              )
-              (builtins.readDir dir)
-          )
-        );
-    in
-    builtins.concatMap nixFromDir;
+  flake = {
+    nixFromDirs =
+      let
+        nixFromDir =
+          dir:
+          builtins.concatLists (
+            builtins.attrValues (
+              builtins.mapAttrs
+                (
+                  name: path_type:
+                  if path_type == "regular" && builtins.match "[^_].*\\.nix" name != null then
+                    [ (import "${dir}/${name}") ]
+                  else if path_type == "directory" then
+                    nixFromDir "${dir}/${name}"
+                  else
+                    [ ]
+                )
+                (builtins.readDir dir)
+            )
+          );
+      in
+      builtins.concatMap nixFromDir;
+    iso = withSystem "x86_64-linux" (
+      { pkgs, ... }:
+      (pkgs.nixos {
+        imports = [
+          ./iso.nix
+          "${inputs.nixos-stable}/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-gnome.nix"
+        ];
+      }).config.system.build.isoImage
+    );
+  };
+
   perSystem =
     {
       inputs',
