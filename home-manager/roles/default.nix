@@ -91,7 +91,6 @@
           if ! rbw unlocked; then killall rbw-agent; fi
           rbw unlock
         '')
-        (pkgs.writeShellScriptBin "dingdingding" (builtins.readFile ./signal.sh))
       ];
     sessionVariables = {
       PATH = "$HOME/.nix-profile/bin:$PATH";
