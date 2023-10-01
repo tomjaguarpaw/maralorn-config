@@ -1,19 +1,11 @@
 { lib, ... }:
 let
-  inject_exec = lib.mapAttrs (
-    _: x:
-    x
-    // {
-      exec = [
-        "eww open bar"
-        "eww open bg"
-      ];
-    }
-  );
+  inject_exec = lib.mapAttrs (_: x: x // { exec = [ "eww open-many bar bg" ]; });
 in
 {
   services.kanshi = {
     enable = true;
+    systemdTarget = "graphical-session.target";
     profiles = inject_exec {
       undocked.outputs = [ {
         criteria = "eDP-1";

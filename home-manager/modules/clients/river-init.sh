@@ -118,19 +118,15 @@ riverctl border-width 1
 
 # Make all views with app-id "bar" and any title use client-side decorations
 #riverctl rule-add csd -app-id "bar"
-dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE NIXOS_OZONE_WL
 
-riverctl spawn systemctl --user restart status-script
-riverctl spawn unlock-keys
+systemctl --user start river-session.target
 
-
-kanshi &
 river-tag-overlay &
-
-eww daemon
-eww open bar
 
 # Set the default layout generator to be rivertile and start it.
 # River will send the process group of the init executable SIGTERM on exit.
 riverctl default-layout luatile
 river-luatile &
+
+riverctl spawn unlock-keys

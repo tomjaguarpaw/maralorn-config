@@ -2,7 +2,7 @@
 {
   environment.systemPackages = [
     (pkgs.writeShellScriptBin "launch-wayland" ''
-      XDG_CURRENT_DESKTOP=river exec dbus-run-session river &>> /run/user/$UID/river.log
+      XDG_CURRENT_DESKTOP=river exec river &>> /run/user/$UID/river.log
     '')
   ];
   services.greetd.enable = true;
