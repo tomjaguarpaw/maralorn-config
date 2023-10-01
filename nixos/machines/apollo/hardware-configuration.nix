@@ -27,12 +27,10 @@
       ];
     };
     "/efi" = {
-      device = "/dev/disk/by-uuid/C4A6-3DB5";
+      device = "/dev/disk/by-uuid/256B-9B5C";
       fsType = "vfat";
     };
   };
-  zramSwap.enable = true;
-  swapDevices = [ { device = "/dev/mapper/system-swap"; } ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   nix.settings.max-jobs = lib.mkDefault 8;
