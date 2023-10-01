@@ -30,6 +30,7 @@ in
   fileSystems =
     let
       btrfsOptions = {
+        neededForBoot = true;
         options = [
           "compress=zstd"
           "autodefrag"
@@ -38,10 +39,7 @@ in
       };
     in
     {
-      "/disk" = {
-        neededForBoot = true;
-      } // btrfsOptions;
-      "/boot" = btrfsOptions;
+      "/disk" = btrfsOptions;
       "/nix" = btrfsOptions;
     };
 

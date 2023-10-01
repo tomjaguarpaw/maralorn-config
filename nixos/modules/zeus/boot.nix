@@ -1,7 +1,7 @@
 {
   m-0.server.initrd-ssh = {
-    ip-config = "dhcp";
     key = "/disk/persist/boot-ssh-key";
+    networkingModules = [ "igb" ];
   };
   boot = {
     kernelParams = [ "amdgpu.cik_support=1" ];
