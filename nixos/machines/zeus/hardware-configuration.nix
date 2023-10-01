@@ -40,13 +40,7 @@
     options = [ "subvol=nix" ];
   };
 
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/47552982-2abf-45c6-8c5c-d33091ce3f5a";
-    fsType = "btrfs";
-    options = [ "subvol=boot" ];
-  };
-
-  fileSystems."/boot/efi" = {
+  fileSystems."/efi" = {
     device = "/dev/disk/by-uuid/C41C-0C8E";
     fsType = "vfat";
   };

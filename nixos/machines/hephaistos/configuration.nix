@@ -5,7 +5,6 @@ flake-inputs: {
       flake-inputs.nixos-hardware.nixosModules.lenovo-thinkpad
       ../../roles
       ../../roles/fonts.nix
-      ../../roles/metal.nix
     ]
     ++ flake-inputs.self.nixFromDirs [
       ../../modules/hephaistos
@@ -15,6 +14,7 @@ flake-inputs: {
       ../../modules/all
       ../../modules/impermanent
       ../../modules/beefs
+      ../../modules/metal
     ];
 
   networking.hostName = "hephaistos";

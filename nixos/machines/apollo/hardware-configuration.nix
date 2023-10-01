@@ -2,19 +2,6 @@
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
   boot = {
-    loader = {
-      efi = {
-        canTouchEfiVariables = true;
-        efiSysMountPoint = "/boot/EFI";
-      };
-      grub = {
-        enable = true;
-        device = "nodev";
-        efiSupport = true;
-        enableCryptodisk = true;
-        gfxmodeEfi = "1024x768";
-      };
-    };
     initrd = {
       luks.devices."nixos".device = "/dev/disk/by-uuid/78acaebe-952a-43b1-acc8-66c35a60577e";
       availableKernelModules = [
@@ -39,7 +26,7 @@
         "noatime"
       ];
     };
-    "/boot/EFI" = {
+    "/efi" = {
       device = "/dev/disk/by-uuid/C4A6-3DB5";
       fsType = "vfat";
     };

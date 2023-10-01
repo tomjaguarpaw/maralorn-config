@@ -32,10 +32,8 @@ in
       ../../roles/miniflux.nix
       ../../roles/monitoring
       ../../roles/nixpkgs-bot.nix
-      ../../roles/server
       ../../roles/unbound.nix
       ../../roles/update-postgres.nix
-      ./boot.nix
       ./cloud.nix
       ./hardware-configuration.nix
       ./network.nix
@@ -154,11 +152,6 @@ in
         "/media";
   };
   systemd.tmpfiles.rules = [ "Z /media 0770 maralorn nginx - -" ];
-  nix.sshServe = {
-    protocol = "ssh-ng";
-    enable = true;
-    keys = pkgs.privateValue [ ] "root-ssh-keys";
-  };
 
   users.users = {
     choreutes = {

@@ -16,8 +16,6 @@ in
       ./hardware-configuration.nix
       ../../roles
       ../../roles/fonts.nix
-      ../../roles/boot-key.nix
-      ../../roles/metal.nix
       (import ../../roles/monitoring/folder-size-exporter.nix {
         folders = [
           "/"
@@ -34,6 +32,7 @@ in
       ../../modules/not-home
       ../../modules/all
       ../../modules/apollo
+      ../../modules/metal
     ];
 
   networking.hostName = "apollo";

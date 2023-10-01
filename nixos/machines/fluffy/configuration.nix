@@ -10,14 +10,13 @@ in
       ../../roles
       ../../roles/fonts.nix
       ../../roles/home-assistant
-      ../../roles/metal.nix
-      ../../roles/server
     ]
     ++ flake-inputs.self.nixFromDirs [
       ../../modules/athene
       ../../modules/all
       ../../modules/impermanent
       ../../modules/servers
+      ../../modules/metal
     ];
 
   systemd.services = {

@@ -1,4 +1,4 @@
-_: {
+{
   boot.kernelParams = [ "mitigations=off" ];
   console.keyMap = "neo";
   security.rtkit.enable = true;

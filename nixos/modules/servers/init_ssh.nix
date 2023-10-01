@@ -1,17 +1,30 @@
 { config, lib, ... }:
 with lib; {
 
-  options.m-0.server.initSSHKey = mkOption { type = types.path; };
+  options.m-0.server = {
+    initrd-ssh = {
+      key = mkOption { type = types.path; };
+      ip-config = mkOption {
+        type = types.str;
+        default = "dhcp";
+      };
+      networkingModules = mkOption { type = types.listOf types.str; };
+    };
+  };
 
-  config.boot.initrd = {
-    network = {
-      enable = true;
-      ssh = {
+  config.boot = {
+    kernelParams = [ "ip=${config.m-0.server.initrd-ssh.ip-config}" ];
+    initrd = {
+      kernelModules = config.m-0.server.initrd-ssh.networkingModules;
+      network = {
         enable = true;
-        authorizedKeys = config.users.users.root.openssh.authorizedKeys.keys;
-        hostKeys = [ config.m-0.server.initSSHKey ];
+        ssh = {
+          enable = true;
+          shell = "/bin/cryptsetup-askpass";
+          authorizedKeys = config.users.users.root.openssh.authorizedKeys.keys;
+          hostKeys = [ config.m-0.server.initrd-ssh.key ];
+        };
       };
     };
-    postMountCommands = "ip link set eth0 down";
   };
 }

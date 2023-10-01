@@ -16,7 +16,6 @@ in
       ./hardware-configuration.nix
       ../../roles
       ../../roles/fonts.nix
-      ../../roles/metal.nix
     ]
     ++ flake-inputs.self.nixFromDirs [
       ../../modules/zeus
@@ -24,6 +23,8 @@ in
       ../../modules/all
       ../../modules/impermanent
       ../../modules/beefs
+      ../../modules/metal
+      ../../modules/servers
     ];
 
   fileSystems =
