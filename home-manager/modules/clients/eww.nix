@@ -19,6 +19,7 @@
       PartOf = [ "graphical-session.target" ];
       Requires = [ "graphical-session.target" ];
     };
+    Install.WantedBy = [ "graphical-session.target" ];
     Service = {
       Environment = "PATH=${
           lib.makeBinPath [
