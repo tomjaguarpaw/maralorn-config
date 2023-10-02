@@ -1,6 +1,12 @@
-{ lib, ... }:
+{ lib, config, ... }:
 let
-  inject_exec = lib.mapAttrs (_: x: x // { exec = [ "eww open-many bar bg" ]; });
+  inject_exec = lib.mapAttrs (
+    _: x:
+    x
+    // {
+      exec = [ "${lib.getExe config.programs.eww.package} open-many bar bg" ];
+    }
+  );
 in
 {
   services.kanshi = {
