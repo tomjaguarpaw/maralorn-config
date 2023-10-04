@@ -9,6 +9,8 @@ let
   passwordFile = lib.mkDefault config.age.secrets.pam-long-password.path;
 in
 {
+  # Enable lingering
+  systemd.tmpfiles.rules = [ "f /var/lib/systemd/linger/maralorn" ];
   users.users = {
     maralorn = {
       description = "maralorn";
