@@ -118,24 +118,32 @@ let
 in
 {
   apollo = daily-driver "apollo" (
-    flake-inputs.self.nixFromDirs [ ./modules/apollo ]
+    flake-inputs.self.nixFromDirs [
+      ./modules/apollo
+      ./modules/metal
+    ]
   );
 
   zeus = daily-driver "zeus" (
     flake-inputs.self.nixFromDirs [
       ./modules/impermanent
       ./modules/zeus
+      ./modules/metal
     ]
   );
   fluffy.default = makeConfig "fluffy" (
     default
     ++ [ ./roles/headless.nix ]
-    ++ flake-inputs.self.nixFromDirs [ ./modules/impermanent ]
+    ++ flake-inputs.self.nixFromDirs [
+      ./modules/impermanent
+      ./modules/metal
+    ]
   );
   hephaistos.default = makeConfig "hephaistos" (
     flake-inputs.self.nixFromDirs [
       ./modules/impermanent
       ./modules/hephaistos
+      ./modules/metal
     ]
     ++ daily
     ++ [

@@ -10,19 +10,11 @@ let
 in
 {
   xdg.configFile."mpDris2/mpDris2.conf".enable = false;
-  services = {
-    mpd.extraConfig = ''
-      audio_output {
-        type "pipewire"
-        name "PipeWire"
-      }
-    '';
-    mpdris2 = {
-      enable = true;
-      mpd = {
-        musicDirectory = lib.mkForce null;
-        host = replace_string;
-      };
+  services.mpdris2 = {
+    enable = true;
+    mpd = {
+      musicDirectory = lib.mkForce null;
+      host = replace_string;
     };
   };
   home.packages = [

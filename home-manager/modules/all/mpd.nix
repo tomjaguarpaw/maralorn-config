@@ -11,12 +11,6 @@ in
 {
 
   services.mpd = {
-    extraConfig = ''
-      audio_output {
-        type "pipewire"
-        name "PipeWire"
-      }
-    '';
     enable = true;
     musicDirectory = audio_dir;
     playlistDirectory = playlist_dir;
