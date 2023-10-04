@@ -19,6 +19,7 @@ in
         "systemd-journal"
         "networkmanager"
         "docker"
+        "audio"
         "video"
         "keys"
         "adbusers"

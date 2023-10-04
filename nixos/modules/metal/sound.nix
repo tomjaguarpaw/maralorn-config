@@ -1,6 +1,5 @@
 {
   # rtkit is optional but recommended
-  security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;

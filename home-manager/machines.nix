@@ -59,8 +59,6 @@ let
       ./roles/khal.nix
       ./roles/khard.nix
       ./roles/mode-switching.nix
-      ./roles/mpclient.nix
-      ./roles/mpd.nix
       ./roles/mpv
       #./roles/night-shutdown.nix
       ./roles/research.nix
@@ -154,7 +152,6 @@ in
       ./roles/mail-sort.nix
       ./roles/mail2rss.nix
       ./roles/headless.nix
-      ./roles/headless-mpd.nix
     ]
   );
 }

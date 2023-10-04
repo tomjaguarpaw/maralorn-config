@@ -10,7 +10,6 @@
     ./home-options.nix
     ../../common
     ./unlock.nix
-    ./mpclient.nix
     ./nvd.nix
   ];
 
