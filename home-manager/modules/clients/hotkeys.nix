@@ -50,7 +50,8 @@ let
         in
         [
           { "hera via vpn" = ssh "hera.vpn.m-0.eu"; }
-          { "fluffy via vpn" = ssh "fluffy.vpn.m-0.eu"; }
+          { "athene via vpn" = ssh "fluffy.vpn.m-0.eu"; }
+          { "zeus via vpn" = ssh "zeus.vpn.m-0.eu"; }
           { remote-builder = ssh "phoibe.cased.de"; }
           { ag = ssh "ag-forward"; }
           { mathe-gateway = ssh "gw"; }
