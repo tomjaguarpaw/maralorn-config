@@ -144,6 +144,7 @@ in
       ./modules/impermanent
       ./modules/hephaistos
       ./modules/metal
+      ./modules/laptops
     ]
     ++ daily
     ++ [
