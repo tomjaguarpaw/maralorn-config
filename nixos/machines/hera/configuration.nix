@@ -148,6 +148,7 @@ in
           "apollo"
           "zeus"
           "pegasus"
+          "hephaistos"
         ]
         "/media";
   };
