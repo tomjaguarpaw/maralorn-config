@@ -1,6 +1,5 @@
 -- You can define your global state here
 local maxsubcols = 2
-local maxrows = 2
 
 -- The most important function - the actual layout generator
 --
@@ -27,9 +26,13 @@ end
 
 function handle_layout(args)
   local cols = 3
+  local maxrows = 2
 	if args.width < 4500 then
 	  cols = 1
   end
+	if args.height < 1200 then
+	  maxrows = 1
+	end
 	function col_count(count, col)
 			local num = div(count-1,cols)
 
