@@ -153,7 +153,8 @@ in
     ]
   );
   hera.default = makeConfig "hera" (
-    default
+    flake-inputs.self.nixFromDirs [ ./modules/hera ]
+    ++ default
     ++ orga-basics
     ++ [
       ./roles/weechat
