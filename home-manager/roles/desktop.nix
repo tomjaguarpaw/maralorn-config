@@ -96,6 +96,6 @@
         tweaks = [ "rimless" ];
       };
     };
-    gtk3.bookmarks = [ "ftp://fluffy.lo.m-0.eu" ];
+    gtk3.bookmarks = [ "ftp://athene.lo.m-0.eu" ];
   };
 }

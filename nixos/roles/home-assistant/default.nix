@@ -92,7 +92,7 @@ in
         notify = [ {
           name = "matrix";
           platform = "matrix";
-          default_room = "#fluffy:maralorn.de";
+          default_room = "#athene:maralorn.de";
         } ];
         group = {
           wohnzimmer_lights = {

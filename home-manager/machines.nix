@@ -131,7 +131,7 @@ in
       ./modules/metal
     ]
   );
-  fluffy.default = makeConfig "fluffy" (
+  athene.default = makeConfig "athene" (
     default
     ++ [ ./roles/headless.nix ]
     ++ flake-inputs.self.nixFromDirs [

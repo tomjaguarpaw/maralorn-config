@@ -1,6 +1,6 @@
 {
   services.printing = {
     enable = true;
-    clientConf = "ServerName fluffy.lo.m-0.eu";
+    clientConf = "ServerName athene.lo.m-0.eu";
   };
 }

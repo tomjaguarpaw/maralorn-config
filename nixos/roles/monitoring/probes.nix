@@ -48,7 +48,7 @@ in
       ])
       (makeProbe "http" (
         [ "hera.m-0.eu" ]
-        ++ lib.pipe (config.m-0.hosts.aliases.fluffy ++ config.m-0.hosts.aliases.hera) [
+        ++ lib.pipe (config.m-0.hosts.aliases.athene ++ config.m-0.hosts.aliases.hera) [
           (builtins.filter (name: name != "cache"))
           (map (name: "http://${name}.maralorn.de/"))
         ]
@@ -64,7 +64,7 @@ in
           "https://cloud.vocalensemble-darmstadt.de"
           "https://www.vocalensemble-darmstadt.de"
         ]
-        ++ lib.pipe (config.m-0.hosts.aliases.fluffy ++ config.m-0.hosts.aliases.hera) [
+        ++ lib.pipe (config.m-0.hosts.aliases.athene ++ config.m-0.hosts.aliases.hera) [
           (builtins.filter (name: name != "cache"))
           (map (name: "https://${name}.maralorn.de/"))
         ]

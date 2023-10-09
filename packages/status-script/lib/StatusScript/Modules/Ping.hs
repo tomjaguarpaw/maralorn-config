@@ -10,7 +10,7 @@ import StatusScript.ReflexUtil qualified as ReflexUtil
 import StatusScript.Warnings (Warning (..))
 
 hosts :: [Text]
-hosts = ["hera", "fluffy"]
+hosts = ["hera", "athene"]
 
 ping :: (R.MonadHeadlessApp t m) => Env -> m (R.Event t [Warning])
 ping = \env -> do

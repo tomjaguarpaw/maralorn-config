@@ -29,7 +29,7 @@ in
           forceSSL = true;
           locations = locations // {
             "/thesis.pdf" = {
-              proxyPass = "http://fluffy.vpn.m-0.eu/thesis.pdf";
+              proxyPass = "http://athene.vpn.m-0.eu/thesis.pdf";
               basicAuthFile = "/run/credentials/nginx.service/melon-pw";
             };
           };

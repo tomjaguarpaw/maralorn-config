@@ -34,7 +34,7 @@ in
   ];
 
   networking = {
-    hostName = "fluffy";
+    hostName = "athene";
     domain = "lo.m-0.eu";
     firewall = {
       allowedUDPPorts = [

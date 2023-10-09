@@ -28,8 +28,8 @@ with lib; {
         flaky = true;
       }
       {
-        host = "fluffy.vpn.m-0.eu:9100";
-        name = "fluffy";
+        host = "athene.vpn.m-0.eu:9100";
+        name = "athene";
       }
       {
         name = "ved server";
@@ -115,11 +115,11 @@ with lib; {
             "taskserver"
             "code"
           ];
-          fluffy = [
+          athene = [
             "firefox-sync"
             "home"
             "cache"
-            "syncthing-fluffy"
+            "syncthing-athene"
             "5e"
             "graphs"
           ];

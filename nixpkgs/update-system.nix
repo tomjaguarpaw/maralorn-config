@@ -56,10 +56,10 @@ let
             when (null paths) do
               say "Found no paths to upload."
               exitFailure
-            when (hostname /= "fluffy") do
-              say [i|Uploading the following paths to fluffy:\n  #{List.intercalate "\n  " paths}|]
-              nix "copy" "--to" "ssh://fluffy" paths --derivation
-              nix "copy" "--to" "ssh://fluffy" paths
+            when (hostname /= "athene") do
+              say [i|Uploading the following paths to athene:\n  #{List.intercalate "\n  " paths}|]
+              nix "copy" "--to" "ssh://athene" paths --derivation
+              nix "copy" "--to" "ssh://athene" paths
             now <- Time.getZonedTime
             let timestamp =  Time.formatTime Time.defaultTimeLocale "%F-%T" now
             paths & mapM_ \path -> do
@@ -67,8 +67,8 @@ let
                   gc_root_full = [i|/disk/volatile/nix-gc-roots/#{timestamp}-#{name}|] :: String
                   gc_root = [i|/disk/volatile/nix-gc-roots/#{name}|] :: String
               say [i|Setting gc-roots #{gc_root} and #{gc_root_full}|]
-              ssh "fluffy" "nix" "build" "-o" gc_root_full path
-              ssh "fluffy" "nix" "build" "-o" gc_root path
+              ssh "athene" "nix" "build" "-o" gc_root_full path
+              ssh "athene" "nix" "build" "-o" gc_root path
         '';
     maintenance = pkgs.writeShellScriptBin "maintenance" ''
       set -e
@@ -189,7 +189,7 @@ let
 
           main = getArgs >>= \case
             [] -> deploy Nothing
-            hosts -> (if hosts == ["all"] then ["apollo", "hephaistos", "zeus", "fluffy", "hera"] else hosts)
+            hosts -> (if hosts == ["all"] then ["apollo", "hephaistos", "zeus", "athene", "hera"] else hosts)
               & filterM is_reachable
               >>= mapM_ (deploy . Just)
         '';

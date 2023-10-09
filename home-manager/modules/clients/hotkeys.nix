@@ -50,7 +50,7 @@ let
         in
         [
           { "hera via vpn" = ssh "hera.vpn.m-0.eu"; }
-          { "athene via vpn" = ssh "fluffy.vpn.m-0.eu"; }
+          { "athene via vpn" = ssh "athene.vpn.m-0.eu"; }
           { "zeus via vpn" = ssh "zeus.vpn.m-0.eu"; }
           { remote-builder = ssh "phoibe.cased.de"; }
           { ag = ssh "ag-forward"; }
@@ -59,7 +59,7 @@ let
           { shells = ssh "shells"; }
           { "bach (ved)" = ssh "bach.vocalensemble-darmstadt.de"; }
           { "nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net shell"; }
-          { "fluffy via local network" = ssh "fluffy.lo.m-0.eu"; }
+          { "athene via local network" = ssh "athene.lo.m-0.eu"; }
           { "hera via public v4" = ssh "hera-v4"; }
           { "TU Tunnel" = "sshuttle --python python3.9 -r gw 130.83.0.0/16"; }
         ];
@@ -78,7 +78,7 @@ let
             "Toggle Input Mute" = "${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
           }
           { "MPD lokal" = mpdclient "::"; }
-          { "MPD athene" = mpdclient "fluffy"; }
+          { "MPD athene" = mpdclient "athene"; }
           { "MPD hera" = mpdclient "hera"; }
           { "Lautstärke" = "ncpamixer"; }
           { Pavucontrol = fork "pavucontrol"; }
