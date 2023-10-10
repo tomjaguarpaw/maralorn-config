@@ -10,7 +10,8 @@ jobs:
            - nixosConfigurations.zeus.config.system.build.toplevel
            - nixosConfigurations.apollo.config.system.build.toplevel
            - nixosConfigurations.hera.config.system.build.toplevel
-           - nixosConfigurations.fluffy.config.system.build.toplevel
+           - nixosConfigurations.athene.config.system.build.toplevel
+           - nixosConfigurations.hephaistos.config.system.build.toplevel
            - homeModes.zeus
            - homeModes.apollo
     env:
