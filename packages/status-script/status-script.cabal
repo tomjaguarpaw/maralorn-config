@@ -80,7 +80,6 @@ library
     StatusScript.Modules.BootState
     StatusScript.Modules.Calendar
     StatusScript.Modules.ConfigPull
-    StatusScript.Modules.ConfigStale
     StatusScript.Modules.Git
     StatusScript.Modules.IdleState
     StatusScript.Modules.KeyTouch

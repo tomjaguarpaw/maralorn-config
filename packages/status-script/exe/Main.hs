@@ -1,17 +1,15 @@
 module Main (main) where
 
+import Control.Concurrent.Async qualified as Async
+import Control.Concurrent.STM qualified as STM
+import Control.Exception qualified as Exception
 import Data.Aeson qualified as Aeson
 import Data.List.NonEmpty qualified as NonEmpty
+import Data.Time.Clock.POSIX qualified as Time
 import Maralorn.Prelude
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
 import Shh (ExecReference (Absolute), load)
-import System.FSNotify qualified as Notify
-
-import Control.Concurrent.Async qualified as Async
-import Control.Concurrent.STM qualified as STM
-import Control.Exception qualified as Exception
-import Data.Time.Clock.POSIX qualified as Time
 import StatusScript.CommandUtil qualified as ReflexUtil
 import StatusScript.Env (Env (..))
 import StatusScript.Mode qualified as Mode
@@ -19,7 +17,6 @@ import StatusScript.Modules.Audio qualified as Audio
 import StatusScript.Modules.BootState qualified as BootState
 import StatusScript.Modules.Calendar qualified as Calendar
 import StatusScript.Modules.ConfigPull qualified as ConfigPull
-import StatusScript.Modules.ConfigStale qualified as ConfigStale
 import StatusScript.Modules.Git qualified as Git
 import StatusScript.Modules.IdleState qualified as IdleState
 import StatusScript.Modules.KeyTouch qualified as KeyTouch
@@ -35,8 +32,10 @@ import StatusScript.PublishSocket qualified as PublishSocket
 import StatusScript.ReflexUtil qualified as ReflexUtil
 import StatusScript.Warnings qualified as Warnings
 import System.Environment qualified as Env
+import System.FSNotify qualified as Notify
 
 Shh.load Shh.Absolute ["mkdir"]
+
 missingExecutables :: IO [FilePath]
 
 data WarningGroup = MkWarningGroup
@@ -68,7 +67,6 @@ main = Notify.withManager \watch_manager -> do
     boot_state_event <- BootState.bootState env mode
     config_pull_event <- ConfigPull.pullNeeded env mode
     (git_warnings, dirties) <- Git.gitEvents env mode
-    config_stale_event <- ConfigStale.configStale env mode dirties
     mail_events <- Mail.mail env mode
     inbox_events <- Tasks.tasks env mode
     notification_events <- Mako.notifications env
@@ -79,7 +77,6 @@ main = Notify.withManager \watch_manager -> do
         , config_pull_event
         , git_warnings
         , software_feed_event
-        , config_stale_event
         , mail_events
         , inbox_events
         , notification_events
