@@ -77,6 +77,8 @@ in
           "hera"
           "apollo"
           "pegasus"
+          "hephaistos"
+          "athene"
         ]
         "/disk/persist/home/maralorn/media";
     #minecraft-server = {

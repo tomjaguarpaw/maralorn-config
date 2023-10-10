@@ -149,6 +149,7 @@ in
           "zeus"
           "pegasus"
           "hephaistos"
+          "athene"
         ]
         "/media";
   };

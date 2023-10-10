@@ -63,11 +63,9 @@ in
     );
   };
 
-  m-0 = {
-    virtualHosts = lib.genAttrs (hosts.aliases.${hostName} or [ ]) (
-      name: "${name}.maralorn.de"
-    );
-  };
+  m-0.virtualHosts = lib.genAttrs (hosts.aliases.${hostName} or [ ]) (
+    name: "${name}.maralorn.de"
+  );
 
   nix = {
     # Extra Option which is on by default: allow-import-from-derivation = true
@@ -229,20 +227,24 @@ in
     };
     nginx = {
       enable = lib.mkDefault (config.m-0.virtualHosts != { });
-      virtualHosts = lib.genAttrs (builtins.attrValues config.m-0.virtualHosts) (
-        name: {
-          forceSSL = true;
-          enableACME = true;
-          extraConfig =
-            lib.mkIf (builtins.elem name hosts.publicAliases.${hostName} or [ ])
-              ''
-                satisfy any;
-                ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};")
-                  config.m-0.headscaleIPs}
-                deny all;
-              '';
-        }
-      );
+      virtualHosts =
+        lib.mapAttrs'
+          (name: hostname: {
+            name = hostname;
+            value = {
+              forceSSL = true;
+              enableACME = true;
+              extraConfig =
+                lib.mkIf (!(builtins.elem name (hosts.publicAliases.${hostName} or [ ])))
+                  ''
+                    satisfy any;
+                    ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};")
+                      config.m-0.headscaleIPs}
+                    deny all;
+                  '';
+            };
+          })
+          config.m-0.virtualHosts;
       statusPage = true;
       recommendedOptimisation = true;
       recommendedGzipSettings = true;

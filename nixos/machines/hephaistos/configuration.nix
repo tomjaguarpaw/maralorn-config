@@ -15,6 +15,7 @@ flake-inputs: {
       ../../modules/impermanent
       ../../modules/beefs
       ../../modules/metal
+      ../../modules/new-sync
     ];
 
   networking.hostName = "hephaistos";

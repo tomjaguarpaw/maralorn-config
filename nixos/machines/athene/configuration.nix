@@ -17,6 +17,7 @@ in
       ../../modules/impermanent
       ../../modules/servers
       ../../modules/metal
+      ../../modules/new-sync
     ];
 
   systemd.services = {

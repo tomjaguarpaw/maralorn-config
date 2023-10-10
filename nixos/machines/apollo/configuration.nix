@@ -71,6 +71,8 @@ in
           "hera"
           "zeus"
           "pegasus"
+          "hephaistos"
+          "athene"
         ]
         "/home/maralorn/media";
   };

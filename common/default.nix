@@ -111,7 +111,6 @@ with lib; {
             "rspamd"
             "rss"
             "stats"
-            "syncthing-hera"
             "taskserver"
             "code"
           ];
@@ -125,6 +124,7 @@ with lib; {
           ];
           zeus = [ "syncthing-zeus" ];
           apollo = [ "syncthing-apollo" ];
+          hephaistos = [ "syncthing-hephaistos" ];
         };
       };
     };
