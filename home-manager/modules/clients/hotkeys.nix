@@ -79,7 +79,6 @@ let
           }
           { "MPD lokal" = mpdclient "::"; }
           { "MPD athene" = mpdclient "athene"; }
-          { "MPD hera" = mpdclient "hera"; }
           { "Lautstärke" = "ncpamixer"; }
           { Pavucontrol = fork "pavucontrol"; }
           {
