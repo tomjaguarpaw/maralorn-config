@@ -9,6 +9,7 @@ in
     stateDir = "/var/lib/forgejo";
     settings = {
       actions.ENABLED = true;
+      metrics.ENABLED = true;
       server = {
         ROOT_URL = "https://code.maralorn.de";
         HTTP_PORT = 3787; # Default port was blocked
