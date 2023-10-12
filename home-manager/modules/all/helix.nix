@@ -21,7 +21,7 @@ let
         command = "ormolu";
         args = [
           "--stdin-input-file"
-          "/home/maralorn/git/connect-app/import/src/Import/Common.hs"
+          "/home/maralorn/git/connect-app/model/src/Model.hs"
         ];
       };
     } ];
