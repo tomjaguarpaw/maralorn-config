@@ -78,9 +78,8 @@ let
             "Toggle Input Mute" = "${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
           }
           { "MPD lokal" = mpdclient "::"; }
-          { "MPD athene" = mpdclient "athene"; }
-          { "Lautstärke" = "ncpamixer"; }
-          { Pavucontrol = fork "pavucontrol"; }
+          { "Athene MPD" = mpdclient "athene"; }
+          { "Lautstärke" = fork "pavucontrol"; }
           {
             Headset = {
               Earplugs = {
@@ -93,9 +92,9 @@ let
               };
             };
           }
-          { "MPD Lounge" = mpdclient "lounge.w17.io"; }
-          { "MPD Kitchen" = mpdclient "kitchen.w17.io"; }
-          { "MPD Space" = mpdclient "burbon.w17.io"; }
+          { "Loung MPD" = mpdclient "lounge.w17.io"; }
+          { "Kitchen MPD" = mpdclient "kitchen.w17.io"; }
+          { "Space MPD" = mpdclient "burbon.w17.io"; }
         ];
     }
     {
