@@ -9,6 +9,7 @@ let
   playlist_dir = "${audio_dir}/playlists";
 in
 {
+  systemd.user.services.mpd.Service.Restart = "on-failure";
   services = {
     mpd = {
       extraConfig = ''
