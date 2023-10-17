@@ -57,23 +57,27 @@ in
         ];
     };
     interfaces.enp1s0 = {
-      ipv6.addresses = [ {
-        address = localAddress;
-        prefixLength = 64;
-      } ];
+      ipv6.addresses = [
+        {
+          address = localAddress;
+          prefixLength = 64;
+        }
+      ];
       useDHCP = true;
     };
   };
   programs.ssh.startAgent = true;
   hardware.printers = {
     ensureDefaultPrinter = "Klio";
-    ensurePrinters = [ {
-      name = "Klio";
-      location = "Wohnzimmer";
-      description = "Klio (Brother MFC-L3750CDW)";
-      deviceUri = "ipp://klio.lo.m-0.eu/ipp";
-      model = "everywhere";
-    } ];
+    ensurePrinters = [
+      {
+        name = "Klio";
+        location = "Wohnzimmer";
+        description = "Klio (Brother MFC-L3750CDW)";
+        deviceUri = "ipp://klio.lo.m-0.eu/ipp";
+        model = "everywhere";
+      }
+    ];
   };
   services = {
     borgbackup.repos.hera = {

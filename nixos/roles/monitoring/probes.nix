@@ -3,10 +3,12 @@ let
     job_name = "blackbox ${module}";
     metrics_path = "/probe";
     params.module = [ module ];
-    static_configs = [ {
-      inherit targets;
-      labels.alert_type = "infrastructure";
-    } ];
+    static_configs = [
+      {
+        inherit targets;
+        labels.alert_type = "infrastructure";
+      }
+    ];
     relabel_configs = [
       {
         source_labels = [

@@ -5,10 +5,12 @@ let
     path: fileOrDir:
     (
       if final.lib.types.path.check fileOrDir then
-        [ {
-          name = lib.concatStringsSep "/" path;
-          path = fileOrDir;
-        } ]
+        [
+          {
+            name = lib.concatStringsSep "/" path;
+            path = fileOrDir;
+          }
+        ]
       else
         lib.concatLists (
           lib.mapAttrsToList (dirName: linkToPath (path ++ [ dirName ])) fileOrDir

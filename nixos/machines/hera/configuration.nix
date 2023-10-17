@@ -61,10 +61,12 @@ in
       ../../modules/servers
     ];
 
-  m-0.monitoring = [ {
-    name = "hera";
-    host = "hera:9100";
-  } ];
+  m-0.monitoring = [
+    {
+      name = "hera";
+      host = "hera:9100";
+    }
+  ];
 
   systemd.services =
     {

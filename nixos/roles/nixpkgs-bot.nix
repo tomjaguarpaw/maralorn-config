@@ -19,18 +19,20 @@ let
       name = "nixpkgs";
     };
     branches = builtins.zipAttrsWith (_: lib.flatten) (
-      [ {
-        "staging" = [ "staging-next" ];
-        "staging-next" = [ "master" ];
-        "haskell-updates" = [ "master" ];
-        "master" = [
-          "nixos-unstable-small"
-          "nixpkgs-unstable"
-        ];
-        "nixpkgs-unstable" = [ ];
-        "nixos-unstable-small" = [ "nixos-unstable" ];
-        "nixos-unstable" = [ ];
-      } ]
+      [
+        {
+          "staging" = [ "staging-next" ];
+          "staging-next" = [ "master" ];
+          "haskell-updates" = [ "master" ];
+          "master" = [
+            "nixos-unstable-small"
+            "nixpkgs-unstable"
+          ];
+          "nixpkgs-unstable" = [ ];
+          "nixos-unstable-small" = [ "nixos-unstable" ];
+          "nixos-unstable" = [ ];
+        }
+      ]
       ++
         map
           (release: {

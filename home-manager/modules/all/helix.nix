@@ -15,30 +15,36 @@ let
     "connect-app"
   ];
   custom_configs = {
-    connect-app = [ {
-      name = "haskell";
-      formatter = {
-        command = "ormolu";
-        args = [
-          "--stdin-input-file"
-          "/home/maralorn/git/connect-app/model/src/Model.hs"
-        ];
-      };
-    } ];
+    connect-app = [
+      {
+        name = "haskell";
+        formatter = {
+          command = "ormolu";
+          args = [
+            "--stdin-input-file"
+            "/home/maralorn/git/connect-app/model/src/Model.hs"
+          ];
+        };
+      }
+    ];
   };
   project_configs = builtins.zipAttrsWith (_: lib.concatLists) [
     custom_configs
     (lib.genAttrs format_haskell (
-      _: [ {
-        name = "haskell";
-        auto-format = true;
-      } ]
+      _: [
+        {
+          name = "haskell";
+          auto-format = true;
+        }
+      ]
     ))
     (lib.genAttrs format_nix (
-      _: [ {
-        name = "nix";
-        auto-format = true;
-      } ]
+      _: [
+        {
+          name = "nix";
+          auto-format = true;
+        }
+      ]
     ))
   ];
 in

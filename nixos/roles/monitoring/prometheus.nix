@@ -20,13 +20,15 @@
             {
               job_name = name;
               metrics_path = "/_synapse/metrics";
-              static_configs = [ {
-                targets = [ "localhost:9148" ];
-                labels = {
-                  inherit name;
-                  inherit alert_type;
-                };
-              } ];
+              static_configs = [
+                {
+                  targets = [ "localhost:9148" ];
+                  labels = {
+                    inherit name;
+                    inherit alert_type;
+                  };
+                }
+              ];
             }
           )
         ]
@@ -39,19 +41,20 @@
               in
               {
                 job_name = name;
-                static_configs = [ {
-                  targets = [ entry.host ];
-                  labels = {
-                    inherit name;
-                    inherit alert_type;
-                    inContainer = lib.boolToString entry.container;
-                    flaky = lib.boolToString entry.flaky;
-                  };
-                } ];
+                static_configs = [
+                  {
+                    targets = [ entry.host ];
+                    labels = {
+                      inherit name;
+                      inherit alert_type;
+                      inContainer = lib.boolToString entry.container;
+                      flaky = lib.boolToString entry.flaky;
+                    };
+                  }
+                ];
               }
             )
-            config.m-0.monitoring
-      ;
+            config.m-0.monitoring;
     };
   };
 }

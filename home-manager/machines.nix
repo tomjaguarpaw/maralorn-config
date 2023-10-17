@@ -37,8 +37,7 @@ let
     imports =
       imports
       ++ [ ./roles/default.nix ]
-      ++ flake-inputs.self.nixFromDirs [ ./modules/all ]
-    ;
+      ++ flake-inputs.self.nixFromDirs [ ./modules/all ];
     m-0.hostName = hostName;
   };
   orga-basics = [ ./roles/mail.nix ];
@@ -66,8 +65,7 @@ let
       ./roles/tinkering.nix
       ./roles/vdirsyncer.nix
     ]
-    ++ flake-inputs.self.nixFromDirs [ ./modules/clients ]
-  ;
+    ++ flake-inputs.self.nixFromDirs [ ./modules/clients ];
   blockServer = import ./roles/block-server.nix;
   daily-driver =
     name: extra:

@@ -203,8 +203,7 @@ in
         nix-gc.serviceConfig.Type = "oneshot";
         nix-optimise.serviceConfig.Type = "oneshot";
       }
-      // builtins.listToAttrs (map makeConfig hosts)
-    ;
+      // builtins.listToAttrs (map makeConfig hosts);
 
     oomd.enableRootSlice = true;
   };

@@ -7,10 +7,12 @@ in
     80
     443
   ];
-  m-0.monitoring = [ {
-    name = "hera-nginx";
-    host = "hera:9113";
-  } ];
+  m-0.monitoring = [
+    {
+      name = "hera-nginx";
+      host = "hera:9113";
+    }
+  ];
   security.acme.certs = {
     "hera.m-0.eu".keyType = "rsa4096";
   };

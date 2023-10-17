@@ -81,8 +81,7 @@ in
         Restart = "on-failure";
         RestartSec = "30s";
       };
-    }
-  ;
+    };
 
   programs = {
     msmtp.enable = true;

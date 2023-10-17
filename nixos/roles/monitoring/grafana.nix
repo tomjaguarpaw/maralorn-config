@@ -51,16 +51,20 @@ in
       };
       provision = {
         enable = true;
-        datasources.settings.datasources = [ {
-          access = "proxy";
-          name = "prometheus";
-          type = "prometheus";
-          url = "http://localhost:9090";
-        } ];
-        dashboards.settings.providers = [ {
-          name = "Static dashboards";
-          options.path = dashboards;
-        } ];
+        datasources.settings.datasources = [
+          {
+            access = "proxy";
+            name = "prometheus";
+            type = "prometheus";
+            url = "http://localhost:9090";
+          }
+        ];
+        dashboards.settings.providers = [
+          {
+            name = "Static dashboards";
+            options.path = dashboards;
+          }
+        ];
       };
     };
   };

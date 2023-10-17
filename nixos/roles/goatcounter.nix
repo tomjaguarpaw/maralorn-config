@@ -22,12 +22,14 @@ in
   };
   services.postgresql = {
     enable = true;
-    ensureUsers = [ {
-      name = "goatcounter";
-      ensurePermissions = {
-        "DATABASE goatcounter" = "ALL PRIVILEGES";
-      };
-    } ];
+    ensureUsers = [
+      {
+        name = "goatcounter";
+        ensurePermissions = {
+          "DATABASE goatcounter" = "ALL PRIVILEGES";
+        };
+      }
+    ];
     ensureDatabases = [ "goatcounter" ];
   };
   services.nginx = {

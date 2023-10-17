@@ -38,15 +38,13 @@ let
     lib.mapAttrs (_: package: package final) myHaskellPackages
     // {
       nixfmt = overrideCabal (_: { src = inputs.nixfmt; }) prev.nixfmt;
-    }
-  ;
+    };
   selectHaskellPackages =
     attrs:
     lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages
     // {
       inherit (attrs) nixfmt;
-    }
-  ;
+    };
   myHaskellPackages = {
     wizards-dialog = cleanCabalPackage ./wizards-dialog { };
     rssfeeds = cleanCabalPackage ./rssfeeds { };

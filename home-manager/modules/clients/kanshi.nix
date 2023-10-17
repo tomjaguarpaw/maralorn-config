@@ -13,10 +13,12 @@ in
     enable = true;
     systemdTarget = "graphical-session.target";
     profiles = inject_exec {
-      undocked.outputs = [ {
-        criteria = "eDP-1";
-        status = "enable";
-      } ];
+      undocked.outputs = [
+        {
+          criteria = "eDP-1";
+          status = "enable";
+        }
+      ];
       docked.outputs = [
         {
           criteria = "eDP-1";

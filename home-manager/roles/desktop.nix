@@ -10,8 +10,7 @@
             + ''
               wrapProgram $out/bin/zoom-us --unset XDG_SESSION_TYPE
               wrapProgram $out/bin/zoom --unset XDG_SESSION_TYPE
-            ''
-          ;
+            '';
         }
       );
       mic-check = pkgs.writeShellScriptBin "mic-check" ''

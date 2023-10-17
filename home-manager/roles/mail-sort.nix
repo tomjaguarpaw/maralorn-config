@@ -43,8 +43,7 @@ let
   myFilters =
     builtins.map filter.simpleSortList lists.sortLists
     ++ builtins.map filter.stupidList lists.stupidLists
-    ++ builtins.map filter.notifications lists.notifications
-  ;
+    ++ builtins.map filter.notifications lists.notifications;
   sortMail =
     pkgs.writeHaskellScript
       {

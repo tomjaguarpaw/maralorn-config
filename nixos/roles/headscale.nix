@@ -6,10 +6,12 @@ let
   derp_port = 3479;
 in
 {
-  m-0.monitoring = [ {
-    name = "hera-headscale";
-    host = "[::1]:9098";
-  } ];
+  m-0.monitoring = [
+    {
+      name = "hera-headscale";
+      host = "[::1]:9098";
+    }
+  ];
   networking.firewall.allowedUDPPorts = [ derp_port ];
   services = {
     headscale = {

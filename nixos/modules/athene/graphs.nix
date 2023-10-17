@@ -60,25 +60,29 @@ in
         };
         provision = {
           enable = true;
-          datasources.settings.datasources = [ {
-            type = "postgres";
-            isDefault = true;
-            name = "Postgres";
-            url = "localhost:5432";
-            user = "grafana";
-            uid = "accounting";
-            secureJsonData.password = "$__file{${
-                config.age.secrets."grafana-postgres-pw".path
-              }}";
-            jsonData = {
-              database = "accounting";
-              sslmode = "disable";
-            };
-          } ];
-          dashboards.settings.providers = [ {
-            name = "Static dashboards";
-            options.path = dashboards;
-          } ];
+          datasources.settings.datasources = [
+            {
+              type = "postgres";
+              isDefault = true;
+              name = "Postgres";
+              url = "localhost:5432";
+              user = "grafana";
+              uid = "accounting";
+              secureJsonData.password = "$__file{${
+                  config.age.secrets."grafana-postgres-pw".path
+                }}";
+              jsonData = {
+                database = "accounting";
+                sslmode = "disable";
+              };
+            }
+          ];
+          dashboards.settings.providers = [
+            {
+              name = "Static dashboards";
+              options.path = dashboards;
+            }
+          ];
         };
       };
   };
