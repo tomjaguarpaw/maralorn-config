@@ -3,8 +3,10 @@ flake-inputs:
   config,
   pkgs,
   lib,
+  prelude,
   ...
 }:
+with prelude;
 let
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
 in
@@ -17,14 +19,14 @@ in
       ../../roles
       ../../roles/fonts.nix
     ]
-    ++ flake-inputs.self.nixFromDirs [
-      ../../modules/zeus
-      ../../modules/clients
-      ../../modules/all
-      ../../modules/impermanent
-      ../../modules/beefs
-      ../../modules/metal
-      ../../modules/servers
+    ++ nixFromDirs [
+      "${./../../..}/nixos/modules/zeus"
+      ./../../modules/clients
+      ./../../modules/all
+      ./../../modules/impermanent
+      ./../../modules/beefs
+      ./../../modules/metal
+      ./../../modules/servers
     ];
 
   fileSystems =

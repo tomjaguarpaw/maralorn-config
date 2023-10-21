@@ -3,8 +3,10 @@ flake-inputs:
   lib,
   config,
   pkgs,
+  prelude,
   ...
 }:
+with prelude;
 let
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
 in
@@ -26,7 +28,7 @@ in
         ];
       })
     ]
-    ++ flake-inputs.self.nixFromDirs [
+    ++ nixFromDirs [
       ../../modules/clients
       ../../modules/laptops
       ../../modules/not-home

@@ -1,28 +1,25 @@
-flake-inputs:
-{ pkgs, ... }:
+{ pkgs, prelude, ... }:
+with prelude;
 let
   localAddress = "fdc0:1::2";
 in
 {
   imports =
     [
-      (import ../../roles/home-manager.nix flake-inputs)
       ../../roles
       ../../roles/fonts.nix
       ../../roles/home-assistant
     ]
-    ++ flake-inputs.self.nixFromDirs [
+    ++ nixFromDirs [
       ../../modules/athene
-      ../../modules/all
+      "${./../../..}/nixos/modules/all"
       ../../modules/impermanent
       ../../modules/servers
       ../../modules/metal
       ../../modules/new-sync
     ];
 
-  systemd.services = {
-    ensure-printers.serviceConfig.SuccessExitStatus = "0 1";
-  };
+  systemd.services.ensure-printers.serviceConfig.SuccessExitStatus = "0 1";
 
   systemd.tmpfiles.rules = [
     "d /backup 700 borg borg - -"

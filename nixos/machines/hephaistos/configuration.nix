@@ -1,12 +1,13 @@
-flake-inputs: {
+flake-inputs:
+{ prelude, ... }:
+with prelude; {
   imports =
     [
-      (import ../../roles/home-manager.nix flake-inputs)
       flake-inputs.nixos-hardware.nixosModules.lenovo-thinkpad
       ../../roles
       ../../roles/fonts.nix
     ]
-    ++ flake-inputs.self.nixFromDirs [
+    ++ nixFromDirs [
       ../../modules/hephaistos
       ../../modules/clients
       ../../modules/laptops

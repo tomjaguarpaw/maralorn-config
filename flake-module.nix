@@ -1,35 +1,60 @@
-{ inputs, withSystem, ... }:
+{
+  inputs,
+  withSystem,
+  lib,
+  ...
+}:
 {
   imports = [
     inputs.pre-commit-hooks.flakeModule
     ./nixos/flake-module.nix
-    ./home-manager/flake-module.nix
     ./packages/flake-module.nix
     ./nixpkgs/flake-module.nix
   ];
   systems = [ "x86_64-linux" ];
   flake = {
-    nixFromDirs =
-      let
-        nixFromDir =
-          dir:
-          builtins.concatLists (
-            builtins.attrValues (
-              builtins.mapAttrs
-                (
-                  name: path_type:
-                  if path_type == "regular" && builtins.match "[^_].*\\.nix" name != null then
-                    [ (import "${dir}/${name}") ]
-                  else if path_type == "directory" then
-                    nixFromDir "${dir}/${name}"
-                  else
-                    [ ]
+    prelude = {
+      inherit (inputs.nixos-unstable.lib) getExe';
+      inherit (lib) mapAttrs;
+      flattenAttrs =
+        attrs:
+        lib.listToAttrs (
+          lib.flatten (
+            lib.mapAttrsToList
+              (
+                outer_key:
+                lib.mapAttrsToList (
+                  inner_key: value: {
+                    name = "${outer_key}-${inner_key}";
+                    inherit value;
+                  }
                 )
-                (builtins.readDir dir)
-            )
-          );
-      in
-      builtins.concatMap nixFromDir;
+              )
+              attrs
+          )
+        );
+      nixFromDirs =
+        let
+          nixFromDir =
+            dir:
+            builtins.concatLists (
+              builtins.attrValues (
+                builtins.mapAttrs
+                  (
+                    name: path_type:
+                    if path_type == "regular" && builtins.match "[^_].*\\.nix" name != null then
+                      [ (import "${dir}/${name}") ]
+                    else if path_type == "directory" then
+                      nixFromDir "${dir}/${name}"
+                    else
+                      [ ]
+                  )
+                  (builtins.readDir dir)
+              )
+            );
+        in
+        builtins.concatMap nixFromDir;
+    };
     iso = withSystem "x86_64-linux" (
       { pkgs, ... }:
       (pkgs.nixos {
@@ -50,8 +75,8 @@
       ...
     }:
     {
-      devShells = {
-        default = pkgs.mkShell { shellHook = config.pre-commit.installationScript; };
+      devShells.default = pkgs.mkShell {
+        shellHook = config.pre-commit.installationScript;
       };
 
       pre-commit =

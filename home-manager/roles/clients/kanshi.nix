@@ -1,11 +1,9 @@
-{ lib, config, ... }:
+{ pkgs, prelude, ... }:
+with prelude;
 let
-  inject_exec = lib.mapAttrs (
+  inject_exec = mapAttrs (
     _: x:
-    x
-    // {
-      exec = [ "${lib.getExe config.programs.eww.package} open-many bar bg" ];
-    }
+    x // { exec = [ "${getExe' pkgs.systemd "systemctl"} --user restart eww" ]; }
   );
 in
 {

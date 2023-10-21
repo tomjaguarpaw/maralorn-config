@@ -142,14 +142,6 @@ let
         };
     }
     {
-      "Select Mode" = lib.pipe pkgs.flake-inputs.self.homeConfigurations [
-        builtins.attrNames
-        (builtins.filter (lib.hasPrefix "${config.m-0.hostName}-"))
-        (map (lib.removePrefix "${config.m-0.hostName}-"))
-        (x: lib.genAttrs x (name: "select-mode ${name}"))
-      ];
-    }
-    {
       Communication = [
         { Matrix = fork "element-desktop"; }
         {

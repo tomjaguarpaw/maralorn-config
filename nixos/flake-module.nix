@@ -9,11 +9,17 @@ let
 in
 {
   flake.nixosConfigurations = withSystem "x86_64-linux" (
-    { pkgs, ... }:
+    { pkgs, system, ... }:
     lib.genAttrs machines (
       name:
-      pkgs.nixos {
-        imports = [
+      inputs.nixos-stable.lib.nixosSystem {
+        inherit system;
+        modules = [
+          {
+            config.nixpkgs = {
+              inherit pkgs;
+            };
+          }
           (import (./. + "/machines/${name}/configuration.nix") inputs)
           inputs.secrets.nixosModules.default
           inputs.impermanence.nixosModules.impermanence
@@ -21,6 +27,9 @@ in
           inputs.nixos-mailserver.nixosModules.default
           inputs.home-manager.nixosModules.home-manager
         ];
+        specialArgs = {
+          inherit (inputs.self) prelude;
+        };
       }
     )
   );

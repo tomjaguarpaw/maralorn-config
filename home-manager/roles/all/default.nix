@@ -5,14 +5,6 @@
   ...
 }:
 {
-  imports = [
-    ./zsh
-    ./home-options.nix
-    ../../common
-    ./unlock.nix
-    ./nvd.nix
-  ];
-
   news.display = "silent";
 
   home = {

@@ -3,8 +3,10 @@ flake-inputs:
   config,
   pkgs,
   lib,
+  prelude,
   ...
 }:
+with prelude;
 let
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
   backupJobs = pkgs.privateValue { } "borgbackup";
@@ -16,7 +18,6 @@ in
   imports =
     [
       (flake-inputs.secrets.lib.vpn "hera")
-      (import ../../roles/home-manager.nix flake-inputs)
       ./mail.nix
       ../../roles
       ../../roles/blog.nix
@@ -54,7 +55,7 @@ in
         ];
       })
     ]
-    ++ flake-inputs.self.nixFromDirs [
+    ++ nixFromDirs [
       ../../modules/hera
       ../../modules/not-home
       ../../modules/all
