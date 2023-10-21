@@ -32,7 +32,7 @@ in
       ../../modules/clients
       ../../modules/laptops
       ../../modules/not-home
-      ../../modules/all
+      "${./../../..}/nixos/modules/all"
       ../../modules/apollo
       ../../modules/metal
     ];

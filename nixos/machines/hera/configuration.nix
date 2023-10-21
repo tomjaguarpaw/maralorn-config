@@ -58,8 +58,8 @@ in
     ++ nixFromDirs [
       ../../modules/hera
       ../../modules/not-home
-      ../../modules/all
       ../../modules/servers
+      "${./../../..}/nixos/modules/all"
     ];
 
   m-0.monitoring = [
