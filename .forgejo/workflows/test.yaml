@@ -12,8 +12,6 @@ jobs:
            - nixosConfigurations.hera.config.system.build.toplevel
            - nixosConfigurations.athene.config.system.build.toplevel
            - nixosConfigurations.hephaistos.config.system.build.toplevel
-           - homeModes.zeus
-           - homeModes.apollo
     env:
         HOME: .
     steps:
