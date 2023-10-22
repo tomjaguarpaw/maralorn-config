@@ -3,7 +3,7 @@ with prelude;
 let
   makeConfig = hostName: roles: {
     imports = nixFromDirs (
-      map (x: "${./..}/home-manager/roles/${x}") (
+      map (x: ./roles + "/${x}") (
         roles
         ++ [
           "all"

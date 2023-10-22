@@ -59,7 +59,7 @@ in
       ../../modules/hera
       ../../modules/not-home
       ../../modules/servers
-      "${./../../..}/nixos/modules/all"
+      ../../modules/all
     ];
 
   m-0.monitoring = [

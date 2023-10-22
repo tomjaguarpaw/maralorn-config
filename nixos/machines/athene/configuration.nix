@@ -13,7 +13,7 @@ in
     ]
     ++ nixFromDirs [
       ../../modules/athene
-      "${./../../..}/nixos/modules/all"
+      ../../modules/all
       ../../modules/impermanent
       ../../modules/servers
       ../../modules/metal

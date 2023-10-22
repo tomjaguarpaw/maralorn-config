@@ -12,7 +12,7 @@ with prelude; {
       ../../modules/clients
       ../../modules/laptops
       ../../modules/not-home
-      "${./../../..}/nixos/modules/all"
+      ../../modules/all
       ../../modules/impermanent
       ../../modules/beefs
       ../../modules/metal

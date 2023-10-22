@@ -43,9 +43,9 @@
                   (
                     name: path_type:
                     if path_type == "regular" && builtins.match "[^_].*\\.nix" name != null then
-                      [ (import "${dir}/${name}") ]
+                      [ (import (dir + "/${name}")) ]
                     else if path_type == "directory" then
-                      nixFromDir "${dir}/${name}"
+                      nixFromDir (dir + "/${name}")
                     else
                       [ ]
                   )

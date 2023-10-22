@@ -20,7 +20,7 @@ in
       ../../roles/fonts.nix
     ]
     ++ nixFromDirs [
-      "${./../../..}/nixos/modules/all"
+      ./../../modules/all
       ./../../modules/clients
       ./../../modules/zeus
       ./../../modules/impermanent
