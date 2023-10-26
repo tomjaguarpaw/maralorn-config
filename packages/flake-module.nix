@@ -53,6 +53,7 @@ let
     };
     kassandra-standalone = cleanCabalPackage ./kassandra/standalone { };
     nixpkgs-bot = cleanCabalPackage ./nixpkgs-bot { };
+    t = cleanCabalPackage ./t { };
     builders-configurator = cleanCabalPackage ./builders-configurator { };
     status-script = cleanCabalPackage ./status-script {
       overrides = _: {
