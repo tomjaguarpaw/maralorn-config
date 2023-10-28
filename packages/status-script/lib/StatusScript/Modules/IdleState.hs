@@ -19,18 +19,19 @@ data IdleState = Off | Active | Idle Int
 idleState :: (R.MonadHeadlessApp t m) => Env -> m (R.Dynamic t IdleState)
 idleState = \env -> do
   service_running_dyn <-
-    ReflexUtil.processLines env (journalctl "--user" "-n1" "-fu" "swayidle.service") <<&>> \case
-      line | "Stopped" `BS.isInfixOf` line -> Just False
-      line | "Started" `BS.isInfixOf` line -> Just True
-      _ -> Nothing
+    ReflexUtil.processLines env (journalctl "--user" "-n1" "-fu" "swayidle.service")
+      <<&>> \case
+        line | "Stopped" `BS.isInfixOf` line -> Just False
+        line | "Started" `BS.isInfixOf` line -> Just True
+        _ -> Nothing
       <&> R.mapMaybe id
       >>= R.holdDyn True
   file_dyn <-
     FileWatch.watchFileContents env env.homeDir ".idle_state"
       <&> R.updated
-        % R.mapMaybe id
-        % fmap encodeUtf8
-        % R.mapMaybe Aeson.decode'
+      % R.mapMaybe id
+      % fmap encodeUtf8
+      % R.mapMaybe Aeson.decode'
       >>= R.holdDyn Active
   R.holdUniqDyn (liftA2 combine service_running_dyn file_dyn)
 

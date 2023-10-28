@@ -37,22 +37,22 @@ playerModule = \env -> do
         %> find (/= "::")
         %> fmap (" " <>)
         %> fromMaybe ""
-    pure $
-      player_states
-        & decodeUtf8
-        % Text.lines
-        %> Text.splitOn "@@@"
-        % mapMaybe
-          ( \case
-              [name, status, title] ->
-                Just $
-                  MkPlayerState
-                    { name = if name == "mpd" then name <> mpd_host else name
-                    , title = cleanTitle title
-                    , status = status
-                    }
-              _ -> Nothing
-          )
+    pure
+      $ player_states
+      & decodeUtf8
+      % Text.lines
+      %> Text.splitOn "@@@"
+      % mapMaybe
+        ( \case
+            [name, status, title] ->
+              Just
+                $ MkPlayerState
+                  { name = if name == "mpd" then name <> mpd_host else name
+                  , title = cleanTitle title
+                  , status = status
+                  }
+            _ -> Nothing
+        )
 
 cleanList :: [Text]
 cleanList =

@@ -164,5 +164,6 @@ css fontPath = do
       ".show" & color black
       ".showable" & display none
     active
-      & i ? do
+      & i
+      ? do
         background black

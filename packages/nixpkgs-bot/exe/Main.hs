@@ -336,8 +336,9 @@ findSubscribedPRsInCommitList branch possible_new_merge_commits =
   fmap join . mapM \change ->
     either id id <$> runExceptT do
       found_by_merge_commit <-
-        lift $
-          fmap (unMergeKey . Persist.entityKey) <$> SQL.select do
+        lift
+          $ fmap (unMergeKey . Persist.entityKey)
+          <$> SQL.select do
             merge <- SQL.from $ SQL.table @Merge
             SQL.where_ (merge ^. MergeCommit ==. SQL.val (commitId change))
             pure merge
@@ -401,7 +402,9 @@ watchRepo = do
             if null changes
               then pure Nothing
               else
-                Just . (,prs) . fold
+                Just
+                  . (,prs)
+                  . fold
                   <$> sequence
                     [ branchHTML branch
                     , pure $ m " advanced by "
@@ -439,8 +442,9 @@ dropUnsubscribedPRs :: App ()
 dropUnsubscribedPRs = do
   SQL.delete do
     pr <- SQL.from $ SQL.table @PullRequest
-    SQL.where_ $
-      (pr ^. PullRequestId) `notIn` SQL.subList_select do
+    SQL.where_
+      $ (pr ^. PullRequestId)
+      `notIn` SQL.subList_select do
         sub <- SQL.from $ SQL.table @Subscription
         pure (sub ^. SubscriptionPullRequest)
 
@@ -464,15 +468,15 @@ unsubscribeFromFinishedPRs = do
 deleteUnusedQueries :: App ()
 deleteUnusedQueries = SQL.delete do
   query <- SQL.from $ SQL.table @Query
-  SQL.where_ $
-    (query ^. QueryUser)
+  SQL.where_
+    $ (query ^. QueryUser)
+    `notIn` SQL.subList_select do
+      sub <- SQL.from $ SQL.table @Subscription
+      pure (sub ^. SubscriptionUser)
+    &&. (query ^. QueryUser)
       `notIn` SQL.subList_select do
-        sub <- SQL.from $ SQL.table @Subscription
-        pure (sub ^. SubscriptionUser)
-      &&. (query ^. QueryUser)
-        `notIn` SQL.subList_select do
-          sub <- SQL.from $ SQL.table @AuthorSubscription
-          pure (sub ^. AuthorSubscriptionUser)
+        sub <- SQL.from $ SQL.table @AuthorSubscription
+        pure (sub ^. AuthorSubscriptionUser)
 
 leaveEmptyRooms :: App ()
 leaveEmptyRooms = do
@@ -486,13 +490,13 @@ sendMessage roomId@(Matrix.RoomID roomIdText) message = do
   putTextLn $ "in room" <> roomIdText <> ":\n" <> fst message
   txnId <- Matrix.TxnID . show <$> Random.randomRIO (1000000 :: Int, 9999999)
   session <- getEnv matrixSession
-  void $
-    unwrapMatrixError $
-      Matrix.sendMessage
-        session
-        roomId
-        (Matrix.EventRoomMessage $ Matrix.RoomMessageText $ Matrix.MessageText (fst message) Matrix.NoticeType (Just "org.matrix.custom.html") (Just (snd message)))
-        txnId
+  void
+    $ unwrapMatrixError
+    $ Matrix.sendMessage
+      session
+      roomId
+      (Matrix.EventRoomMessage $ Matrix.RoomMessageText $ Matrix.MessageText (fst message) Matrix.NoticeType (Just "org.matrix.custom.html") (Just (snd message)))
+      txnId
 
 sendMessageToUser :: Text -> MessageText -> App ()
 sendMessageToUser user message = do
@@ -679,8 +683,8 @@ helpMessage :: App MessageText
 helpMessage = do
   branchList <- join $ getEnv (fmap (intercalateMsgPlain ", ") . mapM branchHTML . Map.keys . branches . config)
   repo_link <- repoLink "" "nixpkgs git repository on github"
-  pure $
-    unlinesMsg
+  pure
+    $ unlinesMsg
       [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
       , mempty
       , m "I am continously watching the " <> repo_link <> m ". If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"

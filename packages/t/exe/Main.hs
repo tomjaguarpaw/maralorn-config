@@ -63,7 +63,8 @@ getTasks = do
 getFilePaths :: FilePath -> IO [FilePath]
 getFilePaths dir =
   Dir.listDirectory dir
-    >>= fmap concat . mapM \name -> do
+    >>= fmap concat
+    . mapM \name -> do
       isFile <- Dir.doesFileExist (dir </> name)
       isDir <- Dir.doesDirectoryExist (dir </> name)
       case () of

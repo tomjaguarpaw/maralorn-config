@@ -17,8 +17,9 @@ ping = \env -> do
   tick <- ReflexUtil.tickEvent 15
   ReflexUtil.performEventThreaded env tick \_ -> do
     unreachable_hosts <- flip filterM hosts \host -> isLeft <$> (Shh.tryFailure do (Shh.exe "/run/wrappers/bin/ping" "-c" "1" (toString host)) &> Shh.devNull)
-    pure $
-      unreachable_hosts <&> \host ->
+    pure
+      $ unreachable_hosts
+      <&> \host ->
         MkWarning
           { description = Just [i|No tunnel to #{host}|]
           , group = "warning"

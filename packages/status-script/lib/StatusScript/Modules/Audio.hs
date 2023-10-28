@@ -97,13 +97,14 @@ mkInfos = \objects ->
     get_info :: (Aeson.FromJSON a) => Int -> [Aeson.Key] -> Maybe a
     get_info = \id' path ->
       IntMap.lookup id' objects
-        >>= [get|.info|] % extractJSON path
+        >>= [get|.info|]
+        % extractJSON path
     get_name :: Int -> Text
     get_name id' =
       let raw = get_info id' ["props", "node.description"] & fromMaybe "unknown"
        in find (fst % (`Text.isInfixOf` raw)) aliases
             & fmap snd
-              % fromMaybe raw
+            % fromMaybe raw
     find_volume :: Int -> Maybe Double
     find_volume = \id' ->
       get_info id' ["params", "Props"]
@@ -121,11 +122,11 @@ mkInfos = \objects ->
     defaults =
       objects
         & toList
-          % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Metadata")
-          % mapMaybe [get|.metadata|]
+        % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Metadata")
+        % mapMaybe [get|.metadata|]
         & join
-          % filter (extractJSON ["key"] % (`elem` [Just "default.audio.sink", Just "default.audio.source"]))
-          % mapMaybe (extractJSON ["value", "name"])
+        % filter (extractJSON ["key"] % (`elem` [Just "default.audio.sink", Just "default.audio.source"]))
+        % mapMaybe (extractJSON ["value", "name"])
     links =
       objects
         & toList

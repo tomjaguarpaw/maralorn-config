@@ -54,8 +54,8 @@ data Message = Message
 main :: IO ()
 main = do
   Options{dbPath, folder} <-
-    O.execParser $
-      O.info
+    O.execParser
+      $ O.info
         ( Options
             <$> O.argument
               O.str
@@ -80,11 +80,12 @@ main = do
     msgsByThread <- forM msgs \msg -> Notmuch.threadId msg <&> (,Right msg)
     thrdsByThread <- forM thrds \thrd -> Notmuch.threadId thrd <&> (,Left thrd)
     result <-
-      mapM (runExceptT . processThread) . Map.toList $
-        fmap snd
-          <$> groupBy
-            fst
-            (msgsByThread <> thrdsByThread)
+      mapM (runExceptT . processThread)
+        . Map.toList
+        $ fmap snd
+        <$> groupBy
+          fst
+          (msgsByThread <> thrdsByThread)
     now <- lift getCurrentTime
     let entries = threadToEntry <$> sortOn (.date) (rights result)
         feed =
@@ -94,8 +95,9 @@ main = do
             (timestamp now)
         errors = lefts result
     feedText <-
-      tryJust [i|Failed to generate feed.|] . textFeed $
-        feed
+      tryJust [i|Failed to generate feed.|]
+        . textFeed
+        $ feed
           { feedEntries = (if null errors then id else (errorsToEntry now errors :)) entries
           }
     say $ toStrict feedText
@@ -158,9 +160,9 @@ processThread (threadid, toList -> thrdAndMsgs) =
 
 messageToHtml :: Message -> Text
 messageToHtml Message{headers, body} =
-  Text.intercalate "<br>\n" $
-    ((\(name, content) -> [i|<b>#{name}:</b> #{content}|]) <$> headers)
-      <> one (bodyToHtml body)
+  Text.intercalate "<br>\n"
+    $ ((\(name, content) -> [i|<b>#{name}:</b> #{content}|]) <$> headers)
+    <> one (bodyToHtml body)
 
 bodyToHtml :: Body -> Text
 bodyToHtml (HTMLBody x) = fromMaybe x onlyBody
@@ -191,16 +193,17 @@ processMessage msg = do
     (\error_msg -> [i|Failed to read msg\nFilename:#{fileName}\nerror: #{error_msg}|])
     do
       msgContent <-
-        handleIOError (\io_error -> throwE [i|IOError: #{io_error}|]) $
-          readFileBS fileName
+        handleIOError (\io_error -> throwE [i|IOError: #{io_error}|])
+          $ readFileBS fileName
       parseResult <-
-        hoistEither . first toText $
-          MIME.parse
+        hoistEither
+          . first toText
+          $ MIME.parse
             (MIME.message MIME.mime)
             msgContent
       textPart <-
-        tryJust [i|No text or html part in message|] $
-          firstOf
+        tryJust [i|No text or html part in message|]
+          $ firstOf
             ( MIME.entities . filtered isHtml <> MIME.entities . filtered isTextPlain
             )
             parseResult

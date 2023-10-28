@@ -25,8 +25,9 @@ data Command = Run Text | Fork Text deriving (Show)
 instance FromJSON (Menu Command) where
   parseJSON = parseMenu "Hotkeys"
    where
-    parseList name = (fmap (Menu name) .) $
-      mapM $ \(Key.toText -> key, val) ->
+    parseList name = (fmap (Menu name) .)
+      $ mapM
+      $ \(Key.toText -> key, val) ->
         case val of
           String cmd -> pure $ Dialog.Option key (text2cmd cmd)
           innerObj -> Dialog.SubMenu <$> parseMenu key innerObj

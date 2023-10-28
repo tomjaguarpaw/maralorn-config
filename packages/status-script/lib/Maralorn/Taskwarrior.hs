@@ -35,8 +35,8 @@ getInbox = do
       children :: HashMap UUID.UUID (HashSet UUID.UUID) =
         tasks
           & toList
-            % mapMaybe (\task -> getParent task <&> (,HashSet.singleton task.uuid))
-            % HashMap.fromListWith (<>)
+          % mapMaybe (\task -> getParent task <&> (,HashSet.singleton task.uuid))
+          % HashMap.fromListWith (<>)
       waiting_tasks :: HashSet UUID.UUID =
         tasks
           & toList
@@ -48,9 +48,9 @@ getInbox = do
           %> (.uuid)
           % fromList
       inhibitedTasks :: HashSet UUID.UUID = foldMap (closure children) (blocked_tasks <> waiting_tasks <> tagged_tasks)
-  pure $
-    toList tasks
-      & filter \task -> Set.null task.tags && not (HashMap.member task.uuid children) && not (HashSet.member task.uuid inhibitedTasks)
+  pure
+    $ toList tasks
+    & filter \task -> Set.null task.tags && not (HashMap.member task.uuid children) && not (HashSet.member task.uuid inhibitedTasks)
 
 closure :: (Hashable a) => HashMap a (HashSet a) -> a -> HashSet a
 closure mapping = go
@@ -58,12 +58,13 @@ closure mapping = go
   go = \x ->
     HashMap.lookup x mapping
       & maybe mempty (foldMap go)
-        % HashSet.insert x
+      % HashSet.insert x
 
 getParent :: Task.Task -> Maybe UUID.UUID
 getParent = \task ->
   Map.lookup "partof" task.uda
-    >>= Aeson.fromJSON % \case
+    >>= Aeson.fromJSON
+    % \case
       Aeson.Success uuid -> Just uuid
       Aeson.Error err -> error ("invalid partof uda " <> toText err)
 

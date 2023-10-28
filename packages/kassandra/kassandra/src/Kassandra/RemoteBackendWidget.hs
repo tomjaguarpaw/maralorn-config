@@ -122,9 +122,9 @@ remoteBackendWidget closeEvent mayBackend = D.divClass "remoteBackend" $ do
     D.inputElement $
       D.def
         & lensVL D.inputElementConfig_initialValue
-          .~ defaultValue
+        .~ defaultValue
         & lensVL (D.inputElementConfig_elementConfig . D.elementConfig_initialAttributes)
-          .~ if hidden then "type" D.=: "password" else mempty
+        .~ if hidden then "type" D.=: "password" else mempty
   inputValue = R.current . D._inputElement_value
 
 data WebSocketState = WebSocketError Text | Connecting deriving stock (Show)
@@ -142,8 +142,8 @@ webClientSocket closeEvent backend@RemoteBackend{url, user, password} = do
         let socketConfig =
               D.def
                 & (lensVL D.webSocketConfig_send .~ (toList <$> (socketRequestEvent <> (one AllTasks <$ refreshEvent))))
-                  . (lensVL D.webSocketConfig_reconnect .~ True)
-                  . (lensVL D.webSocketConfig_close .~ ((3000, "Client unloaded websocket.") <$ un closeEvent))
+                . (lensVL D.webSocketConfig_reconnect .~ True)
+                . (lensVL D.webSocketConfig_close .~ ((3000, "Client unloaded websocket.") <$ un closeEvent))
         storage <- getStorage
         socket <- D.jsonWebSocket @SocketRequest @SocketMessage socketString socketConfig
         let messages = R.fmapMaybe id $ socket ^. lensVL D.webSocket_recv

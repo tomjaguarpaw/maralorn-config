@@ -403,12 +403,13 @@ collapseButton = do
       =<< lookupTasksM
         (taskInfos ^. #children)
   D.dyn_ $
-    when <$> hasChildren ?? do
-      open <- getIsExpanded $ taskInfos ^. #uuid
-      let label = \case
-            True -> "unfold_less"
-            False -> "unfold_more"
-      buttonEvent <-
-        button "slimButton" $
-          D.dyn_ (icon "collapse" . label <$> open)
-      tellToggle $ taskInfos ^. #uuid <$ buttonEvent
+    when
+      <$> hasChildren ?? do
+        open <- getIsExpanded $ taskInfos ^. #uuid
+        let label = \case
+              True -> "unfold_less"
+              False -> "unfold_more"
+        buttonEvent <-
+          button "slimButton" $
+            D.dyn_ (icon "collapse" . label <$> open)
+        tellToggle $ taskInfos ^. #uuid <$ buttonEvent
