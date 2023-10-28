@@ -38,6 +38,7 @@ let
     lib.mapAttrs (_: package: package final) myHaskellPackages
     // {
       nixfmt = overrideCabal (_: { src = inputs.nixfmt; }) prev.nixfmt;
+      daemons = final.callHackage "daemons" "0.3.0" { };
     };
   selectHaskellPackages =
     attrs:
