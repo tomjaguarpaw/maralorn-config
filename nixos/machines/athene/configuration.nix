@@ -83,7 +83,7 @@ in
       authorizedKeys = pkgs.privateValue [ "dummy-key" ] "backup-ssh-keys";
     };
     printing = {
-      enable = true;
+      enable = false; # Printer is currently disfunctional anyway
       allowFrom = [ "all" ];
       listenAddresses = [ "[${localAddress}]:631" ];
       extraConf = "ServerAlias *";
