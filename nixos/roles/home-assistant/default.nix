@@ -20,10 +20,10 @@ let
     primary = "#858EFF";
   };
   esp = {
-    schlafzimmer = "671af9";
+    schlafzimmer = "670dcb"; # Getauscht, war eigentlich in der Küche
     wohnzimmer = "670a54";
     bad = "670dbe";
-    kueche = "670dcb";
+    kueche = "671af9"; # Getauscht, war eigentlich im Schlafzimmer.
   };
   sensor = {
     schlafzimmer = "${esp.schlafzimmer}_bme280";
@@ -432,6 +432,36 @@ in
               ];
               action = [ (actions.notify "Es ist 22:50 Uhr.") ];
             }
+            {
+              alias = "Aufwachen";
+              trigger = [
+                {
+                  platform = "time";
+                  at = "07:00:00";
+                }
+              ];
+              action = [
+                {
+                  service = "switch.turn_on";
+                  target.entity_id = "group.schlafzimmer_lights";
+                }
+              ];
+            }
+            {
+              alias = "Wachen";
+              trigger = [
+                {
+                  platform = "time";
+                  at = "08:00:00";
+                }
+              ];
+              action = [
+                {
+                  service = "switch.turn_off";
+                  target.entity_id = "group.schlafzimmer_lights";
+                }
+              ];
+            }
           ]
           ++ (map
             (entity: {
@@ -451,12 +481,6 @@ in
               "sensor.${sensor.schlafzimmer}_humidity"
             ]
           )
-          #condition = {
-          #  condition = "numeric_state";
-          #  entity_id = "weather.dwd_darmstadt";
-          #  attribute = "temperature";
-          #  below = 15;
-          #};
           ++ (map
             (minutes: {
               alias = "Warnung bei ${minutes} Minuten offenem Fenster oder offener Tür";
