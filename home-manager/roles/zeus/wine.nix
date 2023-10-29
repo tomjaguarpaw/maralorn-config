@@ -1,1 +1,1 @@
-{ pkgs, ... }: { home.packages = [ pkgs.wine64 ]; }
+{ pkgs, ... }: { home.packages = [ pkgs.wineWowPackages.wayland ]; }
