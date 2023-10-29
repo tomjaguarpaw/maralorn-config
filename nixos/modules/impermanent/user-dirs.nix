@@ -43,6 +43,7 @@
   };
   environment.persistence.unsnapshoted.users.maralorn.directories = [
     "Videos"
+    ".wine"
     ".cache/kassandra"
     ".cache/hie-bios"
     ".cache/ghcide"
