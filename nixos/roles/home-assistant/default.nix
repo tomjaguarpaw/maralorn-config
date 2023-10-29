@@ -33,12 +33,12 @@ let
   };
   humidity_threshold = {
     schlafzimmer = {
-      upper = 66;
+      upper = 65;
       lower = 64;
     };
     bad = {
-      upper = 62;
-      lower = 60;
+      upper = 65;
+      lower = 64;
     };
   };
   inherit (haLib) triggers actions;
