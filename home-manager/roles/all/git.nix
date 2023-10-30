@@ -17,6 +17,7 @@
       ".direnv"
       ".syncthing*.tmp"
       ".helix"
+      ".zsh_config"
       "*.swp"
       "*.autosave~"
       "*.aux"
