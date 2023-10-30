@@ -26,9 +26,9 @@ data Task = MkTask
   { _status :: TaskStatus
   , _description :: Text
   , _tags :: [Text]
-  , -- wait :: Maybe UTCTime,
-    -- due :: Maybe UTCTime,
-    -- modified :: UTCTime,
+  , _wait :: Maybe Time.Day
+  , _due :: Maybe Time.Day
+  , -- modified :: UTCTime,
     _path :: [Text]
   }
 
@@ -58,7 +58,7 @@ inbox :: Task -> Bool
 inbox = elem "Inbox" . view path
 
 outdated :: Time.UTCTime -> Task -> Bool
-outdated now t = (t ^? (path . folded . to parseDate . _Just)) & maybe False (\date -> date.utctDay < now.utctDay)
+outdated now t = (t ^? (path . folded . to parseDate . _Just)) & maybe False (< now.utctDay)
 
 pall :: [(a -> Bool)] -> a -> Bool
 pall preds = \x -> all ($ x) preds
@@ -94,7 +94,7 @@ splitSharedPrefix = \cases
   (a : as) (x : xs) | a == x -> splitSharedPrefix as xs & _1 %~ (x :)
   _ xs -> ([], xs)
 
-parseDate :: Text -> Maybe Time.UTCTime
+parseDate :: Text -> Maybe Time.Day
 parseDate = Time.parseTimeM True Time.defaultTimeLocale "%Y-%m-%d" . toString
 
 printStatus = \case
@@ -154,8 +154,19 @@ parseLine = P.choice [heading, task]
     s <- status
     d <- P.takeRest
     state <- get
-    let (tags, description) = List.partition (Text.isPrefixOf "+") $ Text.words d
-    pure $ Just (MkTask s (Text.unwords description) (Text.drop 1 <$> tags) (state ^. file <> state ^. section))
+    let (tags, d1) = List.partition (Text.isPrefixOf "+") $ Text.words d
+        (due, d2) = List.partition (Text.isPrefixOf "due:") d1
+        (wait, d3) = List.partition (Text.isPrefixOf "wait:") d2
+    pure
+      $ Just
+        ( MkTask
+            s
+            (Text.unwords d3)
+            (Text.drop 1 <$> tags)
+            (due ^? folded . to (Text.drop 4) . to parseDate . _Just)
+            (wait ^? folded . to (Text.drop 5) . to parseDate . _Just)
+            (state ^. file <> state ^. section)
+        )
 
 parseFile :: Text -> Text -> [Task]
 parseFile name file =
