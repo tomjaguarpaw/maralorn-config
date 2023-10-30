@@ -1,14 +1,17 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Main (main) where
 
-import Control.Lens (Prism', folded, itoList, preview, (^..), _Just, _Right)
+import Control.Lens (Prism', each, folded, itoList, makeFieldsNoPrefix, preview, to, view, (%=), (%~), (.~), (^.), (^..), (^?), _1, _Just, _Right)
+import Data.List qualified as List
 import Data.Text qualified as Text
-import Data.Time (UTCTime)
+import Data.Time qualified as Time
 import Relude
 import System.Directory qualified as Dir
 import System.FilePath ((</>))
@@ -17,17 +20,82 @@ import Text.Megaparsec qualified as P
 import Text.Megaparsec.Char qualified as P
 import Prelude ()
 
+data TaskStatus = ToDo | Done | Deleted | Category | Maybe deriving (Show, Eq)
+
+data Task = MkTask
+  { _status :: TaskStatus
+  , _description :: Text
+  , _tags :: [Text]
+  , -- wait :: Maybe UTCTime,
+    -- due :: Maybe UTCTime,
+    -- modified :: UTCTime,
+    _path :: [Text]
+  }
+
+makeFieldsNoPrefix ''Task
+
+data ParseState = MkParseState
+  { _file :: [Text]
+  , _section :: [Text]
+  , _parents :: [(Text, Text)]
+  -- ^ Incremental Indentation and name of Task
+  }
+
+makeFieldsNoPrefix ''ParseState
+
 main :: IO ()
 main = do
+  now <- Time.getCurrentTime
   getArgs >>= \case
-    [] -> showTasks (== ToDo)
-    ["inbox"] -> undefined
-    ["all"] -> undefined
-    ["list"] -> undefined
+    [] -> showTasks active
+    ["unsorted"] -> showTasks (pall [active, pany [inbox, outdated now]])
+    ["inbox"] -> showTasks (pall [null . (view tags), active])
 
-showTasks pre = getTasks >>= (mapM_ \t -> putTextLn $ printStatus t.status <> " " <> t.description <> " " <> Text.intercalate "." t.path) . filter (pre . (.status))
+active :: Task -> Bool
+active = (== ToDo) . view status
 
-data TaskStatus = ToDo | Done | Deleted | Category | Maybe deriving (Show, Eq)
+inbox :: Task -> Bool
+inbox = elem "Inbox" . view path
+
+outdated :: Time.UTCTime -> Task -> Bool
+outdated now t = (t ^? (path . folded . to parseDate . _Just)) & maybe False (\date -> date.utctDay < now.utctDay)
+
+pall :: [(a -> Bool)] -> a -> Bool
+pall preds = \x -> all ($ x) preds
+
+pany :: [(a -> Bool)] -> a -> Bool
+pany preds = \x -> any ($ x) preds
+
+showTasks :: (Task -> Bool) -> IO ()
+showTasks pre = getTasks >>= printTree . filter pre
+
+printList :: [Task] -> IO ()
+printList = (mapM_ \t -> putTextLn $ printStatus (t ^. status) <> " " <> t ^. description <> " " <> Text.intercalate "." (t ^. path) <> " " <> Text.unwords (t ^. tags))
+
+printTree :: [Task] -> IO ()
+printTree = (mapM_ (uncurry printRow)) . (\t -> zip t ([] : ((^. path) <$> t))) . sortOn (^. path)
+ where
+  printRow = \cases
+    task prepath -> putTextLn $ ((each .~ ' ') (Text.intercalate " " prefix) <> connection <> Text.intercalate "." own) <-> (" " <> printStatus (task ^. status) <-> (task ^. description) <-> Text.unwords (task ^. tags))
+     where
+      (prefix, own) = splitSharedPrefix prepath (task ^. path)
+      connection
+        | null prefix || null own = ""
+        | otherwise = "."
+
+"" <-> b = b
+a <-> "" = a
+a <-> b | Text.isPrefixOf " " b || Text.isSuffixOf " " a = a <> b
+a <-> b = a <> " " <> b
+
+-- >>> splitSharedPrefix "Foo" "Foobar"
+splitSharedPrefix :: (Eq a) => [a] -> [a] -> ([a], [a])
+splitSharedPrefix = \cases
+  (a : as) (x : xs) | a == x -> splitSharedPrefix as xs & _1 %~ (x :)
+  _ xs -> ([], xs)
+
+parseDate :: Text -> Maybe Time.UTCTime
+parseDate = Time.parseTimeM True Time.defaultTimeLocale "%Y-%m-%d" . toString
 
 printStatus = \case
   ToDo -> "o"
@@ -35,23 +103,6 @@ printStatus = \case
   Deleted -> "-"
   Category -> "*"
   Maybe -> "?"
-
-data Task = MkTask
-  { status :: TaskStatus
-  , description :: Text
-  , -- tags :: [Text],
-    -- wait :: Maybe UTCTime,
-    -- due :: Maybe UTCTime,
-    -- modified :: UTCTime,
-    path :: [Text]
-  }
-
-data ParseState = MkParseState
-  { file :: [Text]
-  , section :: [Text]
-  , parents :: [(Text, Text)]
-  -- ^ Incremental Indentation and name of Task
-  }
 
 getTasks :: IO [Task]
 getTasks = do
@@ -73,13 +124,19 @@ getFilePaths dir =
         _ | isDir -> getFilePaths (dir </> name)
         _ -> pure []
 
-parseLine :: P.ParsecT () Text (State ParseState) (Maybe Task)
+type ParserT = P.ParsecT () Text
+
+type Parser = ParserT Identity
+
+parseLine :: ParserT (State ParseState) (Maybe Task)
 parseLine = P.choice [heading, task]
  where
   indent = P.many P.spaceChar
   heading = do
     level <- length <$> P.some (P.char '#')
+    P.space
     rest <- P.takeRest
+    section %= (<> [rest]) . take (level - 1)
     pure Nothing
   status =
     P.choice
@@ -97,7 +154,8 @@ parseLine = P.choice [heading, task]
     s <- status
     d <- P.takeRest
     state <- get
-    pure $ Just (MkTask s d (state.file <> state.section))
+    let (tags, description) = List.partition (Text.isPrefixOf "+") $ Text.words d
+    pure $ Just (MkTask s (Text.unwords description) (Text.drop 1 <$> tags) (state ^. file <> state ^. section))
 
 parseFile :: Text -> Text -> [Task]
 parseFile name file =
