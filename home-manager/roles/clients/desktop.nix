@@ -43,7 +43,6 @@
         handbrake
         evince
         abcde
-        beets
         zbar
         graphia
 
