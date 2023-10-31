@@ -48,15 +48,8 @@
         graphia
 
         # media
-        ncpamixer
-        pavucontrol
-        pulseaudio
-        playerctl
         deluge
         vlc
-        yt-dlp
-        spotdl
-        ffmpeg
         syncplay
         esphome # To flash devices
         esptool # provides esptool.py
@@ -67,7 +60,6 @@
         libnotify
         shotcut
         audacity
-        paprefs
         wl-clipboard
         dconf2nix
         chrysalis
