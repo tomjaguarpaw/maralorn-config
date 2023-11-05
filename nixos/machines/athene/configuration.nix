@@ -44,6 +44,8 @@ in
         80 # http
         443 # https
         631 # cups
+        4713 # pulseaudio input
+        6600 # mpd
       ];
       allowedTCPPortRanges =
         [
