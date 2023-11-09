@@ -14,6 +14,7 @@ import StatusScript.Warnings (Warning (..))
 import System.FilePath ((</>))
 
 Shh.load Shh.Absolute ["notmuch"]
+
 missingExecutables :: IO [FilePath]
 processNotmuchDescription :: Text -> Text
 processNotmuchDescription =
@@ -42,9 +43,9 @@ mail env mode = do
   notmuch_update <-
     FileWatch.watchFile env (env.homeDir </> "Maildir/.notmuch/xapian") "flintlock"
   events <-
-    [ ((/= Klausur), ["folder:hera/Inbox", "tag:unread"], "e-mail")
-      , ((== Orga), ["folder:hera/Inbox", "not", "tag:unread"], "e-mail-open")
-      , ((== Code), ["folder:hera/Code"], "Code")
+    [ (const True, ["tag:unread"], "e-mail")
+    -- , ((== Orga), ["folder:hera/Inbox", "not", "tag:unread"], "e-mail-open")
+    -- , ((== Code), ["folder:hera/Code"], "Code")
       ]
       & mapM \(on_mode, folder, subgroup) ->
         ReflexUtil.performEventThreaded

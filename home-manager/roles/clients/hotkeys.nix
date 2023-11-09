@@ -148,6 +148,7 @@ let
           Mail = {
             Open = term "neomutt";
             Inbox = term "neomutt -f ~/Maildir/hera/Inbox";
+            Inbox-Work = term "neomutt -f ~/Maildir/heilmann/Inbox";
             Code = term "neomutt -f ~/Maildir/hera/Code";
           };
         }

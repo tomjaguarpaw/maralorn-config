@@ -21,7 +21,7 @@ let
   ;
   quick-mail-sync = pkgs.writeShellScriptBin "quick-mail-sync" ''
     ${pkgs.coreutils}/bin/mkdir -p ~/.cache/mutt
-    ${pkgs.isync}/bin/mbsync hera:INBOX,Code
+    ${pkgs.isync}/bin/mbsync hera:INBOX,Code heilmann-inbox
     ${pkgs.notmuch}/bin/notmuch new
   '';
   maildir = config.accounts.email.maildirBasePath;
@@ -136,9 +136,9 @@ in
         '';
         # See: https://unix.stackexchange.com/questions/44358/mutt-mark-as-read-and-delete
         move-message-macro =
-          key: dir: name:
+          account: key: dir:
           ''
-            macro index,pager ${key} ":set confirmappend=no resolve=no\n<clear-flag>N<save-message>=hera/${dir}\n:set confirmappend=yes resolve=yes\n<next-undeleted>" "move message to ${name}"'';
+            folder-hook ${account} "macro index,pager ${key} \":set confirmappend=no resolve=no\n<clear-flag>N<save-message>=${account}/${dir}\n:set confirmappend=yes resolve=yes\n<next-undeleted>\" \"move message to ${account}/${dir}\""'';
       in
       {
         ".neomuttrc".text = ''
@@ -149,10 +149,12 @@ in
           set wait_key = false
           color normal default default
 
-          ${move-message-macro "a" "Archiv/unsortiert" "archive"}
-          ${move-message-macro "s" "Junk" "spam"}
-          ${move-message-macro "t" "Move/todo" "todo list"}
-          ${move-message-macro "l" "Move/readlater" "readlater list"}
+          ${move-message-macro "hera" "a" "Archiv/unsortiert"}
+          ${move-message-macro "heilmann" "a" "Archive"}
+          ${move-message-macro "hera" "s" "Junk"}
+          ${move-message-macro "heilmann" "s" "Spam"}
+          ${move-message-macro "hera" "t" "Move/todo"}
+          ${move-message-macro "hera" "l" "Move/readlater"}
           macro attach 'V' "<shell-escape>mkdir -p ~/.cache/mutt<enter><pipe-entry>iconv -c --to-code=UTF8 > ~/.cache/mutt/mail.html<enter><shell-escape>firefox ~/.cache/mutt/mail.html<enter>"
 
           macro index,pager <F6> "<shell-escape>${pkgs.zsh}/bin/zsh -c '${pkgs.sieve-connect}/bin/sieve-connect -s ${
