@@ -40,6 +40,9 @@ in
               "br-klassik" = "http://dispatcher.rndfnk.com/br/brklassik/live/mp3/high";
               "klassik-radio-games" = "https://klassikr.streamabc.net/klr-games-mp3-128-1540253";
               "klassik-radio-movie" = "https://klassikr.streamabc.net/klr-movie-mp3-128-5213277";
+              "querfunk" = "http://mp3.querfunk.de/qfhi";
+              "radio-dreyeckland" = "https://stream.rdl.de/rdl";
+              "hr2-kultur" = "https://hlshr2.akamaized.net/hls/live/2016534/hr2/master.m3u8";
             }
         );
         recursive = true;

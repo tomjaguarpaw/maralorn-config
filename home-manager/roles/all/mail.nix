@@ -21,7 +21,13 @@ let
   ;
   quick-mail-sync = pkgs.writeShellScriptBin "quick-mail-sync" ''
     ${pkgs.coreutils}/bin/mkdir -p ~/.cache/mutt
-    ${pkgs.isync}/bin/mbsync hera:INBOX,Code heilmann-inbox
+    PATH=${
+      lib.makeBinPath [
+        pkgs.sd
+        pkgs.rbw
+        pkgs.coreutils
+      ]
+    }:$PATH ${pkgs.isync}/bin/mbsync hera:INBOX,Code heilmann-inbox
     ${pkgs.notmuch}/bin/notmuch new
   '';
   maildir = config.accounts.email.maildirBasePath;
@@ -58,7 +64,9 @@ in
               pkgs.writeShellScript "watch-${name}-maildir" ''
                 while ${pkgs.coreutils}/bin/sleep 1s; do
                   ${lib.getExe quick-mail-sync}
-                  ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete -r ${maildir}/${name}/Inbox ${maildir}/${name}/Code
+                  ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete -r ${maildir}/${name}/Inbox ${
+                    if name == "hera" then "${maildir}/${name}/Code" else ""
+                  }
                 done
               ''
             );
@@ -75,6 +83,7 @@ in
         Environment = "PATH=${
             lib.makeBinPath [
               pkgs.rbw
+              pkgs.sd
               pkgs.coreutils
             ]
           }";
