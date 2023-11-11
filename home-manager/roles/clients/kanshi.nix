@@ -25,6 +25,25 @@ in
         {
           criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
           mode = "5120x1440";
+          status = "enable";
+        }
+      ];
+      desk.outputs = [
+        {
+          criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
+          mode = "5120x1440";
+          status = "enable";
+        }
+      ];
+      tv.outputs = [
+        {
+          criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
+          status = "disable";
+        }
+        {
+          criteria = "Panasonic Industry Company Panasonic-TV 0x00000101";
+          status = "enable";
+          mode = "1920x1080";
         }
       ];
     };
