@@ -49,7 +49,7 @@
 
   programs.eww = {
     enable = true;
-    package = pkgs.callPackage ./_eww-package.nix { withWayland = true; };
+    package = pkgs.eww-wayland;
     configDir = ./eww-config;
   };
 }

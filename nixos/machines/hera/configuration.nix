@@ -3,10 +3,9 @@ flake-inputs:
   config,
   pkgs,
   lib,
-  prelude,
+  mylib,
   ...
 }:
-with prelude;
 let
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
   backupJobs = pkgs.privateValue { } "borgbackup";
@@ -55,7 +54,7 @@ in
         ];
       })
     ]
-    ++ nixFromDirs [
+    ++ mylib.nixFromDirs [
       ../../modules/hera
       ../../modules/not-home
       ../../modules/servers

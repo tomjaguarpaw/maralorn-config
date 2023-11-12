@@ -1,6 +1,5 @@
 _:
-{ pkgs, prelude, ... }:
-with prelude;
+{ pkgs, mylib, ... }:
 let
   localAddress = "fdc0:1::2";
 in
@@ -11,7 +10,7 @@ in
       ../../roles/fonts.nix
       ../../roles/home-assistant
     ]
-    ++ nixFromDirs [
+    ++ mylib.nixFromDirs [
       ../../modules/athene
       ../../modules/all
       ../../modules/impermanent

@@ -1,9 +1,16 @@
-{ pkgs, prelude, ... }:
-with prelude;
+{
+  pkgs,
+  lib,
+  mylib,
+  ...
+}:
 let
-  inject_exec = mapAttrs (
-    _: x:
-    x // { exec = [ "${getExe' pkgs.systemd "systemctl"} --user restart eww" ]; }
+  inject_exec = lib.mapAttrs (
+    lib.const (
+      lib.recursiveUpdate {
+        exec = [ "${mylib.getExe' pkgs.systemd "systemctl"} --user restart eww" ];
+      }
+    )
   );
 in
 {

@@ -1,5 +1,8 @@
 { config, lib, ... }:
-with lib; {
+let
+  inherit (lib) mkOption types;
+in
+{
 
   options.m-0.server = {
     initrd-ssh = {

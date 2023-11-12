@@ -1,8 +1,7 @@
-prelude:
-with prelude;
+mylib:
 let
   makeConfig = hostName: roles: {
-    imports = nixFromDirs (
+    imports = mylib.nixFromDirs (
       map (x: ./roles + "/${x}") (
         roles
         ++ [

@@ -224,7 +224,7 @@ in
             #}
             {
               alias = "Schlafzimmerfenstertimer";
-              trigger = with triggers; [ (stateTrigger "binary_sensor.schlafzimmerfenster") ];
+              trigger = [ (triggers.stateTrigger "binary_sensor.schlafzimmerfenster") ];
               action = {
                 service = "timer.start";
                 data = {
@@ -235,13 +235,17 @@ in
             }
             {
               alias = "Thermostatsteuerung Schlafzimmer";
-              trigger = with triggers; [
-                (stateTrigger "input_number.target_temperature_schlafzimmer")
-                (stateTrigger "sensor.${sensor.schlafzimmer}_temperature")
-                (stateTrigger "binary_sensor.schlafzimmerfenster")
-                (stateTrigger "climate.schlafzimmer")
-                (stateTrigger "timer.block_heating_schlafzimmer")
-              ];
+              trigger =
+                let
+                  inherit (triggers) stateTrigger;
+                in
+                [
+                  (stateTrigger "input_number.target_temperature_schlafzimmer")
+                  (stateTrigger "sensor.${sensor.schlafzimmer}_temperature")
+                  (stateTrigger "binary_sensor.schlafzimmerfenster")
+                  (stateTrigger "climate.schlafzimmer")
+                  (stateTrigger "timer.block_heating_schlafzimmer")
+                ];
               action = [
                 {
                   choose = [
@@ -285,12 +289,16 @@ in
             }
             {
               alias = "Thermostatsteuerung Küche";
-              trigger = with triggers; [
-                (stateTrigger "input_number.target_temperature_kueche")
-                (stateTrigger "sensor.${sensor.kueche}_temperature")
-                (stateTrigger "binary_sensor.kuechenfenster")
-                (stateTrigger "climate.kueche")
-              ];
+              trigger =
+                let
+                  inherit (triggers) stateTrigger;
+                in
+                [
+                  (stateTrigger "input_number.target_temperature_kueche")
+                  (stateTrigger "sensor.${sensor.kueche}_temperature")
+                  (stateTrigger "binary_sensor.kuechenfenster")
+                  (stateTrigger "climate.kueche")
+                ];
               action = [
                 {
                   choose = [
@@ -329,12 +337,16 @@ in
             }
             {
               alias = "Thermostatsteuerung Wohnzimmer";
-              trigger = with triggers; [
-                (stateTrigger "input_number.target_temperature_wohnzimmer")
-                (stateTrigger "sensor.${sensor.wohnzimmer}_temperature")
-                (stateTrigger "binary_sensor.wohnzimmerfenster")
-                (stateTrigger "climate.wohnzimmer")
-              ];
+              trigger =
+                let
+                  inherit (triggers) stateTrigger;
+                in
+                [
+                  (stateTrigger "input_number.target_temperature_wohnzimmer")
+                  (stateTrigger "sensor.${sensor.wohnzimmer}_temperature")
+                  (stateTrigger "binary_sensor.wohnzimmerfenster")
+                  (stateTrigger "climate.wohnzimmer")
+                ];
               action = [
                 {
                   choose = [

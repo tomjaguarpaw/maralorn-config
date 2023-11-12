@@ -3,10 +3,9 @@ flake-inputs:
   config,
   pkgs,
   lib,
-  prelude,
+  mylib,
   ...
 }:
-with prelude;
 let
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
 in
@@ -19,7 +18,7 @@ in
       ../../roles
       ../../roles/fonts.nix
     ]
-    ++ nixFromDirs [
+    ++ mylib.nixFromDirs [
       ./../../modules/all
       ./../../modules/clients
       ./../../modules/zeus

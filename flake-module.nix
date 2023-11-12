@@ -13,9 +13,8 @@
   ];
   systems = [ "x86_64-linux" ];
   flake = {
-    prelude = {
+    mylib = {
       inherit (inputs.nixos-unstable.lib) getExe';
-      inherit (lib) mapAttrs;
       flattenAttrs =
         attrs:
         lib.listToAttrs (

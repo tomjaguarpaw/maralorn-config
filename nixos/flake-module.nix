@@ -28,7 +28,7 @@ in
           inputs.home-manager.nixosModules.home-manager
         ];
         specialArgs = {
-          inherit (inputs.self) prelude;
+          inherit (inputs.self) mylib;
         };
       }
     )

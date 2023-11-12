@@ -1,13 +1,13 @@
 flake-inputs:
-{ prelude, ... }:
-with prelude; {
+{ mylib, ... }:
+{
   imports =
     [
       flake-inputs.nixos-hardware.nixosModules.lenovo-thinkpad
       ../../roles
       ../../roles/fonts.nix
     ]
-    ++ nixFromDirs [
+    ++ mylib.nixFromDirs [
       ../../modules/hephaistos
       ../../modules/clients
       ../../modules/laptops

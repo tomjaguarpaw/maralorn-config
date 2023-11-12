@@ -2,13 +2,15 @@ final: _prev:
 let
   pkgs = final;
   deps =
-    ps:
-    with ps; [
-      jinja2
-      mastodon-py
-      scipy
-      python-dotenv
-    ];
+    p:
+    builtins.attrValues {
+      inherit (p)
+        jinja2
+        mastodon-py
+        scipy
+        python-dotenv
+      ;
+    };
   python-env = pkgs.python3.withPackages deps;
   src = pkgs.fetchFromGitHub {
     owner = "hodgesmr";
