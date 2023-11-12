@@ -22,12 +22,12 @@ let
            setEnv "NOTMUCH_CONFIG" "${
              config.home.sessionVariables.NOTMUCH_CONFIG or ""
            }"
-           mbsync "-a"
+           mbsync "hera:Move/readlater,Archiv/unsortiert"
            notmuch "new" "--quiet"
            mail2rss "${config.accounts.email.maildirBasePath}" "hera/Move/readlater" &> Truncate "/var/www/rss/mails.xml"
            files <- notmuch "search" "--output" "files" "folder:hera/Move/readlater" |> capture
            writeOutput files |> mrefile "${config.accounts.email.maildirBasePath}/hera/Archiv/unsortiert"
-           mbsync "-a"
+           mbsync "hera:Move/readlater,Archiv/unsortiert"
            notmuch "new" "--quiet"
       '';
 in
