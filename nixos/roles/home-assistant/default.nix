@@ -460,7 +460,7 @@ in
               ];
             }
             {
-              alias = "Wachen";
+              alias = "Wach";
               trigger = [
                 {
                   platform = "time";
