@@ -85,14 +85,11 @@ in
       virtualMapType = "regexp";
       config = {
         # Allow TLSv1 because we need to be able to receive mail from legacy servers.
-        smtpd_tls_protocols =
-          lib.mkForce
-            "TLSv1.3, TLSv1.2, TLSv1.1, TLSv1, !SSLv2, !SSLv3";
+        smtpd_tls_protocols = lib.mkForce "TLSv1.3, TLSv1.2, TLSv1.1, TLSv1, !SSLv2, !SSLv3";
         virtual_mailbox_domains = lib.mkForce (
           builtins.toFile "vhosts" (
             lib.concatStringsSep "\n" (
-              builtins.filter (x: !builtins.elem x nonMailboxDomains)
-                config.mailserver.domains
+              builtins.filter (x: !builtins.elem x nonMailboxDomains) config.mailserver.domains
             )
           )
         );

@@ -63,16 +63,12 @@ in
     );
   };
 
-  m-0.virtualHosts = lib.genAttrs (hosts.aliases.${hostName} or [ ]) (
-    name: "${name}.maralorn.de"
-  );
+  m-0.virtualHosts = lib.genAttrs (hosts.aliases.${hostName} or [ ]) (name: "${name}.maralorn.de");
 
   nix = {
     # Extra Option which is on by default: allow-import-from-derivation = true
     settings = {
-      trusted-public-keys = [
-        "cache.maralorn.de:nul5zddJUyqgWvtcailq5WMdnqWXMmSY/JOxumIvTdU="
-      ];
+      trusted-public-keys = [ "cache.maralorn.de:nul5zddJUyqgWvtcailq5WMdnqWXMmSY/JOxumIvTdU=" ];
       experimental-features = [
         "nix-command"
         "flakes"
@@ -233,14 +229,11 @@ in
             value = {
               forceSSL = true;
               enableACME = true;
-              extraConfig =
-                lib.mkIf (!(builtins.elem name (hosts.publicAliases.${hostName} or [ ])))
-                  ''
-                    satisfy any;
-                    ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};")
-                      config.m-0.headscaleIPs}
-                    deny all;
-                  '';
+              extraConfig = lib.mkIf (!(builtins.elem name (hosts.publicAliases.${hostName} or [ ]))) ''
+                satisfy any;
+                ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};") config.m-0.headscaleIPs}
+                deny all;
+              '';
             };
           })
           config.m-0.virtualHosts;

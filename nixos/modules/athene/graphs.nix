@@ -68,9 +68,7 @@ in
               url = "localhost:5432";
               user = "grafana";
               uid = "accounting";
-              secureJsonData.password = "$__file{${
-                  config.age.secrets."grafana-postgres-pw".path
-                }}";
+              secureJsonData.password = "$__file{${config.age.secrets."grafana-postgres-pw".path}}";
               jsonData = {
                 database = "accounting";
                 sslmode = "disable";

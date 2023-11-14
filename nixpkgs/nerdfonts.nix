@@ -1,3 +1,1 @@
-_final: prev: {
-  nerdfonts = prev.nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; };
-}
+_final: prev: { nerdfonts = prev.nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; }; }

@@ -9,9 +9,7 @@ let
   hostName = "matrix.${server_name}";
 in
 {
-  environment.systemPackages = [
-    pkgs.matrix-synapse-tools.rust-synapse-compress-state
-  ];
+  environment.systemPackages = [ pkgs.matrix-synapse-tools.rust-synapse-compress-state ];
   systemd.services = {
     # use jemalloc to improve the memory situation with synapse
     matrix-synapse.environment = {

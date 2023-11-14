@@ -14,9 +14,7 @@ let
     minifyStaticFiles = true;
     updateChannel = "release";
   };
-  declarativeConfigFile = builtins.toFile "foundry-options.json" (
-    builtins.toJSON config
-  );
+  declarativeConfigFile = builtins.toFile "foundry-options.json" (builtins.toJSON config);
 in
 {
   config = {
@@ -28,9 +26,7 @@ in
         if [[ -f "${configFile}" ]]; then
           tempfile=$(mktemp)
           cp "${configFile}" "$tempfile"
-          ${
-            lib.getExe pkgs.jq
-          } ".[0] * .[1]" -s "$tempfile" "${declarativeConfigFile}" > "${configFile}"
+          ${lib.getExe pkgs.jq} ".[0] * .[1]" -s "$tempfile" "${declarativeConfigFile}" > "${configFile}"
         else
           cp "${declarativeConfigFile}" "${configFile}"
         fi
@@ -45,9 +41,7 @@ in
         Restart = "always";
         Environment = "HOME=${stateDir}";
         ExecStart = ''
-          ${
-            lib.getExe pkgs.nodejs
-          } ${stateDir}/app/resources/app/main.js --dataPath="${dataDir}"'';
+          ${lib.getExe pkgs.nodejs} ${stateDir}/app/resources/app/main.js --dataPath="${dataDir}"'';
       };
     };
     services = {
@@ -69,9 +63,7 @@ in
                   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                   proxy_set_header X-Forwarded-Proto $scheme;
                   if ($query_string ~ "pw=([A-Za-z]*)") {
-                     add_header Set-Cookie "password=$1; path=/; Max-Age=${
-                       toString (365 * 24 * 60 * 60)
-                     }; Secure";
+                     add_header Set-Cookie "password=$1; path=/; Max-Age=${toString (365 * 24 * 60 * 60)}; Secure";
                      return 303 /;
                   }
                   if ($http_cookie !~ "password=${pkgs.privateValue "" "foundry-pw"}") {

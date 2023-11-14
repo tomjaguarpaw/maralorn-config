@@ -15,7 +15,6 @@ extra-doc-files: CHANGELOG.md
 common common-config
   ghc-options:        -Wall
   default-extensions:
-    NoImplicitPrelude
     BlockArguments
     DataKinds
     DeriveAnyClass
@@ -30,6 +29,7 @@ common common-config
     LambdaCase
     MultiParamTypeClasses
     NamedFieldPuns
+    NoImplicitPrelude
     OverloadedStrings
     QuasiQuotes
     ScopedTypeVariables

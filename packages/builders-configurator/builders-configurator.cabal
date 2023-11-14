@@ -22,11 +22,11 @@ executable builders-configurator
   import:             warnings
   main-is:            Main.hs
   default-extensions:
-    NoImplicitPrelude
     BlockArguments
     DataKinds
     ExtendedDefaultRules
     LambdaCase
+    NoImplicitPrelude
     OverloadedRecordDot
     OverloadedStrings
     QuasiQuotes

@@ -74,9 +74,7 @@
       ...
     }:
     {
-      devShells.default = pkgs.mkShell {
-        shellHook = config.pre-commit.installationScript;
-      };
+      devShells.default = pkgs.mkShell { shellHook = config.pre-commit.installationScript; };
 
       pre-commit =
         let

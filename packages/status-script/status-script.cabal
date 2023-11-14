@@ -16,9 +16,6 @@ build-type:    Simple
 
 common common-config
   default-extensions:
-    NoFieldSelectors
-    NoImplicitPrelude
-    NoImplicitPrelude
     BlockArguments
     DataKinds
     DeriveAnyClass
@@ -30,6 +27,9 @@ common common-config
     ImpredicativeTypes
     LambdaCase
     NamedFieldPuns
+    NoFieldSelectors
+    NoImplicitPrelude
+    NoImplicitPrelude
     OverloadedRecordDot
     OverloadedStrings
     PartialTypeSignatures

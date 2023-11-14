@@ -9,8 +9,7 @@ let
   term = cmd: fork "foot ${cmd}";
   edit_dir = dir: term (shell "cd ${dir}; hx ${dir}");
   shell = cmd: "sh -c '${cmd}'";
-  with-mic-check =
-    cmd: fork (shell "${config.home.sessionVariables.TERMINAL} mic-check; ${cmd}");
+  with-mic-check = cmd: fork (shell "${config.home.sessionVariables.TERMINAL} mic-check; ${cmd}");
   hotkeys = [
     {
       Orga = [
@@ -71,12 +70,8 @@ let
         in
         [
           { "Play/Pause" = "${pkgs.playerctl}/bin/playerctl play-pause"; }
-          {
-            "Toggle Output Mute" = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
-          }
-          {
-            "Toggle Input Mute" = "${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
-          }
+          { "Toggle Output Mute" = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle"; }
+          { "Toggle Input Mute" = "${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle"; }
           { "MPD lokal" = mpdclient "::"; }
           { "Athene MPD" = mpdclient "athene"; }
           { "Lautstärke" = fork "pavucontrol"; }
@@ -112,9 +107,7 @@ let
           "Steam Lanucher" = fork "steam";
           "The Witcher 3" = fork "xdg-open heroic://launch/gog/1495134320";
           "Baldurs Gate 3" = fork "steam steam://rungameid/1086940";
-          "Guild Wars 2" =
-            fork
-              "xdg-open heroic://launch/sideload/9gC1jhFqE9cV2xNz43ciaE";
+          "Guild Wars 2" = fork "xdg-open heroic://launch/sideload/9gC1jhFqE9cV2xNz43ciaE";
           "Minecraft" = fork "prismlauncher";
           "Factorio" = fork "factorio";
         };

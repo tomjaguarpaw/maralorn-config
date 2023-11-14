@@ -17,9 +17,7 @@ let
     }:
     hpkgs:
     let
-      cleanSource = lib.sourceFilesBySuffices source (
-        includePatterns ++ extraPatterns
-      );
+      cleanSource = lib.sourceFilesBySuffices source (includePatterns ++ extraPatterns);
     in
     lib.pipe { } [
       (hpkgs.callPackage source)
@@ -41,17 +39,11 @@ let
       daemons = final.callHackage "daemons" "0.3.0" { };
     };
   selectHaskellPackages =
-    attrs:
-    lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages
-    // {
-      inherit (attrs) nixfmt;
-    };
+    attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages // { inherit (attrs) nixfmt; };
   myHaskellPackages = {
     wizards-dialog = cleanCabalPackage ./wizards-dialog { };
     rssfeeds = cleanCabalPackage ./rssfeeds { };
-    kassandra = cleanCabalPackage ./kassandra/kassandra {
-      overrides = _: { doHaddock = false; };
-    };
+    kassandra = cleanCabalPackage ./kassandra/kassandra { overrides = _: { doHaddock = false; }; };
     kassandra-standalone = cleanCabalPackage ./kassandra/standalone { };
     nixpkgs-bot = cleanCabalPackage ./nixpkgs-bot { };
     t = cleanCabalPackage ./t { };
@@ -74,9 +66,7 @@ let
       };
     };
   };
-  hpkgs = unstable-pkgs.haskellPackages.override {
-    overrides = haskellPackagesOverlay;
-  };
+  hpkgs = unstable-pkgs.haskellPackages.override { overrides = haskellPackagesOverlay; };
   packages = selectHaskellPackages hpkgs;
 in
 {

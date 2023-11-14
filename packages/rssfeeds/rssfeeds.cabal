@@ -12,8 +12,6 @@ build-type:    Simple
 common common-options
   ghc-options:        -Wall -Wcompat
   default-extensions:
-    NoFieldSelectors
-    NoImplicitPrelude
     BlockArguments
     DataKinds
     DuplicateRecordFields
@@ -23,6 +21,8 @@ common common-options
     LambdaCase
     MultiWayIf
     NamedFieldPuns
+    NoFieldSelectors
+    NoImplicitPrelude
     OverloadedRecordDot
     OverloadedStrings
     PartialTypeSignatures

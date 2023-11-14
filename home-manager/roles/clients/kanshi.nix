@@ -7,9 +7,7 @@
 let
   inject_exec = lib.mapAttrs (
     lib.const (
-      lib.recursiveUpdate {
-        exec = [ "${mylib.getExe' pkgs.systemd "systemctl"} --user restart eww" ];
-      }
+      lib.recursiveUpdate { exec = [ "${mylib.getExe' pkgs.systemd "systemctl"} --user restart eww" ]; }
     )
   );
 in

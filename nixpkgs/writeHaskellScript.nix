@@ -29,13 +29,9 @@ in
           in
           ''
             cp $contentPath ${filename}.hs
-            ${
-              lib.concatStringsSep " " (
-                lib.mapAttrsToList (key: val: ''${key}="${val}"'') ghcEnv
-              )
-            } ${ghc.withPackages (_: libraries)}/bin/ghc ${
-              lib.escapeShellArgs ghcArgs
-            } ${filename}.hs
+            ${lib.concatStringsSep " " (lib.mapAttrsToList (key: val: ''${key}="${val}"'') ghcEnv)} ${
+              ghc.withPackages (_: libraries)
+            }/bin/ghc ${lib.escapeShellArgs ghcArgs} ${filename}.hs
             mv ${filename} $out
             ${pkgs.binutils-unwrapped}/bin/strip --strip-unneeded "$out"
           '';

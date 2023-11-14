@@ -43,14 +43,12 @@ in
   };
   systemd.user.timers.mbsync.Timer.RandomizedDelaySec = "10m";
 
-  accounts.email.accounts =
-    lib.recursiveUpdate (pkgs.privateValue { } "mail/accounts")
-      {
-        hera = {
-          passwordCommand = "${pkgs.coreutils}/bin/cat /run/agenix/mail-password";
-          imapnotify.onNotify = lib.getExe quick-mail-sync;
-        };
-      };
+  accounts.email.accounts = lib.recursiveUpdate (pkgs.privateValue { } "mail/accounts") {
+    hera = {
+      passwordCommand = "${pkgs.coreutils}/bin/cat /run/agenix/mail-password";
+      imapnotify.onNotify = lib.getExe quick-mail-sync;
+    };
+  };
 
   systemd.user.services =
     let
@@ -75,9 +73,7 @@ in
         };
       };
     in
-    lib.mapAttrs' mkWatchService (
-      lib.filterAttrs hasImapHost config.accounts.email.accounts
-    )
+    lib.mapAttrs' mkWatchService (lib.filterAttrs hasImapHost config.accounts.email.accounts)
     // {
       mbsync.Service = {
         Environment = "PATH=${

@@ -44,17 +44,14 @@
       # have the job run this shell script
       script =
         let
-          options = ''
-            --accept-routes --advertise-routes "${config.m-0.tailscale-routes}"'';
+          options = ''--accept-routes --advertise-routes "${config.m-0.tailscale-routes}"'';
         in
         ''
           # wait for tailscaled to settle
           sleep 2
 
           # check if we are already authenticated to tailscale
-          status="$(${lib.getExe pkgs.tailscale} status -json | ${
-            lib.getExe pkgs.jq
-          } -r .BackendState)"
+          status="$(${lib.getExe pkgs.tailscale} status -json | ${lib.getExe pkgs.jq} -r .BackendState)"
           if [ $status = "Running" ]; then # if so, then do nothing
             ${lib.getExe pkgs.tailscale} set ${options}
           else

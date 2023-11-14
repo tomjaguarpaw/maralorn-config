@@ -15,8 +15,7 @@
     users.maralorn = {
       imports = [
         pkgs.flake-inputs.nix-index-database.hmModules.nix-index
-        (import ./../../../home-manager/machines.nix mylib)
-        .${config.networking.hostName}
+        (import ./../../../home-manager/machines.nix mylib).${config.networking.hostName}
       ];
     };
   };

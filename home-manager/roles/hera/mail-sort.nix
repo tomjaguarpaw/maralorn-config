@@ -29,16 +29,12 @@ let
   unsorted = "${maildir}/${unsortedSuffix}";
   archive = "${maildir}/${archiveSuffix}";
   filter = rec {
-    mailToFolder =
-      name: toFolder (lib.concatStringsSep "." (lib.splitString "@" name));
-    toFolder =
-      name: lib.concatStringsSep "/" (lib.reverseList (lib.splitString "." name));
+    mailToFolder = name: toFolder (lib.concatStringsSep "." (lib.splitString "@" name));
+    toFolder = name: lib.concatStringsSep "/" (lib.reverseList (lib.splitString "." name));
     simple = filter: target: { inherit filter target; };
-    notifications =
-      notify: simple "from:${notify}" "notifications/${mailToFolder notify}";
+    notifications = notify: simple "from:${notify}" "notifications/${mailToFolder notify}";
     stupidList = list: simple "to:${list}" "list/${mailToFolder list}";
-    simpleSortList =
-      listName: simple "List:${listName}" "list/${toFolder listName}";
+    simpleSortList = listName: simple "List:${listName}" "list/${toFolder listName}";
   };
   myFilters =
     builtins.map filter.simpleSortList lists.sortLists
@@ -108,9 +104,7 @@ let
 
         main = do
            setEnv "MBLAZE_PAGER" "cat"
-           setEnv "NOTMUCH_CONFIG" "${
-             config.home.sessionVariables.NOTMUCH_CONFIG or ""
-           }"
+           setEnv "NOTMUCH_CONFIG" "${config.home.sessionVariables.NOTMUCH_CONFIG or ""}"
            reScan
            (listIDs,tos) <- concurrently (mhdr "-h" "List-ID" "-d" "${unsorted}" |> capture) (mhdr "-h" "To" "-d" "${unsorted}" "-A" |> capture)
            let listFilters = mapMaybe filtersFromListIDs . sortNub . mapMaybe (parseMaybe listId) . lines . decodeUtf8 $ listIDs

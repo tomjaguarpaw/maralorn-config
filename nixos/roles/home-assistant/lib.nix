@@ -43,8 +43,7 @@ rec {
     modeSelectEntity = mode: "input_select.${modeSelectName mode}";
     modeSelectName = mode: "mode_${mode.name}";
     modeBinarySensorName = mode: option: "${modeSelectName mode}_is_${option}";
-    modeBinarySensorEntity =
-      mode: option: "binary_sensor.${modeBinarySensorName mode option}";
+    modeBinarySensorEntity = mode: option: "binary_sensor.${modeBinarySensorName mode option}";
   };
   triggers = rec {
     stateTrigger = entity_id: {
@@ -96,11 +95,8 @@ rec {
       };
   };
   templates = rec {
-    binarySensor = state: attrs: {
-      binary_sensor = [ ({ inherit state; } // attrs) ];
-    };
-    binarySensorFromCondition =
-      condition: binarySensor (jinja.if' condition "1" "0");
+    binarySensor = state: attrs: { binary_sensor = [ ({ inherit state; } // attrs) ]; };
+    binarySensorFromCondition = condition: binarySensor (jinja.if' condition "1" "0");
     binarySensorForMode =
       mode: option:
       binarySensorFromCondition (jinja.isState (util.modeSelectEntity mode) option) {

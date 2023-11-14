@@ -45,18 +45,12 @@ in
         ${
           lib.getExe pkgs.mastodon_digest
         } -o /var/www/rss/mastodon/$now-read-all-list -n 24 -t all --theme no-boosts -f list:3811
-        ${
-          lib.getExe pkgs.mastodon_digest
-        } -o /var/www/rss/mastodon/$now-tags -n 24 -t all -f list:4160
-        ${
-          lib.getBin pkgs.rssfeeds
-        }/bin/mastodon2rss /var/www/rss/mastodon.xml /var/www/rss/mastodon
+        ${lib.getExe pkgs.mastodon_digest} -o /var/www/rss/mastodon/$now-tags -n 24 -t all -f list:4160
+        ${lib.getBin pkgs.rssfeeds}/bin/mastodon2rss /var/www/rss/mastodon.xml /var/www/rss/mastodon
       '';
       serviceConfig = {
         Type = "oneshot";
-        LoadCredential = [
-          "mastodon-auth-env:${config.age.secrets.mastodon-auth-env.path}"
-        ];
+        LoadCredential = [ "mastodon-auth-env:${config.age.secrets.mastodon-auth-env.path}" ];
       };
     };
     refresh-miniflux = {

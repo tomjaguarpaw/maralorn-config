@@ -19,9 +19,7 @@ let
       }
       ''
         main = do
-           setEnv "NOTMUCH_CONFIG" "${
-             config.home.sessionVariables.NOTMUCH_CONFIG or ""
-           }"
+           setEnv "NOTMUCH_CONFIG" "${config.home.sessionVariables.NOTMUCH_CONFIG or ""}"
            mbsync "hera:Move/readlater,Archiv/unsortiert"
            notmuch "new" "--quiet"
            mail2rss "${config.accounts.email.maildirBasePath}" "hera/Move/readlater" &> Truncate "/var/www/rss/mails.xml"

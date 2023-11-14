@@ -401,11 +401,7 @@ in
                     2500
                     3000
                   ];
-              action = [
-                (actions.notify
-                  "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }} ppm."
-                )
-              ];
+              action = [ (actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }} ppm.") ];
             }
             {
               alias = "Warnung bei niedrigem Akkustand";
@@ -428,11 +424,7 @@ in
                     1
                     0
                   ];
-              action = [
-                (actions.notify
-                  "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%."
-                )
-              ];
+              action = [ (actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%.") ];
             }
             {
               alias = "Abend";
@@ -482,9 +474,7 @@ in
                 to = "unavailable";
                 for = "01:00:00";
               };
-              action = [
-                (actions.notify "{{ trigger.to_state.name }} ist seit 1h unerreichbar.")
-              ];
+              action = [ (actions.notify "{{ trigger.to_state.name }} ist seit 1h unerreichbar.") ];
             })
             [
               "switch.luftentfeuchter"
@@ -514,9 +504,7 @@ in
                 below = 16;
               };
               action = [
-                (actions.notify
-                  "{{ trigger.to_state.name }} ist seit mehr als ${minutes} Minuten offen."
-                )
+                (actions.notify "{{ trigger.to_state.name }} ist seit mehr als ${minutes} Minuten offen.")
               ];
             })
             (

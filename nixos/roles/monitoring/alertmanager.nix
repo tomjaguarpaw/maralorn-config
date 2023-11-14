@@ -2,9 +2,7 @@
 {
   services = {
     prometheus = {
-      alertmanagers = [
-        { static_configs = [ { targets = [ "localhost:9093" ]; } ]; }
-      ];
+      alertmanagers = [ { static_configs = [ { targets = [ "localhost:9093" ]; } ]; } ];
       alertmanager = {
         enable = true;
         listenAddress = "0.0.0.0";

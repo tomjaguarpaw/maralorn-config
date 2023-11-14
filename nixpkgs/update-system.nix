@@ -23,9 +23,7 @@ let
       if [[ "$2" == "" ]]; then
         new_timers=`${lib.getExe pkgs.jq} "map(select(.name != \"$1\"))" ~/.timers`
       else
-        new_timers=`${
-          lib.getExe pkgs.jq
-        } "map(select(.name != \"$1\")) + [{name: \"$1\", at:$(${
+        new_timers=`${lib.getExe pkgs.jq} "map(select(.name != \"$1\")) + [{name: \"$1\", at:$(${
           lib.getBin pkgs.coreutils
         }/bin/date +%s -d "$2")}]" ~/.timers`
       fi

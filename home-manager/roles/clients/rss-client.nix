@@ -13,9 +13,7 @@ let
 
     link="''${1:-`${lib.getBin pkgs.wl-clipboard}/bin/wl-paste`}"
 
-    filename="`${lib.getExe pkgs.yt-dlp} -j $link | ${
-      lib.getExe pkgs.jq
-    } -r .filename`"
+    filename="`${lib.getExe pkgs.yt-dlp} -j $link | ${lib.getExe pkgs.jq} -r .filename`"
     if [[ ! -f "$filename" ]]; then
       echo "Prefetching file …"
       # --user to use the user daemon
@@ -24,9 +22,7 @@ let
       ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block -G \
         ${lib.getExe pkgs.foot} -D "${video_dir}" \
         /bin/sh -c \
-        "${
-          lib.getExe pkgs.yt-dlp
-        } --embed-subs --embed-metadata --embed-chapters \"$1\""
+        "${lib.getExe pkgs.yt-dlp} --embed-subs --embed-metadata --embed-chapters \"$1\""
     else
       echo "File already fetched. Playing …"
       ${lib.getExe config.programs.mpv.finalPackage} "$filename"
@@ -58,10 +54,7 @@ let
           '';
         in
         pkgs.writeShellScriptBin name
-          ''
-            ${
-              lib.getExe pkgs.newsboat
-            } -r -C ${configFile} -c ~/.local/share/newsboat/${name}-cache.db "$@"''
+          ''${lib.getExe pkgs.newsboat} -r -C ${configFile} -c ~/.local/share/newsboat/${name}-cache.db "$@"''
       )
       {
         news = {

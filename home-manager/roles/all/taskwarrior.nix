@@ -29,9 +29,7 @@ in
             pkgs.gnugrep
           ]
         }
-        if [[ -z "$(${
-          lib.getExe pkgs.taskwarrior
-        } show taskd.credentials | grep maralorn)" ]]; then
+        if [[ -z "$(${lib.getExe pkgs.taskwarrior} show taskd.credentials | grep maralorn)" ]]; then
           yes | /bin/sh /run/agenix/taskwarrior-creds-script
         fi
       '').outPath;

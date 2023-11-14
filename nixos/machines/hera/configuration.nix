@@ -9,9 +9,7 @@ flake-inputs:
 let
   inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
   backupJobs = pkgs.privateValue { } "borgbackup";
-  backupJobNames = map (name: "borgbackup-job-${name}") (
-    lib.attrNames backupJobs
-  );
+  backupJobNames = map (name: "borgbackup-job-${name}") (lib.attrNames backupJobs);
 in
 {
   imports =
@@ -74,8 +72,7 @@ in
         script =
           lib.concatMapStringsSep "\n"
             (
-              name:
-              "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}"
+              name: "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}"
             )
             config.services.postgresql.ensureDatabases;
         serviceConfig = {

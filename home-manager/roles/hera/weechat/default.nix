@@ -12,9 +12,7 @@ let
         plugins = builtins.attrValues (
           availablePlugins
           // {
-            python = availablePlugins.python.withPackages (
-              _: [ pkgs.weechatScripts.weechat-matrix ]
-            );
+            python = availablePlugins.python.withPackages (_: [ pkgs.weechatScripts.weechat-matrix ]);
           }
         );
         scripts = [ pkgs.weechatScripts.weechat-matrix ];
@@ -110,9 +108,7 @@ in
       log2rss = {
         Unit.Description = "weechat2rss";
         Service = {
-          ExecStart = "${
-              lib.getBin pkgs.rssfeeds
-            }/bin/weechat2rss /var/www/rss/chats.xml";
+          ExecStart = "${lib.getBin pkgs.rssfeeds}/bin/weechat2rss /var/www/rss/chats.xml";
           Type = "oneshot";
         };
       };
