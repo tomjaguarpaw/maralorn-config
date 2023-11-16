@@ -13,8 +13,21 @@ let
     "nix-output-monitor"
     "config"
     "connect-app"
+    "connect-app-converts"
   ];
   custom_configs = {
+    connect-app-converts = [
+      {
+        name = "haskell";
+        formatter = {
+          command = "ormolu";
+          args = [
+            "--stdin-input-file"
+            "/home/maralorn/git/connect-app-converts/convert-common/src/Convert/Common.hs"
+          ];
+        };
+      }
+    ];
     connect-app = [
       {
         name = "haskell";
