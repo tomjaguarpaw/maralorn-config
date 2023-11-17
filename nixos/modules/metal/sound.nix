@@ -6,4 +6,8 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
+  hardware.pulseaudio = {
+    tcp.enable = true;
+    zeroconf.discovery.enable = true;
+  };
 }
