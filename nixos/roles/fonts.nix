@@ -6,6 +6,8 @@
 }:
 {
   fonts = {
+    fontDir.enable = true;
+    enableDefaultFonts = true;
     fontconfig = {
       enable = true;
       cache32Bit = true;
