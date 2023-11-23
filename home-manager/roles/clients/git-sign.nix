@@ -5,7 +5,7 @@ in
 {
   programs.git = {
     signing = {
-      signByDefault = true;
+      signByDefault = false;
       key = "key::${signing-key}";
     };
     extraConfig = {
