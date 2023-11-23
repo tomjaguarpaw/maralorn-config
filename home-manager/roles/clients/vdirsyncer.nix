@@ -131,6 +131,7 @@ in
       Unit.Description = "vdirsyncer sync";
       Service = {
         Type = "oneshot";
+        Environment = "PATH=${lib.makeBinPath [ config.programs.rbw.package ]}";
         ExecStart = "${pkgs.vdirsyncer}/bin/vdirsyncer sync";
         Restart = "on-failure";
         RestartSec = "1min";
