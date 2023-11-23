@@ -116,6 +116,7 @@ in
     services.watch-vdir = {
       Unit.Description = "Watch vdir data for changes";
       Service = {
+        Environment = "PATH=${lib.makeBinPath [ config.programs.rbw.package ]}";
         ExecStart = toString (
           pkgs.writeShellScript "watch-vdir" ''
             while ${pkgs.coreutils}/bin/sleep 1s; do
