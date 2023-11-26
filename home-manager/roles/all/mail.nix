@@ -77,12 +77,12 @@ in
     // {
       mbsync.Service = {
         Environment = "PATH=${
-            lib.makeBinPath [
-              pkgs.rbw
-              pkgs.sd
-              pkgs.coreutils
-            ]
-          }";
+          lib.makeBinPath [
+            pkgs.rbw
+            pkgs.sd
+            pkgs.coreutils
+          ]
+        }";
         Restart = "on-failure";
         RestartSec = "30s";
       };

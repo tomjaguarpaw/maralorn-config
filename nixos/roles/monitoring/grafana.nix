@@ -9,19 +9,15 @@ let
     (job "blog")
 
     (heading "haskell-taskwarrior" "https://hackage.haskell.org/package/taskwarrior")
-    (badge "https://github.com/maralorn/haskell-taskwarrior/actions/workflows/haskell.yml/badge.svg"
-      "https://github.com/maralorn/haskell-taskwarrior/actions"
+    (badge "https://github.com/maralorn/haskell-taskwarrior/actions/workflows/haskell.yml/badge.svg" "https://github.com/maralorn/haskell-taskwarrior/actions"
     )
-    (badge "https://img.shields.io/hackage-deps/v/taskwarrior.svg"
-      "http://packdeps.haskellers.com/reverse/taskwarrior"
+    (badge "https://img.shields.io/hackage-deps/v/taskwarrior.svg" "http://packdeps.haskellers.com/reverse/taskwarrior"
     )
-    (badge "https://repology.org/badge/vertical-allrepos/haskell:taskwarrior.svg?columns=3&header="
-      "https://repology.org/project/haskell:taskwarrior/versions"
+    (badge "https://repology.org/badge/vertical-allrepos/haskell:taskwarrior.svg?columns=3&header=" "https://repology.org/project/haskell:taskwarrior/versions"
     )
 
     (heading "nix-output-monitor" "https://github.com/maralorn/nix-output-monitor")
-    (badge "https://repology.org/badge/vertical-allrepos/nix-output-monitor.svg?columns=3&header="
-      "https://repology.org/project/nix-output-monitor/versions"
+    (badge "https://repology.org/badge/vertical-allrepos/nix-output-monitor.svg?columns=3&header=" "https://repology.org/project/nix-output-monitor/versions"
     )
   ];
   dashboards = pkgs.runCommand "dashboards" { } ''

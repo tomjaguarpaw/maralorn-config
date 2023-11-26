@@ -59,8 +59,8 @@ in
       Restart = "always"; # TODO: Add error handling to git querying github in nixpkgs-bot
       WorkingDirectory = "/var/lib/nixpkgs-bot";
       ExecStart = "${lib.getExe pkgs.nixpkgs-bot} ${
-          builtins.toFile "config.yaml" (builtins.toJSON configFile)
-        }";
+        builtins.toFile "config.yaml" (builtins.toJSON configFile)
+      }";
       DynamicUser = true;
       StateDirectory = "nixpkgs-bot";
     };

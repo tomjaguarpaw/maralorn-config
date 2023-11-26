@@ -42,9 +42,7 @@ in
   services.nginx.virtualHosts.${virtualHosts."code"} = {
     forceSSL = true;
     enableACME = true;
-    locations."/".proxyPass = "http://localhost:${
-        toString config.services.gitea.settings.server.HTTP_PORT
-      }";
+    locations."/".proxyPass = "http://localhost:${toString config.services.gitea.settings.server.HTTP_PORT}";
     extraConfig = ''
       client_max_body_size 0;
     '';

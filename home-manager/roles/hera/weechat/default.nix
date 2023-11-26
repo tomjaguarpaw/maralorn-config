@@ -116,9 +116,7 @@ in
         Unit.Description = "Weechat Tmux Session";
         Service = {
           Type = "forking";
-          ExecStart = "${
-              lib.getExe pkgs.tmux
-            } -L weechat -2 new-session -d -s irc -n weechat '${weechat}/bin/weechat'";
+          ExecStart = "${lib.getExe pkgs.tmux} -L weechat -2 new-session -d -s irc -n weechat '${weechat}/bin/weechat'";
           Restart = "always";
         };
         Install.WantedBy = [ "default.target" ];

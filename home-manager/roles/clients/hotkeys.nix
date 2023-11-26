@@ -98,9 +98,7 @@ let
         Files = fork "nautilus";
         Accounting = {
           Update = term (shell "cd ~/git/buchhaltung; nix develop -c interactive-update");
-          Display =
-            term
-              "hledger -f ~/git/buchhaltung/buchhaltung.journal ui -- --watch --theme=terminal -X€ -t -E";
+          Display = term "hledger -f ~/git/buchhaltung/buchhaltung.journal ui -- --watch --theme=terminal -X€ -t -E";
         };
         Games = {
           "Heroic Launcher" = fork "heroic";
@@ -183,11 +181,9 @@ let
       };
     }
   ];
-  my-hotkeys =
-    pkgs.writeShellScriptBin "my-hotkeys"
-      "${lib.getBin pkgs.wizards-dialog}/bin/hotkeys ${
-        pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)
-      }";
+  my-hotkeys = pkgs.writeShellScriptBin "my-hotkeys" "${lib.getBin pkgs.wizards-dialog}/bin/hotkeys ${
+    pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)
+  }";
 in
 {
   home.packages = [ my-hotkeys ];

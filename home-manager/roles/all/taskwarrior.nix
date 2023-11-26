@@ -68,33 +68,31 @@ in
       target = ".task/hooks/on-modify.habitica-points";
       executable = true;
       source = "${
-          pkgs.writeHaskellScript
-            {
-              name = "habitica-points";
-              bins = [
-                pkgs.curl
-                pkgs.jq
-                pkgs.libnotify
-              ];
-              imports = [ "Data.Aeson" ];
-            }
-            ''
+        pkgs.writeHaskellScript
+          {
+            name = "habitica-points";
+            bins = [
+              pkgs.curl
+              pkgs.jq
+              pkgs.libnotify
+            ];
+            imports = [ "Data.Aeson" ];
+          }
+          ''
 
-              data Task = Task { status :: Text } deriving (Generic, FromJSON)
+            data Task = Task { status :: Text } deriving (Generic, FromJSON)
 
-              main = do
-                oldTask <- getLine
-                newTask <- getLine
-                let oldStatus = maybe "unknown" status (decode (encodeUtf8 oldTask))
-                    newStatus = maybe "unknown" status (decode (encodeUtf8 newTask))
-                when (oldStatus /= "completed" && newStatus == "completed") $ do
-                  result :: String <- curl "-XPOST" "-H" "x-api-user: dbd97aba-8b6b-4649-9dd4-dad284333925" "-H" "x-api-key: ${
-                    pkgs.privateValue "" "habitica-token"
-                  }" "https://habitica.com/api/v3/tasks/6e95cccd-06e1-466c-b871-643dff31423c/score/up" |> jq "-c" ".data._tmp" |> captureTrim <&> decodeUtf8
-                  notify_send "Task Completed!" result
-                putTextLn newTask
-            ''
-        }/bin/habitica-points";
+            main = do
+              oldTask <- getLine
+              newTask <- getLine
+              let oldStatus = maybe "unknown" status (decode (encodeUtf8 oldTask))
+                  newStatus = maybe "unknown" status (decode (encodeUtf8 newTask))
+              when (oldStatus /= "completed" && newStatus == "completed") $ do
+                result :: String <- curl "-XPOST" "-H" "x-api-user: dbd97aba-8b6b-4649-9dd4-dad284333925" "-H" "x-api-key: ${pkgs.privateValue "" "habitica-token"}" "https://habitica.com/api/v3/tasks/6e95cccd-06e1-466c-b871-643dff31423c/score/up" |> jq "-c" ".data._tmp" |> captureTrim <&> decodeUtf8
+                notify_send "Task Completed!" result
+              putTextLn newTask
+          ''
+      }/bin/habitica-points";
     };
   };
   programs.taskwarrior = {

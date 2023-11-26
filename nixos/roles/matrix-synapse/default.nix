@@ -27,11 +27,11 @@ in
                 pkgs.haskellPackages.HTTP
               ];
               ghcEnv.PATH = "${
-                  lib.makeBinPath [
-                    pkgs.matrix-synapse-tools.rust-synapse-compress-state
-                    config.services.postgresql.package
-                  ]
-                }:$PATH";
+                lib.makeBinPath [
+                  pkgs.matrix-synapse-tools.rust-synapse-compress-state
+                  config.services.postgresql.package
+                ]
+              }:$PATH";
               ghcArgs = [ "-threaded" ];
             }
             (builtins.readFile ./synapse-cleanup.hs);

@@ -53,8 +53,8 @@ let
             ${config}
           '';
         in
-        pkgs.writeShellScriptBin name
-          ''${lib.getExe pkgs.newsboat} -r -C ${configFile} -c ~/.local/share/newsboat/${name}-cache.db "$@"''
+        pkgs.writeShellScriptBin name ''
+          ${lib.getExe pkgs.newsboat} -r -C ${configFile} -c ~/.local/share/newsboat/${name}-cache.db "$@"''
       )
       {
         news = {

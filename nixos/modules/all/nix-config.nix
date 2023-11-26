@@ -26,9 +26,7 @@
 
   environment.etc."nix/machines".source = toString (
     pkgs.runCommand "nix-machines" { } ''
-      cp $(${
-        lib.getExe pkgs.builders-configurator
-      } ${config.networking.hostName} --without-connection) $out
+      cp $(${lib.getExe pkgs.builders-configurator} ${config.networking.hostName} --without-connection) $out
     ''
   );
 }

@@ -39,12 +39,8 @@ in
         set -o allexport
         source $CREDENTIALS_DIRECTORY/mastodon-auth-env
         set +o allexport
-        ${
-          lib.getExe pkgs.mastodon_digest
-        } -o /var/www/rss/mastodon/$now-home-feed-highlights -n 24 -t normal
-        ${
-          lib.getExe pkgs.mastodon_digest
-        } -o /var/www/rss/mastodon/$now-read-all-list -n 24 -t all --theme no-boosts -f list:3811
+        ${lib.getExe pkgs.mastodon_digest} -o /var/www/rss/mastodon/$now-home-feed-highlights -n 24 -t normal
+        ${lib.getExe pkgs.mastodon_digest} -o /var/www/rss/mastodon/$now-read-all-list -n 24 -t all --theme no-boosts -f list:3811
         ${lib.getExe pkgs.mastodon_digest} -o /var/www/rss/mastodon/$now-tags -n 24 -t all -f list:4160
         ${lib.getBin pkgs.rssfeeds}/bin/mastodon2rss /var/www/rss/mastodon.xml /var/www/rss/mastodon
       '';
@@ -55,15 +51,9 @@ in
     };
     refresh-miniflux = {
       script = ''
-        ${
-          lib.getExe pkgs.curl
-        } -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header https://${virtualHosts.rss}/v1/feeds/refresh
-        ${
-          lib.getExe pkgs.curl
-        } -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-watchfeeds https://${virtualHosts.rss}/v1/feeds/refresh
-        ${
-          lib.getExe pkgs.curl
-        } -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-softwareupdates https://${virtualHosts.rss}/v1/feeds/refresh
+        ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header https://${virtualHosts.rss}/v1/feeds/refresh
+        ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-watchfeeds https://${virtualHosts.rss}/v1/feeds/refresh
+        ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-softwareupdates https://${virtualHosts.rss}/v1/feeds/refresh
       '';
       after = [ "mastodon-digest.service" ];
       requires = [ "mastodon-digest.service" ];

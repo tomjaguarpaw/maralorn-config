@@ -2,9 +2,7 @@
 let
   idle-timeout = 150;
   write-idle = pkgs.writeShellScript "write-idle" ''
-    echo "{\"contents\": $(${lib.getBin pkgs.coreutils}/bin/date +%s -d "-${
-      toString idle-timeout
-    } seconds"), \"tag\": \"Idle\"}" > ~/.idle_state
+    echo "{\"contents\": $(${lib.getBin pkgs.coreutils}/bin/date +%s -d "-${toString idle-timeout} seconds"), \"tag\": \"Idle\"}" > ~/.idle_state
   '';
   write-active = pkgs.writeShellScript "write-active" ''
     echo "{\"tag\":\"Active\"}" > ~/.idle_state

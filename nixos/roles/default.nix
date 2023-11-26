@@ -51,8 +51,8 @@ in
             let
               mkHost = name: "${name} ${name}.maralorn.de";
               name = "${host} ${host}.vpn.m-0.eu ${
-                  lib.concatMapStringsSep " " mkHost config.m-0.hosts.aliases.${host} or [ ]
-                }";
+                lib.concatMapStringsSep " " mkHost config.m-0.hosts.aliases.${host} or [ ]
+              }";
             in
             {
               ${ips.AAAA} = name;

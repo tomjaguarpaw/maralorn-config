@@ -185,18 +185,14 @@ in
                 {
                   choose = [
                     {
-                      conditions = "{{ states('sensor.${sensor.bad}_dew_point')|float > states('sensor.openweathermap_darmstadt_hourly_dew_point')|float(0) + 2 and states('sensor.${sensor.bad}_humidity')|float > ${
-                          toString humidity_threshold.bad.upper
-                        } }}";
+                      conditions = "{{ states('sensor.${sensor.bad}_dew_point')|float > states('sensor.openweathermap_darmstadt_hourly_dew_point')|float(0) + 2 and states('sensor.${sensor.bad}_humidity')|float > ${toString humidity_threshold.bad.upper} }}";
                       sequence = {
                         service = "switch.turn_on";
                         target.entity_id = "switch.lueftung_bad";
                       };
                     }
                     {
-                      conditions = "{{ states('sensor.${sensor.bad}_dew_point')|float < states('sensor.openweathermap_darmstadt_hourly_dew_point')|float(0) + 1 or states('sensor.${sensor.bad}_humidity')|float < ${
-                          toString humidity_threshold.bad.lower
-                        } }}";
+                      conditions = "{{ states('sensor.${sensor.bad}_dew_point')|float < states('sensor.openweathermap_darmstadt_hourly_dew_point')|float(0) + 1 or states('sensor.${sensor.bad}_humidity')|float < ${toString humidity_threshold.bad.lower} }}";
                       sequence = {
                         service = "switch.turn_off";
                         target.entity_id = "switch.lueftung_bad";
