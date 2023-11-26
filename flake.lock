@@ -205,11 +205,11 @@
         "pre-commit-hooks": []
       },
       "locked": {
-        "lastModified": 1701005265,
-        "narHash": "sha256-lo48HxU/HXd2Gu39JC8EPguiOVZj0RZvV+x7pxkNVl8=",
+        "lastModified": 1701010398,
+        "narHash": "sha256-2aDPKpyodF9ZfINpNPs2ZEz+k/DzdTckRRggVHdEpeI=",
         "ref": "refs/heads/main",
-        "rev": "6a71b657b87339934ed88dd47c85a1b8620986d4",
-        "revCount": 468,
+        "rev": "c585a41563886edf896d1dce6c66b1c3a1ee2b89",
+        "revCount": 470,
         "type": "git",
         "url": "https://code.maralorn.de/maralorn/nix-output-monitor.git"
       },
