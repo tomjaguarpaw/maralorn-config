@@ -43,7 +43,7 @@ mail env mode = do
   notmuch_update <-
     FileWatch.watchFile env (env.homeDir </> "Maildir/.notmuch/xapian") "flintlock"
   events <-
-    [ (const True, ["tag:unread"], "e-mail")
+    [ (const True, ["tag:unread", "not", "folder:/Archiv/"], "e-mail")
     -- , ((== Orga), ["folder:hera/Inbox", "not", "tag:unread"], "e-mail-open")
     -- , ((== Code), ["folder:hera/Code"], "Code")
       ]
