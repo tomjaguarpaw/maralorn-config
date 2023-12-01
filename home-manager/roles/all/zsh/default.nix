@@ -7,8 +7,7 @@
     history = {
       path = "$HOME/.persist/.zsh_history";
       extended = true;
-      ignoreDups = true;
-      share = true;
+      expireDuplicatesFirst = true;
       save = 10000000;
       size = 10000000;
     };
@@ -18,6 +17,8 @@
     '';
     initExtra = ''
       ${builtins.readFile ./zshrc}
+      setopt HIST_FIND_NO_DUPS
+      setopt INC_APPEND_HISTORY
       source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
       source ${./p10k.zsh}
       set inc_append_history
