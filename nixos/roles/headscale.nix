@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{config, lib, ...}:
 let
   inherit (config.m-0) hosts;
   domain = "headscale.maralorn.de";
@@ -12,7 +12,7 @@ in
       host = "[::1]:9098";
     }
   ];
-  networking.firewall.allowedUDPPorts = [ derp_port ];
+  networking.firewall.allowedUDPPorts = [derp_port];
   services = {
     headscale = {
       enable = true;
@@ -28,7 +28,7 @@ in
             region_code = "hera";
             region_name = "Hera";
           };
-          urls = [ ];
+          urls = [];
         };
         dns_config = {
           base_domain = "m-0.eu";
@@ -36,7 +36,7 @@ in
             config.m-0.hosts.tailscale.hera.AAAA
             "9.9.9.9"
           ];
-          domains = [ zone ];
+          domains = [zone];
           extra_records = lib.concatLists (
             lib.concatLists (
               lib.mapAttrsToList
@@ -52,7 +52,7 @@ in
                         })
                         (lib.filterAttrs (_: addr: addr != "") ips)
                     )
-                    (hosts.aliases.${host} or [ ])
+                    (hosts.aliases.${host} or [])
                   )
                 )
                 hosts.tailscale
@@ -75,5 +75,5 @@ in
     };
   };
 
-  environment.systemPackages = [ config.services.headscale.package ];
+  environment.systemPackages = [config.services.headscale.package];
 }

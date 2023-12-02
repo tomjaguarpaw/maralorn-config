@@ -1,8 +1,8 @@
-{ pkgs, ... }:
+{pkgs, ...}:
 {
   systemd.user.services.hoogle = {
     Unit.Description = "Hoogle server";
-    Install.WantedBy = [ "graphical-session.target" ];
+    Install.WantedBy = ["graphical-session.target"];
     Service = {
       ExecStart = "${pkgs.ghcWithPackages}/bin/hoogle server --local --links";
       Restart = "always";
@@ -20,7 +20,7 @@
       hledger
       hledger-ui
       hledger-web
-    ;
+      ;
     inherit (pkgs.unstableHaskellPackages)
       haskell-language-server
       ghc-debug-client
@@ -31,6 +31,6 @@
       cabal-fmt
       threadscope
       nix-derivation
-    ;
+      ;
   };
 }

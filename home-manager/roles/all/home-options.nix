@@ -1,10 +1,10 @@
-{ lib, ... }:
+{lib, ...}:
 {
   options = {
     m-0 = {
-      hostName = lib.mkOption { type = lib.types.str; };
+      hostName = lib.mkOption {type = lib.types.str;};
       colors = lib.mkOption {
-        default = { };
+        default = {};
         type = lib.types.attrs;
       };
     };

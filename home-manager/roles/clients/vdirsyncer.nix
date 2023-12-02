@@ -5,11 +5,11 @@
   ...
 }:
 let
-  addressbooks = pkgs.privateValue [ ] "addressbooks";
-  calendars = pkgs.privateValue [ ] "calendars";
+  addressbooks = pkgs.privateValue [] "addressbooks";
+  calendars = pkgs.privateValue [] "calendars";
   mkConfig =
     config:
-    (pkgs.formats.ini { }).generate "vdirsyncer-config" (
+    (pkgs.formats.ini {}).generate "vdirsyncer-config" (
       lib.mapAttrs (_: lib.mapAttrs (_: builtins.toJSON)) config
     );
   mkCalendar =
@@ -36,7 +36,7 @@ let
         b = remoteName;
         inherit collections;
         conflict_resolution = "b wins";
-        metadata = [ "color" ];
+        metadata = ["color"];
       };
       "storage ${localName}" = {
         type = "filesystem";
@@ -60,7 +60,7 @@ let
               read_only = readOnly;
             }
           else
-            { }
+            {}
         );
     };
   mkAddressbook =
@@ -106,17 +106,17 @@ let
 in
 {
   xdg.configFile."vdirsyncer/config".source = mkConfig (
-    pkgs.lib.fold (a: b: a // b) { general.status_path = "~/.vdirsyncer/status"; } (
+    pkgs.lib.fold (a: b: a // b) {general.status_path = "~/.vdirsyncer/status";} (
       map mkCalendar calendars ++ map mkAddressbook addressbooks
     )
   );
-  home.packages = [ pkgs.vdirsyncer ];
+  home.packages = [pkgs.vdirsyncer];
 
   systemd.user = {
     services.watch-vdir = {
       Unit.Description = "Watch vdir data for changes";
       Service = {
-        Environment = "PATH=${lib.makeBinPath [ config.programs.rbw.package ]}";
+        Environment = "PATH=${lib.makeBinPath [config.programs.rbw.package]}";
         ExecStart = toString (
           pkgs.writeShellScript "watch-vdir" ''
             while ${pkgs.coreutils}/bin/sleep 1s; do
@@ -126,13 +126,13 @@ in
           ''
         );
       };
-      Install.WantedBy = [ "default.target" ];
+      Install.WantedBy = ["default.target"];
     };
     services.vdirsyncer = {
       Unit.Description = "vdirsyncer sync";
       Service = {
         Type = "oneshot";
-        Environment = "PATH=${lib.makeBinPath [ config.programs.rbw.package ]}";
+        Environment = "PATH=${lib.makeBinPath [config.programs.rbw.package]}";
         ExecStart = "${pkgs.vdirsyncer}/bin/vdirsyncer sync";
         Restart = "on-failure";
         RestartSec = "1min";
@@ -141,7 +141,7 @@ in
     timers.vdirsyncer = {
       Unit.Description = "vdirsync sync timer";
       Timer.OnCalendar = "*:0/15";
-      Install.WantedBy = [ "timers.target" ];
+      Install.WantedBy = ["timers.target"];
     };
   };
 }

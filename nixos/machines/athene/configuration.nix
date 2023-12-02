@@ -1,5 +1,5 @@
 _:
-{ pkgs, mylib, ... }:
+{pkgs, mylib, ...}:
 let
   localAddress = "fdc0:1::2";
 in
@@ -81,12 +81,12 @@ in
   services = {
     borgbackup.repos.hera = {
       path = "/backup/hera-borg-repo";
-      authorizedKeys = pkgs.privateValue [ "dummy-key" ] "backup-ssh-keys";
+      authorizedKeys = pkgs.privateValue ["dummy-key"] "backup-ssh-keys";
     };
     printing = {
       enable = false; # Printer is currently disfunctional anyway
-      allowFrom = [ "all" ];
-      listenAddresses = [ "[${localAddress}]:631" ];
+      allowFrom = ["all"];
+      listenAddresses = ["[${localAddress}]:631"];
       extraConf = "ServerAlias *";
       defaultShared = true;
     };

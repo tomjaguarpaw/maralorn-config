@@ -7,15 +7,15 @@
 let
   weechat = pkgs.wrapWeechat pkgs.weechat-unwrapped {
     configure =
-      { availablePlugins, ... }:
+      {availablePlugins, ...}:
       {
         plugins = builtins.attrValues (
           availablePlugins
           // {
-            python = availablePlugins.python.withPackages (_: [ pkgs.weechatScripts.weechat-matrix ]);
+            python = availablePlugins.python.withPackages (_: [pkgs.weechatScripts.weechat-matrix]);
           }
         );
-        scripts = [ pkgs.weechatScripts.weechat-matrix ];
+        scripts = [pkgs.weechatScripts.weechat-matrix];
       };
   };
 in
@@ -93,7 +93,7 @@ in
               ${server}.username = "${serverConfig.user}"
               ${server}.password = "${serverConfig.password}"
             '')
-            (pkgs.privateValue { } "weechat/matrix")
+            (pkgs.privateValue {} "weechat/matrix")
         )}
       '';
     };
@@ -102,7 +102,7 @@ in
   systemd.user = {
     timers.log2rss = {
       Timer.OnCalendar = "22:58";
-      Install.WantedBy = [ "timers.target" ];
+      Install.WantedBy = ["timers.target"];
     };
     services = {
       log2rss = {
@@ -119,7 +119,7 @@ in
           ExecStart = "${lib.getExe pkgs.tmux} -L weechat -2 new-session -d -s irc -n weechat '${weechat}/bin/weechat'";
           Restart = "always";
         };
-        Install.WantedBy = [ "default.target" ];
+        Install.WantedBy = ["default.target"];
       };
     };
   };

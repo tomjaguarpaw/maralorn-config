@@ -40,7 +40,7 @@
       "git"
       "media"
     ];
-    files = [ ".chpwd-recent-dirs" ];
+    files = [".chpwd-recent-dirs"];
   };
   environment.persistence.unsnapshoted.users.maralorn.directories = [
     "Videos"

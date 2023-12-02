@@ -1,1 +1,1 @@
-{ pkgs, ... }: { home.packages = builtins.attrValues { inherit (pkgs) gamemode mangohud; }; }
+{pkgs, ...}: {home.packages = builtins.attrValues {inherit (pkgs) gamemode mangohud;};}

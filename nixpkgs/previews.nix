@@ -6,7 +6,7 @@ final: prev: {
     nil # Because old nil with new nix does not get cached.
     forgejo
     eww-wayland
-  ;
+    ;
   lib = prev.lib // {
     inherit (final.unstable) getExe';
   };

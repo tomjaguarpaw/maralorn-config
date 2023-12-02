@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{pkgs, ...}:
 {
   environment.systemPackages = [
     pkgs.networkmanagerapplet # For when the gnome dialog sucks in asking for a wifi password.

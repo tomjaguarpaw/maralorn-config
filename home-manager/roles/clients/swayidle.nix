@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{pkgs, lib, ...}:
 let
   idle-timeout = 150;
   write-idle = pkgs.writeShellScript "write-idle" ''

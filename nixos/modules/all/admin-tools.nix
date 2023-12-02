@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{pkgs, ...}:
 {
   environment.systemPackages = builtins.attrValues {
     inherit (pkgs)
@@ -7,7 +7,7 @@
       htop
       pamtester
       sqlite-interactive
-    ;
+      ;
   };
   programs.mtr.enable = true;
 }

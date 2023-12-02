@@ -13,6 +13,6 @@
       these
       fsnotify
       witch
-    ;
+      ;
   };
 }

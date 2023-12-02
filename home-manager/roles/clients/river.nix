@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{pkgs, ...}:
 {
   home.packages = builtins.attrValues {
     inherit (pkgs)
@@ -11,7 +11,7 @@
       river-luatile
       river-tag-overlay
       light
-    ;
+      ;
     tv-on = pkgs.writeShellScriptBin "tv-on" ''
       wlr-randr --output HDMI-A-1 --mode 1920x1080
     '';

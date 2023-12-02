@@ -8,7 +8,7 @@
 
   options.status-script.env = lib.mkOption {
     type = lib.types.listOf lib.types.package;
-    default = [ ];
+    default = [];
     description = lib.mdDoc "Packages in the status-script environment.";
   };
 

@@ -5,12 +5,12 @@
   ...
 }:
 let
-  openssh.authorizedKeys.keys = pkgs.privateValue [ ] "ssh-keys";
+  openssh.authorizedKeys.keys = pkgs.privateValue [] "ssh-keys";
   passwordFile = lib.mkDefault config.age.secrets.pam-long-password.path;
 in
 {
   # Enable lingering
-  systemd.tmpfiles.rules = [ "f /var/lib/systemd/linger/maralorn" ];
+  systemd.tmpfiles.rules = ["f /var/lib/systemd/linger/maralorn"];
   users.users = {
     maralorn = {
       description = "maralorn";

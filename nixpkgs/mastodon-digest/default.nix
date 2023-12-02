@@ -9,7 +9,7 @@ let
         mastodon-py
         scipy
         python-dotenv
-      ;
+        ;
     };
   python-env = pkgs.python3.withPackages deps;
   src = pkgs.fetchFromGitHub {
@@ -18,7 +18,7 @@ let
     rev = "07d8827a79086263f0e0f161faa2c12e405b2929";
     hash = "sha256-iFOvexzj5UQve67nvNcGthrvVbL5yQbYyUIXlaRYlug=";
   };
-  patchedSrc = pkgs.runCommand "mastodon_digest-patched-src" { } ''
+  patchedSrc = pkgs.runCommand "mastodon_digest-patched-src" {} ''
     cp -r ${src} $out
     chmod -R +w $out
     patch -d $out -p1 < ${./all-posts.patch}
@@ -30,7 +30,7 @@ in
 {
   mastodon_digest = pkgs.writeShellApplication {
     name = "mastodon_digest";
-    runtimeInputs = [ python-env ];
+    runtimeInputs = [python-env];
     text = ''
       # shellcheck source=/dev/null
       cd ${patchedSrc} && python run.py "''${@}"

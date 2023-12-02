@@ -8,5 +8,5 @@
       timeout = 7200
     '';
   };
-  environment.persistence.snapshoted.directories = [ "/var/lib/couchdb" ];
+  environment.persistence.snapshoted.directories = ["/var/lib/couchdb"];
 }

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{pkgs, ...}:
 {
   home.packages = builtins.attrValues {
     inherit (pkgs)
@@ -6,6 +6,6 @@
       gh
       nix-top
       nixfmt
-    ;
+      ;
   };
 }

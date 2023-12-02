@@ -18,7 +18,7 @@
         '';
         # meta iifname m0wire accept comment "wireguard vpn"
         checkReversePath = "loose";
-        allowedUDPPorts = [ config.services.tailscale.port ];
+        allowedUDPPorts = [config.services.tailscale.port];
       };
     };
 
@@ -36,7 +36,7 @@
         "network-pre.target"
         "tailscale.service"
       ];
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
 
       # set this service as a oneshot job
       serviceConfig.Type = "oneshot";

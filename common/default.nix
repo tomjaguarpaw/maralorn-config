@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{config, lib, ...}:
 {
   config = {
     m-0.monitoring = [
@@ -55,8 +55,8 @@
         type = types.listOf (
           types.submodule {
             options = {
-              name = mkOption { type = types.str; };
-              host = mkOption { type = types.str; };
+              name = mkOption {type = types.str;};
+              host = mkOption {type = types.str;};
               container = mkOption {
                 type = types.bool;
                 default = false;
@@ -68,7 +68,7 @@
             };
           }
         );
-        default = [ ];
+        default = [];
       };
       headscaleIPs = mkOption {
         type = types.listOf types.string;
@@ -77,7 +77,7 @@
           "fd7a:115c:a1e0:77::/64"
         ];
       };
-      virtualHosts = mkOption { type = types.attrs; };
+      virtualHosts = mkOption {type = types.attrs;};
       hosts = mkOption {
         type = types.attrs;
         default = {
@@ -126,9 +126,9 @@
               "5e"
               "graphs"
             ];
-            zeus = [ "syncthing-zeus" ];
-            apollo = [ "syncthing-apollo" ];
-            hephaistos = [ "syncthing-hephaistos" ];
+            zeus = ["syncthing-zeus"];
+            apollo = ["syncthing-apollo"];
+            hephaistos = ["syncthing-hephaistos"];
           };
         };
       };

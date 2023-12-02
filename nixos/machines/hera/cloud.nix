@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{pkgs, config, ...}:
 let
   adminCreds =
     pkgs.privateValue
@@ -63,7 +63,7 @@ in
   services = {
     redis.servers."".enable = true;
     nextcloud = nextcloudConf mainHostName;
-    postgresql.ensureDatabases = [ "nextcloud" ];
+    postgresql.ensureDatabases = ["nextcloud"];
     nginx = {
       enable = true;
       virtualHosts."cloud.maralorn.de" = {
@@ -72,5 +72,5 @@ in
       };
     };
   };
-  users.users.nextcloud.extraGroups = [ "nginx" ];
+  users.users.nextcloud.extraGroups = ["nginx"];
 }

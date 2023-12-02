@@ -13,13 +13,13 @@ let
   hotkeys = [
     {
       Orga = [
-        { Kassandra = fork "kassandra2"; }
-        { Kalendar = term "ikhal"; }
-        { Habitica = fork "firefox https://habitica.com"; }
-        { Tasks = term "tasksh"; }
-        { Meditate = term "meditate"; }
-        { Pythia = term "pythia"; }
-        { Notes = edit_dir "~/git/notes"; }
+        {Kassandra = fork "kassandra2";}
+        {Kalendar = term "ikhal";}
+        {Habitica = fork "firefox https://habitica.com";}
+        {Tasks = term "tasksh";}
+        {Meditate = term "meditate";}
+        {Pythia = term "pythia";}
+        {Notes = edit_dir "~/git/notes";}
       ];
     }
     {
@@ -48,19 +48,19 @@ let
           ssh = host: term "ssh ${host}";
         in
         [
-          { "hera via vpn" = ssh "hera.vpn.m-0.eu"; }
-          { "athene via vpn" = ssh "athene.vpn.m-0.eu"; }
-          { "zeus via vpn" = ssh "zeus.vpn.m-0.eu"; }
-          { remote-builder = ssh "phoibe.cased.de"; }
-          { ag = ssh "ag-forward"; }
-          { mathe-gateway = ssh "gw"; }
-          { backup-server = ssh "borg.cysec.de"; }
-          { shells = ssh "shells"; }
-          { "bach (ved)" = ssh "bach.vocalensemble-darmstadt.de"; }
-          { "nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net shell"; }
-          { "athene via local network" = ssh "athene.lo.m-0.eu"; }
-          { "hera via public v4" = ssh "hera-v4"; }
-          { "TU Tunnel" = "sshuttle --python python3.9 -r gw 130.83.0.0/16"; }
+          {"hera via vpn" = ssh "hera.vpn.m-0.eu";}
+          {"athene via vpn" = ssh "athene.vpn.m-0.eu";}
+          {"zeus via vpn" = ssh "zeus.vpn.m-0.eu";}
+          {remote-builder = ssh "phoibe.cased.de";}
+          {ag = ssh "ag-forward";}
+          {mathe-gateway = ssh "gw";}
+          {backup-server = ssh "borg.cysec.de";}
+          {shells = ssh "shells";}
+          {"bach (ved)" = ssh "bach.vocalensemble-darmstadt.de";}
+          {"nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net shell";}
+          {"athene via local network" = ssh "athene.lo.m-0.eu";}
+          {"hera via public v4" = ssh "hera-v4";}
+          {"TU Tunnel" = "sshuttle --python python3.9 -r gw 130.83.0.0/16";}
         ];
     }
     {
@@ -69,12 +69,12 @@ let
           mpdclient = host: shell "switch-mpd ${host}; ncmpcpp -h ${host}";
         in
         [
-          { "Play/Pause" = "${pkgs.playerctl}/bin/playerctl play-pause"; }
-          { "Toggle Output Mute" = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle"; }
-          { "Toggle Input Mute" = "${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle"; }
-          { "MPD lokal" = mpdclient "::"; }
-          { "Athene MPD" = mpdclient "athene"; }
-          { "Lautstärke" = fork "pavucontrol"; }
+          {"Play/Pause" = "${pkgs.playerctl}/bin/playerctl play-pause";}
+          {"Toggle Output Mute" = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";}
+          {"Toggle Input Mute" = "${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";}
+          {"MPD lokal" = mpdclient "::";}
+          {"Athene MPD" = mpdclient "athene";}
+          {"Lautstärke" = fork "pavucontrol";}
           {
             Headset = {
               Earplugs = {
@@ -87,9 +87,9 @@ let
               };
             };
           }
-          { "Loung MPD" = mpdclient "lounge.w17.io"; }
-          { "Kitchen MPD" = mpdclient "kitchen.w17.io"; }
-          { "Space MPD" = mpdclient "burbon.w17.io"; }
+          {"Loung MPD" = mpdclient "lounge.w17.io";}
+          {"Kitchen MPD" = mpdclient "kitchen.w17.io";}
+          {"Space MPD" = mpdclient "burbon.w17.io";}
         ];
     }
     {
@@ -134,7 +134,7 @@ let
     }
     {
       Communication = [
-        { Matrix = fork "element-desktop"; }
+        {Matrix = fork "element-desktop";}
         {
           Mail = {
             Open = term "neomutt";
@@ -150,16 +150,16 @@ let
             CCC = with-mic-check "mumble mumble://maralorn@mumble.c3pb.de";
           };
         }
-        { Weechat = "weechat"; }
-        { Signal = fork "signal-desktop"; }
-        { Zoom = with-mic-check "zoom"; }
-        { Telegram = fork "telegram-desktop"; }
-        { Rocket = fork "rocketchat-desktop"; }
-        { Discord = with-mic-check "Discord"; }
-        { Tmate = "tmate"; }
+        {Weechat = "weechat";}
+        {Signal = fork "signal-desktop";}
+        {Zoom = with-mic-check "zoom";}
+        {Telegram = fork "telegram-desktop";}
+        {Rocket = fork "rocketchat-desktop";}
+        {Discord = with-mic-check "Discord";}
+        {Tmate = "tmate";}
       ];
     }
-    { "Monitor" = "htop"; }
+    {"Monitor" = "htop";}
     {
       W17 = {
         Strichliste = "firefox https://strichliste.w17.io/#!/user/56";
@@ -169,7 +169,7 @@ let
         Close = "ssh door@burbon.w17.io close";
       };
     }
-    { "Dismiss last notification" = "makoctl dismiss"; }
+    {"Dismiss last notification" = "makoctl dismiss";}
     {
       Timers = {
         "Start Pomodoro" = shell "set-timer Pause; set-timer Pomodoro 25minutes";
@@ -186,5 +186,5 @@ let
   }";
 in
 {
-  home.packages = [ my-hotkeys ];
+  home.packages = [my-hotkeys];
 }

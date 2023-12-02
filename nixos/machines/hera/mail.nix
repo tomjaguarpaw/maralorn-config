@@ -6,7 +6,7 @@
 }:
 let
   certPath = "/var/lib/acme/hera.m-0.eu";
-  nonMailboxDomains = [ "lists.maralorn.de" ];
+  nonMailboxDomains = ["lists.maralorn.de"];
   inherit (config.m-0) hosts virtualHosts;
   rspamd-address = "[::1]:11334";
 in
@@ -34,12 +34,12 @@ in
     rspamd = {
       workers = {
         controller = {
-          bindSockets = [ rspamd-address ];
+          bindSockets = [rspamd-address];
           extraConfig = ''
             secure_ip = "::1/128 127.0.0.1/32";
           '';
         };
-        normal = { };
+        normal = {};
       };
       locals = {
         "multimap.conf".text =
@@ -114,7 +114,7 @@ in
       "lists.maralorn.de"
       "malte-und-clai.re"
     ];
-    loginAccounts = pkgs.privateValue { } "mail/users";
+    loginAccounts = pkgs.privateValue {} "mail/users";
     hierarchySeparator = "/";
     certificateScheme = "manual";
     certificateFile = "${certPath}/fullchain.pem";

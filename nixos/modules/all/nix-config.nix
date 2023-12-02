@@ -6,7 +6,7 @@
 }:
 {
   nix = {
-    nixPath = [ "nixpkgs=flake:pkgs" ];
+    nixPath = ["nixpkgs=flake:pkgs"];
 
     registry.pkgs = {
       from = {
@@ -15,9 +15,9 @@
       };
       flake = pkgs.flake-inputs.nixos-unstable;
     };
-    settings.trusted-users = [ "maralorn" ];
+    settings.trusted-users = ["maralorn"];
     optimise = {
-      dates = [ ];
+      dates = [];
       automatic = true;
     };
     distributedBuilds = lib.mkDefault true;
@@ -25,7 +25,7 @@
   };
 
   environment.etc."nix/machines".source = toString (
-    pkgs.runCommand "nix-machines" { } ''
+    pkgs.runCommand "nix-machines" {} ''
       cp $(${lib.getExe pkgs.builders-configurator} ${config.networking.hostName} --without-connection) $out
     ''
   );

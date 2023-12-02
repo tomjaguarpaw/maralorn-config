@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{pkgs, ...}:
 {
   home = {
     packages = builtins.attrValues {
@@ -12,7 +12,7 @@
         gparted
         httpie
         tea
-      ;
+        ;
     };
     file.".editorconfig".text = ''
       # Top-most EditorConfig file

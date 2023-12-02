@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{pkgs, config, ...}:
 let
   inherit (config.m-0) virtualHosts;
 in
@@ -21,18 +21,18 @@ in
       Type = "oneshot";
       User = "postgres";
     };
-    after = [ "postgresql.service" ];
-    wantedBy = [ "default.target" ];
+    after = ["postgresql.service"];
+    wantedBy = ["default.target"];
   };
 
   services = {
     postgresql = {
       enable = true;
       package = pkgs.postgresql_15;
-      ensureDatabases = [ "accounting" ];
+      ensureDatabases = ["accounting"];
       ensureUsers = [
-        { name = "maralorn"; }
-        { name = "grafana"; }
+        {name = "maralorn";}
+        {name = "grafana";}
       ];
     };
     nginx = {

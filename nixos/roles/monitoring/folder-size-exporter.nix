@@ -1,7 +1,7 @@
 {
-  folders ? [ "/" ],
+  folders ? ["/"],
 }:
-{ lib, ... }:
+{lib, ...}:
 let
   textfilesDir = "/var/cache/prometheus-textfiles";
 in
@@ -26,7 +26,7 @@ in
       '';
     };
     timers.folder-size-exporter = {
-      wantedBy = [ "timers.target" ];
+      wantedBy = ["timers.target"];
       timerConfig.OnCalendar = "2,8,14,20:00";
     };
   };

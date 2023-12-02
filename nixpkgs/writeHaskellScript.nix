@@ -16,10 +16,10 @@ in
   writeHaskell =
     name:
     {
-      libraries ? [ ],
+      libraries ? [],
       ghc ? pkgs.ghc,
-      ghcArgs ? [ ],
-      ghcEnv ? { },
+      ghcArgs ? [],
+      ghcEnv ? {},
     }:
     pkgs.writers.makeBinWriter
       {
@@ -43,8 +43,8 @@ in
   writeHaskellScript =
     {
       name ? "haskell-script",
-      bins ? [ ],
-      imports ? [ ],
+      bins ? [],
+      imports ? [],
     }:
     code:
     pkgs.writeHaskellBin name

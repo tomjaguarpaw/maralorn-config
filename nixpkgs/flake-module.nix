@@ -1,7 +1,7 @@
-{ lib, inputs, ... }:
+{lib, inputs, ...}:
 {
   perSystem =
-    { inputs', system, ... }:
+    {inputs', system, ...}:
     {
       _module.args.pkgs = import inputs.nixos-stable {
         inherit system;

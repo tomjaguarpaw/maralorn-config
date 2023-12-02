@@ -14,7 +14,7 @@ let
           pkgs.git
           pkgs.laminar
         ];
-        imports = [ "System.Directory (withCurrentDirectory)" ];
+        imports = ["System.Directory (withCurrentDirectory)"];
       }
       ''
         checkout :: String -> IO FilePath
@@ -124,8 +124,8 @@ in
     gitolite = {
       enable = true;
       user = "git";
-      adminPubkey = builtins.elemAt (pkgs.privateValue [ "" ] "ssh-keys") 0;
-      commonHooks = [ "${post-update}/bin/post-update" ];
+      adminPubkey = builtins.elemAt (pkgs.privateValue [""] "ssh-keys") 0;
+      commonHooks = ["${post-update}/bin/post-update"];
       extraGitoliteRc = ''
         $RC{UMASK} = 0027;
         $RC{GIT_CONFIG_KEYS} = 'gitweb\..*';

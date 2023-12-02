@@ -9,7 +9,7 @@ let
 in
 {
   flake.nixosConfigurations = withSystem "x86_64-linux" (
-    { pkgs, system, ... }:
+    {pkgs, system, ...}:
     lib.genAttrs machines (
       name:
       inputs.nixos-stable.lib.nixosSystem {

@@ -1,4 +1,4 @@
-{ buildGoModule, fetchFromGitHub, ... }:
+{buildGoModule, fetchFromGitHub, ...}:
 buildGoModule rec {
   name = "email2matrix";
   version = "817f819deb96f093394932537faa7f623e0126b9";

@@ -55,6 +55,6 @@ in
         user_interface = alternative
       '';
     };
-    packages = [ pkgs.ncmpcpp ];
+    packages = [pkgs.ncmpcpp];
   };
 }

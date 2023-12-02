@@ -1,1 +1,1 @@
-{ pkgs, ... }: { status-script.env = [ pkgs.networkmanager ]; }
+{pkgs, ...}: {status-script.env = [pkgs.networkmanager];}

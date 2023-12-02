@@ -1,1 +1,1 @@
-{ services.gpg-agent.pinentryFlavor = "curses"; }
+{services.gpg-agent.pinentryFlavor = "curses";}

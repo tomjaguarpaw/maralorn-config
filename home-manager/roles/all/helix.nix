@@ -70,7 +70,7 @@ in
           if [ -d "${config.home.homeDirectory}/git/${name}" ]; then
             mkdir -p "${config.home.homeDirectory}/git/${name}/.helix"
             ln -sf ${
-              (pkgs.formats.toml { }).generate "languages.toml" { language = value; }
+              (pkgs.formats.toml {}).generate "languages.toml" {language = value;}
             } ${config.home.homeDirectory}/git/${name}/.helix/languages.toml
           fi
         '')

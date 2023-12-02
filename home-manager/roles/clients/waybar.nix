@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{config, lib, ...}:
 {
   systemd.user.services.waybar = {
     Unit.Description = "Waybar";
@@ -7,7 +7,7 @@
       Restart = "always";
       RestartSec = "10s";
     };
-    Install.WantedBy = [ "graphical-session.target" ];
+    Install.WantedBy = ["graphical-session.target"];
   };
   programs.waybar = {
     enable = true;
@@ -15,7 +15,7 @@
       mainBar = {
         position = "bottom";
         layer = "bottom";
-        modules-left = [ "tray" ];
+        modules-left = ["tray"];
         exclusive = false;
         margin = "5";
       };

@@ -16,7 +16,7 @@
     Match localuser gitea-runner host athene
       User ci-upload-user
   '';
-  nix.settings.trusted-users = [ "gitea-runner" ];
+  nix.settings.trusted-users = ["gitea-runner"];
   services.gitea-actions-runner.instances.${config.networking.hostName} = {
     enable = true;
     name = config.networking.hostName;
@@ -24,7 +24,7 @@
     # I am fine with leaking this secret, because it will be invalidated after
     # first use.
     token = "Kn0b5KM3YEzpXO2FDBW1N8op6w4Q0M8bkJpth2e2";
-    labels = [ "nix:host" ];
+    labels = ["nix:host"];
     hostPackages = builtins.attrValues {
       inherit (pkgs)
         archive-nix-path
@@ -39,7 +39,7 @@
         nodejs
         openssh
         wget
-      ;
+        ;
     };
   };
 }

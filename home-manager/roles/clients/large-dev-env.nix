@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{pkgs, ...}:
 {
   home = {
     packages = builtins.attrValues {
@@ -7,7 +7,7 @@
         vscode-json-languageserver-bin
         vscode-html-languageserver-bin
         vscode-css-languageserver-bin
-      ;
+        ;
       inherit (pkgs.python3Packages) python-lsp-server;
       inherit (pkgs)
         rust-analyzer # rust language server
@@ -21,7 +21,7 @@
         shfmt
         astyle
         nodejs
-      ;
+        ;
     };
   };
 }
