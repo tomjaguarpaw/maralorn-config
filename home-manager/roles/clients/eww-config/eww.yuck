@@ -38,7 +38,7 @@
     (box :orientation "vertical" :space-evenly false (for alert in {mode != "Klausur" && arraylength(alerts) > 0 ? [1] : []}
       (box :class "component" (image :path "icons/cloud-alert.png") (label :text "${arraylength(alerts)}"))
     ))
-    (box :orientation "vertical" :space-evenly false (for alert in {mode != "Klausur" && config-state != "success" ? [1] : []}
+    (box :orientation "vertical" :space-evenly false (for alert in {config-state != "pending" && config-state != "success" ? [1] : []}
       (box :class "component" (image :path "icons/cloud-alert.png") (label :text "1"))
     ))
     (box :orientation "vertical" :space-evenly false (for rbwfile in {rbw ? [] : [1]}
