@@ -1,5 +1,6 @@
-{ mkDerivation, base, directory, filepath, lens, lib, megaparsec
-, relude, time, unix
+{ mkDerivation, base, directory, filepath, generic-lens, lens, lib
+, megaparsec, mtl, relude, streamly, streamly-core
+, string-interpolate, time, unix, witch
 }:
 mkDerivation {
   pname = "t";
@@ -7,11 +8,13 @@ mkDerivation {
   src = ./.;
   isLibrary = true;
   isExecutable = true;
-  libraryHaskellDepends = [ base ];
+  libraryHaskellDepends = [
+    base generic-lens lens megaparsec mtl relude streamly streamly-core
+    string-interpolate time witch
+  ];
   executableHaskellDepends = [
     base directory filepath lens megaparsec relude time unix
   ];
-  doHaddock = false;
   license = lib.licenses.agpl3Plus;
   mainProgram = "t";
 }

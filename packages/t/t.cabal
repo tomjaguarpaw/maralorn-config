@@ -48,7 +48,7 @@ build-type:    Simple
 common common
   ghc-options:
     -Weverything -Wno-unsafe -Wno-missing-safe-haskell-mode
-    -Wno-missing-import-lists
+    -Wno-missing-kind-signatures -Wno-missing-import-lists
 
   default-extensions: NoImplicitPrelude
 
@@ -58,6 +58,8 @@ library
 
   -- Modules exported by the library.
   exposed-modules:
+    Maralude
+    T.Parser
 
   -- Modules included in this library but not exported.
   -- other-modules:
@@ -66,7 +68,18 @@ library
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:    base ^>=4.17.2.0
+  build-depends:
+    , base                ^>=4.17.2.0
+    , generic-lens
+    , lens
+    , megaparsec
+    , mtl
+    , relude
+    , streamly
+    , streamly-core
+    , string-interpolate
+    , time
+    , witch
 
   -- Directories containing source files.
   hs-source-dirs:   lib
