@@ -1,4 +1,9 @@
-{pkgs, lib, ...}:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 let
   idle-timeout = 150;
   write-idle = pkgs.writeShellScript "write-idle" ''
@@ -12,6 +17,12 @@ in
   services.swayidle = {
     enable = true;
     systemdTarget = "graphical-session.target";
+    events = [
+      {
+        event = "lock";
+        command = "${lib.getExe config.programs.swaylock.package} -f";
+      }
+    ];
     timeouts = [
       {
         timeout = idle-timeout;
@@ -19,7 +30,7 @@ in
         resumeCommand = write-active.outPath;
       }
       {
-        timeout = 300;
+        timeout = 310;
         command = "${lib.getBin pkgs.hyprland}/bin/hyprctl dispatch dpms off";
         resumeCommand = "${lib.getBin pkgs.hyprland}/bin/hyprctl dispatch dpms on";
       }
