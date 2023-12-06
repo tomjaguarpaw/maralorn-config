@@ -47,7 +47,7 @@
     (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" && EWW_BATTERY.BAT0.status != "Charging"&& EWW_BATTERY.BAT0.status != "Full"  ? [EWW_BATTERY.BAT0] : []}
       (box :class "component" (image :path "icons/battery-alert.png") (label :text "${battery.capacity}%"))
     ))
-    (box :orientation "vertical" :space-evenly false (for ramwarning in {EWW_RAM.used_mem_perc > 50 ? [1] : []}
+    (box :orientation "vertical" :space-evenly false (for ramwarning in {EWW_RAM.used_mem_perc > 70 ? [1] : []}
       (box :class "component ${EWW_RAM.used_mem_perc > 85 ? "blink" : ""}" (image :path "icons/memory.png") (label :text "${round(EWW_RAM.used_mem_perc,0)}%"))
     ))
   )
