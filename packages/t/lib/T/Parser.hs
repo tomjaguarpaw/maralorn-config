@@ -3,19 +3,21 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE OverloadedLabels #-}
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
 
 module T.Parser (module T.Parser) where
 
-import Control.Lens (Prism', each, folded, itoList, makeFieldsNoPrefix, preview, to, view, (%=), (%~), (.~), (^.), (^..), (^?), _1, _Just, _Right)
+import Control.Lens (Getting, Prism', each, folded, has, itoList, makeFieldsNoPrefix, preview, to, view, (%=), (%~), (.~), (^.), (^..), (^?), _1, _Just, _Right)
+import Data.Generics.Labels ()
 import Data.List qualified as List
 import Data.Set qualified as Set
 import Data.Text qualified as Text
 import Data.Time qualified as Time
 import Relude
-import Text.Megaparsec (MonadParsec (try), ParsecT, anySingle, choice, customFailure, manyTill)
+import Text.Megaparsec (MonadParsec (token, try), ParsecT, Stream (Token), anySingle, choice, customFailure, manyTill, satisfy)
 import Text.Megaparsec.Char (char, hspace, hspace1, newline, string, tab)
 import Text.Megaparsec.Error (ErrorFancy (ErrorFail))
 import Prelude ()
@@ -82,12 +84,10 @@ newtype Indent = MkIndent [Whitespace]
   deriving newtype (Show, Eq, Ord)
 
 data Line = Blank | Heading Int Text | Task Indent Task | Other Indent Text
-  deriving stock (Show, Eq, Ord)
+  deriving stock (Show, Eq, Ord, Generic)
 
-blankLine :: FileParserT m ()
-blankLine = do
-  Blank <- anySingle
-  pure ()
+parsePrism :: (Stream s, Ord e) => Getting (First a) (Token s) a -> ParsecT e s m a
+parsePrism prism = token (preview prism) mempty
 
 parseLine :: LineParserT m Line
 parseLine =
@@ -131,11 +131,13 @@ parseStatus :: LineParserT m TaskStatus
 parseStatus = choice statusParsers <* hspace1
  where
   statusParsers :: [LineParserT m TaskStatus]
-  statusParsers =
-    (\(c, s) -> s <$ char c)
-      <$> [ ('o', ToDo)
-          , ('x', Done)
-          , ('-', Deleted)
-          , ('*', Category)
-          , ('?', Maybe)
-          ]
+  statusParsers = statusChars <&> \(c, s) -> s <$ char c
+
+statusChars :: [(Char, TaskStatus)]
+statusChars =
+  [ ('o', ToDo)
+  , ('x', Done)
+  , ('-', Deleted)
+  , ('*', Category)
+  , ('?', Maybe)
+  ]
