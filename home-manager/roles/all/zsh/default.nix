@@ -4,6 +4,23 @@
     enable = true;
     enableAutosuggestions = true;
     enableCompletion = true;
+    shellAliases = {
+      nom-build-remote = "nom build --builders @$(builders-configurator $(hostname) --force)";
+      nix-build-remote = "nix build --builders @$(builders-configurator $(hostname) --force)";
+      nb = "nom build";
+      nbr = "nom-build-remote";
+      sj = "journalctl -efu";
+      uj = "journalctl --user -efu";
+      o = "xdg-open";
+      s = "sudo systemctl";
+      g = "lazygit";
+      u = "systemctl --user";
+      m = "man";
+      h = ''f() { if [[ "$1" == "" ]]; then hx .; else hx "$@"; fi}; f'';
+      vim = "echo use hx";
+      r = "NIX_AUTO_RUN=1";
+      git-nosign = "git commit.gpgsign=false";
+    };
     history = {
       path = "$HOME/.persist/.zsh_history";
       extended = true;

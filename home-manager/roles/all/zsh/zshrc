@@ -7,22 +7,6 @@ function chpwd() {
   fi
 }
 
-alias nom-build-remote='nom build --builders @$(builders-configurator $(hostname) --force)'
-alias nix-build-remote='nix build --builders @$(builders-configurator $(hostname) --force)'
-alias nb='nom build'
-alias nbr=nom-build-remote
-alias nixpkgs-review-pr-remote='nixpkgs-review pr --build-args "--builders @$(builders-configurator --force)"'
-alias nixpkgs-review-rev-remote='nixpkgs-review rev --build-args "--builders @$(builders-configurator --force)"'
-alias accounting='f() { if [[ "$1" == "" ]]; then year="buchhaltung" else year="$1" fi; hledger -f ~/git/buchhaltung/$year.journal ui -- --watch --theme=terminal -X€ -t -E}; f'
-alias o=xdg-open
-alias s='sudo systemctl'
-alias g='lazygit'
-alias u='systemctl --user'
-alias m=man
-alias h='f() { if [[ "$1" == "" ]]; then hx .; else hx "$@"; fi}; f'
-alias vim="echo use h"
-alias r="NIX_AUTO_RUN=1"
-alias git-nosign="git commit.gpgsign=false"
 
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs

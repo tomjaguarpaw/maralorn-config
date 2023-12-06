@@ -1,5 +1,4 @@
 -- You can define your global state here
-local maxsubcols = 2
 
 -- The most important function - the actual layout generator
 --
@@ -27,8 +26,12 @@ end
 function handle_layout(args)
   local cols = 3
   local maxrows = 2
+  local maxsubcols = 2
 	if args.width < 4500 then
 	  cols = 1
+  end
+	if 3500 < args.width and args.width < 4500 then
+	  cols = 2
   end
 	if args.height < 1200 then
 	  maxrows = 1
@@ -56,16 +59,26 @@ function handle_layout(args)
 	end
 
 	local retval = {}
+	local totalcount = args.count
+	if cols > 1 then
+		totalcount = totalcount - 1
+	end
 	for i = 1, cols do
-		local count = col_count(args.count, i)
+		local height = args.height
+		local voffset = 0
+		if i == 1 and cols > 1 then
+			voffset = height / 2
+			height = height / 2
+		end
+		local count = col_count(totalcount, i)
 	  if count <= maxsubcols then
 		  local subcolwidth = div(colwidth,count)
 		  for col = 0, count - 1 do
 				table.insert(retval, {
 					colorder[i] * colwidth + subcolwidth * col,
-					0,
+					voffset,
 					subcolwidth,
-					args.height
+					height
 				})
 			end
 	  else
@@ -75,11 +88,11 @@ function handle_layout(args)
 			  if rows < maxrows and count % maxsubcols > col then
 			    rows = rows + 1
 			  end
-			  local cellheight = div(args.height,rows)
+			  local cellheight = div(height,rows)
 			  for row = 0, rows - 1 do
 					table.insert(retval, {
 						colorder[i] * colwidth + subcolwidth * col,
-						cellheight * row,
+						voffset + cellheight * row,
 						subcolwidth,
 						cellheight
 					})
@@ -87,9 +100,9 @@ function handle_layout(args)
 			end
 		end
 	end
-	for i = 1, args.count - cols * maxsubcols * maxrows do
-	  local subcolwidth = div(colwidth,maxsubcols)
-    local cellheight = div(args.height,maxrows)
+	local subcolwidth = div(colwidth,maxsubcols)
+  local cellheight = div(args.height,maxrows)
+	for i = 1, totalcount - cols * maxsubcols * maxrows do
 		table.insert(retval, {
 			(cols - 1) * colwidth + (maxsubcols - 1) * subcolwidth,
 			cellheight * (maxrows - 1),
@@ -97,12 +110,21 @@ function handle_layout(args)
 			cellheight
 		})
 	end
+	if cols > 1 and totalcount >= 0 then
+		table.insert(retval, {
+			0,
+			0,
+			colwidth,
+			cellheight
+		})
+	end
 	return retval
 end
 
---local foo = handle_layout({width = 1000, height = 1000, count = 14})
+-- local foo = handle_layout({width = 3840, height = 2160, count = 1})
 
---print(#foo)
+-- print(#foo)
+-- print(foo[1][4])
 
 -- This optional function returns the metadata for the current layout.
 -- Currently only `name` is supported, the name of the layout. It get's passed

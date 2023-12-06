@@ -33,6 +33,16 @@ in
           status = "enable";
         }
       ];
+      office.outputs = [
+        {
+          criteria = "eDP-1";
+          status = "disable";
+        }
+        {
+          criteria = "Dell Inc. DELL S2721QS F9SJM43";
+          status = "enable";
+        }
+      ];
       desk.outputs = [
         {
           criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
