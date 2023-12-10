@@ -33,9 +33,9 @@ function handle_layout(args)
 	if 3500 < args.width and args.width < 4500 then
 	  cols = 2
   end
-	if args.height < 1200 then
-	  maxrows = 1
-	end
+	-- if args.height < 1200 then
+	--   maxrows = 1
+	-- end
 	function col_count(count, col)
 			local num = div(count-1,cols)
 
@@ -60,16 +60,16 @@ function handle_layout(args)
 
 	local retval = {}
 	local totalcount = args.count
-	if cols > 1 then
-		totalcount = totalcount - 1
-	end
+	--if cols > 1 then
+	--	totalcount = totalcount - 1
+	--end
 	for i = 1, cols do
 		local height = args.height
 		local voffset = 0
-		if i == 1 and cols > 1 then
-			voffset = height / 2
-			height = height / 2
-		end
+		--if i == 1 and cols > 1 then
+		--	voffset = height / 2
+		--	height = height / 2
+		--end
 		local count = col_count(totalcount, i)
 	  if count <= maxsubcols then
 		  local subcolwidth = div(colwidth,count)
@@ -110,14 +110,14 @@ function handle_layout(args)
 			cellheight
 		})
 	end
-	if cols > 1 and totalcount >= 0 then
-		table.insert(retval, {
-			0,
-			0,
-			colwidth,
-			cellheight
-		})
-	end
+	-- if cols > 1 and totalcount >= 0 then
+	-- 	table.insert(retval, {
+	-- 		0,
+	-- 		0,
+	-- 		colwidth,
+	-- 		cellheight
+	-- 	})
+	-- end
 	return retval
 end
 
