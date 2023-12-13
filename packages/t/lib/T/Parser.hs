@@ -98,7 +98,7 @@ data Section = MkSection
   }
   deriving stock (Show, Eq, Ord, Generic)
 
-type LineParserT = ParsecT Void Text
+type LineParserT = ParsecT MyParseFail Text
 
 type FileParserT = ParsecT MyParseFail [Line]
 
