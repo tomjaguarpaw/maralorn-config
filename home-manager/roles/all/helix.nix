@@ -16,6 +16,22 @@ let
     "connect-app-converts"
   ];
   custom_configs = {
+    notes = [
+      {
+        name = "t";
+        scope = "text.t";
+        file-types = [{suffix = "notes";}];
+        roots = ["Inbox"];
+        indent = {
+          tab-width = 2;
+          unit = "	";
+        };
+        formatter = {
+          command = "t";
+          args = ["fmt"];
+        };
+      }
+    ];
     connect-app-converts = [
       {
         name = "haskell";

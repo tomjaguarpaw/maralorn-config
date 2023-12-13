@@ -49,9 +49,16 @@ common common
   ghc-options:
     -Weverything -Wno-unsafe -Wno-missing-safe-haskell-mode
     -Wno-missing-kind-signatures -Wno-missing-import-lists
-    -fno-show-valid-hole-fits
+    -Wno-all-missed-specialisations -fno-show-valid-hole-fits
 
-  default-extensions: NoImplicitPrelude
+  default-extensions:
+    BlockArguments
+    DerivingStrategies
+    DuplicateRecordFields
+    FunctionalDependencies
+    LambdaCase
+    NoImplicitPrelude
+    OverloadedStrings
 
 library
   -- Import common warning flags.
@@ -109,6 +116,7 @@ executable t
     , lens
     , megaparsec
     , relude
+    , t
     , time
     , unix
 

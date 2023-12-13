@@ -9,7 +9,11 @@ let
     packages = p: builtins.attrValues (self.lib.selectHaskellPackages p);
     extraDependencies = p: {
       libraryHaskellDepends = builtins.attrValues (
-        myPkgs.makeHaskellScriptPackages p // selectHaskellPackages p // {inherit (p) ghc-debug-client;}
+        myPkgs.makeHaskellScriptPackages p
+        // selectHaskellPackages p
+        // {
+          inherit (p) ghc-debug-client doctest;
+        }
       );
     };
   };

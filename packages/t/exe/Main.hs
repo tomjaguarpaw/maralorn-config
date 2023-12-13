@@ -1,26 +1,22 @@
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE FunctionalDependencies #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedRecordDot #-}
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
 
 module Main (main) where
 
-import Control.Lens (Prism', each, folded, itoList, makeFieldsNoPrefix, preview, to, view, (%=), (%~), (.~), (^.), (^..), (^?), _1, _Just, _Right)
+import Control.Lens (each, folded, itoList, makeFieldsNoPrefix, to, view, (%=), (%~), (.~), (^.), (^..), (^?), _1, _Just, _Right)
 import Data.List qualified as List
 import Data.Text qualified as Text
+import Data.Text.IO qualified as Text.IO
 import Data.Time qualified as Time
 import Relude
 import System.Directory qualified as Dir
 import System.FilePath ((</>))
-import System.Posix (getEnv)
+import T.Parser qualified as Parser
 import Text.Megaparsec qualified as P
 import Text.Megaparsec.Char qualified as P
 import Prelude ()
 
-data TaskStatus = ToDo | Done | Deleted | Category | Maybe deriving (Show, Eq)
+data TaskStatus = ToDo | Done | Deleted | Category | Maybe deriving stock (Show, Eq)
 
 data Task = MkTask
   { _status :: TaskStatus
@@ -50,6 +46,8 @@ main = do
     [] -> showTasks active
     ["unsorted"] -> showTasks (pall [active, pany [inbox, outdated now]])
     ["inbox"] -> showTasks (pall [null . (view tags), active])
+    ["fmt"] -> putText . Parser.printFile =<< either fail pure . Parser.parseFile "stdin" =<< Text.IO.getContents
+    x -> putStrLn $ "Unrecognized command: " <> show x
 
 active :: Task -> Bool
 active = (== ToDo) . view status
