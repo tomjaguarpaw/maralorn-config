@@ -1,11 +1,11 @@
 module T.File (module T.File) where
 
-import Control.Lens (IndexedTraversal', Lens', Traversal', lens, prism', re, to, traversal, view, _1, _3)
+import Control.Lens (Lens', Traversal', lens, to, view, _1, _3)
 import Control.Lens.Unsound (adjoin)
 import Data.Generics.Labels ()
 import Data.Text qualified as Text
 import Data.Text.Lens (IsText (packed))
-import Maralude (Prism', (^.), (^..))
+import Maralude ((^.))
 import Relude
 import T.Task (Task, printTask)
 import Text.Megaparsec (TraversableStream (reachOffsetNoLine), VisualStream (showTokens))

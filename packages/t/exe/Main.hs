@@ -1,8 +1,6 @@
-{-# LANGUAGE OverloadedRecordDot #-}
-
 module Main (main) where
 
-import Control.Lens (toListOf)
+import Control.Lens (over, toListOf, traversed)
 import Data.Text qualified as Text
 import Data.Text.IO qualified as Text.IO
 import Data.Time qualified as Time
@@ -10,20 +8,20 @@ import Maralude hiding (mapM, mapM_)
 import Relude hiding (getArgs, putTextLn)
 import System.Directory qualified as Dir
 import System.FilePath ((</>))
-import T.File (tasksInFile)
+import T.File (FileElement (TaskEntry), Line (Task), SectionBody, tasksInFile)
 import T.Parser (parseFile)
 import T.Parser qualified as Parser
 import T.Print (printFile)
-import T.Task (Task, TaskStatus (ToDo), printTask)
+import T.Task (Task, TaskStatus (Category, ToDo), printTask)
 import Prelude ()
 
 main :: IO ()
 main = do
   now <- Time.getCurrentTime
   getArgs >>= \case
-    [] -> showTasks active
-    ["unsorted"] -> showTasks (pall [active, pany [inbox, outdated now]])
-    ["inbox"] -> showTasks (pall [has (_2 . #tags . only mempty), active])
+    [] -> showTasks active (const True)
+    ["unsorted"] -> showTasks (pall [active, pany [inbox, outdated now]]) (const True)
+    ["inbox"] -> showTasks active (pall [has (#tags . only mempty), (`elem` [ToDo, Category]) . view #status])
     ["fmt"] -> putText . printFile =<< either fail pure . Parser.parseFile "stdin" =<< Text.IO.getContents
     x -> putStrLn $ "Unrecognized command: " <> show x
 
@@ -42,8 +40,8 @@ pall preds = \x -> all ($ x) preds
 pany :: [(a -> Bool)] -> a -> Bool
 pany preds = \x -> any ($ x) preds
 
-showTasks :: (([Text], Task) -> Bool) -> IO ()
-showTasks pre = getTasks >>= printList . filter pre
+showTasks :: (([Text], Task) -> Bool) -> (Task -> Bool) -> IO ()
+showTasks pre scopePredicate = getTasks scopePredicate >>= printList . filter pre
 
 printList :: [([Text], Task)] -> IO ()
 printList = mapM_ \t -> putTextLn $ printTask (t ^. _2) <-> (t ^. _1 . to (Text.intercalate "."))
@@ -73,16 +71,26 @@ a <-> b = a <> " " <> b
 --   (a : as) (x : xs) | a == x -> splitSharedPrefix as xs & _1 %~ (x :)
 --   _ xs -> ([], xs)
 
+filterFile :: (Task -> Bool) -> SectionBody -> SectionBody
+filterFile predicate = go
+ where
+  go :: SectionBody -> SectionBody
+  go = over #head (mapMaybe goFileElement) . over (#sections . traversed . #content) go
+  goFileElement :: FileElement -> Maybe FileElement
+  goFileElement = \case
+    TaskEntry t g n | predicate t -> Just $ TaskEntry t g (mapMaybe goFileElement n)
+    _ -> Nothing
+
 parseDate :: Text -> Maybe Time.Day
 parseDate = Time.parseTimeM True Time.defaultTimeLocale "%Y-%m-%d" . toString
 
-getTasks :: IO [([Text], Task)]
-getTasks = do
+getTasks :: (Task -> Bool) -> IO [([Text], Task)]
+getTasks predicate = do
   home <- Dir.getHomeDirectory
   let dir = (home <> "/git/notes")
   paths <- getFilePaths dir
   paths & fmap concat . mapM \case
-    n -> toListOf (folded . tasksInFile (name ^. into)) . parseFile (name) <$> readFileUTF8 n
+    n -> toListOf (folded . to (filterFile predicate) . tasksInFile (name ^. into)) . parseFile (name) <$> readFileUTF8 n
      where
       name = drop (length dir + 1) n
 
