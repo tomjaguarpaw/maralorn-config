@@ -2,19 +2,18 @@ module T.Print (printFile) where
 
 import Control.Lens (folded, over, to, (^.), (^..))
 import Data.Generics.Labels ()
+import Data.List qualified as List
 import Maralude (lined)
 import Relude
 import T.File (FileElement (Paragraph, TaskEntry), Line (Blank, Heading, Other, Task), Section, SectionBody, Whitespace (Tab), indent, printLines)
 import Prelude ()
 
 printFile :: SectionBody -> Text
-printFile = printLines . ensureTrailingNewline . printSectionBody 0
-
-ensureTrailingNewline :: [Line] -> [Line]
-ensureTrailingNewline = \case
-  [] -> [Blank]
-  [Blank] -> [Blank]
-  (x : xs) -> x : ensureTrailingNewline xs
+printFile =
+  printLines
+    . List.dropWhile (== Blank)
+    . List.dropWhileEnd (== Blank)
+    . printSectionBody 0
 
 printSectionBody :: Int -> SectionBody -> [Line]
 printSectionBody lvl sb =

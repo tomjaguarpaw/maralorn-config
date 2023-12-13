@@ -49,7 +49,7 @@ common common
   ghc-options:
     -Weverything -Wno-unsafe -Wno-missing-safe-haskell-mode
     -Wno-missing-kind-signatures -Wno-missing-import-lists
-    -Wno-all-missed-specialisations -fno-show-valid-hole-fits
+    -Wno-missed-specialisations -fno-show-valid-hole-fits
 
   default-extensions:
     BlockArguments
@@ -104,6 +104,7 @@ library
 executable t
   -- Import common warning flags.
   import:           common
+  ghc-options:      -Wunused-packages
 
   -- .hs or .lhs file containing the Main module.
   main-is:          Main.hs

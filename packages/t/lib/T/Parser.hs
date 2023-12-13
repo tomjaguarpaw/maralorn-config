@@ -11,13 +11,13 @@ import Maralude (from, lined)
 import Relude
 import T.File (FileElement (Paragraph, TaskEntry), Indent, Line (..), Section (MkSection), SectionBody (MkSectionBody), Whitespace (..), whitespace)
 import T.Task (Task (MkTask), TaskStatus, statusChars)
-import Text.Megaparsec (MonadParsec (token, try), ParsecT, ShowErrorComponent (showErrorComponent), Stream (Token), anySingle, choice, customFailure, manyTill, parse, skipMany)
-import Text.Megaparsec.Char (char, hspace1, newline, tab)
+import Text.Megaparsec (MonadParsec (eof, token, try), ParsecT, ShowErrorComponent (showErrorComponent), Stream (Token), anySingle, choice, customFailure, manyTill, parse, skipMany)
+import Text.Megaparsec.Char (char, hspace1, tab)
 import Prelude ()
 
 parseFile :: String -> Text -> Either String SectionBody
 parseFile name content =
-  first displayException (parse (many parseLine) name content)
+  mapM (first displayException . parse parseLine name) (Text.lines content)
     >>= first displayException
     . parse (parseSectionBody 0) name
 
@@ -100,7 +100,7 @@ parseLine :: LineParserT m Line
 parseLine =
   uncurry Heading <$> parseHeading <|> do
     i <- parseIndent
-    choice [Blank <$ newline, Task i <$> try parseTask, Other i <$> restOfLine]
+    choice [Blank <$ eof, Task i <$> try parseTask, Other i <$> restOfLine]
 
 parseHeading :: LineParserT m (Int, Text)
 parseHeading = do
@@ -115,7 +115,7 @@ parseIndent :: LineParserT m Indent
 parseIndent = many parseWhitespace
 
 restOfLine :: LineParserT m Text
-restOfLine = Text.pack <$> manyTill anySingle newline
+restOfLine = Text.pack <$> manyTill anySingle eof
 
 parseTask :: LineParserT m Task
 parseTask = do

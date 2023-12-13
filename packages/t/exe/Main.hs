@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Control.Lens (over, toListOf, traversed)
+import Data.Set qualified as Set
 import Data.Text qualified as Text
 import Data.Text.IO qualified as Text.IO
 import Data.Time qualified as Time
@@ -8,11 +9,11 @@ import Maralude hiding (mapM, mapM_)
 import Relude hiding (getArgs, putTextLn)
 import System.Directory qualified as Dir
 import System.FilePath ((</>))
-import T.File (FileElement (TaskEntry), Line (Task), SectionBody, tasksInFile)
+import T.File (FileElement (TaskEntry), SectionBody, tasksInFile)
 import T.Parser (parseFile)
 import T.Parser qualified as Parser
 import T.Print (printFile)
-import T.Task (Task, TaskStatus (Category, ToDo), printTask)
+import T.Task (Task, TaskStatus (Category, Maybe, ToDo), printTask)
 import Prelude ()
 
 main :: IO ()
@@ -20,13 +21,17 @@ main = do
   now <- Time.getCurrentTime
   getArgs >>= \case
     [] -> showTasks active (const True)
+    ("tag" : tag) -> showTasks (pall [todo, Set.isSubsetOf (Set.fromList tag) . view (_2 . #tags)]) (const True)
     ["unsorted"] -> showTasks (pall [active, pany [inbox, outdated now]]) (const True)
-    ["inbox"] -> showTasks active (pall [has (#tags . only mempty), (`elem` [ToDo, Category]) . view #status])
+    ["inbox"] -> showTasks todo (pall [has (#tags . only mempty), (`elem` [ToDo, Category]) . view #status])
     ["fmt"] -> putText . printFile =<< either fail pure . Parser.parseFile "stdin" =<< Text.IO.getContents
     x -> putStrLn $ "Unrecognized command: " <> show x
 
 active :: ([Text], Task) -> Bool
-active = has (_2 . #status . only ToDo)
+active = (`elem` [ToDo, Category, Maybe]) . view (_2 . #status)
+
+todo :: ([Text], Task) -> Bool
+todo = has (_2 . #status . only ToDo)
 
 inbox :: ([Text], Task) -> Bool
 inbox = elem "Inbox" . view _1
