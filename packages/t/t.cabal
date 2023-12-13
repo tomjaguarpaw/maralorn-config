@@ -53,12 +53,14 @@ common common
 
   default-extensions:
     BlockArguments
-    DerivingStrategies
+    DerivingVia
     DuplicateRecordFields
     FunctionalDependencies
     LambdaCase
     NoImplicitPrelude
+    OverloadedLabels
     OverloadedStrings
+    PartialTypeSignatures
 
 library
   -- Import common warning flags.
@@ -67,7 +69,10 @@ library
   -- Modules exported by the library.
   exposed-modules:
     Maralude
+    T.File
     T.Parser
+    T.Print
+    T.Task
 
   -- Modules included in this library but not exported.
   -- other-modules:

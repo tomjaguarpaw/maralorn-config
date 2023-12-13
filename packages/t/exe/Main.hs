@@ -12,6 +12,7 @@ import Relude
 import System.Directory qualified as Dir
 import System.FilePath ((</>))
 import T.Parser qualified as Parser
+import T.Print (printFile)
 import Text.Megaparsec qualified as P
 import Text.Megaparsec.Char qualified as P
 import Prelude ()
@@ -46,7 +47,7 @@ main = do
     [] -> showTasks active
     ["unsorted"] -> showTasks (pall [active, pany [inbox, outdated now]])
     ["inbox"] -> showTasks (pall [null . (view tags), active])
-    ["fmt"] -> putText . Parser.printFile =<< either fail pure . Parser.parseFile "stdin" =<< Text.IO.getContents
+    ["fmt"] -> putText . printFile =<< either fail pure . Parser.parseFile "stdin" =<< Text.IO.getContents
     x -> putStrLn $ "Unrecognized command: " <> show x
 
 active :: Task -> Bool
