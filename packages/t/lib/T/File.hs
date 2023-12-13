@@ -1,10 +1,11 @@
 module T.File (module T.File) where
 
-import Control.Lens (Traversal', to, view, _1)
+import Control.Lens (IndexedTraversal', Lens', Traversal', lens, prism', re, to, traversal, view, _1, _3)
 import Control.Lens.Unsound (adjoin)
 import Data.Generics.Labels ()
 import Data.Text qualified as Text
 import Data.Text.Lens (IsText (packed))
+import Maralude (Prism', (^.), (^..))
 import Relude
 import T.Task (Task, printTask)
 import Text.Megaparsec (TraversableStream (reachOffsetNoLine), VisualStream (showTokens))
@@ -53,3 +54,29 @@ printLine = \case
 
 whitespace :: Indent -> Text
 whitespace = view $ to (fmap \case Space -> ' '; Tab -> '\t') . packed
+
+tasksInFile :: Text -> Traversal' SectionBody ([Text], Task)
+tasksInFile label = tasksInSectionBody . addLabel (Text.splitOn "/" label)
+
+tasksInSectionBody :: Traversal' SectionBody ([Text], Task)
+tasksInSectionBody = adjoin (#head . traverse . tasksInFileElement) (#sections . traverse . tasksInSection)
+
+tasksInSection :: Traversal' Section ([Text], Task)
+tasksInSection f body = (#content . tasksInSectionBody . addLabel h) f body
+ where
+  h = [body ^. #heading]
+
+tasksInFileElement :: Traversal' FileElement ([Text], Task)
+tasksInFileElement = #_TaskEntry . ((_1 . withLabel) `adjoin` nestedTasksInFileElement)
+
+nestedTasksInFileElement :: Traversal' (Task, a, [FileElement]) ([Text], Task)
+nestedTasksInFileElement a b = (_3 . traverse . tasksInFileElement . addLabel lbl) a b
+ where
+  lbl :: [Text]
+  lbl = [b ^. _1 . #description]
+
+withLabel :: Lens' a ([b], a)
+withLabel = lens ([],) (const snd)
+
+addLabel :: [b] -> Lens' ([b], a) ([b], a)
+addLabel label = lens (first (label <>)) (const (first (drop 1)))

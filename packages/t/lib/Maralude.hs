@@ -72,11 +72,12 @@ module Maralude (
   _3,
   otherwise,
   on,
+  only,
 )
 where
 
 import Control.Applicative (Applicative, pure)
-import Control.Lens (Contravariant, Iso', LensLike', Prism', each, folded, from, has, hasn't, iso, ix, preview, prism', to, view, (%~), (.~), (^.), (^..), (^?), _1, _2, _3, _Just, _Left, _Nothing, _Right)
+import Control.Lens (Contravariant, Iso', LensLike', Prism', each, folded, from, has, hasn't, iso, ix, only, preview, prism', to, view, (%~), (.~), (^.), (^..), (^?), _1, _2, _3, _Just, _Left, _Nothing, _Right)
 import Control.Monad (Monad, (=<<), (>>), (>>=))
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Control.Monad.State.Strict (State)

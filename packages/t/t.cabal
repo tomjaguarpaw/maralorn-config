@@ -59,6 +59,7 @@ common common
     LambdaCase
     NoImplicitPrelude
     OverloadedLabels
+    OverloadedRecordDot
     OverloadedStrings
     PartialTypeSignatures
 

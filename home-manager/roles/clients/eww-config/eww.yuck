@@ -14,6 +14,9 @@
 (defpoll alerts :interval "1m" :initial "[]" `curl https://alerts.maralorn.de/api/v1/alerts | jq '.data | map(select(.status.state != "suppressed"))'`)
 (defpoll config-state :interval "10m" :initial "unavailable" `curl https://code.maralorn.de/api/v1/repos/maralorn/config/commits/main/status | jq '.state' -r`)
 (defpoll rbw :interval "5s" :initial false "if rbw unlocked; then echo true; else echo false; fi")
+(defpoll unsortedcount :interval "5s" :initial "0" "t unsorted | wc -l")
+(defpoll inboxcount :interval "5s" :initial "0" "t inbox | wc -l")
+(defpoll inbox :interval "5s" :initial "" "t inbox")
 (defpoll host :interval "1440m" :initial "unknown" "cat /etc/hostname")
 (defvar disks '{"apollo":["/","/boot/EFI"],"zeus":["/disk"],"unknown":[]}')
 
@@ -43,6 +46,12 @@
     ))
     (box :orientation "vertical" :space-evenly false (for rbwfile in {rbw ? [] : [1]}
       (box :class "component" (image :path "icons/lock-alert.png") (label :text "rbw"))
+    ))
+    (box :orientation "vertical" :space-evenly false (for i in {inboxcount == "0" ? [] : [1]}
+      (box :class "component" (image :path "icons/inbox.png") (label :text inboxcount))
+    ))
+    (box :orientation "vertical" :space-evenly false (for u in {unsortedcount == "0" ? [] : [1]}
+      (box :class "component" (image :path "icons/dirty.png") (label :text unsortedcount))
     ))
     (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" && EWW_BATTERY.BAT0.status != "Charging"&& EWW_BATTERY.BAT0.status != "Full"  ? [EWW_BATTERY.BAT0] : []}
       (box :class "component" (image :path "icons/battery-alert.png") (label :text "${battery.capacity}%"))

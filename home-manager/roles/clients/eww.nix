@@ -32,6 +32,7 @@
           pkgs.gitMinimal
           pkgs.nix
           pkgs.jaq
+          pkgs.t
           config.programs.rbw.package
         ]
       }";
