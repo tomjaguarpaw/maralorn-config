@@ -19,9 +19,10 @@ let
     notes = [
       {
         name = "t";
+        auto-format = true;
         scope = "text.t";
-        file-types = [{suffix = "notes";}];
-        roots = ["Inbox"];
+        file-types = ["t"];
+        roots = ["Inbox.t"];
         indent = {
           tab-width = 2;
           unit = "	";
