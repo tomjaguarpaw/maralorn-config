@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Control.Lens (over, toListOf, traversed)
+import Control.Lens (anyOf, over, toListOf, traversed)
 import Data.Set qualified as Set
 import Data.Text qualified as Text
 import Data.Text.IO qualified as Text.IO
@@ -9,7 +9,7 @@ import Maralude hiding (mapM, mapM_)
 import Relude hiding (getArgs, putTextLn)
 import System.Directory qualified as Dir
 import System.FilePath ((</>))
-import T.File (FileElement (TaskEntry), SectionBody, tasksInFile)
+import T.File (FileElement (TaskEntry), Section, SectionBody, tasksInFile)
 import T.Parser (parseFile)
 import T.Parser qualified as Parser
 import T.Print (printFile)
@@ -21,20 +21,53 @@ main = do
   now <- Time.getCurrentTime
   getArgs >>= \case
     [] -> showTasks active (const True)
-    ("tag" : tag) -> showTasks (pall [todo, Set.isSubsetOf (Set.fromList tag) . view (_2 . #tags)]) (const True)
-    ["unsorted"] -> showTasks (pall [active, pany [inbox, outdated now]]) (const True)
-    ["inbox"] -> showTasks todo (pall [has (#tags . only mempty), (`elem` [ToDo, Category]) . view #status])
+    ("tag" : tag) -> showTasks (pall [(has (_2 . #status . only ToDo)), Set.isSubsetOf (Set.fromList tag) . view (_2 . #tags)]) (const True)
+    ["unsorted"] -> showTasks (pall [active, pany [anyOf (_1 . folded) (== "Inbox"), outdated now]]) (const True)
+    ["inbox"] -> showTasks (has (_2 . #status . only ToDo)) (pall [has (#tags . only mempty), (`elem` [ToDo, Category]) . view #status])
     ["fmt"] -> putText . printFile =<< either fail pure . Parser.parseFile "stdin" =<< Text.IO.getContents
     x -> putStrLn $ "Unrecognized command: " <> show x
 
+data TaskContext = MkTaskContext
+  { file :: Text
+  , sections :: [Text]
+  , task :: Task
+  , notes :: [FileElement]
+  , allTasks :: [Task]
+  , now :: Time.Day
+  }
+  deriving stock (Eq, Show, Generic)
+
+data Query = MkQuery
+  { take :: TaskContext -> Bool
+  , descent :: TaskContext -> Bool
+  }
+
+-- inbox = todo and not dep active and not tagged and not waiting and not has children
+
+query :: Query -> [(Text, SectionBody)] -> [TaskContext]
+query _ _ = undefined
+
 active :: ([Text], Task) -> Bool
-active = (`elem` [ToDo, Category, Maybe]) . view (_2 . #status)
+active = anyOf (_2 . #status) (`elem` [ToDo, Category, Maybe])
 
-todo :: ([Text], Task) -> Bool
-todo = has (_2 . #status . only ToDo)
+todo :: TaskContext -> Bool
+todo = has (#task . #status . only ToDo)
 
-inbox :: ([Text], Task) -> Bool
-inbox = elem "Inbox" . view _1
+inbox :: Query
+inbox =
+  MkQuery
+    { take = pall [todo, not . hasChildren, untagged]
+    , descent = pall [relevantForInbox . view #task, untagged]
+    }
+
+untagged :: TaskContext -> Bool
+untagged = has (#task . #tags . only mempty)
+
+relevantForInbox :: Task -> Bool
+relevantForInbox = (`elem` [ToDo, Category]) . view (#status)
+
+hasChildren :: TaskContext -> Bool
+hasChildren = anyOf (#notes . folded . #_TaskEntry . _1) relevantForInbox
 
 outdated :: Time.UTCTime -> ([Text], Task) -> Bool
 outdated now t = (t ^? (_1 . folded . to parseDate . _Just)) & maybe False (< now.utctDay)
