@@ -57,6 +57,8 @@ common common
     DuplicateRecordFields
     FunctionalDependencies
     LambdaCase
+    MultiWayIf
+    NoFieldSelectors
     NoImplicitPrelude
     OverloadedLabels
     OverloadedRecordDot

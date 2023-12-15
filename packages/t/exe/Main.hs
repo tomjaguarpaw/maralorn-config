@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Control.Lens (anyOf, over, toListOf, traversed)
+import Data.List qualified as List
 import Data.Set qualified as Set
 import Data.Text qualified as Text
 import Data.Text.IO qualified as Text.IO
@@ -20,10 +21,16 @@ main :: IO ()
 main = do
   now <- Time.getCurrentTime
   getArgs >>= \case
-    [] -> showTasks active (const True)
-    ("tag" : tag) -> showTasks (pall [(has (_2 . #status . only ToDo)), Set.isSubsetOf (Set.fromList tag) . view (_2 . #tags)]) (const True)
+    [] -> showTasks (const True) (const True)
+    ("tag" : tag) ->
+      showTasks
+        (pall [(has (_2 . #status . only ToDo)), Set.isSubsetOf (Set.fromList tag) . view (_2 . #tags)])
+        (const True)
     ["unsorted"] -> showTasks (pall [active, pany [anyOf (_1 . folded) (== "Inbox"), outdated now]]) (const True)
-    ["inbox"] -> showTasks (has (_2 . #status . only ToDo)) (pall [has (#tags . only mempty), (`elem` [ToDo, Category]) . view #status])
+    ["inbox"] ->
+      showTasks
+        (has (_2 . #status . only ToDo))
+        (pall [has (#tags . only mempty), anyOf #status (`elem` [ToDo, Category])])
     ["fmt"] -> putText . printFile =<< either fail pure . Parser.parseFile "stdin" =<< Text.IO.getContents
     x -> putStrLn $ "Unrecognized command: " <> show x
 
@@ -130,7 +137,8 @@ getTasks predicate = do
   paths & fmap concat . mapM \case
     n -> toListOf (folded . to (filterFile predicate) . tasksInFile (name ^. into)) . parseFile (name) <$> readFileUTF8 n
      where
-      name = drop (length dir + 1) n
+      name :: [Char]
+      name = (\x -> take (length x - 2) x) $ drop (length dir + 1) n
 
 readFileUTF8 :: FilePath -> IO Text
 readFileUTF8 = fmap decodeUtf8 . readFileBS
@@ -142,8 +150,7 @@ getFilePaths dir =
     . mapM \name -> do
       isFile <- Dir.doesFileExist (dir </> name)
       isDir <- Dir.doesDirectoryExist (dir </> name)
-      case () of
-        _ | '.' `elem` name -> pure []
-        _ | isFile -> pure [dir </> name]
-        _ | isDir -> getFilePaths (dir </> name)
-        _ -> pure []
+      if
+        | isFile, ".t" `List.isSuffixOf` name -> pure [dir </> name]
+        | isDir -> getFilePaths (dir </> name)
+        | otherwise -> pure []
