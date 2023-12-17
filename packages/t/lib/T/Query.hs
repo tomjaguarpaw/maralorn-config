@@ -7,7 +7,7 @@ import Maralude hiding (mapM, mapM_)
 import Relude hiding (getArgs, putTextLn, take)
 import T.File (FileElement, Section, SectionBody, tasksInSectionBody)
 import T.Parser qualified as Parser
-import T.Task (Task, TaskStatus (Category, Maybe, ToDo))
+import T.Task (Task (status), TaskStatus (Category, Maybe, ToDo))
 
 data TaskContext = MkTaskContext
   { file :: Text
@@ -45,8 +45,8 @@ todo = has (#task . #status . only ToDo)
 inbox :: Query
 inbox =
   MkQuery
-    { take = pall [actionable, not . hasChildren, not . tagged]
-    , descent = pall [relevantForInbox . view #task, not . inactive, not . tagged]
+    { take = pall [actionable, not . hasChildren, not . tagged, isNothing . hasDateFile]
+    , descent = pall [relevantForInbox . view #task, not . inactive, not . tagged, isNothing . hasDateFile]
     }
 
 inactive :: TaskContext -> Bool
@@ -70,13 +70,16 @@ tagged :: TaskContext -> Bool
 tagged = anyOf (#task . #tags) (/= mempty)
 
 relevantForInbox :: Task -> Bool
-relevantForInbox = (`elem` [ToDo, Category]) . view (#status)
+relevantForInbox = (`elem` [ToDo, Category]) . (.status)
 
 hasChildren :: TaskContext -> Bool
 hasChildren = anyOf (#notes . folded . #_TaskEntry . _1) relevantForInbox
 
 outdated :: TaskContext -> Bool
-outdated context = Parser.parseDate context.file & maybe False (< context.now)
+outdated context = maybe False (< context.now) . hasDateFile $ context
+
+hasDateFile :: TaskContext -> Maybe Time.Day
+hasDateFile = Parser.parseDate . (.file)
 
 pall :: [(a -> Bool)] -> a -> Bool
 pall preds = \x -> all ($ x) preds
