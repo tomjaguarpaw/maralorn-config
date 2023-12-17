@@ -56,7 +56,7 @@ actionable :: TaskContext -> Bool
 actionable = pall [todo, not . inactive]
 
 waiting :: TaskContext -> Bool
-waiting tc = has (#task . #wait . _Just . filtered (< tc ^. #now)) tc
+waiting tc = has (#task . #wait . _Just . filtered (> tc ^. #now)) tc
 
 depToDo :: TaskContext -> Bool
 depToDo taskContext = case taskContext ^. #task . #dep of
