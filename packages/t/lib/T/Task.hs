@@ -16,6 +16,7 @@ data Task = MkTask
   , description :: Text
   , tags :: Set Text
   , wait :: Maybe Time.Day
+  , dep :: Maybe Text
   }
   deriving stock (Show, Eq, Ord, Generic)
 
@@ -41,4 +42,8 @@ printTask t =
       <> t
     ^.. #wait
       . folded
-      . to (\day -> "wait:" <> show day)
+      . to (("wait:" <>) . show)
+      <> t
+    ^.. #dep
+      . folded
+      . to ("dep:" <>)

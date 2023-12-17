@@ -75,6 +75,7 @@ library
     T.File
     T.Parser
     T.Print
+    T.Query
     T.Task
 
   -- Modules included in this library but not exported.

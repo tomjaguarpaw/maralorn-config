@@ -1,4 +1,4 @@
-module T.Parser (parseFile) where
+module T.Parser (parseFile, parseDate) where
 
 import Control.Lens (Getting, coerced, folded, foldl1Of, partsOf, preview, to, (^.), (^?), _1, _Just)
 import Data.Generics.Labels ()
@@ -124,12 +124,14 @@ parseTask = do
   let d1, d2, tags', wait' :: [Text]
       (tags', d1) = List.partition (Text.isPrefixOf "+") $ Text.words d
       (wait', d2) = List.partition (Text.isPrefixOf "wait:") d1
+      (dep', d3) = List.partition (Text.isPrefixOf "dep:") d2
   pure
     $ MkTask
       s
-      (Text.unwords d2)
-      (Set.fromList $ Text.drop 1 <$> tags')
+      (Text.unwords d3)
+      (Set.fromList $ Text.toLower . Text.drop 1 <$> tags')
       (wait' ^? folded . to (Text.drop 5) . to parseDate . _Just)
+      (dep' ^? folded . to (Text.toLower . Text.drop 4))
 
 parseDate :: Text -> Maybe Time.Day
 parseDate = Time.parseTimeM True Time.defaultTimeLocale "%Y-%m-%d" . toString
