@@ -31,7 +31,7 @@ simpleQuery take = MkQuery{take, descent}
   descent = not . take
 
 hasTags :: Set Text -> Query
-hasTags tags = simpleQuery $ pall [actionable, Set.isSubsetOf tags . view (#task . #tags)]
+hasTags tags = simpleQuery $ pall [pany [actionable, hasChildren], Set.isSubsetOf tags . view (#task . #tags)]
 
 unsorted :: Query
 unsorted = simpleQuery $ pall [active, pany [has (#file . only "Inbox"), outdated]]
