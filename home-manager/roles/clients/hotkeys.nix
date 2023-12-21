@@ -72,8 +72,21 @@ let
           {"Play/Pause" = "${pkgs.playerctl}/bin/playerctl play-pause";}
           {"Toggle Output Mute" = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";}
           {"Toggle Input Mute" = "${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";}
-          {"MPD lokal" = mpdclient "::";}
-          {"Athene MPD" = mpdclient "athene";}
+          {
+            MPD = {
+              Lokal = mpdclient "::";
+              Athene = mpdclient "athene";
+              Lounge = mpdclient "lounge.w17.io";
+              Kitchen = mpdclient "kitchen.w17.io";
+              Space = mpdclient "burbon.w17.io";
+            };
+          }
+          {
+            "Forward to Athene" = {
+              Connect = "pactl load-module module-tunnel-sink server=athene";
+              Disconnect = "pactl unload-module module-tunnel-sink";
+            };
+          }
           {"Lautstärke" = fork "pavucontrol";}
           {
             Headset = {
@@ -87,9 +100,6 @@ let
               };
             };
           }
-          {"Loung MPD" = mpdclient "lounge.w17.io";}
-          {"Kitchen MPD" = mpdclient "kitchen.w17.io";}
-          {"Space MPD" = mpdclient "burbon.w17.io";}
         ];
     }
     {
