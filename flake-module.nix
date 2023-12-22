@@ -11,7 +11,7 @@
     ./packages/flake-module.nix
     ./nixpkgs/flake-module.nix
   ];
-  systems = ["x86_64-linux"];
+  systems = [ "x86_64-linux" ];
   flake = {
     mylib = {
       inherit (inputs.nixos-unstable.lib) getExe';
@@ -42,11 +42,11 @@
                   (
                     name: path_type:
                     if path_type == "regular" && builtins.match "[^_].*\\.nix" name != null then
-                      [(import (dir + "/${name}"))]
+                      [ (import (dir + "/${name}")) ]
                     else if path_type == "directory" then
                       nixFromDir (dir + "/${name}")
                     else
-                      []
+                      [ ]
                   )
                   (builtins.readDir dir)
               )
@@ -55,7 +55,7 @@
         builtins.concatMap nixFromDir;
     };
     iso = withSystem "x86_64-linux" (
-      {pkgs, ...}:
+      { pkgs, ... }:
       (pkgs.nixos {
         imports = [
           ./iso.nix
@@ -74,7 +74,7 @@
       ...
     }:
     {
-      devShells.default = pkgs.mkShell {shellHook = config.pre-commit.installationScript;};
+      devShells.default = pkgs.mkShell { shellHook = config.pre-commit.installationScript; };
 
       pre-commit =
         let
@@ -88,7 +88,7 @@
           check.enable = true;
           settings = {
             tools.nixfmt = lib.mkForce (lib.getBin pkgs.nixfmt);
-            excludes = ["\\.zsh$"];
+            excludes = [ "\\.zsh$" ];
             settings = {
               ormolu.defaultExtensions = [
                 "TypeApplications"
@@ -110,7 +110,7 @@
                 excludes = generated_nix_files;
               };
               editorconfig-checker = {
-                excludes = [".*\\.json"];
+                excludes = [ ".*\\.json" ];
                 enable = true;
               };
               deadnix = {

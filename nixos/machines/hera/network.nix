@@ -1,4 +1,4 @@
-{config, ...}:
+{ config, ... }:
 let
   inherit (config.m-0) hosts;
 in
@@ -12,8 +12,8 @@ in
       "${hosts.hera.AAAA}/128"
     ];
     routes = [
-      {routeConfig.Gateway = "213.136.94.1";}
-      {routeConfig.Gateway = "fe80::1";}
+      { routeConfig.Gateway = "213.136.94.1"; }
+      { routeConfig.Gateway = "fe80::1"; }
     ];
   };
   networking = {
@@ -55,6 +55,6 @@ in
       "2a02:c207::1:53"
       "2a02:c207::2:53"
     ];
-    firewall.allowedTCPPorts = [8666];
+    firewall.allowedTCPPorts = [ 8666 ];
   };
 }

@@ -1,1 +1,1 @@
-{pkgs, ...}: {home.packages = builtins.attrValues {inherit (pkgs) heroic gogdl;};}
+{ pkgs, ... }: { home.packages = builtins.attrValues { inherit (pkgs) heroic gogdl; }; }

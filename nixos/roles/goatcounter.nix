@@ -1,10 +1,10 @@
-{pkgs, lib, ...}:
+{ pkgs, lib, ... }:
 let
   src = pkgs.fetchurl {
     url = "https://github.com/zgoat/goatcounter/releases/download/v2.0.4/goatcounter-v2.0.4-linux-amd64.gz";
     sha256 = "1h7hv5lk2gm3klbfbgwfa7xn31az9zmlryd8bqqq38lp5r56cpb4";
   };
-  goatcounter-bin = pkgs.runCommand "goatcounter-bin" {} ''
+  goatcounter-bin = pkgs.runCommand "goatcounter-bin" { } ''
     mkdir -p $out/bin
     gunzip -c ${src} > $out/bin/goatcounter
     chmod +x $out/bin/goatcounter
@@ -12,13 +12,13 @@ let
   goatcounter-token = pkgs.privateValue "" "goatcounter-token";
 in
 {
-  environment.systemPackages = [goatcounter-bin];
+  environment.systemPackages = [ goatcounter-bin ];
   users = {
     users.goatcounter = {
       isSystemUser = true;
       group = "goatcounter";
     };
-    groups.goatcounter = {};
+    groups.goatcounter = { };
   };
   services.postgresql = {
     enable = true;
@@ -30,7 +30,7 @@ in
         };
       }
     ];
-    ensureDatabases = ["goatcounter"];
+    ensureDatabases = [ "goatcounter" ];
   };
   services.nginx = {
     appendHttpConfig = lib.mkAfter ''
@@ -47,8 +47,8 @@ in
   };
   systemd.services = {
     goatcounter = {
-      requires = ["postgresql.service"];
-      after = ["postgresql.service"];
+      requires = [ "postgresql.service" ];
+      after = [ "postgresql.service" ];
       serviceConfig = {
         User = "goatcounter";
         ExecStart = "${goatcounter-bin}/bin/goatcounter serve -db 'postgresql://host=/run/postgresql dbname=goatcounter' -listen *:8081 -tls http -automigrate";
@@ -56,11 +56,11 @@ in
         WatchdogSec = "20m";
         Restart = "always";
       };
-      wantedBy = ["multi-user.target"];
+      wantedBy = [ "multi-user.target" ];
     };
     goatcounter-feeder = {
-      requires = ["goatcounter.service"];
-      after = ["goatcounter.service"];
+      requires = [ "goatcounter.service" ];
+      after = [ "goatcounter.service" ];
       serviceConfig = {
         User = "nginx";
         Type = "oneshot";
@@ -80,7 +80,7 @@ in
   systemd.timers = {
     goatcounter-feeder = {
       timerConfig.OnCalendar = "minutely";
-      wantedBy = ["timers.target"];
+      wantedBy = [ "timers.target" ];
     };
   };
 }

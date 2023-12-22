@@ -1,4 +1,4 @@
-{pkgs, lib, ...}:
+{ pkgs, lib, ... }:
 let
   heading = name: link: ''<h2><a href=\"${link}\">${name}</a></h2>'';
   badge = src: link: ''<a href=\"${link}\">\n  <img src=\"${src}\">\n</a>'';
@@ -20,7 +20,7 @@ let
     (badge "https://repology.org/badge/vertical-allrepos/nix-output-monitor.svg?columns=3&header=" "https://repology.org/project/nix-output-monitor/versions"
     )
   ];
-  dashboards = pkgs.runCommand "dashboards" {} ''
+  dashboards = pkgs.runCommand "dashboards" { } ''
     mkdir -p $out
     cp ${./grafana-dashboards}/* $out
     substituteInPlace $out/health-status.json --replace '@BADGES@' '${badges}'

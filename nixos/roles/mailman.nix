@@ -1,15 +1,15 @@
-{pkgs, lib, ...}:
+{ pkgs, lib, ... }:
 let
   hostname = "lists.maralorn.de";
-  lists = pkgs.privateValue {} "mail/lists";
-  me = pkgs.privateValue {mail = "";} "mail/me";
+  lists = pkgs.privateValue { } "mail/lists";
+  me = pkgs.privateValue { mail = ""; } "mail/me";
   admin = me.mail;
 in
 {
   systemd.services.mailman.postStart = lib.concatStringsSep "\n" (
     map
       (x: ''
-        ${(pkgs.mailmanPackages.buildEnvs {}).mailmanEnv}/bin/mailman syncmembers -W -G - "${x}" << EOF
+        ${(pkgs.mailmanPackages.buildEnvs { }).mailmanEnv}/bin/mailman syncmembers -W -G - "${x}" << EOF
         ${lib.concatStringsSep "\n" lists."${x}"}
         EOF
       '')
@@ -18,7 +18,7 @@ in
   services = {
     mailman = {
       enable = true;
-      webHosts = [hostname];
+      webHosts = [ hostname ];
       serve.enable = true;
       enablePostfix = true;
       siteOwner = admin;
@@ -55,10 +55,10 @@ in
       };
     };
     postfix = {
-      relayDomains = ["hash:/var/lib/mailman/data/postfix_domains"];
+      relayDomains = [ "hash:/var/lib/mailman/data/postfix_domains" ];
       config =
         let
-          lmtp = ["hash:/var/lib/mailman/data/postfix_lmtp"];
+          lmtp = [ "hash:/var/lib/mailman/data/postfix_lmtp" ];
         in
         {
           transport_maps = lmtp;

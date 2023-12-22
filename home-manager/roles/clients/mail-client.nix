@@ -1,1 +1,1 @@
-{pkgs, ...}: {home.packages = [pkgs.neomutt];}
+{ pkgs, ... }: { home.packages = [ pkgs.neomutt ]; }

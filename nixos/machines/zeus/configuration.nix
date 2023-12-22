@@ -7,7 +7,7 @@ flake-inputs:
   ...
 }:
 let
-  inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
+  inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
 in
 {
   imports =

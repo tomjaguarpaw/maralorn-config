@@ -23,7 +23,7 @@ rec {
   '';
   if' =
     condition: ifTrue: ifFalse:
-    case ifFalse {"${condition}" = ifTrue;};
+    case ifFalse { "${condition}" = ifTrue; };
   or = lhs: rhs: "(${lhs} or ${rhs})";
   and = lhs: rhs: "(${lhs} and ${rhs})";
   isState = entity: state: "is_state('${entity}','${state}')";

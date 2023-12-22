@@ -1,1 +1,1 @@
-{pkgs, ...}: {environment.systemPackages = [pkgs.updateSystem];}
+{ pkgs, ... }: { environment.systemPackages = [ pkgs.updateSystem ]; }

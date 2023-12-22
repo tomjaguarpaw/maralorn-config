@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 {
   home.packages = builtins.attrValues {
     factorio = pkgs.factorio.override {

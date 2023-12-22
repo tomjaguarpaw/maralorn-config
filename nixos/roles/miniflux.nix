@@ -46,7 +46,7 @@ in
       '';
       serviceConfig = {
         Type = "oneshot";
-        LoadCredential = ["mastodon-auth-env:${config.age.secrets.mastodon-auth-env.path}"];
+        LoadCredential = [ "mastodon-auth-env:${config.age.secrets.mastodon-auth-env.path}" ];
       };
     };
     refresh-miniflux = {
@@ -55,8 +55,8 @@ in
         ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-watchfeeds https://${virtualHosts.rss}/v1/feeds/refresh
         ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-softwareupdates https://${virtualHosts.rss}/v1/feeds/refresh
       '';
-      after = ["mastodon-digest.service"];
-      requires = ["mastodon-digest.service"];
+      after = [ "mastodon-digest.service" ];
+      requires = [ "mastodon-digest.service" ];
       startAt = "23:00";
       serviceConfig = {
         Type = "oneshot";

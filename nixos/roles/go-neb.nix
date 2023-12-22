@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 {
   services.go-neb = {
     enable = true;
@@ -14,8 +14,8 @@
           DisplayName = "marabot";
         }
       ];
-      realms = [];
-      sessions = [];
+      realms = [ ];
+      sessions = [ ];
       services = [
         {
           ID = "alertmanager_service";

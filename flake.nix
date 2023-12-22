@@ -68,5 +68,5 @@
     nixos-hardware.url = "nixos-hardware";
   };
 
-  outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;} (import ./flake-module.nix);
+  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (import ./flake-module.nix);
 }

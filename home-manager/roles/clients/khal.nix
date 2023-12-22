@@ -1,9 +1,9 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 let
-  calendars = pkgs.privateValue [] "calendars";
+  calendars = pkgs.privateValue [ ] "calendars";
 in
 {
-  home.packages = [pkgs.khal];
+  home.packages = [ pkgs.khal ];
   xdg.configFile."khal/config".text = ''
     [locale]
     dateformat = "%Y-%m-%d"

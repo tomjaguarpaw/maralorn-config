@@ -1,1 +1,1 @@
-{pkgs, ...}: {home.packages = [pkgs.wineWowPackages.wayland];}
+{ pkgs, ... }: { home.packages = [ pkgs.wineWowPackages.wayland ]; }

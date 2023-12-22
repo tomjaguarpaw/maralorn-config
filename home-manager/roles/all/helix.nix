@@ -21,15 +21,15 @@ let
         name = "t";
         auto-format = true;
         scope = "text.t";
-        file-types = ["t"];
-        roots = ["Inbox.t"];
+        file-types = [ "t" ];
+        roots = [ "Inbox.t" ];
         indent = {
           tab-width = 2;
           unit = "	";
         };
         formatter = {
           command = "t";
-          args = ["fmt"];
+          args = [ "fmt" ];
         };
       }
     ];
@@ -87,7 +87,7 @@ in
           if [ -d "${config.home.homeDirectory}/git/${name}" ]; then
             mkdir -p "${config.home.homeDirectory}/git/${name}/.helix"
             ln -sf ${
-              (pkgs.formats.toml {}).generate "languages.toml" {language = value;}
+              (pkgs.formats.toml { }).generate "languages.toml" { language = value; }
             } ${config.home.homeDirectory}/git/${name}/.helix/languages.toml
           fi
         '')

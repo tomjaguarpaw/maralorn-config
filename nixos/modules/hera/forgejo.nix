@@ -1,4 +1,4 @@
-{pkgs, config, ...}:
+{ pkgs, config, ... }:
 let
   inherit (config.m-0) virtualHosts;
 in

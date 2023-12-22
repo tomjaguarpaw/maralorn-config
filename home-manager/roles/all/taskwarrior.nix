@@ -11,7 +11,7 @@ let
   '';
 in
 {
-  home.packages = [fix-tasks];
+  home.packages = [ fix-tasks ];
   services.taskwarrior-sync = {
     enable = true;
     frequency = "*:0/1";
@@ -44,7 +44,7 @@ in
             done
           '').outPath;
       };
-      Install.WantedBy = ["default.target"];
+      Install.WantedBy = [ "default.target" ];
     };
   };
   home.file = {
@@ -76,7 +76,7 @@ in
               pkgs.jq
               pkgs.libnotify
             ];
-            imports = ["Data.Aeson"];
+            imports = [ "Data.Aeson" ];
           }
           ''
 

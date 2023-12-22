@@ -1,1 +1,1 @@
-{nix.distributedBuilds = false;}
+{ nix.distributedBuilds = false; }

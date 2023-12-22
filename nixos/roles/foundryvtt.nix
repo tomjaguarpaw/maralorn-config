@@ -1,4 +1,4 @@
-{pkgs, lib, ...}:
+{ pkgs, lib, ... }:
 let
   name = "foundryvtt";
   stateDir = "/var/lib/${name}";
@@ -19,7 +19,7 @@ in
 {
   config = {
     systemd.services."${name}" = {
-      wantedBy = ["multi-user.target"];
+      wantedBy = [ "multi-user.target" ];
       description = "Foundryvtt server";
       preStart = ''
         mkdir -p ${dataDir}

@@ -9,7 +9,7 @@ let
   inherit (config.networking) hostName;
 in
 {
-  imports = [../../common];
+  imports = [ ../../common ];
 
   i18n = {
     defaultLocale = "en_DK.UTF-8";
@@ -41,7 +41,7 @@ in
               ${ip.A or null} = "${host} ${host}.m-0.eu";
             }
           else
-            {"${ip}" = "${host} ${host}.m-0.eu";}
+            { "${ip}" = "${host} ${host}.m-0.eu"; }
         )
         config.m-0.hosts
       ++
@@ -51,7 +51,7 @@ in
             let
               mkHost = name: "${name} ${name}.maralorn.de";
               name = "${host} ${host}.vpn.m-0.eu ${
-                lib.concatMapStringsSep " " mkHost config.m-0.hosts.aliases.${host} or []
+                lib.concatMapStringsSep " " mkHost config.m-0.hosts.aliases.${host} or [ ]
               }";
             in
             {
@@ -63,12 +63,12 @@ in
     );
   };
 
-  m-0.virtualHosts = lib.genAttrs (hosts.aliases.${hostName} or []) (name: "${name}.maralorn.de");
+  m-0.virtualHosts = lib.genAttrs (hosts.aliases.${hostName} or [ ]) (name: "${name}.maralorn.de");
 
   nix = {
     # Extra Option which is on by default: allow-import-from-derivation = true
     settings = {
-      trusted-public-keys = ["cache.maralorn.de:nul5zddJUyqgWvtcailq5WMdnqWXMmSY/JOxumIvTdU="];
+      trusted-public-keys = [ "cache.maralorn.de:nul5zddJUyqgWvtcailq5WMdnqWXMmSY/JOxumIvTdU=" ];
       experimental-features = [
         "nix-command"
         "flakes"
@@ -214,14 +214,14 @@ in
           "systemd"
           "logind"
         ];
-        disabledCollectors = ["timex"];
+        disabledCollectors = [ "timex" ];
       };
       nginx = {
         inherit (config.services.nginx) enable;
       };
     };
     nginx = {
-      enable = lib.mkDefault (config.m-0.virtualHosts != {});
+      enable = lib.mkDefault (config.m-0.virtualHosts != { });
       virtualHosts =
         lib.mapAttrs'
           (name: hostname: {
@@ -229,7 +229,7 @@ in
             value = {
               forceSSL = true;
               enableACME = true;
-              extraConfig = lib.mkIf (!(builtins.elem name (hosts.publicAliases.${hostName} or []))) ''
+              extraConfig = lib.mkIf (!(builtins.elem name (hosts.publicAliases.${hostName} or [ ]))) ''
                 satisfy any;
                 ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};") config.m-0.headscaleIPs}
                 deny all;

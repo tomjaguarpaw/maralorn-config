@@ -1,5 +1,5 @@
 {
-  boot.kernelParams = ["mitigations=off"];
+  boot.kernelParams = [ "mitigations=off" ];
   console.keyMap = "neo";
   services = {
     fwupd.enable = true;

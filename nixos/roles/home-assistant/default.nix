@@ -69,21 +69,21 @@ let
   homeAssistantDir = "/disk/persist/home-assistant";
 in
 {
-  imports = [./hexa-cards.nix];
+  imports = [ ./hexa-cards.nix ];
 
-  systemd.tmpfiles.rules = ["d ${homeAssistantDir} - - - - -"];
+  systemd.tmpfiles.rules = [ "d ${homeAssistantDir} - - - - -" ];
 
   services = {
     avahi.enable = true;
     home-assistant = {
       enable = true;
       configDir = homeAssistantDir;
-      extraComponents = [];
+      extraComponents = [ ];
       config = {
-        esphome = {};
-        default_config = {};
-        shopping_list = {};
-        openweathermap = {};
+        esphome = { };
+        default_config = { };
+        shopping_list = { };
+        openweathermap = { };
         matrix = {
           homeserver = "https://matrix.maralorn.de";
           username = "@marabot:maralorn.de";
@@ -113,9 +113,9 @@ in
             ];
           };
         };
-        homeassistant = pkgs.privateValue {} "homeassistant-home";
+        homeassistant = pkgs.privateValue { } "homeassistant-home";
         frontend.themes.ourdefault.modes.dark.primary-color = colors.primary;
-        timer.block_heating_schlafzimmer = {};
+        timer.block_heating_schlafzimmer = { };
         automation =
           [
             {
@@ -151,7 +151,7 @@ in
                             {
                               condition = "state";
                               entity_id = "binary_sensor.schlafzimmerfenster";
-                              state = ["on"];
+                              state = [ "on" ];
                             }
                           ];
                         }
@@ -180,7 +180,7 @@ in
             }
             {
               alias = "Lüftungssteuerung Bad";
-              trigger = [(triggers.stateTrigger "sensor.${sensor.bad}_humidity")];
+              trigger = [ (triggers.stateTrigger "sensor.${sensor.bad}_humidity") ];
               action = [
                 {
                   choose = [
@@ -220,7 +220,7 @@ in
             #}
             {
               alias = "Schlafzimmerfenstertimer";
-              trigger = [(triggers.stateTrigger "binary_sensor.schlafzimmerfenster")];
+              trigger = [ (triggers.stateTrigger "binary_sensor.schlafzimmerfenster") ];
               action = {
                 service = "timer.start";
                 data = {
@@ -255,7 +255,7 @@ in
                         {
                           condition = "state";
                           entity_id = "timer.block_heating_schlafzimmer";
-                          state = ["idle"];
+                          state = [ "idle" ];
                         }
                         {
                           condition = "state";
@@ -397,7 +397,7 @@ in
                     2500
                     3000
                   ];
-              action = [(actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }} ppm.")];
+              action = [ (actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }} ppm.") ];
             }
             {
               alias = "Warnung bei niedrigem Akkustand";
@@ -420,7 +420,7 @@ in
                     1
                     0
                   ];
-              action = [(actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%.")];
+              action = [ (actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%.") ];
             }
             {
               alias = "Abend";
@@ -430,7 +430,7 @@ in
                   at = "22:50:00";
                 }
               ];
-              action = [(actions.notify "Es ist 22:50 Uhr.")];
+              action = [ (actions.notify "Es ist 22:50 Uhr.") ];
             }
             {
               alias = "Aufwachen";
@@ -470,7 +470,7 @@ in
                 to = "unavailable";
                 for = "01:00:00";
               };
-              action = [(actions.notify "{{ trigger.to_state.name }} ist seit 1h unerreichbar.")];
+              action = [ (actions.notify "{{ trigger.to_state.name }} ist seit 1h unerreichbar.") ];
             })
             [
               "switch.luftentfeuchter"
@@ -514,7 +514,7 @@ in
               ]
             )
           );
-        recorder = {};
+        recorder = { };
         template = [
           {
             sensor = [
@@ -638,12 +638,12 @@ in
             "00:12:4b:00:24:c0:ff:ad-1".type = "switch"; # Weihnachtsstern Schlafzimmer
           };
         };
-        ipp = {};
-        brother = {};
+        ipp = { };
+        brother = { };
         sensor = [
           {
             platform = "rmvtransport";
-            next_departure = [{station = "3024634";}];
+            next_departure = [ { station = "3024634"; } ];
           }
           {
             platform = "dwd_weather_warnings";
@@ -652,7 +652,7 @@ in
         ];
         http = {
           use_x_forwarded_for = true;
-          trusted_proxies = ["::1"];
+          trusted_proxies = [ "::1" ];
         };
         prometheus = {
           namespace = "hass";
@@ -670,12 +670,12 @@ in
                     icon = "mdi:broadcast-off";
                   })
                   switches;
-              state_filter = ["unavailable"];
+              state_filter = [ "unavailable" ];
             }
             {
               type = "entity-filter";
               entities = fenster;
-              state_filter = ["on"];
+              state_filter = [ "on" ];
             }
             {
               type = "entity-filter";
@@ -692,7 +692,7 @@ in
           envstack = {
             type = "vertical-stack";
             cards = [
-              {type = "custom:sun-card";}
+              { type = "custom:sun-card"; }
               {
                 type = "picture";
                 image = "https://www.dwd.de/DWD/wetter/radar/radfilm_hes_akt.gif";
@@ -1351,7 +1351,7 @@ in
               })
               {
                 type = "logbook";
-                entities = ["switch.lueftung_bad"];
+                entities = [ "switch.lueftung_bad" ];
               }
             ];
           };
@@ -1362,27 +1362,27 @@ in
             {
               icon = "mdi:sofa";
               type = "panel";
-              cards = [wohnzimmerstack];
+              cards = [ wohnzimmerstack ];
             }
             {
               icon = "mdi:countertop";
               type = "panel";
-              cards = [kuechenstack];
+              cards = [ kuechenstack ];
             }
             {
               icon = "mdi:bed-king";
               type = "panel";
-              cards = [schlafzimmerstack];
+              cards = [ schlafzimmerstack ];
             }
             {
               icon = "mdi:shower-head";
               type = "panel";
-              cards = [badstack];
+              cards = [ badstack ];
             }
             {
               icon = "mdi:city";
               inherit badges;
-              cards = [envstack];
+              cards = [ envstack ];
             }
             {
               icon = "mdi:floor-plan";

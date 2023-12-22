@@ -95,7 +95,7 @@ in
     timers.update-software-feeds = {
       Unit.Description = "Update software feeds";
       Timer.OnCalendar = "00:05";
-      Install.WantedBy = ["timers.target"];
+      Install.WantedBy = [ "timers.target" ];
     };
   };
   home = {

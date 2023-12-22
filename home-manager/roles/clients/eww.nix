@@ -8,18 +8,18 @@
 
   systemd.user.services.eww = {
     Unit = {
-      X-Restart-Triggers = ["${config.programs.eww.configDir}"];
+      X-Restart-Triggers = [ "${config.programs.eww.configDir}" ];
       Description = "EWW";
-      Wants = ["status-script.service"];
+      Wants = [ "status-script.service" ];
       After = [
         "status-script.service"
         "graphical-session.target"
       ];
-      Before = ["kanshi.service"];
-      PartOf = ["graphical-session.target"];
-      Requires = ["graphical-session.target"];
+      Before = [ "kanshi.service" ];
+      PartOf = [ "graphical-session.target" ];
+      Requires = [ "graphical-session.target" ];
     };
-    Install.WantedBy = ["graphical-session.target"];
+    Install.WantedBy = [ "graphical-session.target" ];
     Service = {
       Environment = "PATH=${
         lib.makeBinPath [

@@ -1,4 +1,4 @@
-{lib, config, ...}:
+{ lib, config, ... }:
 {
   services.swayidle = {
     events = [

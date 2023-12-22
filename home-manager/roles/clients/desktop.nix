@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 {
   home = {
     # This fixes border drawing but makes neo wonky. sessionVariables.NIXOS_OZONE_WL = "1";
@@ -83,9 +83,9 @@
       package = pkgs.catppuccin-gtk.override {
         variant = "mocha";
         size = "compact";
-        tweaks = ["rimless"];
+        tweaks = [ "rimless" ];
       };
     };
-    gtk3.bookmarks = ["ftp://athene.lo.m-0.eu"];
+    gtk3.bookmarks = [ "ftp://athene.lo.m-0.eu" ];
   };
 }

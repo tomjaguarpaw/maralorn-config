@@ -75,7 +75,7 @@ let
       ${lib.getExe pkgs.updateSystem}
       echo "Maintenance finished."
     '';
-    activateMode = pkgs.writeHaskellScript {name = "activate-mode";} ''
+    activateMode = pkgs.writeHaskellScript { name = "activate-mode"; } ''
       main = do
         ${get_mode}
         say [i|Switching to mode #{mode}...|]
@@ -89,7 +89,7 @@ let
             pkgs.river
             pkgs.activateMode
           ];
-          imports = ["System.Directory qualified as Directory"];
+          imports = [ "System.Directory qualified as Directory" ];
         }
         ''
           main = do
@@ -191,4 +191,4 @@ let
         '';
   };
 in
-mode-scripts // {inherit mode-scripts;}
+mode-scripts // { inherit mode-scripts; }

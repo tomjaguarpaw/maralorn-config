@@ -1,4 +1,4 @@
-{config, lib, ...}:
+{ config, lib, ... }:
 {
   services = {
     prometheus = {
@@ -7,7 +7,7 @@
         "--query.lookback-delta=180m"
         "--storage.tsdb.retention.time=720d"
       ];
-      ruleFiles = [./rules.yml];
+      ruleFiles = [ ./rules.yml ];
       scrapeConfigs =
         let
           alert_type = "infrastructure";
@@ -22,7 +22,7 @@
               metrics_path = "/_synapse/metrics";
               static_configs = [
                 {
-                  targets = ["localhost:9148"];
+                  targets = [ "localhost:9148" ];
                   labels = {
                     inherit name;
                     inherit alert_type;
@@ -43,7 +43,7 @@
                 job_name = name;
                 static_configs = [
                   {
-                    targets = [entry.host];
+                    targets = [ entry.host ];
                     labels = {
                       inherit name;
                       inherit alert_type;

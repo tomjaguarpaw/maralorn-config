@@ -1,4 +1,4 @@
-{config, ...}:
+{ config, ... }:
 {
   home.file = {
     ".volatile".source = config.lib.file.mkOutOfStoreSymlink "/disk/volatile${config.home.homeDirectory}";

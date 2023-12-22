@@ -7,7 +7,7 @@ flake-inputs:
   ...
 }:
 let
-  inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
+  inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
 in
 {
   imports =
@@ -38,7 +38,7 @@ in
 
   networking.hostName = "apollo";
 
-  systemd.services.throttled.path = [pkgs.kmod];
+  systemd.services.throttled.path = [ pkgs.kmod ];
 
   services = {
     udev.extraRules = ''

@@ -2,7 +2,7 @@ let
   makeProbe = module: targets: {
     job_name = "blackbox ${module}";
     metrics_path = "/probe";
-    params.module = [module];
+    params.module = [ module ];
     static_configs = [
       {
         inherit targets;
@@ -19,11 +19,11 @@ let
         separator = " against ";
       }
       {
-        source_labels = ["__address__"];
+        source_labels = [ "__address__" ];
         target_label = "__param_target";
       }
       {
-        source_labels = ["__param_target"];
+        source_labels = [ "__param_target" ];
         target_label = "instance";
       }
       {
@@ -34,7 +34,7 @@ let
     ];
   };
 in
-{config, lib, ...}:
+{ config, lib, ... }:
 {
   services.prometheus = {
     exporters.blackbox = {
@@ -42,14 +42,14 @@ in
       configFile = ./blackbox_rules.yml;
     };
     scrapeConfigs = [
-      (makeProbe "tls_connect" ["hera.m-0.eu:993"])
+      (makeProbe "tls_connect" [ "hera.m-0.eu:993" ])
       (makeProbe "smtp_starttls" [
         "hera.m-0.eu:587"
         "bach.vocalensemble-darmstadt.de:25"
         "hera.m-0.eu:25"
       ])
       (makeProbe "http" (
-        ["hera.m-0.eu"]
+        [ "hera.m-0.eu" ]
         ++ lib.pipe (config.m-0.hosts.aliases.athene ++ config.m-0.hosts.aliases.hera) [
           (builtins.filter (name: name != "cache"))
           (map (name: "http://${name}.maralorn.de/"))

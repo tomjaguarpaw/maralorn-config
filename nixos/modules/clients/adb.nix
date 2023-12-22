@@ -1,1 +1,1 @@
-{programs.adb.enable = true;}
+{ programs.adb.enable = true; }

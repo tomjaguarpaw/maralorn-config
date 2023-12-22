@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 let
   nur = pkgs.flake-inputs'.hexa-nur-packages.packages;
 

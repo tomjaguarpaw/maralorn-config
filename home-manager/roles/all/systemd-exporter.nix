@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 {
   systemd.user = {
     services.prometheus-systemd-exporter = {
@@ -6,7 +6,7 @@
       Service = {
         ExecStart = "${pkgs.prometheus-systemd-exporter}/bin/systemd_exporter --systemd.collector.user";
       };
-      Install.WantedBy = ["default.target"];
+      Install.WantedBy = [ "default.target" ];
     };
   };
 }

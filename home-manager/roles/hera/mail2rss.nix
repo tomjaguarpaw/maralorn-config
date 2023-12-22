@@ -15,7 +15,7 @@ let
           pkgs.isync
           pkgs.rssfeeds
         ];
-        imports = ["System.Environment (setEnv)"];
+        imports = [ "System.Environment (setEnv)" ];
       }
       ''
         main = do
@@ -33,13 +33,13 @@ in
   systemd.user = {
     timers.mail2rss = {
       Timer.OnCalendar = "22:58";
-      Install.WantedBy = ["timers.target"];
+      Install.WantedBy = [ "timers.target" ];
     };
     services = {
       mail2rss = {
         Unit.Description = "Mail to rss exporter";
         Service = {
-          Environment = "PATH=${lib.makeBinPath [pkgs.coreutils]}";
+          Environment = "PATH=${lib.makeBinPath [ pkgs.coreutils ]}";
           ExecStart = lib.getExe mail2rss;
           Type = "oneshot";
         };

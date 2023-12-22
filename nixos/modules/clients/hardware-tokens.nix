@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 {
   hardware.nitrokey.enable = true;
   environment.systemPackages = [
@@ -6,7 +6,7 @@
     pkgs.yubikey-touch-detector
     pkgs.solo2-cli
   ];
-  services.udev.packages = [pkgs.solo2-cli];
+  services.udev.packages = [ pkgs.solo2-cli ];
   security.pam = {
     services = {
       login.u2fAuth = true;

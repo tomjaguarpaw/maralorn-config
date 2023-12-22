@@ -7,8 +7,8 @@ flake-inputs:
   ...
 }:
 let
-  inherit (import ../../../common/common.nix {inherit pkgs;}) syncthing;
-  backupJobs = pkgs.privateValue {} "borgbackup";
+  inherit (import ../../../common/common.nix { inherit pkgs; }) syncthing;
+  backupJobs = pkgs.privateValue { } "borgbackup";
   backupJobNames = map (name: "borgbackup-job-${name}") (lib.attrNames backupJobs);
 in
 {
@@ -131,7 +131,7 @@ in
       enable = true;
       fqdn = "${config.m-0.virtualHosts.taskserver}";
       listenHost = "::";
-      organisations."maralorn.de".users = ["maralorn"];
+      organisations."maralorn.de".users = [ "maralorn" ];
     };
     syncthing =
       {
@@ -152,7 +152,7 @@ in
         ]
         "/media";
   };
-  systemd.tmpfiles.rules = ["Z /media 0770 maralorn nginx - -"];
+  systemd.tmpfiles.rules = [ "Z /media 0770 maralorn nginx - -" ];
 
   users.users = {
     choreutes = {

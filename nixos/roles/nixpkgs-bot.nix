@@ -21,26 +21,26 @@ let
     branches = builtins.zipAttrsWith (_: lib.flatten) (
       [
         {
-          "staging" = ["staging-next"];
-          "staging-next" = ["master"];
-          "haskell-updates" = ["master"];
+          "staging" = [ "staging-next" ];
+          "staging-next" = [ "master" ];
+          "haskell-updates" = [ "master" ];
           "master" = [
             "nixos-unstable-small"
             "nixpkgs-unstable"
           ];
-          "nixpkgs-unstable" = [];
-          "nixos-unstable-small" = ["nixos-unstable"];
-          "nixos-unstable" = [];
+          "nixpkgs-unstable" = [ ];
+          "nixos-unstable-small" = [ "nixos-unstable" ];
+          "nixos-unstable" = [ ];
         }
       ]
       ++
         map
           (release: {
-            "staging-${release}" = ["staging-next-${release}"];
-            "staging-next-${release}" = ["release-${release}"];
-            "release-${release}" = ["nixos-${release}-small"];
-            "nixos-${release}-small" = ["nixos-${release}"];
-            "nixos-${release}" = [];
+            "staging-${release}" = [ "staging-next-${release}" ];
+            "staging-next-${release}" = [ "release-${release}" ];
+            "release-${release}" = [ "nixos-${release}-small" ];
+            "nixos-${release}-small" = [ "nixos-${release}" ];
+            "nixos-${release}" = [ ];
           })
           releases
     );
@@ -48,9 +48,9 @@ let
 in
 {
   systemd.services.nixpkgs-bot = {
-    wantedBy = ["multi-user.target"];
+    wantedBy = [ "multi-user.target" ];
     description = "nixpkgs-bot";
-    path = [pkgs.git];
+    path = [ pkgs.git ];
     serviceConfig = {
       LoadCredential = [
         "matrix_token:${config.age.secrets."nixpkgs-bot/matrix_token".path}"

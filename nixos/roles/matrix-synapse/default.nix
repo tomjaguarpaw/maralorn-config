@@ -9,7 +9,7 @@ let
   hostName = "matrix.${server_name}";
 in
 {
-  environment.systemPackages = [pkgs.matrix-synapse-tools.rust-synapse-compress-state];
+  environment.systemPackages = [ pkgs.matrix-synapse-tools.rust-synapse-compress-state ];
   systemd.services = {
     # use jemalloc to improve the memory situation with synapse
     matrix-synapse.environment = {
@@ -32,14 +32,14 @@ in
                   config.services.postgresql.package
                 ]
               }:$PATH";
-              ghcArgs = ["-threaded"];
+              ghcArgs = [ "-threaded" ];
             }
             (builtins.readFile ./synapse-cleanup.hs);
         User = "matrix-synapse";
         Type = "oneshot";
       };
     };
-    synapse-worker-1 = {};
+    synapse-worker-1 = { };
   };
   services = {
     nginx = {
@@ -83,7 +83,7 @@ in
     postgresql = {
       enable = true;
       settings = import ./postgres-tuning.nix;
-      ensureDatabases = ["matrix-synapse"];
+      ensureDatabases = [ "matrix-synapse" ];
     };
 
     # Synapse
@@ -167,21 +167,21 @@ in
             {
               type = "metrics";
               port = 9148;
-              bind_addresses = ["127.0.0.1"];
-              resources = [];
+              bind_addresses = [ "127.0.0.1" ];
+              resources = [ ];
               tls = false;
             }
             {
               port = 8008;
-              bind_addresses = ["::1"];
+              bind_addresses = [ "::1" ];
               resources = [
                 {
                   compress = false;
-                  names = ["client"];
+                  names = [ "client" ];
                 }
                 {
                   compress = false;
-                  names = ["federation"];
+                  names = [ "federation" ];
                 }
               ];
               x_forwarded = true;

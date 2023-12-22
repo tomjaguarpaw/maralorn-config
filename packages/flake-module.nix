@@ -1,4 +1,4 @@
-{lib, inputs, ...}:
+{ lib, inputs, ... }:
 let
   stable-pkgs = inputs.nixos-stable.legacyPackages.x86_64-linux;
   unstable-pkgs = inputs.nixos-unstable.legacyPackages.x86_64-linux;
@@ -12,14 +12,14 @@ let
   cleanCabalPackage =
     source:
     {
-      extraPatterns ? [],
-      overrides ? _: {},
+      extraPatterns ? [ ],
+      overrides ? _: { },
     }:
     hpkgs:
     let
       cleanSource = lib.sourceFilesBySuffices source (includePatterns ++ extraPatterns);
     in
-    lib.pipe {} [
+    lib.pipe { } [
       (hpkgs.callPackage source)
       (overrideCabal (
         old:
@@ -35,18 +35,18 @@ let
     final: prev:
     lib.mapAttrs (_: package: package final) myHaskellPackages
     // {
-      nixfmt = overrideCabal (_: {src = inputs.nixfmt;}) prev.nixfmt;
+      nixfmt = overrideCabal (_: { src = inputs.nixfmt; }) prev.nixfmt;
     };
   selectHaskellPackages =
-    attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages // {inherit (attrs) nixfmt;};
+    attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages // { inherit (attrs) nixfmt; };
   myHaskellPackages = {
-    wizards-dialog = cleanCabalPackage ./wizards-dialog {};
-    rssfeeds = cleanCabalPackage ./rssfeeds {};
-    kassandra = cleanCabalPackage ./kassandra/kassandra {overrides = _: {doHaddock = false;};};
-    kassandra-standalone = cleanCabalPackage ./kassandra/standalone {};
-    nixpkgs-bot = cleanCabalPackage ./nixpkgs-bot {};
-    t = cleanCabalPackage ./t {};
-    builders-configurator = cleanCabalPackage ./builders-configurator {};
+    wizards-dialog = cleanCabalPackage ./wizards-dialog { };
+    rssfeeds = cleanCabalPackage ./rssfeeds { };
+    kassandra = cleanCabalPackage ./kassandra/kassandra { overrides = _: { doHaddock = false; }; };
+    kassandra-standalone = cleanCabalPackage ./kassandra/standalone { };
+    nixpkgs-bot = cleanCabalPackage ./nixpkgs-bot { };
+    t = cleanCabalPackage ./t { };
+    builders-configurator = cleanCabalPackage ./builders-configurator { };
     status-script = cleanCabalPackage ./status-script {
       overrides = _: {
         buildDepends = builtins.attrValues {
@@ -65,7 +65,7 @@ let
       };
     };
   };
-  hpkgs = unstable-pkgs.haskellPackages.override {overrides = haskellPackagesOverlay;};
+  hpkgs = unstable-pkgs.haskellPackages.override { overrides = haskellPackagesOverlay; };
   packages = selectHaskellPackages hpkgs;
 in
 {

@@ -1,4 +1,4 @@
-{pkgs, config, ...}:
+{ pkgs, config, ... }:
 let
   locations."/".extraConfig = "return 301 https://blog.maralorn.de$request_uri;";
 in
@@ -36,11 +36,11 @@ in
             };
           };
         };
-      } // pkgs.privateValue {} "extra-sites";
+      } // pkgs.privateValue { } "extra-sites";
     };
   };
   systemd.services.nginx.serviceConfig = {
     Restart = "always";
-    LoadCredential = ["melon-pw:${config.age.secrets."basic-auth/melon".path}"];
+    LoadCredential = [ "melon-pw:${config.age.secrets."basic-auth/melon".path}" ];
   };
 }

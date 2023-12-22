@@ -1,1 +1,1 @@
-{nix.optimise.dates = ["daily"];}
+{ nix.optimise.dates = [ "daily" ]; }

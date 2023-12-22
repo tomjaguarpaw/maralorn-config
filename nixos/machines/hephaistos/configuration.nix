@@ -1,5 +1,5 @@
 flake-inputs:
-{mylib, ...}:
+{ mylib, ... }:
 {
   imports =
     [

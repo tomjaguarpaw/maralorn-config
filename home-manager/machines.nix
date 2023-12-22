@@ -30,7 +30,7 @@ in
     "laptops"
     "metal"
   ];
-  hera = makeConfig "hera" ["servers"];
+  hera = makeConfig "hera" [ "servers" ];
   zeus = makeConfig "zeus" [
     "clients"
     "impermanent"

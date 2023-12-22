@@ -1,4 +1,4 @@
-{pkgs, config, ...}:
+{ pkgs, config, ... }:
 {
   services = {
     mysql = {
@@ -8,7 +8,7 @@
 
     mysqlBackup = {
       enable = true;
-      databases = ["firefox_syncserver"];
+      databases = [ "firefox_syncserver" ];
       calendar = "";
       singleTransaction = true;
     };

@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 let
   default_mailbox = {
     MailboxName = "<missing>";
@@ -52,6 +52,6 @@ in
 {
   systemd.services.email2matrix = {
     script = "${pkgs.email2matrix}/bin/devture-email2matrix --config ${email2matrix-config}";
-    wantedBy = ["multi-user.target"];
+    wantedBy = [ "multi-user.target" ];
   };
 }

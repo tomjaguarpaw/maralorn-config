@@ -1,4 +1,4 @@
-{pkgs, lib, ...}:
+{ pkgs, lib, ... }:
 {
   system.activationScripts.diff = {
     supportsDryActivation = true;

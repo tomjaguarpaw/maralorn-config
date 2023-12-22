@@ -1,4 +1,4 @@
-{device, ...}:
+{ device, ... }:
 {
   disko.devices = {
     disk.system = {
@@ -34,17 +34,17 @@
             content = {
               type = "luks";
               name = "system";
-              extraOpenArgs = ["--allow-discards"];
+              extraOpenArgs = [ "--allow-discards" ];
               content = {
                 type = "btrfs";
                 subvolumes = {
-                  "/disk" = {};
+                  "/disk" = { };
                   "/disk/persist" = {
-                    mountOptions = ["compress=zstd"];
+                    mountOptions = [ "compress=zstd" ];
                     mountpoint = "/disk/persist";
                   };
                   "/disk/volatile" = {
-                    mountOptions = ["compress=zstd"];
+                    mountOptions = [ "compress=zstd" ];
                     mountpoint = "/disk/volatile";
                   };
                   "/nix" = {

@@ -11,7 +11,7 @@ let
         gpg = "";
         name = "";
         mail = "";
-        alternates = [];
+        alternates = [ ];
       }
       "mail/me"
     )
@@ -43,7 +43,7 @@ in
   };
   systemd.user.timers.mbsync.Timer.RandomizedDelaySec = "10m";
 
-  accounts.email.accounts = lib.recursiveUpdate (pkgs.privateValue {} "mail/accounts") {
+  accounts.email.accounts = lib.recursiveUpdate (pkgs.privateValue { } "mail/accounts") {
     hera = {
       passwordCommand = "${pkgs.coreutils}/bin/cat /run/agenix/mail-password";
       imapnotify.onNotify = lib.getExe quick-mail-sync;
@@ -69,7 +69,7 @@ in
               ''
             );
           };
-          Install.WantedBy = ["default.target"];
+          Install.WantedBy = [ "default.target" ];
         };
       };
     in
@@ -100,15 +100,15 @@ in
         ${pkgs.notmuch}/bin/notmuch tag -spam -- "(not folder:/Junk|Spam|SPAM/) tag:spam"
       '';
       new = {
-        tags = [];
-        ignore = [".isyncuidmap.db"];
+        tags = [ ];
+        ignore = [ ".isyncuidmap.db" ];
       };
       maildir.synchronizeFlags = true;
     };
   };
 
   home = {
-    packages = [quick-mail-sync];
+    packages = [ quick-mail-sync ];
     file =
       let
         mutt_alternates = "@maralorn.de " + (builtins.concatStringsSep " " alternates);

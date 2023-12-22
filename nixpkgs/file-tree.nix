@@ -12,9 +12,9 @@ let
           }
         ]
       else
-        lib.concatLists (lib.mapAttrsToList (dirName: linkToPath (path ++ [dirName])) fileOrDir)
+        lib.concatLists (lib.mapAttrsToList (dirName: linkToPath (path ++ [ dirName ])) fileOrDir)
     );
 in
 {
-  recursiveLinkFarm = name: files: final.linkFarm name (linkToPath [] files);
+  recursiveLinkFarm = name: files: final.linkFarm name (linkToPath [ ] files);
 }
