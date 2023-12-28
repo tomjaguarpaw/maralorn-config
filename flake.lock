@@ -123,16 +123,16 @@
         "nixpkgs": []
       },
       "locked": {
-        "lastModified": 1702195668,
-        "narHash": "sha256-Lxmjez0nfNBptdqV5GsXKm7Bb7swjGsrxiLxWJu0tL8=",
+        "lastModified": 1703367386,
+        "narHash": "sha256-FMbm48UGrBfOWGt8+opuS+uLBLQlRfhiYXhHNcYMS5k=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "33110fb3c7fe6a94b98b641866a5eddb64b7c23f",
+        "rev": "d5824a76bc6bb93d1dce9ebbbcb09a9b6abcc224",
         "type": "github"
       },
       "original": {
         "id": "home-manager",
-        "ref": "release-23.05",
+        "ref": "release-23.11",
         "type": "indirect"
       }
     },
@@ -289,25 +289,25 @@
         "rev": "b5023b36a1f6628865cb42b4353bd2ddde0ea9f4",
         "revCount": 575,
         "type": "git",
-        "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git"
+        "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git?branch=nixos-23.11"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git"
+        "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git?branch=nixos-23.11"
       }
     },
     "nixos-stable": {
       "locked": {
-        "lastModified": 1703351344,
-        "narHash": "sha256-9FEelzftkE9UaJ5nqxidaJJPEhe9TPhbypLHmc2Mysc=",
+        "lastModified": 1703467016,
+        "narHash": "sha256-/5A/dNPhbQx/Oa2d+Get174eNI3LERQ7u6WTWOlR1eQ=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "7790e078f8979a9fcd543f9a47427eeaba38f268",
+        "rev": "d02d818f22c777aa4e854efc3242ec451e5d462a",
         "type": "github"
       },
       "original": {
         "id": "nixpkgs",
-        "ref": "nixos-23.05",
+        "ref": "nixos-23.11",
         "type": "indirect"
       }
     },
