@@ -3,6 +3,7 @@
   home.packages = builtins.attrValues {
     inherit (pkgs)
       river
+      riverguile
       wlopm
       wlr-randr
       swaybg
