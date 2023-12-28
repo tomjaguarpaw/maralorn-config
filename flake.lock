@@ -280,20 +280,22 @@
         "nixpkgs": [],
         "nixpkgs-22_11": [],
         "nixpkgs-23_05": [],
+        "nixpkgs-23_11": [],
         "utils": []
       },
       "locked": {
-        "lastModified": 1703666786,
-        "narHash": "sha256-SLPNpM/rI8XPyVJAxMYAe+n6NiYSpuXvdwPILHP4yZI=",
-        "ref": "refs/heads/master",
-        "rev": "b5023b36a1f6628865cb42b4353bd2ddde0ea9f4",
-        "revCount": 575,
+        "lastModified": 1703023684,
+        "narHash": "sha256-XQU4OaacV0F2tf9cNAvIMqlC0HBIrAtvb0MLjIHt+7M=",
+        "ref": "nixos-23.11",
+        "rev": "4bfb8eb058f098302c97b909df2d019926e11220",
+        "revCount": 574,
         "type": "git",
-        "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git?branch=nixos-23.11"
+        "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git"
       },
       "original": {
+        "ref": "nixos-23.11",
         "type": "git",
-        "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git?branch=nixos-23.11"
+        "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git"
       }
     },
     "nixos-stable": {

@@ -37,9 +37,10 @@
         nixpkgs.follows = "";
         nixpkgs-22_11.follows = "";
         nixpkgs-23_05.follows = "";
+        nixpkgs-23_11.follows = "";
         blobs.follows = "";
       };
-      url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git?branch=nixos-23.11";
+      url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git?ref=nixos-23.11";
     };
     home-manager = {
       url = "home-manager/release-23.11";
