@@ -34,7 +34,7 @@
           ] ++ unicode-fallback;
         };
     };
-    fonts = builtins.attrValues {
+    packages = builtins.attrValues {
       inherit (pkgs)
         libertinus
         # nice text font
