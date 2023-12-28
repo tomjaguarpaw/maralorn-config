@@ -3,6 +3,8 @@
   fetchFromSourcehut,
   wayland-scanner,
   wayland,
+  gnused,
+  lib,
   guile_2_2,
   pkg-config,
   ...
@@ -16,6 +18,10 @@ stdenv.mkDerivation rec {
     rev = version;
     sha256 = "sha256-WNv7mCpUydIBVpAMm6EiBEWSZYdlTr5hTr0O3RvUMcs=";
   };
+  makeFlags = [ "PREFIX=$(out)" ];
+  patchPhase = ''
+    ${lib.getExe gnused} -i s/-Werror// Makefile
+  '';
   buildInputs = [
     wayland-scanner
     wayland
