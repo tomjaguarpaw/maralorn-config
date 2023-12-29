@@ -25,6 +25,9 @@
     # first use.
     token = "Kn0b5KM3YEzpXO2FDBW1N8op6w4Q0M8bkJpth2e2";
     labels = [ "nix:host" ];
+
+    # Fix for: https://gitea.com/gitea/act_runner/issues/361
+    settings.host.workdir_parent = "/var/lib/gitea-runner/action-cache-dir";
     hostPackages = builtins.attrValues {
       inherit (pkgs)
         archive-nix-path
