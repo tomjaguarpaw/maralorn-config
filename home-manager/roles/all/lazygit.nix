@@ -2,7 +2,7 @@
 {
   home.activation = {
     cleanLazygitConfigFile = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
-      rm ~/.config/lazygit/config.yml
+      rm -f ~/.config/lazygit/config.yml
     '';
     fixLazygitConfigFile = lib.hm.dag.entryAfter [ "onFilesChange" ] ''
       cp ~/.config/lazygit/config.yml ~/.config/lazygit/config.yml.cp
