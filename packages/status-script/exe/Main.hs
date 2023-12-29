@@ -62,11 +62,9 @@ main = Notify.withManager \watch_manager -> do
     start <- R.getPostBuild
     PublishSocket.publishJson env "uptime" (start $> now)
     mode <- Mode.getMode env
-    ping_event <- Ping.ping env
+    ping_event <- Ping.ping' env
     software_feed_event <- SoftwareFeed.softwareFeed env mode
     boot_state_event <- BootState.bootState env mode
-    config_pull_event <- ConfigPull.pullNeeded env mode
-    (git_warnings, dirties) <- Git.gitEvents env mode
     mail_events <- Mail.mail env mode
     inbox_events <- Tasks.tasks env mode
     notification_events <- Mako.notifications env
@@ -74,8 +72,6 @@ main = Notify.withManager \watch_manager -> do
       ReflexUtil.concatEvents
         [ ping_event
         , boot_state_event
-        , config_pull_event
-        , git_warnings
         , software_feed_event
         , mail_events
         , inbox_events
@@ -107,8 +103,6 @@ main = Notify.withManager \watch_manager -> do
     PublishSocket.publishJson env "timers" timer_events
     network_events <- Network.networkState env
     PublishSocket.publishJson env "networks" network_events
-    touch_required <- KeyTouch.touchRequired env
-    PublishSocket.publishJson env "touchrequired" (touch_required & R.updated)
     audio_event <- Audio.audioUpdateEvent env
     audio_info_event <- Audio.audioInfos audio_event
     PublishSocket.publishJson env "audio" audio_info_event

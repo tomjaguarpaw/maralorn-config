@@ -1,4 +1,4 @@
-module StatusScript.Modules.Ping (ping) where
+module StatusScript.Modules.Ping (ping') where
 
 import Maralorn.Prelude
 import Reflex qualified as R
@@ -12,11 +12,13 @@ import StatusScript.Warnings (Warning (..))
 hosts :: [Text]
 hosts = ["hera", "athene"]
 
-ping :: (R.MonadHeadlessApp t m) => Env -> m (R.Event t [Warning])
-ping = \env -> do
+Shh.load Shh.Absolute ["ping"]
+
+ping' :: (R.MonadHeadlessApp t m) => Env -> m (R.Event t [Warning])
+ping' = \env -> do
   tick <- ReflexUtil.tickEvent 15
   ReflexUtil.performEventThreaded env tick \_ -> do
-    unreachable_hosts <- flip filterM hosts \host -> isLeft <$> (Shh.tryFailure do (Shh.exe "/run/wrappers/bin/ping" "-c" "1" (toString host)) &> Shh.devNull)
+    unreachable_hosts <- flip filterM hosts \host -> isLeft <$> (Shh.tryFailure do (ping "-c" "1" (toString host)) &> Shh.devNull)
     pure
       $ unreachable_hosts
       <&> \host ->

@@ -60,12 +60,14 @@ in
           Service = {
             ExecStart = toString (
               pkgs.writeShellScript "watch-${name}-maildir" ''
-                while ${pkgs.coreutils}/bin/sleep 1s; do
-                  ${lib.getExe quick-mail-sync}
-                  ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete -r ${maildir}/${name}/Inbox ${
-                    if name == "hera" then "${maildir}/${name}/Code" else ""
-                  }
-                done
+                if [[ -d ${maildir}/${name}/Inbox ]]; then
+                  while ${pkgs.coreutils}/bin/sleep 1s; do
+                    ${lib.getExe quick-mail-sync}
+                    ${pkgs.inotify-tools}/bin/inotifywait -e move,create,delete -r ${maildir}/${name}/Inbox ${
+                      if name == "hera" then "${maildir}/${name}/Code" else ""
+                    } --exclude "\.lock"
+                  done
+                fi
               ''
             );
           };
