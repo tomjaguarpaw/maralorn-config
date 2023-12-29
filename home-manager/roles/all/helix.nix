@@ -171,36 +171,17 @@ in
         auto-save = true;
       };
     };
-    languages.language = [
-      {
-        name = "haskell";
+    languages = {
+      language-server.haskell-language-server = {
         config.languageServerHaskell.formattingProvider = "fourmolu";
-      }
-      {
-        name = "comment";
-        language-server.command = "ltex-ls";
-        config.ltex.additionalRules = {
-          enablePickyRules = true;
-          completionEnabled = true;
-        };
-      }
-      {
-        name = "markdown";
-        language-server.command = "ltex-ls";
-        file-types = [
-          "md"
-          "markdown"
-          "txt"
-        ];
-        config.ltex.additionalRules = {
-          enablePickyRules = true;
-          completionEnabled = true;
-        };
-      }
-      {
-        name = "nix";
-        formatter.command = "nixfmt";
-      }
-    ];
+      };
+
+      language = [
+        {
+          name = "nix";
+          formatter.command = "nixfmt";
+        }
+      ];
+    };
   };
 }

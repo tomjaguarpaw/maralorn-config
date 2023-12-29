@@ -63,25 +63,25 @@ in
       cleanupInterval = "15m";
       snapshotInterval = "*:00/3:00";
     };
-    syncthing =
-      {
-        enable = true;
-        group = "users";
-        user = "maralorn";
-        openDefaultPorts = true;
-        configDir = "/disk/persist/syncthing";
-        cert = config.age.secrets."syncthing/zeus/cert.pem".path;
-        key = config.age.secrets."syncthing/zeus/key.pem".path;
-      }
-      // syncthing.declarativeWith
-        [
-          "hera"
-          "apollo"
-          "pegasus"
-          "hephaistos"
-          "athene"
-        ]
-        "/disk/persist/home/maralorn/media";
+    syncthing = {
+      enable = true;
+      group = "users";
+      user = "maralorn";
+      openDefaultPorts = true;
+      configDir = "/disk/persist/syncthing";
+      cert = config.age.secrets."syncthing/zeus/cert.pem".path;
+      key = config.age.secrets."syncthing/zeus/key.pem".path;
+      settings =
+        syncthing.declarativeWith
+          [
+            "hera"
+            "apollo"
+            "pegasus"
+            "hephaistos"
+            "athene"
+          ]
+          "/disk/persist/home/maralorn/media";
+    };
     #minecraft-server = {
     #  enable = true;
     #  openFirewall = true;

@@ -1,4 +1,15 @@
+{ lib, ... }:
 {
+  home.activation = {
+    cleanLazygitConfigFile = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+      rm ~/.config/lazygit/config.yml
+    '';
+    fixLazygitConfigFile = lib.hm.dag.entryAfter [ "onFilesChange" ] ''
+      cp ~/.config/lazygit/config.yml ~/.config/lazygit/config.yml.cp
+      mv ~/.config/lazygit/config.yml.cp ~/.config/lazygit/config.yml
+      chmod +w ~/.config/lazygit/config.yml
+    '';
+  };
   programs.lazygit = {
     enable = true;
     settings = {

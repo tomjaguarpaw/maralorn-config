@@ -133,24 +133,24 @@ in
       listenHost = "::";
       organisations."maralorn.de".users = [ "maralorn" ];
     };
-    syncthing =
-      {
-        enable = true;
-        group = "nginx";
-        user = "maralorn";
-        openDefaultPorts = true;
-        cert = config.age.secrets."syncthing/hera/cert.pem".path;
-        key = config.age.secrets."syncthing/hera/key.pem".path;
-      }
-      // syncthing.declarativeWith
-        [
-          "apollo"
-          "zeus"
-          "pegasus"
-          "hephaistos"
-          "athene"
-        ]
-        "/media";
+    syncthing = {
+      enable = true;
+      group = "nginx";
+      user = "maralorn";
+      openDefaultPorts = true;
+      cert = config.age.secrets."syncthing/hera/cert.pem".path;
+      key = config.age.secrets."syncthing/hera/key.pem".path;
+      settings =
+        syncthing.declarativeWith
+          [
+            "apollo"
+            "zeus"
+            "pegasus"
+            "hephaistos"
+            "athene"
+          ]
+          "/media";
+    };
   };
   systemd.tmpfiles.rules = [ "Z /media 0770 maralorn nginx - -" ];
 
@@ -163,7 +163,7 @@ in
         "wheel"
         "systemd-journal"
       ];
-      passwordFile = config.age.secrets.pam-login-password-choreutes.path;
+      hashedPasswordFile = config.age.secrets.pam-login-password-choreutes.path;
     };
     ved-backup = {
       isNormalUser = true;

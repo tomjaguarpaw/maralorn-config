@@ -22,6 +22,8 @@ in
 
   time.timeZone = "Europe/Berlin";
 
+  boot.kernelPackages = pkgs.linuxPackages_testing;
+
   networking = {
     resolvconf.dnsExtensionMechanism = false; # this breaks dnssec but is necessary for certain bad-behaved hotspots
     firewall = {
@@ -119,7 +121,7 @@ in
         curl
         direnv
         entr
-        exa
+        eza
         fd
         file
         fzf
@@ -186,10 +188,9 @@ in
           value = {
             serviceConfig = {
               Restart = "on-failure";
-              RestartSec = 600;
             };
             unitConfig = {
-              StartLimitIntervalSec = 2400;
+              StartLimitIntervalSec = 3000;
               StartLimitBurst = 3;
             };
           };

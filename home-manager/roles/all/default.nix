@@ -15,7 +15,7 @@
   programs = {
     nix-index.enable = true;
     home-manager.enable = true;
-    exa = {
+    eza = {
       enable = true;
       enableAliases = true;
     };
