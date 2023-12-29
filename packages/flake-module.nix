@@ -56,6 +56,7 @@ let
             khal
             playerctl
             notmuch
+            iputils
             tailscale
             pipewire
             mako
