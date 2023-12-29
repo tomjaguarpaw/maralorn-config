@@ -71,7 +71,7 @@
         default = [ ];
       };
       headscaleIPs = mkOption {
-        type = types.listOf types.string;
+        type = types.listOf types.str;
         default = [
           "100.64.7.0/24"
           "fd7a:115c:a1e0:77::/64"

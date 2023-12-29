@@ -38,7 +38,6 @@ let
     enable = true;
     hostName = hostname;
     package = pkgs.nextcloud27;
-    enableBrokenCiphersForSSE = false;
     maxUploadSize = "10g";
     caching = {
       redis = true;

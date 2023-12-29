@@ -6,7 +6,7 @@
 }:
 let
   openssh.authorizedKeys.keys = pkgs.privateValue [ ] "ssh-keys";
-  passwordFile = lib.mkDefault config.age.secrets.pam-long-password.path;
+  hashedPasswordFile = lib.mkDefault config.age.secrets.pam-long-password.path;
 in
 {
   # Enable lingering
@@ -27,10 +27,10 @@ in
         "adbusers"
         "dialout"
       ];
-      inherit openssh passwordFile;
+      inherit openssh hashedPasswordFile;
     };
     root = {
-      inherit openssh passwordFile;
+      inherit openssh hashedPasswordFile;
     };
   };
 }

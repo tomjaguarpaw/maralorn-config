@@ -5,7 +5,6 @@
       inherit (pkgs.xorg) xev;
       inherit (pkgs)
         meld
-        octave
         filezilla
         gparted
         httpie

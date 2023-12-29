@@ -2,7 +2,7 @@
 {
   fonts = {
     fontDir.enable = true;
-    enableDefaultFonts = true;
+    enableDefaultPackages = true;
     fontconfig = {
       enable = true;
       cache32Bit = true;

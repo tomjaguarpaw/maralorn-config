@@ -58,24 +58,24 @@ in
       cleanupInterval = "15m";
       snapshotInterval = "*:00/3:00";
     };
-    syncthing =
-      {
-        enable = true;
-        group = "users";
-        user = "maralorn";
-        openDefaultPorts = true;
-        cert = config.age.secrets."syncthing/apollo/cert.pem".path;
-        key = config.age.secrets."syncthing/apollo/key.pem".path;
-      }
-      // syncthing.declarativeWith
-        [
-          "hera"
-          "zeus"
-          "pegasus"
-          "hephaistos"
-          "athene"
-        ]
-        "/home/maralorn/media";
+    syncthing = {
+      enable = true;
+      group = "users";
+      user = "maralorn";
+      openDefaultPorts = true;
+      cert = config.age.secrets."syncthing/apollo/cert.pem".path;
+      key = config.age.secrets."syncthing/apollo/key.pem".path;
+      settings =
+        syncthing.declarativeWith
+          [
+            "hera"
+            "zeus"
+            "pegasus"
+            "hephaistos"
+            "athene"
+          ]
+          "/home/maralorn/media";
+    };
   };
   system.stateVersion = "19.09";
 }
