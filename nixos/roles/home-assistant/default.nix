@@ -80,10 +80,8 @@ in
       configDir = homeAssistantDir;
       extraComponents = [ ];
       config = {
-        esphome = { };
         default_config = { };
         shopping_list = { };
-        openweathermap = { };
         matrix = {
           homeserver = "https://matrix.maralorn.de";
           username = "@marabot:maralorn.de";
@@ -638,16 +636,10 @@ in
             "00:12:4b:00:24:c0:ff:ad-1".type = "switch"; # Weihnachtsstern Schlafzimmer
           };
         };
-        ipp = { };
-        brother = { };
         sensor = [
           {
             platform = "rmvtransport";
             next_departure = [ { station = "3024634"; } ];
-          }
-          {
-            platform = "dwd_weather_warnings";
-            region_name = 106411000; # Stadt Darmstadt
           }
         ];
         http = {
