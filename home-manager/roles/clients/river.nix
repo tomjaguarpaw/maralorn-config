@@ -3,6 +3,7 @@
   home.packages = builtins.attrValues {
     inherit (pkgs)
       river
+      ristate
       riverguile
       wlopm
       wlr-randr
