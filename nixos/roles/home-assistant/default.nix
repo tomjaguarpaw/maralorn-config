@@ -78,7 +78,13 @@ in
     home-assistant = {
       enable = true;
       configDir = homeAssistantDir;
-      extraComponents = [ ];
+      extraComponents = [
+        "esphome"
+        "openweathermap"
+        "ipp"
+        "brother"
+        "dwd_weather_warnings"
+      ];
       config = {
         default_config = { };
         shopping_list = { };
