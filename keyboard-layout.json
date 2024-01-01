@@ -486,10 +486,10 @@
         "categories": ["blanks"]
       },
       {
-        "code": 2308,
-        "label": {"hint": {"full": "Ctrl+Shift+", "1u": "C+S+"}, "base": "a"},
+        "code": 2314,
+        "label": {"hint": {"full": "Ctrl+Shift+", "1u": "C+S+"}, "base": "g"},
         "categories": ["with-modifiers", "ctrl", "shift"],
-        "baseCode": 4
+        "baseCode": 10
       },
       {
         "code": 20484,
@@ -993,9 +993,12 @@
       },
       {
         "code": 53605,
-        "label": {"hint": {"full": "Dynamic Macro", "1u": "DM"}, "base": "#9"},
-        "rangeStart": 53596,
-        "categories": ["dynmacros"]
+        "label": {
+          "hint": {"full": "Ctrl+TopsyTurvy+", "1u": "C+Ƨ+"},
+          "base": "/"
+        },
+        "categories": ["with-modifiers", "ctrl", "topsyturvy"],
+        "baseCode": 56
       },
       {
         "code": 53606,
