@@ -124,9 +124,8 @@ systemctl --user start river-session.target
 
 river-tag-overlay &
 
-# Set the default layout generator to be rivertile and start it.
-# River will send the process group of the init executable SIGTERM on exit.
-riverctl default-layout luatile
-river-luatile &
+riverctl default-layout riverguile
+#river-luatile &
+riverguile &
 
 riverctl spawn unlock-keys

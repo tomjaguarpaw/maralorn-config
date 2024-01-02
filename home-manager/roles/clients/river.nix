@@ -30,6 +30,7 @@
   xdg.configFile = {
     "river/init".source = ./river-init.sh;
     "river-luatile/layout.lua".source = ./river-layout.lua;
+    "river/layout.scm".source = ./layout.scm;
   };
   systemd.user.targets.river-session.Unit.BindsTo = "graphical-session.target";
 }
