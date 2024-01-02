@@ -11,12 +11,6 @@ in
     enable = true;
     systemdTarget = "graphical-session.target";
     profiles = inject_exec {
-      undocked.outputs = [
-        {
-          criteria = "eDP-1";
-          status = "enable";
-        }
-      ];
       docked.outputs = [
         {
           criteria = "eDP-1";
@@ -25,16 +19,6 @@ in
         {
           criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
           mode = "5120x1440";
-          status = "enable";
-        }
-      ];
-      office.outputs = [
-        {
-          criteria = "eDP-1";
-          status = "disable";
-        }
-        {
-          criteria = "Dell Inc. DELL S2721QS F9SJM43";
           status = "enable";
         }
       ];
@@ -47,13 +31,29 @@ in
       ];
       tv.outputs = [
         {
-          criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
+          criteria = "*";
           status = "disable";
         }
         {
           criteria = "Panasonic Industry Company Panasonic-TV 0x00000101";
           status = "enable";
           mode = "1920x1080";
+        }
+      ];
+      z-default-single.outputs = [
+        {
+          criteria = "eDP-1";
+          status = "enable";
+        }
+      ];
+      z-default-extern.outputs = [
+        {
+          criteria = "eDP-1";
+          status = "disable";
+        }
+        {
+          criteria = "*";
+          status = "enable";
         }
       ];
     };
