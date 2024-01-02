@@ -59,8 +59,6 @@ in
         [
           "https://hera.m-0.eu"
 
-          "https://hochzeit.malte-und-clai.re"
-
           "https://wiki.vocalensemble-darmstadt.de"
           "https://lists.vocalensemble-darmstadt.de"
           "https://cloud.vocalensemble-darmstadt.de"

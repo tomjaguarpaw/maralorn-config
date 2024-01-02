@@ -112,7 +112,6 @@ in
       "maralorn.de"
       "choreutes.de"
       "lists.maralorn.de"
-      "malte-und-clai.re"
     ];
     loginAccounts = pkgs.privateValue { } "mail/users";
     hierarchySeparator = "/";
