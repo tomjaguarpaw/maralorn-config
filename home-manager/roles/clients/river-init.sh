@@ -14,7 +14,8 @@ swaybg -i ~/.config/wallpaper &
 riverctl map normal Super N spawn "(makoctl mode -r show; eww close overlay) || (eww open overlay; makoctl mode -a show)"
 
 riverctl map normal Super Return spawn foot
-riverctl map normal Super Space spawn "foot my-hotkeys"
+riverctl map normal Super Space spawn "foot -a hotkeys my-hotkeys"
+riverctl float-filter-add app-id hotkeys
 riverctl keyboard-layout -variant neo -options altwin:swap_lalt_lwin de
 
 riverctl map normal Super Q close
