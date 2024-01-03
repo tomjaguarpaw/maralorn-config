@@ -13,6 +13,7 @@ import StatusScript.Env (Env (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
 
 Shh.load Shh.Absolute ["playerctl"]
+
 missingExecutables :: IO [FilePath]
 playerCTLFormat :: String
 playerCTLFormat = [i|{{playerName}}@@@{{status}}@@@{{title}} | {{album}} | {{artist}}|]
@@ -87,7 +88,7 @@ cleanTitle =
     %> Text.strip
     % filter (Text.null % not)
     % List.nub
-    % Text.intercalate "\\n"
+    % Text.intercalate " | "
 
 data PlayerState = MkPlayerState
   { name :: Text

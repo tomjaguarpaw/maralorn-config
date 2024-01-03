@@ -20,7 +20,9 @@ in
   home.packages = [
     (pkgs.writeShellScriptBin "switch-mpd" ''
       mkdir -p ${config.xdg.configHome}/mpDris2
-      ${lib.getExe pkgs.sd} -p ${replace_string} "$1" ${mprisCfg.source} > $HOME/${mprisCfg.target}
+      rm -r $HOME/${mprisCfg.target}
+      cp ${mprisCfg.source} $HOME/${mprisCfg.target}
+      ${lib.getExe pkgs.sd} ${replace_string} "$1" $HOME/${mprisCfg.target}
       ${pkgs.systemd}/bin/systemctl --user restart mpdris2.service
     '')
   ];
