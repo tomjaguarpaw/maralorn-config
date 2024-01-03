@@ -1,16 +1,23 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 let
-  inject_exec = lib.mapAttrs (
-    lib.const (
-      lib.recursiveUpdate { exec = [ "${lib.getExe' pkgs.systemd "systemctl"} --user restart eww" ]; }
-    )
-  );
+  openbar = name: outputs: {
+    inherit outputs;
+    exec = [
+      "${lib.getExe' pkgs.systemd "systemctl"} --user restart eww"
+      "${lib.getExe config.programs.eww.package} open ${name}"
+    ];
+  };
 in
 {
   services.kanshi = {
     enable = true;
     systemdTarget = "graphical-session.target";
-    profiles = inject_exec {
+    profiles = {
       docked.outputs = [
         {
           criteria = "eDP-1";
@@ -40,13 +47,13 @@ in
           mode = "1920x1080";
         }
       ];
-      z-default-single.outputs = [
+      z-default-single = openbar "rightbar" [
         {
           criteria = "eDP-1";
           status = "enable";
         }
       ];
-      z-default-extern.outputs = [
+      z-default-extern = openbar "middlebar" [
         {
           criteria = "eDP-1";
           status = "disable";

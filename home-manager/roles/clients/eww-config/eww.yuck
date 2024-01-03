@@ -211,7 +211,18 @@
   (info-overlay)
 )
 
-(defwindow bar
+(defwindow rightbar
+  :monitor 0
+  :focusable false
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "41%"
+                      :height "200px"
+                      :anchor "top right")
+  (sidebar)
+)
+
+(defwindow middlebar
   :monitor 0
   :focusable false
   :geometry (geometry :x "0%"
