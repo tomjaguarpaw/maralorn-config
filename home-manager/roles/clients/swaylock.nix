@@ -10,6 +10,7 @@
       indicator = true;
       clock = true;
       datestr = "${config.m-0.hostName}";
+      scaling = "fill";
     };
   };
 }

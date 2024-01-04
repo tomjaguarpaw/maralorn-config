@@ -9,7 +9,7 @@
 #      ];
 #  };
 
-swaybg -i ~/.config/wallpaper &
+swaybg -m fill -i ~/.config/wallpaper &
 
 riverctl map normal Super N spawn "(makoctl mode -r show; eww close overlay) || (eww open overlay; makoctl mode -a show)"
 
