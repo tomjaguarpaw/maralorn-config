@@ -53,7 +53,7 @@
       ((eq? view-count 1)         (list (lrelo 0.2 0 0.6 1)))
       ((eq? view-count 2)         (list (lrelo 0 0 0.5 1)     (lrelo 0.5 0 0.5 1)))
       ((eq? view-count 3)         (list (lrelo 0.4 0 0.2 1)   (lrel 0.6 0 0.4 1)      (lrel 0 0 0.4 1)))
-      ((eq? view-count 4)         (list (lrelo 0.4 0 0.2 1)   (lrel 0.6 0 0.2 1)      (lrel 0.8 0 0.2 1)     (lrel 0 0 0.4 1)))
+      ((eq? view-count 4)         (list (lrelo 0.4 0 0.2 1)   (lrel 0.6 0 0.4 1)      (lrel 0 0.5 0.4 0.5)   (lrel 0 0 0.4 0.5)))
       ((eq? view-count 5)         (list (lrelo 0.4 0 0.2 1)   (lrel 0.6 0 0.2 1)      (lrel 0.8 0 0.2 1)     (lrel 0 0.5 0.4 0.5)   (lrel 0 0 0.4 0.5)))
       ((eq? view-count 6)         (list (lrelo 0.4 0 0.2 1)   (lrel 0.6 0 0.2 1)      (lrel 0.8 0 0.2 0.5)   (lrel 0.8 0.5 0.2 0.5) (lrel 0 0.5 0.4 0.5)   (lrel 0 0 0.4 0.5)))
       ((eq? view-count 7)         (list (lrelo 0.4 0 0.2 1)   (lrel 0.6 0 0.2 0.5)    (lrel 0.6 0.5 0.2 0.5) (lrel 0.8 0 0.2 0.5)   (lrel 0.8 0.5 0.2 0.5) (lrel 0 0.5 0.4 0.5)    (lrel 0 0 0.4 0.5)))
