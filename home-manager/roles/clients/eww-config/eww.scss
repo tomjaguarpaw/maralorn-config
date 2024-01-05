@@ -16,6 +16,19 @@ $background-lighter: #152f6d;
   font-size: 16px;
 }
 
+.tophud {
+  color: #ffffff;
+  background: rgba($background,0.8);
+  border-bottom-left-radius: 1em;
+  border-bottom-right-radius: 1em;
+  border: 1px solid #7eaafd;
+  border-top: 0px;
+  box-shadow: 0 0 8px #7eaafd;
+  padding: 0.3em;
+  margin: 0.4em;
+  margin-top: 0em;
+}
+
 .component {
   color: #ffffff;
   background: rgba($background,0.8);

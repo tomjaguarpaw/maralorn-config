@@ -22,17 +22,6 @@ in
     enable = true;
     systemdTarget = "graphical-session.target";
     profiles = {
-      docked.outputs = [
-        {
-          criteria = "eDP-1";
-          status = "disable";
-        }
-        {
-          criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
-          mode = "5120x1440";
-          status = "enable";
-        }
-      ];
       desk.outputs = [
         {
           criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
