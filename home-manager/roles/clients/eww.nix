@@ -37,7 +37,7 @@
         ]
       }";
       ExecStart = "${lib.getExe config.programs.eww.package} daemon --no-daemonize --restart";
-      ExecStartPost = [ "${lib.getExe pkgs.set-timer} foo" ];
+      ExecStartPost = [ "${lib.getExe' pkgs.kanshi "kanshictl"} reload" ];
       Restart = "always";
       RestartSec = "10s";
     };

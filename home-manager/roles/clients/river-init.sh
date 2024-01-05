@@ -130,3 +130,5 @@ riverctl default-layout riverguile
 riverguile &
 
 riverctl spawn unlock-keys
+
+kanshictl reload

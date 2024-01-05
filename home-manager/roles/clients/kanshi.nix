@@ -8,8 +8,12 @@ let
   openbar = name: outputs: {
     inherit outputs;
     exec = [
-      "${lib.getExe' pkgs.systemd "systemctl"} --user restart eww"
-      "${lib.getExe config.programs.eww.package} open ${name}"
+      (pkgs.writeShellScript "launch-eww" ''
+        if [[ "$(${lib.getExe config.programs.eww.package} ping)" != "pong" ]]; then
+          ${lib.getExe' pkgs.systemd "systemctl"} --user restart eww
+        fi
+        ${lib.getExe config.programs.eww.package} open ${name}
+      '').outPath
     ];
   };
 in
@@ -65,4 +69,5 @@ in
       ];
     };
   };
+  systemd.user.services.kanshi.Service.RestartSec = "3s";
 }

@@ -91,7 +91,7 @@
 )
 
 (defwidget sidebar []
-  (centerbox :space-evenly false :orientation "vertical"
+  (centerbox :orientation "vertical"
     (status)
     (box :orientation "vertical" :space-evenly false (for player in {jq(players,"map(select(.status==\"Playing\"))")}
       (box :class "component" :orientation "vertical" :space-evenly false :spacing 10
