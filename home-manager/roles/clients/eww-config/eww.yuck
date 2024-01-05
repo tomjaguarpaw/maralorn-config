@@ -49,7 +49,7 @@
     (box :orientation "vertical" :space-evenly false (for u in {unsortedcount == "0" ? [] : [1]}
       (box :class "component" :space-evenly false (image :path "icons/dirty.png") (label :text unsortedcount))
     ))
-    (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" && EWW_BATTERY.BAT0.status != "Charging"&& EWW_BATTERY.BAT0.status != "Full"  ? [EWW_BATTERY.BAT0] : []}
+    (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" && EWW_BATTERY.BAT0.status != "Charging" && (EWW_BATTERY.BAT0.status != "Not charging" || EWW_BATTERY.BAT0.status < 90) && EWW_BATTERY.BAT0.status != "Full"  ? [EWW_BATTERY.BAT0] : []}
       (box :class "component" :space-evenly false (image :path "icons/battery-alert.png") (label :text "${battery.capacity}%"))
     ))
     (box :orientation "vertical" :space-evenly false (for ramwarning in {EWW_RAM.used_mem_perc > 70 ? [1] : []}

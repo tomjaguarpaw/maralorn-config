@@ -121,8 +121,6 @@ riverctl border-width 1
 #riverctl rule-add csd -app-id "bar"
 dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE NIXOS_OZONE_WL
 
-systemctl --user start river-session.target
-
 river-tag-overlay &
 
 riverctl default-layout riverguile
@@ -131,4 +129,5 @@ riverguile &
 
 riverctl spawn unlock-keys
 
+systemctl --user start river-session.target kanshi eww swayidle status-script
 kanshictl reload

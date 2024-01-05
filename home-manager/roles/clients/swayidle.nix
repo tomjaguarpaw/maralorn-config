@@ -44,4 +44,5 @@ in
       }
     ];
   };
+  systemd.user.services.swayidle.Service.RestartSec = "3s";
 }
