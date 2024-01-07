@@ -45,6 +45,7 @@
         abcde
         zbar
         graphia
+        pdfpc
 
         # media
         deluge
