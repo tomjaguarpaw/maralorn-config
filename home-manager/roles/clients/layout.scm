@@ -45,7 +45,7 @@
 (define (five view-count width height)
   (letrec ((lrel (lambda (a b c d) (rel width height a b c d)))
           (lrelo (lambda (a b c d) (relo width height a b c d)))
-          (nthsplit (lambda (n N) (lrel 0.8 (/ n N) 0.2 (/ (+ n 1) N))))
+          (nthsplit (lambda (n N) (lrel 0.8 (/ n N) 0.2 (/ 1 N))))
           (vsplit (lambda (n N) (if (eq? n -1) '() (cons (nthsplit n N) (vsplit (- n 1) N)))))
           )
     (cond
