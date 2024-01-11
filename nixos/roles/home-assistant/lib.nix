@@ -39,7 +39,9 @@ rec {
   };
   util = rec {
     mkIcon = name: "mdi:${name}";
-    mkMode = name: options: { inherit name options; };
+    mkMode = name: options: {
+      inherit name options;
+    };
     modeSelectEntity = mode: "input_select.${modeSelectName mode}";
     modeSelectName = mode: "mode_${mode.name}";
     modeBinarySensorName = mode: option: "${modeSelectName mode}_is_${option}";
@@ -60,7 +62,9 @@ rec {
     };
   };
   modules = rec {
-    mkHAConfig = attrs: { services.home-assistant.config = attrs; };
+    mkHAConfig = attrs: {
+      services.home-assistant.config = attrs;
+    };
     mkModeSwitcher =
       mode:
       let
@@ -95,7 +99,9 @@ rec {
       };
   };
   templates = rec {
-    binarySensor = state: attrs: { binary_sensor = [ ({ inherit state; } // attrs) ]; };
+    binarySensor = state: attrs: {
+      binary_sensor = [ ({ inherit state; } // attrs) ];
+    };
     binarySensorFromCondition = condition: binarySensor (jinja.if' condition "1" "0");
     binarySensorForMode =
       mode: option:

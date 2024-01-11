@@ -46,14 +46,13 @@ in
         4713 # pulseaudio input
         6600 # mpd
       ];
-      allowedTCPPortRanges =
-        [
-          # also ftp
-          {
-            from = 51000;
-            to = 51999;
-          }
-        ];
+      allowedTCPPortRanges = [
+        # also ftp
+        {
+          from = 51000;
+          to = 51999;
+        }
+      ];
     };
     interfaces.enp1s0 = {
       ipv6.addresses = [

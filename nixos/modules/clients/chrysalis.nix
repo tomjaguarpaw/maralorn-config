@@ -1,1 +1,4 @@
-{ pkgs, ... }: { services.udev.packages = [ pkgs.chrysalis ]; }
+{ pkgs, ... }:
+{
+  services.udev.packages = [ pkgs.chrysalis ];
+}

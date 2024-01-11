@@ -1,1 +1,4 @@
-{ pkgs, ... }: { home.packages = builtins.attrValues pkgs.mode-scripts; }
+{ pkgs, ... }:
+{
+  home.packages = builtins.attrValues pkgs.mode-scripts;
+}

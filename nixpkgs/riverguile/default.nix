@@ -1,1 +1,3 @@
-self: _: { riverguile = self.callPackage ./package.nix { }; }
+self: _: {
+  riverguile = self.callPackage ./package.nix { };
+}

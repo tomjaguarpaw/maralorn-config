@@ -35,14 +35,23 @@ let
     final: prev:
     lib.mapAttrs (_: package: package final) myHaskellPackages
     // {
-      nixfmt = overrideCabal (_: { src = inputs.nixfmt; }) prev.nixfmt;
+      nixfmt =
+        overrideCabal
+          (_: {
+            src = inputs.nixfmt;
+          })
+          prev.nixfmt;
     };
   selectHaskellPackages =
     attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages // { inherit (attrs) nixfmt; };
   myHaskellPackages = {
     wizards-dialog = cleanCabalPackage ./wizards-dialog { };
     rssfeeds = cleanCabalPackage ./rssfeeds { };
-    kassandra = cleanCabalPackage ./kassandra/kassandra { overrides = _: { doHaddock = false; }; };
+    kassandra = cleanCabalPackage ./kassandra/kassandra {
+      overrides = _: {
+        doHaddock = false;
+      };
+    };
     kassandra-standalone = cleanCabalPackage ./kassandra/standalone { };
     nixpkgs-bot = cleanCabalPackage ./nixpkgs-bot { };
     t = cleanCabalPackage ./t { };
