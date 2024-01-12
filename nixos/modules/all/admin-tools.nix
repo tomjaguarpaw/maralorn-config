@@ -7,6 +7,7 @@
       htop
       pamtester
       sqlite-interactive
+      nethogs
       ;
   };
   programs.mtr.enable = true;
