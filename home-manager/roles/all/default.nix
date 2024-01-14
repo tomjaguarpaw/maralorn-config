@@ -52,35 +52,34 @@
   };
 
   home = {
-    packages =
-      builtins.attrValues {
-        inherit (pkgs)
-          mpc_cli
-          ncmpcpp
-          magic-wormhole
-          matrix-commander
-          upterm
-          tasksh
-          ledger
-          aqbanking
-          ;
-        mytmux = pkgs.writeShellScriptBin "mytmux" ''
-          session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
-          if [[ -n $session ]]; then
-             exec ${pkgs.tmux}/bin/tmux attach -t $session;
-          else
-             exec ${pkgs.tmux}/bin/tmux;
-          fi
-        '';
-      }
-      ++ [
-        (pkgs.writeShellScriptBin "unlock-keys" ''
-          ssh-add ~/.ssh/id_ed25519_sk-nitro-1
-          ${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd SSH_AUTH_SOCK
-          if ! rbw unlocked; then killall rbw-agent; fi
-          rbw unlock
-        '')
-      ];
+    packages = builtins.attrValues {
+      inherit (pkgs)
+        mpc_cli
+        ncmpcpp
+        magic-wormhole
+        matrix-commander
+        upterm
+        tasksh
+        ledger
+        aqbanking
+        ;
+      mytmux = pkgs.writeShellScriptBin "mytmux" ''
+        session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
+        if [[ -n $session ]]; then
+           exec ${pkgs.tmux}/bin/tmux attach -t $session;
+        else
+           exec ${pkgs.tmux}/bin/tmux;
+        fi
+      '';
+      unlock-keys = pkgs.writeShellScriptBin "unlock-keys" ''
+        ${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd SSH_AUTH_SOCK
+        if ! rbw unlocked; then killall rbw-agent; fi
+        rbw unlock
+        ssh-add <(rbw get "SSH code")
+        ssh-add <(rbw get "SSH signing")
+        ssh-add <(rbw get "SSH login")
+      '';
+    };
     sessionVariables = {
       PATH = "$HOME/.nix-profile/bin:$PATH";
       BROWSER = "firefox";
