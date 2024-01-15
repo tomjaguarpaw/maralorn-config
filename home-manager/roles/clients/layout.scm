@@ -70,7 +70,7 @@
 
 (define (layout view-count width height tags output)
   (cond
-      ((> width 2000) (five  view-count width height))
+      ((> width 3000) (five  view-count width height))
       (else           (three view-count width height))
   )
 )
