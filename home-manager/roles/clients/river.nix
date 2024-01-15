@@ -12,6 +12,7 @@
       kanshi
       jaq # Für eww
       river-tag-overlay
+      lswt
       light
       ;
   };
