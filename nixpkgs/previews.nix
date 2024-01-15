@@ -8,5 +8,6 @@ final: _prev: {
     forgejo # I am apparently stuck here, because forgejo frequently receives
     # updates and when switching back to stable I run into database version
     # conflicts.
+    klog # not in 23.11
     ;
 }

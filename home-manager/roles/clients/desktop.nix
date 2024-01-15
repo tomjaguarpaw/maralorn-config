@@ -34,6 +34,7 @@
         acpi
 
         # tools & office
+        klog
         feh
         gimp
         imagemagick
