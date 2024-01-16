@@ -29,15 +29,15 @@ in
         command = write-idle.outPath;
         resumeCommand = write-active.outPath;
       }
-      {
-        timeout = 310;
-        command = "${lib.getBin pkgs.hyprland}/bin/hyprctl dispatch dpms off";
-        resumeCommand = "${lib.getBin pkgs.hyprland}/bin/hyprctl dispatch dpms on";
-      }
-      {
-        timeout = 599;
-        command = "${lib.getBin pkgs.hyprland}/bin/hyprctl dispatch dpms on";
-      }
+      #{
+      #  timeout = 310;
+      #  command = "${lib.getBin pkgs.hyprland}/bin/hyprctl dispatch dpms off";
+      #  resumeCommand = "${lib.getBin pkgs.hyprland}/bin/hyprctl dispatch dpms on";
+      #}
+      #{
+      #  timeout = 599;
+      #  command = "${lib.getBin pkgs.hyprland}/bin/hyprctl dispatch dpms on";
+      #}
       {
         timeout = 600;
         command = "${lib.getBin pkgs.systemd}/bin/systemctl suspend";

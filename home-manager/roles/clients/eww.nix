@@ -24,7 +24,6 @@
       Environment = "PATH=${
         lib.makeBinPath [
           pkgs.coreutils
-          pkgs.hyprland
           pkgs.jq
           pkgs.socat
           pkgs.bash
