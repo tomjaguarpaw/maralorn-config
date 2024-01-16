@@ -1,3 +1,1 @@
-self: _: {
-  email2matrix = self.callPackage ./package.nix { };
-}
+self: _: { email2matrix = self.callPackage ./package.nix { }; }

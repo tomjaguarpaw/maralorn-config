@@ -31,9 +31,7 @@ let
   filter = rec {
     mailToFolder = name: toFolder (lib.concatStringsSep "." (lib.splitString "@" name));
     toFolder = name: lib.concatStringsSep "/" (lib.reverseList (lib.splitString "." name));
-    simple = filter: target: {
-      inherit filter target;
-    };
+    simple = filter: target: { inherit filter target; };
     notifications = notify: simple "from:${notify}" "notifications/${mailToFolder notify}";
     stupidList = list: simple "to:${list}" "list/${mailToFolder list}";
     simpleSortList = listName: simple "List:${listName}" "list/${toFolder listName}";
