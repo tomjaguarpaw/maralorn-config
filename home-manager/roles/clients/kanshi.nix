@@ -22,11 +22,22 @@ in
     enable = true;
     systemdTarget = "graphical-session.target";
     profiles = {
-      desk.outputs = [
+      desk = openbar "middlebar" [
         {
           criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
           mode = "5120x1440";
           status = "enable";
+        }
+      ];
+      docked = openbar "middlebar" [
+        {
+          criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
+          mode = "5120x1440";
+          status = "enable";
+        }
+        {
+          criteria = "eDP-1";
+          status = "disable";
         }
       ];
       tv.outputs = [
@@ -46,10 +57,10 @@ in
           status = "enable";
         }
       ];
-      z-default-extern = openbar "middlebar" [
+      z-default-extern = openbar "rightbar" [
         {
           criteria = "eDP-1";
-          status = "disable";
+          status = "enable";
         }
         {
           criteria = "*";

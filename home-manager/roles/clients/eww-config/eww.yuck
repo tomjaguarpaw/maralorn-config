@@ -214,7 +214,6 @@
 )
 
 (defwindow rightbar
-  :monitor 0
   :focusable false
   :geometry (geometry :x "0%"
                       :y "0%"
@@ -225,7 +224,6 @@
 )
 
 (defwindow middlebar
-  :monitor 0
   :focusable false
   :geometry (geometry :x "0%"
                       :y "0%"
