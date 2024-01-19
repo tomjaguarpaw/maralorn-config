@@ -37,7 +37,7 @@ in
         }
         {
           criteria = "eDP-1";
-          status = "disable";
+          status = "enable";
         }
       ];
       tv.outputs = [
