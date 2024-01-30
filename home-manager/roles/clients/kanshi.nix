@@ -37,7 +37,17 @@ in
         }
         {
           criteria = "eDP-1";
+          status = "disable";
+        }
+      ];
+      docked-s = openbar "middlebar" [
+        {
+          criteria = "Dell Inc. DELL S2721QS 77SJM43";
           status = "enable";
+        }
+        {
+          criteria = "eDP-1";
+          status = "disable";
         }
       ];
       tv.outputs = [
