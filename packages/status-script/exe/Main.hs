@@ -19,14 +19,12 @@ import StatusScript.Modules.Calendar qualified as Calendar
 import StatusScript.Modules.ConfigPull qualified as ConfigPull
 import StatusScript.Modules.Git qualified as Git
 import StatusScript.Modules.IdleState qualified as IdleState
-import StatusScript.Modules.KeyTouch qualified as KeyTouch
 import StatusScript.Modules.Mail qualified as Mail
 import StatusScript.Modules.Mako qualified as Mako
 import StatusScript.Modules.Network qualified as Network
 import StatusScript.Modules.Ping qualified as Ping
 import StatusScript.Modules.Player qualified as Player
 import StatusScript.Modules.SoftwareFeed qualified as SoftwareFeed
-import StatusScript.Modules.Tasks qualified as Tasks
 import StatusScript.Modules.Timer qualified as Timer
 import StatusScript.PublishSocket qualified as PublishSocket
 import StatusScript.ReflexUtil qualified as ReflexUtil
@@ -66,7 +64,6 @@ main = Notify.withManager \watch_manager -> do
     software_feed_event <- SoftwareFeed.softwareFeed env mode
     boot_state_event <- BootState.bootState env mode
     mail_events <- Mail.mail env mode
-    inbox_events <- Tasks.tasks env mode
     notification_events <- Mako.notifications env
     warnings <-
       ReflexUtil.concatEvents
@@ -74,7 +71,6 @@ main = Notify.withManager \watch_manager -> do
         , boot_state_event
         , software_feed_event
         , mail_events
-        , inbox_events
         , notification_events
         , start $> []
         ]

@@ -12,19 +12,13 @@
     description = lib.mdDoc "Packages in the status-script environment.";
   };
 
-  config = {
-    status-script.env = [
-      pkgs.gnupg # yubikey-touch-detector
-      pkgs.taskwarrior
-    ];
-    systemd.user.services.status-script = {
-      Unit.Description = "status-script";
-      Service = {
-        Environment = "PATH=${lib.makeBinPath config.status-script.env}";
-        ExecStart = lib.getExe pkgs.status-script;
-        Restart = "always";
-        RestartSec = "10s";
-      };
+  config.systemd.user.services.status-script = {
+    Unit.Description = "status-script";
+    Service = {
+      Environment = "PATH=${lib.makeBinPath config.status-script.env}";
+      ExecStart = lib.getExe pkgs.status-script;
+      Restart = "always";
+      RestartSec = "10s";
     };
   };
 }

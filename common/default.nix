@@ -115,7 +115,6 @@
               "rspamd"
               "rss"
               "stats"
-              "taskserver"
               "code"
             ];
             athene = [

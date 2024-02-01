@@ -1,1 +1,0 @@
-../../../private/kassandra-uiConfig.dhall

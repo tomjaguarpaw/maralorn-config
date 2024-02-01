@@ -13,7 +13,6 @@ let
   hotkeys = [
     {
       Orga = [
-        { Kassandra = fork "kassandra2"; }
         { Kalendar = term "ikhal"; }
         { Habitica = fork "firefox https://habitica.com"; }
         { Tasks = term "tasksh"; }

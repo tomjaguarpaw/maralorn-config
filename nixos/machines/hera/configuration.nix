@@ -127,12 +127,6 @@ in
       package = pkgs.postgresql_14;
     };
     borgbackup.jobs = backupJobs;
-    taskserver = {
-      enable = true;
-      fqdn = "${config.m-0.virtualHosts.taskserver}";
-      listenHost = "::";
-      organisations."maralorn.de".users = [ "maralorn" ];
-    };
     syncthing = {
       enable = true;
       group = "nginx";
@@ -173,9 +167,5 @@ in
     };
   };
 
-  # This value determines the NixOS release with which your system is to be
-  # compatible, in order to avoid breaking some software such as database
-  # servers. You should change this only after NixOS release notes say you
-  # should.
-  system.stateVersion = "18.03"; # Did you read the comment?
+  system.stateVersion = "18.03";
 }

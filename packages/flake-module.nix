@@ -42,8 +42,6 @@ let
   myHaskellPackages = {
     wizards-dialog = cleanCabalPackage ./wizards-dialog { };
     rssfeeds = cleanCabalPackage ./rssfeeds { };
-    kassandra = cleanCabalPackage ./kassandra/kassandra { overrides = _: { doHaddock = false; }; };
-    kassandra-standalone = cleanCabalPackage ./kassandra/standalone { };
     nixpkgs-bot = cleanCabalPackage ./nixpkgs-bot { };
     t = cleanCabalPackage ./t { };
     builders-configurator = cleanCabalPackage ./builders-configurator { };
@@ -60,7 +58,6 @@ let
             tailscale
             pipewire
             mako
-            yubikey-touch-detector
             ;
         };
       };
