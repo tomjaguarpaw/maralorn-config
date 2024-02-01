@@ -7,8 +7,8 @@
 let
   stateDirectory = "/var/lib/nixpkgs-bot";
   releases = [
-    "22.11"
     "23.05"
+    "23.11"
   ];
   configFile = {
     server = "https://matrix.maralorn.de";
