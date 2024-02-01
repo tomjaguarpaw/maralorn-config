@@ -35,7 +35,6 @@
         flake-compat.follows = "";
         utils.follows = "";
         nixpkgs.follows = "";
-        nixpkgs-22_11.follows = "";
         nixpkgs-23_05.follows = "";
         nixpkgs-23_11.follows = "";
         blobs.follows = "";
