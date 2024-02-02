@@ -25,7 +25,7 @@
     nix-output-monitor = {
       inputs = {
         flake-utils.follows = "pre-commit-hooks/flake-utils";
-        nixpkgs.follows = "nixos-unstable";
+        #nixpkgs.follows = "nixos-unstable";
         pre-commit-hooks.follows = "";
       };
       url = "git+https://code.maralorn.de/maralorn/nix-output-monitor.git";

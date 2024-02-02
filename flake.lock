@@ -199,9 +199,7 @@
           "pre-commit-hooks",
           "flake-utils"
         ],
-        "nixpkgs": [
-          "nixos-unstable"
-        ],
+        "nixpkgs": "nixpkgs",
         "pre-commit-hooks": []
       },
       "locked": {
@@ -324,6 +322,21 @@
       "original": {
         "id": "nixpkgs",
         "ref": "nixos-unstable",
+        "type": "indirect"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1706832731,
+        "narHash": "sha256-AYUpebwWrXvOu1wIwnri+fCxCrU9KCmUzhGHz1Jo72Q=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "34dab68635ecf2188361867eea9e9d49429d393d",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "ref": "haskell-updates",
         "type": "indirect"
       }
     },
