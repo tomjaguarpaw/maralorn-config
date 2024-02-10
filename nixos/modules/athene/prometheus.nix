@@ -2,52 +2,39 @@
 let
   inherit (config.m-0) virtualHosts;
   targets = [
-    {
-      name = "apollo";
-      host = "apollo:9100";
-      flaky = true;
-    }
-    {
-      name = "apollo-user";
-      host = "apollo:9558";
-      flaky = true;
-    }
-    {
-      name = "hera-user";
-      host = "hera:9558";
-    }
-    {
-      name = "zeus";
-      host = "zeus:9100";
-      flaky = true;
-    }
-    {
-      name = "zeus-user";
-      host = "zeus:9558";
-      flaky = true;
-    }
+    # Athene
     {
       name = "athene";
       host = "athene:9100";
     }
     {
+      name = "athene user services";
+      host = "athene:9558";
+    }
+    {
+      name = "nginx on athene";
+      host = "hera:9113";
+    }
+    {
+      name = "home assistant on athene";
+      metrics_path = "/api/prometheus";
+      host = "[::1]:8123";
+    }
+    # Hera
+    {
       name = "hera";
       host = "hera:9100";
     }
     {
-      name = "ved server";
-      host = "bach.vocalensemble-darmstadt.de:9100";
+      name = "hera user services";
+      host = "hera:9558";
     }
     {
-      name = "ved postfix";
-      host = "bach.vocalensemble-darmstadt.de:9154";
-    }
-    {
-      name = "hera-nginx";
+      name = "nginx on hera";
       host = "hera:9113";
     }
     {
-      name = "hera-headscale";
+      name = "headscale on hera";
       host = "hera:9098";
     }
     {
@@ -55,14 +42,51 @@ let
       host = "hera:9154";
     }
     {
-      metrics_path = "/_synapse/metrics";
       name = "matrix-synapse on hera";
+      metrics_path = "/_synapse/metrics";
       host = "hera:9148";
     }
+    # Apollo
     {
-      metrics_path = "/api/prometheus";
-      name = "home assistant on athene";
-      host = "[::1]:8123";
+      name = "apollo";
+      host = "apollo:9100";
+      flaky = true;
+    }
+    {
+      name = "apollo user services";
+      host = "apollo:9558";
+      flaky = true;
+    }
+    # Hephaistos
+    {
+      name = "hephaistos";
+      host = "hephaistos:9100";
+      flaky = true;
+    }
+    {
+      name = "hephaistos user services";
+      host = "hephaistos:9558";
+      flaky = true;
+    }
+    # Zeus
+    {
+      name = "zeus";
+      host = "zeus:9100";
+      flaky = true;
+    }
+    {
+      name = "zeus user services";
+      host = "zeus:9558";
+      flaky = true;
+    }
+    # Vocalensemble
+    {
+      name = "bach.ved";
+      host = "bach.vocalensemble-darmstadt.de:9100";
+    }
+    {
+      name = "postfix on bach.ved";
+      host = "bach.vocalensemble-darmstadt.de:9154";
     }
   ];
 in
