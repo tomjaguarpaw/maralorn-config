@@ -15,7 +15,6 @@ in
   imports =
     [
       (flake-inputs.secrets.lib.vpn "hera")
-      ./mail.nix
       ../../roles
       ../../roles/blog.nix
       #../../roles/coturn.nix
@@ -32,10 +31,6 @@ in
       ../../roles/nixpkgs-bot.nix
       ../../roles/unbound.nix
       ../../roles/update-postgres.nix
-      ./cloud.nix
-      ./hardware-configuration.nix
-      ./network.nix
-      ./web.nix
       (import ../../roles/monitoring/folder-size-exporter.nix {
         folders = [
           "/"
