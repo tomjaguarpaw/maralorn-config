@@ -100,6 +100,22 @@ in
         "--storage.tsdb.retention.time=180d"
       ];
       ruleFiles = [ ./rules.yml ];
+      rules = [
+        {
+          alert = "home_device_unavailable";
+          expr = "hass_entity_available == 0";
+          for = "60m";
+          labels.severity = "critical";
+          annotations.description = "{{ $labels.friendly_name }} is unavailable.";
+        }
+        {
+          alert = "home_device_battery_low";
+          expr = "hass_sensor_battery_percent < 25";
+          for = "60m";
+          labels.severity = "critical";
+          annotations.description = "{{ $labels.friendly_name }} has only {{ $value }}% battery.";
+        }
+      ];
       scrapeConfigs =
         let
           alert_type = "infrastructure";
