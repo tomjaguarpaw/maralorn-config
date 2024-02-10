@@ -6,12 +6,6 @@ let
   derp_port = 3479;
 in
 {
-  m-0.monitoring = [
-    {
-      name = "hera-headscale";
-      host = "[::1]:9098";
-    }
-  ];
   networking.firewall.allowedUDPPorts = [ derp_port ];
   services = {
     headscale = {
@@ -60,7 +54,7 @@ in
           );
         };
         logtail.enabled = false;
-        metrics_listen_addr = "[::1]:9098";
+        metrics_listen_addr = "[${config.m-0.hosts.tailscale.hera.AAAA}]:9098";
         ip_prefixes = config.m-0.headscaleIPs;
       };
     };

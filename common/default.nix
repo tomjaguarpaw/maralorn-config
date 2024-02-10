@@ -1,46 +1,5 @@
 { config, lib, ... }:
 {
-  config = {
-    m-0.monitoring = [
-      {
-        host = "apollo:9100";
-        name = "apollo";
-        flaky = true;
-      }
-      {
-        host = "apollo:9558";
-        name = "apollo-user";
-        flaky = true;
-      }
-      {
-        host = "hera:9558";
-        name = "hera-user";
-        flaky = true;
-      }
-      {
-        host = "zeus:9100";
-        name = "zeus";
-        flaky = true;
-      }
-      {
-        host = "zeus:9558";
-        name = "zeus-user";
-        flaky = true;
-      }
-      {
-        host = "athene.vpn.m-0.eu:9100";
-        name = "athene";
-      }
-      {
-        name = "ved server";
-        host = "bach.vocalensemble-darmstadt.de:9100";
-      }
-      {
-        name = "ved postfix";
-        host = "bach.vocalensemble-darmstadt.de:9154";
-      }
-    ];
-  };
 
   options.m-0 =
     let
@@ -50,25 +9,6 @@
       prefix = mkOption {
         default = "2a02:c207:3002:7584";
         type = types.str;
-      };
-      monitoring = mkOption {
-        type = types.listOf (
-          types.submodule {
-            options = {
-              name = mkOption { type = types.str; };
-              host = mkOption { type = types.str; };
-              container = mkOption {
-                type = types.bool;
-                default = false;
-              };
-              flaky = mkOption {
-                type = types.bool;
-                default = false;
-              };
-            };
-          }
-        );
-        default = [ ];
       };
       headscaleIPs = mkOption {
         type = types.listOf types.str;
@@ -102,15 +42,12 @@
           };
           aliases = {
             hera = [
-              "alerts"
               "analytics"
               "blog"
-              "ci"
               "cloud"
               "git"
               "lists"
               "matrix"
-              "monitoring"
               "rpg"
               "rspamd"
               "rss"
@@ -120,6 +57,8 @@
             athene = [
               "firefox-sync"
               "home"
+              "monitoring"
+              "alerts"
               "cache"
               "syncthing-athene"
               "5e"

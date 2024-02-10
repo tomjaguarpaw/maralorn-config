@@ -82,7 +82,7 @@ in
     # Postgres
     postgresql = {
       enable = true;
-      settings = import ./postgres-tuning.nix;
+      settings = import ./_postgres-tuning.nix;
       ensureDatabases = [ "matrix-synapse" ];
     };
 
@@ -167,7 +167,7 @@ in
             {
               type = "metrics";
               port = 9148;
-              bind_addresses = [ "127.0.0.1" ];
+              bind_addresses = [ "${config.m-0.hosts.tailscale.hera.AAAA}" ];
               resources = [ ];
               tls = false;
             }

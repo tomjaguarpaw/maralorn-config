@@ -16,8 +16,6 @@ in
     [
       (flake-inputs.secrets.lib.vpn "hera")
       ../../roles
-      ../../roles/matrix-synapse
-      ../../roles/monitoring
       (import ../../roles/monitoring/folder-size-exporter.nix {
         folders = [
           "/"
@@ -40,13 +38,6 @@ in
       ../../modules/servers
       ../../modules/all
     ];
-
-  m-0.monitoring = [
-    {
-      name = "hera";
-      host = "hera:9100";
-    }
-  ];
 
   systemd.services =
     {

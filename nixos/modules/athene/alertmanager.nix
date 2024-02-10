@@ -1,6 +1,10 @@
 { config, ... }:
+let
+  inherit (config.m-0) virtualHosts;
+in
 {
   services = {
+    nginx.virtualHosts.${virtualHosts.alerts}.locations."/".proxyPass = "http://localhost:9093";
     prometheus = {
       alertmanagers = [ { static_configs = [ { targets = [ "localhost:9093" ]; } ]; } ];
       alertmanager = {

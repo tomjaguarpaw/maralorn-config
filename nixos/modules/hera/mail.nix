@@ -11,12 +11,6 @@ let
   rspamd-address = "[::1]:11334";
 in
 {
-  m-0.monitoring = [
-    {
-      name = "postfix on hera";
-      host = "hera:9154";
-    }
-  ];
 
   services = {
     nginx.virtualHosts.${virtualHosts.rspamd}.locations."/" = {
