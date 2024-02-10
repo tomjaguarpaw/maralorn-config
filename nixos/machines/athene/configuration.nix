@@ -8,7 +8,6 @@ in
     [
       ../../roles
       ../../roles/fonts.nix
-      ../../roles/home-assistant
     ]
     ++ mylib.nixFromDirs [
       ../../modules/athene

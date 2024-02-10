@@ -59,6 +59,11 @@ let
       name = "matrix-synapse on hera";
       host = "hera:9148";
     }
+    {
+      metrics_path = "/api/prometheus";
+      name = "home assistant on athene";
+      host = "[::1]:8123";
+    }
   ];
 in
 {

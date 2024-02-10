@@ -5,7 +5,7 @@
   ...
 }:
 let
-  haLib = import ./lib.nix lib;
+  haLib = import ./_lib.nix lib;
   colors = rec {
     okay = "#009933";
     warn = "#ffbf00";
@@ -69,8 +69,6 @@ let
   homeAssistantDir = "/disk/persist/home-assistant";
 in
 {
-  imports = [ ./hexa-cards.nix ];
-
   systemd.tmpfiles.rules = [ "d ${homeAssistantDir} - - - - -" ];
 
   services = {
@@ -86,20 +84,9 @@ in
         "dwd_weather_warnings"
       ];
       config = {
+        prometheus.requires_auth = false;
         default_config = { };
         shopping_list = { };
-        matrix = {
-          homeserver = "https://matrix.maralorn.de";
-          username = "@marabot:maralorn.de";
-          password = pkgs.privateValue "" "matrix/marabot-pw";
-        };
-        notify = [
-          {
-            name = "matrix";
-            platform = "matrix";
-            default_room = "#athene:maralorn.de";
-          }
-        ];
         group = {
           wohnzimmer_lights = {
             name = "Lichter Wohnzimmer";
@@ -1396,6 +1383,7 @@ in
         };
     };
     nginx.virtualHosts.${config.m-0.virtualHosts.home} = {
+      serverAliases = [ config.m-0.virtualHosts."home.local" ];
       extraConfig = "proxy_buffering off;";
       locations = {
         "/" = {

@@ -3,7 +3,6 @@ lib:
 # title refers to a human readable name
 # mode = { name, title, options = { <option_name> : { title , icon } } }
 rec {
-  jinja = import ./jinja.nix lib;
   tap_actions =
     let
       fromServiceAction = action: {
@@ -59,22 +58,6 @@ rec {
       inherit state;
     };
   };
-  modules = rec {
-    mkHAConfig = attrs: { services.home-assistant.config = attrs; };
-    mkModeSwitcher =
-      mode:
-      let
-        options = builtins.attrNames mode.options;
-      in
-      attrs: _:
-      mkHAConfig {
-        input_select."${util.modeSelectName mode}" = {
-          inherit options;
-          name = mode.title;
-        } // attrs;
-        template = builtins.map (templates.binarySensorForMode mode) options;
-      };
-  };
   cards = {
     modeSwitcher =
       mode:
@@ -92,15 +75,6 @@ rec {
         columns = builtins.length (builtins.attrNames mode.options);
         show_state = false;
         entities = lib.mapAttrsToList mkEntity mode.options;
-      };
-  };
-  templates = rec {
-    binarySensor = state: attrs: { binary_sensor = [ ({ inherit state; } // attrs) ]; };
-    binarySensorFromCondition = condition: binarySensor (jinja.if' condition "1" "0");
-    binarySensorForMode =
-      mode: option:
-      binarySensorFromCondition (jinja.isState (util.modeSelectEntity mode) option) {
-        name = util.modeBinarySensorName mode option;
       };
   };
 }

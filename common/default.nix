@@ -57,6 +57,7 @@
             athene = [
               "firefox-sync"
               "home"
+              "home.local"
               "monitoring"
               "alerts"
               "cache"
