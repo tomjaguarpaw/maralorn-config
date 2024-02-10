@@ -80,15 +80,6 @@ in
           Type = "oneshot";
         };
       };
-      #bump-config = {
-      #  script = ''
-      #    ${pkgs.laminar}/bin/laminarc queue bump-config
-      #  '';
-      #  serviceConfig = {
-      #    Type = "oneshot";
-      #  };
-      #  startAt = "Sat 04:00";
-      #};
       night-routines = {
         script =
           let
