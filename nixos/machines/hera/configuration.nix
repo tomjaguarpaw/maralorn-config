@@ -16,21 +16,8 @@ in
     [
       (flake-inputs.secrets.lib.vpn "hera")
       ../../roles
-      ../../roles/blog.nix
-      #../../roles/coturn.nix
-      ../../roles/email2matrix.nix
-      ../../roles/foundryvtt.nix
-      ../../roles/git.nix
-      ../../roles/go-neb.nix
-      ../../roles/goatcounter.nix
-      ../../roles/headscale.nix
-      ../../roles/mailman.nix
       ../../roles/matrix-synapse
-      ../../roles/miniflux.nix
       ../../roles/monitoring
-      ../../roles/nixpkgs-bot.nix
-      ../../roles/unbound.nix
-      ../../roles/update-postgres.nix
       (import ../../roles/monitoring/folder-size-exporter.nix {
         folders = [
           "/"
