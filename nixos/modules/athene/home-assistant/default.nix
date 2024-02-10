@@ -455,22 +455,6 @@ in
             }
           ]
           ++ (map
-            (entity: {
-              alias = "Unreachable Warnung";
-              trigger = triggers.stateTrigger entity // {
-                to = "unavailable";
-                for = "01:00:00";
-              };
-              action = [ (actions.notify "{{ trigger.to_state.name }} ist seit 1h unerreichbar.") ];
-            })
-            [
-              "switch.luftentfeuchter"
-              "switch.lueftung_bad"
-              "sensor.${sensor.bad}_humidity"
-              "sensor.${sensor.schlafzimmer}_humidity"
-            ]
-          )
-          ++ (map
             (minutes: {
               alias = "Warnung bei ${minutes} Minuten offenem Fenster oder offener Tür";
               trigger =
