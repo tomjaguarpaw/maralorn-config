@@ -1383,7 +1383,7 @@ in
         };
     };
     nginx.virtualHosts.${config.m-0.virtualHosts.home} = {
-      serverAliases = [ config.m-0.virtualHosts."home.local" ];
+      serverAliases = [ "home.local.maralorn.de" ];
       extraConfig = "proxy_buffering off;";
       locations = {
         "/" = {

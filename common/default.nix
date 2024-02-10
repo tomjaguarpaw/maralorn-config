@@ -30,6 +30,7 @@
           # (echo '{' && tailscale status -json | jq -r '.Self,.Peer[] | .DNSName[:-17] + " = { A = \"" + .TailscaleIPs[0] + "\"; AAAA = \"" + .TailscaleIPs[1] + "\";};"' && echo '}') > common/tailscale.nix
           tailscale = import ./tailscale.nix;
           publicAliases = {
+            athene = [ "home" ];
             hera = [
               "blog"
               "cloud"
@@ -57,7 +58,6 @@
             athene = [
               "firefox-sync"
               "home"
-              "home.local"
               "monitoring"
               "alerts"
               "cache"
