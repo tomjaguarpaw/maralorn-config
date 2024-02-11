@@ -1,21 +1,18 @@
-_:
+flake-inputs:
 { pkgs, mylib, ... }:
 let
   localAddress = "fdc0:1::2";
 in
 {
   imports =
-    [
-      ../../roles
-      ../../roles/fonts.nix
-    ]
+    [ (flake-inputs.secrets.lib.vpn "hera") ]
     ++ mylib.nixFromDirs [
-      ../../modules/athene
-      ../../modules/all
-      ../../modules/impermanent
-      ../../modules/servers
-      ../../modules/metal
-      ../../modules/new-sync
+      ../../roles/athene
+      ../../roles/all
+      ../../roles/impermanent
+      ../../roles/servers
+      ../../roles/metal
+      ../../roles/new-sync
     ];
 
   systemd.services.ensure-printers.serviceConfig.SuccessExitStatus = "0 1";
@@ -32,7 +29,7 @@ in
 
   networking = {
     hostName = "athene";
-    domain = "lo.m-0.eu";
+    domain = "local.maralorn.de";
     firewall = {
       allowedUDPPorts = [
         631 # cups
@@ -71,7 +68,7 @@ in
         name = "Klio";
         location = "Wohnzimmer";
         description = "Klio (Brother MFC-L3750CDW)";
-        deviceUri = "ipp://klio.lo.m-0.eu/ipp";
+        deviceUri = "ipp://klio.local.maralorn.de/ipp";
         model = "everywhere";
       }
     ];

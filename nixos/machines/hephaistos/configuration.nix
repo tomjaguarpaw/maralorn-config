@@ -2,21 +2,17 @@ flake-inputs:
 { mylib, ... }:
 {
   imports =
-    [
-      flake-inputs.nixos-hardware.nixosModules.lenovo-thinkpad
-      ../../roles
-      ../../roles/fonts.nix
-    ]
+    [ flake-inputs.nixos-hardware.nixosModules.lenovo-thinkpad ]
     ++ mylib.nixFromDirs [
-      ../../modules/hephaistos
-      ../../modules/clients
-      ../../modules/laptops
-      ../../modules/not-home
-      ../../modules/all
-      ../../modules/impermanent
-      ../../modules/beefs
-      ../../modules/metal
-      ../../modules/new-sync
+      ../../roles/hephaistos
+      ../../roles/clients
+      ../../roles/laptops
+      ../../roles/not-home
+      ../../roles/all
+      ../../roles/impermanent
+      ../../roles/beefs
+      ../../roles/metal
+      ../../roles/new-sync
     ];
 
   networking.hostName = "hephaistos";

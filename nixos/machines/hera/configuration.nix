@@ -1,4 +1,4 @@
-flake-inputs:
+_:
 {
   config,
   pkgs,
@@ -14,9 +14,7 @@ in
 {
   imports =
     [
-      (flake-inputs.secrets.lib.vpn "hera")
-      ../../roles
-      (import ../../roles/monitoring/folder-size-exporter.nix {
+      (import ../../roles/folder-size-exporter.nix {
         folders = [
           "/"
           "/home"
@@ -33,10 +31,10 @@ in
       })
     ]
     ++ mylib.nixFromDirs [
-      ../../modules/hera
-      ../../modules/not-home
-      ../../modules/servers
-      ../../modules/all
+      ../../roles/hera
+      ../../roles/not-home
+      ../../roles/servers
+      ../../roles/all
     ];
 
   systemd.services =

@@ -15,9 +15,7 @@ in
       (flake-inputs.secrets.lib.vpn "apollo")
       flake-inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480s
       ./hardware-configuration.nix
-      ../../roles
-      ../../roles/fonts.nix
-      (import ../../roles/monitoring/folder-size-exporter.nix {
+      (import ../../roles/folder-size-exporter.nix {
         folders = [
           "/"
           "/home"
@@ -28,12 +26,12 @@ in
       })
     ]
     ++ mylib.nixFromDirs [
-      ../../modules/clients
-      ../../modules/laptops
-      ../../modules/not-home
-      ../../modules/all
-      ../../modules/apollo
-      ../../modules/metal
+      ../../roles/clients
+      ../../roles/laptops
+      ../../roles/not-home
+      ../../roles/all
+      ../../roles/apollo
+      ../../roles/metal
     ];
 
   networking.hostName = "apollo";

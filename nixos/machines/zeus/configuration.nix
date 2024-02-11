@@ -14,18 +14,15 @@ in
     [
       (flake-inputs.secrets.lib.vpn "zeus")
       "${flake-inputs.nixos-hardware}/common/gpu/amd/sea-islands"
-      ./hardware-configuration.nix
-      ../../roles
-      ../../roles/fonts.nix
     ]
     ++ mylib.nixFromDirs [
-      ./../../modules/all
-      ./../../modules/clients
-      ./../../modules/zeus
-      ./../../modules/impermanent
-      ./../../modules/beefs
-      ./../../modules/metal
-      ./../../modules/servers
+      ./../../roles/all
+      ./../../roles/clients
+      ./../../roles/zeus
+      ./../../roles/impermanent
+      ./../../roles/beefs
+      ./../../roles/metal
+      ./../../roles/servers
     ];
 
   fileSystems =
