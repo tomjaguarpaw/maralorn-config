@@ -1,6 +1,6 @@
 { mkDerivation, base, containers, errors, exceptions, extra, feed
-, filepath, filepattern, lens, lib, megaparsec, notmuch
-, optparse-applicative, purebred-email, relude, say
+, filepath, filepattern, http-client, lens, lib, megaparsec
+, notmuch, optparse-applicative, purebred-email, relude, say
 , string-interpolate, tagsoup, text, time, witch, wreq
 }:
 mkDerivation {
@@ -11,8 +11,9 @@ mkDerivation {
   isExecutable = true;
   executableHaskellDepends = [
     base containers errors exceptions extra feed filepath filepattern
-    lens megaparsec notmuch optparse-applicative purebred-email relude
-    say string-interpolate tagsoup text time witch wreq
+    http-client lens megaparsec notmuch optparse-applicative
+    purebred-email relude say string-interpolate tagsoup text time
+    witch wreq
   ];
   license = "unknown";
 }

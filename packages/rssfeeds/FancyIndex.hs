@@ -1,11 +1,13 @@
 module Main (main) where
 
 import Control.Concurrent qualified as Concurrent
+import Control.Lens ((%~), _Left)
 import Data.List.Extra qualified as List
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Data.Time (UTCTime)
 import Data.Time qualified as Time
+import Network.HTTP.Client qualified as Http
 import Network.Wreq qualified as Wreq
 import Relude
 import Relude.Extra ((^.))
@@ -68,14 +70,21 @@ extractEntryFromTableRow = \row ->
 fetchIndex :: Text -> IO [Entry]
 fetchIndex = \url -> do
   putTextLn [i|fetching #{url} …|]
-  Concurrent.threadDelay 20_000 -- Microseconds
+  Concurrent.threadDelay 50_000 -- Microseconds
   mapMaybe extractEntryFromTableRow
     . List.split (TagSoup.isTagOpenName "tr")
     . dropWhile (not . TagSoup.isTagOpenName "tbody")
     . TagSoup.parseTags
     . decodeUtf8
     . (^. Wreq.responseBody)
-    <$> Wreq.get (toString url)
+    <$> Wreq.getWith opts (toString url)
+
+opts :: Wreq.Options
+opts =
+  Wreq.defaults
+    & Wreq.manager
+    . _Left
+    %~ (\x -> x{Http.managerResponseTimeout = Http.responseTimeoutMicro 10_000_000})
 
 getExtension :: Text -> Text
 getExtension =
