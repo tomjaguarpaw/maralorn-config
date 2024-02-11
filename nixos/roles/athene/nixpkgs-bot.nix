@@ -47,6 +47,7 @@ let
   };
 in
 {
+  environment.persistence.snapshoted.directories = [ "/var/lib/private/nixpkgs-bot" ];
   systemd.services.nixpkgs-bot = {
     wantedBy = [ "multi-user.target" ];
     description = "nixpkgs-bot";

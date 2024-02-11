@@ -96,6 +96,7 @@ let
   ];
 in
 {
+  environment.persistence.snapshoted.directories = [ "/var/lib/prometheus2" ];
   services = {
     nginx.virtualHosts.${virtualHosts.monitoring}.locations."/".proxyPass = "http://localhost:9090";
     prometheus = {
