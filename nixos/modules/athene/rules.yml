@@ -87,3 +87,12 @@ groups:
             severity: warning
           annotations:
             description: '{{ $labels.friendly_name }} has only {{ $value }}% battery.'
+
+        # low battery
+        - alert: battery_low
+          expr: node_power_supply_energy_watthour / node_power_supply_energy_full < 0.25
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            description: '{{ $labels.name }} has only {{ $value | humanizePercentage }} battery.'
