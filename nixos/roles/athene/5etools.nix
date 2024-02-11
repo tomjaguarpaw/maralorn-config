@@ -20,7 +20,7 @@ in
       if [[ -d ".git" ]]; then
          ${lib.getExe pkgs.git} pull -r
       else
-         ${lib.getExe pkgs.git} clone https://github.com/5etools-mirror-1/5etools-mirror-1.github.io.git .
+         ${lib.getExe pkgs.git} clone https://github.com/5etools-mirror-2/5etools-mirror-2.github.io.git .
       fi
     '';
     startAt = "daily";
