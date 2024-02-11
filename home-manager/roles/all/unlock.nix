@@ -14,12 +14,12 @@ let
       echo "Waiting for host to come up";
       while true; do
         echo -n .
-        /run/wrappers/bin/ping -4 ${hostName} -c 1 -w 1 > /dev/null && break;
+        ${pkgs.iputils}/bin/ping -4 ${hostName} -c 1 -w 1 > /dev/null && break;
         sleep 1s;
       done;
       echo
       echo "Ping successful; Entering disk encryption password"
-      ${config.programs.rbw.package}/bin/rbw get ${passwordName} | ssh -4 root@${hostName} -o UserKnownHostsFile=${knownHosts} cryptsetup-askpass
+      ${config.programs.rbw.package}/bin/rbw get ${passwordName} | ssh -4 root@${hostName} -o UserKnownHostsFile=${knownHosts}
     '';
   unlocker = [
     {
