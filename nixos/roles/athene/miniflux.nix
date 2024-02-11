@@ -10,7 +10,7 @@ let
 in
 {
   environment.persistence.snapshoted.directories = [
-    "/var/lib/rss"
+    "/var/www/rss"
     "/var/lib/postgresql"
   ];
   services = {
