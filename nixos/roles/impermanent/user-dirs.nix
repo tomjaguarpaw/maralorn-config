@@ -33,6 +33,7 @@
       ".steam"
       ".task"
       ".vdirsyncer"
+      ".weechat"
       ".zoom"
       ".zotero/zotero"
       "Games"
