@@ -9,7 +9,7 @@ let
   inherit (config.networking) hostName;
 in
 {
-  imports = [ ../../common ];
+  imports = [ ../../../common ];
 
   i18n = {
     defaultLocale = "en_DK.UTF-8";
