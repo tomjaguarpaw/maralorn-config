@@ -1,9 +1,12 @@
 { config, ... }:
+let
+  lnk = config.lib.file.mkOutOfStoreSymlink;
+in
 {
   home.file = {
-    ".volatile".source = config.lib.file.mkOutOfStoreSymlink "/disk/volatile${config.home.homeDirectory}";
-    ".persist".source = config.lib.file.mkOutOfStoreSymlink "/disk/persist${config.home.homeDirectory}";
-    "logs".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/media/documents/aktuell/it/logs";
-    "documents".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/media/documents/aktuell";
+    ".volatile".source = lnk "/disk/volatile${config.home.homeDirectory}";
+    ".persist".source = lnk "/disk/persist${config.home.homeDirectory}";
+    logs.source = lnk "${config.home.homeDirectory}/media/documents/aktuell/it/logs";
+    documents.source = lnk "${config.home.homeDirectory}/media/documents/aktuell";
   };
 }
