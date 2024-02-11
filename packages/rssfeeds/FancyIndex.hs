@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Control.Concurrent qualified as Concurrent
+import Control.Exception (try)
 import Control.Lens ((%~), _Left)
 import Data.List.Extra qualified as List
 import Data.String.Interpolate (i)
@@ -70,21 +71,24 @@ extractEntryFromTableRow = \row ->
 fetchIndex :: Text -> IO [Entry]
 fetchIndex = \url -> do
   putTextLn [i|fetching #{url} …|]
-  Concurrent.threadDelay 50_000 -- Microseconds
-  mapMaybe extractEntryFromTableRow
-    . List.split (TagSoup.isTagOpenName "tr")
-    . dropWhile (not . TagSoup.isTagOpenName "tbody")
-    . TagSoup.parseTags
-    . decodeUtf8
-    . (^. Wreq.responseBody)
-    <$> Wreq.getWith opts (toString url)
+  Concurrent.threadDelay 100_000 -- Microseconds
+  either
+    (const [])
+    ( mapMaybe extractEntryFromTableRow
+        . List.split (TagSoup.isTagOpenName "tr")
+        . dropWhile (not . TagSoup.isTagOpenName "tbody")
+        . TagSoup.parseTags
+        . decodeUtf8
+        . (^. Wreq.responseBody)
+    )
+    <$> try @SomeException (Wreq.getWith opts (toString url))
 
 opts :: Wreq.Options
 opts =
   Wreq.defaults
     & Wreq.manager
     . _Left
-    %~ (\x -> x{Http.managerResponseTimeout = Http.responseTimeoutMicro 10_000_000})
+    %~ (\x -> x{Http.managerResponseTimeout = Http.responseTimeoutMicro 5_000_000})
 
 getExtension :: Text -> Text
 getExtension =
@@ -125,14 +129,13 @@ data FeedInfo = MkFeedInfo
 {- | Scrape an nginx fancy index.
 | Create one RSS feed for every subfolder of the given folder.
 -}
-ignores = []
-
 main :: IO ()
 main = do
+  hSetBuffering stdout LineBuffering
   [root_dir_str] <- getArgs
   let root_dir = [i|#{root_dir_str}/|]
   folders <- fetchIndex root_dir
-  feeds <- forM (filter (\x -> not $ any (`Text.isInfixOf` x.link) ignores) folders) \entry -> do
+  feeds <- forM folders \entry -> do
     let path = Text.dropAround (== '/') entry.link
     entries <- collectEntries root_dir entry
 
