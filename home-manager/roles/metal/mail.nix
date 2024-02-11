@@ -19,11 +19,7 @@ let
   quick-mail-sync = pkgs.writeShellScriptBin "quick-mail-sync" ''
     ${pkgs.coreutils}/bin/mkdir -p ~/.cache/mutt
     PATH=${
-      lib.makeBinPath [
-        pkgs.sd
-        pkgs.rbw
-        pkgs.coreutils
-      ]
+      lib.makeBinPath [ pkgs.coreutils ]
     }:$PATH ${pkgs.isync}/bin/mbsync hera:INBOX,Code heilmann-inbox
     ${pkgs.notmuch}/bin/notmuch new
   '';
@@ -42,6 +38,11 @@ in
 
   accounts.email.accounts = lib.recursiveUpdate (pkgs.privateValue { } "mail/accounts") {
     hera = {
+      passwordCommand = "${pkgs.coreutils}/bin/cat /run/agenix/mail-password";
+      imapnotify.onNotify = lib.getExe quick-mail-sync;
+    };
+    heilmann = {
+      passwordCommand = "${pkgs.coreutils}/bin/cat /run/agenix/heilmann-mail-password";
       imapnotify.onNotify = lib.getExe quick-mail-sync;
     };
   };
@@ -74,13 +75,7 @@ in
     lib.mapAttrs' mkWatchService (lib.filterAttrs hasImapHost config.accounts.email.accounts)
     // {
       mbsync.Service = {
-        Environment = "PATH=${
-          lib.makeBinPath [
-            pkgs.rbw
-            pkgs.sd
-            pkgs.coreutils
-          ]
-        }";
+        Environment = "PATH=${lib.makeBinPath [ pkgs.coreutils ]}";
         Restart = "on-failure";
         RestartSec = "30s";
       };
