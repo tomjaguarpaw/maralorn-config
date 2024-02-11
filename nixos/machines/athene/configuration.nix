@@ -5,7 +5,7 @@ let
 in
 {
   imports =
-    [ (flake-inputs.secrets.lib.vpn "hera") ]
+    [ (flake-inputs.secrets.lib.vpn "athene") ]
     ++ mylib.nixFromDirs [
       ../../roles/athene
       ../../roles/all
