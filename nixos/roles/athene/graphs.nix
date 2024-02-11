@@ -8,22 +8,11 @@ let
   inherit (config.m-0) virtualHosts;
   heading = name: link: ''<h2><a href=\"${link}\">${name}</a></h2>'';
   badge = src: link: ''<a href=\"${link}\">\n  <img src=\"${src}\">\n</a>'';
-  job = name: badge "https://ci.maralorn.de/badge/${name}.svg" "https://ci.maralorn.de/jobs/${name}";
   badges = lib.concatStringsSep "\\n" [
-    (heading "ci.maralorn.de" "https://ci.maralorn.de")
-    (job "test-config")
-    (job "blog")
-
     (heading "haskell-taskwarrior" "https://hackage.haskell.org/package/taskwarrior")
     (badge "https://github.com/maralorn/haskell-taskwarrior/actions/workflows/haskell.yml/badge.svg" "https://github.com/maralorn/haskell-taskwarrior/actions"
     )
     (badge "https://img.shields.io/hackage-deps/v/taskwarrior.svg" "http://packdeps.haskellers.com/reverse/taskwarrior"
-    )
-    (badge "https://repology.org/badge/vertical-allrepos/haskell:taskwarrior.svg?columns=3&header=" "https://repology.org/project/haskell:taskwarrior/versions"
-    )
-
-    (heading "nix-output-monitor" "https://github.com/maralorn/nix-output-monitor")
-    (badge "https://repology.org/badge/vertical-allrepos/nix-output-monitor.svg?columns=3&header=" "https://repology.org/project/nix-output-monitor/versions"
     )
   ];
   dashboards = pkgs.runCommand "dashboards" { } ''
@@ -65,12 +54,7 @@ in
         { name = "grafana"; }
       ];
     };
-    nginx = {
-      enable = true;
-      virtualHosts.${virtualHosts."graphs"} = {
-        locations."/".proxyPass = "http://localhost:3000/";
-      };
-    };
+    nginx.virtualHosts.${virtualHosts."graphs"}.locations."/".proxyPass = "http://localhost:3000/";
     grafana = {
       enable = true;
       settings = {
@@ -82,7 +66,7 @@ in
         users.default_theme = "dark";
         "auth.basic".enabled = false;
         server.domain = virtualHosts."graphs";
-        dashboards.default_home_dashboard_path = "${dashboards}/accounting.json";
+        dashboards.default_home_dashboard_path = "${dashboards}/health-status.json";
       };
       provision = {
         enable = true;
