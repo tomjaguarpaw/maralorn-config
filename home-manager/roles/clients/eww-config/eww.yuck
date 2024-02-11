@@ -99,7 +99,7 @@
       (box :orientation "vertical" :space-evenly false :spacing 10
         (box  :space-evenly false :spacing 10
           (image :image-width 20 :image-height 20 :path "icons/${player.status}.png")
-          (label :justify "center" :text "${player.name} | ${player.title}")
+          (label :justify "center" :wrap true :text "${player.name} | ${player.title}")
         )
       )
     ))
