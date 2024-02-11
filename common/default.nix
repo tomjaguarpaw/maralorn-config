@@ -34,7 +34,6 @@
             hera = [
               "blog"
               "cloud"
-              "git"
               "code"
               "lists"
               "matrix"
@@ -46,17 +45,15 @@
               "analytics"
               "blog"
               "cloud"
-              "git"
               "lists"
               "matrix"
               "rpg"
               "rspamd"
-              "rss"
-              "stats"
               "code"
             ];
             athene = [
               "firefox-sync"
+              "rss"
               "home"
               "monitoring"
               "alerts"
