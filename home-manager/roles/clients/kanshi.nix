@@ -11,8 +11,9 @@ let
       (pkgs.writeShellScript "launch-eww" ''
         if [[ "$(${lib.getExe config.programs.eww.package} ping)" != "pong" ]]; then
           ${lib.getExe' pkgs.systemd "systemctl"} --user restart eww
+          sleep 0.1s;
         fi
-        ${lib.getExe config.programs.eww.package} open ${name}
+        ${lib.getExe config.programs.eww.package} open topbar --arg screen=${name}
       '').outPath
     ];
   };
@@ -22,14 +23,14 @@ in
     enable = true;
     systemdTarget = "graphical-session.target";
     profiles = {
-      desk = openbar "middlebar" [
+      desk = openbar "big" [
         {
           criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
           mode = "5120x1440";
           status = "enable";
         }
       ];
-      docked = openbar "middlebar" [
+      docked = openbar "big" [
         {
           criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
           mode = "5120x1440";
@@ -40,7 +41,7 @@ in
           status = "disable";
         }
       ];
-      docked-s = openbar "middlebar" [
+      docked-s = openbar "big" [
         {
           criteria = "Dell Inc. DELL S2721QS 77SJM43";
           status = "enable";
@@ -61,13 +62,13 @@ in
           mode = "1920x1080";
         }
       ];
-      z-default-single = openbar "rightbar" [
+      z-default-single = openbar "small" [
         {
           criteria = "eDP-1";
           status = "enable";
         }
       ];
-      z-default-extern = openbar "rightbar" [
+      z-default-extern = openbar "small" [
         {
           criteria = "eDP-1";
           status = "enable";

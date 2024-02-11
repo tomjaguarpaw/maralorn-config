@@ -213,22 +213,13 @@
   (info-overlay)
 )
 
-(defwindow rightbar
+(defwindow topbar [screen]
+  :monitor 0
   :focusable false
   :geometry (geometry :x "0%"
                       :y "0%"
-                      :width "41%"
+                      :width { screen == "small" ? "41%" : "20%" }
                       :height "200px"
-                      :anchor "top right")
-  (sidebar)
-)
-
-(defwindow middlebar
-  :focusable false
-  :geometry (geometry :x "0%"
-                      :y "0%"
-                      :width "20%"
-                      :height "200px"
-                      :anchor "top center")
+                      :anchor { screen == "small" ? "top right" : "top center"})
   (sidebar)
 )
