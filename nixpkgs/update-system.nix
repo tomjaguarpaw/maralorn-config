@@ -2,13 +2,7 @@ final: _:
 let
   inherit (final) pkgs lib;
   homeDir = "/home/maralorn";
-  modeFile = "${homeDir}/.mode";
-  modeDir = "${homeDir}/.volatile/modes";
   configPath = "${homeDir}/git/config";
-  configGit = "${lib.getExe pkgs.git} -C ${configPath}";
-  get_mode = ''
-    mode <- decodeUtf8 @Text <$> (cat "${modeFile}" |> captureTrim)
-  '';
   get_hostname = ''
     hostname <- BSC.strip <$> readFileBS "/etc/hostname"
   '';
@@ -65,82 +59,6 @@ let
               say [i|Setting gc-roots #{gc_root} and #{gc_root_full}|]
               ssh "athene" "nix" "build" "-o" gc_root_full path
               ssh "athene" "nix" "build" "-o" gc_root path
-        '';
-    maintenance = pkgs.writeShellScriptBin "maintenance" ''
-      set -e
-      ${configGit} pull --ff-only
-      echo "Running update-modes …"
-      ${lib.getExe pkgs.updateModes}
-      echo "Updating system …"
-      ${lib.getExe pkgs.updateSystem}
-      echo "Maintenance finished."
-    '';
-    activateMode = pkgs.writeHaskellScript { name = "activate-mode"; } ''
-      main = do
-        ${get_mode}
-        say [i|Switching to mode #{mode}...|]
-        exe ([i|${modeDir}/#{mode}/activate|] :: String)
-    '';
-    selectMode =
-      pkgs.writeHaskellScript
-        {
-          name = "select-mode";
-          bins = [
-            pkgs.river
-            pkgs.activateMode
-          ];
-          imports = [ "System.Directory qualified as Directory" ];
-        }
-        ''
-          main = do
-            [mode] <- getArgs
-            writeFile "${modeFile}" mode
-            activate_mode
-            riverctl "exit"
-        '';
-    updateModes =
-      pkgs.writeHaskellScript
-        {
-          name = "update-modes";
-          bins = [
-            pkgs.activateMode
-            pkgs.git
-            pkgs.nix-output-monitor
-            pkgs.builders-configurator
-            pkgs.archive-nix-path
-          ];
-        }
-        ''
-          main = do
-            ${get_hostname}
-            ${get_builders}
-            say [i|Building modes for #{hostname} …|]
-            nom ["build", "--builders", [i|@#{builders}|], [i|${configPath}\#homeModes.#{hostname}|], "-o", "${modeDir}"]
-            activate_mode
-            archive_nix_path "${modeDir}"
-        '';
-    quickUpdateMode =
-      pkgs.writeHaskellScript
-        {
-          name = "quick-update-mode";
-          bins = [
-            pkgs.updateModes
-            pkgs.git
-            pkgs.home-manager
-            pkgs.nix-output-monitor
-            pkgs.builders-configurator
-          ];
-        }
-        ''
-
-          main = do
-            ${get_hostname}
-            ${get_mode}
-            ${get_builders}
-            say [i|Quick switching to mode #{mode} ...|]
-            path <- decodeUtf8 @Text <$> (nom ["build", "--builders", [i|@#{builders}|], "--print-out-paths", "--no-link", [i|${configPath}\#homeConfigurations.#{hostname}-#{mode}.activationPackage|]] |> captureTrim)
-            exe ([i|#{path}/activate|] :: String)
-            update_modes
         '';
     updateSystem =
       pkgs.writeHaskellScript
