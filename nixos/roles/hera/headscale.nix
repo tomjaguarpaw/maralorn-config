@@ -47,7 +47,7 @@ in
           );
         };
         logtail.enabled = false;
-        metrics_listen_addr = "[${config.m-0.hosts.tailscale.hera.AAAA}]:9098";
+        metrics_listen_addr = "[::]:9098";
         ip_prefixes = config.m-0.headscaleIPs;
       };
     };
