@@ -1,13 +1,8 @@
 groups:
    - name: rules
      rules:
-        - alert: probe_timeout
-          expr: probe_success == 0
-          for: 60m
-          labels:
-             severity: critical
-          annotations:
-             description: '{{ $labels.instance }} probe {{ $labels.job}} failed.'
+
+        # nodes reachable
         - alert: node_down
           expr: 'up{flaky!="true"} == 0'
           for: 5m
@@ -15,6 +10,27 @@ groups:
              severity: critical
           annotations:
              description: '{{ $labels.name }} is not reachable.'
+
+        # blackbox probes
+        ## probe reachable
+        - alert: probe_timeout
+          expr: probe_success == 0
+          for: 60m
+          labels:
+             severity: critical
+          annotations:
+             description: '{{ $labels.instance }} probe {{ $labels.job}} failed.'
+        ## certificate valid
+        - alert: certificate_expiry
+          expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 14
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            description: 'Certificate for {{ $labels.instance }} is expiring soon.'
+
+        # systemd services
+        ## system services
         - alert: systemd_service_failed
           expr: node_systemd_unit_state{state="failed"} == 1
           for: 5m
@@ -22,6 +38,7 @@ groups:
              severity: critical
           annotations:
              description: 'service {{$labels.exported_name}} on {{$labels.name}} failed.'
+        ## user services
         - alert: systemd_user_service_failed
           expr: systemd_unit_state{state="failed"} == 1
           for: 5m
@@ -29,42 +46,44 @@ groups:
              severity: critical
           annotations:
              description: 'service {{$labels.exported_name}} on {{$labels.name}} failed.'
+
+        # filesystems
         - alert: out_of_diskspace
-          expr: min by (device, name) (node_filesystem_avail_bytes{device!="tmpfs",device!="none",inContainer!="true"}) / max by (device,name) (node_filesystem_size_bytes) < 0.1
+          expr: min by (device, name) (node_filesystem_avail_bytes{device!~"tmpfs|none"}) / max by (device,name) (node_filesystem_size_bytes) < 0.1
           for: 5m
           labels:
             severity: warning
           annotations:
-            description: "{{ $labels.device }} on {{ $labels.name }} has only {{ $value | humanizePercentage }} free diskspace."
+            description: '{{ $labels.device }} on {{ $labels.name }} has only {{ $value | humanizePercentage }} free diskspace.'
         - alert: out_of_inodes
           expr: node_filesystem_files_free{fstype!="tmpfs"} / node_filesystem_files * 100 < 10
           for: 5m
           labels:
             severity: warning
           annotations:
-            description: "mountpoint {{ $labels.mountpoint }} on {{ $labels.name }} out of inodes."
+            description: 'mountpoint {{ $labels.mountpoint }} on {{ $labels.name }} out of inodes.'
+
+        # postfix (mail queue)
         - alert: mailq
           expr: postfix_showq_message_age_seconds_sum > 1800
           for: 5m
           labels:
-             severity: warning
+            severity: warning
           annotations:
-             description: "mail queue {{ $labels.queue }} of {{ $labels.name }} has accumulated a waiting time of {{ $value | humanizeDuration }}."
-        # TLS
-        - alert: CertificateExpiry
-          expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 14
-          for: 10m
+            description: 'mail queue {{ $labels.queue }} of {{ $labels.name }} has accumulated a waiting time of {{ $value | humanizeDuration }}.'
+
+        # home assistant
+        - alert: home_device_unavailable
+          expr: hass_entity_available{domain!~"device_tracker|person"} == 0
+          for: 60m
+          labels:
+            severity: critical
+          annotations:
+            description: '{{ $labels.friendly_name }} is unavailable.'
+        - alert: home_device_battery_low
+          expr: hass_sensor_battery_percent < 25
+          for: 5m
           labels:
             severity: warning
           annotations:
-            summary: "Certificate for {{ $labels.instance }} is expiring soon."
-        - alert: "home_device_unavailable"
-          expr: "hass_entity_available == 0"
-          for: "60m"
-          labels: {severity: "critical"}
-          annotations: {description: "{{ $labels.friendly_name }} is unavailable."}
-        - alert: "home_device_battery_low"
-          expr: "hass_sensor_battery_percent < 25"
-          for: "5m"
-          labels: {severity: "critical"}
-          annotations: {description: "{{ $labels.friendly_name }} has only {{ $value }}% battery."}
+            description: '{{ $labels.friendly_name }} has only {{ $value }}% battery.'
