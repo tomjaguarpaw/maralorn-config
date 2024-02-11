@@ -28,11 +28,11 @@
     "cdarknet-hosts": {
       "flake": false,
       "locked": {
-        "lastModified": 1679696228,
-        "narHash": "sha256-u1DGcI06Foxdfw7iHj7nZVzIGZ4OS0LYAc4UlwdaNkg=",
+        "lastModified": 1707669817,
+        "narHash": "sha256-bSpEuGBTtVLQc4lzOLoUz0TlYf7a2Of4bTtHaAo6PSE=",
         "ref": "refs/heads/master",
-        "rev": "33625a4b34c90034ebe37b1234c37276cf71ef70",
-        "revCount": 243,
+        "rev": "48a90c70ac4accde8ec76308a1a5a12d4ece0e05",
+        "revCount": 251,
         "type": "git",
         "url": "ssh://git@git.darmstadt.ccc.de/cdark.net/hosts.git"
       },
@@ -388,11 +388,11 @@
         "nixpkgs": []
       },
       "locked": {
-        "lastModified": 1707661035,
-        "narHash": "sha256-+RWGYwv6zRP5ylw0wN3EBilYxwB4jVUaI9SJEOY6DtI=",
+        "lastModified": 1707669995,
+        "narHash": "sha256-VjiXEWt+y/5Ln4aJWLe3e4qaDt2JNefeA+FgUiBXBCM=",
         "ref": "refs/heads/main",
-        "rev": "87138d8275f31660a80924403723b82509a09adc",
-        "revCount": 295,
+        "rev": "2dd524eb2dbe7289c2d9ab03fcc09e2e24d041fd",
+        "revCount": 298,
         "type": "git",
         "url": "ssh://gitea@code.maralorn.de/maralorn/config-secrets"
       },
