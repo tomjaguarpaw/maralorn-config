@@ -14,7 +14,6 @@ in
     [
       (flake-inputs.secrets.lib.vpn "apollo")
       flake-inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480s
-      ./hardware-configuration.nix
       (import ../../roles/folder-size-exporter.nix {
         folders = [
           "/"
