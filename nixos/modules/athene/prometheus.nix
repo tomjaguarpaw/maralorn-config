@@ -46,6 +46,11 @@ let
       metrics_path = "/_synapse/metrics";
       host = "hera:9148";
     }
+    {
+      name = "forgejo on hera";
+      metrics_path = "/metrics";
+      host = "code.maralorn.de";
+    }
     # Apollo
     {
       name = "apollo";
