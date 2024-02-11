@@ -66,25 +66,25 @@
       mytmux = pkgs.writeShellScriptBin "mytmux" ''
         session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
         if [[ -n $session ]]; then
-           exec ${lib.getBin pkgs.tmux} attach -t $session;
+           exec ${lib.getExe pkgs.tmux} attach -t $session;
         else
-           exec ${lib.getBin pkgs.tmux};
+           exec ${lib.getExe pkgs.tmux};
         fi
       '';
       ssh-rbw-pubkey = pkgs.writeShellScriptBin "ssh-rbw-pubkey" ''
         file=$(mktemp)
-        ${lib.getBin ssh-rbw-privkey} "$1" > $file
+        ${lib.getExe ssh-rbw-privkey} "$1" > $file
         ssh-keygen -y -f $file
         rm $file
       '';
       ssh-rbw-privkey = pkgs.writeShellScriptBin "ssh-rbw-privkey" ''
-        ${lib.getBin config.programs.rbw.package} get --folder ssh "sshkey: $1"
+        ${lib.getExe config.programs.rbw.package} get --folder ssh "sshkey: $1"
       '';
       ssh-rbw-gen = pkgs.writeShellScriptBin "ssh-rbw-gen" ''
         ssh-keygen -ted25519 -C "maralorn.$1@pantheon"
       '';
       ssh-rbw-add = pkgs.writeShellScriptBin "ssh-rbw-add" ''
-        ssh-add <(${lib.getBin ssh-rbw-privkey} "$1")
+        ssh-add <(${lib.getExe ssh-rbw-privkey} "$1")
       '';
       unlock-keys = pkgs.writeShellScriptBin "unlock-keys" ''
         ${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd SSH_AUTH_SOCK
