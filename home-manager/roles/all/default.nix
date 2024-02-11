@@ -52,7 +52,7 @@
   };
 
   home = {
-    packages = builtins.attrValues {
+    packages = builtins.attrValues rec {
       inherit (pkgs)
         mpc_cli
         ncmpcpp
@@ -66,18 +66,34 @@
       mytmux = pkgs.writeShellScriptBin "mytmux" ''
         session=$(${pkgs.tmux}/bin/tmux ls | grep -v attached | head -1 | cut -f1 -d:)
         if [[ -n $session ]]; then
-           exec ${pkgs.tmux}/bin/tmux attach -t $session;
+           exec ${lib.getBin pkgs.tmux} attach -t $session;
         else
-           exec ${pkgs.tmux}/bin/tmux;
+           exec ${lib.getBin pkgs.tmux};
         fi
+      '';
+      ssh-rbw-pubkey = pkgs.writeShellScriptBin "ssh-rbw-pubkey" ''
+        file=$(mktemp)
+        ${lib.getBin ssh-rbw-privkey} "$1" > $file
+        ssh-keygen -y -f $file
+        rm $file
+      '';
+      ssh-rbw-privkey = pkgs.writeShellScriptBin "ssh-rbw-privkey" ''
+        ${lib.getBin config.programs.rbw.package} get --folder ssh "sshkey: $1"
+      '';
+      ssh-rbw-gen = pkgs.writeShellScriptBin "ssh-rbw-gen" ''
+        ssh-keygen -ted25519 -C "maralorn.$1@pantheon"
+      '';
+      ssh-rbw-add = pkgs.writeShellScriptBin "ssh-rbw-add" ''
+        ssh-add <(${lib.getBin ssh-rbw-privkey} "$1")
       '';
       unlock-keys = pkgs.writeShellScriptBin "unlock-keys" ''
         ${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd SSH_AUTH_SOCK
         if ! rbw unlocked; then killall rbw-agent; fi
         rbw unlock
-        ssh-add <(rbw get "SSH code")
-        ssh-add <(rbw get "SSH signing")
-        ssh-add <(rbw get "SSH login")
+
+        ${lib.getBin ssh-rbw-add} code
+        ${lib.getBin ssh-rbw-add} signing
+        ${lib.getBin ssh-rbw-add} login
       '';
     };
     sessionVariables = {
