@@ -9,7 +9,10 @@ let
   address = "[::1]:8100";
 in
 {
-  environment.persistence.snapshoted.directories = [ "/var/lib/rss" ];
+  environment.persistence.snapshoted.directories = [
+    "/var/lib/rss"
+    "/var/lib/postgresql"
+  ];
   services = {
     miniflux = {
       enable = true;
