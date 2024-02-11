@@ -65,6 +65,6 @@ groups:
           annotations: {description: "{{ $labels.friendly_name }} is unavailable."}
         - alert: "home_device_battery_low"
           expr: "hass_sensor_battery_percent < 25"
-          for: "60m"
+          for: "5m"
           labels: {severity: "critical"}
           annotations: {description: "{{ $labels.friendly_name }} has only {{ $value }}% battery."}
