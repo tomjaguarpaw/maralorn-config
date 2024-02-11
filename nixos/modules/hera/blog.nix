@@ -1,11 +1,15 @@
+{ config, ... }:
+let
+  inherit (config.m-0) virtualHosts;
+in
 {
   services = {
     nginx = {
       enable = true;
-      virtualHosts."blog.maralorn.de" = {
+      virtualHosts.${virtualHosts.blog} = {
         forceSSL = true;
         enableACME = true;
-        root = "/var/cache/gc-links/blog";
+        root = "/var/www/blog";
         locations = {
           "/static" = {
             extraConfig = ''
