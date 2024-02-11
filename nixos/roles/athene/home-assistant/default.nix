@@ -47,14 +47,6 @@ let
     "wohnzimmerfenster"
     "schlafzimmerfenster"
   ];
-  switches = map (name: "switch.${name}") [
-    "weihnachtsstern_schlafzimmer"
-    "luftentfeuchter"
-    "lueftung_bad"
-    "lichterkette_schrank"
-    "lichterkette_fernseher"
-    "blaue_lichterkette"
-  ];
   batteries = map (name: "sensor.${name}") [
     "wohnzimmerfenster_battery"
     "thermostat_kueche_battery"
@@ -626,32 +618,6 @@ in
       };
       lovelaceConfig =
         let
-          alertbadges = [
-            {
-              type = "entity-filter";
-              entities = map (entity: {
-                inherit entity;
-                icon = "mdi:broadcast-off";
-              }) switches;
-              state_filter = [ "unavailable" ];
-            }
-            {
-              type = "entity-filter";
-              entities = fenster;
-              state_filter = [ "on" ];
-            }
-            {
-              type = "entity-filter";
-              entities = batteries;
-              state_filter = [
-                {
-                  value = 25;
-                  operator = "<";
-                }
-              ];
-            }
-          ];
-          badges = alertbadges;
           envstack = {
             type = "vertical-stack";
             cards = [
@@ -1344,12 +1310,10 @@ in
             }
             {
               icon = "mdi:city";
-              inherit badges;
               cards = [ envstack ];
             }
             {
               icon = "mdi:floor-plan";
-              inherit badges;
               cards = [
                 wohnzimmerstack
                 schlafzimmerstack
