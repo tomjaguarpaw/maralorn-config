@@ -7,13 +7,11 @@ let
 in
 {
   systemd.services.mailman.postStart = lib.concatStringsSep "\n" (
-    map
-      (x: ''
-        ${(pkgs.mailmanPackages.buildEnvs { }).mailmanEnv}/bin/mailman syncmembers -W -G - "${x}" << EOF
-        ${lib.concatStringsSep "\n" lists."${x}"}
-        EOF
-      '')
-      (builtins.attrNames lists)
+    map (x: ''
+      ${(pkgs.mailmanPackages.buildEnvs { }).mailmanEnv}/bin/mailman syncmembers -W -G - "${x}" << EOF
+      ${lib.concatStringsSep "\n" lists."${x}"}
+      EOF
+    '') (builtins.attrNames lists)
   );
   services = {
     mailman = {

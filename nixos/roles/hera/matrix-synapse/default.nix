@@ -19,22 +19,19 @@ in
     };
     synapse-cleanup = {
       serviceConfig = {
-        ExecStart =
-          pkgs.writeHaskell "synapse-cleanup"
-            {
-              libraries = builtins.attrValues pkgs.myHaskellScriptPackages ++ [
-                pkgs.haskellPackages.postgresql-simple
-                pkgs.haskellPackages.HTTP
-              ];
-              ghcEnv.PATH = "${
-                lib.makeBinPath [
-                  pkgs.matrix-synapse-tools.rust-synapse-compress-state
-                  config.services.postgresql.package
-                ]
-              }:$PATH";
-              ghcArgs = [ "-threaded" ];
-            }
-            (builtins.readFile ./synapse-cleanup.hs);
+        ExecStart = pkgs.writeHaskell "synapse-cleanup" {
+          libraries = builtins.attrValues pkgs.myHaskellScriptPackages ++ [
+            pkgs.haskellPackages.postgresql-simple
+            pkgs.haskellPackages.HTTP
+          ];
+          ghcEnv.PATH = "${
+            lib.makeBinPath [
+              pkgs.matrix-synapse-tools.rust-synapse-compress-state
+              config.services.postgresql.package
+            ]
+          }:$PATH";
+          ghcArgs = [ "-threaded" ];
+        } (builtins.readFile ./synapse-cleanup.hs);
         User = "matrix-synapse";
         Type = "oneshot";
       };
@@ -91,13 +88,10 @@ in
       enable = true;
       settings =
         let
-          server-secrets =
-            pkgs.privateValue
-              {
-                registration_shared_secret = "";
-                macaroon_secret_key = "";
-              }
-              "matrix/server-secrets";
+          server-secrets = pkgs.privateValue {
+            registration_shared_secret = "";
+            macaroon_secret_key = "";
+          } "matrix/server-secrets";
         in
         server-secrets
         // {

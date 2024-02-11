@@ -68,16 +68,13 @@ in
       configDir = "/disk/persist/syncthing";
       cert = config.age.secrets."syncthing/zeus/cert.pem".path;
       key = config.age.secrets."syncthing/zeus/key.pem".path;
-      settings =
-        syncthing.declarativeWith
-          [
-            "hera"
-            "apollo"
-            "pegasus"
-            "hephaistos"
-            "athene"
-          ]
-          "/disk/persist/home/maralorn/media";
+      settings = syncthing.declarativeWith [
+        "hera"
+        "apollo"
+        "pegasus"
+        "hephaistos"
+        "athene"
+      ] "/disk/persist/home/maralorn/media";
     };
     #minecraft-server = {
     #  enable = true;

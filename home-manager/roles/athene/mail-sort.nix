@@ -5,14 +5,11 @@
   ...
 }:
 let
-  lists =
-    pkgs.privateValue
-      {
-        sortLists = [ ];
-        stupidLists = [ ];
-        notifications = [ ];
-      }
-      "mail/filters";
+  lists = pkgs.privateValue {
+    sortLists = [ ];
+    stupidLists = [ ];
+    notifications = [ ];
+  } "mail/filters";
   maildir = config.accounts.email.maildirBasePath;
   # mhdr -h List-ID -d Maildir/hera/Archiv/unsortiert | sort | sed 's/^.*<\(.*\)>$/\1/' | uniq | xargs -I '{}' sh -c "notmuch count List:{} | sed 's/$/: {}/'" | sort
   # To find candidates

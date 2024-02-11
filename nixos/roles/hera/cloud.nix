@@ -1,13 +1,10 @@
 { pkgs, config, ... }:
 let
-  adminCreds =
-    pkgs.privateValue
-      {
-        adminpass = "";
-        dbpass = "";
-        adminuser = "";
-      }
-      "nextcloud-admin";
+  adminCreds = pkgs.privateValue {
+    adminpass = "";
+    dbpass = "";
+    adminuser = "";
+  } "nextcloud-admin";
   nextcloudServices = hostname: {
     nextcloud-pg-backup = {
       script =

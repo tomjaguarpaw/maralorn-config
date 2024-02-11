@@ -6,15 +6,12 @@
 }:
 let
   inherit
-    (pkgs.privateValue
-      {
-        gpg = "";
-        name = "";
-        mail = "";
-        alternates = [ ];
-      }
-      "mail/me"
-    )
+    (pkgs.privateValue {
+      gpg = "";
+      name = "";
+      mail = "";
+      alternates = [ ];
+    } "mail/me")
     gpg
     name
     alternates

@@ -86,14 +86,12 @@ in
         human_buffer_names = on
         [server]
         ${lib.concatStringsSep "\n" (
-          lib.mapAttrsToList
-            (server: serverConfig: ''
-              ${server}.address = "${serverConfig.address}"
-              ${server}.autoconnect = on
-              ${server}.username = "${serverConfig.user}"
-              ${server}.password = "${serverConfig.password}"
-            '')
-            (pkgs.privateValue { } "weechat/matrix")
+          lib.mapAttrsToList (server: serverConfig: ''
+            ${server}.address = "${serverConfig.address}"
+            ${server}.autoconnect = on
+            ${server}.username = "${serverConfig.user}"
+            ${server}.password = "${serverConfig.password}"
+          '') (pkgs.privateValue { } "weechat/matrix")
         )}
       '';
     };

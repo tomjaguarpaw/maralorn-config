@@ -29,12 +29,10 @@
               "books"
               "tmp"
             ]
-            (
-              name: {
-                path = "${config.services.syncthing.dataDir}/${name}";
-                devices = builtins.attrNames config.services.syncthing.settings.devices;
-              }
-            );
+            (name: {
+              path = "${config.services.syncthing.dataDir}/${name}";
+              devices = builtins.attrNames config.services.syncthing.settings.devices;
+            });
       };
     };
     nginx.virtualHosts.${

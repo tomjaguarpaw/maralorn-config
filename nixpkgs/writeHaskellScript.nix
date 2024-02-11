@@ -21,22 +21,20 @@ in
       ghcArgs ? [ ],
       ghcEnv ? { },
     }:
-    pkgs.writers.makeBinWriter
-      {
-        compileScript =
-          let
-            filename = lib.last (builtins.split "/" name);
-          in
-          ''
-            cp $contentPath ${filename}.hs
-            ${lib.concatStringsSep " " (lib.mapAttrsToList (key: val: ''${key}="${val}"'') ghcEnv)} ${
-              ghc.withPackages (_: libraries)
-            }/bin/ghc ${lib.escapeShellArgs ghcArgs} ${filename}.hs
-            mv ${filename} $out
-            ${pkgs.binutils-unwrapped}/bin/strip --strip-unneeded "$out"
-          '';
-      }
-      name;
+    pkgs.writers.makeBinWriter {
+      compileScript =
+        let
+          filename = lib.last (builtins.split "/" name);
+        in
+        ''
+          cp $contentPath ${filename}.hs
+          ${lib.concatStringsSep " " (lib.mapAttrsToList (key: val: ''${key}="${val}"'') ghcEnv)} ${
+            ghc.withPackages (_: libraries)
+          }/bin/ghc ${lib.escapeShellArgs ghcArgs} ${filename}.hs
+          mv ${filename} $out
+          ${pkgs.binutils-unwrapped}/bin/strip --strip-unneeded "$out"
+        '';
+    } name;
 
   # writeHaskellBin takes the same arguments as writeHaskell but outputs a directory (like writeScriptBin)
   writeHaskellBin = name: pkgs.writeHaskell "/bin/${name}";

@@ -63,16 +63,13 @@ in
       openDefaultPorts = true;
       cert = config.age.secrets."syncthing/apollo/cert.pem".path;
       key = config.age.secrets."syncthing/apollo/key.pem".path;
-      settings =
-        syncthing.declarativeWith
-          [
-            "hera"
-            "zeus"
-            "pegasus"
-            "hephaistos"
-            "athene"
-          ]
-          "/home/maralorn/media";
+      settings = syncthing.declarativeWith [
+        "hera"
+        "zeus"
+        "pegasus"
+        "hephaistos"
+        "athene"
+      ] "/home/maralorn/media";
     };
   };
   system.stateVersion = "19.09";

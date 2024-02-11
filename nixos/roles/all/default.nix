@@ -34,34 +34,29 @@ in
     useNetworkd = true;
     useDHCP = false; # enabled per interface
     hosts = lib.zipAttrs (
-      lib.mapAttrsToList
-        (
-          host: ip:
-          if builtins.typeOf ip == "set" then
-            {
-              ${ip.AAAA or null} = "${host} ${host}.m-0.eu";
-              ${ip.A or null} = "${host} ${host}.m-0.eu";
-            }
-          else
-            { "${ip}" = "${host} ${host}.m-0.eu"; }
-        )
-        config.m-0.hosts
-      ++
-        lib.mapAttrsToList
-          (
-            host: ips:
-            let
-              mkHost = name: "${name} ${name}.maralorn.de";
-              name = "${host} ${host}.vpn.m-0.eu ${
-                lib.concatMapStringsSep " " mkHost config.m-0.hosts.aliases.${host} or [ ]
-              }";
-            in
-            {
-              ${ips.AAAA} = name;
-              ${ips.A} = name;
-            }
-          )
-          config.m-0.hosts.tailscale
+      lib.mapAttrsToList (
+        host: ip:
+        if builtins.typeOf ip == "set" then
+          {
+            ${ip.AAAA or null} = "${host} ${host}.m-0.eu";
+            ${ip.A or null} = "${host} ${host}.m-0.eu";
+          }
+        else
+          { "${ip}" = "${host} ${host}.m-0.eu"; }
+      ) config.m-0.hosts
+      ++ lib.mapAttrsToList (
+        host: ips:
+        let
+          mkHost = name: "${name} ${name}.maralorn.de";
+          name = "${host} ${host}.vpn.m-0.eu ${
+            lib.concatMapStringsSep " " mkHost config.m-0.hosts.aliases.${host} or [ ]
+          }";
+        in
+        {
+          ${ips.AAAA} = name;
+          ${ips.A} = name;
+        }
+      ) config.m-0.hosts.tailscale
     );
   };
 
@@ -92,12 +87,10 @@ in
       email = "security@maralorn.de";
     };
     acceptTerms = true;
-    certs = lib.genAttrs (builtins.attrValues config.m-0.virtualHosts) (
-      _: {
-        webroot = null;
-        dnsProvider = "inwx";
-      }
-    );
+    certs = lib.genAttrs (builtins.attrValues config.m-0.virtualHosts) (_: {
+      webroot = null;
+      dnsProvider = "inwx";
+    });
   };
 
   security.pam.services."login".failDelay.enable = true;
@@ -168,14 +161,11 @@ in
         ;
       inherit (pkgs.python3Packages) qrcode;
     };
-    variables =
-      lib.genAttrs
-        [
-          "CURL_CA_BUNDLE"
-          "GIT_SSL_CAINFO"
-          "SSL_CERT_FILE"
-        ]
-        (_: "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt");
+    variables = lib.genAttrs [
+      "CURL_CA_BUNDLE"
+      "GIT_SSL_CAINFO"
+      "SSL_CERT_FILE"
+    ] (_: "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt");
   };
 
   systemd = {
@@ -223,21 +213,18 @@ in
     };
     nginx = {
       enable = lib.mkDefault (config.m-0.virtualHosts != { });
-      virtualHosts =
-        lib.mapAttrs'
-          (name: hostname: {
-            name = hostname;
-            value = {
-              forceSSL = true;
-              enableACME = true;
-              extraConfig = lib.mkIf (!(builtins.elem name (hosts.publicAliases.${hostName} or [ ]))) ''
-                satisfy any;
-                ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};") config.m-0.headscaleIPs}
-                deny all;
-              '';
-            };
-          })
-          config.m-0.virtualHosts;
+      virtualHosts = lib.mapAttrs' (name: hostname: {
+        name = hostname;
+        value = {
+          forceSSL = true;
+          enableACME = true;
+          extraConfig = lib.mkIf (!(builtins.elem name (hosts.publicAliases.${hostName} or [ ]))) ''
+            satisfy any;
+            ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};") config.m-0.headscaleIPs}
+            deny all;
+          '';
+        };
+      }) config.m-0.virtualHosts;
       statusPage = true;
       recommendedOptimisation = true;
       recommendedGzipSettings = true;

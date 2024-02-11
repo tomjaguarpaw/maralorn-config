@@ -18,17 +18,15 @@
         attrs:
         lib.listToAttrs (
           lib.flatten (
-            lib.mapAttrsToList
-              (
-                outer_key:
-                lib.mapAttrsToList (
-                  inner_key: value: {
-                    name = "${outer_key}-${inner_key}";
-                    inherit value;
-                  }
-                )
+            lib.mapAttrsToList (
+              outer_key:
+              lib.mapAttrsToList (
+                inner_key: value: {
+                  name = "${outer_key}-${inner_key}";
+                  inherit value;
+                }
               )
-              attrs
+            ) attrs
           )
         );
       nixFromDirs =
@@ -37,17 +35,15 @@
             dir:
             builtins.concatLists (
               builtins.attrValues (
-                builtins.mapAttrs
-                  (
-                    name: path_type:
-                    if path_type == "regular" && builtins.match "[^_].*\\.nix" name != null then
-                      [ (import (dir + "/${name}")) ]
-                    else if path_type == "directory" then
-                      nixFromDir (dir + "/${name}")
-                    else
-                      [ ]
-                  )
-                  (builtins.readDir dir)
+                builtins.mapAttrs (
+                  name: path_type:
+                  if path_type == "regular" && builtins.match "[^_].*\\.nix" name != null then
+                    [ (import (dir + "/${name}")) ]
+                  else if path_type == "directory" then
+                    nixFromDir (dir + "/${name}")
+                  else
+                    [ ]
+                ) (builtins.readDir dir)
               )
             );
         in

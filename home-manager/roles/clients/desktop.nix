@@ -3,16 +3,14 @@
   home = {
     # This fixes border drawing but makes neo wonky. sessionVariables.NIXOS_OZONE_WL = "1";
     packages = builtins.attrValues {
-      zoom = pkgs.zoom-us.overrideAttrs (
-        old: {
-          postFixup =
-            old.postFixup
-            + ''
-              wrapProgram $out/bin/zoom-us --unset XDG_SESSION_TYPE
-              wrapProgram $out/bin/zoom --unset XDG_SESSION_TYPE
-            '';
-        }
-      );
+      zoom = pkgs.zoom-us.overrideAttrs (old: {
+        postFixup =
+          old.postFixup
+          + ''
+            wrapProgram $out/bin/zoom-us --unset XDG_SESSION_TYPE
+            wrapProgram $out/bin/zoom --unset XDG_SESSION_TYPE
+          '';
+      });
       mic-check = pkgs.writeShellScriptBin "mic-check" ''
         echo "Activating loopback!"
         ${pkgs.pulseaudio}/bin/pactl load-module module-loopback

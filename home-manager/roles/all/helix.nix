@@ -60,38 +60,32 @@ let
   };
   project_configs = builtins.zipAttrsWith (_: lib.concatLists) [
     custom_configs
-    (lib.genAttrs format_haskell (
-      _: [
-        {
-          name = "haskell";
-          auto-format = true;
-        }
-      ]
-    ))
-    (lib.genAttrs format_nix (
-      _: [
-        {
-          name = "nix";
-          auto-format = true;
-        }
-      ]
-    ))
+    (lib.genAttrs format_haskell (_: [
+      {
+        name = "haskell";
+        auto-format = true;
+      }
+    ]))
+    (lib.genAttrs format_nix (_: [
+      {
+        name = "nix";
+        auto-format = true;
+      }
+    ]))
   ];
 in
 {
 
   home = {
     activation.configureHelixProjects = lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (name: value: ''
-          if [ -d "${config.home.homeDirectory}/git/${name}" ]; then
-            mkdir -p "${config.home.homeDirectory}/git/${name}/.helix"
-            ln -sf ${
-              (pkgs.formats.toml { }).generate "languages.toml" { language = value; }
-            } ${config.home.homeDirectory}/git/${name}/.helix/languages.toml
-          fi
-        '')
-        project_configs
+      lib.mapAttrsToList (name: value: ''
+        if [ -d "${config.home.homeDirectory}/git/${name}" ]; then
+          mkdir -p "${config.home.homeDirectory}/git/${name}/.helix"
+          ln -sf ${
+            (pkgs.formats.toml { }).generate "languages.toml" { language = value; }
+          } ${config.home.homeDirectory}/git/${name}/.helix/languages.toml
+        fi
+      '') project_configs
     );
     sessionVariables = {
       EDITOR = "hx";

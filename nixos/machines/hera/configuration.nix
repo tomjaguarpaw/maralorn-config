@@ -40,12 +40,9 @@ in
   systemd.services =
     {
       pg_backup = {
-        script =
-          lib.concatMapStringsSep "\n"
-            (
-              name: "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}"
-            )
-            config.services.postgresql.ensureDatabases;
+        script = lib.concatMapStringsSep "\n" (
+          name: "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}"
+        ) config.services.postgresql.ensureDatabases;
         serviceConfig = {
           User = "postgres";
           Type = "oneshot";
@@ -74,14 +71,12 @@ in
       };
     }
     // lib.listToAttrs (
-      map
-        (name: {
-          inherit name;
-          value = {
-            serviceConfig.Type = "oneshot";
-          };
-        })
-        backupJobNames
+      map (name: {
+        inherit name;
+        value = {
+          serviceConfig.Type = "oneshot";
+        };
+      }) backupJobNames
     );
   services = {
     postgresql = {
@@ -96,16 +91,13 @@ in
       openDefaultPorts = true;
       cert = config.age.secrets."syncthing/hera/cert.pem".path;
       key = config.age.secrets."syncthing/hera/key.pem".path;
-      settings =
-        syncthing.declarativeWith
-          [
-            "apollo"
-            "zeus"
-            "pegasus"
-            "hephaistos"
-            "athene"
-          ]
-          "/media";
+      settings = syncthing.declarativeWith [
+        "apollo"
+        "zeus"
+        "pegasus"
+        "hephaistos"
+        "athene"
+      ] "/media";
     };
   };
   systemd.tmpfiles.rules = [ "Z /media 0770 maralorn nginx - -" ];

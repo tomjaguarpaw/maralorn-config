@@ -190,9 +190,7 @@ let
       };
     }
   ];
-  my-hotkeys = pkgs.writeShellScriptBin "my-hotkeys" "${lib.getBin pkgs.wizards-dialog}/bin/hotkeys ${
-    pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)
-  }";
+  my-hotkeys = pkgs.writeShellScriptBin "my-hotkeys" "${lib.getBin pkgs.wizards-dialog}/bin/hotkeys ${pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)}";
 in
 {
   home.packages = [ my-hotkeys ];

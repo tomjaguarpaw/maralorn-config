@@ -33,16 +33,13 @@ let
           "nixos-unstable" = [ ];
         }
       ]
-      ++
-        map
-          (release: {
-            "staging-${release}" = [ "staging-next-${release}" ];
-            "staging-next-${release}" = [ "release-${release}" ];
-            "release-${release}" = [ "nixos-${release}-small" ];
-            "nixos-${release}-small" = [ "nixos-${release}" ];
-            "nixos-${release}" = [ ];
-          })
-          releases
+      ++ map (release: {
+        "staging-${release}" = [ "staging-next-${release}" ];
+        "staging-next-${release}" = [ "release-${release}" ];
+        "release-${release}" = [ "nixos-${release}-small" ];
+        "nixos-${release}-small" = [ "nixos-${release}" ];
+        "nixos-${release}" = [ ];
+      }) releases
     );
   };
 in
@@ -59,9 +56,7 @@ in
       ];
       Restart = "always"; # TODO: Add error handling to git querying github in nixpkgs-bot
       WorkingDirectory = "/var/lib/nixpkgs-bot";
-      ExecStart = "${lib.getExe pkgs.nixpkgs-bot} ${
-        builtins.toFile "config.yaml" (builtins.toJSON configFile)
-      }";
+      ExecStart = "${lib.getExe pkgs.nixpkgs-bot} ${builtins.toFile "config.yaml" (builtins.toJSON configFile)}";
       DynamicUser = true;
       StateDirectory = "nixpkgs-bot";
     };

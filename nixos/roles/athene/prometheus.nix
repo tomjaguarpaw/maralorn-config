@@ -110,28 +110,26 @@ in
         let
           alert_type = "infrastructure";
         in
-        map
-          (
-            entry:
-            let
-              inherit (entry) name;
-            in
-            {
-              job_name = name;
-              metrics_path = entry.metrics_path or null;
-              static_configs = [
-                {
-                  targets = [ entry.host ];
-                  labels = {
-                    inherit name;
-                    inherit alert_type;
-                    flaky = lib.boolToString entry.flaky or false;
-                  };
-                }
-              ];
-            }
-          )
-          targets;
+        map (
+          entry:
+          let
+            inherit (entry) name;
+          in
+          {
+            job_name = name;
+            metrics_path = entry.metrics_path or null;
+            static_configs = [
+              {
+                targets = [ entry.host ];
+                labels = {
+                  inherit name;
+                  inherit alert_type;
+                  flaky = lib.boolToString entry.flaky or false;
+                };
+              }
+            ];
+          }
+        ) targets;
     };
   };
 }

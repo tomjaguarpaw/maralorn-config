@@ -457,17 +457,14 @@ in
           ++ (map
             (minutes: {
               alias = "Warnung bei ${minutes} Minuten offenem Fenster oder offener Tür";
-              trigger =
-                map
-                  (
-                    name:
-                    triggers.stateTrigger name
-                    // {
-                      to = "on";
-                      for = "00:${minutes}:00";
-                    }
-                  )
-                  fenster;
+              trigger = map (
+                name:
+                triggers.stateTrigger name
+                // {
+                  to = "on";
+                  for = "00:${minutes}:00";
+                }
+              ) fenster;
               condition = {
                 condition = "numeric_state";
                 entity_id = "sensor.openweathermap_darmstadt_hourly_temperature";
@@ -632,13 +629,10 @@ in
           alertbadges = [
             {
               type = "entity-filter";
-              entities =
-                map
-                  (entity: {
-                    inherit entity;
-                    icon = "mdi:broadcast-off";
-                  })
-                  switches;
+              entities = map (entity: {
+                inherit entity;
+                icon = "mdi:broadcast-off";
+              }) switches;
               state_filter = [ "unavailable" ];
             }
             {
