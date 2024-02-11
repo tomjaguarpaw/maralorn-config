@@ -91,9 +91,9 @@
         if ! rbw unlocked; then killall rbw-agent; fi
         rbw unlock
 
-        ${lib.getBin ssh-rbw-add} code
-        ${lib.getBin ssh-rbw-add} signing
-        ${lib.getBin ssh-rbw-add} login
+        ${lib.getExe ssh-rbw-add} code
+        ${lib.getExe ssh-rbw-add} signing
+        ${lib.getExe ssh-rbw-add} login
       '';
     };
     sessionVariables = {
