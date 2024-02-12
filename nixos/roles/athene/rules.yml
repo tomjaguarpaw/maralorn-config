@@ -81,16 +81,16 @@ groups:
           annotations:
             description: '{{ $labels.friendly_name }} is unavailable.'
         - alert: home_device_battery_low
-          expr: hass_sensor_battery_percent < 25
+          expr: hass_sensor_battery_percent <= 25
           for: 5m
           labels:
             severity: warning
           annotations:
-            description: '{{ $labels.friendly_name }} has only {{ $value }}% battery.'
+            description: '{{ $labels.friendly_name }} is only {{ $value }}%.'
 
         # low battery
         - alert: battery_low
-          expr: node_power_supply_energy_watthour / node_power_supply_energy_full < 0.25
+          expr: node_power_supply_energy_watthour / node_power_supply_energy_full <= 0.25
           for: 5m
           labels:
             severity: warning
