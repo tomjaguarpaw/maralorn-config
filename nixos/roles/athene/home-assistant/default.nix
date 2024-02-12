@@ -47,17 +47,6 @@ let
     "wohnzimmerfenster"
     "schlafzimmerfenster"
   ];
-  batteries = map (name: "sensor.${name}") [
-    "wohnzimmerfenster_battery"
-    "thermostat_kueche_battery"
-    "thermostat_schlafzimmer_battery"
-    "thermostat_wohnzimmer_battery"
-    "klimasensor_schlafzimmer_battery"
-    "kuechenfenster_battery"
-    "pegasus_battery_level"
-    "kalliope_battery_level"
-    "schlafzimmerfenster_battery"
-  ];
   homeAssistantDir = "/disk/persist/home-assistant";
 in
 {
@@ -381,39 +370,6 @@ in
                     3000
                   ];
               action = [ (actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }} ppm.") ];
-            }
-            {
-              alias = "Warnung bei niedrigem Akkustand";
-              trigger =
-                map
-                  (limit: {
-                    platform = "numeric_state";
-                    below = toString limit;
-                    entity_id = batteries;
-                  })
-                  [
-                    25
-                    20
-                    15
-                    10
-                    5
-                    4
-                    3
-                    2
-                    1
-                    0
-                  ];
-              action = [ (actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }}%.") ];
-            }
-            {
-              alias = "Abend";
-              trigger = [
-                {
-                  platform = "time";
-                  at = "22:50:00";
-                }
-              ];
-              action = [ (actions.notify "Es ist 22:50 Uhr.") ];
             }
             {
               alias = "Aufwachen";
