@@ -6,4 +6,5 @@
     upower.enable = true;
     fstrim.enable = true;
   };
+  systemd.services.fwupd-refresh.serviceConfig.Restart = "on-failure";
 }
