@@ -12,7 +12,6 @@
       ".config/discord"
       ".config/gh"
       ".config/heroic" # Login data
-      ".config/mpv/watch_later"
       ".config/tea"
       ".config/remmina" # RDP Client
       ".contacts"
@@ -27,6 +26,7 @@
       ".local/share/mpd"
       ".local/share/newsboat"
       ".local/share/remmina" # RDP Client
+      ".local/state/mpv" # To save watch later
       ".minecraft"
       ".mozilla/firefox"
       ".ssh"
