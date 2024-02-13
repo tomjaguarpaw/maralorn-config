@@ -1,10 +1,13 @@
 { pkgs, ... }:
 {
 
-  ## In 23.05 zfs conflicts with bcachefs to prevent this we do this override.
-  #nixpkgs.overlays = [
-  #  (_: super: { zfs = super.zfs.overrideAttrs (_: { meta.platforms = [ ]; }); })
-  #];
+  nixpkgs.overlays = [
+    (_: super: {
+      zfs = super.zfs.overrideAttrs (_: {
+        meta.platforms = [ ];
+      });
+    })
+  ];
 
   environment.systemPackages = [
     pkgs.helix
@@ -19,6 +22,11 @@
     "flakes"
     "repl-flake"
   ];
+
+  boot = {
+    supportedFilesystems = [ "bcachefs" ];
+    kernelPackages = pkgs.linuxPackages_latest;
+  };
 
   #boot.supportedFilesystems = [ "bcachefs" ];
   console = {
