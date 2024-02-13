@@ -21,7 +21,7 @@ softwareFeed ::
   m (R.Event t [Warning])
 softwareFeed = \env _ -> do
   -- db_event <- FileWatch.watchFile env (env.homeDir </> ".local/share/newsboat") "software-updates-cache.db"
-  db_event <- ReflexUtil.tickEvent 3600
+  db_event <- (<>) <$> ReflexUtil.tickEvent 3600 <*> R.getPostBuild
   ReflexUtil.performEventThreaded env db_event
     $ const
     $ (Shh.exe ("software-updates") "-x" "print-unread" |> Shh.captureTrim)
@@ -35,8 +35,7 @@ softwareFeed = \env _ -> do
       0 -> []
       n ->
         [ MkWarning
-            { description =
-                Just [i|Code Updates: #{n}|]
+            { description = Just [i|Code Updates: #{n}|]
             , group = "warning"
             , subgroup = Nothing
             }
