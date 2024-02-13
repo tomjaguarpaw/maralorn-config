@@ -5,7 +5,8 @@
   ...
 }:
 let
-  rbw = config.programs.rbw.package;
+  rbw-unwrapped = config.programs.rbw.package;
+  rbw = pkgs.writeShellScript "rbw" "PATH=${lib.makeBinPath [ rbw-unwrapped ]} rbw \"$@\"";
   video_dir = "${config.home.homeDirectory}/Videos";
   download-and-watch = pkgs.writeShellScriptBin "download-and-watch" ''
     set -euo pipefail
@@ -49,11 +50,11 @@ let
             urls-source "miniflux"
             miniflux-url "https://rss.maralorn.de/"
             miniflux-login "${user}"
-            miniflux-passwordeval "${lib.getExe rbw} get rss.maralorn.de ${user}"
+            miniflux-passwordeval "${rbw} get rss.maralorn.de ${user}"
             ${config}
           '';
         in
-        pkgs.writeShellScriptBin name ''${lib.getExe pkgs.newsboat} -r -C ${configFile} -c ~/.local/share/newsboat/${name}-cache.db "$@"''
+        pkgs.writeShellScriptBin name ''PATH=${lib.makeBinPath [ pkgs.bash ]} ${lib.getExe pkgs.newsboat} -r -C ${configFile} -c ~/.local/share/newsboat/${name}-cache.db "$@"''
       )
       {
         news = {
@@ -74,16 +75,15 @@ let
     };
 in
 {
+  status-script.env = [ commands.software-updates ];
   systemd.user = {
     services.update-software-feeds = {
       Unit.Description = "Update software feeds";
       Service = {
         Type = "oneshot";
-        ExecStart = toString (
-          pkgs.writeShellScript "update-plans" ''
-            ${commands.software-updates}/bin/software-updates -x reload
-          ''
-        );
+        ExecStart =
+          (pkgs.writeShellScript "update-software-feeds" "${commands.software-updates}/bin/software-updates -x reload"
+          ).outPath;
         Restart = "on-failure";
         RestartSec = "1h";
       };

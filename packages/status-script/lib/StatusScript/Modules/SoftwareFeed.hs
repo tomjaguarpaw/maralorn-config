@@ -4,15 +4,15 @@ import Data.Text qualified as Text
 import Maralorn.Prelude
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
-import Shh qualified
-import StatusScript.CommandUtil qualified as CommandUtil
-import StatusScript.Env (Env (..))
 
 -- import StatusScript.FileWatch qualified as FileWatch
+
+import Shh ((|>))
+import Shh qualified
+import StatusScript.Env (Env (..))
 import StatusScript.Mode (Mode (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
 import StatusScript.Warnings (Warning (..))
-import System.FilePath ((</>))
 
 softwareFeed ::
   (R.MonadHeadlessApp t m) =>
@@ -24,9 +24,8 @@ softwareFeed = \env mode -> do
   db_event <- ReflexUtil.tickEvent 3600
   ReflexUtil.performEventThreaded env (ReflexUtil.taggedAndUpdated mode db_event) \case
     Code ->
-      Shh.exe (env.homeDir </> ".nix-profile" </> "bin" </> "software-updates") "-x" "print-unread"
-        & CommandUtil.tryCmd
-        % liftIO
+      (Shh.exe ("software-updates") "-x" "print-unread" |> Shh.captureTrim)
+        & liftIO
         %> decodeUtf8
         %> Text.replace " unread articles" ""
         %> toString

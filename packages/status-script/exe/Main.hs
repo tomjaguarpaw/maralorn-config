@@ -10,14 +10,12 @@ import Maralorn.Prelude
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
 import Shh (ExecReference (Absolute), load)
-import StatusScript.CommandUtil qualified as ReflexUtil
+import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
 import StatusScript.Mode qualified as Mode
 import StatusScript.Modules.Audio qualified as Audio
 import StatusScript.Modules.BootState qualified as BootState
 import StatusScript.Modules.Calendar qualified as Calendar
-import StatusScript.Modules.ConfigPull qualified as ConfigPull
-import StatusScript.Modules.Git qualified as Git
 import StatusScript.Modules.IdleState qualified as IdleState
 import StatusScript.Modules.Mail qualified as Mail
 import StatusScript.Modules.Mako qualified as Mako
@@ -53,7 +51,7 @@ main = Notify.withManager \watch_manager -> do
           , fork = curry (STM.writeTQueue job_queue % atomically)
           , watch_manager
           }
-  ReflexUtil.reportMissing missingExecutables
+  CommandUtil.reportMissing missingExecutables
   mkdir "-p" PublishSocket.socketsDir
   now :: Int <- Time.getPOSIXTime <&> round
   R.runHeadlessApp do
