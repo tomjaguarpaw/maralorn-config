@@ -114,6 +114,7 @@ in
         curl
         direnv
         entr
+        bcachefs-tools
         eza
         fd
         file
