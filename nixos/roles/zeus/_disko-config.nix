@@ -36,7 +36,7 @@
               type = "filesystem";
               format = "bcachefs";
               mountpoint = "/";
-              options = [ "--compression=zstd" ];
+              extraArgs = [ "--compression=zstd" ];
             };
           };
         };
