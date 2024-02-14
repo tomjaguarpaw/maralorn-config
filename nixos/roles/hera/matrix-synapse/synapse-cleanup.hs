@@ -1,7 +1,6 @@
 {-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
-{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE PartialTypeSignatures #-}
@@ -11,7 +10,7 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE NoImplicitPrelude #-}
-{-# OPTIONS_GHC -Wall -Wno-missing-signatures -Wno-type-defaults -Wno-orphans #-}
+{-# OPTIONS_GHC -Werror -Wall -Wno-missing-signatures -Wno-type-defaults -Wno-orphans #-}
 
 import Control.Concurrent (threadDelay)
 import Data.Aeson (FromJSON, decode)
@@ -42,19 +41,34 @@ import Network.HTTP (
 import Relude
 import Say (say, sayErr)
 import Shh (ExecReference (Absolute), load, (|>))
-import System.IO (BufferMode (LineBuffering))
 
 -- Executables used.
-load Absolute ["synapse_compress_state", "cat", "psql", "rm"]
+load
+  Absolute
+  [ "synapse_compress_state" -- NIX_BIN
+  , "cat" -- NIX_BIN
+  , "psql" -- NIX_BIN
+  , "rm" -- NIX_BIN
+  ]
 
-newtype PurgeResult = PurgeResult {purge_id :: Text} deriving (Generic, FromJSON)
-newtype Status = Status {status :: Text} deriving (Generic, FromJSON)
+newtype PurgeResult = PurgeResult {purge_id :: Text}
+  deriving stock (Generic)
+  deriving anyclass (FromJSON)
+
+newtype Status = Status {status :: Text}
+  deriving stock (Generic)
+  deriving anyclass (FromJSON)
 
 apiUrl = [i|http://localhost:8008/_synapse/admin/v1|] :: Text
+
 daysOld = 30
+
 lastMessages = 500
+
 minUsersToPurgeRoom = 5
+
 filename = "/var/lib/matrix-synapse/tmp-storage-compression.sql"
+
 contentType = "application/json"
 
 giveToken :: Text -> Request_String -> Request_String
@@ -132,6 +146,7 @@ processRoom token conn upToTime roomId = do
   rm filename
 
 locallyUnjoinedRoomsQuery = "SELECT r.room_id FROM rooms AS r LEFT JOIN (SELECT room_id FROM local_current_membership WHERE membership = 'join' GROUP BY room_id) AS l ON l.room_id = r.room_id WHERE l.room_id IS NULL"
+
 largeRoomsQuery = "SELECT q.room_id FROM (select count(*) as numberofusers, room_id FROM current_state_events WHERE type ='m.room.member' AND membership = 'join' GROUP BY room_id) AS q LEFT JOIN room_aliases a ON q.room_id=a.room_id WHERE q.numberofusers > ? ORDER BY numberofusers desc"
 
 main :: IO ()

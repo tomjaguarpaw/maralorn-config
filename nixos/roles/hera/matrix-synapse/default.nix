@@ -19,19 +19,26 @@ in
     };
     synapse-cleanup = {
       serviceConfig = {
-        ExecStart = pkgs.writeHaskell "synapse-cleanup" {
-          libraries = builtins.attrValues pkgs.myHaskellScriptPackages ++ [
-            pkgs.haskellPackages.postgresql-simple
-            pkgs.haskellPackages.HTTP
-          ];
-          ghcEnv.PATH = "${
-            lib.makeBinPath [
-              pkgs.matrix-synapse-tools.rust-synapse-compress-state
-              config.services.postgresql.package
-            ]
-          }:$PATH";
-          ghcArgs = [ "-threaded" ];
-        } (builtins.readFile ./synapse-cleanup.hs);
+        ExecStart =
+          pkgs.writers.writeHaskell "synapse-cleanup"
+            { libraries = builtins.attrValues pkgs.myHaskellScriptPackages; }
+            (
+              builtins.replaceStrings
+                [
+                  "\"synapse_compress_state\" -- NIX_BIN"
+                  "\"cat\" -- NIX_BIN"
+                  "\"psql\" -- NIX_BIN"
+                  "\"rm\" -- NIX_BIN"
+                ]
+                [
+                  "\"${lib.getExe' pkgs.matrix-synapse-tools.rust-synapse-compress-state "synapse_compress_state"}\""
+                  "\"${lib.getExe' pkgs.coreutils "cat"}\""
+                  "\"${lib.getExe' config.services.postgresql.package "psql"}\""
+                  "\"${lib.getExe' pkgs.coreutils "rm"}\""
+                ]
+
+                (builtins.readFile ./synapse-cleanup.hs)
+            );
         User = "matrix-synapse";
         Type = "oneshot";
       };

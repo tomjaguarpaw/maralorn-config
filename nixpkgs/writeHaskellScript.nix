@@ -4,40 +4,6 @@ let
 in
 {
   haskellList = list: ''["${builtins.concatStringsSep ''", "'' list}"]'';
-  # writeHaskell takes a name, an attrset with libraries and haskell version (both optional)
-  # and some haskell source code and returns an executable.
-  #
-  # Example:
-  #   writeHaskell "missiles" { libraries = [ pkgs.haskellPackages.acme-missiles ]; } ''
-  #     import Acme.Missiles
-  #
-  #     main = launchMissiles
-  #   '';
-  writeHaskell =
-    name:
-    {
-      libraries ? [ ],
-      ghc ? pkgs.ghc,
-      ghcArgs ? [ ],
-      ghcEnv ? { },
-    }:
-    pkgs.writers.makeBinWriter {
-      compileScript =
-        let
-          filename = lib.last (builtins.split "/" name);
-        in
-        ''
-          cp $contentPath ${filename}.hs
-          ${lib.concatStringsSep " " (lib.mapAttrsToList (key: val: ''${key}="${val}"'') ghcEnv)} ${
-            ghc.withPackages (_: libraries)
-          }/bin/ghc ${lib.escapeShellArgs ghcArgs} ${filename}.hs
-          mv ${filename} $out
-          ${pkgs.binutils-unwrapped}/bin/strip --strip-unneeded "$out"
-        '';
-    } name;
-
-  # writeHaskellBin takes the same arguments as writeHaskell but outputs a directory (like writeScriptBin)
-  writeHaskellBin = name: pkgs.writeHaskell "/bin/${name}";
   writeHaskellScript =
     {
       name ? "haskell-script",
@@ -45,10 +11,9 @@ in
       imports ? [ ],
     }:
     code:
-    pkgs.writeHaskellBin name
+    pkgs.writers.writeHaskellBin name
       {
         ghcArgs = [
-          "-threaded"
           "-Wall"
           "-Wno-unused-top-binds"
           "-Wno-missing-signatures"

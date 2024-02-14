@@ -13,6 +13,8 @@
       these
       fsnotify
       witch
+      postgresql-simple
+      HTTP
       ;
   };
 }

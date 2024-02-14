@@ -25,41 +25,9 @@ in
       ./../../roles/servers
     ];
 
-  fileSystems =
-    let
-      btrfsOptions = {
-        neededForBoot = true;
-        options = [
-          "compress=zstd"
-          "autodefrag"
-          "noatime"
-        ];
-      };
-    in
-    {
-      "/disk" = btrfsOptions;
-      "/nix" = btrfsOptions;
-    };
-
-  systemd.tmpfiles.rules = [
-    "z / 755 - - - -"
-    "Z /home/maralorn - maralorn users - -"
-  ];
+  systemd.tmpfiles.rules = [ "Z /home/maralorn - maralorn users - -" ];
 
   services = {
-    snapper = {
-      configs.persist = {
-        SUBVOLUME = "/disk/persist";
-        TIMELINE_MIN_AGE = "3600";
-        TIMELINE_LIMIT_WEEKLY = "4";
-        TIMELINE_LIMIT_MONTHLY = "1";
-        TIMELINE_LIMIT_YEARLY = "0";
-        TIMELINE_CREATE = true;
-        TIMELINE_CLEANUP = true;
-      };
-      cleanupInterval = "15m";
-      snapshotInterval = "*:00/3:00";
-    };
     syncthing = {
       enable = true;
       group = "users";
