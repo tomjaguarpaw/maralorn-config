@@ -2,8 +2,11 @@
   documentation = {
     dev.enable = true;
     nixos = {
-      #includeAllModules = true;
-      options.splitBuild = true;
+      includeAllModules = true;
+      options = {
+        splitBuild = true;
+        warningsAreErrors = false;
+      };
     };
   };
 }

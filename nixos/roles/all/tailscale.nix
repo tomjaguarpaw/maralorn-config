@@ -7,6 +7,7 @@
 {
   options.m-0.tailscale-routes = lib.mkOption {
     default = "";
+    description = "Extra routes for tailscale";
     type = lib.types.str;
   };
   config = {

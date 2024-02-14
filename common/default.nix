@@ -9,6 +9,7 @@
       prefix = mkOption {
         default = "2a02:c207:3002:7584";
         type = types.str;
+        description = "External ipv6 prefix";
       };
       headscaleIPs = mkOption {
         type = types.listOf types.str;
@@ -16,10 +17,15 @@
           "100.64.7.0/24"
           "fd7a:115c:a1e0:77::/64"
         ];
+        description = "Internal headscale ips";
       };
-      virtualHosts = mkOption { type = types.attrs; };
+      virtualHosts = mkOption {
+        type = types.attrs;
+        description = "available aliases on this machine";
+      };
       hosts = mkOption {
         type = types.attrs;
+        description = "hosts";
         default = {
           hera = {
             AAAA = "${config.m-0.prefix}::1";
