@@ -90,9 +90,17 @@ groups:
 
         # low battery
         - alert: battery_low
-          expr: node_power_supply_energy_watthour / node_power_supply_energy_full <= 0.25
+          expr: node_power_supply_energy_watthour / node_power_supply_energy_full * on (name,power_supply) node_power_supply_info{status="Discharging"} <= 0.25
           for: 5m
           labels:
             severity: warning
           annotations:
             description: '{{ $labels.name }} has only {{ $value | humanizePercentage }} battery.'
+
+        # kernel stale
+        - alert: current_kernel_not_booted
+          expr: nixos_current_system_kernel_booted == 0
+          labels:
+            severity: warning
+          annotations:
+            description: 'The current kernel of {{ $labels.name }} is not booted.'

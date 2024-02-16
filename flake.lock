@@ -271,6 +271,22 @@
         "type": "indirect"
       }
     },
+    "nixos-infra": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1708125913,
+        "narHash": "sha256-2tFkhoIaZ7zjt9TsZIn0AxyOpGYxbqwE6IESi911g6Q=",
+        "owner": "nixos",
+        "repo": "infra",
+        "rev": "e35c6d13e9ab2ffe84015d1401df335c2690ca8e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "infra",
+        "type": "github"
+      }
+    },
     "nixos-mailserver": {
       "inputs": {
         "blobs": [],
@@ -373,6 +389,7 @@
         "nix-output-monitor": "nix-output-monitor",
         "nixfmt": "nixfmt",
         "nixos-hardware": "nixos-hardware",
+        "nixos-infra": "nixos-infra",
         "nixos-mailserver": "nixos-mailserver",
         "nixos-stable": "nixos-stable",
         "nixos-unstable": "nixos-unstable",

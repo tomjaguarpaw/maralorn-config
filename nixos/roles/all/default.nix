@@ -200,39 +200,6 @@ in
   services = {
     logind.killUserProcesses = false;
     journald.extraConfig = "SystemMaxUse=5G";
-    prometheus.exporters = {
-      node = {
-        enable = true;
-        enabledCollectors = [
-          "systemd"
-          "logind"
-        ];
-        disabledCollectors = [ "timex" ];
-      };
-      nginx = {
-        inherit (config.services.nginx) enable;
-      };
-    };
-    nginx = {
-      enable = lib.mkDefault (config.m-0.virtualHosts != { });
-      virtualHosts = lib.mapAttrs' (name: hostname: {
-        name = hostname;
-        value = {
-          forceSSL = true;
-          enableACME = true;
-          extraConfig = lib.mkIf (!(builtins.elem name (hosts.publicAliases.${hostName} or [ ]))) ''
-            satisfy any;
-            ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};") config.m-0.headscaleIPs}
-            deny all;
-          '';
-        };
-      }) config.m-0.virtualHosts;
-      statusPage = true;
-      recommendedOptimisation = true;
-      recommendedGzipSettings = true;
-      recommendedTlsSettings = true;
-      clientMaxBodySize = "500m";
-    };
   };
   programs = {
     git.config.init.defaultBranch = "main";

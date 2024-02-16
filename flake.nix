@@ -8,6 +8,10 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixos-stable";
     };
+    nixos-infra = {
+      url = "github:nixos/infra";
+      flake = false;
+    };
     nixfmt = {
       url = "github:piegamesde/nixfmt/rfc101-style";
       inputs = {
