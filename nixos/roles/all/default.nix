@@ -105,6 +105,7 @@ in
       inherit (pkgs)
         asciinema
         bat
+        moreutils
         bind
         binutils
         borgbackup
