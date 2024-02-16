@@ -53,7 +53,7 @@ let
           { remote-builder = ssh "phoibe.cased.de"; }
           { ag = ssh "ag-forward"; }
           { mathe-gateway = ssh "gw"; }
-          { backup-server = ssh "borg.cysec.de"; }
+          { backup-server = ssh "borg.cased.de"; }
           { shells = ssh "shells"; }
           { "bach (ved)" = ssh "bach.vocalensemble-darmstadt.de"; }
           { "nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net shell"; }
