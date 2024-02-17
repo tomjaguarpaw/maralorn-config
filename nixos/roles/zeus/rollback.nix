@@ -9,9 +9,12 @@ in
   boot.initrd.systemd = {
     storePaths = [ script ];
     services.rollback = {
-      description = "Delete everything but /nix and /disk on the root filesystem to get a fresh nixos install.";
-      wantedBy = [ "initrd-root-fs.target" ];
-      before = [ "initrd-root-fs.target" ];
+      description = "Rollback File System Root";
+      wantedBy = [ "basic.target" ];
+      before = [
+        "initrd-root-fs.target"
+        "sysroot-var-lib-nixos.mount"
+      ];
       after = [ "sysroot.mount" ];
       unitConfig.DefaultDependencies = "no";
       serviceConfig = {
