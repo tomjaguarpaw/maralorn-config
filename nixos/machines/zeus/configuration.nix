@@ -22,7 +22,6 @@ in
       ./../../roles/impermanent
       ./../../roles/beefs
       ./../../roles/metal
-      ./../../roles/servers
     ];
 
   systemd.tmpfiles.rules = [ "Z /home/maralorn - maralorn users - -" ];
