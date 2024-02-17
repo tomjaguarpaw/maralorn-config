@@ -11,6 +11,7 @@ in
     services.rollback = {
       description = "Delete everything but /nix and /disk on the root filesystem to get a fresh nixos install.";
       wantedBy = [ "initrd-root-fs.target" ];
+      before = [ "initrd-root-fs.target" ];
       after = [ "sysroot.mount" ];
       unitConfig.DefaultDependencies = "no";
       serviceConfig = {
