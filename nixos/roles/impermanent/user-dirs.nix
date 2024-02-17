@@ -22,6 +22,7 @@
       ".local/share/Steam"
       ".local/share/TelegramDesktop"
       ".local/share/direnv"
+      ".local/share/keyrings"
       ".local/share/khal"
       ".local/share/mpd"
       ".local/share/newsboat"
