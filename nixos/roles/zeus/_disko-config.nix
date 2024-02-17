@@ -13,6 +13,10 @@
             type = "filesystem";
             format = "vfat";
             mountpoint = "/efi";
+            mountOptions = [
+              "defaults"
+              "noatime"
+            ];
           };
         };
         swap = {
@@ -36,6 +40,10 @@
               type = "filesystem";
               format = "bcachefs";
               mountpoint = "/";
+              mountOptions = [
+                "defaults"
+                "noatime"
+              ];
               extraArgs = [ "--compression=zstd" ];
             };
           };
