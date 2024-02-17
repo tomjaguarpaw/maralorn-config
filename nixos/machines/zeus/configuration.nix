@@ -24,8 +24,6 @@ in
       ./../../roles/metal
     ];
 
-  systemd.tmpfiles.rules = [ "Z /home/maralorn - maralorn users - -" ];
-
   services = {
     syncthing = {
       enable = true;
@@ -43,12 +41,6 @@ in
         "athene"
       ] "/disk/persist/home/maralorn/media";
     };
-    #minecraft-server = {
-    #  enable = true;
-    #  openFirewall = true;
-    #  eula = true;
-    #  dataDir = "/disk/persist/minecraft";
-    #};
   };
   system.stateVersion = "21.05";
 }
