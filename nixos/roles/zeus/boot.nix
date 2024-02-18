@@ -1,9 +1,6 @@
 {
   boot = {
     kernelParams = [ "amdgpu.cik_support=1" ];
-    initrd = {
-      kernelModules = [ "amdgpu" ]; # For earlier and better framebuffer
-      systemd.enable = true;
-    };
+    initrd.kernelModules = [ "amdgpu" ]; # For earlier and better framebuffer
   };
 }
