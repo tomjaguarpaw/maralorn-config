@@ -52,7 +52,7 @@
   };
 
   home = {
-    packages = builtins.attrValues rec {
+    packages = builtins.attrValues {
       inherit (pkgs)
         mpc_cli
         ncmpcpp
@@ -70,30 +70,6 @@
         else
            exec ${lib.getExe pkgs.tmux};
         fi
-      '';
-      ssh-rbw-pubkey = pkgs.writeShellScriptBin "ssh-rbw-pubkey" ''
-        file=$(mktemp)
-        ${lib.getExe ssh-rbw-privkey} "$1" > $file
-        ssh-keygen -y -f $file
-        rm $file
-      '';
-      ssh-rbw-privkey = pkgs.writeShellScriptBin "ssh-rbw-privkey" ''
-        ${lib.getExe config.programs.rbw.package} get --folder ssh "sshkey: $1"
-      '';
-      ssh-rbw-gen = pkgs.writeShellScriptBin "ssh-rbw-gen" ''
-        ssh-keygen -ted25519 -C "maralorn.$1@pantheon"
-      '';
-      ssh-rbw-add = pkgs.writeShellScriptBin "ssh-rbw-add" ''
-        ssh-add <(${lib.getExe ssh-rbw-privkey} "$1")
-      '';
-      unlock-keys = pkgs.writeShellScriptBin "unlock-keys" ''
-        ${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd SSH_AUTH_SOCK
-        if ! rbw unlocked; then killall rbw-agent; fi
-        rbw unlock
-
-        ${lib.getExe ssh-rbw-add} code
-        ${lib.getExe ssh-rbw-add} signing
-        ${lib.getExe ssh-rbw-add} login
       '';
     };
     sessionVariables = {
