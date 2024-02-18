@@ -1,1 +1,6 @@
-{ boot.plymouth.enable = true; }
+{
+  boot.plymouth = {
+    theme = "fade-in";
+    enable = true;
+  };
+}
