@@ -33,7 +33,7 @@
           };
 
           # generate with:
-          # (echo '{' && tailscale status -json | jq -r '.Self,.Peer[] | .DNSName[:-17] + " = { A = \"" + .TailscaleIPs[0] + "\"; AAAA = \"" + .TailscaleIPs[1] + "\";};"' && echo '}') > common/tailscale.nix
+          # (echo '{' && tailscale status -json | jq -r '.Self,.Peer[] | .DNSName[:-11] + " = { A = \"" + .TailscaleIPs[0] + "\"; AAAA = \"" + .TailscaleIPs[1] + "\";};"' | sort && echo '}') > common/tailscale.nix
           tailscale = import ./tailscale.nix;
           publicAliases = {
             athene = [ "home" ];
