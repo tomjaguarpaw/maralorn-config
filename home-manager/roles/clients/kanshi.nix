@@ -25,15 +25,13 @@ in
     profiles = {
       desk = openbar "big" [
         {
-          criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
-          mode = "5120x1440";
+          criteria = "Dell Inc. DELL S2721QS F9SJM43";
           status = "enable";
         }
       ];
       docked = openbar "big" [
         {
-          criteria = "Dell Inc. Dell U4919DW 2RSQXH3";
-          mode = "5120x1440";
+          criteria = "Dell Inc. DELL S2721QS F9SJM43";
           status = "enable";
         }
         {
