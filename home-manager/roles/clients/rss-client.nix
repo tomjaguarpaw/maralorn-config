@@ -29,7 +29,7 @@ let
       ${lib.getExe config.programs.mpv.finalPackage} "$filename"
       echo "Enter 'y' to delete $filename:"
       read delete
-      if [[ "$delete" == "y" ]] then rm "$filename"; fi
+      if [[ "$delete" == "y" ]] then ${lib.getExe' pkgs.coreutils "rm"} "$filename"; fi
     fi
   '';
   commands =
