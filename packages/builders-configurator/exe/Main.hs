@@ -22,6 +22,7 @@ nix run pkgs#sysbench -- cpu run
 
 Host    events/s
 ----------------
+Builders    9545
 Zeus        5249
 Hephaistos  3777
 Athene      1672
@@ -33,10 +34,13 @@ Hera         729
 
 remoteBuilder :: Text
 remoteBuilder = "remote.builder"
+
 nixbuildDotNet :: Text
 nixbuildDotNet = "nixbuild.net"
+
 zeusBuilder :: Text
 zeusBuilder = "zeus.builder"
+
 atheneBuilder :: Text
 atheneBuilder = "athene.builder"
 
@@ -62,6 +66,7 @@ builderConfigs =
 
 systems :: [Text]
 systems = ["x86_64-linux", "i686-linux"]
+
 supportedFeatures :: [Text]
 supportedFeatures = ["benchmark", "big-parallel", "kvm", "nixos-test"]
 
