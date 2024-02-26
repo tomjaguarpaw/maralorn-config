@@ -36,12 +36,12 @@ fzf-directory-search() {
 zle -N fzf-directory-search
 bindkey '^S' fzf-directory-search
 
-fzf-vim-search() {
+fzf-helix-search() {
  LBUFFER=$( fd -t f | fzf |  sed -E 's/\\/\\\\/g;s/^/hx /')
  zle redisplay
 }
-zle -N fzf-vim-search
-bindkey '^V' fzf-vim-search
+zle -N fzf-helix-search
+bindkey '^H' fzf-helix-search
 
 fzf-git-checkout() {
  LBUFFER=$( git branch --list | fzf |  sed -E 's/ \* //;s/^/git checkout /')
