@@ -6,14 +6,24 @@
 }:
 {
   nix = {
+    package = pkgs.nixVersions.unstable;
     nixPath = [ "nixpkgs=flake:pkgs" ];
 
-    registry.pkgs = {
-      from = {
-        type = "indirect";
-        id = "pkgs";
+    registry = {
+      pkgs = {
+        from = {
+          type = "indirect";
+          id = "pkgs";
+        };
+        flake = pkgs.flake-inputs.nixos-unstable;
       };
-      flake = pkgs.flake-inputs.nixos-unstable;
+      stable-pkgs = {
+        from = {
+          type = "indirect";
+          id = "stable-pkgs";
+        };
+        flake = pkgs.flake-inputs.nixos-stable;
+      };
     };
     settings.trusted-users = [ "maralorn" ];
     optimise = {
