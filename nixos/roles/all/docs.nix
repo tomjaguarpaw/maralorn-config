@@ -1,12 +1,8 @@
 {
   documentation = {
     dev.enable = true;
-    nixos = {
-      includeAllModules = true;
-      options = {
-        splitBuild = true;
-        warningsAreErrors = false;
-      };
-    };
+    doc.enable = false;
+    info.enable = false;
+    nixos.enable = false;
   };
 }
