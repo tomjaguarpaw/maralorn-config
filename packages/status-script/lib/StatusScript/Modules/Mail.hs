@@ -44,8 +44,8 @@ mail env mode = do
     FileWatch.watchFile env (env.homeDir </> "Maildir/.notmuch/xapian") "flintlock"
   events <-
     [ (const True, ["tag:unread and (not folder:/Archiv/ or folder:/Inbox/)"], "e-mail")
-    -- , ((== Orga), ["folder:hera/Inbox", "not", "tag:unread"], "e-mail-open")
-    -- , ((== Code), ["folder:hera/Code"], "Code")
+      , (const True, ["folder:hera/Inbox", "not", "tag:unread"], "e-mail-open")
+      , (const True, ["folder:hera/Code"], "Code")
       ]
       & mapM \(on_mode, folder, subgroup) ->
         ReflexUtil.performEventThreaded
