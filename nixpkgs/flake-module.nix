@@ -18,12 +18,7 @@
               "steam-run"
               "steam-original"
               "factorio-alpha"
-
-              # Needed for pyntitrokey
-              "nrfutil"
-              "pc-ble-driver-py"
-              "pc-ble-driver"
-              "pypemicro"
+              "teamviewer"
             ];
         };
         overlays =
