@@ -55,6 +55,7 @@ in
         "github_token:${config.age.secrets."nixpkgs-bot/github_token".path}"
       ];
       Restart = "always"; # TODO: Add error handling to git querying github in nixpkgs-bot
+      RestartSec = "15s";
       WorkingDirectory = "/var/lib/nixpkgs-bot";
       ExecStart = "${lib.getExe pkgs.nixpkgs-bot} ${builtins.toFile "config.yaml" (builtins.toJSON configFile)}";
       DynamicUser = true;
