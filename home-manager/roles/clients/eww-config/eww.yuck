@@ -27,7 +27,7 @@
 (defwidget status []
   (box :space-evenly false :vexpand false :orientation "vertical"
     (label :text "${alerts}${rbw}${mode}${warnings}${warninggroups}}${players}${uptime}${networks}" :visible false)
-    (box :class "time" :halign "center" :space-evenly false {formattime(EWW_TIME, " ${host} %F KW%V %a %H:%M")})
+    (box :class "time" :halign "center" :space-evenly false {formattime(EWW_TIME, " ${host}   %F KW%V %a   %H:%M:%S")})
     (box :space-evenly false :vexpand false
       (box :orientation "vertical" :space-evenly false (for group in warninggroups
         (box :space-evenly false (image :path "icons/${group.name}.png") {group.count})
