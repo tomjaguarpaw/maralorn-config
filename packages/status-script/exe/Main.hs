@@ -14,7 +14,6 @@ import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
 import StatusScript.Mode qualified as Mode
 import StatusScript.Modules.Audio qualified as Audio
-import StatusScript.Modules.BootState qualified as BootState
 import StatusScript.Modules.Calendar qualified as Calendar
 import StatusScript.Modules.IdleState qualified as IdleState
 import StatusScript.Modules.Mail qualified as Mail
@@ -60,13 +59,11 @@ main = Notify.withManager \watch_manager -> do
     mode <- Mode.getMode env
     ping_event <- Ping.ping' env
     software_feed_event <- SoftwareFeed.softwareFeed env mode
-    boot_state_event <- BootState.bootState env mode
     mail_events <- Mail.mail env mode
     notification_events <- Mako.notifications env
     warnings <-
       ReflexUtil.concatEvents
         [ ping_event
-        , boot_state_event
         , software_feed_event
         , mail_events
         , notification_events

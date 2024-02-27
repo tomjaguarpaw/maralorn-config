@@ -75,7 +75,6 @@ library
     StatusScript.Mode
     StatusScript.Modules.Alerts
     StatusScript.Modules.Audio
-    StatusScript.Modules.BootState
     StatusScript.Modules.Calendar
     StatusScript.Modules.ConfigPull
     StatusScript.Modules.Git
