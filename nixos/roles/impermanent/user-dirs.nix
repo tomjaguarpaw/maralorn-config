@@ -1,20 +1,21 @@
 {
   environment.persistence.snapshoted.users.maralorn = {
     directories = [
-      ".aqbanking"
-      ".aws"
+      ".aqbanking" # Save user login
+      ".aws" # Save user login
       ".cache/rbw" # Save user login
-      ".calendars"
-      ".cabal/store"
-      ".config/Element"
-      ".config/Mumble"
-      ".config/Signal"
-      ".config/discord"
-      ".config/gh"
-      ".config/heroic" # Login data
-      ".config/tea"
+      ".calendars" # Cache synced calendars
+      ".cabal/store" # Save user login
+      ".config/Element" # Save user login
+      ".config/Mumble" # Save known servers
+      ".config/Signal" # Save user login
+      ".config/discord" # Save user login
+      ".config/gh" # Save user login
+      ".config/heroic" # Save user login
+      ".config/tea" # Save user login
+      ".config/teamviewer" # Save user login
       ".config/remmina" # RDP Client
-      ".contacts"
+      ".contacts" # Cache synced addressbook
       ".factorio" # Factorio save games and login
       ".gnupg"
       ".local/share/Mumble"
