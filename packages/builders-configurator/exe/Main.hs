@@ -59,7 +59,7 @@ nixbuildGroup :: BuilderGroup
 nixbuildGroup = MkBuilderGroup (one nixbuildDotNet)
 
 zeusBuilder :: Builder
-zeusBuilder = "zeus.vpn.m-0.eu"
+zeusBuilder = "zeus.builder"
 
 zeusGroup :: BuilderGroup
 zeusGroup = MkBuilderGroup (one zeusBuilder)
@@ -126,7 +126,9 @@ runWithoutConnectivity = Eff.interpret $ \_ -> \case
 runWithPing :: (Eff.IOE :> es) => Eff (Ping : es) a -> Eff es a
 runWithPing = Eff.interpret $ \_ -> \case
   CheckConnectivity host_name -> liftIO $ Exception.handle (\(_ :: SomeException) -> pure False) do
-    let reqUrl = Req.http (builder host_name)
+    let reqUrl = Req.http case builder host_name of
+          "zeus.builder" -> "zeus.vpn.m-0.eu"
+          x -> x
     response <- (Req.runReq Req.defaultHttpConfig $ Req.req Req.GET reqUrl Req.NoReqBody Req.lbsResponse (Req.responseTimeout 500_000))
     let status = Req.responseStatusCode response
     pure $ status >= 200 && status < 300
