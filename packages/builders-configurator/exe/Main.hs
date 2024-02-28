@@ -82,13 +82,13 @@ cccdaGroup = MkBuilderGroup (fromList [cccda1, cccda2, cccda3, cccda4])
 builderInfos :: Map.Map Builder Natural
 builderInfos =
   Map.fromList
-    [ (cccda1, 4)
-    , (cccda2, 4)
-    , (cccda3, 4)
-    , (cccda4, 2)
+    [ (cccda1, 10)
+    , (cccda2, 10)
+    , (cccda3, 10)
+    , (cccda4, 5)
     , (remoteBuilder, 32)
     , (nixbuildDotNet, 100)
-    , (zeusBuilder, 12)
+    , (zeusBuilder, 6)
     ]
 
 mkConfig :: Bool -> [(BuilderGroup, Reachable)]
