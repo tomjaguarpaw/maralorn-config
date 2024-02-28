@@ -1,4 +1,6 @@
+{ pkgs, ... }:
 {
+  home.packages = [ pkgs.git-absorb ];
   programs.git = {
     aliases = {
       sync = "!git pull -r && git push";
