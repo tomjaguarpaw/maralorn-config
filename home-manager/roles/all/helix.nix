@@ -52,7 +52,7 @@ let
           command = "ormolu";
           args = [
             "--stdin-input-file"
-            "/home/maralorn/git/connect-app/model/src/Model.hs"
+            "/home/maralorn/git/connect-app/frontend/src/Frontend.hs"
           ];
         };
       }
