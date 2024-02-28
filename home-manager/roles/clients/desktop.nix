@@ -65,8 +65,6 @@
         ;
       inherit (pkgs.gnome) dconf-editor;
     };
-
-    file.".zprofile".text = ". $HOME/.nix-profile/etc/profile.d/hm-session-vars.sh";
   };
   gtk = {
     enable = true;
