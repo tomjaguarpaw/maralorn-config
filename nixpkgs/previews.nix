@@ -3,6 +3,7 @@ final: _prev: {
   unstableHaskellPackages = final.unstable.haskellPackages;
   nix-output-monitor = final.flake-inputs'.nix-output-monitor.packages.default;
   inherit (final.unstable)
+    eww-wayland
     forgejo # I am apparently stuck here, because forgejo frequently receives
     # updates and when switching back to stable I run into database version
     # conflicts.
