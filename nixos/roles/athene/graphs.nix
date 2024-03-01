@@ -10,10 +10,8 @@ let
   badge = src: link: ''<a href=\"${link}\">\n  <img src=\"${src}\">\n</a>'';
   badges = lib.concatStringsSep "\\n" [
     (heading "haskell-taskwarrior" "https://hackage.haskell.org/package/taskwarrior")
-    (badge "https://github.com/maralorn/haskell-taskwarrior/actions/workflows/haskell.yml/badge.svg" "https://github.com/maralorn/haskell-taskwarrior/actions"
-    )
-    (badge "https://img.shields.io/hackage-deps/v/taskwarrior.svg" "http://packdeps.haskellers.com/reverse/taskwarrior"
-    )
+    (badge "https://github.com/maralorn/haskell-taskwarrior/actions/workflows/haskell.yml/badge.svg" "https://github.com/maralorn/haskell-taskwarrior/actions")
+    (badge "https://img.shields.io/hackage-deps/v/taskwarrior.svg" "http://packdeps.haskellers.com/reverse/taskwarrior")
   ];
   dashboards = pkgs.runCommand "dashboards" { } ''
     mkdir -p $out

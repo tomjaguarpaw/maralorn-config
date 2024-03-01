@@ -82,8 +82,8 @@ in
       Service = {
         Type = "oneshot";
         ExecStart =
-          (pkgs.writeShellScript "update-software-feeds" "${commands.software-updates}/bin/software-updates -x reload"
-          ).outPath;
+          (pkgs.writeShellScript "update-software-feeds" "${commands.software-updates}/bin/software-updates -x reload")
+          .outPath;
         Restart = "on-failure";
         RestartSec = "1h";
       };
