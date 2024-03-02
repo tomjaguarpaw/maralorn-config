@@ -12,9 +12,9 @@ jobs:
            - nixosConfigurations.hera.config.system.build.toplevel
            - nixosConfigurations.athene.config.system.build.toplevel
            - nixosConfigurations.hephaistos.config.system.build.toplevel
-    env:
-        HOME: .
     steps:
+      - name: Set HOME
+        run: echo "HOME=$(dirname $(pwd))" >> $GITHUB_ENV
       - uses: actions/checkout@v3
       - name: Configuring remote builders
         run: |
@@ -25,9 +25,9 @@ jobs:
       - run: archive-nix-path
   nix-flake-check:
     runs-on: nix
-    env:
-        HOME: .
     steps:
+      - name: Set HOME
+        run: echo "HOME=$(dirname $(pwd))" >> $GITHUB_ENV
       - uses: actions/checkout@v3
       - name: Configuring remote builders
         run: |
