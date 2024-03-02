@@ -38,7 +38,9 @@
         gawk
         gitMinimal
         gnused
+        jq
         nix
+        nix-update
         nodejs
         openssh
         wget

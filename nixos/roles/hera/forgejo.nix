@@ -8,7 +8,10 @@ in
     enable = true;
     stateDir = "/var/lib/forgejo";
     settings = {
-      actions.ENABLED = true;
+      actions = {
+        DEFAULT_ACTIONS_URL = "https://github.com";
+        ENABLED = true;
+      };
       metrics.ENABLED = true;
       server = {
         ROOT_URL = "https://code.maralorn.de";
