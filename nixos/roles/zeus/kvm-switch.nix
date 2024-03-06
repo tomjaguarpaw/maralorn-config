@@ -10,5 +10,4 @@ in
     (mkMonitorline "add" "15") # DP
     (mkMonitorline "remove" "17") # HDM11
   ];
-  hardware.i2c.enable = true;
 }
