@@ -17,34 +17,38 @@
       User ci-upload-user
   '';
   nix.settings.trusted-users = [ "gitea-runner" ];
-  services.gitea-actions-runner.instances.${config.networking.hostName} = {
-    enable = true;
-    name = config.networking.hostName;
-    url = "https://code.maralorn.de";
-    # I am fine with leaking this secret, because it will be invalidated after
-    # first use.
-    token = "Kn0b5KM3YEzpXO2FDBW1N8op6w4Q0M8bkJpth2e2";
-    labels = [ "nix:host" ];
+  services.gitea-actions-runner = {
+    package = pkgs.forgejo-actions-runner;
+    instances.${config.networking.hostName} = {
+      enable = true;
+      name = config.networking.hostName;
+      url = "https://code.maralorn.de";
+      # I am fine with leaking this secret, because it will be invalidated after
+      # first use.
+      token = "Kn0b5KM3YEzpXO2FDBW1N8op6w4Q0M8bkJpth2e2";
+      labels = [ "nix:host" ];
 
-    # Fix for: https://gitea.com/gitea/act_runner/issues/361
-    settings.host.workdir_parent = "/var/lib/gitea-runner/action-cache-dir";
-    hostPackages = builtins.attrValues {
-      inherit (pkgs)
-        archive-nix-path
-        bash
-        builders-configurator
-        coreutils
-        curl
-        gawk
-        gitMinimal
-        gnused
-        jq
-        nix
-        nix-update
-        nodejs
-        openssh
-        wget
-        ;
+      # Fix for: https://gitea.com/gitea/act_runner/issues/361
+      settings.host.workdir_parent = "/var/lib/gitea-runner/action-cache-dir";
+      hostPackages = builtins.attrValues {
+        inherit (pkgs)
+          archive-nix-path
+          bash
+          builders-configurator
+          coreutils
+          curl
+          gawk
+          gitMinimal
+          gnused
+          jq
+          nix
+          nix-update
+          nodejs
+          tea
+          openssh
+          wget
+          ;
+      };
     };
   };
 }
