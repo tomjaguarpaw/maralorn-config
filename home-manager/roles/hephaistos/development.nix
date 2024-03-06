@@ -22,7 +22,7 @@
       direnv allow
     '')
     (pkgs.writeShellScriptBin "with-model" ''
-      sd ", model/\*.cabal" "" cabal.project
+      sd ", model-?[a-z]*/\*.cabal" "" cabal.project
       cp ${./_with-model-shell.nix} shell.nix
       echo "use nix" > .envrc
       direnv allow
