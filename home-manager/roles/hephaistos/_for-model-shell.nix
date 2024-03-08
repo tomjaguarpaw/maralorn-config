@@ -4,8 +4,7 @@
       model = "${./.}/model";
       model-lens = "${./.}/model-lens";
       model-migrations = "${./.}/model-migrations";
-      model-aeson = "${./.}/model-aeson";
-      model-jsaddle = "${./.}/model-jsaddle";
+      model-json = "${./.}/model-json";
       model-types = "${./.}/model-types";
       console = "${./.}/console";
       common-backend = "${./.}/common-backend";
