@@ -11,6 +11,7 @@
       ".config/Signal" # Save user login
       ".config/discord" # Save user login
       ".config/gh" # Save user login
+      ".config/glab-cli" # Save user login
       ".config/heroic" # Save user login
       ".config/tea" # Save user login
       ".config/teamviewer" # Save user login
