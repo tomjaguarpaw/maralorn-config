@@ -144,6 +144,7 @@ in
         pwgen
         python3
         ranger
+        nnn
         rename
         ripgrep
         sd
