@@ -144,6 +144,7 @@ in
         pwgen
         python3
         ranger
+        broot
         nnn
         rename
         ripgrep
