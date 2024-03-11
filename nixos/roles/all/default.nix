@@ -148,6 +148,7 @@ in
         nnn
         rename
         ripgrep
+        ntfy
         sd
         socat
         sshuttle
