@@ -26,8 +26,7 @@ let
         {
           name = "archive-nix-path";
           bins = [
-            # nix-copy-closure is buggy in nix 2.15
-            pkgs.nixVersions.nix_2_13
+            pkgs.nix
             pkgs.openssh
           ];
           imports = [
@@ -65,8 +64,7 @@ let
         {
           name = "update-system";
           bins = [
-            # nix-copy-closure is buggy in nix 2.15
-            pkgs.nixVersions.nix_2_13
+            pkgs.nix
             pkgs.openssh
             pkgs.archive-nix-path
             pkgs.builders-configurator

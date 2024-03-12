@@ -2,10 +2,8 @@
 {
   home = {
     packages = builtins.attrValues {
-      inherit (pkgs.xorg) xev;
       inherit (pkgs)
         meld
-        filezilla
         gparted
         httpie
         tea

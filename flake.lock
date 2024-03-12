@@ -232,31 +232,6 @@
         "url": "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark.git"
       }
     },
-    "nixfmt": {
-      "inputs": {
-        "flake-compat": [],
-        "flake-utils": [
-          "pre-commit-hooks",
-          "flake-utils"
-        ],
-        "nixpkgs": [],
-        "nixpkgs-stable": []
-      },
-      "locked": {
-        "lastModified": 1709314736,
-        "narHash": "sha256-D8OYHmW3BiOfv7HSjBqihfqBihraeE7jdac9ggNbMsQ=",
-        "owner": "piegamesde",
-        "repo": "nixfmt",
-        "rev": "2b5ee820690bae64cb4003e46917ae43541e3e0b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "piegamesde",
-        "ref": "rfc101-style",
-        "repo": "nixfmt",
-        "type": "github"
-      }
-    },
     "nixos-hardware": {
       "locked": {
         "lastModified": 1710123225,
@@ -387,7 +362,6 @@
         "impermanence": "impermanence",
         "nix-index-database": "nix-index-database",
         "nix-output-monitor": "nix-output-monitor",
-        "nixfmt": "nixfmt",
         "nixos-hardware": "nixos-hardware",
         "nixos-infra": "nixos-infra",
         "nixos-mailserver": "nixos-mailserver",

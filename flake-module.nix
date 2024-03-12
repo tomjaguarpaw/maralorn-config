@@ -82,8 +82,8 @@
           pkgs = inputs'.nixos-unstable.legacyPackages;
           check.enable = true;
           settings = {
-            tools.nixfmt = lib.mkForce (lib.getBin pkgs.nixfmt);
-            excludes = [ "\\.zsh$" ];
+            tools.nixfmt = lib.mkForce (lib.getBin pkgs.nixfmt-rfc-style);
+            excludes = [ "\\.zsh$" ] ++ generated_nix_files;
             settings = {
               ormolu.defaultExtensions = [
                 "TypeApplications"
@@ -95,27 +95,16 @@
             };
             hooks = {
               hlint.enable = true;
-              nixfmt = {
-                enable = true;
-                excludes = generated_nix_files;
-              };
+              nixfmt.enable = true;
               cabal2nix.enable = true;
-              nil = {
-                enable = true;
-                excludes = generated_nix_files;
-              };
+              nil.enable = true;
               editorconfig-checker = {
                 excludes = [ ".*\\.json" ];
                 enable = true;
               };
-              deadnix = {
-                enable = true;
-                excludes = generated_nix_files;
-              };
+              deadnix.enable = true;
               statix.enable = true;
-              fourmolu = {
-                enable = true;
-              };
+              fourmolu.enable = true;
               shellcheck.enable = true;
               cabal-fmt.enable = true;
             };

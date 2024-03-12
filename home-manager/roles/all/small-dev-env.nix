@@ -5,7 +5,7 @@
       nil # nix language server
       gh
       nix-top
-      nixfmt
+      nixfmt-rfc-style
       ;
   };
 }

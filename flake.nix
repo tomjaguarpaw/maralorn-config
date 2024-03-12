@@ -12,15 +12,6 @@
       url = "github:nixos/infra";
       flake = false;
     };
-    nixfmt = {
-      url = "github:piegamesde/nixfmt/rfc101-style";
-      inputs = {
-        flake-compat.follows = "";
-        flake-utils.follows = "pre-commit-hooks/flake-utils";
-        nixpkgs.follows = "";
-        nixpkgs-stable.follows = "";
-      };
-    };
     secrets = {
       url = "git+ssh://gitea@code.maralorn.de/maralorn/config-secrets";
       inputs.nixpkgs.follows = "";

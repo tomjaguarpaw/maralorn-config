@@ -6,9 +6,6 @@
       _module.args.pkgs = import inputs.nixos-stable {
         inherit system;
         config = {
-          permittedInsecurePackages = [
-            "zotero-6.0.26" # https://nvd.nist.gov/vuln/detail/CVE-2023-5217
-          ];
           allowUnfreePredicate =
             pkg:
             builtins.elem (lib.getName pkg) [
