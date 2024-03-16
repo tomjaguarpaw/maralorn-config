@@ -2,6 +2,7 @@
   environment.persistence.snapshoted.users.maralorn = {
     directories = [
       ".aqbanking" # Save user login
+      ".arbtt"
       ".aws" # Save user login
       ".cache/rbw" # Save user login
       ".calendars" # Cache synced calendars
