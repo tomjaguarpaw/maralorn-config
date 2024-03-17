@@ -12,4 +12,5 @@ in
   newsboat = set "newsboat";
   rbw = set "rbw";
   sd = set "sd";
+  lswt = set "lswt";
 }
