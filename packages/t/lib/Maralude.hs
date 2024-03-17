@@ -58,7 +58,6 @@ module Maralude (
   flip,
   (%),
   i,
-  mapM_,
   mapM,
   compare,
   sequence_,
@@ -99,7 +98,6 @@ import Streamly.Data.Fold qualified as Fold
 import Streamly.Data.Stream (mapM)
 import Streamly.Data.Stream qualified as Stream
 import Streamly.Data.Stream.Prelude (Stream)
-import Streamly.Internal.Data.Stream.StreamD.Eliminate (mapM_)
 import System.Environment qualified as Env
 import System.IO (IO)
 import Text.Show (Show)
