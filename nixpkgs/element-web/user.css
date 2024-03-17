@@ -1,7 +1,3 @@
-.mx_NotificationBadge_dot {
-   display: none !important;
-}
-
 [aria-label="Rooms"] ~ .mx_RoomSublist_resizeBox {
    display: none !important;
 }
