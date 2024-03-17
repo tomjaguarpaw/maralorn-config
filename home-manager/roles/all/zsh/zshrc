@@ -1,12 +1,9 @@
 setopt prompt_subst
 autoload -U colors && colors # Enable colors in prompt
 
-function chpwd() {
-  if [ -r $PWD/.zsh_config ]; then
-    source $PWD/.zsh_config
-  fi
+function set_terminal_title() {
+  echo -en "\e]2;$@\a"
 }
-
 
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs

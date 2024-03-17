@@ -13,10 +13,10 @@
       uj = "journalctl --user -efu";
       o = "xdg-open";
       s = "sudo systemctl";
-      g = "lazygit";
+      g = "set_terminal_title lazygit $(pwd); lazygit";
       u = "systemctl --user";
       m = "man";
-      h = ''f() { if [[ "$1" == "" ]]; then hx .; else hx "$@"; fi}; f'';
+      h = ''f() { if [[ "$1" == "" ]]; then set_terminal_title hx $(pwd); hx .; else set_terminal_title hx $(pwd) $@; hx "$@"; fi}; f'';
       vim = "echo use hx";
       r = "NIX_AUTO_RUN=1";
       git-nosign = "git commit.gpgsign=false";
