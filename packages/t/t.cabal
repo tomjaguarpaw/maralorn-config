@@ -87,7 +87,7 @@ library
 
   -- Other library packages from which modules are imported.
   build-depends:
-    , base                ^>=4.17.2.0
+    , base
     , generic-lens
     , lens
     , megaparsec
@@ -121,7 +121,7 @@ executable t
 
   -- Other library packages from which modules are imported.
   build-depends:
-    , base        ^>=4.17.2.0
+    , base
     , directory
     , filepath
     , lens
