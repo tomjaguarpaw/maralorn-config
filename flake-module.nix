@@ -82,7 +82,10 @@
           pkgs = inputs'.nixos-unstable.legacyPackages;
           check.enable = true;
           settings = {
-            tools.nixfmt = lib.mkForce (lib.getBin pkgs.nixfmt-rfc-style);
+            tools = {
+              nixfmt = lib.mkForce (lib.getBin pkgs.nixfmt-rfc-style);
+              fourmolu = lib.mkForce (lib.getBin pkgs.unstableHaskellPackages.fourmolu);
+            };
             excludes = [ "\\.zsh$" ] ++ generated_nix_files;
             settings = {
               ormolu.defaultExtensions = [

@@ -16,7 +16,6 @@
       cabal-install
       cabal2nix
       pandoc
-      hlint
       hledger
       hledger-ui
       hledger-web
@@ -27,6 +26,7 @@
       eventlog2html
       fourmolu
       ghc-debug-brick
+      hlint
       calligraphy
       cabal-fmt
       threadscope
