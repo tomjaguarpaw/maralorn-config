@@ -11,7 +11,7 @@ in
   '';
   systemd.user = {
     timers.my-arbtt-capture = {
-      Timer.OnCalendar = "minutely";
+      Timer.OnCalendar = "*:*:10/20";
       Install.WantedBy = [ "timers.target" ];
     };
     services = {
