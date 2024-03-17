@@ -6,7 +6,16 @@ import Data.List qualified as List
 import Data.Text qualified as Text
 import Maralude (lined)
 import Relude
-import T.File (FileElement (Paragraph, TaskEntry), Line (Blank, Heading, Other, Task), Section, SectionBody, Whitespace (Tab), indent, printLine, printLines)
+import T.File
+  ( FileElement (Paragraph, TaskEntry)
+  , Line (Blank, Heading, Other, Task)
+  , Section
+  , SectionBody
+  , Whitespace (Tab)
+  , indent
+  , printLine
+  , printLines
+  )
 import T.Query (TaskContext)
 import T.Task (printTask)
 import Prelude ()

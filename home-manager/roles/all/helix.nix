@@ -166,10 +166,7 @@ in
       };
     };
     languages = {
-      language-server.haskell-language-server = {
-        config.languageServerHaskell.formattingProvider = "fourmolu";
-      };
-
+      language-server.haskell-language-server.config.formattingProvider = "fourmolu";
       language = [
         {
           name = "nix";

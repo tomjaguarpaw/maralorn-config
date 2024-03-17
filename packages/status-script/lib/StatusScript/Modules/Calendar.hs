@@ -11,6 +11,7 @@ import StatusScript.Env (Env (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
 
 Shh.load Shh.Absolute ["khal"]
+
 missingExecutables :: IO [FilePath]
 
 data Appointment = MkAppointment
@@ -24,7 +25,7 @@ data Appointment = MkAppointment
   deriving stock (Eq, Generic)
   deriving anyclass (Aeson.ToJSON)
 
-calendar :: (R.MonadHeadlessApp t m) => Env -> m (R.Event t [Appointment])
+calendar :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Appointment])
 calendar = \env -> do
   CommandUtil.reportMissing missingExecutables
   tick <- ReflexUtil.tickEvent (5 * 60)

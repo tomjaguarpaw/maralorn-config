@@ -123,13 +123,14 @@ runWithoutConnectivity :: Eff (Ping : es) a -> Eff es a
 runWithoutConnectivity = Eff.interpret $ \_ -> \case
   CheckConnectivity _ -> pure False
 
-runWithPing :: (Eff.IOE :> es) => Eff (Ping : es) a -> Eff es a
+runWithPing :: Eff.IOE :> es => Eff (Ping : es) a -> Eff es a
 runWithPing = Eff.interpret $ \_ -> \case
   CheckConnectivity host_name -> liftIO $ Exception.handle (\(_ :: SomeException) -> pure False) do
     let reqUrl = Req.http case builder host_name of
           "zeus.builder" -> "zeus.vpn.m-0.eu"
           x -> x
-    response <- (Req.runReq Req.defaultHttpConfig $ Req.req Req.GET reqUrl Req.NoReqBody Req.lbsResponse (Req.responseTimeout 500_000))
+    response <-
+      (Req.runReq Req.defaultHttpConfig $ Req.req Req.GET reqUrl Req.NoReqBody Req.lbsResponse (Req.responseTimeout 500_000))
     let status = Req.responseStatusCode response
     pure $ status >= 200 && status < 300
 
@@ -137,9 +138,10 @@ commaList :: [Text] -> Text
 commaList = Text.intercalate ","
 
 builderLine :: Builder -> Natural -> Natural -> Text
-builderLine hostName maxJobs speed_factor = [i|ssh-ng://#{builder hostName} #{commaList systems} - #{maxJobs} #{speed_factor} #{commaList supportedFeatures} - -|]
+builderLine hostName maxJobs speed_factor =
+  [i|ssh-ng://#{builder hostName} #{commaList systems} - #{maxJobs} #{speed_factor} #{commaList supportedFeatures} - -|]
 
-testBuilders :: (Ping :> es) => [(BuilderGroup, Reachable)] -> Eff es [BuilderGroup]
+testBuilders :: Ping :> es => [(BuilderGroup, Reachable)] -> Eff es [BuilderGroup]
 testBuilders =
   fmap (fmap fst) . filterM \case
     (_, Always) -> pure True
@@ -169,9 +171,12 @@ main = do
         [host', "--force"] -> (into host', False, False)
         [host', "--without-connection"] -> (into host', True, False)
         _ -> error [i|Unknown arguments: #{args}|]
-      builder_tries :: (Ping :> es) => Eff es [BuilderGroup]
+      builder_tries :: Ping :> es => Eff es [BuilderGroup]
       builder_tries = testBuilders $ fromMaybe (error [i|#{host} not found in builderConfigs.|]) $ Map.lookup (into host) builderConfigs
-  builders <- if allow_empty && host `elem` ["zeus", "hephaistos"] then pure [] else Eff.runEff $ (if withoutConnection then runWithoutConnectivity else runWithPing) builder_tries
+  builders <-
+    if allow_empty && host `elem` ["zeus", "hephaistos"]
+      then pure []
+      else Eff.runEff $ (if withoutConnection then runWithoutConnectivity else runWithPing) builder_tries
   (path, handle) <- IO.openTempFile "/tmp" "machines"
   TextIO.hPutStr handle (printBuilders builders)
   IO.hClose handle

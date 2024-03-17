@@ -113,6 +113,7 @@ getEnv :: (Environment -> a) -> App a
 getEnv getter = lift $ lift $ lift $ asks getter
 
 instance Exception Matrix.MatrixError
+
 instance Exception Text
 
 unwrapMatrixErrorT :: (MonadMask m, MonadIO m) => Matrix.MatrixM m a -> m a
@@ -123,7 +124,7 @@ unwrapMatrixErrorT action = do
       liftIO $ Exception.throwIO matrix_error
     Right response -> pure response
 
-unwrapMatrixError :: (MonadIO m) => Matrix.MatrixIO a -> m a
+unwrapMatrixError :: MonadIO m => Matrix.MatrixIO a -> m a
 unwrapMatrixError = liftIO . unwrapMatrixErrorT
 
 git :: Config -> [String] -> Process.ProcessConfig () () ()
@@ -223,7 +224,7 @@ discoverReachedBranches pr merge = do
       set_arrived branch
       check_arrived_in_next branch
 
-queryGraphQL :: (GraphQL.GraphQLQuery a) => a -> App (GraphQL.Object (GraphQL.ResultSchema a))
+queryGraphQL :: GraphQL.GraphQLQuery a => a -> App (GraphQL.Object (GraphQL.ResultSchema a))
 queryGraphQL query = do
   github_token <- getEnv githubToken
   GraphQL.runGraphQLQueryT
@@ -241,11 +242,13 @@ queryGraphQL query = do
     $ GraphQL.runQuery query
 
 type PRSchema = [GraphQL.unwrap| (GraphQL.API.PullRequestSchema).repository!.pullRequest! |]
+
 type RateLimitSchema = [GraphQL.unwrap| (GraphQL.API.PullRequestSchema).rateLimit! |]
 
 extractPR :: PRSchema -> App (PullRequest, Maybe Merge, Text)
 extractPR pr = do
-  when (isNothing [get|pr.mergeCommit|] && [get|pr.merged|]) $ MonadCatch.throwM ("PR is merged but has no merge commit:" <> show pr :: Text)
+  when (isNothing [get|pr.mergeCommit|] && [get|pr.merged|])
+    $ MonadCatch.throwM ("PR is merged but has no merge commit:" <> show pr :: Text)
   pure
     ( PullRequest
         { pullRequestNumber = [get|pr.number|]
@@ -323,7 +326,9 @@ ensureSubscriptions pr_key author missing_subscriptions = do
   forM_ missing_subscriptions \user -> void $ Persist.insertUnique_ (Subscription user pr_key)
   pr_msg <- mapM prHTML =<< getPRInfo pr_key
   forM_ pr_msg \msg -> forM_ missing_subscriptions \user ->
-    sendMessageToUser user $ m ("Because you are following user " <> author <> " I subscribed you to the pull request ") <> msg
+    sendMessageToUser user
+      $ m ("Because you are following user " <> author <> " I subscribed you to the pull request ")
+      <> msg
 
 {- | This function
  | 1. Looks if a commit is a known merge commit, and marks as arrived.
@@ -349,7 +354,9 @@ findSubscribedPRsInCommitList branch possible_new_merge_commits =
       lift do
         owner <- getEnv (owner . repo . config)
         name <- getEnv (name . repo . config)
-        result <- queryGraphQL GraphQL.API.MergingPullRequestQuery{GraphQL.API._commit = commitId change, _m_owner = owner, _m_name = name}
+        result <-
+          queryGraphQL
+            GraphQL.API.MergingPullRequestQuery{GraphQL.API._commit = commitId change, _m_owner = owner, _m_name = name}
         putText $ "MergingQuery: " <> show change <> " "
         checkRateLimit [get|result.rateLimit!|]
         prs <- mapM extractPR $ catMaybes [get|result.repository!.object!.__fragment!.associatedPullRequests!.nodes!|]
@@ -419,7 +426,9 @@ watchRepo = do
     let author = subscriptionUser $ head subscriptionsByUser
         prs = toList $ subscriptionPullRequest <$> subscriptionsByUser
     prMsgs <- sequence =<< mapMaybeM (fmap (fmap prHTML) . getPRInfo) prs
-    sendMessageToUser author $ unlinesMsg $ msg : m ("Including these " <> show (length prMsgs) <> " pull requests you subscribed to:") : prMsgs
+    sendMessageToUser author $ unlinesMsg $ msg
+      : m ("Including these " <> show (length prMsgs) <> " pull requests you subscribed to:")
+      : prMsgs
   unsubscribeFromFinishedPRs
   -- Run some maintenance daily
   whenTimeIsUp lastMaintenance (60 * 60 * 24) maintenance
@@ -460,7 +469,10 @@ unsubscribeFromFinishedPRs = do
         pure sub
       forM_ subs \sub -> do
         pr_html <- prHTML (SQL.entityVal pr, [])
-        sendMessageToUser (subscriptionUser (Persist.entityVal sub)) $ m "Your subscription of pr " <> pr_html <> m " has ended, because it reached all relevant branches."
+        sendMessageToUser (subscriptionUser (Persist.entityVal sub))
+          $ m "Your subscription of pr "
+          <> pr_html
+          <> m " has ended, because it reached all relevant branches."
       SQL.delete do
         pr_ <- SQL.from $ SQL.table @PullRequest
         SQL.where_ (pr_ ^. PullRequestId ==. SQL.val (SQL.entityKey pr))
@@ -483,7 +495,9 @@ leaveEmptyRooms = do
   session <- getEnv matrixSession
   rooms <- unwrapMatrixError (Matrix.getJoinedRooms session)
   forM_ rooms \room ->
-    whenM ((== 1) . length <$> unwrapMatrixError (Matrix.getRoomMembers session room)) $ unwrapMatrixError $ Matrix.leaveRoomById session room
+    whenM ((== 1) . length <$> unwrapMatrixError (Matrix.getRoomMembers session room))
+      $ unwrapMatrixError
+      $ Matrix.leaveRoomById session room
 
 sendMessage :: Matrix.RoomID -> MessageText -> App ()
 sendMessage roomId@(Matrix.RoomID roomIdText) message = do
@@ -495,7 +509,10 @@ sendMessage roomId@(Matrix.RoomID roomIdText) message = do
     $ Matrix.sendMessage
       session
       roomId
-      (Matrix.EventRoomMessage $ Matrix.RoomMessageText $ Matrix.MessageText (fst message) Matrix.NoticeType (Just "org.matrix.custom.html") (Just (snd message)))
+      ( Matrix.EventRoomMessage
+          $ Matrix.RoomMessageText
+          $ Matrix.MessageText (fst message) Matrix.NoticeType (Just "org.matrix.custom.html") (Just (snd message))
+      )
       txnId
 
 sendMessageToUser :: Text -> MessageText -> App ()
@@ -525,7 +542,12 @@ getCommands roomId events = do
       let (cmd, args) = second (Text.drop 1) $ Text.breakOn " " $ Text.strip line
       pure $ MkCommand{command = Text.toLower cmd, args, author, isQuery, roomId}
  where
-  getCommand Matrix.RoomEvent{Matrix.reSender = Matrix.Author author, Matrix.reContent = Matrix.EventRoomMessage (Matrix.RoomMessageText (Matrix.MessageText{Matrix.mtBody, Matrix.mtType = Matrix.TextType}))} = Just (author, mtBody)
+  getCommand
+    Matrix.RoomEvent
+      { Matrix.reSender = Matrix.Author author
+      , Matrix.reContent =
+        Matrix.EventRoomMessage (Matrix.RoomMessageText (Matrix.MessageText{Matrix.mtBody, Matrix.mtType = Matrix.TextType}))
+      } = Just (author, mtBody)
   getCommand _ = Nothing
 
 recordInvites :: Maybe Matrix.SyncResultRoom -> App ()
@@ -576,7 +598,8 @@ setQueries commands = do
         | queryRoom query == coerce (roomId command) -> pass
         | otherwise -> do
             set_room
-            sendMessageToUser (author command) $ m "Because you sent your most recent message to this room, I will use this room for direct messages to you from now on."
+            sendMessageToUser (author command)
+              $ m "Because you sent your most recent message to this room, I will use this room for direct messages to you from now on."
       _ -> do
         putTextLn $ "Setting Query for user " <> author command <> " to " <> coerce (roomId command)
         set_room
@@ -629,7 +652,9 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
                   else do
                     SQL.delete $ do
                       author_sub <- SQL.from $ SQL.table @AuthorSubscription
-                      SQL.where_ (author_sub ^. AuthorSubscriptionUser ==. SQL.val author &&. author_sub ^. AuthorSubscriptionGithubLogin ==. SQL.val user)
+                      SQL.where_
+                        ( author_sub ^. AuthorSubscriptionUser ==. SQL.val author &&. author_sub ^. AuthorSubscriptionGithubLogin ==. SQL.val user
+                        )
                     pure $ m $ "I will not subscribe you automatically to new pull requests by user " <> user <> " anymore."
       MkCommand{command, author, args} | Text.isPrefixOf command "subscribe" ->
         case parsePRNumber args of
@@ -670,12 +695,32 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           pure sub
         if null existingSubscriptions && null existingAuthorSubscriptions
           then do
-            pure $ m "I am currently not tracking any pull requests or users for you. Use " <> codeHTML "subscribe" <> m " to change that."
+            pure
+              $ m "I am currently not tracking any pull requests or users for you. Use "
+              <> codeHTML "subscribe"
+              <> m " to change that."
           else do
-            prMsgs <- sequence =<< mapMaybeM (fmap (fmap prHTML) . getPRInfo . subscriptionPullRequest . Persist.entityVal) existingSubscriptions
-            pure $ unlinesMsg (m ("I am currently watching the following " <> show (length existingSubscriptions) <> " pull requests for you:") : prMsgs <> [m ("Also I am subscribing you to new pull requests by the users: " <> Text.intercalate ", " (fmap (authorSubscriptionGithubLogin . Persist.entityVal) existingAuthorSubscriptions))])
+            prMsgs <-
+              sequence
+                =<< mapMaybeM (fmap (fmap prHTML) . getPRInfo . subscriptionPullRequest . Persist.entityVal) existingSubscriptions
+            pure
+              $ unlinesMsg
+                ( m ("I am currently watching the following " <> show (length existingSubscriptions) <> " pull requests for you:")
+                    : prMsgs
+                      <> [ m
+                            ( "Also I am subscribing you to new pull requests by the users: "
+                                <> Text.intercalate ", " (fmap (authorSubscriptionGithubLogin . Persist.entityVal) existingAuthorSubscriptions)
+                            )
+                         ]
+                )
       MkCommand{command} | Text.isPrefixOf command "help" -> helpMessage
-      MkCommand{command} -> pure (unlinesMsg [m "Sorry, I don‘t know what you want from me, when your command starts with: " <> codeHTML command, m "I‘ll tell you all commands I know, when you use the " <> codeHTML "help" <> m " command."])
+      MkCommand{command} ->
+        pure
+          ( unlinesMsg
+              [ m "Sorry, I don‘t know what you want from me, when your command starts with: " <> codeHTML command
+              , m "I‘ll tell you all commands I know, when you use the " <> codeHTML "help" <> m " command."
+              ]
+          )
   forM_ responses $ uncurry \MkCommand{author} -> sendMessageToUser author . fromMaybe (m "Your command triggered an internal error in the bot. Sorry about that.")
   whenTimeIsUp lastWatch 60 watchRepo
 
@@ -685,23 +730,38 @@ helpMessage = do
   repo_link <- repoLink "" "nixpkgs git repository on github"
   pure
     $ unlinesMsg
-      [ m "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
+      [ m
+          "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
       , mempty
-      , m "I am continously watching the " <> repo_link <> m ". If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
+      , m "I am continously watching the "
+          <> repo_link
+          <> m
+            ". If you want to be notified whenever a PR reaches one of the relevant branches in the nixpkgs release cycle, you can tell me via the following commands:"
       , mempty
       , codeHTML "subscribe [pr-number]" <> m ": I will subscribe you to the given pull request."
       , codeHTML "unsubscribe [pr-number]" <> m ": I will unsubscribe you from the given pull request."
-      , codeHTML "subscribe user [github-login-name]" <> m ": I will subscribe you to all newly merged pull requests created by the given github handle."
-      , codeHTML "unsubscribe user [github-login-name]" <> m ": I will not subscribe you to newly merged pull requests from the given user anymore."
+      , codeHTML "subscribe user [github-login-name]"
+          <> m ": I will subscribe you to all newly merged pull requests created by the given github handle."
+      , codeHTML "unsubscribe user [github-login-name]"
+          <> m ": I will not subscribe you to newly merged pull requests from the given user anymore."
       , codeHTML "list" <> m ": I will show you all the pull requests, I am watching for you."
       , codeHTML "help" <> m ": So I can tell you all of this again."
       , mempty
-      , m "By the way, you don‘t need to type the whole command, for every keyword in the command any prefix will work. e.g. " <> codeHTML "s u" <> m " for " <> codeHTML "subscribe user"
+      , m "By the way, you don‘t need to type the whole command, for every keyword in the command any prefix will work. e.g. "
+          <> codeHTML "s u"
+          <> m " for "
+          <> codeHTML "subscribe user"
       , mempty
       , m "I will inform you, when one of the pull requests you subscribed to reaches one of these branches: " <> branchList
       , mempty
-      , m "I have been programmed and am being hosted by " <> mention "@maralorn:maralorn.de" <> m ". Feel free to reach out to him, if you have any problems or suggestions."
-      , m "My code is written in Haskell, is open source under the AGPL license and can be found at " <> link "https://code.maralorn.de/maralorn/config/src/branch/main/packages/nixpkgs-bot" "code.maralorn.de/maralorn/config/src/branch/main/packages/nixpkgs-bot" <> m "."
+      , m "I have been programmed and am being hosted by "
+          <> mention "@maralorn:maralorn.de"
+          <> m ". Feel free to reach out to him, if you have any problems or suggestions."
+      , m "My code is written in Haskell, is open source under the AGPL license and can be found at "
+          <> link
+            "https://code.maralorn.de/maralorn/config/src/branch/main/packages/nixpkgs-bot"
+            "code.maralorn.de/maralorn/config/src/branch/main/packages/nixpkgs-bot"
+          <> m "."
       ]
 
 whenTimeIsUp :: (Environment -> IORef Clock.TimeSpec) -> Int64 -> App () -> App ()
@@ -729,14 +789,26 @@ main = do
   last_watch <- newIORef now
   last_maintenance <- newIORef minBound
   let runApp :: App a -> IO a
-      runApp = flip runReaderT (MkEnvironment config matrix_session github_token last_watch last_maintenance) . Persist.Sqlite.runSqlite (database config) . Persist.Sqlite.retryOnBusy
+      runApp =
+        flip runReaderT (MkEnvironment config matrix_session github_token last_watch last_maintenance)
+          . Persist.Sqlite.runSqlite (database config)
+          . Persist.Sqlite.retryOnBusy
   first_next_batch <- runApp do
     Persist.Sqlite.runMigration migrateAll
     watchRepo
     fmap sessionStateValue <$> Persist.get (SessionStateKey' "next_batch")
   userId <- unwrapMatrixError $ Matrix.getTokenOwner matrix_session
   filterId <- unwrapMatrixError $ Matrix.createFilter matrix_session userId Matrix.messageFilter
-  unwrapMatrixError $ Matrix.syncPoll matrix_session (Just filterId) first_next_batch (Just Matrix.Online) (void . catchAll . runApp . resultHandler)
+  unwrapMatrixError
+    $ Matrix.syncPoll
+      matrix_session
+      (Just filterId)
+      first_next_batch
+      (Just Matrix.Online)
+      (void . catchAll . runApp . resultHandler)
 
 catchAll :: (MonadIO m, MonadCatch.MonadCatch m) => m a -> m (Maybe a)
-catchAll action = MonadCatch.catch (Just <$> action) (\(e :: SomeException) -> putStrLn ("### ERROR ###: " <> displayException e) >> pure Nothing)
+catchAll action =
+  MonadCatch.catch
+    (Just <$> action)
+    (\(e :: SomeException) -> putStrLn ("### ERROR ###: " <> displayException e) >> pure Nothing)

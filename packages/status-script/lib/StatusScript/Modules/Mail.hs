@@ -37,7 +37,7 @@ mkWarning = \subgroup msg ->
     , subgroup = Just subgroup
     }
 
-mail :: (R.MonadHeadlessApp t m) => Env -> R.Dynamic t Mode -> m (R.Event t [Warning])
+mail :: R.MonadHeadlessApp t m => Env -> R.Dynamic t Mode -> m (R.Event t [Warning])
 mail env mode = do
   CommandUtil.reportMissing missingExecutables
   notmuch_update <-

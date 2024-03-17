@@ -14,7 +14,7 @@ data Timer = MkTimer
   deriving stock (Generic)
   deriving anyclass (Aeson.FromJSON, Aeson.ToJSON)
 
-timers :: (R.MonadHeadlessApp t m) => Env -> m (R.Event t [Timer])
+timers :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Timer])
 timers = \env ->
   FileWatch.watchFileContents env env.homeDir ".timers"
     <&> R.updated

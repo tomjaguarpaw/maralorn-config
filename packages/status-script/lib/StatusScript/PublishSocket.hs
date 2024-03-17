@@ -41,23 +41,23 @@ mkSendToSocketCallback = \env socket_name -> do
   send socket msg =
     Exception.try @Exception.IOException (Network.sendAll socket (msg <> "\n")) <&> isRight
 
-publish ::
-  (R.MonadHeadlessApp t m) =>
-  Env ->
-  Text ->
-  R.Event t ByteString ->
-  m ()
+publish
+  :: R.MonadHeadlessApp t m
+  => Env
+  -> Text
+  -> R.Event t ByteString
+  -> m ()
 publish = \env socket_name event -> do
   -- Listen socket
   callback <- liftIO $ mkSendToSocketCallback env [i|#{socketsDir}/#{socket_name}|]
   R.performEvent_ $ event <&> (callback % env.fork [i|Publishing to socket #{socket_name}|] % liftIO)
 
-publishJson ::
-  (R.MonadHeadlessApp t m, Aeson.ToJSON a) =>
-  Env ->
-  Text ->
-  R.Event t a ->
-  m ()
+publishJson
+  :: (R.MonadHeadlessApp t m, Aeson.ToJSON a)
+  => Env
+  -> Text
+  -> R.Event t a
+  -> m ()
 publishJson = \env name -> fmap (Aeson.encode % toStrict) % publish env name
 
 socketsDir :: FilePath

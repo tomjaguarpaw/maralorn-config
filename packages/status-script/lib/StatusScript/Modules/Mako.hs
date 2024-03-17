@@ -19,8 +19,9 @@ type MakoList =
   }|]
 
 Shh.load Shh.Absolute ["makoctl"]
+
 missingExecutables :: IO [FilePath]
-notifications :: (R.MonadHeadlessApp t m) => Env -> m (R.Event t [Warning])
+notifications :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Warning])
 notifications = \env -> do
   CommandUtil.reportMissing missingExecutables
   tick <- ReflexUtil.tickEvent 5

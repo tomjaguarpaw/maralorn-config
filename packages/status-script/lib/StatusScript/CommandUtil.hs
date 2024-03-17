@@ -9,5 +9,5 @@ import Shh qualified
 tryCmd :: Shh.Proc a -> IO LBS.ByteString
 tryCmd x = Shh.ignoreFailure x |> Shh.captureTrim
 
-reportMissing :: (MonadIO m) => IO [FilePath] -> m ()
+reportMissing :: MonadIO m => IO [FilePath] -> m ()
 reportMissing missing = whenJustM (nonEmpty <$> liftIO missing) \missing' -> sayErr [i|Missing executables: #{Text.intercalate "," (toList missing' <&> toText)}|]

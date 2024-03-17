@@ -8,7 +8,7 @@ import StatusScript.Env (Env (..))
 
 data Mode = Klausur | Orga | Code | Leisure | Unrestricted | Default deriving (Eq, Ord, Show, Enum, Bounded)
 
-getMode :: (R.MonadHeadlessApp t m) => Env -> m (R.Dynamic t Mode)
+getMode :: R.MonadHeadlessApp t m => Env -> m (R.Dynamic t Mode)
 getMode _env = pure $ constDyn Default
 
 -- FileWatch.watchFileContents env env.homeDir ".mode" <<&>> \case

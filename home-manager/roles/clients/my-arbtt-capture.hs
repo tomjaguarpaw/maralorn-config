@@ -35,4 +35,9 @@ main = do
   let inactive = case idle_state of
         "Idle" -> "1"
         _ -> "0"
-  lswt "--json" |> jq (id @String [i|{date:now|strftime("%FT%TZ"),rate:#{sampleRateInSeconds * 1000},inactive:#{inactive},windows:map({title,program:.app_id,active:.activated}),desktop:""}|]) |> arbtt_import "-a" "-t" "JSON"
+  lswt "--json"
+    |> jq
+      ( id @String
+          [i|{date:now|strftime("%FT%TZ"),rate:#{sampleRateInSeconds * 1000},inactive:#{inactive},windows:map({title,program:.app_id,active:.activated}),desktop:""}|]
+      )
+    |> arbtt_import "-a" "-t" "JSON"

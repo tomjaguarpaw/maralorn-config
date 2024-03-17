@@ -19,16 +19,19 @@ import System.Directory qualified as Directory
 import System.FilePath ((</>))
 
 Shh.load Shh.Absolute ["git"]
+
 missingExecutables :: IO [FilePath]
 isDirty :: String -> IO Bool
-isDirty gitDir = ((/= "") <$> (git "--no-optional-locks" "-C" gitDir "status" "--porcelain" |> Shh.captureTrim)) `Exception.catch` (\(_ :: SomeException) -> pure True)
+isDirty gitDir =
+  ((/= "") <$> (git "--no-optional-locks" "-C" gitDir "status" "--porcelain" |> Shh.captureTrim))
+    `Exception.catch` (\(_ :: SomeException) -> pure True)
 
 isUnpushed :: String -> IO Bool
 isUnpushed gitDir = do
   revs <- CommandUtil.tryCmd (git "--no-optional-locks" "-C" gitDir "branch" "-r" "--contains" "HEAD")
   pure $ LBS.null revs
 
-gitEvents :: (R.MonadHeadlessApp t m) => Env -> R.Dynamic t Mode -> m (R.Event t [Warning], R.Dynamic t (Set Text))
+gitEvents :: R.MonadHeadlessApp t m => Env -> R.Dynamic t Mode -> m (R.Event t [Warning], R.Dynamic t (Set Text))
 gitEvents env mode = do
   start <- R.getPostBuild
   let git_dir = env.homeDir </> "git"

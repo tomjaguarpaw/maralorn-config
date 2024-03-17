@@ -8,25 +8,26 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
 
-module Dialog (
-  runHaskeline,
-  runClearingHaskeline,
-  Menu (..),
-  MenuEntry (..),
-  menu,
-  confirm,
-  getLineWithDefaultAndSuggestions,
-) where
+module Dialog
+  ( runHaskeline
+  , runClearingHaskeline
+  , Menu (..)
+  , MenuEntry (..)
+  , menu
+  , confirm
+  , getLineWithDefaultAndSuggestions
+  )
+where
 
 import Control.Applicative (Alternative ((<|>)))
 import Control.Monad (MonadPlus (mzero))
 import Control.Monad.IO.Class
-import Data.Char (
-  isLower,
-  isUpper,
-  toLower,
-  toUpper,
- )
+import Data.Char
+  ( isLower
+  , isUpper
+  , toLower
+  , toUpper
+  )
 import Data.List
 import Data.Maybe
 import Data.Text (Text)
@@ -37,7 +38,8 @@ import System.Console.Wizard.Haskeline
 import System.Console.Wizard.Internal
 import Witch
 
-newtype ClearingHaskeline a = ClearingHaskeline {runClearing :: InputT IO a} deriving newtype (Functor, Applicative, Monad)
+newtype ClearingHaskeline a = ClearingHaskeline {runClearing :: InputT IO a}
+  deriving newtype (Functor, Applicative, Monad)
 
 instance Run ClearingHaskeline Haskeline where
   runAlgebra =
@@ -53,12 +55,12 @@ data Menu a = Menu Text [MenuEntry a]
 cancelCharacter :: Char
 cancelCharacter = '.'
 
-menu ::
-  forall a m.
-  (Character :<: m, Show a) =>
-  Maybe Text ->
-  Menu a ->
-  Wizard m a
+menu
+  :: forall a m
+   . (Character :<: m, Show a)
+  => Maybe Text
+  -> Menu a
+  -> Wizard m a
 menu = runMenu True
  where
   runMenu top prompt thisMenu@(Menu name options) = do
@@ -76,10 +78,10 @@ menu = runMenu True
     mappings :: [(Char, MenuEntry a)]
     (hotkeys, mappings) = foldr foldMappings ([cancelCharacter], []) options
 
-    foldMappings ::
-      MenuEntry a ->
-      ([Char], [(Char, MenuEntry a)]) ->
-      ([Char], [(Char, MenuEntry a)])
+    foldMappings
+      :: MenuEntry a
+      -> ([Char], [(Char, MenuEntry a)])
+      -> ([Char], [(Char, MenuEntry a)])
     foldMappings option accu@(accuHotkeys, accuMappings)
       | Just hotkey <- chooseHotkey accuHotkeys (getLabel option) =
           (hotkey : accuHotkeys, accuMappings <> [(hotkey, option)])
@@ -110,21 +112,21 @@ menu = runMenu True
     promptLabel :: (Char, MenuEntry a) -> [Char]
     promptLabel (c, option) = toUpper c : (": " <> getLabel option)
 
-confirm :: (Character :<: m) => Text -> Wizard m Bool
+confirm :: Character :<: m => Text -> Wizard m Bool
 confirm prompt =
   menu Nothing $ Menu prompt [Option "Yes" True, Option "No" False]
 
 -- From Hledger.Cli.Commands.Add
-withCompletion ::
-  (WithSettings :<: m) => CompletionFunc IO -> Wizard m a -> Wizard m a
+withCompletion
+  :: WithSettings :<: m => CompletionFunc IO -> Wizard m a -> Wizard m a
 withCompletion c = withSettings (setComplete c defaultSettings)
 
-getLineWithDefaultAndSuggestions ::
-  (WithSettings :<: m, LinePrewritten :<: m) =>
-  PromptString ->
-  Maybe String ->
-  [String] ->
-  Wizard m String
+getLineWithDefaultAndSuggestions
+  :: (WithSettings :<: m, LinePrewritten :<: m)
+  => PromptString
+  -> Maybe String
+  -> [String]
+  -> Wizard m String
 getLineWithDefaultAndSuggestions prompt startInput completions =
   retry . withCompletion completeFunc $
     linePrewritten
@@ -137,8 +139,8 @@ getLineWithDefaultAndSuggestions prompt startInput completions =
     match = filter (isInfixOf $ reverse before)
   prewritten = fromMaybe "" startInput
 
-runHaskeline :: (MonadIO m) => Wizard Haskeline a -> m (Maybe a)
+runHaskeline :: MonadIO m => Wizard Haskeline a -> m (Maybe a)
 runHaskeline = liftIO . runInputT defaultSettings . run
 
-runClearingHaskeline :: (MonadIO m) => Wizard Haskeline a -> m (Maybe a)
+runClearingHaskeline :: MonadIO m => Wizard Haskeline a -> m (Maybe a)
 runClearingHaskeline = liftIO . runInputT defaultSettings . runClearing . run

@@ -11,12 +11,14 @@ import StatusScript.FileWatch qualified as FileWatch
 import StatusScript.ReflexUtil qualified as ReflexUtil
 
 Shh.load Shh.Absolute ["journalctl"]
+
 missingExecutables :: IO [FilePath]
+
 data IdleState = Off | Active | Idle Int
   deriving stock (Generic, Eq)
   deriving anyclass (Aeson.FromJSON, Aeson.ToJSON)
 
-idleState :: (R.MonadHeadlessApp t m) => Env -> m (R.Dynamic t IdleState)
+idleState :: R.MonadHeadlessApp t m => Env -> m (R.Dynamic t IdleState)
 idleState = \env -> do
   service_running_dyn <-
     ReflexUtil.processLines env (journalctl "--user" "-n1" "-fu" "swayidle.service")

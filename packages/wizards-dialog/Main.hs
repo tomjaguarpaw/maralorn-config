@@ -4,21 +4,18 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-import Relude
-import Witch
-
 import Data.Aeson (FromJSON (..), Value (Array, String), withObject)
 import Data.Aeson.Key qualified as Key
 import Data.Aeson.KeyMap qualified as Aeson
 import Data.Foldable qualified as Foldable
 import Data.Text qualified as Text
 import Data.Yaml (decodeFileEither)
-
-import System.Posix.Daemon (Redirection (DevNull), runDetached)
-import System.Process (callCommand)
-
 import Dialog (Menu (..), MenuEntry (Option, SubMenu), menu)
 import Dialog qualified
+import Relude
+import System.Posix.Daemon (Redirection (DevNull), runDetached)
+import System.Process (callCommand)
+import Witch
 
 data Command = Run Text | Fork Text deriving (Show)
 

@@ -1,1 +1,11 @@
 indentation: 2
+column-limit: 120
+function-arrows: leading
+comma-style: leading
+import-export-style: leading
+let-style: auto
+in-style: right-align
+single-constraint-parens: never
+single-deriving-parens: never
+unicode: never
+respectful: false

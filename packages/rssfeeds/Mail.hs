@@ -1,16 +1,16 @@
 module Main (main) where
 
-import Control.Error (
-  throwE,
-  tryJust,
-  tryRight,
-  withExceptT,
- )
+import Control.Error
+  ( throwE
+  , tryJust
+  , tryRight
+  , withExceptT
+  )
 import Control.Lens hiding (argument)
-import Control.Monad.Catch (
-  MonadCatch,
-  handleIOError,
- )
+import Control.Monad.Catch
+  ( MonadCatch
+  , handleIOError
+  )
 import Data.Either.Extra (mapLeft)
 import Data.MIME qualified as MIME
 import Data.MIME.Charset
@@ -41,6 +41,7 @@ data Thread = Thread
   , totalCount :: Int
   , messages :: [Message]
   }
+
 type Error = Text
 
 data Body = HTMLBody Text | TextBody Text
@@ -136,12 +137,12 @@ errorsToEntry now er =
 timestamp :: UTCTime -> Text
 timestamp = into . formatTime defaultTimeLocale "%Y-%m-%d %H:%M"
 
-processThread ::
-  (MonadIO m, MonadCatch m) =>
-  ( Notmuch.ThreadId
-  , NonEmpty (Either (Notmuch.Thread a) (Notmuch.Message n a))
-  ) ->
-  ExceptT Error m Thread
+processThread
+  :: (MonadIO m, MonadCatch m)
+  => ( Notmuch.ThreadId
+     , NonEmpty (Either (Notmuch.Thread a) (Notmuch.Message n a))
+     )
+  -> ExceptT Error m Thread
 processThread (threadid, toList -> thrdAndMsgs) =
   handleIOError (\io_error -> throwE [i|IOError: #{io_error}|]) $ do
     thread <-
@@ -167,7 +168,10 @@ messageToHtml Message{headers, body} =
 bodyToHtml :: Body -> Text
 bodyToHtml (HTMLBody x) = fromMaybe x onlyBody
  where
-  onlyBody = renderTags . takeWhile (not . isTagCloseName "body") <$> (viaNonEmpty tail . dropWhile (not . isTagOpenName "body") . parseTags $ x)
+  onlyBody =
+    renderTags
+      . takeWhile (not . isTagCloseName "body")
+      <$> (viaNonEmpty tail . dropWhile (not . isTagOpenName "body") . parseTags $ x)
 bodyToHtml (TextBody x) = Text.intercalate "<br>\n" . Text.splitOn "\n" $ x
 
 processMessage :: (MonadIO m, MonadCatch m) => Notmuch.Message n a -> m Message
@@ -211,7 +215,7 @@ processMessage msg = do
         <$> tryRight (mapLeft ("Could not decode message " <>) $ decode textPart)
   pure $ Message{date, headers = hdrs, body = either TextBody id msgEither}
 
-tryHdr :: (MonadIO m) => ByteString -> Notmuch.Message n a -> m (Maybe Text)
+tryHdr :: MonadIO m => ByteString -> Notmuch.Message n a -> m (Maybe Text)
 tryHdr h msg =
   ((\x -> if x /= "" then Just x else Nothing) . decodeUtf8 =<<)
     <$> Notmuch.messageHeader h msg

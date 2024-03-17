@@ -9,9 +9,28 @@ import Data.Text qualified as Text
 import Data.Time qualified as Time
 import Maralude (from, lined)
 import Relude
-import T.File (FileElement (Paragraph, TaskEntry), Indent, Line (..), Section (MkSection), SectionBody (MkSectionBody), Whitespace (..), whitespace)
+import T.File
+  ( FileElement (Paragraph, TaskEntry)
+  , Indent
+  , Line (..)
+  , Section (MkSection)
+  , SectionBody (MkSectionBody)
+  , Whitespace (..)
+  , whitespace
+  )
 import T.Task (Task (MkTask), TaskStatus, statusChars)
-import Text.Megaparsec (MonadParsec (eof, token, try), ParsecT, ShowErrorComponent (showErrorComponent), Stream (Token), anySingle, choice, customFailure, manyTill, parse, skipMany)
+import Text.Megaparsec
+  ( MonadParsec (eof, token, try)
+  , ParsecT
+  , ShowErrorComponent (showErrorComponent)
+  , Stream (Token)
+  , anySingle
+  , choice
+  , customFailure
+  , manyTill
+  , parse
+  , skipMany
+  )
 import Text.Megaparsec.Char (char, hspace1, tab)
 import Prelude ()
 
@@ -72,24 +91,24 @@ joinOtherLines l = l ^. partsOf (folded . to (uncurry line)) . from lined
   line i t = whitespace (unindent i) <> t
   unindent x = fromMaybe x $ List.stripPrefix prefix x
 
-commonPrefix :: (Eq a) => [a] -> [a] -> [a]
+commonPrefix :: Eq a => [a] -> [a] -> [a]
 commonPrefix = \cases
   (x : xs) (y : ys) | x == y -> x : commonPrefix xs ys
   _ _ -> []
 
-parseIndentedPrism ::
-  (MonadParsec e s m, Eq a) =>
-  [a] ->
-  Getting (First ([a], b)) (Token s) ([a], b) ->
-  m ([a], b)
+parseIndentedPrism
+  :: (MonadParsec e s m, Eq a)
+  => [a]
+  -> Getting (First ([a], b)) (Token s) ([a], b)
+  -> m ([a], b)
 parseIndentedPrism i prism = token (guarded (biggerIndented i . fst) <=< preview prism) mempty
 
-biggerIndented :: (Eq a) => [a] -> [a] -> Bool
+biggerIndented :: Eq a => [a] -> [a] -> Bool
 biggerIndented = \cases
   pfx i | Just (_ : _) <- List.stripPrefix pfx i -> True
   _ _ -> False
 
-parsePrism :: (MonadParsec e s m) => Getting (First a) (Token s) a -> m a
+parsePrism :: MonadParsec e s m => Getting (First a) (Token s) a -> m a
 parsePrism prism = token (preview prism) mempty
 
 ------------------------------------------------------------------------------

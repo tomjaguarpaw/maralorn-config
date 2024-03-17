@@ -10,7 +10,6 @@ module NixpkgsBot.GraphQL.API where
 
 import Data.GraphQL
 import Data.GraphQL.Bootstrap
-
 import NixpkgsBot.GraphQL.Scalars
 
 {-----------------------------------------------------------------------------

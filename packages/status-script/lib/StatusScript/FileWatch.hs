@@ -11,7 +11,7 @@ import StatusScript.ReflexUtil qualified as ReflexUtil
 import System.FSNotify qualified as Notify
 import System.FilePath ((</>))
 
-watchDir :: (R.MonadHeadlessApp t m) => Env -> FilePath -> Bool -> Notify.ActionPredicate -> m (R.Event t Notify.Event)
+watchDir :: R.MonadHeadlessApp t m => Env -> FilePath -> Bool -> Notify.ActionPredicate -> m (R.Event t Notify.Event)
 watchDir env path recursive predicate = do
   let watch = if recursive then Notify.watchTree else Notify.watchDir
   R.newEventWithLazyTriggerWithOnComplete \callback -> do
@@ -33,7 +33,7 @@ watchDir env path recursive predicate = do
       (\(e :: Exception.IOException) -> sayErr [i|Failed to cleanup watches for #{path}: #{e}|])
       do join $ atomically $ takeTMVar finish_callback
 
-watchFile :: (R.MonadHeadlessApp t m) => Env -> FilePath -> FilePath -> m (R.Event t ())
+watchFile :: R.MonadHeadlessApp t m => Env -> FilePath -> FilePath -> m (R.Event t ())
 watchFile env dir file = do
   start <- R.getPostBuild
   event <-
@@ -51,7 +51,7 @@ watchFile env dir file = do
       <&> void
   R.throttle 0.2 (R.leftmost [start, event])
 
-watchFileContents :: (R.MonadHeadlessApp t m) => Env -> FilePath -> FilePath -> m (R.Dynamic t (Maybe Text))
+watchFileContents :: R.MonadHeadlessApp t m => Env -> FilePath -> FilePath -> m (R.Dynamic t (Maybe Text))
 watchFileContents env dir file = do
   start_val <- liftIO read
   event_event <- watchFile env dir file

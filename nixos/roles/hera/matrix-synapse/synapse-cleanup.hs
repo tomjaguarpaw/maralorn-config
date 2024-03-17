@@ -17,27 +17,27 @@ import Data.Aeson (FromJSON, decode)
 import Data.String.Interpolate (i)
 import Data.Time (UTCTime, addUTCTime, getCurrentTime, nominalDay)
 import Data.Time.Clock.POSIX (posixSecondsToUTCTime, utcTimeToPOSIXSeconds)
-import Database.PostgreSQL.Simple as PSQL (
-  Connection,
-  Only (Only, fromOnly),
-  connectPostgreSQL,
-  query,
-  query_,
- )
-import Network.HTTP (
-  Header (Header),
-  HeaderName (HdrAuthorization),
-  RequestMethod (DELETE),
-  Request_String,
-  Response (rspBody, rspReason),
-  getRequest,
-  insertHeaders,
-  postRequest,
-  postRequestWithBody,
-  rqMethod,
-  rspCode,
-  simpleHTTP,
- )
+import Database.PostgreSQL.Simple as PSQL
+  ( Connection
+  , Only (Only, fromOnly)
+  , connectPostgreSQL
+  , query
+  , query_
+  )
+import Network.HTTP
+  ( Header (Header)
+  , HeaderName (HdrAuthorization)
+  , RequestMethod (DELETE)
+  , Request_String
+  , Response (rspBody, rspReason)
+  , getRequest
+  , insertHeaders
+  , postRequest
+  , postRequestWithBody
+  , rqMethod
+  , rspCode
+  , simpleHTTP
+  )
 import Relude
 import Say (say, sayErr)
 import Shh (ExecReference (Absolute), load, (|>))
@@ -100,7 +100,8 @@ waitForPurge token purgeId = do
 queryLastKeptEvent :: PSQL.Connection -> Text -> IO (Maybe (Text, UTCTime))
 queryLastKeptEvent conn roomId =
   let process = fmap (second (posixSecondsToUTCTime . (/ 1000) . realToFrac)) . viaNonEmpty head . mapMaybe sequence
-      queryString = "SELECT event_id, received_ts from events WHERE type='m.room.message' AND room_id =? ORDER BY received_ts DESC LIMIT 1 offset ?"
+      queryString =
+        "SELECT event_id, received_ts from events WHERE type='m.room.message' AND room_id =? ORDER BY received_ts DESC LIMIT 1 offset ?"
    in process <$> query conn queryString (roomId, lastMessages - 1)
 
 purgeUpToEvent :: Text -> Text -> UTCTime -> (Text, UTCTime) -> IO ()
@@ -124,14 +125,16 @@ purgeUpToEvent token roomId upToTime (eventName, eventTime) =
       ( \resp ->
           maybe
             (sayErr [i|Could not parse purge result: #{rspBody resp}|])
-            (\(purge_id -> purgeResult) -> say [i|Purging with id #{purgeResult} for room #{roomId}.|] >> waitForPurge token purgeResult)
+            ( \(purge_id -> purgeResult) -> say [i|Purging with id #{purgeResult} for room #{roomId}.|] >> waitForPurge token purgeResult
+            )
             (decode . encodeUtf8 . rspBody $ resp)
       )
 
 purgeRoom :: Text -> Text -> IO ()
 purgeRoom token roomID = do
   say [i|Deleting #{roomID}...|]
-  handleResponse =<< (simpleHTTP . giveToken token . \x -> x{rqMethod = DELETE}) (postRequestWithBody url contentType "{}")
+  handleResponse
+    =<< (simpleHTTP . giveToken token . \x -> x{rqMethod = DELETE}) (postRequestWithBody url contentType "{}")
  where
   url = [i|#{apiUrl}/rooms/#{roomID}|]
   handleResponse = either printErr (\x -> say [i|#{rspCode x}: #{rspReason x}\n#{rspBody x}|])
@@ -141,13 +144,21 @@ processRoom :: Text -> PSQL.Connection -> UTCTime -> Text -> IO ()
 processRoom token conn upToTime roomId = do
   whenJustM (queryLastKeptEvent conn roomId) (purgeUpToEvent token roomId upToTime)
   say [i|Compressing state in room #{roomId} ...|]
-  synapse'_compress'_state "-o" filename "-p" "host=/run/postgresql user=matrix-synapse dbname=matrix-synapse" "-r" (toString roomId)
+  synapse'_compress'_state
+    "-o"
+    filename
+    "-p"
+    "host=/run/postgresql user=matrix-synapse dbname=matrix-synapse"
+    "-r"
+    (toString roomId)
   cat filename |> psql "matrix-synapse"
   rm filename
 
-locallyUnjoinedRoomsQuery = "SELECT r.room_id FROM rooms AS r LEFT JOIN (SELECT room_id FROM local_current_membership WHERE membership = 'join' GROUP BY room_id) AS l ON l.room_id = r.room_id WHERE l.room_id IS NULL"
+locallyUnjoinedRoomsQuery =
+  "SELECT r.room_id FROM rooms AS r LEFT JOIN (SELECT room_id FROM local_current_membership WHERE membership = 'join' GROUP BY room_id) AS l ON l.room_id = r.room_id WHERE l.room_id IS NULL"
 
-largeRoomsQuery = "SELECT q.room_id FROM (select count(*) as numberofusers, room_id FROM current_state_events WHERE type ='m.room.member' AND membership = 'join' GROUP BY room_id) AS q LEFT JOIN room_aliases a ON q.room_id=a.room_id WHERE q.numberofusers > ? ORDER BY numberofusers desc"
+largeRoomsQuery =
+  "SELECT q.room_id FROM (select count(*) as numberofusers, room_id FROM current_state_events WHERE type ='m.room.member' AND membership = 'join' GROUP BY room_id) AS q LEFT JOIN room_aliases a ON q.room_id=a.room_id WHERE q.numberofusers > ? ORDER BY numberofusers desc"
 
 main :: IO ()
 main = do

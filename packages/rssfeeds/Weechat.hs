@@ -6,23 +6,23 @@
 module Main (main) where
 
 import Data.List.Extra qualified as L
-import Data.List.NonEmpty (
-  groupBy,
-  zip,
- )
+import Data.List.NonEmpty
+  ( groupBy
+  , zip
+  )
 import Data.String.Interpolate (i)
-import Data.Text (
-  intercalate,
-  replace,
- )
+import Data.Text
+  ( intercalate
+  , replace
+  )
 import Data.Text qualified as Text
 import Data.Time.Calendar qualified as T
 import Data.Time.Clock qualified as T
 import Data.Time.Format qualified as T
-import Relude hiding (
-  intercalate,
-  zip,
- )
+import Relude hiding
+  ( intercalate
+  , zip
+  )
 import System.Environment ()
 import System.FilePattern.Directory (getDirectoryFiles)
 import Text.Atom.Feed
@@ -57,6 +57,7 @@ type Parser = MP.Parsec Text Text
 
 hyphen :: Parser Char
 hyphen = MP.char '-'
+
 parseDate :: Parser Text
 parseDate = do
   year <- MP.count 4 MP.digitChar
@@ -65,6 +66,7 @@ parseDate = do
   void hyphen
   day <- MP.count 2 MP.digitChar
   pure [i|#{year}-#{month}-#{day}|]
+
 parseTime :: Parser Text
 parseTime = do
   hour <- MP.count 2 MP.digitChar
@@ -73,10 +75,13 @@ parseTime = do
   void $ MP.char ':'
   seconds <- MP.count 2 MP.digitChar
   pure [i|#{hour}:#{minute}:#{seconds}|]
+
 dirSep :: Parser Char
 dirSep = MP.char '/'
+
 symbol :: Text -> Parser Text
 symbol = MP.symbol MPC.space
+
 folder :: Parser Text
 folder = toText <$> MP.manyTill MP.asciiChar dirSep
 
@@ -134,6 +139,7 @@ main = do
 
 today :: T.UTCTime -> T.Day
 today = T.utctDay
+
 yesterday :: T.UTCTime -> T.Day
 yesterday = T.addDays (negate 1) . today
 

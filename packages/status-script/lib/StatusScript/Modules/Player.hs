@@ -18,7 +18,7 @@ missingExecutables :: IO [FilePath]
 playerCTLFormat :: String
 playerCTLFormat = [i|{{playerName}}@@@{{status}}@@@{{title}} | {{album}} | {{artist}}|]
 
-playerModule :: (R.MonadHeadlessApp t m) => Env -> m (R.Event t [PlayerState])
+playerModule :: R.MonadHeadlessApp t m => Env -> m (R.Event t [PlayerState])
 playerModule = \env -> do
   let home = env.homeDir
   CommandUtil.reportMissing missingExecutables

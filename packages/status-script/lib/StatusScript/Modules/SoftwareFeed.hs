@@ -4,7 +4,6 @@ import Data.Text qualified as Text
 import Maralorn.Prelude
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
-
 -- import StatusScript.FileWatch qualified as FileWatch
 
 import Shh ((|>))
@@ -14,11 +13,11 @@ import StatusScript.Mode (Mode (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
 import StatusScript.Warnings (Warning (..))
 
-softwareFeed ::
-  (R.MonadHeadlessApp t m) =>
-  Env ->
-  R.Dynamic t Mode ->
-  m (R.Event t [Warning])
+softwareFeed
+  :: R.MonadHeadlessApp t m
+  => Env
+  -> R.Dynamic t Mode
+  -> m (R.Event t [Warning])
 softwareFeed = \env _ -> do
   -- db_event <- FileWatch.watchFile env (env.homeDir </> ".local/share/newsboat") "software-updates-cache.db"
   db_event <- (<>) <$> ReflexUtil.tickEvent 3600 <*> R.getPostBuild

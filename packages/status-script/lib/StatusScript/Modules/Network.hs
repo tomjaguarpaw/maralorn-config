@@ -8,7 +8,7 @@ import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
 
-networkState :: (R.MonadHeadlessApp t m) => Env -> m (R.Event t [Text])
+networkState :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Text])
 networkState = \env ->
   liftIO Shh.pathBins <&> (elem "nmcli") >>= \case
     False -> do
