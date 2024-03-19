@@ -6,7 +6,7 @@
 }:
 {
   nix = {
-    package = pkgs.nixVersions.unstable;
+    package = pkgs.unstable.nixVersions.unstable;
     nixPath = [ "nixpkgs=flake:pkgs" ];
 
     registry = {
