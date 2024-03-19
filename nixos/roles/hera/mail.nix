@@ -40,7 +40,6 @@ in
           let
             allow-ip = builtins.toFile "allow-ip.map" "";
             allow-host = builtins.toFile "allow-host.map" ''
-              ccc.de
               discourse.cloud
               haskell.org
               github.com
