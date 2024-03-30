@@ -87,15 +87,6 @@
               fourmolu = lib.mkForce (lib.getBin pkgs.unstableHaskellPackages.fourmolu);
             };
             excludes = [ "\\.zsh$" ] ++ generated_nix_files;
-            settings = {
-              ormolu.defaultExtensions = [
-                "TypeApplications"
-                "BangPatterns"
-                "ImportQualifiedPost"
-                "BlockArguments"
-              ];
-              statix.ignore = generated_nix_files;
-            };
             hooks = {
               hlint.enable = true;
               nixfmt.enable = true;
@@ -106,8 +97,17 @@
                 enable = true;
               };
               deadnix.enable = true;
-              statix.enable = true;
+              statix = {
+                enable = true;
+                settings.ignore = generated_nix_files;
+              };
               fourmolu.enable = true;
+              ormolu.settings.defaultExtensions = [
+                "TypeApplications"
+                "BangPatterns"
+                "ImportQualifiedPost"
+                "BlockArguments"
+              ];
               shellcheck.enable = true;
               cabal-fmt.enable = true;
             };
