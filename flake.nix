@@ -2,7 +2,7 @@
   description = "maralorns configuration";
 
   inputs = {
-    nixos-unstable.url = "nixpkgs/nixos-unstable";
+    nixos-unstable.url = "nixpkgs/nixos-unstable-small";
     nixos-stable.url = "nixpkgs/nixos-23.11";
     disko = {
       url = "github:nix-community/disko";
