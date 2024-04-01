@@ -148,7 +148,7 @@ in
         nnn
         rename
         ripgrep
-        ntfy
+        # build error: ntfy
         sd
         socat
         sshuttle
