@@ -83,6 +83,7 @@ library
     , optics
     , reflex
     , reflex-dom
+    , relude
     , text
     , witch
 
