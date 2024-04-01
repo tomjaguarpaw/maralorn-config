@@ -38,6 +38,7 @@ let
     rssfeeds = cleanCabalPackage ./rssfeeds { };
     nixpkgs-bot = cleanCabalPackage ./nixpkgs-bot { };
     t = cleanCabalPackage ./t { };
+    kass = cleanCabalPackage ./kass { };
     builders-configurator = cleanCabalPackage ./builders-configurator { };
     status-script = cleanCabalPackage ./status-script {
       overrides = _: {
