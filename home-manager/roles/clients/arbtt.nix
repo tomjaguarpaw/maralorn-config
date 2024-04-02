@@ -7,6 +7,7 @@ in
   home.file.".arbtt/categorize.cfg".text = ''
     $idle > 60 ==> tag inactive,
     tag Program:$current.program,
+    tag Title:$current.title,
     current window $title =~ m!/git/([^/]*)! ==> tag Project:$1,
   '';
   systemd.user = {
