@@ -35,8 +35,8 @@ in
     pkgs.remmina
     pkgs.mdbtools
     (pkgs.writeShellScriptBin "for-model" ''
+      set -e
       git checkout cabal.project
-      echo 'package *\n  ghc-options: -XPartialTypeSignatures -fdefer-type-errors' >> cabal.project
       cp ${./_for-model-shell.nix} shell.nix
       mkdir -p .helix
       ln -sf ${
@@ -47,9 +47,9 @@ in
       direnv allow
     '')
     (pkgs.writeShellScriptBin "with-model" ''
+      set -e
       git checkout cabal.project
       sd ", model.*\$" "" cabal.project
-      echo 'package *\n  ghc-options: -XPartialTypeSignatures -fdefer-type-errors' >> cabal.project
       cp ${./_with-model-shell.nix} shell.nix
       mkdir -p .helix
       ln -sf ${
