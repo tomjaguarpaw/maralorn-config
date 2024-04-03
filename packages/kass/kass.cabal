@@ -52,7 +52,7 @@ extra-doc-files: CHANGELOG.md
 -- extra-source-files:
 
 common warnings
-  ghc-options: -Wall
+  ghc-options: -Wall -fdefer-type-errors
 
 library
   -- Import common warning flags.
@@ -69,17 +69,24 @@ library
 
   -- LANGUAGE extensions used by modules in this package.
   default-extensions:
+    BlockArguments
+    BlockArguments
+    DataKinds
     DuplicateRecordFields
+    GADTs
     NoFieldSelectors
+    NoImplicitPrelude
     NoImplicitPrelude
     OverloadedLabels
     OverloadedRecordDot
     OverloadedStrings
+    PartialTypeSignatures
 
   -- Other library packages from which modules are imported.
   build-depends:
     , base
     , bluefin
+    , bluefin-internal
     , optics
     , reflex
     , reflex-dom
