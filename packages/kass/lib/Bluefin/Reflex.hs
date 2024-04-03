@@ -17,9 +17,6 @@ inReflex
 inReflex h act = undefined
 
 withReflexHeadless
-  :: forall a t (es :: Effects) (eio :: Effects)
-   . eio :> es
-  => IOE eio
-  -> (forall (er :: Effects). Reflex t es -> Eff (er :& es) (Event t a))
-  -> Eff es a
-withReflexHeadless io act = undefined
+  :: (forall (er :: Effects) (eio :: Effects). IOE eio -> Reflex t es -> Eff (er :& eio) (Event t a))
+  -> IO a
+withReflexHeadless act = undefined
