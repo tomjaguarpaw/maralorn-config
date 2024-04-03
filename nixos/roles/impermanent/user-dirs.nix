@@ -17,6 +17,7 @@
       ".config/tea" # Save user login
       ".config/teamviewer" # Save user login
       ".config/remmina" # RDP Client
+      ".config/vscodium"
       ".contacts" # Cache synced addressbook
       ".factorio" # Factorio save games and login
       ".gnupg"
