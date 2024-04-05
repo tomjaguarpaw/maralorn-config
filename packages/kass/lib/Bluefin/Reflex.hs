@@ -52,6 +52,7 @@ data ReflexE t (es :: Effects) where
        }
     -> ReflexE (SpiderTimeline x) es
 
+-- Uncommented: Other available type classes which I don’t want to expose.
 type MonadReflexIO t m =
   ( Adjustable t m
   , -- , MonadCatch m
@@ -98,9 +99,9 @@ runReflex act =
     postBuild <- getPostBuild
     initialRequesterState <- lift . lift . PerformEventT . RequesterT $ MTL.get
     requesterSelector <- lift . lift . PerformEventT . RequesterT . lift $ ask
-    (ret, finalState) <- liftIO . unsafeUnEff $ runState initialRequesterState $ \requesterStateHandle ->
+    (ret, finalState) <- liftIO . unsafeUnEff $ runState initialRequesterState \requesterStateHandle ->
       act
-        $ MkReflex
+        MkReflex
           { triggerChan
           , postBuild
           , requesterStateHandle
@@ -133,7 +134,7 @@ reflexUnsafe
   => ReflexE t e
   -> (forall m. MonadReflexIO t m => m r)
   -> Eff es r
-reflexUnsafe r@(MkReflex @x _x _ _ _) act = do
+reflexUnsafe r@(MkReflex{}) act = do
   preState <- get r.requesterStateHandle
   (ret, postState) <-
     UnsafeMkEff
@@ -142,7 +143,7 @@ reflexUnsafe r@(MkReflex @x _x _ _ _) act = do
       . flip runReaderT r.requesterSelector
       . flip runStateT preState
       . unRequesterT
-      . unPerformEventT @_ @(SpiderHost x)
+      . unPerformEventT @_ @(SpiderHost _)
       . flip runPostBuildT r.postBuild
       . flip runTriggerEventT r.triggerChan
       $ act
