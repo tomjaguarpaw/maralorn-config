@@ -1,5 +1,6 @@
-{ mkDerivation, base, bluefin, bluefin-internal, lib, optics
-, reflex, reflex-dom, relude, text, witch
+{ mkDerivation, base, bluefin, bluefin-internal, dependent-sum
+, exceptions, lib, optics, primitive, ref-tf, reflex, reflex-dom
+, relude, text, witch
 }:
 mkDerivation {
   pname = "kass";
@@ -8,8 +9,8 @@ mkDerivation {
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [
-    base bluefin bluefin-internal optics reflex reflex-dom relude text
-    witch
+    base bluefin bluefin-internal dependent-sum exceptions optics
+    primitive ref-tf reflex reflex-dom relude text witch
   ];
   executableHaskellDepends = [ base ];
   license = lib.licenses.agpl3Plus;

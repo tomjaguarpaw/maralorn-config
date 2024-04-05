@@ -62,6 +62,8 @@ library
   exposed-modules:
     Bluefin.Reflex
     Bluefin.Reflex.Dom
+    Bluefin.Reflex.Headless
+    Bluefin.Reflex.Headless.Internal
     Maralude
 
   -- Modules included in this library but not exported.
@@ -70,10 +72,10 @@ library
   -- LANGUAGE extensions used by modules in this package.
   default-extensions:
     BlockArguments
-    BlockArguments
     DataKinds
     DuplicateRecordFields
     GADTs
+    LambdaCase
     NoFieldSelectors
     NoImplicitPrelude
     NoImplicitPrelude
@@ -87,7 +89,11 @@ library
     , base
     , bluefin
     , bluefin-internal
+    , dependent-sum
+    , exceptions
     , optics
+    , primitive
+    , ref-tf
     , reflex
     , reflex-dom
     , relude

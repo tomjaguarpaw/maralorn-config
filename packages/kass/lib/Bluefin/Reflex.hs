@@ -1,78 +1,174 @@
-module Bluefin.Reflex where
+module Bluefin.Reflex (runReflex, reflex, reflexIO, MonadReflex, main) where
 
-import Bluefin.Internal (Eff (UnsafeMkEff), insertFirst, unsafeRemoveEff)
+import Bluefin.Internal (Eff (UnsafeMkEff), unsafeUnEff)
+import Bluefin.Reflex.Headless.Internal
+import Control.Concurrent (Chan)
 import Control.Monad.Fix (MonadFix)
-import GHC.Records (HasField)
+import Data.Dependent.Sum (DSum (..))
+import GHC.Base qualified as GHC
 import Maralude
 import Reflex
-  ( MonadHold
+  ( Adjustable
+  , Event
+  , EventSelectorInt
+  , EventTriggerRef
+  , MonadHold
   , MonadSample
+  , NotReady
+  , PerformEvent
+  , PerformEventT (PerformEventT)
+  , Performable
+  , PostBuild
+  , Reflex
+  , RequesterT (RequesterT)
+  , SpiderHost
   , SpiderTimeline
+  , TriggerEvent
+  , TriggerEventT (TriggerEventT)
+  , TriggerInvocation
   , constDyn
-  , current
-  , runSpiderHostForTimeline
-  , sample
-  , withSpiderTimeline
+  , delay
+  , foldDyn
+  , getPostBuild
+  , performEvent
+  , runPostBuildT
+  , runTriggerEventT
+  , unPerformEventT
+  , unRequesterT
+  , updated
   )
-import Reflex qualified
-import Reflex.Spider.Internal (HasSpiderTimeline, SpiderTimelineEnv, spiderTimeline)
+import Reflex.Requester.Base.Internal (RequesterState)
+import Reflex.Spider.Internal (HasSpiderTimeline, SpiderHostFrame, runSpiderHostFrame, unEventM)
+import Relude.Monad qualified as MTL
 
 -- | Reflex Effect Handle
-data Reflex t (es :: Effects) where
-  MkReflex :: HasSpiderTimeline x => Reflex (SpiderTimeline x) es
+data ReflexE t (es :: Effects) where
+  MkReflex
+    :: HasSpiderTimeline x
+    => { triggerChan :: Chan [DSum (EventTriggerRef (SpiderTimeline x)) TriggerInvocation]
+       , postBuild :: Event (SpiderTimeline x) ()
+       , requesterStateHandle :: State (RequesterState (SpiderTimeline x) (SpiderHostFrame x)) es
+       , requesterSelector :: EventSelectorInt (SpiderTimeline x) GHC.Any
+       }
+    -> ReflexE (SpiderTimeline x) es
 
-type MonadReflex t m = (MonadHold t m, MonadSample t m, MonadFix m)
+type MonadReflexIO t m =
+  ( Adjustable t m
+  , -- , MonadCatch m
+    MonadFix (Performable m)
+  , MonadFix m
+  , -- MonadHold t (Performable m)
+    MonadHold t m
+  , -- , MonadIO (HostFrame t)
+    MonadIO (Performable m)
+  , MonadIO m
+  , -- MonadMask m
+    -- , MonadRef (HostFrame t)
+    --  MonadSample t (Performable m)
+    MonadSample t m
+  , TriggerEvent t m
+  , -- , MonadThrow m
+    NotReady t m
+  , PerformEvent t m
+  , PostBuild t m
+  -- , PrimMonad (HostFrame t)
+  -- Causes issues: , Ref (HostFrame t) ~ IORef
+  -- , Ref m ~ IORef
+  -- , ReflexHost t
+  )
+
+type MonadReflex t m =
+  ( Adjustable t m
+  , MonadFix m
+  , MonadHold t m
+  , MonadSample t m
+  , TriggerEvent t m
+  , NotReady t m
+  , PerformEvent t m
+  , PostBuild t m
+  )
 
 -- | Reflex Handler
 runReflex
-  :: eio :> es
-  => IOE eio
-  -> (forall t. Reflex.Reflex t => Reflex t er -> Eff (er :& es) a)
+  :: (forall t er. Reflex t => ReflexE t er -> Eff (er :& es) (Event t a))
   -> Eff es a
-runReflex io act =
-  withEffInIO
-    ( \runInIO -> withSpiderTimeline \(_ :: SpiderTimelineEnv x) ->
-        runInIO $ unsafeRemoveEff . act $ MkReflex @x
-    )
-    io
+runReflex act =
+  UnsafeMkEff $ runHeadlessApp do
+    triggerChan <- TriggerEventT ask
+    postBuild <- getPostBuild
+    initialRequesterState <- lift . lift . PerformEventT . RequesterT $ MTL.get
+    requesterSelector <- lift . lift . PerformEventT . RequesterT . lift $ ask
+    (ret, finalState) <- liftIO . unsafeUnEff $ runState initialRequesterState $ \requesterStateHandle ->
+      act
+        $ MkReflex
+          { triggerChan
+          , postBuild
+          , requesterStateHandle
+          , requesterSelector
+          }
+    lift . lift . PerformEventT . RequesterT $ MTL.put finalState
+    pure ret
 
-{- | Reflex Actions
-TODO: Add postBuild, triggerEvent and performEvent to the action (this will require extending the Handle type)
--}
-inReflex
+performEffEvent :: er :> es => ReflexE t er -> Event t (Eff es a) -> Eff es (Event t a)
+performEffEvent r ev = reflexUnsafe r $ performEvent (liftIO . unsafeUnEff <$> ev)
+
+reflex
   :: e :> es
-  => Reflex t e
-  -> (forall (m :: Type -> Type). MonadReflex t m => m r)
+  => ReflexE t e
+  -> (forall m. MonadReflex t m => m r)
   -> Eff es r
-inReflex MkReflex act = UnsafeMkEff $ runSpiderHostForTimeline act spiderTimeline
+reflex r a = reflexUnsafe r a
+
+reflexIO
+  :: (er :> es, eio :> es)
+  => IOE eio
+  -> ReflexE t er
+  -> (forall m. MonadReflexIO t m => m r)
+  -> Eff es r
+reflexIO _ r a = reflexUnsafe r a
+
+-- | Reflex Actions
+reflexUnsafe
+  :: e :> es
+  => ReflexE t e
+  -> (forall m. MonadReflexIO t m => m r)
+  -> Eff es r
+reflexUnsafe r@(MkReflex @x _x _ _ _) act = do
+  preState <- get r.requesterStateHandle
+  (ret, postState) <-
+    UnsafeMkEff
+      . unEventM
+      . runSpiderHostFrame
+      . flip runReaderT r.requesterSelector
+      . flip runStateT preState
+      . unRequesterT
+      . unPerformEventT @_ @(SpiderHost x)
+      . flip runPostBuildT r.postBuild
+      . flip runTriggerEventT r.triggerChan
+      $ act
+  put r.requesterStateHandle postState
+  pure ret
 
 -- Example App
 
 main :: IO ()
-main = runEff \io -> runReflex io (\reflex -> app $ MkEnv io reflex)
-
-data Env t e1 e2 = MkEnv
-  { io :: IOE e1
-  , reflex :: Reflex t e2
-  }
-
-type WithIO env e es = (HasField "io" env (IOE e), e :> es)
-
-type WithReflex t env e es = (Reflex.Reflex t, HasField "reflex" env (Reflex t e), e :> es)
+main = runEff \io -> do
+  result <- runReflex (app io)
+  effIO io $ print result
 
 app
-  :: ( WithIO env e1 es
-     , WithReflex t env e2 es
-     )
-  => env
-  -> Eff es ()
-app env = do
-  let myDyn = constDyn 5
-  five <- inReflex env.reflex $ sample (current myDyn)
-  effIO env.io $ print five
-
--- Bluefin Helper
-
--- | Like withEffToIO but without running IO in the inner effect action.
-withEffInIO :: e :> es => ((forall r. Eff es r -> IO r) -> IO a) -> IOE e -> Eff es a
-withEffInIO f = withEffToIO (\runInIO -> f (\act -> runInIO $ const (insertFirst act)))
+  :: (e :> es, ei :> es, Reflex t)
+  => IOE ei
+  -> ReflexE t e
+  -> Eff es (Event t Int)
+app io r = do
+  let myDyn = constDyn (5 :: Int)
+  pb <- reflex r getPostBuild
+  pbs <- reflex r $ foldDyn (\_ x -> x + 1) 0 pb
+  foo <-
+    performEffEvent r
+      $ updated ((+) <$> myDyn <*> pbs)
+      <&> \x -> do
+        effIO io $ print x
+        pure x
+  reflexIO io r (delay 5 foo)
