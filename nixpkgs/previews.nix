@@ -12,6 +12,6 @@ final: _prev: {
     klog-time-tracker # not in 23.11
     ;
   helix =
-    (builtins.getFlake "github:helix-editor/helix/90cd6122116f9f5aaad49f08c629512285ada786")
+    (builtins.getFlake "github:helix-editor/helix/58bd26823fe431cf7391fc27949b215ab2a4e7ac")
     .packages.x86_64-linux.default;
 }
