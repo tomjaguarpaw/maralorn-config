@@ -9,7 +9,9 @@ final: _prev: {
     # conflicts.
     forgejo-actions-runner
     nixfmt-rfc-style
-    helix
     klog-time-tracker # not in 23.11
     ;
+  helix =
+    (builtins.getFlake "github:helix-editor/helix/90cd6122116f9f5aaad49f08c629512285ada786")
+    .packages.x86_64-linux.default;
 }
