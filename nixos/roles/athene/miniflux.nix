@@ -61,7 +61,7 @@ in
       '';
       after = [ "mastodon-digest.service" ];
       requires = [ "mastodon-digest.service" ];
-      startAt = "23:00";
+      startAt = "20:00";
       serviceConfig = {
         Type = "oneshot";
         LoadCredential = [
