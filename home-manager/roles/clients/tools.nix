@@ -5,5 +5,6 @@
     pkgs.typst
     pkgs.texlive.combined.scheme-full
     pkgs.parallel
+    pkgs.glab
   ];
 }

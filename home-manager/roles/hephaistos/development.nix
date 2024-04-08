@@ -31,7 +31,6 @@ in
       sd "ssh://git@gitlab.heilmannsoftware.net" "https://gitlab.heilmannsoftware.net" "$1/.git/config"
       ob --no-handoff thunk pack "$1"
     '')
-    pkgs.glab
     pkgs.remmina
     pkgs.mdbtools
     (pkgs.writeShellScriptBin "for-model" ''
