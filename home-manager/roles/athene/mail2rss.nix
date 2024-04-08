@@ -32,7 +32,7 @@ in
 {
   systemd.user = {
     timers.mail2rss = {
-      Timer.OnCalendar = "19:58";
+      Timer.OnCalendar = "18:58";
       Install.WantedBy = [ "timers.target" ];
     };
     services = {
