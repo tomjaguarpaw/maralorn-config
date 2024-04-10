@@ -371,36 +371,36 @@ in
                   ];
               action = [ (actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }} ppm.") ];
             }
-            {
-              alias = "Aufwachen";
-              trigger = [
-                {
-                  platform = "time";
-                  at = "07:00:00";
-                }
-              ];
-              action = [
-                {
-                  service = "switch.turn_on";
-                  target.entity_id = "group.schlafzimmer_lights";
-                }
-              ];
-            }
-            {
-              alias = "Wach";
-              trigger = [
-                {
-                  platform = "time";
-                  at = "08:00:00";
-                }
-              ];
-              action = [
-                {
-                  service = "switch.turn_off";
-                  target.entity_id = "group.schlafzimmer_lights";
-                }
-              ];
-            }
+            #{
+            #  alias = "Aufwachen";
+            #  trigger = [
+            #    {
+            #      platform = "time";
+            #      at = "07:00:00";
+            #    }
+            #  ];
+            #  action = [
+            #    {
+            #      service = "switch.turn_on";
+            #      target.entity_id = "group.schlafzimmer_lights";
+            #    }
+            #  ];
+            #}
+            #{
+            #  alias = "Wach";
+            #  trigger = [
+            #    {
+            #      platform = "time";
+            #      at = "08:00:00";
+            #    }
+            #  ];
+            #  action = [
+            #    {
+            #      service = "switch.turn_off";
+            #      target.entity_id = "group.schlafzimmer_lights";
+            #    }
+            #  ];
+            #}
           ]
           ++ (map
             (minutes: {
