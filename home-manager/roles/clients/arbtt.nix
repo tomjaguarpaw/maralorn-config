@@ -9,6 +9,11 @@ in
     tag Program:$current.program,
     tag Title:$current.title,
     current window $title =~ m!/git/([^/]*)! ==> tag Project:$1,
+    condition work = current window $title =~ m!(heilmann|basecamp|connect|backend|model|console|frontend|Fauxton)!
+
+      in { $work   ==> tag work,
+           ! $work ==> tag notwork
+         }
   '';
   systemd.user = {
     timers.my-arbtt-capture = {
