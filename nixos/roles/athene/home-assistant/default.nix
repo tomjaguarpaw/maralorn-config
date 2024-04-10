@@ -140,6 +140,12 @@ in
                           entity_id = "sensor.${sensor.schlafzimmer}_humidity";
                           above = humidity_threshold.schlafzimmer.upper;
                         }
+                        {
+                          condition = "numeric_state";
+                          entity_id = "sensor.openweathermap_darmstadt_hourly_temperature";
+                          attribute = "temperature";
+                          below = 15;
+                        }
                       ];
                       sequence = {
                         service = "switch.turn_on";
