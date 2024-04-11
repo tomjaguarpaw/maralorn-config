@@ -31,7 +31,21 @@ let
       ))
       hpkgs.buildFromCabalSdist
     ];
-  haskellPackagesOverlay = final: _prev: lib.mapAttrs (_: package: package final) myHaskellPackages;
+  haskellPackagesOverlay =
+    final: _prev:
+    lib.mapAttrs (_: package: package final) myHaskellPackages
+    // {
+      bluefin = final.callHackageDirect {
+        pkg = "bluefin";
+        ver = "0.0.4.2";
+        sha256 = "sha256-sGxLV9BFbEU1cVWFqbLVet+dpYHNv0M+0STJ3OB+qj4=";
+      } { };
+      bluefin-internal = final.callHackageDirect {
+        pkg = "bluefin-internal";
+        ver = "0.0.4.2";
+        sha256 = "sha256-Gc8kD0+4wELEu86+nDzs+tiZpkVomvssnkwh6VhIW9A=";
+      } { };
+    };
   selectHaskellPackages = attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages;
   myHaskellPackages = {
     wizards-dialog = cleanCabalPackage ./wizards-dialog { };

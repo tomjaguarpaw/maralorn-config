@@ -52,24 +52,7 @@ extra-doc-files: CHANGELOG.md
 -- extra-source-files:
 
 common warnings
-  ghc-options: -Wall -fdefer-type-errors
-
-library
-  -- Import common warning flags.
-  import:             warnings
-
-  -- Modules exported by the library.
-  exposed-modules:
-    Bluefin.Reflex
-    Bluefin.Reflex.Dom
-    Bluefin.Reflex.Headless
-    Bluefin.Reflex.Headless.Internal
-    Maralude
-
-  -- Modules included in this library but not exported.
-  -- other-modules:
-
-  -- LANGUAGE extensions used by modules in this package.
+  ghc-options:        -Wall -fdefer-type-errors
   default-extensions:
     BlockArguments
     DataKinds
@@ -84,6 +67,19 @@ library
     OverloadedStrings
     PartialTypeSignatures
 
+  default-language:   GHC2021
+
+library
+  -- Import common warning flags.
+  import:          warnings
+
+  -- Modules exported by the library.
+  exposed-modules:
+    Bluefin.Reflex
+    Bluefin.Reflex.Dom
+    Bluefin.Reflex.Headless
+    Maralude
+
   -- Other library packages from which modules are imported.
   build-depends:
     , base
@@ -91,6 +87,7 @@ library
     , bluefin-internal
     , dependent-sum
     , exceptions
+    , jsaddle
     , optics
     , primitive
     , ref-tf
@@ -101,17 +98,14 @@ library
     , witch
 
   -- Directories containing source files.
-  hs-source-dirs:     lib
-
-  -- Base language which the package is written in.
-  default-language:   GHC2021
+  hs-source-dirs:  lib
 
 executable kass
   -- Import common warning flags.
-  import:           warnings
+  import:         warnings
 
   -- .hs or .lhs file containing the Main module.
-  main-is:          Main.hs
+  main-is:        Main.hs
 
   -- Modules included in this executable, other than Main.
   -- other-modules:
@@ -123,9 +117,8 @@ executable kass
   build-depends:
     , base
     , kass
+    , reflex
+    , reflex-dom
 
   -- Directories containing source files.
-  hs-source-dirs:   exe
-
-  -- Base language which the package is written in.
-  default-language: GHC2021
+  hs-source-dirs: exe

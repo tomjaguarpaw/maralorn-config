@@ -1,45 +1,14 @@
-module Bluefin.Reflex (runReflex, reflex, reflexIO, MonadReflex, main) where
+module Bluefin.Reflex (ReflexE (..), reflex, reflexIO, MonadReflex, performEffEvent) where
 
 import Bluefin.Internal (Eff (UnsafeMkEff), unsafeUnEff)
-import Bluefin.Reflex.Headless.Internal
 import Control.Concurrent (Chan)
 import Control.Monad.Fix (MonadFix)
 import Data.Dependent.Sum (DSum (..))
 import GHC.Base qualified as GHC
 import Maralude
 import Reflex
-  ( Adjustable
-  , Event
-  , EventSelectorInt
-  , EventTriggerRef
-  , MonadHold
-  , MonadSample
-  , NotReady
-  , PerformEvent
-  , PerformEventT (PerformEventT)
-  , Performable
-  , PostBuild
-  , Reflex
-  , RequesterT (RequesterT)
-  , SpiderHost
-  , SpiderTimeline
-  , TriggerEvent
-  , TriggerEventT (TriggerEventT)
-  , TriggerInvocation
-  , constDyn
-  , delay
-  , foldDyn
-  , getPostBuild
-  , performEvent
-  , runPostBuildT
-  , runTriggerEventT
-  , unPerformEventT
-  , unRequesterT
-  , updated
-  )
 import Reflex.Requester.Base.Internal (RequesterState)
 import Reflex.Spider.Internal (HasSpiderTimeline, SpiderHostFrame, runSpiderHostFrame, unEventM)
-import Relude.Monad qualified as MTL
 
 -- | Reflex Effect Handle
 data ReflexE t (es :: Effects) where
@@ -89,27 +58,6 @@ type MonadReflex t m =
   , PostBuild t m
   )
 
--- | Reflex Handler
-runReflex
-  :: (forall t er. Reflex t => ReflexE t er -> Eff (er :& es) (Event t a))
-  -> Eff es a
-runReflex act =
-  UnsafeMkEff $ runHeadlessApp do
-    triggerChan <- TriggerEventT ask
-    postBuild <- getPostBuild
-    initialRequesterState <- lift . lift . PerformEventT . RequesterT $ MTL.get
-    requesterSelector <- lift . lift . PerformEventT . RequesterT . lift $ ask
-    (ret, finalState) <- liftIO . unsafeUnEff $ runState initialRequesterState \requesterStateHandle ->
-      act
-        MkReflex
-          { triggerChan
-          , postBuild
-          , requesterStateHandle
-          , requesterSelector
-          }
-    lift . lift . PerformEventT . RequesterT $ MTL.put finalState
-    pure ret
-
 performEffEvent :: er :> es => ReflexE t er -> Event t (Eff es a) -> Eff es (Event t a)
 performEffEvent r ev = reflexUnsafe r $ performEvent (liftIO . unsafeUnEff <$> ev)
 
@@ -149,27 +97,3 @@ reflexUnsafe r@(MkReflex{}) act = do
       $ act
   put r.requesterStateHandle postState
   pure ret
-
--- Example App
-
-main :: IO ()
-main = runEff \io -> do
-  result <- runReflex (app io)
-  effIO io $ print result
-
-app
-  :: (e :> es, ei :> es, Reflex t)
-  => IOE ei
-  -> ReflexE t e
-  -> Eff es (Event t Int)
-app io r = do
-  let myDyn = constDyn (5 :: Int)
-  pb <- reflex r getPostBuild
-  pbs <- reflex r $ foldDyn (\_ x -> x + 1) 0 pb
-  foo <-
-    performEffEvent r
-      $ updated ((+) <$> myDyn <*> pbs)
-      <&> \x -> do
-        effIO io $ print x
-        pure x
-  reflexIO io r (delay 5 foo)
