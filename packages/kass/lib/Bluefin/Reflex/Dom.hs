@@ -11,7 +11,7 @@ import Maralude
 import Reflex
 import Reflex.Dom
 import Reflex.Requester.Base.Internal (RequesterState)
-import Reflex.Spider.Internal (SpiderHostFrame, runSpiderHostFrame, unEventM)
+import Reflex.Spider.Internal (SpiderHostFrame)
 import Relude.Monad.Reexport qualified as MTL
 import Unsafe.Coerce (unsafeCoerce)
 
@@ -123,19 +123,14 @@ runWidget
   -> RequesterState DomTimeline (SpiderHostFrame Global)
   -> IO ((r, RequesterState DomTimeline JSM), (RequesterState DomTimeline (SpiderHostFrame Global)))
 runWidget act reflexEventSelector domEventSelector con postBuild triggerChan domBuilderEnv jsmPreState preState = do
-  unEventM
-    . runSpiderHostFrame
-    . flip runReaderT reflexEventSelector
-    . flip runStateT preState
-    . unRequesterT
-    . unPerformEventT
-    . flip runReaderT con
-    . unWithJSContextSingleton
+  runPerformEventT reflexEventSelector preState
+    . runJSContext con
     . flip runPostBuildT postBuild
     . flip runTriggerEventT triggerChan
-    . flip runReaderT domEventSelector
-    . flip runStateT jsmPreState
-    . unRequesterT
+    . Bluefin.Reflex.runRequesterT domEventSelector jsmPreState
     . flip runReaderT domBuilderEnv
     . unsafeUnHydrationDomBuilderT
     $ act
+
+runJSContext :: JSContextSingleton x -> WithJSContextSingleton x m a -> m a
+runJSContext context = flip runReaderT context . unWithJSContextSingleton
