@@ -1,6 +1,8 @@
-{ mkDerivation, base, bluefin, bluefin-internal, dependent-sum
-, exceptions, jsaddle, lib, optics, primitive, ref-tf, reflex
-, reflex-dom, relude, text, witch
+{ mkDerivation, ansi-terminal, async, base, bluefin
+, bluefin-internal, dependent-sum, exceptions, jsaddle
+, jsaddle-warp, jsaddle-webkit2gtk, lib, optics, primitive, ref-tf
+, reflex, reflex-dom, reflex-dom-core, relude, say
+, string-interpolate, text, witch, witherable
 }:
 mkDerivation {
   pname = "kass";
@@ -9,8 +11,10 @@ mkDerivation {
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [
-    base bluefin bluefin-internal dependent-sum exceptions jsaddle
-    optics primitive ref-tf reflex reflex-dom relude text witch
+    ansi-terminal async base bluefin bluefin-internal dependent-sum
+    exceptions jsaddle jsaddle-warp jsaddle-webkit2gtk optics primitive
+    ref-tf reflex reflex-dom-core relude say string-interpolate text
+    witch witherable
   ];
   executableHaskellDepends = [ base reflex reflex-dom ];
   license = lib.licenses.agpl3Plus;

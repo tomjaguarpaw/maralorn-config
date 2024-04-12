@@ -2,7 +2,7 @@
 let
   stable-pkgs = inputs.nixos-stable.legacyPackages.x86_64-linux;
   unstable-pkgs = inputs.nixos-unstable.legacyPackages.x86_64-linux;
-  inherit (unstable-pkgs.haskell.lib.compose) overrideCabal;
+  inherit (unstable-pkgs.haskell.lib.compose) overrideCabal unmarkBroken;
   includePatterns = [
     ".hs"
     ".cabal"
@@ -32,7 +32,7 @@ let
       hpkgs.buildFromCabalSdist
     ];
   haskellPackagesOverlay =
-    final: _prev:
+    final: prev:
     lib.mapAttrs (_: package: package final) myHaskellPackages
     // {
       bluefin = final.callHackageDirect {
@@ -45,6 +45,7 @@ let
         ver = "0.0.4.2";
         sha256 = "sha256-Gc8kD0+4wELEu86+nDzs+tiZpkVomvssnkwh6VhIW9A=";
       } { };
+      jsaddle-warp = unmarkBroken prev.jsaddle-warp;
     };
   selectHaskellPackages = attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages;
   myHaskellPackages = {

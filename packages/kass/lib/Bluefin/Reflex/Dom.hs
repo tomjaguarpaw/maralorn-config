@@ -1,15 +1,16 @@
-module Bluefin.Reflex.Dom (Dom, runReflexDom, dom) where
+module Bluefin.Reflex.Dom (Dom, runReflexDomGUI, runReflexDomServer, dom) where
 
-import Bluefin.Compound (mapHandle, useImpl)
-import Bluefin.Internal (Eff (UnsafeMkEff), assoc1Eff)
+import Bluefin.Internal (Eff (UnsafeMkEff))
 import Bluefin.Reflex
 import Control.Concurrent (Chan)
 import Data.Dependent.Sum (DSum)
 import GHC.Base qualified as GHC
 import Language.Javascript.JSaddle (JSM)
+import Language.Javascript.JSaddle.Warp qualified as Warp
+import Language.Javascript.JSaddle.WebKitGTK qualified as GTK
 import Maralude
 import Reflex
-import Reflex.Dom
+import Reflex.Dom.Core
 import Reflex.Requester.Base.Internal (RequesterState)
 import Reflex.Spider.Internal (SpiderHostFrame)
 import Relude.Monad.Reexport qualified as MTL
@@ -27,61 +28,74 @@ data Dom t (es :: Effects) where
 runReflexDom
   :: ei :> es
   => (forall t e. Reflex t => ReflexE t e -> Dom t e -> Eff (e :& es) ())
+  -> ((forall x. Widget x ()) -> IO ())
   -> IOE ei
   -> Eff es ()
-runReflexDom act = do
-  withEffToIO
-    ( \runInIO -> mainWidget $ do
-        env <- unsafeHydrationDomBuilderT ask
-        jsmRequesterPre <- unsafeHydrationDomBuilderT . lift . RequesterT $ MTL.get
-        jsContext <- unsafeHydrationDomBuilderT . lift . RequesterT . lift . lift . lift . lift . WithJSContextSingleton $ ask
-        requesterPre <-
-          unsafeHydrationDomBuilderT . lift . RequesterT . lift . lift . lift . lift . lift . PerformEventT . RequesterT $ MTL.get
-        reflexRequesterSelector <-
-          unsafeHydrationDomBuilderT
-            . lift
-            . RequesterT
-            . lift
-            . lift
-            . lift
-            . lift
-            . lift
-            . PerformEventT
-            . RequesterT
-            . lift
-            $ ask
-        domRequesterSelector <- unsafeHydrationDomBuilderT . lift . RequesterT . lift $ ask
-        triggerChan <- unsafeHydrationDomBuilderT . lift . RequesterT . lift . lift . TriggerEventT $ ask
-        postBuild <- getPostBuild
-        (((), jsmRequesterPost), requesterPost) <- liftIO $ runInIO $ \_ -> do
-          useImpl $ runState requesterPre \requesterStateHandle -> runState jsmRequesterPre \jsmRequesterState ->
-            assoc1Eff
-              $ act
-                MkReflex
-                  { postBuild
-                  , requesterStateHandle = mapHandle requesterStateHandle
-                  , triggerChan
-                  , requesterSelector = reflexRequesterSelector
-                  }
-                MkReflexDom
-                  { env
-                  , jsmRequesterState = mapHandle jsmRequesterState
-                  , jsContext
-                  , requesterSelector = domRequesterSelector
-                  }
-        unsafeHydrationDomBuilderT . lift . RequesterT $ MTL.put jsmRequesterPost
-        unsafeHydrationDomBuilderT
-          . lift
-          . RequesterT
-          . lift
-          . lift
-          . lift
-          . lift
-          . lift
-          . PerformEventT
-          . RequesterT
-          $ MTL.put requesterPost
-    )
+runReflexDom = \act runner -> withEffToIO \runInIO -> runner do
+  env <- unsafeHydrationDomBuilderT ask
+  jsmRequesterPre <- unsafeHydrationDomBuilderT . lift . RequesterT $ MTL.get
+  jsContext <- unsafeHydrationDomBuilderT . lift . RequesterT . lift . lift . lift . lift . WithJSContextSingleton $ ask
+  requesterPre <-
+    unsafeHydrationDomBuilderT . lift . RequesterT . lift . lift . lift . lift . lift . PerformEventT . RequesterT $ MTL.get
+  reflexRequesterSelector <-
+    unsafeHydrationDomBuilderT
+      . lift
+      . RequesterT
+      . lift
+      . lift
+      . lift
+      . lift
+      . lift
+      . PerformEventT
+      . RequesterT
+      . lift
+      $ ask
+  domRequesterSelector <- unsafeHydrationDomBuilderT . lift . RequesterT . lift $ ask
+  triggerChan <- unsafeHydrationDomBuilderT . lift . RequesterT . lift . lift . TriggerEventT $ ask
+  postBuild <- getPostBuild
+  (((), jsmRequesterPost), requesterPost) <- liftIO $ runInIO $ \_ -> do
+    useImpl $ runState requesterPre \requesterStateHandle -> runState jsmRequesterPre \jsmRequesterState ->
+      assoc1Eff
+        $ act
+          MkReflex
+            { postBuild
+            , requesterStateHandle = mapHandle requesterStateHandle
+            , triggerChan
+            , requesterSelector = reflexRequesterSelector
+            }
+          MkReflexDom
+            { env
+            , jsmRequesterState = mapHandle jsmRequesterState
+            , jsContext
+            , requesterSelector = domRequesterSelector
+            }
+  unsafeHydrationDomBuilderT . lift . RequesterT $ MTL.put jsmRequesterPost
+  unsafeHydrationDomBuilderT
+    . lift
+    . RequesterT
+    . lift
+    . lift
+    . lift
+    . lift
+    . lift
+    . PerformEventT
+    . RequesterT
+    $ MTL.put requesterPost
+
+runReflexDomGUI
+  :: ei :> es
+  => (forall t e. Reflex t => ReflexE t e -> Dom t e -> Eff (e :& es) ())
+  -> IOE ei
+  -> Eff es ()
+runReflexDomGUI = (`runReflexDom` (\widget -> GTK.run do mainWidget widget))
+
+runReflexDomServer
+  :: ei :> es
+  => Int
+  -> (forall t e. Reflex t => ReflexE t e -> Dom t e -> Eff (e :& es) ())
+  -> IOE ei
+  -> Eff es ()
+runReflexDomServer = \port -> (`runReflexDom` (\widget -> Warp.run port do mainWidget widget))
 
 unsafeUnHydrationDomBuilderT
   :: HydrationDomBuilderT s t m a -> ReaderT (HydrationDomBuilderEnv t m) (RequesterT t JSM Identity (TriggerEventT t m)) a

@@ -1,3 +1,5 @@
+{-# LANGUAGE UnboxedTuples #-}
+
 module Maralude
   ( module Witch
   , module Relude
@@ -5,14 +7,53 @@ module Maralude
   , module Bluefin.Eff
   , module Bluefin.IO
   , module Bluefin.State
+  , module Bluefin.Compound
   , module Bluefin.Exception
+  , module Bluefin.EarlyReturn
+  , module Data.String.Interpolate
+  , module System.Exit
+  , module Say
+  , List
+  , assoc1Eff
+  , inContext
+  , inContext'
+  , catMaybes
+  , mapMaybe
   )
 where
 
+import Bluefin.Compound
+import Bluefin.EarlyReturn
 import Bluefin.Eff
 import Bluefin.Exception hiding (Exception)
 import Bluefin.IO
+import Bluefin.Internal (In, assoc1Eff, cmp, fstI, inContext, sndI, weakenEff)
+import Bluefin.Internal qualified as BF
 import Bluefin.State
+import Data.String.Interpolate
+import GHC.List (List)
 import Optics
-import Relude hiding (State, evalState, get, modify, put, runState, uncons)
+import Relude hiding
+  ( Handle
+  , State
+  , catMaybes
+  , evalState
+  , execState
+  , get
+  , mapMaybe
+  , modify
+  , put
+  , return
+  , runState
+  , uncons
+  )
+import Say
+import System.Exit (ExitCode (..))
 import Witch
+import Witherable (catMaybes, mapMaybe)
+
+inContext' :: e2 :> e1 => Eff (e2 :& e1) r -> Eff e1 r
+inContext' = inContext . weakenEff (com (# #))
+
+com :: (# #) -> (a :& b) `In` (b :& a)
+com _ = cmp (BF.bimap (sndI (# #)) (fstI (# #))) (BF.merge (# #))

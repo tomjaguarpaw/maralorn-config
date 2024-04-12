@@ -1,36 +1,47 @@
 module Main where
 
+import Bluefin.Dialog
+import Bluefin.Dialog.ReflexDom
+import Bluefin.Dialog.Term
 import Bluefin.Reflex
 import Bluefin.Reflex.Dom
+import Bluefin.Reflex.Headless
 import Maralude
 import Reflex
-import Reflex.Dom
-
-app
-  :: (e :> es, ei :> es, Reflex t)
-  => IOE ei
-  -> ReflexE t e
-  -> Eff es (Event t Int)
-app io r = do
-  let myDyn = constDyn (5 :: Int)
-  pb <- reflex r getPostBuild
-  pbs <- reflex r $ foldDyn (\_ x -> x + 1) 0 pb
-  foo <-
-    performEffEvent r
-      $ updated ((+) <$> myDyn <*> pbs)
-      <&> \x -> do
-        effIO io $ print x
-        pure x
-  reflexIO io r (delay 5 foo)
 
 main :: IO ()
-main = runEff \io -> runReflexDom (widget io) io
+main = runEff entryPoint
 
-widget :: (Reflex t, e1 :> es, e2 :> es) => IOE e1 -> ReflexE t e2 -> Dom t e2 -> Eff es ()
-widget =
-  \io r d -> do
-    pb <- reflex r getPostBuild
-    let ev1 = "Hello World!" <$ pb
-    ev2 <- reflexIO io r (delay 5 ("Hello World again!" <$ ev1))
-    msg <- reflex r $ holdDyn "Not Hello!" (leftmost [ev1, ev2])
-    dom r d (dynText msg)
+entryPoint
+  :: e :> es
+  => IOE e
+  -> Eff es ()
+entryPoint = \io -> do
+  let inTerm = runReflex (\r -> do runTermDialog io r (app io r); pure never)
+  effIO io getArgs >>= \case
+    [] -> inTerm
+    ["term"] -> inTerm
+    ["gui"] -> runReflexDomGUI (\r d -> (runDomDialog r d (app io r))) io
+    ["web"] -> runReflexDomServer 7777 (\r d -> (runDomDialog r d (app io r))) io
+    _ -> error "not implemented"
+
+app :: (e1 :> es, e2 :> es, e3 :> es, Reflex t) => IOE e1 -> ReflexE t e2 -> Dialog t e3 -> Eff es ()
+app = \io r dialog -> do
+  pb <- reflex r getPostBuild
+  ev <-
+    showPage dialog
+      $ pb
+      $> MkPage
+        [ [TextElement "Hello World!"]
+        , [TextElement "What is the best number?"]
+        , [ButtonElement "70" 70, ButtonElement "42" 42]
+        , [ButtonElement "Twentythree" 23, ButtonElement "Seventeeeeeen" (17 :: Int)]
+        ]
+  _ <-
+    performEffEvent r
+      $ ev
+      <&> ( \case
+              17 -> effIO io (say "Good choice")
+              _ -> effIO io (say "Meh")
+          )
+  pure ()

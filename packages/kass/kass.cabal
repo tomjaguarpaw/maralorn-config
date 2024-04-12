@@ -52,7 +52,10 @@ extra-doc-files: CHANGELOG.md
 -- extra-source-files:
 
 common warnings
-  ghc-options:        -Wall -fdefer-type-errors
+  ghc-options:
+    -Wall -fdefer-type-errors -fno-show-valid-hole-fits
+    -fmax-relevant-binds=0
+
   default-extensions:
     BlockArguments
     DataKinds
@@ -66,6 +69,7 @@ common warnings
     OverloadedRecordDot
     OverloadedStrings
     PartialTypeSignatures
+    QuasiQuotes
 
   default-language:   GHC2021
 
@@ -75,6 +79,9 @@ library
 
   -- Modules exported by the library.
   exposed-modules:
+    Bluefin.Dialog
+    Bluefin.Dialog.ReflexDom
+    Bluefin.Dialog.Term
     Bluefin.Reflex
     Bluefin.Reflex.Dom
     Bluefin.Reflex.Headless
@@ -82,20 +89,27 @@ library
 
   -- Other library packages from which modules are imported.
   build-depends:
+    , ansi-terminal
+    , async
     , base
     , bluefin
     , bluefin-internal
     , dependent-sum
     , exceptions
     , jsaddle
+    , jsaddle-warp
+    , jsaddle-webkit2gtk
     , optics
     , primitive
     , ref-tf
     , reflex
-    , reflex-dom
+    , reflex-dom-core
     , relude
+    , say
+    , string-interpolate
     , text
     , witch
+    , witherable
 
   -- Directories containing source files.
   hs-source-dirs:  lib
