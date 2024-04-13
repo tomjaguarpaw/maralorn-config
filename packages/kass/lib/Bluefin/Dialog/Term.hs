@@ -73,13 +73,15 @@ execState :: s -> (forall st. State s st -> Eff (st :& es) a) -> Eff es s
 execState s act = snd <$> runState s act
 
 chooseHotkey :: Set Char -> Text -> Maybe Char
-chooseHotkey used label =
-  headOf (folded % to Char.toLower % filtered (`Set.notMember` used)) do
-    filter Char.isUpper label'
-      <> filter Char.isLower label'
-      <> label'
-      <> "enaritudoschlgvfwkxqpmzbä,ö.üj"
-      <> ['a' .. 'z']
-      <> ['0' .. '9']
- where
-  label' = into label
+chooseHotkey used =
+  view
+    $ isomorph
+    % to \label ->
+      ( filter Char.isUpper label
+          <> filter Char.isLower label
+          <> label
+          <> "enaritudoschlgvfwkxqpmzbä,ö.üj"
+          <> ['a' .. 'z']
+          <> ['0' .. '9']
+      )
+        ^? pre (folded % to Char.toLower % filtered (`Set.notMember` used))

@@ -1,4 +1,4 @@
-module Bluefin.Reflex.Dom (Dom, runReflexDomGUI, runReflexDomServer, dom) where
+module Bluefin.Reflex.Dom (Dom, runReflexDomGUI, runReflexDomServer, dom, BFWidget) where
 
 import Bluefin.Internal (Eff (UnsafeMkEff))
 import Bluefin.Reflex
@@ -25,13 +25,26 @@ data Dom t (es :: Effects) where
        }
     -> Dom (SpiderTimeline Global) es
 
+type BFWidget es = (forall t e. Reflex t => ReflexE t e -> Dom t e -> Eff (e :& es) ())
+
 runReflexDom
   :: ei :> es
-  => (forall t e. Reflex t => ReflexE t e -> Dom t e -> Eff (e :& es) ())
-  -> ((forall x. Widget x ()) -> IO ())
+  => (JSM () -> IO ())
+  -> BFWidget es
+  -> BFWidget es
   -> IOE ei
   -> Eff es ()
-runReflexDom = \act runner -> withEffToIO \runInIO -> runner do
+runReflexDom = \runner html_head body -> withEffToIO \runInIO ->
+  runner
+    $ mainWidgetWithHead
+      (mkWidget runInIO html_head)
+      (mkWidget runInIO body)
+
+mkWidget
+  :: (forall r. (forall (e1 :: Effects). IOE e1 -> Eff (e1 :& es) r) -> IO r)
+  -> BFWidget es
+  -> (forall x. Widget x ())
+mkWidget = \runInIO act -> do
   env <- unsafeHydrationDomBuilderT ask
   jsmRequesterPre <- unsafeHydrationDomBuilderT . lift . RequesterT $ MTL.get
   jsContext <- unsafeHydrationDomBuilderT . lift . RequesterT . lift . lift . lift . lift . WithJSContextSingleton $ ask
@@ -84,18 +97,22 @@ runReflexDom = \act runner -> withEffToIO \runInIO -> runner do
 
 runReflexDomGUI
   :: ei :> es
-  => (forall t e. Reflex t => ReflexE t e -> Dom t e -> Eff (e :& es) ())
+  => BFWidget es
+  -> BFWidget es
   -> IOE ei
   -> Eff es ()
-runReflexDomGUI = (`runReflexDom` (\widget -> GTK.run do mainWidget widget))
+runReflexDomGUI = runReflexDom GTK.run
 
 runReflexDomServer
   :: ei :> es
   => Int
-  -> (forall t e. Reflex t => ReflexE t e -> Dom t e -> Eff (e :& es) ())
+  -> BFWidget es
+  -> BFWidget es
   -> IOE ei
   -> Eff es ()
-runReflexDomServer = \port -> (`runReflexDom` (\widget -> Warp.run port do mainWidget widget))
+runReflexDomServer = \port -> runReflexDom \app -> do
+  liftIO $ say "Starting Server ..."
+  Warp.run port app
 
 unsafeUnHydrationDomBuilderT
   :: HydrationDomBuilderT s t m a -> ReaderT (HydrationDomBuilderEnv t m) (RequesterT t JSM Identity (TriggerEventT t m)) a

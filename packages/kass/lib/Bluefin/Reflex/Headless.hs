@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
 {-# HLINT ignore #-}
-module Bluefin.Reflex.Headless (runReflex) where
+module Bluefin.Reflex.Headless (runReflexHeadless) where
 
 import Bluefin.Internal (Eff (UnsafeMkEff), unsafeUnEff)
 import Bluefin.Reflex
@@ -16,10 +16,10 @@ import Reflex.Spider.Internal (HasSpiderTimeline)
 import Relude.Monad.Reexport qualified as MTL
 
 -- | Reflex Handler
-runReflex
+runReflexHeadless
   :: (forall t er. Reflex t => ReflexE t er -> Eff (er :& es) (Event t a))
   -> Eff es a
-runReflex act =
+runReflexHeadless act =
   UnsafeMkEff $ runHeadlessApp do
     triggerChan <- TriggerEventT ask
     postBuild <- getPostBuild
@@ -75,13 +75,14 @@ runHeadlessApp guest =
     -- trigger events.
     (result, fc@(FireCommand fire)) <- do
       hostPerformEventT
-        $ flip runPostBuildT postBuild -- Allows the guest app to run
+        $ flip runPostBuildT postBuild
+        $ flip runTriggerEventT events -- Allows the guest app to run
         -- 'performEvent', so that actions
         -- (e.g., IO actions) can be run when
         -- 'Event's fire.
-        $ flip runTriggerEventT events -- Allows the guest app to access to
+        $ guest -- Allows the guest app to access to
         -- a "post-build" 'Event'
-        $ guest -- Allows the guest app to create new
+        -- Allows the guest app to create new
         -- events and triggers and write
         -- those triggers to a channel from
         -- which they will be read and

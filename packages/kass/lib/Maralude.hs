@@ -19,6 +19,10 @@ module Maralude
   , inContext'
   , catMaybes
   , mapMaybe
+  , morph
+  , isomorph
+  , worded
+  , lined
   )
 where
 
@@ -49,11 +53,23 @@ import Relude hiding
   )
 import Say
 import System.Exit (ExitCode (..))
-import Witch
+import Witch hiding (into)
 import Witherable (catMaybes, mapMaybe)
+
+worded :: Iso' Text [Text]
+worded = iso words unwords
+
+lined :: Iso' Text [Text]
+lined = iso lines unlines
 
 inContext' :: e2 :> e1 => Eff (e2 :& e1) r -> Eff e1 r
 inContext' = inContext . weakenEff (com (# #))
+
+isomorph :: forall t s. (From s t, From t s) => Iso' s t
+isomorph = iso from from
+
+morph :: forall t s. From s t => Getter s t
+morph = to from
 
 com :: (# #) -> (a :& b) `In` (b :& a)
 com _ = cmp (BF.bimap (sndI (# #)) (fstI (# #))) (BF.merge (# #))
