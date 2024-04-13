@@ -20,7 +20,7 @@ entryPoint = \io -> do
   let inTerm = runReflexHeadless (\r -> do runTermDialog io r (app io r); pure never)
       webApp = runDomDialog io (runReflexDomServer 5344) app
   effIO io getArgs >>= \case
-    [] -> webApp
+    [] -> inTerm
     ["term"] -> inTerm
     ["gui"] -> runDomDialog io runReflexDomGUI app
     ["web"] -> webApp
