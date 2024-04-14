@@ -111,7 +111,6 @@ renderPage = \page -> elClss
                             =: [ "bg-indigo-800"
                                , "p-1"
                                , "rounded-lg"
-                               , "focus:border-none"
                                , "focus:bg-purple-900"
                                ]
                             ^. re worded
@@ -139,8 +138,7 @@ domButton = \label -> do
                , "m-1"
                , "rounded-lg"
                , "bg-indigo-800"
-               , "active:bg-indigo-200"
-               , "active:text-indigo-950"
+               , "active:bg-purple-900"
                ]
                 ^. re worded
              )

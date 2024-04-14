@@ -2,7 +2,6 @@ module Bluefin.Dialog.Term (runTermDialog) where
 
 import Bluefin.Dialog
 import Bluefin.Reflex
-import Control.Concurrent.Async (Async)
 import Control.Concurrent.Async qualified as Async
 import Data.Char qualified as Char
 import Data.Map.Strict qualified as Map
@@ -68,9 +67,6 @@ color c = setSGRCode [SetColor Foreground Vivid c]
 
 resetColor :: String
 resetColor = setSGRCode [SetDefaultColor Foreground]
-
-async :: e :> es => IOE e -> Eff es a -> Eff es (Async a)
-async = \io act -> withEffToIO (\runInIO -> Async.async $ runInIO (const (useImpl act))) io
 
 renderPage :: e :> es => IOE e -> Page a -> Eff es (Map Char (Update a))
 renderPage = \io page -> do

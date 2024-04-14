@@ -25,6 +25,7 @@ module Maralude
   , lined
   , MonadFix
   , readFile
+  , async
   )
 where
 
@@ -36,6 +37,8 @@ import Bluefin.IO
 import Bluefin.Internal (In, assoc1Eff, cmp, fstI, inContext, sndI, weakenEff)
 import Bluefin.Internal qualified as BF
 import Bluefin.State
+import Control.Concurrent.Async (Async)
+import Control.Concurrent.Async qualified as Async
 import Control.Monad.Fix (MonadFix)
 import Data.String.Interpolate
 import GHC.List (List)
@@ -59,6 +62,9 @@ import Say
 import System.Exit (ExitCode (..))
 import Witch
 import Witherable (catMaybes, mapMaybe)
+
+async :: e :> es => IOE e -> Eff es a -> Eff es (Async a)
+async = \io act -> withEffToIO (\runInIO -> Async.async $ runInIO (const (useImpl act))) io
 
 readFile :: MonadIO m => FilePath -> m Text
 readFile path = into . decodeUtf8 @LText <$> readFileLBS path
