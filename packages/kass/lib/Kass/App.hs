@@ -49,6 +49,7 @@ viewState =
       line (txt "What is the best number?")
         <> line (txt "An even one?" <> button "70" Disappointment <> button "42" Disappointment)
         <> line (txt "Or an ott one?" <> button "Twentythree" Disappointment <> button "Seventeeeeeen" Congrats)
+        <> line (txtField "Enter Other Number" "" (\case "17" -> Congrats; _ -> Disappointment))
         <> footer
     Congrats -> line (txt "Good choice") <> footer
     Disappointment -> line (txt "Meh") <> footer

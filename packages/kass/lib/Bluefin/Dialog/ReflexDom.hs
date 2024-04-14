@@ -13,7 +13,7 @@ import Language.Haskell.TH (bindCode)
 import Language.Haskell.TH.Syntax (liftTyped)
 import Maralude
 import Reflex
-import Reflex.Dom.Core
+import Reflex.Dom.Core hiding ((.~))
 import Reflex.Network (networkHold)
 
 runDomDialog
@@ -95,24 +95,55 @@ renderPage = \page -> elClss
         TextElement t -> do
           el "span" $ text t
           pure never
-        ButtonElement label val -> do
-          (e, _) <-
-            elAttr'
-              "button"
-              ( "type"
-                  =: "button"
-                  <> "class"
-                  =: ( [ "p-1"
-                       , "m-1"
-                       , "rounded-lg"
-                       , "bg-indigo-800"
-                       , "active:bg-indigo-200"
-                       , "active:text-indigo-950"
-                       ]
-                        ^. re worded
-                     )
-              )
-              $ text label
-          pure $ domEvent Click e $> val
-        _ -> error "not implemented"
+        ButtonElement label val -> domButton label <&> ($> val)
+        PromptElement prompt df process -> do
+          text prompt
+          input <-
+            _inputElement_value
+              <$> inputElement
+                ( def
+                    & lensVL inputElementConfig_initialValue
+                    .~ df
+                    & lensVL inputElementConfig_elementConfig
+                    % lensVL elementConfig_initialAttributes
+                    %~ ( <>
+                          "class"
+                            =: [ "bg-indigo-800"
+                               , "p-1"
+                               , "rounded-lg"
+                               , "focus:border-none"
+                               , "focus:bg-purple-900"
+                               ]
+                            ^. re worded
+                       )
+                )
+          ev' <-
+            dyn
+              $ input
+              <&> \case
+                x | x == df -> pure never
+                _ -> domButton "OK"
+          ev <- switchHold never ev'
+          pure $ process <$> current input <@ ev
     pure . leftmost . join $ evs
+
+domButton :: DomBuilder t m => Text -> m (Event t ())
+domButton = \label -> do
+  (e, _) <-
+    elAttr'
+      "button"
+      ( "type"
+          =: "button"
+          <> "class"
+          =: ( [ "p-1"
+               , "m-1"
+               , "rounded-lg"
+               , "bg-indigo-800"
+               , "active:bg-indigo-200"
+               , "active:text-indigo-950"
+               ]
+                ^. re worded
+             )
+      )
+      $ text label
+  pure $ domEvent Click e

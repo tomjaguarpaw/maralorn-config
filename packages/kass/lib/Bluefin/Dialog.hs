@@ -15,7 +15,7 @@ newtype Line a = MkLine {elems :: List (Element a)}
 data Element a where
   TextElement :: Text -> Element a
   ButtonElement :: Text -> a -> Element a
-  FormElement :: Text -> (Text -> a) -> Element a
+  PromptElement :: Text -> Text -> (Text -> a) -> Element a
   deriving stock (Functor)
 
 showPage :: (Reflex t, e :> es) => Dialog t e -> Dynamic t (Page a) -> Eff es (Event t a)
@@ -36,3 +36,6 @@ txt = MkLine . (: []) . TextElement
 
 button :: Text -> a -> Line a
 button lbl val = MkLine [ButtonElement lbl val]
+
+txtField :: Text -> Text -> (Text -> a) -> Line a
+txtField lbl df f = MkLine [PromptElement lbl df f]
