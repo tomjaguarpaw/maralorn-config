@@ -1,4 +1,4 @@
-module Kass.App (main) where
+module Kass.App where
 
 import Bluefin.Dialog
 import Bluefin.Dialog.ReflexDom
@@ -12,18 +12,26 @@ import Reflex
 main :: IO ()
 main = runEff entryPoint
 
+webAppIO, termAppIO, guiAppIO :: IO ()
+webAppIO = runEff webApp
+termAppIO = runEff termApp
+guiAppIO = runEff guiApp
+
+webApp, termApp, guiApp :: e :> es => IOE e -> Eff es ()
+webApp = \io -> runDomDialog io (runReflexDomServer 5344) app
+termApp = \io -> runReflexHeadless (\r -> do runTermDialog io r (app io r); pure never)
+guiApp = \io -> runDomDialog io runReflexDomGUI app
+
 entryPoint
   :: e :> es
   => IOE e
   -> Eff es ()
 entryPoint = \io -> do
-  let inTerm = runReflexHeadless (\r -> do runTermDialog io r (app io r); pure never)
-      webApp = runDomDialog io (runReflexDomServer 5344) app
   effIO io getArgs >>= \case
-    [] -> inTerm
-    ["term"] -> inTerm
-    ["gui"] -> runDomDialog io runReflexDomGUI app
-    ["web"] -> webApp
+    [] -> termApp io
+    ["term"] -> termApp io
+    ["gui"] -> guiApp io
+    ["web"] -> webApp io
     _ -> error "not implemented"
 
 data NavState = StartPage | Numbers | Congrats | Disappointment

@@ -24,6 +24,7 @@ module Maralude
   , worded
   , lined
   , MonadFix
+  , readFile
   )
 where
 
@@ -49,14 +50,18 @@ import Relude hiding
   , mapMaybe
   , modify
   , put
+  , readFile
   , return
   , runState
   , uncons
   )
 import Say
 import System.Exit (ExitCode (..))
-import Witch hiding (into)
+import Witch
 import Witherable (catMaybes, mapMaybe)
+
+readFile :: MonadIO m => FilePath -> m Text
+readFile path = into . decodeUtf8 @LText <$> readFileLBS path
 
 worded :: Iso' Text [Text]
 worded = iso words unwords

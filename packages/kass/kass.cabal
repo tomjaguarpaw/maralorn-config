@@ -83,6 +83,7 @@ library
   exposed-modules:
     Bluefin.Dialog
     Bluefin.Dialog.ReflexDom
+    Bluefin.Dialog.ReflexDom.TH
     Bluefin.Dialog.Term
     Bluefin.Reflex
     Bluefin.Reflex.Dom
@@ -110,7 +111,10 @@ library
     , relude
     , say
     , string-interpolate
+    , template-haskell
     , text
+    , typed-process
+    , unliftio
     , witch
     , witherable
 

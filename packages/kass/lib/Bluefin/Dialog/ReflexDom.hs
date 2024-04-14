@@ -1,8 +1,16 @@
+{-# LANGUAGE TemplateHaskell #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+
+{-# HLINT ignore "Unused LANGUAGE pragma" #-}
+
 module Bluefin.Dialog.ReflexDom (runDomDialog) where
 
 import Bluefin.Dialog
+import Bluefin.Dialog.ReflexDom.TH (createCss)
 import Bluefin.Reflex
 import Bluefin.Reflex.Dom
+import Language.Haskell.TH (bindCode)
+import Language.Haskell.TH.Syntax (liftTyped)
 import Maralude
 import Reflex
 import Reflex.Dom.Core
@@ -28,21 +36,23 @@ runDomDialog
   -> Eff es ()
 runDomDialog = \io engine app ->
   engine
-    (\r d -> (runDomDialogHead io r d))
+    (\r d -> (runDomDialogHead r d))
     (\r d -> (runDomDialogBody r d (app io r)))
     io
 
 runDomDialogHead
-  :: forall er es e t
-   . (Reflex t, er :> es, e :> es)
-  => IOE e
-  -> ReflexE t er
+  :: forall er es t
+   . (Reflex t, er :> es)
+  => ReflexE t er
   -> Dom t er
   -> Eff es ()
-runDomDialogHead = \io r d -> do
-  css <- effIO io $ readFileBS "output.css"
-  dom r d $ do
-    el "style" $ text [i|html, body { background: black; height: 100%; }\n#{css}|]
+runDomDialogHead = \r d ->
+  dom r d
+    $ el "style"
+    $ text [i|html, body { background: black; height: 100%; }\n#{css}|]
+
+css :: Text
+css = $$(bindCode createCss liftTyped)
 
 runDomDialogBody
   :: forall er es t
@@ -66,12 +76,15 @@ elClss tg clss = elClass tg (clss ^. re worded)
 renderPage :: (DomBuilder t m, MonadReflex t m) => Page a -> m (Event t a)
 renderPage = \page -> elClss
   "div"
-  [ "h-full"
-  , "p-2"
+  [ "p-2"
+  , "absolute"
+  , "inset-0"
   , "text-4xl"
   , "lg:text-base"
   , "font-serif"
   , "text-white"
+  , "lg:my-2"
+  , "lg:rounded-lg"
   , "lg:max-w-screen-sm"
   , "lg:mx-auto"
   , "bg-indigo-950"
@@ -89,9 +102,9 @@ renderPage = \page -> elClss
               ( "type"
                   =: "button"
                   <> "class"
-                  =: ( [ "p-2"
+                  =: ( [ "p-1"
                        , "m-1"
-                       , "rounded"
+                       , "rounded-lg"
                        , "bg-indigo-800"
                        , "active:bg-indigo-200"
                        , "active:text-indigo-950"
