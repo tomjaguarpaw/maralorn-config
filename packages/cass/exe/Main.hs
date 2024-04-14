@@ -1,7 +1,7 @@
 module Main where
 
-import Kass.App
+import Cass.App
 import Maralude
 
 main :: IO ()
-main = Kass.App.main
+main = Cass.App.main
