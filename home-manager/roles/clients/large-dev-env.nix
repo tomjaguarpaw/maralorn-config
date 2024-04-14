@@ -21,6 +21,7 @@
         shfmt
         astyle
         nodejs
+        tailwindcss
         ;
     };
   };

@@ -28,19 +28,21 @@ runDomDialog
   -> Eff es ()
 runDomDialog = \io engine app ->
   engine
-    (\r d -> (runDomDialogHead r d))
+    (\r d -> (runDomDialogHead io r d))
     (\r d -> (runDomDialogBody r d (app io r)))
     io
 
 runDomDialogHead
-  :: forall er es t
-   . (Reflex t, er :> es)
-  => ReflexE t er
+  :: forall er es e t
+   . (Reflex t, er :> es, e :> es)
+  => IOE e
+  -> ReflexE t er
   -> Dom t er
   -> Eff es ()
-runDomDialogHead = \r d -> dom r d $ do
-  elAttr "script" ("src" =: "https://cdn.tailwindcss.com") blank
-  el "style" $ text "html, body { background: black; height: 100%; }"
+runDomDialogHead = \io r d -> do
+  css <- effIO io $ readFileBS "output.css"
+  dom r d $ do
+    el "style" $ text [i|html, body { background: black; height: 100%; }\n#{css}|]
 
 runDomDialogBody
   :: forall er es t
@@ -88,7 +90,8 @@ renderPage = \page -> elClss
                   =: "button"
                   <> "class"
                   =: ( [ "p-2"
-                       , "m-2"
+                       , "m-1"
+                       , "rounded"
                        , "bg-indigo-800"
                        , "active:bg-indigo-200"
                        , "active:text-indigo-950"
