@@ -59,6 +59,7 @@ common warnings
   default-extensions:
     BlockArguments
     DataKinds
+    DerivingStrategies
     DuplicateRecordFields
     GADTs
     LambdaCase
@@ -70,6 +71,7 @@ common warnings
     OverloadedStrings
     PartialTypeSignatures
     QuasiQuotes
+    RecursiveDo
 
   default-language:   GHC2021
 

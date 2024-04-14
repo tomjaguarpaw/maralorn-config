@@ -50,14 +50,19 @@ runDomDialogBody
   -> (forall e. Dialog t e -> Eff (e :& es) ())
   -> Eff es ()
 runDomDialogBody = \r d act ->
-  inContext' . act $ MkDialog @t @er \ePage ->
-    switchDyn <$> dom r d do networkHold (pure never) do ePage <&> renderPage
+  inContext'
+    . act
+    $ MkDialog
+      { run = \ePage ->
+          switchDyn <$> dom r d do networkHold (pure never) do ePage <&> renderPage
+      , r
+      }
 
 elClss :: DomBuilder t m => Text -> [Text] -> m a -> m a
 elClss tg clss = elClass tg (clss ^. re worded)
 
 renderPage :: (DomBuilder t m, MonadReflex t m) => Page a -> m (Event t a)
-renderPage = \(MkPage rows) -> elClss
+renderPage = \page -> elClss
   "div"
   [ "h-full"
   , "p-2"
@@ -70,8 +75,8 @@ renderPage = \(MkPage rows) -> elClss
   , "bg-indigo-950"
   ]
   do
-    evs <- forM rows \row ->
-      el "div" $ forM row \case
+    evs <- forM page.lines \line' ->
+      el "div" $ forM line'.elems \case
         TextElement t -> do
           el "span" $ text t
           pure never

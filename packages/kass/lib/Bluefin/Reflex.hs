@@ -1,14 +1,17 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 module Bluefin.Reflex (ReflexE (..), reflex, reflexIO, MonadReflex, performEffEvent, runRequesterT, runPerformEventT) where
 
 import Bluefin.Internal (Eff (UnsafeMkEff), unsafeUnEff)
 import Control.Concurrent (Chan)
-import Control.Monad.Fix (MonadFix)
 import Data.Dependent.Sum (DSum (..))
 import GHC.Base qualified as GHC
 import Maralude
 import Reflex hiding (runRequesterT)
 import Reflex.Requester.Base.Internal (RequesterState)
 import Reflex.Spider.Internal (HasSpiderTimeline, SpiderHostFrame, runSpiderHostFrame, unEventM)
+
+deriving newtype instance MonadFix (Eff es)
 
 -- | Reflex Effect Handle
 data ReflexE t (es :: Effects) where
@@ -20,6 +23,11 @@ data ReflexE t (es :: Effects) where
        , requesterSelector :: EventSelectorInt (SpiderTimeline x) GHC.Any
        }
     -> ReflexE (SpiderTimeline x) es
+
+instance Handle (ReflexE t) where
+  mapHandle = \case
+    MkReflex{triggerChan, postBuild, requesterStateHandle, requesterSelector} ->
+      MkReflex{triggerChan, postBuild, requesterStateHandle = mapHandle requesterStateHandle, requesterSelector}
 
 -- Uncommented: Other available type classes which I don’t want to expose.
 type MonadReflexIO t m =

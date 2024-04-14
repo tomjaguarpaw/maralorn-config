@@ -1,21 +1,38 @@
 module Bluefin.Dialog where
 
+import Bluefin.Reflex
 import Maralude
 import Reflex
 
-newtype Page a = MkPage (List (List (Element a)))
-  deriving (Eq, Show)
+newtype Page a = MkPage {lines :: List (Line a)}
+  deriving newtype (Semigroup, Monoid)
+  deriving stock (Functor)
+
+newtype Line a = MkLine {elems :: List (Element a)}
+  deriving newtype (Semigroup, Monoid)
+  deriving stock (Functor)
 
 data Element a where
   TextElement :: Text -> Element a
   ButtonElement :: Text -> a -> Element a
-  FormElement :: (Text, a) -> Element (Text, a)
+  FormElement :: Text -> (Text -> a) -> Element a
+  deriving stock (Functor)
 
-deriving instance Eq a => Eq (Element a)
+showPage :: (Reflex t, e :> es) => Dialog t e -> Dynamic t (Page a) -> Eff es (Event t a)
+showPage MkDialog{run, r} page = do
+  pb <- reflex r getPostBuild
+  useImpl do run (leftmost [updated page, current page <@ pb])
 
-deriving instance Show a => Show (Element a)
+data Dialog t e = MkDialog
+  { run :: forall a. Event t (Page a) -> Eff e (Event t a)
+  , r :: ReflexE t e
+  }
 
-showPage :: e :> es => Dialog t e -> Event t (Page a) -> Eff es (Event t a)
-showPage (MkDialog impl) page = useImpl do impl page
+line :: Line a -> Page a
+line = MkPage . (: [])
 
-newtype Dialog t e = MkDialog (forall a. Event t (Page a) -> Eff e (Event t a))
+txt :: Text -> Line a
+txt = MkLine . (: []) . TextElement
+
+button :: Text -> a -> Line a
+button lbl val = MkLine [ButtonElement lbl val]

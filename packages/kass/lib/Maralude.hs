@@ -23,6 +23,7 @@ module Maralude
   , isomorph
   , worded
   , lined
+  , MonadFix
   )
 where
 
@@ -34,6 +35,7 @@ import Bluefin.IO
 import Bluefin.Internal (In, assoc1Eff, cmp, fstI, inContext, sndI, weakenEff)
 import Bluefin.Internal qualified as BF
 import Bluefin.State
+import Control.Monad.Fix (MonadFix)
 import Data.String.Interpolate
 import GHC.List (List)
 import Optics
