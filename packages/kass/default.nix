@@ -6,7 +6,7 @@
 , unliftio, witch, witherable, wreq
 }:
 mkDerivation {
-  pname = "cass";
+  pname = "kass";
   version = "0.1.0.0";
   src = ./.;
   isLibrary = true;
@@ -20,5 +20,5 @@ mkDerivation {
   ];
   executableHaskellDepends = [ base reflex reflex-dom ];
   license = lib.licenses.agpl3Plus;
-  mainProgram = "cass";
+  mainProgram = "kass";
 }

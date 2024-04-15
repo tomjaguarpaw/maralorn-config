@@ -53,7 +53,7 @@ let
     rssfeeds = cleanCabalPackage ./rssfeeds { };
     nixpkgs-bot = cleanCabalPackage ./nixpkgs-bot { };
     t = cleanCabalPackage ./t { };
-    cass = cleanCabalPackage ./cass {
+    kass = cleanCabalPackage ./kass {
       overrides = _: { buildDepends = builtins.attrValues { inherit (stable-pkgs) tailwindcss; }; };
     };
     builders-configurator = cleanCabalPackage ./builders-configurator { };

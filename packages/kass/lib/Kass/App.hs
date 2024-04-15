@@ -1,4 +1,4 @@
-module Cass.App where
+module Kass.App where
 
 import Bluefin.Dialog
 import Bluefin.Dialog.ReflexDom
@@ -55,7 +55,7 @@ viewState :: Map Text Entry -> NavState -> Page Update
 viewState = \entries ->
   \case
     StartPage ->
-      line (txt "Hello World!")
+      line (txt "This is Kass. Your assistance to keep, arrange, schedule and succeed.")
         <> foldOf
           ( folded
               % to
@@ -95,7 +95,7 @@ data ChangesResp = MkChangesResp
 
 getCouchJSON :: (FromJSON a, e :> es) => IOE e -> Text -> Eff es a
 getCouchJSON = \io request -> do
-  effIO io (Wreq.get [i|http://admin:admin@localhost:5984/cass/#{request}|])
+  effIO io (Wreq.get [i|http://admin:admin@localhost:5984/kass/#{request}|])
     <&> (Unsafe.^?! (lensVL responseBody % to decode % _Just))
 
 watchDB :: (e1 :> es, e2 :> es, Reflex t) => IOE e1 -> ReflexE t e2 -> Eff es (Dynamic t (Map Text Entry))

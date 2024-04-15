@@ -59,6 +59,7 @@
             ];
             athene = [
               "firefox-sync"
+              "kass"
               "rss"
               "home"
               "monitoring"
