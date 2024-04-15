@@ -1,8 +1,8 @@
 { mkDerivation, aeson, ansi-terminal, async, base, bluefin
-, bluefin-internal, dependent-sum, exceptions, jsaddle
-, jsaddle-warp, jsaddle-webkit2gtk, lib, optics, primitive, ref-tf
-, reflex, reflex-dom, reflex-dom-core, relude, say
-, string-interpolate, template-haskell, text, typed-process
+, bluefin-internal, containers, dependent-sum, exceptions, falsify
+, jsaddle, jsaddle-warp, jsaddle-webkit2gtk, lib, optics, primitive
+, ref-tf, reflex, reflex-dom, reflex-dom-core, relude, say
+, string-interpolate, tasty, template-haskell, text, typed-process
 , unliftio, witch, witherable, wreq
 }:
 mkDerivation {
@@ -19,6 +19,7 @@ mkDerivation {
     witch witherable wreq
   ];
   executableHaskellDepends = [ base reflex reflex-dom ];
+  testHaskellDepends = [ aeson base containers falsify tasty ];
   license = lib.licenses.agpl3Plus;
   mainProgram = "kass";
 }
