@@ -157,8 +157,6 @@ executable kass
   build-depends:
     , base
     , kass
-    , reflex
-    , reflex-dom
 
   -- Directories containing source files.
   hs-source-dirs: exe
