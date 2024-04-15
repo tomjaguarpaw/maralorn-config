@@ -10,8 +10,8 @@ import Maralude
 type Docs = Map Id Doc
 
 newtype Id = MkId {unId :: Text}
-  deriving stock (Eq, Ord, Show, Generic)
-  deriving anyclass (FromJSON, ToJSON)
+  deriving stock (Show, Generic)
+  deriving newtype (Eq, Ord, FromJSON, ToJSON)
 
 data Doc = MkDoc
   { id :: Id
@@ -47,16 +47,15 @@ instance FromJSON Doc where
         }
 
 knownFields :: Doc -> KeyMap Value
-knownFields = \d ->
-  KeyMap.fromList
-    . catMaybes
-    $ [ Just ("_id", toJSON d.id)
-      , d.rev <&> (("_rev",) . toJSON)
-      , if d.deleted then Just ("_deleted", toJSON True) else Nothing
-      , if Text.null d.content then Nothing else Just ("content", toJSON d.content)
-      , d.parent <&> (("parent",) . toJSON)
-      , if (null d.tags) then Nothing else Just ("tags", (toJSON d.tags))
-      ]
+knownFields =
+  KeyMap.fromList . catMaybes . \d ->
+    [ Just ("_id", toJSON d.id)
+    , d.rev <&> (("_rev",) . toJSON)
+    , if d.deleted then Just ("_deleted", toJSON True) else Nothing
+    , if Text.null d.content then Nothing else Just ("content", toJSON d.content)
+    , d.parent <&> (("parent",) . toJSON)
+    , if (null d.tags) then Nothing else Just ("tags", (toJSON d.tags))
+    ]
 
 instance ToJSON Doc where
   toJSON = \d ->

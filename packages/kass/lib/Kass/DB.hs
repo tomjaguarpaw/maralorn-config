@@ -1,14 +1,13 @@
 module Kass.DB where
 
 import Bluefin.Reflex
-import Data.Aeson (FromJSON (..), decode)
+import Data.Aeson (FromJSON (..), eitherDecode)
 import Data.Map.Optics (toMapOf)
 import Data.Map.Strict qualified as Map
 import Kass.Doc
 import Maralude
 import Network.Wreq qualified as Wreq
 import Network.Wreq.Lens (responseBody)
-import Optics.Operators.Unsafe qualified as Unsafe
 import Reflex
 
 newtype Row = MkRow {doc :: Doc}
@@ -28,23 +27,34 @@ data ChangesResp = MkChangesResp
 
 getCouchJSON :: (FromJSON a, e :> es) => IOE e -> Text -> Eff es a
 getCouchJSON = \io request -> do
-  effIO io (Wreq.get [i|http://admin:admin@localhost:5984/kass/#{request}|])
-    <&> (Unsafe.^?! (lensVL responseBody % to decode % _Just))
+  let req = [i|http://admin:admin@localhost:5984/kass/#{request}|]
+  resp <- effIO io $ Wreq.get req ^. mapping (lensVL responseBody)
+  eitherDecode resp
+    & either
+      (\err -> effIO io . fail $ [i|Request: #{req}, Error: #{err}|])
+      pure
 
-respToMap :: [Row] -> Docs
-respToMap = toMapOf (folded % #doc % ito \e -> (e.id, e))
+rowsToMap :: [Row] -> Docs
+rowsToMap = toMapOf (folded % #doc % ito \e -> (e.id, e))
 
 getDB :: e :> es => IOE e -> Eff es Docs
-getDB = \io -> getCouchJSON @DocsResp io "_all_docs?include_docs=true" ^. mapping (#rows % to respToMap)
+getDB = \io -> getCouchJSON @DocsResp io "_all_docs?include_docs=true" ^. mapping (#rows % to rowsToMap)
 
 watchDB :: (e1 :> es, e2 :> es, Reflex t) => IOE e1 -> ReflexE t e2 -> Eff es (Dynamic t Docs)
 watchDB = \io r -> do
-  res <- (.last_seq) <$> getCouchJSON @ChangesResp io "_changes?since=now"
+  initial_seq <- (.last_seq) <$> getCouchJSON @ChangesResp io "_changes?since=now"
   initialDocs <- getDB io
   (docUpdates, hook) <- reflex r newTriggerEvent
-  let getChanges = \last_seq -> do
-        resp' <- getCouchJSON @ChangesResp io [i|_changes?since=#{last_seq}&feed=longpoll&include_docs=true&heartbeat=true|]
-        effIO io $ hook (respToMap resp'.results)
-        getChanges (resp'.last_seq)
-  _ <- async io $ getChanges res
-  reflex r $ foldDyn Map.union initialDocs docUpdates
+  _ <- async io $ runState initial_seq $ \st -> forever do
+    last_seq <- get st
+    resp <-
+      getCouchJSON @ChangesResp
+        io
+        [i|_changes?since=#{last_seq}&feed=longpoll&include_docs=true&heartbeat=true|]
+    effIO io $ hook (rowsToMap resp.results)
+    put st resp.last_seq
+  reflex r
+    $ foldDyn
+      (\update existing -> Map.filter (not . (.deleted)) $ Map.union update existing)
+      initialDocs
+      docUpdates
