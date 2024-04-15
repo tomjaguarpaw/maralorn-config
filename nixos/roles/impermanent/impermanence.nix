@@ -1,4 +1,5 @@
 {
+  has-persistence = true;
   environment = {
     etc = {
       nixos.source = "/disk/persist/home/maralorn/git/config";

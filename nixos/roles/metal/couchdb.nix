@@ -1,4 +1,4 @@
-{ lib, options, ... }:
+{ lib, config, ... }:
 {
   services.couchdb = {
     enable = true;
@@ -9,7 +9,7 @@
       log.writer = "journald"; # to prevent redundant timestamps
     };
   };
-  environment = lib.optionalAttrs (options.environment ? persistence) {
-    persistence.snapshoted.directories = [ "/var/lib/couchdb" ];
-  };
+  environment.persistence.snapshoted.directories = lib.mkIf config.has-persistence [
+    "/var/lib/couchdb"
+  ];
 }
