@@ -1,6 +1,6 @@
 module Kass.Doc where
 
-import Data.Aeson (FromJSON (..), ToJSON (..), Value (..), withObject, withText, (.:), (.:?))
+import Data.Aeson (FromJSON (..), ToJSON (..), Value (..), withObject, withText, (.:?))
 import Data.Aeson.KeyMap (KeyMap)
 import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Map.Strict qualified as Map
@@ -93,7 +93,7 @@ reservedFields =
 
 instance FromJSON Doc where
   parseJSON = withObject "Entry" \v -> do
-    id' <- v .: "_id"
+    id' <- fromMaybe (MkId "") <$> v .:? "_id"
     rev <- v .:? "_rev"
     deleted <- fromMaybe False <$> v .:? "_deleted"
     content <- fromMaybe "" <$> v .:? "content"

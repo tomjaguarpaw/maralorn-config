@@ -79,7 +79,7 @@ doc = do
 prop_docRoundTrip :: Property ()
 prop_docRoundTrip = do
   d <- gen doc
-  -- info $ decodeUtf8 . encode $ d
+  info $ decodeUtf8 . encode $ d
   let rt = decode @Doc . encode $ d
   assert $ P.satisfies ("isJust", isJust) .$ ("decode . encode", rt)
   assert
