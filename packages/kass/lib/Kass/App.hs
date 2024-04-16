@@ -40,16 +40,22 @@ data NavState = StartPage | Doc Id
 
 data Update = Next NavState | Save Doc NavState
 
-processUpdate :: Update -> NavState
-processUpdate = \case
+nextState :: Update -> NavState
+nextState = \case
   Next x -> x
-  _ -> _
+  Save _ x -> x
+
+effects :: Update -> Maybe Doc
+effects = \case
+  Save d _ -> Just d
+  Next _ -> Nothing
 
 viewState :: Docs -> NavState -> Page Update
 viewState = \docs ->
   \case
     StartPage ->
       line (txt "This is Kass. Your assistance to keep, arrange, schedule and succeed.")
+        <> line (txtField "Keep" "" (\t -> Save (newDoc & #content .~ t & #status ?~ Todo) StartPage))
         <> foldOf
           ( folded
               % to
@@ -68,6 +74,6 @@ viewState = \docs ->
 app :: (e1 :> es, e2 :> es, e3 :> es, Reflex t) => IOE e1 -> ReflexE t e2 -> Dialog t e3 -> Eff es ()
 app = \io r dialog -> mdo
   entries <- watchDB io r
-  state <- reflex r $ holdDyn StartPage (processUpdate <$> newState)
+  state <- reflex r $ holdDyn StartPage (nextState <$> newState)
   newState <- showPage dialog $ viewState <$> entries <*> state
-  pass
+  void $ performEffEvent r $ mapMaybe effects newState <&> writeDoc io

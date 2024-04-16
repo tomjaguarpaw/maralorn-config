@@ -1,9 +1,10 @@
 module Kass.DB where
 
 import Bluefin.Reflex
-import Data.Aeson (FromJSON (..), eitherDecode)
+import Data.Aeson (FromJSON (..), eitherDecode, toJSON)
 import Data.Map.Optics (toMapOf)
 import Data.Map.Strict qualified as Map
+import Data.Text qualified as Text
 import Kass.Doc
 import Maralude
 import Network.Wreq qualified as Wreq
@@ -25,9 +26,12 @@ data ChangesResp = MkChangesResp
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
+baseUrl :: String
+baseUrl = "http://admin:admin@localhost:5984/kass"
+
 getCouchJSON :: (FromJSON a, e :> es) => IOE e -> Text -> Eff es a
 getCouchJSON = \io request -> do
-  let req = [i|http://admin:admin@localhost:5984/kass/#{request}|]
+  let req = [i|#{baseUrl}/#{request}|]
   resp <- effIO io $ Wreq.get req ^. mapping (lensVL responseBody)
   eitherDecode resp
     & either
@@ -39,6 +43,12 @@ rowsToMap = toMapOf (folded % #doc % ito \e -> (e.id, e))
 
 getDB :: e :> es => IOE e -> Eff es Docs
 getDB = \io -> getCouchJSON @DocsResp io "_all_docs?include_docs=true" ^. mapping (#rows % to rowsToMap)
+
+writeDoc :: e :> es => IOE e -> Doc -> Eff es ()
+writeDoc = \io -> \case
+  d
+    | Text.null d.id.unId -> void $ effIO io $ Wreq.post baseUrl (toJSON d)
+    | x <- d.id.unId -> void $ effIO io $ Wreq.put [i|#{baseUrl}/#{x}|] (toJSON d)
 
 watchDB :: (e1 :> es, e2 :> es, Reflex t) => IOE e1 -> ReflexE t e2 -> Eff es (Dynamic t Docs)
 watchDB = \io r -> do

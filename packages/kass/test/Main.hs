@@ -5,6 +5,8 @@ import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Map.Strict qualified as Map
 import Data.Maybe qualified as Unsafe
 import Data.Set qualified as Set
+import Data.Time (UTCTime)
+import Data.Time.Clock.POSIX (posixSecondsToUTCTime)
 import Kass.Doc
 import Maralude
 import Test.Falsify.Generator qualified as Gen
@@ -43,6 +45,12 @@ value :: Gen Value
 value =
   Object . KeyMap.fromMapText <$> (into <$> list ((,) <$> text <*> (String <$> text)))
 
+status :: Gen Status
+status = Gen.oneof $ (pure Todo) :| [pure Done, pure Checklist, Tag <$> text, Ref . MkId <$> text]
+
+time :: Gen UTCTime
+time = posixSecondsToUTCTime . fromInteger . toInteger <$> Gen.int (Range.between (0, 1000000000))
+
 docWORest :: Gen Doc
 docWORest = do
   MkDoc
@@ -50,8 +58,15 @@ docWORest = do
     <*> genMaybe text
     <*> Gen.bool False
     <*> multilineText
+    <*> genMaybe status
     <*> genMaybe (MkId <$> text)
     <*> (into <$> list text)
+    <*> (into <$> list (MkId <$> text))
+    <*> genMaybe time
+    <*> genMaybe time
+    <*> genMaybe ((,) <$> time <*> Gen.int (Range.between (0, 1000)))
+    <*> (into <$> list (MkId <$> text))
+    <*> (fromInteger . toInteger <$> Gen.int (Range.between (0, 10000000)))
     <*> pure mempty
 
 doc :: Gen Doc
@@ -63,6 +78,7 @@ doc = do
 prop_docRoundTrip :: Property ()
 prop_docRoundTrip = do
   d <- gen doc
+  info $ decodeUtf8 . encode $ d
   let rt = decode @Doc . encode $ d
   assert $ P.satisfies ("isJust", isJust) .$ ("decode . encode", rt)
   assert

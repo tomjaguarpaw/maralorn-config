@@ -96,34 +96,36 @@ renderPage = \page -> elClss
           el "span" $ text t
           pure never
         ButtonElement label val -> domButton label <&> ($> val)
-        PromptElement prompt df process -> do
-          text prompt
-          input <-
-            _inputElement_value
-              <$> inputElement
-                ( def
-                    & lensVL inputElementConfig_initialValue
-                    .~ df
-                    & lensVL inputElementConfig_elementConfig
-                    % lensVL elementConfig_initialAttributes
-                    %~ ( <>
-                          "class"
-                            =: [ "bg-indigo-800"
-                               , "p-1"
-                               , "rounded-lg"
-                               , "focus:bg-purple-900"
-                               ]
-                            ^. re worded
-                       )
-                )
+        PromptElement prompt df process -> mdo
+          active <- holdDyn False (True <$ eShow)
           ev' <-
             dyn
-              $ input
+              $ active
               <&> \case
-                x | x == df -> pure never
-                _ -> domButton "OK"
-          ev <- switchHold never ev'
-          pure $ process <$> current input <@ ev
+                False -> domButton prompt <&> ($> Left ())
+                _ -> do
+                  input <-
+                    _inputElement_value
+                      <$> inputElement
+                        ( def
+                            & lensVL inputElementConfig_initialValue
+                            .~ df
+                            & lensVL inputElementConfig_elementConfig
+                            % lensVL elementConfig_initialAttributes
+                            %~ ( <>
+                                  "class"
+                                    =: [ "bg-indigo-800"
+                                       , "p-1"
+                                       , "rounded-lg"
+                                       , "focus:bg-purple-900"
+                                       ]
+                                    ^. re worded
+                               )
+                        )
+                  ev <- domButton "OK"
+                  pure $ Right <$> (current input <@ ev)
+          (eShow, eSend) <- fanEither <$> switchHold never ev'
+          pure $ process <$> eSend
     pure . leftmost . join $ evs
 
 domButton :: DomBuilder t m => Text -> m (Event t ())
