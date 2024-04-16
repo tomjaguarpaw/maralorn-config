@@ -2,6 +2,7 @@ module Main (main) where
 
 import Data.Aeson
 import Data.Aeson.KeyMap qualified as KeyMap
+import Data.Default (def)
 import Data.Map.Strict qualified as Map
 import Data.Maybe qualified as Unsafe
 import Data.Set qualified as Set
@@ -16,6 +17,9 @@ import Test.Falsify.Range qualified as Range
 import Test.Tasty
 import Test.Tasty.Falsify
 
+prop :: TestName -> Property' String () -> TestTree
+prop = testPropertyWith def{overrideNumTests = Just 1000}
+
 main :: IO ()
 main =
   defaultMain
@@ -23,8 +27,8 @@ main =
     -- localOption Verbose $
     testGroup
       "PropertyTests"
-      [ testProperty "docRoundTrip" prop_docRoundTrip
-      , testProperty "reservedFields" prop_reservedFields
+      [ prop "docRoundTrip" prop_docRoundTrip
+      , prop "reservedFields" prop_reservedFields
       ]
 
 text :: Gen Text

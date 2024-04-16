@@ -134,6 +134,7 @@ test-suite tests
     , aeson
     , base
     , containers
+    , data-default
     , falsify
     , kass
     , tasty
