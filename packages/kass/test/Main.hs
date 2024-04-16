@@ -19,8 +19,9 @@ import Test.Tasty.Falsify
 main :: IO ()
 main =
   defaultMain
-    $ localOption Verbose
-    $ testGroup
+    $
+    -- localOption Verbose $
+    testGroup
       "PropertyTests"
       [ testProperty "docRoundTrip" prop_docRoundTrip
       , testProperty "reservedFields" prop_reservedFields
@@ -78,7 +79,7 @@ doc = do
 prop_docRoundTrip :: Property ()
 prop_docRoundTrip = do
   d <- gen doc
-  info $ decodeUtf8 . encode $ d
+  -- info $ decodeUtf8 . encode $ d
   let rt = decode @Doc . encode $ d
   assert $ P.satisfies ("isJust", isJust) .$ ("decode . encode", rt)
   assert
