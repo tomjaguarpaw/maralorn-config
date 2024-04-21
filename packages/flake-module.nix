@@ -35,17 +35,11 @@ let
     final: prev:
     lib.mapAttrs (_: package: package final) myHaskellPackages
     // {
-      bluefin = final.callHackageDirect {
-        pkg = "bluefin";
-        ver = "0.0.4.2";
-        sha256 = "sha256-sGxLV9BFbEU1cVWFqbLVet+dpYHNv0M+0STJ3OB+qj4=";
-      } { };
-      bluefin-internal = final.callHackageDirect {
-        pkg = "bluefin-internal";
-        ver = "0.0.4.2";
-        sha256 = "sha256-Gc8kD0+4wELEu86+nDzs+tiZpkVomvssnkwh6VhIW9A=";
-      } { };
-      jsaddle-warp = unmarkBroken prev.jsaddle-warp;
+      jsaddle-warp = overrideCabal {
+        preConfigure = ''
+          sed -i 's/jsaddle.*0.10/jsaddle/' jsaddle-warp.cabal
+        '';
+      } (unmarkBroken prev.jsaddle-warp);
     };
   selectHaskellPackages = attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages;
   myHaskellPackages = {
