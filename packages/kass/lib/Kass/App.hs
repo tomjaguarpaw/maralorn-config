@@ -9,7 +9,8 @@ import Bluefin.Reflex.Headless
 import Kass.DB
 import Kass.Doc
 import Maralude
-import Reflex
+import Reflex hiding (Reflex)
+import Reflex qualified
 
 main :: IO ()
 main = runEff entryPoint
@@ -71,7 +72,7 @@ viewState = \docs ->
  where
   footer = line mempty <> line (button "Back to start" (Next StartPage))
 
-app :: (e1 :> es, e2 :> es, e3 :> es, Reflex t) => IOE e1 -> ReflexE t e2 -> Dialog t e3 -> Eff es ()
+app :: (e1 :> es, e2 :> es, e3 :> es, Reflex.Reflex t) => IOE e1 -> Reflex t e2 -> Dialog t e3 -> Eff es ()
 app = \io r dialog -> mdo
   entries <- watchDB io r
   state <- reflex r $ holdDyn StartPage (nextState <$> newState)

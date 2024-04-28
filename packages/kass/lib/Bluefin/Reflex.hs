@@ -1,33 +1,33 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Bluefin.Reflex (ReflexE (..), reflex, reflexIO, MonadReflex, performEffEvent, runRequesterT, runPerformEventT) where
+module Bluefin.Reflex (Reflex (..), reflex, reflexIO, MonadReflex, performEffEvent, runRequesterT, runPerformEventT) where
 
 import Bluefin.Internal (Eff (UnsafeMkEff), unsafeUnEff)
 import Control.Concurrent (Chan)
 import Data.Dependent.Sum (DSum (..))
 import GHC.Base qualified as GHC
 import Maralude
-import Reflex hiding (runRequesterT)
+import Reflex hiding (Reflex, runRequesterT)
 import Reflex.Requester.Base.Internal (RequesterState)
 import Reflex.Spider.Internal (HasSpiderTimeline, SpiderHostFrame, runSpiderHostFrame, unEventM)
 
 deriving newtype instance MonadFix (Eff es)
 
 -- | Reflex Effect Handle
-data ReflexE t (es :: Effects) where
-  MkReflex
+data Reflex t (es :: Effects) where
+  ReflexHandle
     :: HasSpiderTimeline x
     => { triggerChan :: Chan [DSum (EventTriggerRef (SpiderTimeline x)) TriggerInvocation]
        , postBuild :: Event (SpiderTimeline x) ()
        , requesterStateHandle :: State (RequesterState (SpiderTimeline x) (SpiderHostFrame x)) es
        , requesterSelector :: EventSelectorInt (SpiderTimeline x) GHC.Any
        }
-    -> ReflexE (SpiderTimeline x) es
+    -> Reflex (SpiderTimeline x) es
 
-instance Handle (ReflexE t) where
+instance Handle (Reflex t) where
   mapHandle = \case
-    MkReflex{triggerChan, postBuild, requesterStateHandle, requesterSelector} ->
-      MkReflex{triggerChan, postBuild, requesterStateHandle = mapHandle requesterStateHandle, requesterSelector}
+    ReflexHandle{triggerChan, postBuild, requesterStateHandle, requesterSelector} ->
+      ReflexHandle{triggerChan, postBuild, requesterStateHandle = mapHandle requesterStateHandle, requesterSelector}
 
 -- Uncommented: Other available type classes which I don’t want to expose.
 type MonadReflexIO t m =
@@ -66,12 +66,12 @@ type MonadReflex t m =
   , PostBuild t m
   )
 
-performEffEvent :: er :> es => ReflexE t er -> Event t (Eff es a) -> Eff es (Event t a)
+performEffEvent :: er :> es => Reflex t er -> Event t (Eff es a) -> Eff es (Event t a)
 performEffEvent r ev = reflexUnsafe r $ performEvent (liftIO . unsafeUnEff <$> ev)
 
 reflex
   :: e :> es
-  => ReflexE t e
+  => Reflex t e
   -> (forall m. MonadReflex t m => m r)
   -> Eff es r
 reflex r a = reflexUnsafe r a
@@ -79,7 +79,7 @@ reflex r a = reflexUnsafe r a
 reflexIO
   :: (er :> es, eio :> es)
   => IOE eio
-  -> ReflexE t er
+  -> Reflex t er
   -> (forall m. MonadReflexIO t m => m r)
   -> Eff es r
 reflexIO _ r a = reflexUnsafe r a
@@ -87,10 +87,10 @@ reflexIO _ r a = reflexUnsafe r a
 -- | Reflex Actions
 reflexUnsafe
   :: e :> es
-  => ReflexE t e
+  => Reflex t e
   -> (forall m. MonadReflexIO t m => m r)
   -> Eff es r
-reflexUnsafe r@(MkReflex{}) act = do
+reflexUnsafe r@(ReflexHandle{}) act = do
   preState <- get r.requesterStateHandle
   (ret, postState) <-
     UnsafeMkEff

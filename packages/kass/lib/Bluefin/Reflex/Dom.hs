@@ -9,15 +9,16 @@ import Language.Javascript.JSaddle (JSM)
 import Language.Javascript.JSaddle.Warp qualified as Warp
 import Language.Javascript.JSaddle.WebKitGTK qualified as GTK
 import Maralude
-import Reflex
-import Reflex.Dom.Core
+import Reflex hiding (Reflex)
+import Reflex qualified
+import Reflex.Dom.Core hiding (Reflex)
 import Reflex.Requester.Base.Internal (RequesterState)
 import Reflex.Spider.Internal (SpiderHostFrame)
 import Relude.Monad.Reexport qualified as MTL
 import Unsafe.Coerce (unsafeCoerce)
 
 data Dom t (es :: Effects) where
-  MkReflexDom
+  DomHandle
     :: { env :: HydrationDomBuilderEnv DomTimeline (DomCoreWidget x)
        , jsContext :: JSContextSingleton x
        , jsmRequesterState :: State (RequesterState DomTimeline JSM) es
@@ -25,7 +26,7 @@ data Dom t (es :: Effects) where
        }
     -> Dom (SpiderTimeline Global) es
 
-type BFWidget es = (forall t e. Reflex t => ReflexE t e -> Dom t e -> Eff (e :& es) ())
+type BFWidget es = forall t e. Reflex.Reflex t => Reflex t e -> Dom t e -> Eff (e :& es) ()
 
 runReflexDom
   :: ei :> es
@@ -40,8 +41,16 @@ runReflexDom = \runner html_head body -> withEffToIO \runInIO ->
       (mkWidget runInIO html_head)
       (mkWidget runInIO body)
 
+runWithReplace
+  :: Reflex t eo
+  -> Dom t eo
+  -> Eff (eo :& es) a
+  -> (forall ei. Event t (Reflex t ei -> Dom t ei -> Eff (ei :& es) a))
+  -> Eff (eo :& es) (a, Event t b)
+runWithReplace = _
+
 mkWidget
-  :: (forall r. (forall (e1 :: Effects). IOE e1 -> Eff (e1 :& es) r) -> IO r)
+  :: (forall r. (forall e1. IOE e1 -> Eff (e1 :& es) r) -> IO r)
   -> BFWidget es
   -> (forall x. Widget x ())
 mkWidget = \runInIO act -> do
@@ -70,13 +79,13 @@ mkWidget = \runInIO act -> do
     useImpl $ runState requesterPre \requesterStateHandle -> runState jsmRequesterPre \jsmRequesterState ->
       assoc1Eff
         $ act
-          MkReflex
+          ReflexHandle
             { postBuild
             , requesterStateHandle = mapHandle requesterStateHandle
             , triggerChan
             , requesterSelector = reflexRequesterSelector
             }
-          MkReflexDom
+          DomHandle
             { env
             , jsmRequesterState = mapHandle jsmRequesterState
             , jsContext
@@ -123,8 +132,8 @@ unsafeHydrationDomBuilderT
 unsafeHydrationDomBuilderT = unsafeCoerce
 
 dom
-  :: forall t e es r. e :> es => ReflexE t e -> Dom t e -> (forall m. (DomBuilder t m, MonadReflex t m) => m r) -> Eff es r
-dom r d@(MkReflexDom env con _ _) act = do
+  :: forall t e es r. e :> es => Reflex t e -> Dom t e -> (forall m. (DomBuilder t m, MonadReflex t m) => m r) -> Eff es r
+dom r d@(DomHandle env con _ _) act = do
   modifyM @es d.jsmRequesterState \jsmPreState ->
     modifyM @es (r.requesterStateHandle) \preState ->
       UnsafeMkEff

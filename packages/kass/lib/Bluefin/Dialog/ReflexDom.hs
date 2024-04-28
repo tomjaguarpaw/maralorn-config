@@ -12,8 +12,9 @@ import Bluefin.Reflex.Dom
 import Language.Haskell.TH (bindCode)
 import Language.Haskell.TH.Syntax (liftTyped)
 import Maralude
-import Reflex
-import Reflex.Dom.Core hiding ((.~))
+import Reflex hiding (Reflex)
+import Reflex qualified
+import Reflex.Dom.Core hiding (Reflex, (.~))
 import Reflex.Network (networkHold)
 
 runDomDialog
@@ -27,9 +28,9 @@ runDomDialog
        -> Eff es ()
      )
   -> ( forall e1 e2 e3 ex t
-        . (e1 :> ex, e2 :> ex, e3 :> ex, Reflex t)
+        . (e1 :> ex, e2 :> ex, e3 :> ex, Reflex.Reflex t)
        => IOE e1
-       -> ReflexE t e2
+       -> Reflex t e2
        -> Dialog t e3
        -> Eff ex ()
      )
@@ -42,8 +43,8 @@ runDomDialog = \io engine app ->
 
 runDomDialogHead
   :: forall er es t
-   . (Reflex t, er :> es)
-  => ReflexE t er
+   . (Reflex.Reflex t, er :> es)
+  => Reflex t er
   -> Dom t er
   -> Eff es ()
 runDomDialogHead = \r d ->
@@ -56,8 +57,8 @@ css = $$(bindCode createCss liftTyped)
 
 runDomDialogBody
   :: forall er es t
-   . (Reflex t, er :> es)
-  => ReflexE t er
+   . (Reflex.Reflex t, er :> es)
+  => Reflex t er
   -> Dom t er
   -> (forall e. Dialog t e -> Eff (e :& es) ())
   -> Eff es ()

@@ -2,7 +2,8 @@ module Bluefin.Dialog where
 
 import Bluefin.Reflex
 import Maralude
-import Reflex
+import Reflex hiding (Reflex)
+import Reflex qualified
 
 newtype Page a = MkPage {lines :: List (Line a)}
   deriving newtype (Semigroup, Monoid)
@@ -18,14 +19,14 @@ data Element a where
   PromptElement :: Text -> Text -> (Text -> a) -> Element a
   deriving stock (Functor)
 
-showPage :: (Reflex t, e :> es) => Dialog t e -> Dynamic t (Page a) -> Eff es (Event t a)
+showPage :: (Reflex.Reflex t, e :> es) => Dialog t e -> Dynamic t (Page a) -> Eff es (Event t a)
 showPage MkDialog{run, r} page = do
   pb <- reflex r getPostBuild
   useImpl do run (leftmost [updated page, current page <@ pb])
 
 data Dialog t e = MkDialog
   { run :: forall a. Event t (Page a) -> Eff e (Event t a)
-  , r :: ReflexE t e
+  , r :: Reflex t e
   }
 
 line :: Line a -> Page a

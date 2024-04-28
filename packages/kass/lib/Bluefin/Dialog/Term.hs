@@ -8,7 +8,8 @@ import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
 import Data.Text qualified as Text
 import Maralude
-import Reflex
+import Reflex hiding (Reflex)
+import Reflex qualified
 import System.Console.ANSI
   ( Color (..)
   , ColorIntensity (Vivid)
@@ -22,9 +23,9 @@ data Update a = Return a | Prompt Text Text (Text -> a)
 
 runTermDialog
   :: forall e1 e2 t es a
-   . (e1 :> es, e2 :> es, Reflex t)
+   . (e1 :> es, e2 :> es, Reflex.Reflex t)
   => IOE e1
-  -> ReflexE t e2
+  -> Reflex t e2
   -> (forall e. Dialog t e -> Eff (e :& es) a)
   -> Eff es a
 runTermDialog = \io r act ->

@@ -10,14 +10,15 @@ import Control.Monad.Ref (readRef)
 import Data.Dependent.Sum (DSum (..), (==>))
 import Data.Traversable (for)
 import Maralude
-import Reflex
+import Reflex hiding (Reflex)
+import Reflex qualified
 import Reflex.Host.Class
 import Reflex.Spider.Internal (HasSpiderTimeline)
 import Relude.Monad.Reexport qualified as MTL
 
 -- | Reflex Handler
 runReflexHeadless
-  :: (forall t er. Reflex t => ReflexE t er -> Eff (er :& es) (Event t a))
+  :: (forall t er. Reflex.Reflex t => Reflex t er -> Eff (er :& es) (Event t a))
   -> Eff es a
 runReflexHeadless act =
   UnsafeMkEff $ runHeadlessApp do
@@ -27,7 +28,7 @@ runReflexHeadless act =
     requesterSelector <- lift . lift . PerformEventT . RequesterT . lift $ ask
     (ret, finalState) <- liftIO . unsafeUnEff $ runState initialRequesterState \requesterStateHandle ->
       act
-        MkReflex
+        ReflexHandle
           { triggerChan
           , postBuild
           , requesterStateHandle
@@ -76,11 +77,12 @@ runHeadlessApp guest =
     (result, fc@(FireCommand fire)) <- do
       hostPerformEventT
         $ flip runPostBuildT postBuild
-        $ flip runTriggerEventT events -- Allows the guest app to run
+        $ flip runTriggerEventT events
+        $ guest -- Allows the guest app to run
         -- 'performEvent', so that actions
         -- (e.g., IO actions) can be run when
         -- 'Event's fire.
-        $ guest -- Allows the guest app to access to
+        -- Allows the guest app to access to
         -- a "post-build" 'Event'
         -- Allows the guest app to create new
         -- events and triggers and write
