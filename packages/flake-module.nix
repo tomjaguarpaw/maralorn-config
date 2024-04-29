@@ -2,7 +2,7 @@
 let
   stable-pkgs = inputs.nixos-stable.legacyPackages.x86_64-linux;
   unstable-pkgs = inputs.nixos-unstable.legacyPackages.x86_64-linux;
-  inherit (unstable-pkgs.haskell.lib.compose) overrideCabal unmarkBroken;
+  inherit (unstable-pkgs.haskell.lib.compose) overrideCabal;
   includePatterns = [
     ".hs"
     ".cabal"
@@ -31,16 +31,7 @@ let
       ))
       hpkgs.buildFromCabalSdist
     ];
-  haskellPackagesOverlay =
-    final: prev:
-    lib.mapAttrs (_: package: package final) myHaskellPackages
-    // {
-      jsaddle-warp = overrideCabal {
-        preConfigure = ''
-          sed -i 's/jsaddle.*0.10/jsaddle/' jsaddle-warp.cabal
-        '';
-      } (unmarkBroken prev.jsaddle-warp);
-    };
+  haskellPackagesOverlay = final: _prev: lib.mapAttrs (_: package: package final) myHaskellPackages;
   selectHaskellPackages = attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages;
   myHaskellPackages = {
     wizards-dialog = cleanCabalPackage ./wizards-dialog { };
