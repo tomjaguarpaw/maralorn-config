@@ -18,11 +18,7 @@ in
         HTTP_PORT = 3787; # Default port was blocked
       };
       service.DISABLE_REGISTRATION = true;
-      ui = {
-        # Codeberg theme manually copied into state folder
-        DEFAULT_THEME = "codeberg-auto";
-        THEMES = "forgejo-auto,forgejo-light,forgejo-dark,auto,gitea,arc-green,codeberg-auto,codeberg-light,codeberg-dark";
-      };
+      ui.DEFAULT_THEME = "gitea-auto";
       mailer = {
         ENABLED = true;
         FROM = "forgejo@code.maralorn.de"; # Could also be "Forgejo <...>" or "Git minion on Hera"
