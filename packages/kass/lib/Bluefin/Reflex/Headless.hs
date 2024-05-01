@@ -10,7 +10,7 @@ import Control.Monad.Ref (readRef)
 import Data.Dependent.Sum (DSum (..), (==>))
 import Data.Traversable (for)
 import Maralude
-import Reflex hiding (Reflex)
+import Reflex hiding (Reflex, runRequesterT)
 import Reflex qualified
 import Reflex.Host.Class
 import Reflex.Spider.Internal (HasSpiderTimeline)
@@ -18,24 +18,30 @@ import Relude.Monad.Reexport qualified as MTL
 
 -- | Reflex Handler
 runReflexHeadless
-  :: (forall t er. Reflex.Reflex t => Reflex t er -> Eff (er :& es) (Event t a))
+  :: (forall t er. Reflex.Reflex t => Reflex Headless t er -> Eff (er :& es) (Event t a))
   -> Eff es a
-runReflexHeadless act =
+runReflexHeadless network =
   UnsafeMkEff $ runHeadlessApp do
     triggerChan <- TriggerEventT ask
     postBuild <- getPostBuild
     initialRequesterState <- lift . lift . PerformEventT . RequesterT $ MTL.get
     requesterSelector <- lift . lift . PerformEventT . RequesterT . lift $ ask
     (ret, finalState) <- liftIO . unsafeUnEff $ runState initialRequesterState \requesterStateHandle ->
-      act
+      network
         ReflexHandle
-          { triggerChan
-          , postBuild
-          , requesterStateHandle
-          , requesterSelector
+          { spiderData =
+              MkSpiderData
+                { triggerChan
+                , postBuild
+                , requesterStateHandle
+                , requesterSelector
+                }
+          , payload = Headless
           }
     lift . lift . PerformEventT . RequesterT $ MTL.put finalState
     pure ret
+
+data Headless t es = Headless
 
 --- Everything below this point is basically copied from Reflex.Host.Headless
 

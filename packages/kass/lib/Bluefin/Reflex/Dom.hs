@@ -26,7 +26,7 @@ data Dom t (es :: Effects) where
        }
     -> Dom (SpiderTimeline Global) es
 
-type BFWidget es = forall t e. Reflex.Reflex t => Reflex t e -> Dom t e -> Eff (e :& es) ()
+type BFWidget es = forall t e. Reflex.Reflex t => Reflex Dom t e -> Eff (e :& es) ()
 
 runReflexDom
   :: ei :> es
@@ -42,10 +42,9 @@ runReflexDom = \runner html_head body -> withEffToIO \runInIO ->
       (mkWidget runInIO body)
 
 runWithReplace
-  :: Reflex t eo
-  -> Dom t eo
+  :: Reflex s t eo
   -> Eff (eo :& es) a
-  -> (forall ei. Event t (Reflex t ei -> Dom t ei -> Eff (ei :& es) a))
+  -> (forall ei. Event t (Reflex s t ei -> Eff (ei :& es) a))
   -> Eff (eo :& es) (a, Event t b)
 runWithReplace = _
 
@@ -80,16 +79,20 @@ mkWidget = \runInIO act -> do
       assoc1Eff
         $ act
           ReflexHandle
-            { postBuild
-            , requesterStateHandle = mapHandle requesterStateHandle
-            , triggerChan
-            , requesterSelector = reflexRequesterSelector
-            }
-          DomHandle
-            { env
-            , jsmRequesterState = mapHandle jsmRequesterState
-            , jsContext
-            , requesterSelector = domRequesterSelector
+            { spiderData =
+                MkSpiderData
+                  { postBuild
+                  , requesterStateHandle = mapHandle requesterStateHandle
+                  , triggerChan
+                  , requesterSelector = reflexRequesterSelector
+                  }
+            , payload =
+                DomHandle
+                  { env
+                  , jsmRequesterState = mapHandle jsmRequesterState
+                  , jsContext
+                  , requesterSelector = domRequesterSelector
+                  }
             }
   unsafeHydrationDomBuilderT . lift . RequesterT $ MTL.put jsmRequesterPost
   unsafeHydrationDomBuilderT
@@ -132,12 +135,21 @@ unsafeHydrationDomBuilderT
 unsafeHydrationDomBuilderT = unsafeCoerce
 
 dom
-  :: forall t e es r. e :> es => Reflex t e -> Dom t e -> (forall m. (DomBuilder t m, MonadReflex t m) => m r) -> Eff es r
-dom r d@(DomHandle env con _ _) act = do
+  :: forall t e es r. e :> es => Reflex Dom t e -> (forall m. (DomBuilder t m, MonadReflex t m) => m r) -> Eff es r
+dom ReflexHandle{spiderData, payload = d@(DomHandle env con _ _)} act = do
   modifyM @es d.jsmRequesterState \jsmPreState ->
-    modifyM @es (r.requesterStateHandle) \preState ->
+    modifyM @es (spiderData.requesterStateHandle) \preState ->
       UnsafeMkEff
-        $ runWidget act r.requesterSelector d.requesterSelector con r.postBuild r.triggerChan env jsmPreState preState
+        $ runWidget
+          act
+          spiderData.requesterSelector
+          d.requesterSelector
+          con
+          spiderData.postBuild
+          spiderData.triggerChan
+          env
+          jsmPreState
+          preState
 
 modifyM :: forall ein st e s r. (st :> e, ein :> e) => State s st -> (s -> Eff ein (r, s)) -> Eff e r
 modifyM st act = do

@@ -22,7 +22,7 @@ guiAppIO = runEff guiApp
 
 webApp, termApp, guiApp :: e :> es => IOE e -> Eff es ()
 webApp = \io -> runDomDialog io (runReflexDomServer 5344) app
-termApp = \io -> runReflexHeadless (\r -> do runTermDialog io r (app io r); pure never)
+termApp = \io -> runReflexHeadless (\r -> do runTermDialog io r (app io); pure never)
 guiApp = \io -> runDomDialog io runReflexDomGUI app
 
 entryPoint
@@ -72,9 +72,9 @@ viewState = \docs ->
  where
   footer = line mempty <> line (button "Back to start" (Next StartPage))
 
-app :: (e1 :> es, e2 :> es, e3 :> es, Reflex.Reflex t) => IOE e1 -> Reflex t e2 -> Dialog t e3 -> Eff es ()
-app = \io r dialog -> mdo
+app :: (e1 :> es, e2 :> es, Reflex.Reflex t) => IOE e1 -> Reflex Dialog t e2 -> Eff es ()
+app = \io r -> mdo
   entries <- watchDB io r
   state <- reflex r $ holdDyn StartPage (nextState <$> newState)
-  newState <- showPage dialog $ viewState <$> entries <*> state
+  newState <- showPage r $ viewState <$> entries <*> state
   void $ performEffEvent r $ mapMaybe effects newState <&> writeDoc io

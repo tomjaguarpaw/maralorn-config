@@ -27,28 +27,26 @@ runDomDialog
        -> IOE ei
        -> Eff es ()
      )
-  -> ( forall e1 e2 e3 ex t
-        . (e1 :> ex, e2 :> ex, e3 :> ex, Reflex.Reflex t)
+  -> ( forall e1 e2 ex t
+        . (e1 :> ex, e2 :> ex, Reflex.Reflex t)
        => IOE e1
-       -> Reflex t e2
-       -> Dialog t e3
+       -> Reflex Dialog t e2
        -> Eff ex ()
      )
   -> Eff es ()
 runDomDialog = \io engine app ->
   engine
-    (\r d -> (runDomDialogHead r d))
-    (\r d -> (runDomDialogBody r d (app io r)))
+    (\r -> (runDomDialogHead r))
+    (\r -> (runDomDialogBody r (app io)))
     io
 
 runDomDialogHead
   :: forall er es t
    . (Reflex.Reflex t, er :> es)
-  => Reflex t er
-  -> Dom t er
+  => Reflex Dom t er
   -> Eff es ()
-runDomDialogHead = \r d ->
-  dom r d
+runDomDialogHead = \r ->
+  dom r
     $ el "style"
     $ text [i|html, body { background: black; height: 100%; }\n#{css}|]
 
@@ -58,17 +56,19 @@ css = $$(bindCode createCss liftTyped)
 runDomDialogBody
   :: forall er es t
    . (Reflex.Reflex t, er :> es)
-  => Reflex t er
-  -> Dom t er
-  -> (forall e. Dialog t e -> Eff (e :& es) ())
+  => Reflex Dom t er
+  -> (forall e. Reflex Dialog t e -> Eff (e :& es) ())
   -> Eff es ()
-runDomDialogBody = \r d act ->
+runDomDialogBody = \r act ->
   inContext'
     . act
-    $ MkDialog
-      { run = \ePage ->
-          switchDyn <$> dom r d do networkHold (pure never) do ePage <&> renderPage
-      , r
+    $ ReflexHandle
+      { payload =
+          DialogHandle
+            { run = \ePage ->
+                switchDyn <$> dom r do networkHold (pure never) do ePage <&> renderPage
+            }
+      , spiderData = r.spiderData
       }
 
 elClss :: DomBuilder t m => Text -> [Text] -> m a -> m a

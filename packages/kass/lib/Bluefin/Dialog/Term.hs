@@ -22,29 +22,32 @@ import System.Console.ANSI
 data Update a = Return a | Prompt Text Text (Text -> a)
 
 runTermDialog
-  :: forall e1 e2 t es a
+  :: forall e1 e2 t es a s
    . (e1 :> es, e2 :> es, Reflex.Reflex t)
   => IOE e1
-  -> Reflex t e2
-  -> (forall e. Dialog t e -> Eff (e :& es) a)
+  -> Reflex s t e2
+  -> (forall e. Reflex Dialog t e -> Eff (e :& es) a)
   -> Eff es a
 runTermDialog = \io r act ->
   inContext'
     . inContext'
     . assoc1Eff
     . act @(e1 :& e2)
-    $ MkDialog
-      { run = \ev -> do
-          (retEv, hook) <- reflex r newTriggerEvent
-          _ <- runState Nothing $ \thread ->
-            performEffEvent r
-              $ ev
-              <&> \page -> do
-                whenJustM (get thread) (effIO io . Async.cancel)
-                put thread . Just =<< async io do
-                  effIO io . hook =<< runPage io page
-          pure retEv
-      , r = mapHandle r
+    $ ReflexHandle
+      { payload =
+          DialogHandle
+            { run = \ev -> do
+                (retEv, hook) <- reflex r newTriggerEvent
+                _ <- runState Nothing $ \thread ->
+                  performEffEvent r
+                    $ ev
+                    <&> \page -> do
+                      whenJustM (get thread) (effIO io . Async.cancel)
+                      put thread . Just =<< async io do
+                        effIO io . hook =<< runPage io page
+                pure retEv
+            }
+      , spiderData = mapHandle r.spiderData
       }
 
 runPage :: e :> es => IOE e -> Page a -> Eff es a

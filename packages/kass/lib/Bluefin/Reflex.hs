@@ -1,10 +1,21 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Bluefin.Reflex (Reflex (..), reflex, reflexIO, MonadReflex, performEffEvent, runRequesterT, runPerformEventT) where
+module Bluefin.Reflex
+  ( Reflex (..)
+  , SpiderData (..)
+  , reflex
+  , reflexIO
+  , MonadReflex
+  , MonadReflexIO
+  , performEffEvent
+  , runRequesterT
+  , runPerformEventT
+  )
+where
 
 import Bluefin.Internal (Eff (UnsafeMkEff), unsafeUnEff)
 import Control.Concurrent (Chan)
-import Data.Dependent.Sum (DSum (..))
+import Data.Dependent.Sum (DSum)
 import GHC.Base qualified as GHC
 import Maralude
 import Reflex hiding (Reflex, runRequesterT)
@@ -13,23 +24,33 @@ import Reflex.Spider.Internal (HasSpiderTimeline, SpiderHostFrame, runSpiderHost
 
 deriving newtype instance MonadFix (Eff es)
 
--- TODO: Reflex t a (es :: Effects)
-
 -- | Reflex Effect Handle
-data Reflex t (es :: Effects) where
+data Reflex a t (es :: Effects) where
   ReflexHandle
+    :: { spiderData :: SpiderData t es
+       , payload :: a t es
+       }
+    -> Reflex a t es
+
+data SpiderData t es where
+  MkSpiderData
     :: HasSpiderTimeline x
     => { triggerChan :: Chan [DSum (EventTriggerRef (SpiderTimeline x)) TriggerInvocation]
        , postBuild :: Event (SpiderTimeline x) ()
        , requesterStateHandle :: State (RequesterState (SpiderTimeline x) (SpiderHostFrame x)) es
        , requesterSelector :: EventSelectorInt (SpiderTimeline x) GHC.Any
        }
-    -> Reflex (SpiderTimeline x) es
+    -> SpiderData (SpiderTimeline x) es
 
-instance Handle (Reflex t) where
-  mapHandle = \case
-    ReflexHandle{triggerChan, postBuild, requesterStateHandle, requesterSelector} ->
-      ReflexHandle{triggerChan, postBuild, requesterStateHandle = mapHandle requesterStateHandle, requesterSelector}
+instance Handle (SpiderData t) where
+  mapHandle = \d@MkSpiderData{} -> d{requesterStateHandle = mapHandle d.requesterStateHandle}
+
+instance Handle (a t) => Handle (Reflex a t) where
+  mapHandle = \ReflexHandle{spiderData, payload} ->
+    ReflexHandle
+      { spiderData = mapHandle spiderData
+      , payload = mapHandle payload
+      }
 
 -- Uncommented: Other available type classes which I don’t want to expose.
 type MonadReflexIO t m =
@@ -68,12 +89,13 @@ type MonadReflex t m =
   , PostBuild t m
   )
 
-performEffEvent :: er :> es => Reflex t er -> Event t (Eff es a) -> Eff es (Event t a)
+performEffEvent :: er :> es => Reflex s t er -> Event t (Eff es a) -> Eff es (Event t a)
 performEffEvent r ev = reflexUnsafe r $ performEvent (liftIO . unsafeUnEff <$> ev)
 
 reflex
-  :: e :> es
-  => Reflex t e
+  :: forall a t e es r
+   . e :> es
+  => Reflex a t e
   -> (forall m. MonadReflex t m => m r)
   -> Eff es r
 reflex r a = reflexUnsafe r a
@@ -81,7 +103,7 @@ reflex r a = reflexUnsafe r a
 reflexIO
   :: (er :> es, eio :> es)
   => IOE eio
-  -> Reflex t er
+  -> Reflex a t er
   -> (forall m. MonadReflexIO t m => m r)
   -> Eff es r
 reflexIO _ r a = reflexUnsafe r a
@@ -89,18 +111,18 @@ reflexIO _ r a = reflexUnsafe r a
 -- | Reflex Actions
 reflexUnsafe
   :: e :> es
-  => Reflex t e
+  => Reflex a t e
   -> (forall m. MonadReflexIO t m => m r)
   -> Eff es r
-reflexUnsafe r@(ReflexHandle{}) act = do
-  preState <- get r.requesterStateHandle
+reflexUnsafe ReflexHandle{spiderData = d@MkSpiderData{}} act = do
+  preState <- get d.requesterStateHandle
   (ret, postState) <-
     UnsafeMkEff
-      . runPerformEventT r.requesterSelector preState
-      . flip runPostBuildT r.postBuild
-      . flip runTriggerEventT r.triggerChan
+      . runPerformEventT d.requesterSelector preState
+      . flip runPostBuildT d.postBuild
+      . flip runTriggerEventT d.triggerChan
       $ act
-  put r.requesterStateHandle postState
+  put d.requesterStateHandle postState
   pure ret
 
 runRequesterT

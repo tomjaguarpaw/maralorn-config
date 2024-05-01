@@ -51,7 +51,7 @@ writeDoc = \io -> \case
     | Text.null d.id.unId -> void $ effIO io $ Wreq.post baseUrl (toJSON d)
     | x <- d.id.unId -> void $ effIO io $ Wreq.put [i|#{baseUrl}/#{x}|] (toJSON d)
 
-watchDB :: (e1 :> es, e2 :> es, Reflex.Reflex t) => IOE e1 -> Reflex t e2 -> Eff es (Dynamic t Docs)
+watchDB :: (e1 :> es, e2 :> es, Reflex.Reflex t) => IOE e1 -> Reflex a t e2 -> Eff es (Dynamic t Docs)
 watchDB = \io r -> do
   initial_seq <- (.last_seq) <$> getCouchJSON @ChangesResp io "_changes?since=now"
   initialDocs <- getDB io

@@ -19,14 +19,13 @@ data Element a where
   PromptElement :: Text -> Text -> (Text -> a) -> Element a
   deriving stock (Functor)
 
-showPage :: (Reflex.Reflex t, e :> es) => Dialog t e -> Dynamic t (Page a) -> Eff es (Event t a)
-showPage MkDialog{run, r} page = do
+showPage :: (Reflex.Reflex t, e :> es) => Reflex Dialog t e -> Dynamic t (Page a) -> Eff es (Event t a)
+showPage r@ReflexHandle{payload = DialogHandle{run}} page = do
   pb <- reflex r getPostBuild
   useImpl do run (leftmost [updated page, current page <@ pb])
 
-data Dialog t e = MkDialog
+newtype Dialog t e = DialogHandle
   { run :: forall a. Event t (Page a) -> Eff e (Event t a)
-  , r :: Reflex t e
   }
 
 line :: Line a -> Page a
