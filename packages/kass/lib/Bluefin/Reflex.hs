@@ -13,6 +13,8 @@ import Reflex.Spider.Internal (HasSpiderTimeline, SpiderHostFrame, runSpiderHost
 
 deriving newtype instance MonadFix (Eff es)
 
+-- TODO: Reflex t a (es :: Effects)
+
 -- | Reflex Effect Handle
 data Reflex t (es :: Effects) where
   ReflexHandle
