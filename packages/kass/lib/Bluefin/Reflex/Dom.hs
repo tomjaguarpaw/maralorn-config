@@ -41,13 +41,6 @@ runReflexDom = \runner html_head body -> withEffToIO \runInIO ->
       (mkWidget runInIO html_head)
       (mkWidget runInIO body)
 
-runWithReplace
-  :: Reflex s t eo
-  -> Eff (eo :& es) a
-  -> (forall ei. Event t (Reflex s t ei -> Eff (ei :& es) a))
-  -> Eff (eo :& es) (a, Event t b)
-runWithReplace = _
-
 mkWidget
   :: (forall r. (forall e1. IOE e1 -> Eff (e1 :& es) r) -> IO r)
   -> BFWidget es
@@ -93,6 +86,7 @@ mkWidget = \runInIO act -> do
                   , jsContext
                   , requesterSelector = domRequesterSelector
                   }
+            , runWithReplaceImpl = _
             }
   unsafeHydrationDomBuilderT . lift . RequesterT $ MTL.put jsmRequesterPost
   unsafeHydrationDomBuilderT

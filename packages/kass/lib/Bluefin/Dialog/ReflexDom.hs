@@ -1,8 +1,3 @@
-{-# LANGUAGE TemplateHaskell #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-
-{-# HLINT ignore "Unused LANGUAGE pragma" #-}
-
 module Bluefin.Dialog.ReflexDom (runDomDialog) where
 
 import Bluefin.Dialog
@@ -69,6 +64,7 @@ runDomDialogBody = \r act ->
                 switchDyn <$> dom r do networkHold (pure never) do ePage <&> renderPage
             }
       , spiderData = r.spiderData
+      , runWithReplaceImpl = _
       }
 
 elClss :: DomBuilder t m => Text -> [Text] -> m a -> m a

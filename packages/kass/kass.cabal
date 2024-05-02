@@ -73,6 +73,7 @@ common common
     PartialTypeSignatures
     QuasiQuotes
     RecursiveDo
+    TemplateHaskell
 
   default-language:   GHC2021
 

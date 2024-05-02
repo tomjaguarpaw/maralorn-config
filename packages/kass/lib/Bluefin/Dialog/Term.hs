@@ -48,6 +48,7 @@ runTermDialog = \io r act ->
                 pure retEv
             }
       , spiderData = mapHandle r.spiderData
+      , runWithReplaceImpl = _
       }
 
 runPage :: e :> es => IOE e -> Page a -> Eff es a

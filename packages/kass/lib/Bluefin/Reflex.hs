@@ -1,3 +1,4 @@
+{-# LANGUAGE UnboxedTuples #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Bluefin.Reflex
@@ -10,10 +11,12 @@ module Bluefin.Reflex
   , performEffEvent
   , runRequesterT
   , runPerformEventT
+  , reflexRunSpiderData
   )
 where
 
-import Bluefin.Internal (Eff (UnsafeMkEff), unsafeUnEff)
+import Bluefin.Internal (Eff (UnsafeMkEff), unsafeUnEff, weakenEff)
+import Bluefin.Internal qualified as BF
 import Control.Concurrent (Chan)
 import Data.Dependent.Sum (DSum)
 import GHC.Base qualified as GHC
@@ -29,6 +32,11 @@ data Reflex a t (es :: Effects) where
   ReflexHandle
     :: { spiderData :: SpiderData t es
        , payload :: a t es
+       , runWithReplaceImpl
+          :: forall e
+           . (forall ei. Reflex a t ei -> Eff (ei :& e) r)
+          -> (forall ei. Event t (Reflex a t ei -> Eff (ei :& e) b))
+          -> Eff (es :& e) (r, Event t b)
        }
     -> Reflex a t es
 
@@ -46,10 +54,11 @@ instance Handle (SpiderData t) where
   mapHandle = \d@MkSpiderData{} -> d{requesterStateHandle = mapHandle d.requesterStateHandle}
 
 instance Handle (a t) => Handle (Reflex a t) where
-  mapHandle = \ReflexHandle{spiderData, payload} ->
+  mapHandle = \ReflexHandle{spiderData, payload, runWithReplaceImpl} ->
     ReflexHandle
       { spiderData = mapHandle spiderData
       , payload = mapHandle payload
+      , runWithReplaceImpl = \initial ev -> weakenEff (BF.bimap BF.has (BF.eq (# #))) $ runWithReplaceImpl initial ev
       }
 
 -- Uncommented: Other available type classes which I don’t want to expose.
@@ -90,7 +99,7 @@ type MonadReflex t m =
   )
 
 performEffEvent :: er :> es => Reflex s t er -> Event t (Eff es a) -> Eff es (Event t a)
-performEffEvent r ev = reflexUnsafe r $ performEvent (liftIO . unsafeUnEff <$> ev)
+performEffEvent r ev = reflexRunSpiderData r.spiderData $ performEvent (liftIO . unsafeUnEff <$> ev)
 
 reflex
   :: forall a t e es r
@@ -98,7 +107,7 @@ reflex
   => Reflex a t e
   -> (forall m. MonadReflex t m => m r)
   -> Eff es r
-reflex r a = reflexUnsafe r a
+reflex r a = reflexRunSpiderData r.spiderData a
 
 reflexIO
   :: (er :> es, eio :> es)
@@ -106,15 +115,24 @@ reflexIO
   -> Reflex a t er
   -> (forall m. MonadReflexIO t m => m r)
   -> Eff es r
-reflexIO _ r a = reflexUnsafe r a
+reflexIO _ r a = reflexRunSpiderData r.spiderData a
 
 -- | Reflex Actions
-reflexUnsafe
+reflexRunSpiderData
   :: e :> es
-  => Reflex a t e
-  -> (forall m. MonadReflexIO t m => m r)
+  => SpiderData t e
+  -> ( forall x
+        . (SpiderTimeline x ~ t, HasSpiderTimeline x)
+       => TriggerEventT
+            (SpiderTimeline x)
+            ( PostBuildT
+                (SpiderTimeline x)
+                (PerformEventT (SpiderTimeline x) (SpiderHost x))
+            )
+            r
+     )
   -> Eff es r
-reflexUnsafe ReflexHandle{spiderData = d@MkSpiderData{}} act = do
+reflexRunSpiderData d@MkSpiderData{} act = do
   preState <- get d.requesterStateHandle
   (ret, postState) <-
     UnsafeMkEff

@@ -27,17 +27,26 @@ runReflexHeadless network =
     initialRequesterState <- lift . lift . PerformEventT . RequesterT $ MTL.get
     requesterSelector <- lift . lift . PerformEventT . RequesterT . lift $ ask
     (ret, finalState) <- liftIO . unsafeUnEff $ runState initialRequesterState \requesterStateHandle ->
-      network
-        ReflexHandle
-          { spiderData =
-              MkSpiderData
-                { triggerChan
-                , postBuild
-                , requesterStateHandle
-                , requesterSelector
-                }
-          , payload = Headless
-          }
+      let
+        spiderData =
+          MkSpiderData
+            { triggerChan
+            , postBuild
+            , requesterStateHandle
+            , requesterSelector
+            }
+        r =
+          ReflexHandle
+            { spiderData
+            , payload = Headless
+            , runWithReplaceImpl = \initial ev ->
+                reflexRunSpiderData spiderData
+                  $ runWithReplace
+                    (liftIO . unsafeUnEff $ initial r)
+                    ((\act -> _ $ act r) <$> ev)
+            }
+       in
+        network r
     lift . lift . PerformEventT . RequesterT $ MTL.put finalState
     pure ret
 
