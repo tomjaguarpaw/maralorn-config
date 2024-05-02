@@ -12,6 +12,8 @@ module Bluefin.Reflex
   , runRequesterT
   , runPerformEventT
   , reflexRunSpiderData
+  , ReflexAction (..)
+  , runWithReplaceEff
   )
 where
 
@@ -33,12 +35,21 @@ data Reflex a t (es :: Effects) where
     :: { spiderData :: SpiderData t es
        , payload :: a t es
        , runWithReplaceImpl
-          :: forall e
-           . (forall ei. Reflex a t ei -> Eff (ei :& e) r)
-          -> (forall ei. Event t (Reflex a t ei -> Eff (ei :& e) b))
+          :: forall e r b
+           . ReflexAction a t e r
+          -> (Event t (ReflexAction a t e b))
           -> Eff (es :& e) (r, Event t b)
        }
     -> Reflex a t es
+
+newtype ReflexAction a t e b = ReflexAction (forall ei. Reflex a t ei -> Eff (ei :& e) b)
+
+runWithReplaceEff
+  :: Reflex a t es
+  -> ReflexAction a t e r
+  -> (Event t (ReflexAction a t e b))
+  -> Eff (es :& e) (r, Event t b)
+runWithReplaceEff = \ReflexHandle{runWithReplaceImpl} -> runWithReplaceImpl
 
 data SpiderData t es where
   MkSpiderData

@@ -51,11 +51,11 @@ inHeadlessApp network = do
         ReflexHandle
           { spiderData
           , payload = Headless
-          , runWithReplaceImpl = \initial ev ->
+          , runWithReplaceImpl = \(ReflexAction initial) ev ->
               reflexRunSpiderData spiderData
                 $ runWithReplace
                   (liftIO . unsafeUnEff $ initial r)
-                  ((\act -> inHeadlessApp (\r' -> act r')) <$> ev)
+                  (ev <&> \(ReflexAction a) -> inHeadlessApp a)
           }
      in
       network r
