@@ -21,36 +21,51 @@ runReflexHeadless
   :: (forall t er. Reflex.Reflex t => Reflex Headless t er -> Eff (er :& es) (Event t a))
   -> Eff es a
 runReflexHeadless network =
-  UnsafeMkEff $ runHeadlessApp do
-    triggerChan <- TriggerEventT ask
-    postBuild <- getPostBuild
-    initialRequesterState <- lift . lift . PerformEventT . RequesterT $ MTL.get
-    requesterSelector <- lift . lift . PerformEventT . RequesterT . lift $ ask
-    (ret, finalState) <- liftIO . unsafeUnEff $ runState initialRequesterState \requesterStateHandle ->
-      let
-        spiderData =
-          MkSpiderData
-            { triggerChan
-            , postBuild
-            , requesterStateHandle
-            , requesterSelector
-            }
-        r =
-          ReflexHandle
-            { spiderData
-            , payload = Headless
-            , runWithReplaceImpl = \initial ev ->
-                reflexRunSpiderData spiderData
-                  $ runWithReplace
-                    (liftIO . unsafeUnEff $ initial r)
-                    ((\act -> _ $ act r) <$> ev)
-            }
-       in
-        network r
-    lift . lift . PerformEventT . RequesterT $ MTL.put finalState
-    pure ret
+  UnsafeMkEff $ runHeadlessApp $ inHeadlessApp network
+
+inHeadlessApp
+  :: HasSpiderTimeline x
+  => (forall er. Reflex Headless (SpiderTimeline x) er -> Eff (er :& es) b)
+  -> TriggerEventT
+      (SpiderTimeline x)
+      ( PostBuildT
+          (SpiderTimeline x)
+          (PerformEventT (SpiderTimeline x) (SpiderHost x))
+      )
+      b
+inHeadlessApp network = do
+  triggerChan <- TriggerEventT ask
+  postBuild <- getPostBuild
+  initialRequesterState <- lift . lift . PerformEventT . RequesterT $ MTL.get
+  requesterSelector <- lift . lift . PerformEventT . RequesterT . lift $ ask
+  (ret, finalState) <- liftIO . unsafeUnEff $ runState initialRequesterState \requesterStateHandle ->
+    let
+      spiderData =
+        MkSpiderData
+          { triggerChan
+          , postBuild
+          , requesterStateHandle
+          , requesterSelector
+          }
+      r =
+        ReflexHandle
+          { spiderData
+          , payload = Headless
+          , runWithReplaceImpl = \initial ev ->
+              reflexRunSpiderData spiderData
+                $ runWithReplace
+                  (liftIO . unsafeUnEff $ initial r)
+                  ((\act -> inHeadlessApp (\r' -> act r')) <$> ev)
+          }
+     in
+      network r
+  lift . lift . PerformEventT . RequesterT $ MTL.put finalState
+  pure ret
 
 data Headless t es = Headless
+
+instance Handle (Headless t) where
+  mapHandle = const Headless
 
 --- Everything below this point is basically copied from Reflex.Host.Headless
 
