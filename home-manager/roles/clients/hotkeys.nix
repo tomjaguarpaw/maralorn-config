@@ -75,9 +75,9 @@ let
             MPD = {
               Lokal = mpdclient "::";
               Athene = mpdclient "athene";
-              Lounge = mpdclient "lounge.w17.io";
-              Kitchen = mpdclient "kitchen.w17.io";
-              Space = mpdclient "burbon.w17.io";
+              Lounge = mpdclient "lounge.cccda.de";
+              Kitchen = mpdclient "kitchen.cccda.de";
+              Space = mpdclient "burbon.cccda.de";
             };
           }
           {
@@ -171,11 +171,11 @@ let
     { "Monitor" = "htop"; }
     {
       W17 = {
-        Strichliste = "firefox https://strichliste.w17.io/#!/user/56";
-        Hub = "firefox https://hub.w17.io";
-        Summer = "ssh door@burbon.w17.io buzzer";
-        Open = "ssh door@burbon.w17.io open";
-        Close = "ssh door@burbon.w17.io close";
+        Strichliste = "firefox https://strichliste.cccda.de/#!/user/56";
+        Hub = "firefox https://hub.cccda.de";
+        Summer = "ssh door@burbon.cccda.de buzzer";
+        Open = "ssh door@burbon.cccda.de open";
+        Close = "ssh door@burbon.cccda.de close";
       };
     }
     { "Dismiss last notification" = "makoctl dismiss"; }
