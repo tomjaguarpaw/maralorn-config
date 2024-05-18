@@ -18,11 +18,7 @@
     };
     flake-parts.inputs.nixpkgs-lib.follows = "nixos-unstable";
     nix-output-monitor = {
-      inputs = {
-        flake-utils.follows = "pre-commit-hooks/flake-utils";
-        #nixpkgs.follows = "nixos-unstable";
-        pre-commit-hooks.follows = "";
-      };
+      inputs.pre-commit-hooks.follows = "";
       url = "git+https://code.maralorn.de/maralorn/nix-output-monitor.git";
     };
     nixos-mailserver = {
