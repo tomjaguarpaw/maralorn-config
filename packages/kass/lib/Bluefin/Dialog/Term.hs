@@ -149,7 +149,7 @@ chooseHotkey used =
     % to \label ->
       ( filter Char.isUpper label
           <> filter Char.isLower label
-          <> label
+          <> filter Char.isDigit label
           <> "enaritudoschlgvfwkxqpmzbä,ö.üj"
           <> ['a' .. 'z']
           <> ['0' .. '9']

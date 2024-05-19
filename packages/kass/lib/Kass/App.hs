@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
+
 module Kass.App where
 
 import Bluefin.Dialog
@@ -6,6 +8,7 @@ import Bluefin.Dialog.Term
 import Bluefin.Reflex
 import Bluefin.Reflex.Dom
 import Bluefin.Reflex.Headless
+import Data.Map.Strict qualified as M
 import Kass.DB
 import Kass.Doc
 import Maralude
@@ -51,44 +54,55 @@ effects = \case
   Save d _ -> Just d
   Next _ -> Nothing
 
--- viewState :: Docs -> NavState -> Page Update
--- viewState = \docs ->
---  \case
---    StartPage ->
---      line (txt "This is Kass. Your assistance to keep, arrange, schedule and succeed.")
---        <> line (txtField "Keep" "" (\t -> Save (newDoc & #content .~ t & #status ?~ Todo) StartPage))
---        <> foldOf
---          ( folded
---              % to
---                ( \e ->
---                    button
---                      (fromMaybe e.id.unId (headOf (#content % lined % folded) e))
---                      (Next (Doc e.id))
---                )
---              % to line
---          )
---          docs
---    Doc id' -> line (txt id'.unId) <> footer
--- where
---  footer = line mempty <> line (button "Back to start" (Next StartPage))
-
 app :: (e1 :> es, e2 :> es, Reflex.Reflex t) => IOE e1 -> Reflex Dialog t e2 -> Eff es ()
-app = \_ r -> mdo
-  -- entries <- watchDB io r
-  -- state <- reflex r $ holdDyn StartPage (nextState <$> newState)
-  -- newState <- showPage r $ viewState <$> entries <*> state
-  -- void $ performEffEvent r $ mapMaybe effects newState <&> writeDoc io
-
-  text r "This is Kass. Your assistance to keep, arrange, schedule and succeed."
-  newline r
-  pb <- reflex r getPostBuild
-  (_, ev) <-
-    runWithReplaceEff
-      r
-      (ReflexAction (`text` "Uninitialized"))
-      ( leftmost [ev', False <$ pb] <&> \case
-          True -> ReflexAction (\r' -> (False <$) <$> button r' "SwitchOff")
-          False -> ReflexAction (\r' -> (True <$) <$> button r' "SwitchOn")
-      )
-  ev' <- reflex r $ switchHold never ev
-  pure ()
+app = \io r -> mdo
+  entries <- watchDB io r
+  void $ performEffEvent r $ mapMaybe effects new_state_ev <&> writeDoc io
+  nav_state <- reflex r $ holdDyn StartPage (nextState <$> new_state_ev)
+  new_state_ev <-
+    dynEffEv r
+      $ nav_state
+      <&> \case
+        StartPage -> ReflexAction \r -> do
+          text r "This is Kass. Your assistance to keep, arrange, schedule and succeed."
+          newline r
+          new_task_ev <- input r "Keep" "" <&> fmap (\t -> Save (newDoc & #content .~ t & #status ?~ Todo) StartPage)
+          newline r
+          dynEffEv r
+            $ entries
+            <&> \docs -> ReflexAction \r -> do
+              doc_evs <- forM docs \e -> do
+                newline r
+                fmap (const (Next (Doc e.id)))
+                  <$> button
+                    r
+                    (fromMaybe e.id.unId (headOf (#content % lined % folded) e))
+              newline r
+              pure $ leftmost $ new_task_ev : M.elems doc_evs
+        Doc id' -> ReflexAction \r -> do
+          ev1 <-
+            dynEffEv r
+              $ (M.lookup id' <$> entries)
+              <&> \case
+                Just doc -> ReflexAction \r -> do
+                  ev' <- case doc.status of
+                    Nothing -> pure never
+                    Just Todo -> button r "☐" <&> fmap (const (Save (doc & #status % _Just .~ Done) (Doc id')))
+                    Just Done -> button r "☑" <&> fmap (const (Save (doc & #status % _Just .~ Todo) (Doc id')))
+                    Just x -> do text r (show x); pure never
+                  new_content_ev <-
+                    input r doc.content doc.content <&> fmap (\new_content -> (Save (doc & #content .~ new_content) (Doc id')))
+                  newline r
+                  ev2 <- button r "Delete" <&> fmap (const (Save (doc & #deleted .~ True) (Doc id')))
+                  pure $ leftmost [ev', ev2, new_content_ev]
+                Nothing -> ReflexAction \r -> do
+                  text r [i|#{id'} missing|]
+                  pure never
+          ev2 <- footer r
+          pure $ leftmost [ev1, ev2]
+  pass
+ where
+  footer :: (e :> es, Reflex.Reflex t) => Reflex Dialog t e -> Eff es (Event t Update)
+  footer = \r -> do
+    newline r
+    fmap (const (Next StartPage)) <$> button r "Back to start"
