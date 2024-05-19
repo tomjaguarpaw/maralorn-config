@@ -10,9 +10,19 @@ data Element t a where
   PromptElement :: Text -> Text -> Element t (Event t Text)
   BreakElement :: Element t ()
 
-render :: forall t e es a. e :> es => Reflex Dialog t e -> Element t a -> Eff es a
-render d e = case d.payload of DialogHandle{render = r} -> useImpl $ r e
+render :: e :> es => Reflex Dialog t e -> Element t a -> Eff es a
+render = \d e -> case d.payload of DialogHandle run -> useImpl $ run e
 
-newtype Dialog t e = DialogHandle
-  { render :: forall a. Element t a -> Eff e a
-  }
+newtype Dialog t e = DialogHandle (forall a. Element t a -> Eff e a)
+
+text :: e :> es => Reflex Dialog t e -> Text -> Eff es ()
+text = \r lbl -> render r (TextElement lbl)
+
+newline :: e :> es => Reflex Dialog t e -> Eff es ()
+newline = \r -> render r (BreakElement)
+
+input :: e :> es => Reflex Dialog t e -> Text -> Text -> Eff es (Event t Text)
+input = \r lbl default' -> render r (PromptElement lbl default')
+
+button :: e :> es => Reflex Dialog t e -> Text -> Eff es (Event t ())
+button = \r lbl -> render r (ButtonElement lbl)

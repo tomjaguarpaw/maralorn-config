@@ -79,16 +79,16 @@ app = \_ r -> mdo
   -- newState <- showPage r $ viewState <$> entries <*> state
   -- void $ performEffEvent r $ mapMaybe effects newState <&> writeDoc io
 
-  render r (TextElement "This is Kass. Your assistance to keep, arrange, schedule and succeed.")
-  render r (BreakElement)
+  text r "This is Kass. Your assistance to keep, arrange, schedule and succeed."
+  newline r
   pb <- reflex r getPostBuild
   (_, ev) <-
     runWithReplaceEff
       r
-      (ReflexAction \r' -> render r' (TextElement "Uninitialized"))
+      (ReflexAction (`text` "Uninitialized"))
       ( leftmost [ev', False <$ pb] <&> \case
-          True -> ReflexAction (\r' -> (False <$) <$> render r' (ButtonElement "SwitchOff"))
-          False -> ReflexAction (\r' -> (True <$) <$> render r' (ButtonElement "SwitchOn"))
+          True -> ReflexAction (\r' -> (False <$) <$> button r' "SwitchOff")
+          False -> ReflexAction (\r' -> (True <$) <$> button r' "SwitchOn")
       )
   ev' <- reflex r $ switchHold never ev
   pure ()

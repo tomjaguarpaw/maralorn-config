@@ -64,19 +64,18 @@ toDialogHandle = go
     ReflexHandle
       { payload =
           DialogHandle
-            { render =
-                unsafeRemoveEff @e' . \case
-                  (x@TextElement{}) -> yield collector . constDyn . one $ SimpleElement x
-                  (x@ButtonElement{}) -> do
-                    (ev, hook) <- reflex r newTriggerEvent
-                    yield collector . constDyn . one $ ResponseElement x hook
-                    pure ev
-                  (x@PromptElement{}) -> do
-                    (ev, hook) <- reflex r newTriggerEvent
-                    yield collector . constDyn . one $ ResponseElement x hook
-                    pure ev
-                  (x@BreakElement{}) -> yield collector . constDyn . one $ SimpleElement x
-            }
+            $ unsafeRemoveEff @e'
+            . \case
+              (x@TextElement{}) -> yield collector . constDyn . one $ SimpleElement x
+              (x@ButtonElement{}) -> do
+                (ev, hook) <- reflex r newTriggerEvent
+                yield collector . constDyn . one $ ResponseElement x hook
+                pure ev
+              (x@PromptElement{}) -> do
+                (ev, hook) <- reflex r newTriggerEvent
+                yield collector . constDyn . one $ ResponseElement x hook
+                pure ev
+              (x@BreakElement{}) -> yield collector . constDyn . one $ SimpleElement x
       , spiderData = mapHandle r.spiderData
       , runWithReplaceImpl = \initial ev -> do
           ((result, initial_dyn), later) <- runWithReplaceImpl (mapAction initial) (mapAction <$> ev)
@@ -103,8 +102,8 @@ runPage = \io page -> forever do
   effIO io do clearScreen; putStr resetColor
   keybinds <- renderPage io page
   effIO io do putStr [i|#{color Magenta}> |]; hFlush stdout
-  input <- effIO io getLine <&> preview (ix 0 % to (`Map.lookup` keybinds) % _Just)
-  whenJust input
+  input' <- effIO io getLine <&> preview (ix 0 % to (`Map.lookup` keybinds) % _Just)
+  whenJust input'
     $ \case
       SimpleHook h -> effIO io h
       PromptHook prompt _ h -> do
