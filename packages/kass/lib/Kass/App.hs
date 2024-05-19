@@ -51,30 +51,44 @@ effects = \case
   Save d _ -> Just d
   Next _ -> Nothing
 
-viewState :: Docs -> NavState -> Page Update
-viewState = \docs ->
-  \case
-    StartPage ->
-      line (txt "This is Kass. Your assistance to keep, arrange, schedule and succeed.")
-        <> line (txtField "Keep" "" (\t -> Save (newDoc & #content .~ t & #status ?~ Todo) StartPage))
-        <> foldOf
-          ( folded
-              % to
-                ( \e ->
-                    button
-                      (fromMaybe e.id.unId (headOf (#content % lined % folded) e))
-                      (Next (Doc e.id))
-                )
-              % to line
-          )
-          docs
-    Doc id' -> line (txt id'.unId) <> footer
- where
-  footer = line mempty <> line (button "Back to start" (Next StartPage))
+-- viewState :: Docs -> NavState -> Page Update
+-- viewState = \docs ->
+--  \case
+--    StartPage ->
+--      line (txt "This is Kass. Your assistance to keep, arrange, schedule and succeed.")
+--        <> line (txtField "Keep" "" (\t -> Save (newDoc & #content .~ t & #status ?~ Todo) StartPage))
+--        <> foldOf
+--          ( folded
+--              % to
+--                ( \e ->
+--                    button
+--                      (fromMaybe e.id.unId (headOf (#content % lined % folded) e))
+--                      (Next (Doc e.id))
+--                )
+--              % to line
+--          )
+--          docs
+--    Doc id' -> line (txt id'.unId) <> footer
+-- where
+--  footer = line mempty <> line (button "Back to start" (Next StartPage))
 
 app :: (e1 :> es, e2 :> es, Reflex.Reflex t) => IOE e1 -> Reflex Dialog t e2 -> Eff es ()
-app = \io r -> mdo
-  entries <- watchDB io r
-  state <- reflex r $ holdDyn StartPage (nextState <$> newState)
-  newState <- showPage r $ viewState <$> entries <*> state
-  void $ performEffEvent r $ mapMaybe effects newState <&> writeDoc io
+app = \_ r -> mdo
+  -- entries <- watchDB io r
+  -- state <- reflex r $ holdDyn StartPage (nextState <$> newState)
+  -- newState <- showPage r $ viewState <$> entries <*> state
+  -- void $ performEffEvent r $ mapMaybe effects newState <&> writeDoc io
+
+  render r (TextElement "This is Kass. Your assistance to keep, arrange, schedule and succeed.")
+  render r (BreakElement)
+  pb <- reflex r getPostBuild
+  (_, ev) <-
+    runWithReplaceEff
+      r
+      (ReflexAction \r' -> render r' (TextElement "Uninitialized"))
+      ( leftmost [ev', False <$ pb] <&> \case
+          True -> ReflexAction (\r' -> (False <$) <$> render r' (ButtonElement "SwitchOff"))
+          False -> ReflexAction (\r' -> (True <$) <$> render r' (ButtonElement "SwitchOn"))
+      )
+  ev' <- reflex r $ switchHold never ev
+  pure ()

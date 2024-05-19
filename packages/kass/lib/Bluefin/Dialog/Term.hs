@@ -1,6 +1,7 @@
 module Bluefin.Dialog.Term (runTermDialog) where
 
 import Bluefin.Dialog
+import Bluefin.Internal (unsafeRemoveEff)
 import Bluefin.Reflex
 import Control.Concurrent.Async qualified as Async
 import Data.Char qualified as Char
@@ -19,53 +20,98 @@ import System.Console.ANSI
   , setSGRCode
   )
 
-data Update a = Return a | Prompt Text Text (Text -> a)
-
 runTermDialog
   :: forall e1 e2 t es a s
-   . (e1 :> es, e2 :> es, Reflex.Reflex t)
+   . (e1 :> es, e2 :> es, Reflex.Reflex t, Handle (s t))
   => IOE e1
   -> Reflex s t e2
   -> (forall e. Reflex Dialog t e -> Eff (e :& es) a)
   -> Eff es a
-runTermDialog = \io r act ->
-  inContext'
-    . inContext'
-    . assoc1Eff
-    . act @(e1 :& e2)
-    $ ReflexHandle
+runTermDialog = \io r act -> do
+  let inner
+        :: Stream (Dynamic t (Seq (ElementData t))) e3
+        -> Eff (e3 :& ((e1 :& e2) :& es)) a
+      inner = \stream ->
+        assoc1Eff
+          $ act
+          $ toDialogHandle (mapHandle stream) (mapHandle r)
+  (elms, a) <-
+    inContext'
+      . inContext'
+      . assoc1Eff
+      $ yieldToList inner
+  pageUpdate <- dynToEv r (distributeListOverDynWith fold elms)
+
+  _ <- runState Nothing $ \thread ->
+    performEffEvent r
+      $ pageUpdate
+      <&> \page -> do
+        whenJustM (get thread) (effIO io . Async.cancel)
+        put thread . Just =<< async io do runPage io page
+  pure a
+
+toDialogHandle
+  :: (Reflex.Reflex t, Handle (h t)) => Stream (Dynamic t (Seq (ElementData t))) e -> Reflex h t e -> Reflex Dialog t e
+toDialogHandle = go
+ where
+  go
+    :: forall h t e e'
+     . (Reflex.Reflex t, Handle (h t))
+    => Stream (Dynamic t (Seq (ElementData t))) e'
+    -> Reflex h t e
+    -> Reflex Dialog t e
+  go = \collector r@ReflexHandle{runWithReplaceImpl} ->
+    ReflexHandle
       { payload =
           DialogHandle
-            { run = \ev -> do
-                (retEv, hook) <- reflex r newTriggerEvent
-                _ <- runState Nothing $ \thread ->
-                  performEffEvent r
-                    $ ev
-                    <&> \page -> do
-                      whenJustM (get thread) (effIO io . Async.cancel)
-                      put thread . Just =<< async io do
-                        effIO io . hook =<< runPage io page
-                pure retEv
+            { render =
+                unsafeRemoveEff @e' . \case
+                  (x@TextElement{}) -> yield collector . constDyn . one $ SimpleElement x
+                  (x@ButtonElement{}) -> do
+                    (ev, hook) <- reflex r newTriggerEvent
+                    yield collector . constDyn . one $ ResponseElement x hook
+                    pure ev
+                  (x@PromptElement{}) -> do
+                    (ev, hook) <- reflex r newTriggerEvent
+                    yield collector . constDyn . one $ ResponseElement x hook
+                    pure ev
+                  (x@BreakElement{}) -> yield collector . constDyn . one $ SimpleElement x
             }
       , spiderData = mapHandle r.spiderData
-      , runWithReplaceImpl = _
+      , runWithReplaceImpl = \initial ev -> do
+          ((result, initial_dyn), later) <- runWithReplaceImpl (mapAction initial) (mapAction <$> ev)
+          let (result_ev, dynEv) = splitE later
+          collected <- reflex r $ join <$> holdDyn initial_dyn dynEv
+          unsafeRemoveEff @e' $ yield collector collected
+          pure (result, result_ev)
       }
+  mapAction
+    :: (Reflex.Reflex t, es :> eb, Handle (h t))
+    => ReflexAction Dialog t es b
+    -> ReflexAction h t eb (b, Dynamic t (Seq (ElementData t)))
+  mapAction = \(ReflexAction act) -> ReflexAction \h -> do
+    (collected, result) <- yieldToList \collector ->
+      inContext $ act $ go collector (mapHandle h)
+    pure (result, distributeListOverDynWith fold collected)
 
-runPage :: e :> es => IOE e -> Page a -> Eff es a
-runPage = \io page -> withEarlyReturn \ret -> forever do
-  effIO io $ do clearScreen; putStr resetColor
+data ElementData t where
+  SimpleElement :: Element t () -> ElementData t
+  ResponseElement :: Element t (Event t a) -> (a -> IO ()) -> ElementData t
+
+runPage :: e :> es => IOE e -> Seq (ElementData t) -> Eff es ()
+runPage = \io page -> forever do
+  effIO io do clearScreen; putStr resetColor
   keybinds <- renderPage io page
   effIO io do putStr [i|#{color Magenta}> |]; hFlush stdout
   input <- effIO io getLine <&> preview (ix 0 % to (`Map.lookup` keybinds) % _Just)
   whenJust input
-    $ returnEarly ret
-    <=< \case
-      Return val -> pure val
-      Prompt prompt _ f -> do
+    $ \case
+      SimpleHook h -> effIO io h
+      PromptHook prompt _ h -> do
         effIO io do
           putStr [i|#{color Magenta}#{prompt}> |]
           hFlush stdout
-          f <$> getLine
+          h =<< getLine
 
 color :: Color -> String
 color c = setSGRCode [SetColor Foreground Vivid c]
@@ -73,23 +119,26 @@ color c = setSGRCode [SetColor Foreground Vivid c]
 resetColor :: String
 resetColor = setSGRCode [SetDefaultColor Foreground]
 
-renderPage :: e :> es => IOE e -> Page a -> Eff es (Map Char (Update a))
-renderPage = \io page -> do
-  execState mempty $ \st -> do
-    let mkBind label update = do
-          keybinds <- get st
-          chooseHotkey (Map.keysSet keybinds) label & maybe
-            (pure label)
-            \key -> do
-              put st $ Map.insert key update keybinds
-              pure [i|#{color Magenta}#{Char.toUpper key}: #{color Blue}#{label}#{resetColor}|]
+data Hook = SimpleHook (IO ()) | PromptHook Text Text (Text -> IO ())
 
-    forM_ page.lines \row -> do
-      elems <- forM row.elems \case
-        TextElement t -> pure t
-        ButtonElement label value -> mkBind label (Return value)
-        PromptElement prompt df f -> mkBind prompt (Prompt prompt df f)
-      effIO io . say . Text.intercalate " " $ elems
+renderPage :: e :> es => IOE e -> Seq (ElementData t) -> Eff es (Map Char Hook)
+renderPage = \io page -> do
+  execState mempty $ \(st :: State (Map Char Hook) st) -> do
+    let
+      mkBind :: st :> es => Text -> Hook -> Eff es Text
+      mkBind label update = do
+        keybinds <- get st
+        chooseHotkey (Map.keysSet keybinds) label & maybe
+          (pure label)
+          \key -> do
+            put st $ Map.insert key update keybinds
+            pure [i|#{color Magenta}#{Char.toUpper key}: #{color Blue}#{label}#{resetColor}|]
+    elms <- forM page \case
+      SimpleElement (TextElement t) -> pure (t <> " ")
+      SimpleElement BreakElement -> pure "\n"
+      ResponseElement (ButtonElement label) hook -> (<> " ") <$> mkBind label (SimpleHook (hook ()))
+      ResponseElement (PromptElement prompt df) hook -> (<> " ") <$> mkBind prompt (PromptHook prompt df hook)
+    effIO io $ say $ Text.intercalate "" $ into elms
 
 execState :: s -> (forall st. State s st -> Eff (st :& es) a) -> Eff es s
 execState s act = snd <$> runState s act

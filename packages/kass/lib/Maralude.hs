@@ -7,6 +7,7 @@ module Maralude
   , module Bluefin.Eff
   , module Bluefin.IO
   , module Bluefin.State
+  , module Bluefin.Stream
   , module Bluefin.Compound
   , module Bluefin.Exception
   , module Bluefin.EarlyReturn
@@ -37,6 +38,7 @@ import Bluefin.IO
 import Bluefin.Internal (In, assoc1Eff, cmp, fstI, inContext, sndI, weakenEff)
 import Bluefin.Internal qualified as BF
 import Bluefin.State
+import Bluefin.Stream hiding (catMaybes, mapMaybe)
 import Control.Concurrent.Async (Async)
 import Control.Concurrent.Async qualified as Async
 import Control.Monad.Fix (MonadFix)

@@ -10,15 +10,14 @@ import Maralude
 import Reflex hiding (Reflex)
 import Reflex qualified
 import Reflex.Dom.Core hiding (Reflex, (.~))
-import Reflex.Network (networkHold)
 
 runDomDialog
   :: e :> es
   => IOE e
   -> ( forall ei
         . ei :> es
-       => BFWidget es
-       -> BFWidget es
+       => BFWidget es ()
+       -> BFWidget es ()
        -> IOE ei
        -> Eff es ()
      )
@@ -42,7 +41,7 @@ runDomDialogHead
   -> Eff es ()
 runDomDialogHead = \r ->
   dom r
-    $ el "style"
+    $ Reflex.Dom.Core.el "style"
     $ text [i|html, body { background: black; height: 100%; }\n#{css}|]
 
 css :: Text
@@ -55,75 +54,72 @@ runDomDialogBody
   -> (forall e. Reflex Dialog t e -> Eff (e :& es) ())
   -> Eff es ()
 runDomDialogBody = \r act ->
-  inContext'
-    . act
-    $ ReflexHandle
+  elClss
+    r
+    "div"
+    [ "p-2"
+    , "absolute"
+    , "inset-0"
+    , "text-4xl"
+    , "lg:text-base"
+    , "font-serif"
+    , "text-white"
+    , "lg:my-2"
+    , "lg:rounded-lg"
+    , "lg:max-w-screen-sm"
+    , "lg:mx-auto"
+    , "bg-indigo-950"
+    ]
+    $ \r' -> act $ domToDialogHandle r'
+
+domToDialogHandle :: Reflex.Reflex t => Reflex Dom t e -> Reflex Dialog t e
+domToDialogHandle = go
+ where
+  go :: Reflex.Reflex t => Reflex Dom t e -> Reflex Dialog t e
+  go = \r@ReflexHandle{runWithReplaceImpl} ->
+    ReflexHandle
       { payload =
           DialogHandle
-            { run = \ePage ->
-                switchDyn <$> dom r do networkHold (pure never) do ePage <&> renderPage
+            { render = \case
+                TextElement txt -> dom r $ text txt
+                ButtonElement label -> dom r $ domButton label
+                PromptElement prompt df -> dom r $ mdo
+                  active <- holdDyn False (True <$ eShow)
+                  ev' <-
+                    dyn
+                      $ active
+                      <&> \case
+                        False -> domButton prompt <&> ($> Left ())
+                        _ -> do
+                          input <-
+                            _inputElement_value
+                              <$> inputElement
+                                ( def
+                                    & lensVL inputElementConfig_initialValue
+                                    .~ df
+                                    & lensVL inputElementConfig_elementConfig
+                                    % lensVL elementConfig_initialAttributes
+                                    %~ ( <>
+                                          "class"
+                                            =: [ "bg-indigo-800"
+                                               , "p-1"
+                                               , "rounded-lg"
+                                               , "focus:bg-purple-900"
+                                               ]
+                                            ^. re worded
+                                       )
+                                )
+                          ev <- domButton "OK"
+                          pure $ Right <$> (current input <@ ev)
+                  (eShow, eSend) <- fanEither <$> switchHold never ev'
+                  pure eSend
+                BreakElement -> Bluefin.Reflex.Dom.el r "br" $ const blank
             }
       , spiderData = r.spiderData
-      , runWithReplaceImpl = _
+      , runWithReplaceImpl = \initial ev -> runWithReplaceImpl (mapAction initial) (mapAction <$> ev)
       }
-
-elClss :: DomBuilder t m => Text -> [Text] -> m a -> m a
-elClss tg clss = elClass tg (clss ^. re worded)
-
-renderPage :: (DomBuilder t m, MonadReflex t m) => Page a -> m (Event t a)
-renderPage = \page -> elClss
-  "div"
-  [ "p-2"
-  , "absolute"
-  , "inset-0"
-  , "text-4xl"
-  , "lg:text-base"
-  , "font-serif"
-  , "text-white"
-  , "lg:my-2"
-  , "lg:rounded-lg"
-  , "lg:max-w-screen-sm"
-  , "lg:mx-auto"
-  , "bg-indigo-950"
-  ]
-  do
-    evs <- forM page.lines \line' ->
-      el "div" $ forM line'.elems \case
-        TextElement t -> do
-          el "span" $ text t
-          pure never
-        ButtonElement label val -> domButton label <&> ($> val)
-        PromptElement prompt df process -> mdo
-          active <- holdDyn False (True <$ eShow)
-          ev' <-
-            dyn
-              $ active
-              <&> \case
-                False -> domButton prompt <&> ($> Left ())
-                _ -> do
-                  input <-
-                    _inputElement_value
-                      <$> inputElement
-                        ( def
-                            & lensVL inputElementConfig_initialValue
-                            .~ df
-                            & lensVL inputElementConfig_elementConfig
-                            % lensVL elementConfig_initialAttributes
-                            %~ ( <>
-                                  "class"
-                                    =: [ "bg-indigo-800"
-                                       , "p-1"
-                                       , "rounded-lg"
-                                       , "focus:bg-purple-900"
-                                       ]
-                                    ^. re worded
-                               )
-                        )
-                  ev <- domButton "OK"
-                  pure $ Right <$> (current input <@ ev)
-          (eShow, eSend) <- fanEither <$> switchHold never ev'
-          pure $ process <$> eSend
-    pure . leftmost . join $ evs
+  mapAction :: Reflex.Reflex t => ReflexAction Dialog t e b -> ReflexAction Dom t e b
+  mapAction = \(ReflexAction act) -> (ReflexAction (act . go))
 
 domButton :: DomBuilder t m => Text -> m (Event t ())
 domButton = \label -> do

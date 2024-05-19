@@ -14,6 +14,9 @@ module Bluefin.Reflex
   , reflexRunSpiderData
   , ReflexAction (..)
   , runWithReplaceEff
+  , dynEffEv
+  , dynEff
+  , dynToEv
   )
 where
 
@@ -24,6 +27,7 @@ import Data.Dependent.Sum (DSum)
 import GHC.Base qualified as GHC
 import Maralude
 import Reflex hiding (Reflex, runRequesterT)
+import Reflex qualified
 import Reflex.Requester.Base.Internal (RequesterState)
 import Reflex.Spider.Internal (HasSpiderTimeline, SpiderHostFrame, runSpiderHostFrame, unEventM)
 
@@ -42,14 +46,33 @@ data Reflex a t (es :: Effects) where
        }
     -> Reflex a t es
 
-newtype ReflexAction a t e b = ReflexAction (forall ei. Reflex a t ei -> Eff (ei :& e) b)
+newtype ReflexAction h t e b = ReflexAction (forall ei. Reflex h t ei -> Eff (ei :& e) b)
 
 runWithReplaceEff
-  :: Reflex a t es
-  -> ReflexAction a t e r
-  -> (Event t (ReflexAction a t e b))
-  -> Eff (es :& e) (r, Event t b)
-runWithReplaceEff = \ReflexHandle{runWithReplaceImpl} -> runWithReplaceImpl
+  :: e :> es
+  => Reflex h t e
+  -> ReflexAction h t es r
+  -> (Event t (ReflexAction h t es b))
+  -> Eff es (r, Event t b)
+runWithReplaceEff = \ReflexHandle{runWithReplaceImpl} -> fmap inContext' <$> runWithReplaceImpl
+
+dynEff
+  :: (Reflex.Reflex t, e :> es) => Reflex h t e -> Dynamic t (ReflexAction h t es b) -> Eff es (Event t b)
+dynEff = \r dyn' -> do
+  in_ev <- dynToEv r dyn'
+  (_, ev) <- runWithReplaceEff r (ReflexAction (const pass)) in_ev
+  pure ev
+
+dynToEv :: (Reflex.Reflex t, e :> es) => Reflex h t e -> Dynamic t a -> Eff es (Event t a)
+dynToEv = \r dyn' -> do
+  pb <- reflex r (getPostBuild)
+  pure (leftmost [updated dyn', current dyn' <@ pb])
+
+dynEffEv
+  :: (Reflex.Reflex t, e :> es) => Reflex h t e -> Dynamic t (ReflexAction h t es (Event t b)) -> Eff es (Event t b)
+dynEffEv = \r dyn' -> do
+  ev <- dynEff r dyn'
+  reflex r $ switchHold never ev
 
 data SpiderData t es where
   MkSpiderData
