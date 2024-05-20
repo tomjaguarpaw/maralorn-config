@@ -1,4 +1,4 @@
 k - keep (collect)
 a - arrange (sort)
 s - schedule (plan)
-s - success (execute)
+s - succeed (execute)
