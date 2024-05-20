@@ -14,6 +14,7 @@ import Kass.Doc
 import Maralude
 import Reflex hiding (Reflex)
 import Reflex qualified
+import Witherable qualified
 
 main :: IO ()
 main = runEff entryPoint
@@ -42,23 +43,22 @@ entryPoint = \io -> do
 
 data NavState = StartPage | Doc Id
 
-data Update = Next NavState | Save Doc NavState
+data Update = Next NavState | Save Doc
+  deriving stock (Generic)
 
-nextState :: Update -> NavState
-nextState = \case
-  Next x -> x
-  Save _ x -> x
-
-effects :: Update -> Maybe Doc
-effects = \case
-  Save d _ -> Just d
-  Next _ -> Nothing
+nextState :: Seq Update -> Maybe NavState
+nextState = lastOf (folded % #_Next)
 
 app :: (e1 :> es, e2 :> es, Reflex.Reflex t) => IOE e1 -> Reflex Dialog t e2 -> Eff es ()
 app = \io r -> mdo
   entries <- watchDB io r
-  void $ performEffEvent r $ mapMaybe effects new_state_ev <&> writeDoc io
-  nav_state <- reflex r $ holdDyn StartPage (nextState <$> new_state_ev)
+  void
+    $ performEffEvent r
+    $ fmap (mapM_ (writeDoc io))
+    . Witherable.filter (not . null)
+    . fmap (toListOf (folded % #_Save))
+    $ new_state_ev
+  nav_state <- reflex r $ holdDyn StartPage (fmapMaybe nextState new_state_ev)
   new_state_ev <-
     dynEffEv r
       $ nav_state
@@ -66,19 +66,16 @@ app = \io r -> mdo
         StartPage -> ReflexAction \r -> do
           text r "This is Kass. Your assistance to keep, arrange, schedule and succeed."
           newline r
-          new_task_ev <- input r "Keep" "" <&> fmap (\t -> Save (newDoc & #content .~ t & #status ?~ Todo) StartPage)
+          new_task_ev <- input r "Keep" "" <&> fmap (\t -> one $ Save (newDoc & #content .~ t & #status ?~ Todo))
           newline r
           dynEffEv r
             $ entries
             <&> \docs -> ReflexAction \r -> do
               doc_evs <- forM docs \e -> do
                 newline r
-                fmap (const (Next (Doc e.id)))
-                  <$> button
-                    r
-                    (fromMaybe e.id.unId (headOf (#content % lined % folded) e))
+                docItem r e
               newline r
-              pure $ leftmost $ new_task_ev : M.elems doc_evs
+              pure $ fold (new_task_ev : M.elems doc_evs)
         Doc id' -> ReflexAction \r -> do
           ev1 <-
             dynEffEv r
@@ -87,13 +84,13 @@ app = \io r -> mdo
                 Just doc -> ReflexAction \r -> do
                   ev' <- case doc.status of
                     Nothing -> pure never
-                    Just Todo -> button r "☐" <&> fmap (const (Save (doc & #status % _Just .~ Done) (Doc id')))
-                    Just Done -> button r "☑" <&> fmap (const (Save (doc & #status % _Just .~ Todo) (Doc id')))
+                    Just Todo -> button r "☐" <&> fmap (const (one $ Save (doc & #status % _Just .~ Done)))
+                    Just Done -> button r "☑" <&> fmap (const (one $ Save (doc & #status % _Just .~ Todo)))
                     Just x -> do text r (show x); pure never
                   new_content_ev <-
-                    input r doc.content doc.content <&> fmap (\new_content -> (Save (doc & #content .~ new_content) (Doc id')))
+                    input r doc.content doc.content <&> fmap (\new_content -> (one $ Save (doc & #content .~ new_content)))
                   newline r
-                  ev2 <- button r "Delete" <&> fmap (const (Save (doc & #deleted .~ True) (Doc id')))
+                  ev2 <- button r "Delete" <&> fmap (const (Save (doc & #deleted .~ True) <| one (Next StartPage)))
                   pure $ leftmost [ev', ev2, new_content_ev]
                 Nothing -> ReflexAction \r -> do
                   text r [i|#{id'} missing|]
@@ -102,7 +99,17 @@ app = \io r -> mdo
           pure $ leftmost [ev1, ev2]
   pass
  where
-  footer :: (e :> es, Reflex.Reflex t) => Reflex Dialog t e -> Eff es (Event t Update)
+  footer :: (e :> es, Reflex.Reflex t) => Reflex Dialog t e -> Eff es (Event t (Seq Update))
   footer = \r -> do
     newline r
-    fmap (const (Next StartPage)) <$> button r "Back to start"
+    fmap (const (one $ Next StartPage)) <$> button r "Back to start"
+
+docItem :: (Reflex.Reflex t, e :> es) => Reflex Dialog t e -> Doc -> Eff es (Event t (Seq Update))
+docItem = \r doc -> do
+  ev' <- case doc.status of
+    Nothing -> pure never
+    Just Todo -> button r "☐" <&> fmap (const (one $ Save (doc & #status % _Just .~ Done)))
+    Just Done -> button r "☑" <&> fmap (const (one $ Save (doc & #status % _Just .~ Todo)))
+    Just x -> do text r (show x); pure never
+  open_ev <- button r doc.content <&> fmap (const (one $ Next (Doc doc.id)))
+  pure $ leftmost [ev', open_ev]
