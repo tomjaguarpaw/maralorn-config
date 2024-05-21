@@ -1,5 +1,12 @@
 { pkgs, ... }:
 {
-  environment.systemPackages = builtins.attrValues { inherit (pkgs) git tig lazygit; };
+  environment.systemPackages = builtins.attrValues {
+    inherit (pkgs)
+      git
+      tig
+      jujutsu
+      lazygit
+      ;
+  };
   programs.git.config.init.defaultBranch = "main";
 }

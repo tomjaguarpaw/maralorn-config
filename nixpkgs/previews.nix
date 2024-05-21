@@ -7,6 +7,7 @@ final: _prev: {
     forgejo # I am apparently stuck here, because forgejo frequently receives
     # updates and when switching back to stable I run into database version
     # conflicts.
+    jujutsu
     forgejo-actions-runner
     nixfmt-rfc-style
     klog-time-tracker # not in 23.11
