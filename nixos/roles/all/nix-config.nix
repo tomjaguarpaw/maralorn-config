@@ -6,6 +6,22 @@
 }:
 {
   nix = {
+    # Extra Option which is on by default: allow-import-from-derivation = true
+    settings = {
+      trusted-public-keys = [ "cache.maralorn.de:nul5zddJUyqgWvtcailq5WMdnqWXMmSY/JOxumIvTdU=" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+        "repl-flake"
+      ];
+      fallback = true;
+      auto-optimise-store = true;
+      builders-use-substitutes = true;
+      keep-derivations = true;
+      keep-outputs = true;
+      warn-dirty = false;
+      trusted-users = [ "maralorn" ];
+    };
     nixPath = [ "nixpkgs=flake:pkgs" ];
 
     registry = {
@@ -24,7 +40,6 @@
         flake = pkgs.flake-inputs.nixos-stable;
       };
     };
-    settings.trusted-users = [ "maralorn" ];
     optimise = {
       dates = [ ];
       automatic = true;
@@ -45,4 +60,26 @@
       cp $(${lib.getExe pkgs.builders-configurator} ${config.networking.hostName} --without-connection) $out
     ''
   );
+
+  systemd.services =
+    let
+      hosts = builtins.attrNames config.services.nginx.virtualHosts;
+      makeConfig = host: {
+        name = "acme-${host}";
+        value = {
+          serviceConfig = {
+            Restart = "on-failure";
+          };
+          unitConfig = {
+            StartLimitIntervalSec = 3000;
+            StartLimitBurst = 3;
+          };
+        };
+      };
+    in
+    {
+      nix-gc.serviceConfig.Type = "oneshot";
+      nix-optimise.serviceConfig.Type = "oneshot";
+    }
+    // builtins.listToAttrs (map makeConfig hosts);
 }
