@@ -3,6 +3,7 @@
   home.packages = [
     pkgs.git-absorb
     pkgs.glab
+    pkgs.lazyjj
   ];
   programs = {
     jujutsu = {
