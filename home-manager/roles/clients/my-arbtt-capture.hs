@@ -38,6 +38,6 @@ main = do
   lswt "--json"
     |> jq
       ( id @String
-          [i|{date:now|strftime("%FT%TZ"),rate:#{sampleRateInSeconds * 1000},inactive:#{inactive},windows:.toplevels | map({title,program:.app_id,active:.activated}),desktop:""}|]
+          [i|{date:now|strftime("%FT%TZ"),rate:#{sampleRateInSeconds * 1000},inactive:#{inactive},windows:.toplevels | map({title,program:.app-id,active:.activated}),desktop:""}|]
       )
     |> arbtt_import "-a" "-t" "JSON"
