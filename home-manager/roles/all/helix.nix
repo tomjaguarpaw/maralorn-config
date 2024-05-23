@@ -63,6 +63,7 @@ in
     );
     sessionVariables = {
       EDITOR = "hx";
+      PAGER = "less -FRX";
       VISUAL = "hx";
     };
   };
