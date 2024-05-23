@@ -15,10 +15,7 @@
   programs = {
     nix-index.enable = true;
     home-manager.enable = true;
-    eza = {
-      enable = true;
-      enableAliases = true;
-    };
+    eza.enable = true;
     direnv = {
       enable = true;
       config.global.warn_timeout = "1h";

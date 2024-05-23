@@ -49,7 +49,6 @@
         # media
         deluge
         vlc
-        syncplay
         esphome # To flash devices
         esptool # provides esptool.py
 

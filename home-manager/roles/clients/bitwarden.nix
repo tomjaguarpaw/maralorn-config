@@ -9,6 +9,7 @@ let
     url = "https://github.com/doy/rbw/raw/9958e9ab02b1db5308f4bb131d2c8687d13cf4fd/bin/rbw-fzf";
     sha256 = "sha256:0yrgdpjfwcwv93yb1vr5rzplp4ak9avaahqn8fic7cxxvccqjcm0";
   };
+  jsonFormat = pkgs.formats.json { };
 in
 {
   home.packages = builtins.attrValues rec {
@@ -43,7 +44,7 @@ in
       rm $file
     '';
     ssh-rbw-privkey = pkgs.writeShellScriptBin "ssh-rbw-privkey" ''
-      ${lib.getExe config.programs.rbw.package} get --folder ssh "sshkey: $1"
+      ${lib.getExe config.programs.rbw.package} get --folder ssh "$1"
     '';
     ssh-rbw-gen = pkgs.writeShellScriptBin "ssh-rbw-gen" ''
       ssh-keygen -ted25519 -C "maralorn.$1@pantheon"
@@ -61,12 +62,11 @@ in
       ${lib.getExe ssh-rbw-add} login
     '';
   };
-  programs.rbw = {
-    enable = true;
-    settings = {
-      email = "bitwarden@maralorn.de";
-      base_url = "https://bitwarden.darmstadt.ccc.de";
-      lock_timeout = 86400; # One day
-    };
+  programs.rbw.enable = true;
+  xdg.configFile."rbw/config.json".source = jsonFormat.generate "rbw-config.json" {
+    email = "bitwarden@maralorn.de";
+    base_url = "https://bitwarden.darmstadt.ccc.de";
+    lock_timeout = 86400; # One day
+    pinentry = lib.getExe pkgs.pinentry;
   };
 }

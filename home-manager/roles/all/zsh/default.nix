@@ -2,7 +2,7 @@
 {
   programs.zsh = {
     enable = true;
-    enableAutosuggestions = true;
+    autosuggestion.enable = true;
     enableCompletion = true;
     shellAliases = {
       nom-build-remote = "nom build --builders @$(builders-configurator $(hostname) --force)";

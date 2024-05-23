@@ -17,66 +17,83 @@ let
       '').outPath
     ];
   };
+  profile = name: config: {
+    profile = {
+      inherit name;
+    } // config;
+  };
 in
 {
   services.kanshi = {
     enable = true;
     systemdTarget = "graphical-session.target";
-    profiles = {
-      desk = openbar "big" [
-        {
-          criteria = "Dell Inc. DELL S2721QS F9SJM43";
-          status = "enable";
-        }
-      ];
-      docked = openbar "big" [
-        {
-          criteria = "Dell Inc. DELL S2721QS F9SJM43";
-          status = "enable";
-        }
-        {
-          criteria = "eDP-1";
-          status = "disable";
-        }
-      ];
-      docked-s = openbar "big" [
-        {
-          criteria = "Dell Inc. DELL S2721QS 77SJM43";
-          status = "enable";
-        }
-        {
-          criteria = "eDP-1";
-          status = "disable";
-        }
-      ];
-      tv.outputs = [
-        {
-          criteria = "*";
-          status = "disable";
-        }
-        {
-          criteria = "Panasonic Industry Company Panasonic-TV 0x00000101";
-          status = "enable";
-          mode = "1920x1080";
-        }
-      ];
-      z-default-single = openbar "small" [
-        {
-          criteria = "eDP-1";
-          status = "enable";
-        }
-      ];
-      z-default-extern = openbar "small" [
-        {
-          criteria = "eDP-1";
-          status = "enable";
-        }
-        {
-          criteria = "*";
-          status = "enable";
-        }
-      ];
-    };
+    settings = [
+      (profile "desk" (
+        openbar "big" [
+          {
+            criteria = "Dell Inc. DELL S2721QS F9SJM43";
+            status = "enable";
+          }
+        ]
+      ))
+      (profile "docked" (
+        openbar "big" [
+          {
+            criteria = "Dell Inc. DELL S2721QS F9SJM43";
+            status = "enable";
+          }
+          {
+            criteria = "eDP-1";
+            status = "disable";
+          }
+        ]
+      ))
+      (profile "docked-s" (
+        openbar "big" [
+          {
+            criteria = "Dell Inc. DELL S2721QS 77SJM43";
+            status = "enable";
+          }
+          {
+            criteria = "eDP-1";
+            status = "disable";
+          }
+        ]
+      ))
+      (profile "tv" ({
+        outputs = [
+          {
+            criteria = "*";
+            status = "disable";
+          }
+          {
+            criteria = "Panasonic Industry Company Panasonic-TV 0x00000101";
+            status = "enable";
+            mode = "1920x1080";
+          }
+        ];
+      }))
+      (profile "default-single" (
+        openbar "small" [
+          {
+            criteria = "eDP-1";
+            status = "enable";
+          }
+        ]
+      ))
+      (profile "default-extern" (
+        openbar "small" [
+          {
+            criteria = "eDP-1";
+            status = "enable";
+          }
+          {
+            criteria = "*";
+            status = "enable";
+          }
+        ]
+      ))
+    ];
   };
   systemd.user.services.kanshi.Service.RestartSec = "3s";
 }
