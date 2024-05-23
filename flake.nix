@@ -26,11 +26,9 @@
         flake-compat.follows = "";
         utils.follows = "";
         nixpkgs.follows = "";
-        nixpkgs-23_05.follows = "";
-        nixpkgs-23_11.follows = "";
         blobs.follows = "";
       };
-      url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git?ref=nixos-23.11";
+      url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git?ref=master";
     };
     home-manager = {
       url = "home-manager/release-24.05";

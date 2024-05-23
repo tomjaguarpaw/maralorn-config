@@ -263,21 +263,19 @@
         "blobs": [],
         "flake-compat": [],
         "nixpkgs": [],
-        "nixpkgs-23_05": [],
-        "nixpkgs-23_11": [],
         "utils": []
       },
       "locked": {
-        "lastModified": 1706219574,
-        "narHash": "sha256-qO+8UErk+bXCq2ybHU4GzXG4Ejk4Tk0rnnTPNyypW4g=",
-        "ref": "nixos-23.11",
-        "rev": "e47f3719f1db3e0961a4358d4cb234a0acaa7baf",
-        "revCount": 576,
+        "lastModified": 1714720456,
+        "narHash": "sha256-e0WFe1BHqX23ADpGBc4ZRu38Mg+GICCZCqyS6EWCbHc=",
+        "ref": "master",
+        "rev": "41059fc548088e49e3ddb3a2b4faeb5de018e60f",
+        "revCount": 585,
         "type": "git",
         "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git"
       },
       "original": {
-        "ref": "nixos-23.11",
+        "ref": "master",
         "type": "git",
         "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git"
       }
