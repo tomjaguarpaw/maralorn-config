@@ -280,6 +280,21 @@
         "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git"
       }
     },
+    "nixos-oldstable": {
+      "locked": {
+        "lastModified": 1716361217,
+        "narHash": "sha256-mzZDr00WUiUXVm1ujBVv6A0qRd8okaITyUp4ezYRgc4=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "46397778ef1f73414b03ed553a3368f0e7e33c2f",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "ref": "nixos-23.11",
+        "type": "indirect"
+      }
+    },
     "nixos-stable": {
       "locked": {
         "lastModified": 1716408587,
@@ -358,6 +373,7 @@
         "nixos-hardware": "nixos-hardware",
         "nixos-infra": "nixos-infra",
         "nixos-mailserver": "nixos-mailserver",
+        "nixos-oldstable": "nixos-oldstable",
         "nixos-stable": "nixos-stable",
         "nixos-unstable": "nixos-unstable",
         "pre-commit-hooks": "pre-commit-hooks",
