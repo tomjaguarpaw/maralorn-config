@@ -10,7 +10,7 @@
 (deflisten networks          :initial "[]" "bash scripts/listen.sh networks")
 (deflisten idle_state        :initial "{\"at\":1000000000000000,\"idle\":false}" "bash scripts/listen.sh idle_state")
 
-(defpoll alerts :interval "1m" :initial "[]" `curl https://alerts.maralorn.de/api/v1/alerts | jq '.data | map(select(.status.state != "suppressed"))'`)
+(defpoll alerts :interval "1m" :initial "[]" `curl https://alerts.maralorn.de/api/v2/alerts | jq 'map(select(.status.state != "suppressed"))'`)
 (defpoll config-state :interval "10m" :initial "unavailable" `curl https://code.maralorn.de/api/v1/repos/maralorn/config/commits/main/status | jq '.state' -r`)
 (defpoll rbw :interval "5s" :initial false "if rbw unlocked; then echo true; else echo false; fi")
 (defpoll host :interval "1440m" :initial "unknown" "cat /etc/hostname")
