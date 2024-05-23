@@ -22,7 +22,6 @@ in
   athene = makeConfig "athene" [
     "impermanent"
     "metal"
-    "servers"
   ];
   hephaistos = makeConfig "hephaistos" [
     "clients"
@@ -30,7 +29,7 @@ in
     "laptops"
     "metal"
   ];
-  hera = makeConfig "hera" [ "servers" ];
+  hera = makeConfig "hera" [ ];
   zeus = makeConfig "zeus" [
     "clients"
     "impermanent"
