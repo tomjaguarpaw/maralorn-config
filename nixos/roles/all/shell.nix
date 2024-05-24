@@ -12,8 +12,8 @@
         line_break.disabled = true;
         nix_shell.format = "[$symbol]($style)";
         character = {
-          success_symbol = "[❯](bold green)";
-          error_symbol = "[❯](bold red)";
+          success_symbol = "[>](bold green)";
+          error_symbol = "[>](bold red)";
         };
         git_branch.only_attached = true;
         git_commit.format = "[$tag]($style)";
