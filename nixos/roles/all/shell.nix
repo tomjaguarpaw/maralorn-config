@@ -25,20 +25,26 @@
           command = ''
             jj log --ignore-working-copy --no-graph --color always -r @ -T '
               separate(" ",
-                branches.join(", "),
-                coalesce(
-                  surround("\"","\"",
-                    if(
-                       description.first_line().substr(0, 24).starts_with(description.first_line()),
-                       description.first_line().substr(0, 24),
-                       description.first_line().substr(0, 23) ++ "…"
-                    )
-                  ),
-                  "Ø"
+                branches.map(|x| if(
+                    x.name().substr(0, 10).starts_with(x.name()),
+                    x.name().substr(0, 10),
+                    x.name().substr(0, 9) ++ "…")
+                  ).join(" "),
+                tags.map(|x| if(
+                    x.name().substr(0, 10).starts_with(x.name()),
+                    x.name().substr(0, 10),
+                    x.name().substr(0, 9) ++ "…")
+                  ).join(" "),
+                surround("\"","\"",
+                  if(
+                     description.first_line().substr(0, 24).starts_with(description.first_line()),
+                     description.first_line().substr(0, 24),
+                     description.first_line().substr(0, 23) ++ "…"
+                  )
                 ),
-                if(conflict, "(conflict)"),
-                if(divergent, "(divergent)"),
-                if(hidden, "(hidden)"),
+                if(conflict, "conflict"),
+                if(divergent, "divergent"),
+                if(hidden, "hidden"),
               )
             '
           '';
@@ -48,9 +54,9 @@
         };
         custom.jjstate = {
           command = ''
-            jj -r@ -l1 --ignore-working-copy --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" "\''${1}󱇨 \''${2}+ \''${3}-" | sd "0. ?" ""
+            jj -r@ -l1 --ignore-working-copy --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" " \''${1}󱇨 \''${2}+ \''${3}-" | sd " 0." ""
           '';
-          style = "bold blue";
+          style = "blue";
           detect_folders = [ ".jj" ];
         };
       };
