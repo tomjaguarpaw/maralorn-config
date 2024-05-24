@@ -35,10 +35,7 @@
 
   security.pam.services."login".failDelay.enable = true;
 
-  users = {
-    defaultUserShell = pkgs.zsh;
-    mutableUsers = false;
-  };
+  users.mutableUsers = false;
 
   environment.variables = lib.genAttrs [
     "CURL_CA_BUNDLE"
@@ -52,16 +49,9 @@
     logind.killUserProcesses = false;
     journald.extraConfig = "SystemMaxUse=5G";
   };
-  programs = {
-    ssh = {
-      extraConfig = pkgs.privateValue "" "ssh-config";
-      startAgent = true;
-    };
-    zsh = {
-      enable = true;
-      autosuggestions.enable = true;
-      enableCompletion = true;
-      syntaxHighlighting.enable = true;
-    };
+
+  programs.ssh = {
+    extraConfig = pkgs.privateValue "" "ssh-config";
+    startAgent = true;
   };
 }

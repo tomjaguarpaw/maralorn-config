@@ -1,6 +1,3 @@
-setopt prompt_subst
-autoload -U colors && colors # Enable colors in prompt
-
 function set_terminal_title() {
   echo -en "\e]2;$@\a"
 }
