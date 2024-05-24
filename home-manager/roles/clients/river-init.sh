@@ -110,6 +110,7 @@ done
 riverctl border-color-focused 0xffffff
 riverctl border-color-unfocused 0xffffff00
 riverctl border-width 1
+riverctl rule-add ssd
 
 # Set keyboard repeat rate
 #riverctl set-repeat 50 300
