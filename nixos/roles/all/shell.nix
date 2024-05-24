@@ -23,10 +23,10 @@
         hostname.format = "[$ssh_symbol$hostname]($style) ";
         custom.jj = {
           command = ''
-            jj -r@ -l1 --no-graph -T "" --stat | tail -n1 | sd " files? changed," " " | sd " insertions?\(\+\)," "+" | sd " deletions?\(\-\)" "-" | sd "0. ?" ""
+            jj -r@ -l1 --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" "\''${1}󱇨 \''${2}+ \''${3}-" | sd "0. ?" ""
           '';
-          symbol = " ";
-          style = "bold purple";
+          symbol = " ";
+          style = "bold blue";
           detect_folders = [ ".jj" ];
         };
       };
