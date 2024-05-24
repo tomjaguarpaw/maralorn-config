@@ -15,17 +15,41 @@
           success_symbol = "[>](bold green)";
           error_symbol = "[>](bold red)";
         };
-        git_branch.only_attached = true;
-        git_commit.format = "[$tag]($style)";
+        git_branch.disabled = true;
+        git_commit.disabled = true;
         git_status.disabled = true;
         time.format = "[$time]($style)";
         username.format = "[$user]($style) ";
         hostname.format = "[$ssh_symbol$hostname]($style) ";
         custom.jj = {
           command = ''
-            jj -r@ -l1 --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" "\''${1}󱇨 \''${2}+ \''${3}-" | sd "0. ?" ""
+            jj log --ignore-working-copy --no-graph --color always -r @ -T '
+              separate(" ",
+                branches.join(", "),
+                coalesce(
+                  surround("\"","\"",
+                    if(
+                       description.first_line().substr(0, 24).starts_with(description.first_line()),
+                       description.first_line().substr(0, 24),
+                       description.first_line().substr(0, 23) ++ "…"
+                    )
+                  ),
+                  "Ø"
+                ),
+                if(conflict, "(conflict)"),
+                if(divergent, "(divergent)"),
+                if(hidden, "(hidden)"),
+              )
+            '
           '';
+          style = "white";
           symbol = " ";
+          detect_folders = [ ".jj" ];
+        };
+        custom.jjstate = {
+          command = ''
+            jj -r@ -l1 --ignore-working-copy --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" "\''${1}󱇨 \''${2}+ \''${3}-" | sd "0. ?" ""
+          '';
           style = "bold blue";
           detect_folders = [ ".jj" ];
         };
