@@ -1,9 +1,12 @@
 { pkgs, ... }:
 {
-  home.packages = [
-    pkgs.graphviz
-    pkgs.typst
-    pkgs.texlive.combined.scheme-full
-    pkgs.parallel
-  ];
+  home.packages = builtins.attrValues {
+    inherit (pkgs)
+      starship
+      graphviz
+      typst
+      parallel
+      ;
+    inherit (pkgs.texlive.combined) scheme-full;
+  };
 }
