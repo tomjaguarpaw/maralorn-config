@@ -54,7 +54,7 @@
         };
         custom.jjstate = {
           command = ''
-            jj -r@ -l1 --ignore-working-copy --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" " \''${1}󱇨 \''${2}+ \''${3}-" | sd " 0." ""
+            jj -r@ -l1 --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" " \''${1}󱇨 \''${2}+ \''${3}-" | sd " 0." ""
           '';
           style = "blue";
           detect_folders = [ ".jj" ];
