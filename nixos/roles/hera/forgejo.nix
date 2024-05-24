@@ -1,12 +1,13 @@
-{ pkgs, config, ... }:
+{ config, ... }:
 let
   inherit (config.m-0) virtualHosts;
 in
 {
-  services.gitea = {
-    package = pkgs.forgejo;
+
+  services.forgejo = {
     enable = true;
-    stateDir = "/var/lib/forgejo";
+    mailerPasswordFile = "/run/credentials/forgejo.service/forgejo-mail-password";
+    database.type = "postgres";
     settings = {
       actions = {
         DEFAULT_ACTIONS_URL = "https://github.com";
@@ -28,20 +29,13 @@ in
         SMTP_PORT = "465";
       };
       session.SESSION_LIFE_TIME = 2419200; # 2 weeks
-      # Required for 1.20 compat delete on 23.11
-      packages.CHUNKED_UPLOAD_PATH = "${config.services.gitea.stateDir}/tmp/package-upload";
     };
-    mailerPasswordFile = "/run/credentials/gitea.service/forgejo-mail-password";
-    appName = "Forgejo";
-    database.type = "postgres";
   };
-  systemd.services.gitea.serviceConfig.LoadCredential = [
+  systemd.services.forgejo.serviceConfig.LoadCredential = [
     "forgejo-mail-password:${config.age.secrets.forgejo-mail-password.path}"
   ];
   services.nginx.virtualHosts.${virtualHosts."code"} = {
-    forceSSL = true;
-    enableACME = true;
-    locations."/".proxyPass = "http://localhost:${toString config.services.gitea.settings.server.HTTP_PORT}";
+    locations."/".proxyPass = "http://localhost:${toString config.services.forgejo.settings.server.HTTP_PORT}";
     extraConfig = ''
       client_max_body_size 0;
     '';
