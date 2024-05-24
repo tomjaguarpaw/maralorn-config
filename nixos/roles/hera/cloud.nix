@@ -41,9 +41,9 @@ let
       apcu = false;
       memcached = false;
     };
+    settings.default_phone_region = "DE";
     config = {
       dbtype = "pgsql";
-      defaultPhoneRegion = "DE";
       adminuser = "maralorn";
       adminpassFile = builtins.toFile "nextcloud-adminpass" adminCreds.adminpass;
     };

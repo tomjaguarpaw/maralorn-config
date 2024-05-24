@@ -60,7 +60,7 @@ in
           }
         ]
       ))
-      (profile "tv" ({
+      (profile "tv" {
         outputs = [
           {
             criteria = "*";
@@ -72,7 +72,7 @@ in
             mode = "1920x1080";
           }
         ];
-      }))
+      })
       (profile "default-single" (
         openbar "small" [
           {
