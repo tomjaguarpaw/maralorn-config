@@ -7,19 +7,27 @@
       enable = true;
       settings = {
         add_newline = false;
-        right_format = "$cmd_duration$haskell$time";
+        right_format = "$nix_shell$cmd_duration$haskell$time";
         time.disabled = false;
         line_break.disabled = true;
         nix_shell.format = "[$symbol]($style)";
         character = {
-          success_symbol = "[λ](bold green)";
-          error_symbol = "[λ](bold red)";
+          success_symbol = "[❯](bold green)";
+          error_symbol = "[❯](bold red)";
         };
-        git_branch.format = "[$symbol]($style)";
+        git_branch.only_attached = true;
         git_commit.format = "[$tag]($style)";
         git_status.disabled = true;
         time.format = "[$time]($style)";
         username.format = "[$user]($style) ";
+        custom.jj = {
+          command = ''
+            jj -r@ -l1 --no-graph -T "" --stat | tail -n1 | sd " files? changed," " " | sd " insertions\(\+\)," "+" | sd " deletions?\(\-\)" "-" | sd "0. ?" ""
+          '';
+          symbol = " ";
+          style = "bold purple";
+          detect_folders = [ ".jj" ];
+        };
       };
     };
     zsh = {
