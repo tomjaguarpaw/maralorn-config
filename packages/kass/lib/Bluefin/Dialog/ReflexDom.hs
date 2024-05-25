@@ -106,10 +106,10 @@ domInput = \prompt default' -> mdo
                     % lensVL elementConfig_initialAttributes
                     %~ ( <>
                           "class"
-                            =: [ "bg-indigo-800"
+                            =: [ "bg-blue-800"
                                , "p-1"
                                , "rounded-lg"
-                               , "focus:bg-blue-900"
+                               , "focus:bg-purple-900"
                                ]
                             ^. re worded
                        )
@@ -131,8 +131,8 @@ domButton = \label -> do
                , "p-2"
                , "m-1"
                , "rounded-lg"
-               , "bg-indigo-800"
-               , "active:bg-blue-900"
+               , "bg-blue-800"
+               , "active:bg-purple-900"
                ]
                 ^. re worded
              )
