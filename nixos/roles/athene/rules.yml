@@ -74,7 +74,7 @@ groups:
 
         # home assistant
         - alert: home_device_unavailable
-          expr: hass_entity_available{domain!~"device_tracker|person"} == 0
+          expr: hass_entity_available{domain!~"device_tracker|person|conversation|update"} == 0
           for: 60m
           labels:
             severity: critical
