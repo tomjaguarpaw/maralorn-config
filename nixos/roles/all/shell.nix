@@ -23,7 +23,7 @@
         hostname.format = "[$ssh_symbol$hostname]($style) ";
         custom.jj = {
           command = ''
-            jj log --ignore-working-copy --no-graph --color always -r @ -T '
+            jj log -r@ -l1 --ignore-working-copy --no-graph --color always  -T '
               separate(" ",
                 branches.map(|x| if(
                     x.name().substr(0, 10).starts_with(x.name()),
@@ -54,7 +54,7 @@
         };
         custom.jjstate = {
           command = ''
-            jj -r@ -l1 --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" " \''${1}󱇨 \''${2}+ \''${3}-" | sd " 0." ""
+            jj log -r@ -l1 --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" " \''${1}󱇨 \''${2}+ \''${3}-" | sd " 0." ""
           '';
           style = "blue";
           detect_folders = [ ".jj" ];
