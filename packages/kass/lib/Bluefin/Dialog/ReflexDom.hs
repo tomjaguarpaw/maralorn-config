@@ -62,7 +62,7 @@ runDomDialogBody = \r act ->
     , "inset-0"
     , "font-serif"
     , "text-white"
-    , "text-2xl"
+    , "text-xl"
     , "lg:text-base"
     , "lg:my-2"
     , "lg:rounded-lg"
