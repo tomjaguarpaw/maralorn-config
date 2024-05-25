@@ -56,11 +56,14 @@ runDomDialogBody = \r act ->
   elClss
     r
     "div"
-    [ "p-2"
+    [ "p-8"
+    , "lg:p-2"
     , "absolute"
     , "inset-0"
     , "font-serif"
     , "text-white"
+    , "text-2xl"
+    , "lg:text-base"
     , "lg:my-2"
     , "lg:rounded-lg"
     , "lg:max-w-screen-sm"
@@ -107,7 +110,7 @@ domInput = \prompt default' -> mdo
                     %~ ( <>
                           "class"
                             =: [ "bg-blue-800"
-                               , "p-1"
+                               , "p-2"
                                , "rounded-lg"
                                , "focus:bg-purple-900"
                                ]
@@ -128,7 +131,9 @@ domButton = \label -> do
           =: "button"
           <> "class"
           =: ( [ "lg:p-0.5"
-               , "p-2"
+               , "lg:px-2"
+               , "p-3"
+               , "px-5"
                , "m-1"
                , "rounded-lg"
                , "bg-blue-800"
