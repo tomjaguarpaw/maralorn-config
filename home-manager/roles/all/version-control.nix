@@ -14,9 +14,9 @@
           email = "mail@maralorn.de";
         };
         ui.default-command = "log";
-        revsets.log = "@ | remotes() | ancestors(remotes().. ~ (::remote_branches() ~ ::branches()),2)";
+        revsets.log = "@ | remotes() | ancestors(remotes().. ~ (::tags() | ::remote_branches() ~ ::branches()),2)";
         revset-aliases = {
-          "remotes()" = "remote_branches(exact:\"main\") | remote_branches(exact:\"master\") | remote_branches(exact:\"develop\") | remote_branches(exact:\"haskell-updates\") | remote_branches(\"nixos-\")";
+          "remotes()" = "remote_branches(exact:main,exact:origin) | remote_branches(exact:master,exact:origin) | remote_branches(exact:develop,exact:origin) | remote_branches(exact:haskell-updates,exact:origin)";
           "immutable_heads()" = "remotes() | (remotes().. & ::~mine()) | tags()";
           short = "@ | remotes() | ancestors(heads(trunks()..) ~ (remote_branches() ~ branches()),2)";
         };
