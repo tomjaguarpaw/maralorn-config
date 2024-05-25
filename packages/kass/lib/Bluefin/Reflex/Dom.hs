@@ -1,4 +1,4 @@
-module Bluefin.Reflex.Dom (Dom, runReflexDomGUI, runReflexDomServer, dom, BFWidget, withDom, elAttr, elClass, el, elClss) where
+module Bluefin.Reflex.Dom (Dom, runReflexDomServer, dom, BFWidget, withDom, elAttr, elClass, el, elClss) where
 
 import Bluefin.Internal (Eff (UnsafeMkEff), unsafeUnEff)
 import Bluefin.Reflex
@@ -7,7 +7,6 @@ import Data.Dependent.Sum (DSum)
 import GHC.Base qualified as GHC
 import Language.Javascript.JSaddle (JSM)
 import Language.Javascript.JSaddle.Warp qualified as Warp
-import Language.Javascript.JSaddle.WebKitGTK qualified as GTK
 import Maralude
 import Reflex hiding (Reflex)
 import Reflex qualified
@@ -129,13 +128,13 @@ inWidget = \act -> do
     $ MTL.put requesterPost
   pure a
 
-runReflexDomGUI
-  :: ei :> es
-  => BFWidget es ()
-  -> BFWidget es ()
-  -> IOE ei
-  -> Eff es ()
-runReflexDomGUI = runReflexDom GTK.run
+-- runReflexDomGUI
+--   :: ei :> es
+--   => BFWidget es ()
+--   -> BFWidget es ()
+--   -> IOE ei
+--   -> Eff es ()
+-- runReflexDomGUI = runReflexDom GTK.run
 
 runReflexDomServer
   :: ei :> es

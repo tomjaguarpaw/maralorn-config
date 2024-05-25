@@ -107,7 +107,6 @@ library
     , exceptions
     , jsaddle
     , jsaddle-warp
-    , jsaddle-webkit2gtk
     , optics
     , primitive
     , ref-tf

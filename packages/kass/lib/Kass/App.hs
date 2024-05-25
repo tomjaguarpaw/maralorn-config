@@ -19,15 +19,13 @@ import Witherable qualified
 main :: IO ()
 main = runEff entryPoint
 
-webAppIO, termAppIO, guiAppIO :: IO ()
+webAppIO, termAppIO :: IO ()
 webAppIO = runEff webApp
 termAppIO = runEff termApp
-guiAppIO = runEff guiApp
 
-webApp, termApp, guiApp :: e :> es => IOE e -> Eff es ()
+webApp, termApp :: e :> es => IOE e -> Eff es ()
 webApp = \io -> runDomDialog io (runReflexDomServer 5344) app
 termApp = \io -> runReflexHeadless (\r -> do runTermDialog io r (app io); pure never)
-guiApp = \io -> runDomDialog io runReflexDomGUI app
 
 entryPoint
   :: e :> es
@@ -37,7 +35,6 @@ entryPoint = \io -> do
   effIO io getArgs >>= \case
     [] -> termApp io
     ["term"] -> termApp io
-    ["gui"] -> guiApp io
     ["web"] -> webApp io
     _ -> error "not implemented"
 
