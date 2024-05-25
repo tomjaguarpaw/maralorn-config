@@ -22,6 +22,8 @@
         username.format = "[$user]($style) ";
         hostname.format = "[$ssh_symbol$hostname]($style) ";
         custom.jj = {
+          when = "jj root";
+          require_repo = true;
           command = ''
             jj log -r@ -l1 --ignore-working-copy --no-graph --color always  -T '
               separate(" ",
@@ -50,14 +52,17 @@
           '';
           style = "white";
           symbol = " ";
-          detect_folders = [ ".jj" ];
         };
         custom.jjstate = {
+          when = "jj root";
+          require_repo = true;
           command = ''
-            jj log -r@ -l1 --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" " \''${1}󱇨 \''${2}+ \''${3}-" | sd " 0." ""
+            jj log -r@ -l1 --no-graph -T "" --stat\
+              | tail -n1\
+              | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" " \''${1}󱇨 \''${2}+ \''${3}-"\
+              | sd " 0." ""
           '';
           style = "blue";
-          detect_folders = [ ".jj" ];
         };
       };
     };
