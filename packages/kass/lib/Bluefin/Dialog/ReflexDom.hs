@@ -59,15 +59,13 @@ runDomDialogBody = \r act ->
     [ "p-2"
     , "absolute"
     , "inset-0"
-    , "text-4xl"
-    , "lg:text-base"
     , "font-serif"
     , "text-white"
     , "lg:my-2"
     , "lg:rounded-lg"
     , "lg:max-w-screen-sm"
     , "lg:mx-auto"
-    , "bg-indigo-950"
+    , "bg-blue-950"
     ]
     $ \r' -> act $ domToDialogHandle r'
 
@@ -111,7 +109,7 @@ domInput = \prompt default' -> mdo
                             =: [ "bg-indigo-800"
                                , "p-1"
                                , "rounded-lg"
-                               , "focus:bg-purple-900"
+                               , "focus:bg-blue-900"
                                ]
                             ^. re worded
                        )
@@ -129,11 +127,12 @@ domButton = \label -> do
       ( "type"
           =: "button"
           <> "class"
-          =: ( [ "p-1"
+          =: ( [ "lg:p-0.5"
+               , "p-2"
                , "m-1"
                , "rounded-lg"
                , "bg-indigo-800"
-               , "active:bg-purple-900"
+               , "active:bg-blue-900"
                ]
                 ^. re worded
              )
