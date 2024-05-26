@@ -18,6 +18,6 @@ timers :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Timer])
 timers = \env ->
   FileWatch.watchFileContents env env.homeDir ".timers"
     <&> R.updated
-      % R.fmapMaybe id
-      % fmap encodeUtf8
-      % R.mapMaybe Aeson.decode'
+    % R.fmapMaybe id
+    % fmap encodeUtf8
+    % R.mapMaybe Aeson.decode'

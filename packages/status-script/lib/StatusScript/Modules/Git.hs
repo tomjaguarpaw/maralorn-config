@@ -45,11 +45,11 @@ gitEvents env mode = do
             dir_events <- forM [git_dir </> dir] \sub_dir -> FileWatch.watchDir env sub_dir False (const True)
             git_dir_event <- FileWatch.watchDir env (git_dir </> dir </> ".git") False (const True)
             git_refs_event <- FileWatch.watchDir env (git_dir </> dir </> ".git/refs") True (const True)
-            pure $
-              mconcat (void <$> dir_events)
-                <> void git_dir_event
-                <> void git_refs_event
-                $> [dir]
+            pure
+              $ mconcat (void <$> dir_events)
+              <> void git_dir_event
+              <> void git_refs_event
+              $> [dir]
           R.throttle 0.2 $ mconcat dir_update_events
   git_dir_events <- (<> git_dirs_event) . R.switchDyn <$> R.networkHold (pure R.never) git_dirs_event'
   let dirs_matching git_pred = do

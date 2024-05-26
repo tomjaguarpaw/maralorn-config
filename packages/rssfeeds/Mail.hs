@@ -66,7 +66,7 @@ main = do
             <*> O.argument
               O.str
               (O.metavar "FOLDER" <> O.help "The maildir to scan for messages.")
-              <**> O.helper
+            <**> O.helper
         )
         O.fullDesc
   res <- runExceptT do

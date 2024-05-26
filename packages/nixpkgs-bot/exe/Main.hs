@@ -277,7 +277,7 @@ getMissingAuthorSubscriptions pr_key author = do
           ==. SQL.val author
           SQL.&&. author_sub
             ^. AuthorSubscriptionUser
-              `notIn` SQL.subSelectList users_subscribed_to_this_pr
+            `notIn` SQL.subSelectList users_subscribed_to_this_pr
       )
     pure author_sub
   pure $ fmap (authorSubscriptionUser . Persist.entityVal) author_subs

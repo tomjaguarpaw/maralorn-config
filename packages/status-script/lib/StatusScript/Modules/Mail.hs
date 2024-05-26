@@ -56,7 +56,7 @@ mail env mode = do
               | on_mode mode' ->
                   CommandUtil.tryCmd (notmuch "search" folder)
                     <&> decodeUtf8
-                      % Text.lines
-                      %> mkWarning subgroup
+                    % Text.lines
+                    %> mkWarning subgroup
             _ -> pure []
   ReflexUtil.concatEvents events

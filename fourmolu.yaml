@@ -9,15 +9,10 @@ single-constraint-parens: never
 single-deriving-parens: never
 unicode: never
 respectful: false
-fixities:
-  - infixl 9 %
-  - infixr 9 .
-  - infixl 8 ^.., ^?, ^.
-  - infixr 8 \#
-  - infixr 5 ++
-  - infixr 6 <>
-  - infixl 4 <$, <$>, $>, <*>, <*, *>, <*>
-  - infixr 4 %~, .~, ?~, !~
-  - infixl 1 >>, >>=, <&>, &
-  - infixr 1 =<<
-  - infixr 0 $, $!
+reexports:
+  - module Maralude exports Data.Functor
+  - module Maralude exports Data.Function
+  - module Maralude exports GHC.Base
+  - module Relude exports Data.Functor
+  - module Relude exports Data.Function
+  - module Relude exports GHC.Base

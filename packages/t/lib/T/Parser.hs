@@ -117,10 +117,9 @@ parsePrism prism = token (preview prism) mempty
 
 parseLine :: LineParserT m Line
 parseLine =
-  uncurry Heading
-    <$> parseHeading <|> do
-      i <- parseIndent
-      choice [Blank <$ eof, Task i <$> try parseTask, Other i <$> restOfLine]
+  uncurry Heading <$> parseHeading <|> do
+    i <- parseIndent
+    choice [Blank <$ eof, Task i <$> try parseTask, Other i <$> restOfLine]
 
 parseHeading :: LineParserT m (Int, Text)
 parseHeading = do
