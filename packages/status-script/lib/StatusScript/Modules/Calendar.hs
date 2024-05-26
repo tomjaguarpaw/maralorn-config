@@ -53,23 +53,23 @@ calendar = \env -> do
               , "@=@{start}@@@{end}@@@{title}@@@{description}@@@{location}@@@{calendar}"
               ]
           )
-    pure
-      $ appointments
-      & Text.splitOn "@=@"
-      %> Text.splitOn "@@@"
-      %>> cleanString
-      % mapMaybe \case
-        [start', end, title, description, location, calendar'] ->
-          Just
-            $ MkAppointment
-              { start = start'
-              , end
-              , title
-              , description
-              , location
-              , calendar = calendar'
-              }
-        _ -> Nothing
+    pure $
+      appointments
+        & Text.splitOn "@=@"
+          %> Text.splitOn "@@@"
+          %>> cleanString
+          % mapMaybe \case
+            [start', end, title, description, location, calendar'] ->
+              Just $
+                MkAppointment
+                  { start = start'
+                  , end
+                  , title
+                  , description
+                  , location
+                  , calendar = calendar'
+                  }
+            _ -> Nothing
 
 cleanString :: Text -> Text
 cleanString = Text.replace "\"" "" . Text.intercalate "\\n" . Text.lines . Text.strip

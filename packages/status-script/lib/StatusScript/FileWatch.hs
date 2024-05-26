@@ -62,9 +62,9 @@ watchFileContents env dir file = do
   read =
     readFileBS (dir </> file)
       & Exception.try @Exception.IOException
-      <&> either
-        (const Nothing)
-        ( ByteStringChar.strip
-            % decodeUtf8Strict @Text
-            % hush
-        )
+        <&> either
+          (const Nothing)
+          ( ByteStringChar.strip
+              % decodeUtf8Strict @Text
+              % hush
+          )

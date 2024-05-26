@@ -33,9 +33,9 @@ foldJsonLines = \next_line -> \case
         ( []
         , (next_line : unparsed_lines)
             & reverse
-            %> fromStrict
-            % LazyByteStringChar.unlines
-            % Aeson.decode
+              %> fromStrict
+              % LazyByteStringChar.unlines
+              % Aeson.decode
         )
   (unparsed_lines, _) -> (next_line : unparsed_lines, Nothing)
 
@@ -105,7 +105,7 @@ mkInfos = \objects ->
       let raw = get_info id' ["props", "node.description"] & fromMaybe "unknown"
        in find (fst % (`Text.isInfixOf` raw)) aliases
             & fmap snd
-            % fromMaybe raw
+              % fromMaybe raw
     find_volume :: Int -> Maybe Double
     find_volume = \id' ->
       get_info id' ["params", "Props"]
@@ -123,25 +123,25 @@ mkInfos = \objects ->
     defaults =
       objects
         & toList
-        % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Metadata")
-        % mapMaybe [get|.metadata|]
+          % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Metadata")
+          % mapMaybe [get|.metadata|]
         & join
-        % filter (extractJSON ["key"] % (`elem` [Just "default.audio.sink", Just "default.audio.source"]))
-        % mapMaybe (extractJSON ["value", "name"])
+          % filter (extractJSON ["key"] % (`elem` [Just "default.audio.sink", Just "default.audio.source"]))
+          % mapMaybe (extractJSON ["value", "name"])
     links =
       objects
         & toList
-        % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Link")
-        %> [get|.info|]
-        % mapMaybe (\info -> (,) <$> extractJSON ["input-node-id"] info <*> extractJSON ["output-node-id"] info)
-        %> (second IntSet.singleton)
-        % IntMap.fromListWith (<>)
+          % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Link")
+          %> [get|.info|]
+          % mapMaybe (\info -> (,) <$> extractJSON ["input-node-id"] info <*> extractJSON ["output-node-id"] info)
+          %> (second IntSet.singleton)
+          % IntMap.fromListWith (<>)
     endpoints =
       objects
         & toList
-        % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Node")
-        % filter ([get|.info|] % extractJSON ["props", "media.class"] % (`elem` [Just "Audio/Sink", Just "Audio/Source"]))
-        %> [get|.id|]
+          % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Node")
+          % filter ([get|.info|] % extractJSON ["props", "media.class"] % (`elem` [Just "Audio/Sink", Just "Audio/Source"]))
+          %> [get|.id|]
    in
     endpoints
       <&> ( \endpoint ->

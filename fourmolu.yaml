@@ -9,6 +9,10 @@ single-constraint-parens: never
 single-deriving-parens: never
 unicode: never
 respectful: false
+fixities:
+  - infixr 0 $
+  - infixl 1 &
+  - infixr 9 .
 reexports:
   - module Maralude exports Data.Functor
   - module Maralude exports Data.Function

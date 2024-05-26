@@ -30,30 +30,30 @@ playerModule = \env -> do
     mpd_host <-
       [i|#{home}/.config/mpDris2/mpDris2.conf|]
         & readFileBS
-        % Exception.try @Exception.IOException
-        %> fromRight ""
-        %> decodeUtf8
-        %> lines
-        %> mapMaybe (Text.stripPrefix "host = ")
-        %> find (/= "::")
-        %> fmap (" " <>)
-        %> fromMaybe ""
-    pure
-      $ player_states
-      & decodeUtf8
-      % Text.lines
-      %> Text.splitOn "@@@"
-      % mapMaybe
-        ( \case
-            [name, status, title] ->
-              Just
-                $ MkPlayerState
-                  { name = if name == "mpd" then name <> mpd_host else name
-                  , title = cleanTitle title
-                  , status = status
-                  }
-            _ -> Nothing
-        )
+          % Exception.try @Exception.IOException
+          %> fromRight ""
+          %> decodeUtf8
+          %> lines
+          %> mapMaybe (Text.stripPrefix "host = ")
+          %> find (/= "::")
+          %> fmap (" " <>)
+          %> fromMaybe ""
+    pure $
+      player_states
+        & decodeUtf8
+          % Text.lines
+          %> Text.splitOn "@@@"
+          % mapMaybe
+            ( \case
+                [name, status, title] ->
+                  Just $
+                    MkPlayerState
+                      { name = if name == "mpd" then name <> mpd_host else name
+                      , title = cleanTitle title
+                      , status = status
+                      }
+                _ -> Nothing
+            )
 
 cleanList :: [Text]
 cleanList =
