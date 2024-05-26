@@ -247,8 +247,8 @@ type RateLimitSchema = [GraphQL.unwrap| (GraphQL.API.PullRequestSchema).rateLimi
 
 extractPR :: PRSchema -> App (PullRequest, Maybe Merge, Text)
 extractPR pr = do
-  when (isNothing [get|pr.mergeCommit|] && [get|pr.merged|])
-    $ MonadCatch.throwM ("PR is merged but has no merge commit:" <> show pr :: Text)
+  when (isNothing [get|pr.mergeCommit|] && [get|pr.merged|]) $
+    MonadCatch.throwM ("PR is merged but has no merge commit:" <> show pr :: Text)
   pure
     ( PullRequest
         { pullRequestNumber = [get|pr.number|]
@@ -277,7 +277,7 @@ getMissingAuthorSubscriptions pr_key author = do
           ==. SQL.val author
           SQL.&&. author_sub
             ^. AuthorSubscriptionUser
-            `notIn` SQL.subSelectList users_subscribed_to_this_pr
+              `notIn` SQL.subSelectList users_subscribed_to_this_pr
       )
     pure author_sub
   pure $ fmap (authorSubscriptionUser . Persist.entityVal) author_subs
@@ -326,9 +326,9 @@ ensureSubscriptions pr_key author missing_subscriptions = do
   forM_ missing_subscriptions \user -> void $ Persist.insertUnique_ (Subscription user pr_key)
   pr_msg <- mapM prHTML =<< getPRInfo pr_key
   forM_ pr_msg \msg -> forM_ missing_subscriptions \user ->
-    sendMessageToUser user
-      $ m ("Because you are following user " <> author <> " I subscribed you to the pull request ")
-      <> msg
+    sendMessageToUser user $
+      m ("Because you are following user " <> author <> " I subscribed you to the pull request ")
+        <> msg
 
 {- | This function
  | 1. Looks if a commit is a known merge commit, and marks as arrived.
@@ -341,12 +341,12 @@ findSubscribedPRsInCommitList branch possible_new_merge_commits =
   fmap join . mapM \change ->
     either id id <$> runExceptT do
       found_by_merge_commit <-
-        lift
-          $ fmap (unMergeKey . Persist.entityKey)
-          <$> SQL.select do
-            merge <- SQL.from $ SQL.table @Merge
-            SQL.where_ (merge ^. MergeCommit ==. SQL.val (commitId change))
-            pure merge
+        lift $
+          fmap (unMergeKey . Persist.entityKey)
+            <$> SQL.select do
+              merge <- SQL.from $ SQL.table @Merge
+              SQL.where_ (merge ^. MergeCommit ==. SQL.val (commitId change))
+              pure merge
       unless (null found_by_merge_commit) (Except.throwError found_by_merge_commit)
       -- Branches which beginn with "nix" are channel branches and we don‘t scan those for new merge_commits.
       when (Text.isPrefixOf "nix" branch) $ Except.throwError []
@@ -426,9 +426,11 @@ watchRepo = do
     let author = subscriptionUser $ head subscriptionsByUser
         prs = toList $ subscriptionPullRequest <$> subscriptionsByUser
     prMsgs <- sequence =<< mapMaybeM (fmap (fmap prHTML) . getPRInfo) prs
-    sendMessageToUser author $ unlinesMsg $ msg
-      : m ("Including these " <> show (length prMsgs) <> " pull requests you subscribed to:")
-      : prMsgs
+    sendMessageToUser author $
+      unlinesMsg $
+        msg
+          : m ("Including these " <> show (length prMsgs) <> " pull requests you subscribed to:")
+          : prMsgs
   unsubscribeFromFinishedPRs
   -- Run some maintenance daily
   whenTimeIsUp lastMaintenance (60 * 60 * 24) maintenance
@@ -451,11 +453,11 @@ dropUnsubscribedPRs :: App ()
 dropUnsubscribedPRs = do
   SQL.delete do
     pr <- SQL.from $ SQL.table @PullRequest
-    SQL.where_
-      $ (pr ^. PullRequestId)
-      `notIn` SQL.subList_select do
-        sub <- SQL.from $ SQL.table @Subscription
-        pure (sub ^. SubscriptionPullRequest)
+    SQL.where_ $
+      (pr ^. PullRequestId)
+        `notIn` SQL.subList_select do
+          sub <- SQL.from $ SQL.table @Subscription
+          pure (sub ^. SubscriptionPullRequest)
 
 unsubscribeFromFinishedPRs :: App ()
 unsubscribeFromFinishedPRs = do
@@ -469,10 +471,10 @@ unsubscribeFromFinishedPRs = do
         pure sub
       forM_ subs \sub -> do
         pr_html <- prHTML (SQL.entityVal pr, [])
-        sendMessageToUser (subscriptionUser (Persist.entityVal sub))
-          $ m "Your subscription of pr "
-          <> pr_html
-          <> m " has ended, because it reached all relevant branches."
+        sendMessageToUser (subscriptionUser (Persist.entityVal sub)) $
+          m "Your subscription of pr "
+            <> pr_html
+            <> m " has ended, because it reached all relevant branches."
       SQL.delete do
         pr_ <- SQL.from $ SQL.table @PullRequest
         SQL.where_ (pr_ ^. PullRequestId ==. SQL.val (SQL.entityKey pr))
@@ -480,40 +482,40 @@ unsubscribeFromFinishedPRs = do
 deleteUnusedQueries :: App ()
 deleteUnusedQueries = SQL.delete do
   query <- SQL.from $ SQL.table @Query
-  SQL.where_
-    $ (query ^. QueryUser)
-    `notIn` SQL.subList_select do
-      sub <- SQL.from $ SQL.table @Subscription
-      pure (sub ^. SubscriptionUser)
-    &&. (query ^. QueryUser)
+  SQL.where_ $
+    (query ^. QueryUser)
       `notIn` SQL.subList_select do
-        sub <- SQL.from $ SQL.table @AuthorSubscription
-        pure (sub ^. AuthorSubscriptionUser)
+        sub <- SQL.from $ SQL.table @Subscription
+        pure (sub ^. SubscriptionUser)
+      &&. (query ^. QueryUser)
+        `notIn` SQL.subList_select do
+          sub <- SQL.from $ SQL.table @AuthorSubscription
+          pure (sub ^. AuthorSubscriptionUser)
 
 leaveEmptyRooms :: App ()
 leaveEmptyRooms = do
   session <- getEnv matrixSession
   rooms <- unwrapMatrixError (Matrix.getJoinedRooms session)
   forM_ rooms \room ->
-    whenM ((== 1) . length <$> unwrapMatrixError (Matrix.getRoomMembers session room))
-      $ unwrapMatrixError
-      $ Matrix.leaveRoomById session room
+    whenM ((== 1) . length <$> unwrapMatrixError (Matrix.getRoomMembers session room)) $
+      unwrapMatrixError $
+        Matrix.leaveRoomById session room
 
 sendMessage :: Matrix.RoomID -> MessageText -> App ()
 sendMessage roomId@(Matrix.RoomID roomIdText) message = do
   putTextLn $ "in room" <> roomIdText <> ":\n" <> fst message
   txnId <- Matrix.TxnID . show <$> Random.randomRIO (1000000 :: Int, 9999999)
   session <- getEnv matrixSession
-  void
-    $ unwrapMatrixError
-    $ Matrix.sendMessage
-      session
-      roomId
-      ( Matrix.EventRoomMessage
-          $ Matrix.RoomMessageText
-          $ Matrix.MessageText (fst message) Matrix.NoticeType (Just "org.matrix.custom.html") (Just (snd message))
-      )
-      txnId
+  void $
+    unwrapMatrixError $
+      Matrix.sendMessage
+        session
+        roomId
+        ( Matrix.EventRoomMessage $
+            Matrix.RoomMessageText $
+              Matrix.MessageText (fst message) Matrix.NoticeType (Just "org.matrix.custom.html") (Just (snd message))
+        )
+        txnId
 
 sendMessageToUser :: Text -> MessageText -> App ()
 sendMessageToUser user message = do
@@ -598,8 +600,8 @@ setQueries commands = do
         | queryRoom query == coerce (roomId command) -> pass
         | otherwise -> do
             set_room
-            sendMessageToUser (author command)
-              $ m "Because you sent your most recent message to this room, I will use this room for direct messages to you from now on."
+            sendMessageToUser (author command) $
+              m "Because you sent your most recent message to this room, I will use this room for direct messages to you from now on."
       _ -> do
         putTextLn $ "Setting Query for user " <> author command <> " to " <> coerce (roomId command)
         set_room
@@ -695,16 +697,16 @@ resultHandler syncResult@Matrix.SyncResult{Matrix.srNextBatch, Matrix.srRooms} =
           pure sub
         if null existingSubscriptions && null existingAuthorSubscriptions
           then do
-            pure
-              $ m "I am currently not tracking any pull requests or users for you. Use "
-              <> codeHTML "subscribe"
-              <> m " to change that."
+            pure $
+              m "I am currently not tracking any pull requests or users for you. Use "
+                <> codeHTML "subscribe"
+                <> m " to change that."
           else do
             prMsgs <-
               sequence
                 =<< mapMaybeM (fmap (fmap prHTML) . getPRInfo . subscriptionPullRequest . Persist.entityVal) existingSubscriptions
-            pure
-              $ unlinesMsg
+            pure $
+              unlinesMsg
                 ( m ("I am currently watching the following " <> show (length existingSubscriptions) <> " pull requests for you:")
                     : prMsgs
                       <> [ m
@@ -728,8 +730,8 @@ helpMessage :: App MessageText
 helpMessage = do
   branchList <- join $ getEnv (fmap (intercalateMsgPlain ", ") . mapM branchHTML . Map.keys . branches . config)
   repo_link <- repoLink "" "nixpkgs git repository on github"
-  pure
-    $ unlinesMsg
+  pure $
+    unlinesMsg
       [ m
           "Hey! I am the friendly nixpkgs-bot and I am here to help you notice when pull requests are being merged, so you don‘t need to hammer refresh on github."
       , mempty
@@ -799,8 +801,8 @@ main = do
     fmap sessionStateValue <$> Persist.get (SessionStateKey' "next_batch")
   userId <- unwrapMatrixError $ Matrix.getTokenOwner matrix_session
   filterId <- unwrapMatrixError $ Matrix.createFilter matrix_session userId Matrix.messageFilter
-  unwrapMatrixError
-    $ Matrix.syncPoll
+  unwrapMatrixError $
+    Matrix.syncPoll
       matrix_session
       (Just filterId)
       first_next_batch

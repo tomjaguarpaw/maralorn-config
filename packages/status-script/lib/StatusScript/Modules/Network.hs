@@ -19,5 +19,5 @@ networkState = \env ->
       ReflexUtil.performEventThreaded env monitor_event \_ -> do
         CommandUtil.tryCmd (Shh.exe "nmcli" "-g" "name" "connection" "show" "--active")
           <&> decodeUtf8
-          % lines
-          % filter (/= "lo")
+            % lines
+            % filter (/= "lo")

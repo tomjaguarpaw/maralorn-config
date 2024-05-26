@@ -88,32 +88,32 @@ inWidget = \act -> do
   postBuild <- getPostBuild
   ((a, jsmRequesterPost), requesterPost) <- liftIO $ unsafeUnEff do
     runState requesterPre \requesterStateHandle -> runState jsmRequesterPre \jsmRequesterState ->
-      assoc1Eff
-        $ let
-            r =
-              ReflexHandle
-                { spiderData =
-                    MkSpiderData
-                      { postBuild
-                      , requesterStateHandle = mapHandle requesterStateHandle
-                      , triggerChan
-                      , requesterSelector = reflexRequesterSelector
-                      }
-                , payload =
-                    DomHandle
-                      { env
-                      , jsmRequesterState = mapHandle jsmRequesterState
-                      , jsContext
-                      , requesterSelector = domRequesterSelector
-                      }
-                , runWithReplaceImpl = \(ReflexAction initial) ev ->
-                    runWithDomData r
-                      $ runWithReplace
-                        (liftIO . unsafeUnEff $ initial r)
-                        (ev <&> \(ReflexAction a) -> inWidget a)
-                }
-           in
-            act r
+      assoc1Eff $
+        let
+          r =
+            ReflexHandle
+              { spiderData =
+                  MkSpiderData
+                    { postBuild
+                    , requesterStateHandle = mapHandle requesterStateHandle
+                    , triggerChan
+                    , requesterSelector = reflexRequesterSelector
+                    }
+              , payload =
+                  DomHandle
+                    { env
+                    , jsmRequesterState = mapHandle jsmRequesterState
+                    , jsContext
+                    , requesterSelector = domRequesterSelector
+                    }
+              , runWithReplaceImpl = \(ReflexAction initial) ev ->
+                  runWithDomData r $
+                    runWithReplace
+                      (liftIO . unsafeUnEff $ initial r)
+                      (ev <&> \(ReflexAction a) -> inWidget a)
+              }
+         in
+          act r
   unsafeHydrationDomBuilderT . lift . RequesterT $ MTL.put jsmRequesterPost
   unsafeHydrationDomBuilderT
     . lift
@@ -160,8 +160,8 @@ runWithDomData
 runWithDomData ReflexHandle{spiderData, payload = d@(DomHandle env con _ _)} act = do
   modifyM @es d.jsmRequesterState \jsmPreState ->
     modifyM @es (spiderData.requesterStateHandle) \preState ->
-      UnsafeMkEff
-        $ runWidget
+      UnsafeMkEff $
+        runWidget
           act
           spiderData.requesterSelector
           d.requesterSelector

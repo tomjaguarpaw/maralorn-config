@@ -52,8 +52,8 @@ inHeadlessApp network = do
           { spiderData
           , payload = Headless
           , runWithReplaceImpl = \(ReflexAction initial) ev ->
-              reflexRunSpiderData spiderData
-                $ runWithReplace
+              reflexRunSpiderData spiderData $
+                runWithReplace
                   (liftIO . unsafeUnEff $ initial r)
                   (ev <&> \(ReflexAction a) -> inHeadlessApp a)
           }
@@ -105,20 +105,20 @@ runHeadlessApp guest =
     -- pure the result of the action, and a 'FireCommand' that will be used to
     -- trigger events.
     (result, fc@(FireCommand fire)) <- do
-      hostPerformEventT
-        $ flip runPostBuildT postBuild
-        $ flip runTriggerEventT events
-        $ guest -- Allows the guest app to run
-        -- 'performEvent', so that actions
-        -- (e.g., IO actions) can be run when
-        -- 'Event's fire.
-        -- Allows the guest app to access to
-        -- a "post-build" 'Event'
-        -- Allows the guest app to create new
-        -- events and triggers and write
-        -- those triggers to a channel from
-        -- which they will be read and
-        -- processed.
+      hostPerformEventT $
+        flip runPostBuildT postBuild $
+          flip runTriggerEventT events $
+            guest -- Allows the guest app to run
+            -- 'performEvent', so that actions
+            -- (e.g., IO actions) can be run when
+            -- 'Event's fire.
+            -- Allows the guest app to access to
+            -- a "post-build" 'Event'
+            -- Allows the guest app to create new
+            -- events and triggers and write
+            -- those triggers to a channel from
+            -- which they will be read and
+            -- processed.
 
     -- Read the trigger reference for the post-build event. This will be
     -- 'Nothing' if the guest application hasn't subscribed to this event.
@@ -150,11 +150,10 @@ runHeadlessApp guest =
         ers <- liftIO $ readChan events
         shutdownEventFirings :: [Maybe a] <- do
           -- Fire events that have subscribers.
-          fireEventTriggerRefs fc ers
-            $
+          fireEventTriggerRefs fc ers $
             -- Check if the shutdown 'Event' is firing.
             sequence
-            =<< readEvent shutdown
+              =<< readEvent shutdown
         let
           -- If the shutdown event fires multiple times, take the first one.
           -- Ideally, we should cut off the event loop as soon as this fires,
@@ -174,11 +173,11 @@ runHeadlessApp guest =
     -> ReadPhase m b
     -> m [b]
   fireEventTriggerRefs (FireCommand fire) ers rcb = do
-    mes <- liftIO
-      $ for ers
-      $ \(EventTriggerRef er :=> TriggerInvocation a _) -> do
-        me <- readIORef er
-        pure $ fmap (==> a) me
+    mes <- liftIO $
+      for ers $
+        \(EventTriggerRef er :=> TriggerInvocation a _) -> do
+          me <- readIORef er
+          pure $ fmap (==> a) me
     a <- fire (catMaybes mes) rcb
     liftIO $ for_ ers $ \(_ :=> TriggerInvocation _ cb) -> cb
     pure a

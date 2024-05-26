@@ -45,5 +45,5 @@ main = do
   [out_file, dir] <- getArgs
   now <- Time.getZonedTime
   file_names <- Directory.getDirectoryFiles dir [todayMask now]
-  whenJust (makeFeed now file_names)
-    $ \file -> writeFileLText out_file file
+  whenJust (makeFeed now file_names) $
+    \file -> writeFileLText out_file file

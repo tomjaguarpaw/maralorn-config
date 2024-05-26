@@ -26,7 +26,7 @@ pullNeeded = \env mode -> do
         CommandUtil.tryCmd
           (git "--no-optional-locks" "-C" (env.homeDir </> "git" </> "config") "log" "--oneline" "origin/main" "^main")
           <&> LBSC.lines
-          % length
+            % length
       pure
         [ MkWarning
           { description =

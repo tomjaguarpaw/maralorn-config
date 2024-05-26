@@ -49,51 +49,49 @@ nextState = lastOf (folded % #_Next)
 app :: (e1 :> es, e2 :> es, Reflex.Reflex t) => IOE e1 -> Reflex Dialog t e2 -> Eff es ()
 app = \io r -> mdo
   entries <- watchDB io r
-  void
-    $ performEffEvent r
-    $ fmap (mapM_ (writeDoc io))
-    . Witherable.filter (not . null)
-    . fmap (toListOf (folded % #_Save))
-    $ new_state_ev
+  void $
+    performEffEvent r $
+      fmap (mapM_ (writeDoc io)) . Witherable.filter (not . null) . fmap (toListOf (folded % #_Save)) $
+        new_state_ev
   nav_state <- reflex r $ holdDyn StartPage (fmapMaybe nextState new_state_ev)
   new_state_ev <-
-    dynEffEv r
-      $ nav_state
-      <&> \case
-        StartPage -> ReflexAction \r -> do
-          text r "This is Kass. Your assistance to keep, arrange, schedule and succeed."
-          newline r
-          new_task_ev <- input r "Keep" "" <&> fmap (\t -> one $ Save (newDoc & #content .~ t & #status ?~ Todo))
-          newline r
-          dynEffEv r
-            $ entries
-            <&> \docs -> ReflexAction \r -> do
-              doc_evs <- forM docs \e -> do
-                newline r
-                docItem r e
-              newline r
-              pure $ fold (new_task_ev : M.elems doc_evs)
-        Doc id' -> ReflexAction \r -> do
-          ev1 <-
-            dynEffEv r
-              $ (M.lookup id' <$> entries)
-              <&> \case
-                Just doc -> ReflexAction \r -> do
-                  ev' <- case doc.status of
-                    Nothing -> pure never
-                    Just Todo -> button r "☐" <&> fmap (const (one $ Save (doc & #status % _Just .~ Done)))
-                    Just Done -> button r "☑" <&> fmap (const (one $ Save (doc & #status % _Just .~ Todo)))
-                    Just x -> do text r (show x); pure never
-                  new_content_ev <-
-                    input r doc.content doc.content <&> fmap (\new_content -> (one $ Save (doc & #content .~ new_content)))
+    dynEffEv r $
+      nav_state
+        <&> \case
+          StartPage -> ReflexAction \r -> do
+            text r "This is Kass. Your assistance to keep, arrange, schedule and succeed."
+            newline r
+            new_task_ev <- input r "Keep" "" <&> fmap (\t -> one $ Save (newDoc & #content .~ t & #status ?~ Todo))
+            newline r
+            dynEffEv r $
+              entries
+                <&> \docs -> ReflexAction \r -> do
+                  doc_evs <- forM docs \e -> do
+                    newline r
+                    docItem r e
                   newline r
-                  ev2 <- button r "Delete" <&> fmap (const (Save (doc & #deleted .~ True) <| one (Next StartPage)))
-                  pure $ leftmost [ev', ev2, new_content_ev]
-                Nothing -> ReflexAction \r -> do
-                  text r [i|#{id'} missing|]
-                  pure never
-          ev2 <- footer r
-          pure $ leftmost [ev1, ev2]
+                  pure $ fold (new_task_ev : M.elems doc_evs)
+          Doc id' -> ReflexAction \r -> do
+            ev1 <-
+              dynEffEv r $
+                (M.lookup id' <$> entries)
+                  <&> \case
+                    Just doc -> ReflexAction \r -> do
+                      ev' <- case doc.status of
+                        Nothing -> pure never
+                        Just Todo -> button r "☐" <&> fmap (const (one $ Save (doc & #status % _Just .~ Done)))
+                        Just Done -> button r "☑" <&> fmap (const (one $ Save (doc & #status % _Just .~ Todo)))
+                        Just x -> do text r (show x); pure never
+                      new_content_ev <-
+                        input r doc.content doc.content <&> fmap (\new_content -> (one $ Save (doc & #content .~ new_content)))
+                      newline r
+                      ev2 <- button r "Delete" <&> fmap (const (Save (doc & #deleted .~ True) <| one (Next StartPage)))
+                      pure $ leftmost [ev', ev2, new_content_ev]
+                    Nothing -> ReflexAction \r -> do
+                      text r [i|#{id'} missing|]
+                      pure never
+            ev2 <- footer r
+            pure $ leftmost [ev1, ev2]
   pass
  where
   footer :: (e :> es, Reflex.Reflex t) => Reflex Dialog t e -> Eff es (Event t (Seq Update))

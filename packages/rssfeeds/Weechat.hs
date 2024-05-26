@@ -134,8 +134,8 @@ main = do
           (TextString "Weechat Logs")
           (timestamp now)
   [pathToWrite] <- getArgs
-  whenJust (textFeed feed{feedEntries = entries})
-    $ \file -> writeFileLText pathToWrite file
+  whenJust (textFeed feed{feedEntries = entries}) $
+    \file -> writeFileLText pathToWrite file
 
 today :: T.UTCTime -> T.Day
 today = T.utctDay
@@ -225,10 +225,10 @@ printHTML log = intercalate "\n" $ map printDay days
  where
   days = groupBy ((==) `on` wlDate) log
   printDay ls =
-    intercalate "\n"
-      $ ["<h3>" <> wlDate (head ls) <> "</h3>"]
-      <> toList
-        (printRow <$> zip (WeechatLine "" "" "" "" :| toList ls) ls)
+    intercalate "\n" $
+      ["<h3>" <> wlDate (head ls) <> "</h3>"]
+        <> toList
+          (printRow <$> zip (WeechatLine "" "" "" "" :| toList ls) ls)
   printRow :: (WeechatLine, WeechatLine) -> Text
   printRow (prevRow, curRow) =
     "<i>" <> time <> "</i> <b>" <> printNick <> "</b> " <> message <> "<br>"

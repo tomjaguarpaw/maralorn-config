@@ -75,13 +75,13 @@ main = Notify.withManager \watch_manager -> do
       "warninggroups"
       ( warnings
           <&> fmap (.group)
-          % NonEmpty.group
-          %> ( \group' ->
-                MkWarningGroup
-                  { name = head group'
-                  , count = length group'
-                  }
-             )
+            % NonEmpty.group
+            %> ( \group' ->
+                  MkWarningGroup
+                    { name = head group'
+                    , count = length group'
+                    }
+               )
       )
     PublishSocket.publish env "mode" (ReflexUtil.taggedAndUpdated mode start <&> show)
     player_events <- Player.playerModule env

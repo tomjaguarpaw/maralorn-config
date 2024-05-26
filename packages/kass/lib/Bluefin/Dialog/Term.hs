@@ -32,9 +32,9 @@ runTermDialog = \io r act -> do
         :: Stream (Dynamic t (Seq (ElementData t))) e3
         -> Eff (e3 :& ((e1 :& e2) :& es)) a
       inner = \stream ->
-        assoc1Eff
-          $ act
-          $ toDialogHandle (mapHandle stream) (mapHandle r)
+        assoc1Eff $
+          act $
+            toDialogHandle (mapHandle stream) (mapHandle r)
   (elms, a) <-
     inContext'
       . inContext'
@@ -43,11 +43,11 @@ runTermDialog = \io r act -> do
   pageUpdate <- dynToEv r (distributeListOverDynWith fold elms)
 
   _ <- runState Nothing $ \thread ->
-    performEffEvent r
-      $ pageUpdate
-      <&> \page -> do
-        whenJustM (get thread) (effIO io . Async.cancel)
-        put thread . Just =<< async io do runPage io page
+    performEffEvent r $
+      pageUpdate
+        <&> \page -> do
+          whenJustM (get thread) (effIO io . Async.cancel)
+          put thread . Just =<< async io do runPage io page
   pure a
 
 toDialogHandle
@@ -63,19 +63,19 @@ toDialogHandle = go
   go = \collector r@ReflexHandle{runWithReplaceImpl} ->
     ReflexHandle
       { payload =
-          DialogHandle
-            $ unsafeRemoveEff @e'
-            . \case
-              (x@TextElement{}) -> yield collector . constDyn . one $ SimpleElement x
-              (x@ButtonElement{}) -> do
-                (ev, hook) <- reflex r newTriggerEvent
-                yield collector . constDyn . one $ ResponseElement x hook
-                pure ev
-              (x@PromptElement{}) -> do
-                (ev, hook) <- reflex r newTriggerEvent
-                yield collector . constDyn . one $ ResponseElement x hook
-                pure ev
-              (x@BreakElement{}) -> yield collector . constDyn . one $ SimpleElement x
+          DialogHandle $
+            unsafeRemoveEff @e'
+              . \case
+                (x@TextElement{}) -> yield collector . constDyn . one $ SimpleElement x
+                (x@ButtonElement{}) -> do
+                  (ev, hook) <- reflex r newTriggerEvent
+                  yield collector . constDyn . one $ ResponseElement x hook
+                  pure ev
+                (x@PromptElement{}) -> do
+                  (ev, hook) <- reflex r newTriggerEvent
+                  yield collector . constDyn . one $ ResponseElement x hook
+                  pure ev
+                (x@BreakElement{}) -> yield collector . constDyn . one $ SimpleElement x
       , spiderData = mapHandle r.spiderData
       , runWithReplaceImpl = \initial ev -> do
           ((result, initial_dyn), later) <- runWithReplaceImpl (mapAction initial) (mapAction <$> ev)
@@ -103,8 +103,8 @@ runPage = \io page -> forever do
   keybinds <- renderPage io page
   effIO io do putStr [i|#{color Magenta}> |]; hFlush stdout
   input' <- effIO io getLine <&> preview (ix 0 % to (`Map.lookup` keybinds) % _Just)
-  whenJust input'
-    $ \case
+  whenJust input' $
+    \case
       SimpleHook h -> effIO io h
       PromptHook prompt _ h -> do
         effIO io do
@@ -144,14 +144,14 @@ execState s act = snd <$> runState s act
 
 chooseHotkey :: Set Char -> Text -> Maybe Char
 chooseHotkey used =
-  view
-    $ isomorph
-    % to \label ->
-      ( filter Char.isUpper label
-          <> filter Char.isLower label
-          <> filter Char.isDigit label
-          <> "enaritudoschlgvfwkxqpmzbä,ö.üj"
-          <> ['a' .. 'z']
-          <> ['0' .. '9']
-      )
-        ^? pre (folded % to Char.toLower % filtered (`Set.notMember` used))
+  view $
+    isomorph
+      % to \label ->
+        ( filter Char.isUpper label
+            <> filter Char.isLower label
+            <> filter Char.isDigit label
+            <> "enaritudoschlgvfwkxqpmzbä,ö.üj"
+            <> ['a' .. 'z']
+            <> ['0' .. '9']
+        )
+          ^? pre (folded % to Char.toLower % filtered (`Set.notMember` used))

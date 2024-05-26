@@ -28,12 +28,12 @@ notifications = \env -> do
   ReflexUtil.performEventThreaded env tick \_ ->
     CommandUtil.tryCmd (makoctl "list")
       <&> Aeson.decode @(Schema.Object MakoList)
-      %> [get|.data|]
-      %> join
-      % fromMaybe []
-      %> const
-        MkWarning
-          { group = "notification"
-          , subgroup = Nothing
-          , description = Nothing
-          }
+        %> [get|.data|]
+        %> join
+        % fromMaybe []
+        %> const
+          MkWarning
+            { group = "notification"
+            , subgroup = Nothing
+            , description = Nothing
+            }

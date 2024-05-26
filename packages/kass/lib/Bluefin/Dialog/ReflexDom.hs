@@ -40,8 +40,8 @@ runDomDialogHead
   => Reflex Dom t er
   -> Eff es ()
 runDomDialogHead = \r -> el r "style" $ \r' ->
-  dom r'
-    $ text [i|html, body { background: black; height: 100%; }\n#{css}|]
+  dom r' $
+    text [i|html, body { background: black; height: 100%; }\n#{css}|]
 
 css :: Text
 css = $$(bindCode createCss liftTyped)
@@ -94,31 +94,31 @@ domInput :: (DomBuilder t m, MonadReflex t m) => Text -> Text -> m (Event t Text
 domInput = \prompt default' -> mdo
   active <- holdDyn False (True <$ eShow)
   ev' <-
-    dyn
-      $ active
-      <&> \case
-        False -> domButton prompt <&> ($> Left ())
-        _ -> do
-          input' <-
-            _inputElement_value
-              <$> inputElement
-                ( def
-                    & lensVL inputElementConfig_initialValue
-                    .~ default'
-                    & lensVL inputElementConfig_elementConfig
-                    % lensVL elementConfig_initialAttributes
-                    %~ ( <>
-                          "class"
-                            =: [ "bg-blue-800"
-                               , "p-2"
-                               , "rounded-lg"
-                               , "focus:bg-purple-900"
-                               ]
-                            ^. re worded
-                       )
-                )
-          ev <- domButton "OK"
-          pure $ Right <$> (current input' <@ ev)
+    dyn $
+      active
+        <&> \case
+          False -> domButton prompt <&> ($> Left ())
+          _ -> do
+            input' <-
+              _inputElement_value
+                <$> inputElement
+                  ( def
+                      & lensVL inputElementConfig_initialValue
+                        .~ default'
+                      & lensVL inputElementConfig_elementConfig
+                        % lensVL elementConfig_initialAttributes
+                        %~ ( <>
+                              "class"
+                                =: [ "bg-blue-800"
+                                   , "p-2"
+                                   , "rounded-lg"
+                                   , "focus:bg-purple-900"
+                                   ]
+                                ^. re worded
+                           )
+                  )
+            ev <- domButton "OK"
+            pure $ Right <$> (current input' <@ ev)
   (eShow, eSend) <- fanEither <$> switchHold never ev'
   pure eSend
 
@@ -130,17 +130,17 @@ domButton = \label -> do
       ( "type"
           =: "button"
           <> "class"
-          =: ( [ "lg:p-0.5"
-               , "lg:px-2"
-               , "p-3"
-               , "px-5"
-               , "m-1"
-               , "rounded-lg"
-               , "bg-blue-800"
-               , "active:bg-purple-900"
-               ]
-                ^. re worded
-             )
+            =: ( [ "lg:p-0.5"
+                 , "lg:px-2"
+                 , "p-3"
+                 , "px-5"
+                 , "m-1"
+                 , "rounded-lg"
+                 , "bg-blue-800"
+                 , "active:bg-purple-900"
+                 ]
+                  ^. re worded
+               )
       )
       $ text label
   pure $ domEvent Click e

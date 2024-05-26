@@ -22,8 +22,7 @@ prop = testPropertyWith def{overrideNumTests = Just 1000}
 
 main :: IO ()
 main =
-  defaultMain
-    $
+  defaultMain $
     -- localOption Verbose $
     testGroup
       "PropertyTests"
@@ -86,15 +85,15 @@ prop_docRoundTrip = do
   info $ decodeUtf8 . encode $ d
   let rt = decode @Doc . encode $ d
   assert $ P.satisfies ("isJust", isJust) .$ ("decode . encode", rt)
-  assert
-    $ P.eq
-    .$ ("doc", d)
-    .$ ("decode . encode $ doc", Unsafe.fromJust rt)
+  assert $
+    P.eq
+      .$ ("doc", d)
+      .$ ("decode . encode $ doc", Unsafe.fromJust rt)
 
 prop_reservedFields :: Property ()
 prop_reservedFields = do
   d <- gen doc
-  assert
-    $ P.relatedBy ("isSubsetOf", Set.isSubsetOf)
-    .$ ("keysSet . knownFields $ doc", Map.keysSet . KeyMap.toMapText . knownFields $ d)
-    .$ ("reservedFields", reservedFields)
+  assert $
+    P.relatedBy ("isSubsetOf", Set.isSubsetOf)
+      .$ ("keysSet . knownFields $ doc", Map.keysSet . KeyMap.toMapText . knownFields $ d)
+      .$ ("reservedFields", reservedFields)

@@ -22,12 +22,12 @@ data Command = Run Text | Fork Text deriving (Show)
 instance FromJSON (Menu Command) where
   parseJSON = parseMenu "Hotkeys"
    where
-    parseList name = (fmap (Menu name) .)
-      $ mapM
-      $ \(Key.toText -> key, val) ->
-        case val of
-          String cmd -> pure $ Dialog.Option key (text2cmd cmd)
-          innerObj -> Dialog.SubMenu <$> parseMenu key innerObj
+    parseList name = (fmap (Menu name) .) $
+      mapM $
+        \(Key.toText -> key, val) ->
+          case val of
+            String cmd -> pure $ Dialog.Option key (text2cmd cmd)
+            innerObj -> Dialog.SubMenu <$> parseMenu key innerObj
     unpackMenu (Array arr) = join <$> mapM unpackMenu (reverse $ Foldable.toList arr)
     unpackMenu value = withObject "mapping to menu entries" (pure . reverse . Aeson.toList) value
     parseMenu name = parseList name <=< unpackMenu

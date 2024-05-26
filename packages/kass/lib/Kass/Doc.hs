@@ -106,8 +106,8 @@ instance FromJSON Doc where
     scheduled <- v .:? "scheduled"
     completedRefs <- fromMaybe mempty <$> v .:? "completed_refs"
     priority <- fromMaybe 0 <$> v .:? "priority"
-    pure
-      $ MkDoc
+    pure $
+      MkDoc
         { id = id'
         , rev
         , deleted
@@ -144,7 +144,7 @@ knownFields =
 
 instance ToJSON Doc where
   toJSON = \d ->
-    Object
-      $ KeyMap.union
+    Object $
+      KeyMap.union
         (knownFields d)
         (KeyMap.fromMapText d.rest)

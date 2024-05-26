@@ -64,8 +64,8 @@ watchDB = \io r -> do
         [i|_changes?since=#{last_seq}&feed=longpoll&include_docs=true&heartbeat=true|]
     effIO io $ hook (rowsToMap resp.results)
     put st resp.last_seq
-  reflex r
-    $ foldDyn
+  reflex r $
+    foldDyn
       (\update existing -> Map.filter (not . (.deleted)) $ Map.union update existing)
       initialDocs
       docUpdates

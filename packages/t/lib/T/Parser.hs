@@ -38,7 +38,7 @@ parseFile :: String -> Text -> Either String SectionBody
 parseFile name content =
   mapM (first displayException . parse parseLine name) (Text.lines content)
     >>= first displayException
-    . parse (parseSectionBody 0) name
+      . parse (parseSectionBody 0) name
 
 newtype MyParseFail = MkMyParseFail Text deriving (Eq, Ord, Show) via Text
 
@@ -117,9 +117,10 @@ parsePrism prism = token (preview prism) mempty
 
 parseLine :: LineParserT m Line
 parseLine =
-  uncurry Heading <$> parseHeading <|> do
-    i <- parseIndent
-    choice [Blank <$ eof, Task i <$> try parseTask, Other i <$> restOfLine]
+  uncurry Heading
+    <$> parseHeading <|> do
+      i <- parseIndent
+      choice [Blank <$ eof, Task i <$> try parseTask, Other i <$> restOfLine]
 
 parseHeading :: LineParserT m (Int, Text)
 parseHeading = do
@@ -144,8 +145,8 @@ parseTask = do
       (tags', d1) = List.partition (Text.isPrefixOf "+") $ Text.words d
       (wait', d2) = List.partition (Text.isPrefixOf "wait:") d1
       (dep', d3) = List.partition (Text.isPrefixOf "dep:") d2
-  pure
-    $ MkTask
+  pure $
+    MkTask
       s
       (Text.unwords d3)
       (Set.fromList $ Text.toLower . Text.drop 1 <$> tags')

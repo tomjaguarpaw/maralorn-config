@@ -31,19 +31,19 @@ statusChars =
 
 printTask :: Task -> Text
 printTask t =
-  Text.unwords
-    $ [ Text.singleton (Unsafe.fromJust (List.lookup (t ^. #status) (swap <$> statusChars)))
-      , t ^. #description
-      ]
-    <> t
-    ^.. #tags
-      . folded
-      . to ("+" <>)
+  Text.unwords $
+    [ Text.singleton (Unsafe.fromJust (List.lookup (t ^. #status) (swap <$> statusChars)))
+    , t ^. #description
+    ]
       <> t
-    ^.. #wait
-      . folded
-      . to (("wait:" <>) . show)
+        ^.. #tags
+          . folded
+          . to ("+" <>)
       <> t
-    ^.. #dep
-      . folded
-      . to ("dep:" <>)
+        ^.. #wait
+          . folded
+          . to (("wait:" <>) . show)
+      <> t
+        ^.. #dep
+          . folded
+          . to ("dep:" <>)

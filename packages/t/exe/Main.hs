@@ -67,11 +67,12 @@ getTaskFiles = do
   home <- Dir.getHomeDirectory
   let dir = (home <> "/git/notes")
   paths <- getFilePaths dir
-  paths & fmap concat . mapM \case
-    n -> toListOf (to (parseFile name) . _Right . to (Text.pack name,)) <$> readFileUTF8 n
-     where
-      name :: [Char]
-      name = (\x -> List.take (length x - 2) x) $ drop (length dir + 1) n
+  paths
+    & fmap concat . mapM \case
+      n -> toListOf (to (parseFile name) . _Right . to (Text.pack name,)) <$> readFileUTF8 n
+       where
+        name :: [Char]
+        name = (\x -> List.take (length x - 2) x) $ drop (length dir + 1) n
 
 readFileUTF8 :: FilePath -> IO Text
 readFileUTF8 = fmap decodeUtf8 . readFileBS
@@ -80,10 +81,10 @@ getFilePaths :: FilePath -> IO [FilePath]
 getFilePaths dir =
   Dir.listDirectory dir
     >>= fmap concat
-    . mapM \name -> do
-      isFile <- Dir.doesFileExist (dir </> name)
-      isDir <- Dir.doesDirectoryExist (dir </> name)
-      if
-        | isFile, ".t" `List.isSuffixOf` name -> pure [dir </> name]
-        | isDir -> getFilePaths (dir </> name)
-        | otherwise -> pure []
+      . mapM \name -> do
+        isFile <- Dir.doesFileExist (dir </> name)
+        isDir <- Dir.doesDirectoryExist (dir </> name)
+        if
+          | isFile, ".t" `List.isSuffixOf` name -> pure [dir </> name]
+          | isDir -> getFilePaths (dir </> name)
+          | otherwise -> pure []

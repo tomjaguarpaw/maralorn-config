@@ -33,9 +33,9 @@ main = do
   entries <-
     readFileBS file_path
       <&> fmap (mkEntry now)
-      . zip [0 ..]
-      . lines
-      . decodeUtf8
+        . zip [0 ..]
+        . lines
+        . decodeUtf8
   let
     emptyFeed =
       Feed.nullFeed
@@ -43,8 +43,8 @@ main = do
         (Feed.TextString (toText file_path))
         (timestamp now)
     feed =
-      fromMaybe (error "Could not produce feed.")
-        $ Feed.textFeed
+      fromMaybe (error "Could not produce feed.") $
+        Feed.textFeed
           emptyFeed
             { Feed.feedEntries = entries
             }
