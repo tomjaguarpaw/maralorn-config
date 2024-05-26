@@ -11,6 +11,7 @@ module Bluefin.Reflex
   , performEffEvent
   , runRequesterT
   , runPerformEventT
+  , withReflex
   , reflexRunSpiderData
   , ReflexAction (..)
   , runWithReplaceEff
@@ -56,20 +57,18 @@ runWithReplaceEff
   -> Eff es (r, Event t b)
 runWithReplaceEff = \ReflexHandle{runWithReplaceImpl} -> fmap inContext' <$> runWithReplaceImpl
 
-dynEff
-  :: (Reflex.Reflex t, e :> es) => Reflex h t e -> Dynamic t (ReflexAction h t es b) -> Eff es (Event t b)
+dynEff :: e :> es => Reflex h t e -> Dynamic t (ReflexAction h t es b) -> Eff es (Event t b)
 dynEff = \r dyn' -> do
   in_ev <- dynToEv r dyn'
   (_, ev) <- runWithReplaceEff r (ReflexAction (const pass)) in_ev
   pure ev
 
-dynToEv :: (Reflex.Reflex t, e :> es) => Reflex h t e -> Dynamic t a -> Eff es (Event t a)
+dynToEv :: e :> es => Reflex h t e -> Dynamic t a -> Eff es (Event t a)
 dynToEv = \r dyn' -> do
-  pb <- reflex r (getPostBuild)
-  pure (leftmost [updated dyn', current dyn' <@ pb])
+  pb <- reflex r getPostBuild
+  pure (withReflex r (leftmost [updated dyn', current dyn' <@ pb]))
 
-dynEffEv
-  :: (Reflex.Reflex t, e :> es) => Reflex h t e -> Dynamic t (ReflexAction h t es (Event t b)) -> Eff es (Event t b)
+dynEffEv :: e :> es => Reflex h t e -> Dynamic t (ReflexAction h t es (Event t b)) -> Eff es (Event t b)
 dynEffEv = \r dyn' -> do
   ev <- dynEff r dyn'
   reflex r $ switchHold never ev
@@ -94,6 +93,9 @@ instance Handle (a t) => Handle (Reflex a t) where
       , payload = mapHandle payload
       , runWithReplaceImpl = \initial ev -> weakenEff (BF.bimap BF.has (BF.eq (# #))) $ runWithReplaceImpl initial ev
       }
+
+withReflex :: Reflex h t es -> (Reflex.Reflex t => a) -> a
+withReflex = \ReflexHandle{spiderData = MkSpiderData{}} x -> x
 
 -- Uncommented: Other available type classes which I don’t want to expose.
 type MonadReflexIO t m =

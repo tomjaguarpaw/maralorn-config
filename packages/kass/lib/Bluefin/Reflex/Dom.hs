@@ -144,7 +144,7 @@ runReflexDomServer
   -> IOE ei
   -> Eff es ()
 runReflexDomServer = \port -> runReflexDom \app -> do
-  liftIO $ say "Starting Server ..."
+  liftIO $ say [i|Server is running on http://localhost:#{port} …|]
   Warp.run port app
 
 unsafeUnHydrationDomBuilderT

@@ -92,35 +92,42 @@ domToDialogHandle = go
 
 domInput :: (DomBuilder t m, MonadReflex t m) => Text -> Text -> m (Event t Text)
 domInput = \prompt default' -> mdo
-  active <- holdDyn False (True <$ eShow)
+  active <- holdDyn False eShow
   ev' <-
     dyn $
       active
         <&> \case
-          False -> domButton prompt <&> ($> Left ())
+          False -> domButton prompt <&> ($> Left True)
           _ -> do
             input' <-
               _inputElement_value
                 <$> inputElement
                   ( def
-                      & lensVL inputElementConfig_initialValue
-                        .~ default'
+                      & lensVL inputElementConfig_initialValue .~ default'
                       & lensVL inputElementConfig_elementConfig
                         % lensVL elementConfig_initialAttributes
                         %~ ( <>
                               "class"
-                                =: [ "bg-blue-800"
-                                   , "p-2"
-                                   , "rounded-lg"
-                                   , "focus:bg-purple-900"
-                                   ]
+                                =: (buttonClss <> ["focus:bg-purple-900"])
                                 ^. re worded
                            )
                   )
             ev <- domButton "OK"
-            pure $ Right <$> (current input' <@ ev)
+            ev_hide <- domButton "X"
+            pure $ leftmost [Left False <$ ev_hide, Right <$> (current input' <@ ev)]
   (eShow, eSend) <- fanEither <$> switchHold never ev'
   pure eSend
+
+buttonClss :: [Text]
+buttonClss =
+  [ "lg:p-0.5"
+  , "lg:px-2"
+  , "p-3"
+  , "px-5"
+  , "m-1"
+  , "rounded-lg"
+  , "bg-blue-800"
+  ]
 
 domButton :: DomBuilder t m => Text -> m (Event t ())
 domButton = \label -> do
@@ -129,18 +136,7 @@ domButton = \label -> do
       "button"
       ( "type"
           =: "button"
-          <> "class"
-            =: ( [ "lg:p-0.5"
-                 , "lg:px-2"
-                 , "p-3"
-                 , "px-5"
-                 , "m-1"
-                 , "rounded-lg"
-                 , "bg-blue-800"
-                 , "active:bg-purple-900"
-                 ]
-                  ^. re worded
-               )
+          <> "class" =: (buttonClss <> ["active:bg-purple-900"]) ^. re worded
       )
       $ text label
   pure $ domEvent Click e
