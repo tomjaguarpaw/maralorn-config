@@ -19,7 +19,6 @@ let
         Type = "oneshot";
       };
     };
-    prometheus-nginx-exporter.serviceConfig.RestartSec = 10;
     nextcloud-setup = {
       requires = [
         "postgresql.service"
@@ -60,13 +59,6 @@ in
     redis.servers."".enable = true;
     nextcloud = nextcloudConf mainHostName;
     postgresql.ensureDatabases = [ "nextcloud" ];
-    nginx = {
-      enable = true;
-      virtualHosts."cloud.maralorn.de" = {
-        enableACME = true;
-        forceSSL = true;
-      };
-    };
   };
   users.users.nextcloud.extraGroups = [ "nginx" ];
 }

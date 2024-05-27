@@ -35,5 +35,9 @@ in
       }
     ];
   };
-  systemd.user.services.swayidle.Service.RestartSec = "3s";
+  systemd.user.services.swayidle = {
+    # Restart = "always"; set in the module
+    Service.RestartSec = "3s";
+    Unit.StartLimitIntervalSec = "18s";
+  };
 }

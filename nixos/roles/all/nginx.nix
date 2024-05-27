@@ -31,4 +31,30 @@ in
       clientMaxBodySize = "500m";
     };
   };
+
+  systemd.services =
+    let
+      hosts = builtins.attrNames config.services.nginx.virtualHosts;
+      makeConfig = host: {
+        name = "acme-${host}";
+        value = {
+          # Let's Encrypt Failed Validation Limit allows 5 retries per hour, per account, hostname and hour.
+          serviceConfig = {
+            Restart = "on-failure";
+            RestartSec = lib.mkForce "2m"; # Upstream sets 900s but does not change StartLimit
+          };
+          unitConfig = {
+            StartLimitIntervalSec = "10m";
+            StartLimitBurst = 3;
+          };
+        };
+      };
+    in
+    {
+      prometheus-nginx-exporter = {
+        serviceConfig.RestartSec = "10s";
+        unitConfig.StartLimitIntervalSec = "60s";
+      };
+    }
+    // builtins.listToAttrs (map makeConfig hosts);
 }

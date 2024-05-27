@@ -74,10 +74,13 @@ in
     in
     lib.mapAttrs' mkWatchService (lib.filterAttrs hasImapHost config.accounts.email.accounts)
     // {
-      mbsync.Service = {
-        Environment = "PATH=${lib.makeBinPath [ pkgs.coreutils ]}";
-        Restart = "on-failure";
-        RestartSec = "30s";
+      mbsync = {
+        Service = {
+          Environment = "PATH=${lib.makeBinPath [ pkgs.coreutils ]}";
+          Restart = "on-failure";
+          RestartSec = "30s";
+        };
+        Unit.StartLimitIntervalSec = "3m";
       };
     };
 

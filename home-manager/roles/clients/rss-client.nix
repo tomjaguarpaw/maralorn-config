@@ -85,12 +85,9 @@ in
           (pkgs.writeShellScript "update-software-feeds" "${commands.software-updates}/bin/software-updates -x reload")
           .outPath;
         Restart = "on-failure";
-        RestartSec = "1h";
+        RestartSec = "30m";
       };
-      Unit = {
-        StartLimitIntervalSec = "12h";
-        StartLimitBurst = 10;
-      };
+      Unit.StartLimitIntervalSec = "3h";
     };
     timers.update-software-feeds = {
       Unit.Description = "Update software feeds";
@@ -98,7 +95,5 @@ in
       Install.WantedBy = [ "timers.target" ];
     };
   };
-  home = {
-    packages = builtins.attrValues commands;
-  };
+  home.packages = builtins.attrValues commands;
 }

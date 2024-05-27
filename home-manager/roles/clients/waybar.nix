@@ -7,6 +7,7 @@
       Restart = "always";
       RestartSec = "10s";
     };
+    Unit.StartLimitIntervalSec = "60s";
     Install.WantedBy = [ "graphical-session.target" ];
   };
   programs.waybar = {

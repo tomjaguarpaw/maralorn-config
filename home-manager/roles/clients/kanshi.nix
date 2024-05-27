@@ -95,5 +95,9 @@ in
       ))
     ];
   };
-  systemd.user.services.kanshi.Service.RestartSec = "3s";
+  systemd.user.services.kanshi = {
+    Service.RestartSec = "3s";
+    # Restart = "always"; Set in the module
+    Unit.StartLimitIntervalSec = "18s";
+  };
 }

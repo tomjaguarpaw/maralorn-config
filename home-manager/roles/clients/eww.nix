@@ -18,6 +18,7 @@
       Before = [ "kanshi.service" ];
       PartOf = [ "graphical-session.target" ];
       Requires = [ "graphical-session.target" ];
+      StartLimitIntervalSec = "60s";
     };
     Install.WantedBy = [ "graphical-session.target" ];
     Service = {

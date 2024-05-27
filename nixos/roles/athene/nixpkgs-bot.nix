@@ -61,5 +61,6 @@ in
       DynamicUser = true;
       StateDirectory = "nixpkgs-bot";
     };
+    unitConfig.StartLimitIntervalSec = "90s";
   };
 }

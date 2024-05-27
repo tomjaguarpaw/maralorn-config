@@ -61,25 +61,8 @@
     ''
   );
 
-  systemd.services =
-    let
-      hosts = builtins.attrNames config.services.nginx.virtualHosts;
-      makeConfig = host: {
-        name = "acme-${host}";
-        value = {
-          serviceConfig = {
-            Restart = "on-failure";
-          };
-          unitConfig = {
-            StartLimitIntervalSec = 3000;
-            StartLimitBurst = 3;
-          };
-        };
-      };
-    in
-    {
-      nix-gc.serviceConfig.Type = "oneshot";
-      nix-optimise.serviceConfig.Type = "oneshot";
-    }
-    // builtins.listToAttrs (map makeConfig hosts);
+  systemd.services = {
+    nix-gc.serviceConfig.Type = "oneshot";
+    nix-optimise.serviceConfig.Type = "oneshot";
+  };
 }

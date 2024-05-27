@@ -137,6 +137,7 @@ in
         Restart = "on-failure";
         RestartSec = "1min";
       };
+      Unit.StartLimitIntervalSec = "6min";
     };
     timers.vdirsyncer = {
       Unit.Description = "vdirsync sync timer";

@@ -18,8 +18,9 @@
     ];
     serviceConfig = {
       Restart = "always";
-      RestartSec = "60s";
+      RestartSec = "30s";
       ExecStart = "${pkgs.prometheus-nixos-exporter}/bin/prometheus-nixos-exporter";
     };
+    unitConfig.StartLimitIntervalSec = "3m";
   };
 }

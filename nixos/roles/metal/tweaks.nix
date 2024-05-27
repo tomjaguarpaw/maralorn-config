@@ -6,8 +6,11 @@
     upower.enable = true;
     fstrim.enable = true;
   };
-  systemd.services.fwupd-refresh.serviceConfig = {
-    Restart = "on-failure";
-    RestartSec = "30s";
+  systemd.services.fwupd-refresh = {
+    serviceConfig = {
+      Restart = "on-failure";
+      RestartSec = "30s";
+    };
+    unitConfig.StartLimitIntervalSec = "3m";
   };
 }
