@@ -16,13 +16,6 @@
     nix-index.enable = true;
     home-manager.enable = true;
     eza.enable = true;
-    direnv = {
-      enable = true;
-      config.global.warn_timeout = "1h";
-      # default: enableZshIntegration = true;
-      nix-direnv.enable = true;
-    };
-
     tmux = {
       enable = true;
       escapeTime = 1;

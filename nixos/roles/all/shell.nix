@@ -3,11 +3,15 @@
   users.defaultUserShell = pkgs.zsh;
 
   programs = {
+    direnv = {
+      enable = true;
+      silent = true;
+    };
     starship = {
       enable = true;
       settings = {
         add_newline = false;
-        right_format = "$nix_shell$cmd_duration$haskell$time";
+        right_format = "$cmd_duration$direnv$nix_shell$haskell$time";
         time.disabled = false;
         line_break.disabled = true;
         nix_shell.format = "[$symbol]($style)";
@@ -18,6 +22,7 @@
         git_branch.disabled = true;
         git_commit.disabled = true;
         git_status.disabled = true;
+        direnv.disabled = false;
         time.format = "[$time]($style)";
         username.format = "[$user]($style) ";
         hostname.format = "[$ssh_symbol$hostname]($style) ";
