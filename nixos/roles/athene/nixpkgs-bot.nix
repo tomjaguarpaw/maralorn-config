@@ -45,22 +45,26 @@ let
 in
 {
   environment.persistence.snapshoted.directories = [ "/var/lib/private/nixpkgs-bot" ];
-  systemd.services.nixpkgs-bot = {
-    wantedBy = [ "multi-user.target" ];
-    description = "nixpkgs-bot";
-    path = [ pkgs.git ];
-    serviceConfig = {
-      LoadCredential = [
-        "matrix_token:${config.age.secrets."nixpkgs-bot/matrix_token".path}"
-        "github_token:${config.age.secrets."nixpkgs-bot/github_token".path}"
-      ];
-      Restart = "always"; # TODO: Add error handling to git querying github in nixpkgs-bot
-      RestartSec = "15s";
-      WorkingDirectory = "/var/lib/nixpkgs-bot";
-      ExecStart = "${lib.getExe pkgs.nixpkgs-bot} ${builtins.toFile "config.yaml" (builtins.toJSON configFile)}";
-      DynamicUser = true;
-      StateDirectory = "nixpkgs-bot";
+
+  systemd = {
+    tmpfiles.settings.fix-var-lib-private."/disk/persist/var/lib/private".Z.mode = "0700";
+    services.nixpkgs-bot = {
+      wantedBy = [ "multi-user.target" ];
+      description = "nixpkgs-bot";
+      path = [ pkgs.git ];
+      serviceConfig = {
+        LoadCredential = [
+          "matrix_token:${config.age.secrets."nixpkgs-bot/matrix_token".path}"
+          "github_token:${config.age.secrets."nixpkgs-bot/github_token".path}"
+        ];
+        Restart = "always"; # TODO: Add error handling to git querying github in nixpkgs-bot
+        RestartSec = "15s";
+        WorkingDirectory = "/var/lib/nixpkgs-bot";
+        ExecStart = "${lib.getExe pkgs.nixpkgs-bot} ${builtins.toFile "config.yaml" (builtins.toJSON configFile)}";
+        DynamicUser = true;
+        StateDirectory = "nixpkgs-bot";
+      };
+      unitConfig.StartLimitIntervalSec = "90s";
     };
-    unitConfig.StartLimitIntervalSec = "90s";
   };
 }
