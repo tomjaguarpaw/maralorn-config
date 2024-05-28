@@ -20,7 +20,23 @@
           "immutable_heads()" = "remotes() | (remotes().. & ::~mine()) | tags()";
           short = "@ | remotes() | ancestors(heads(trunks()..) ~ (remote_branches() ~ branches()),2)";
         };
-        template-aliases."format_short_change_id(id)" = "id.shortest()";
+        template-aliases = {
+          "format_short_change_id(id)" = "id.shortest()";
+          "quote(x)" = ''surround("\"","\"",x)'';
+          "branchinfo(x)" = ''
+            separate(" ",
+              x.branches().map(|y| trunc(y.name())).join(" "),
+              x.tags().map(|y| trunc(y.name())).join(" "),
+            )
+          '';
+          "trunc(x)" = ''
+            if(
+               x.substr(0, 24).starts_with(x),
+               x.substr(0, 24),
+               x.substr(0, 23) ++ "…"
+            )
+          '';
+        };
       };
     };
     git = {

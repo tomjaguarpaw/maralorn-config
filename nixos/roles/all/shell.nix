@@ -26,48 +26,61 @@
         time.format = "[$time]($style)";
         username.format = "[$user]($style) ";
         hostname.format = "[$ssh_symbol$hostname]($style) ";
-        custom.jj = {
-          when = "jj root";
-          require_repo = true;
-          command = ''
-            jj log -r@ -l1 --ignore-working-copy --no-graph --color always  -T '
-              separate(" ",
-                branches.map(|x| if(
-                    x.name().substr(0, 10).starts_with(x.name()),
-                    x.name().substr(0, 10),
-                    x.name().substr(0, 9) ++ "…")
-                  ).join(" "),
-                tags.map(|x| if(
-                    x.name().substr(0, 10).starts_with(x.name()),
-                    x.name().substr(0, 10),
-                    x.name().substr(0, 9) ++ "…")
-                  ).join(" "),
-                surround("\"","\"",
-                  if(
-                     description.first_line().substr(0, 24).starts_with(description.first_line()),
-                     description.first_line().substr(0, 24),
-                     description.first_line().substr(0, 23) ++ "…"
-                  )
-                ),
-                if(conflict, "conflict"),
-                if(divergent, "divergent"),
-                if(hidden, "hidden"),
-              )
-            '
-          '';
-          style = "white";
-          symbol = " ";
-        };
-        custom.jjstate = {
-          when = "jj root";
-          require_repo = true;
-          command = ''
-            jj log -r@ -l1 --no-graph -T "" --stat\
-              | tail -n1\
-              | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" " \''${1}󱇨 \''${2}+ \''${3}-"\
-              | sd " 0." ""
-          '';
-          style = "blue";
+        custom = {
+          jjtrouble = {
+            when = "jj root";
+            require_repo = true;
+            command = ''
+              jj log -r@ -l1 --ignore-working-copy --no-graph --color always  -T '
+                separate(" ",
+                  if(conflict, " "),
+                  if(divergent, " "),
+                  if(hidden, " "),
+                )
+              '
+            '';
+            style = "red";
+          };
+          jjstate = {
+            when = "jj root";
+            require_repo = true;
+            command = ''
+              jj log -r@ -l1 --no-graph -T "" --stat\
+                | tail -n1\
+                | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" " \''${1}󱇨 \''${2}+ \''${3}-"\
+                | sd " 0." ""
+            '';
+            style = "blue";
+          };
+          jj = {
+            when = "jj root";
+            require_repo = true;
+            command = ''
+              jj log -r@ -l1 --ignore-working-copy --no-graph --color always  -T '
+                coalesce(
+                  surround("󰜝 "," " ++ coalesce(
+                      branchinfo(self),
+                      surround("󰜘 ","",
+                        parents.map(|p| coalesce(
+                          branchinfo(p),
+                          quote(trunc(p.description().first_line()))
+                        )).join(" | ")
+                      ) 
+                    ),
+                    quote(trunc(description.first_line()))
+                  ),
+                  surround("󰜝 ","", branchinfo(self)),
+                  "󰜘 " ++ 
+                    parents.map(|p| coalesce(
+                      branchinfo(p),
+                      quote(trunc(p.description().first_line()))
+                    )).join(" | ")
+                )
+              '
+            '';
+            style = "white";
+            symbol = "";
+          };
         };
       };
     };
