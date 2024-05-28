@@ -64,7 +64,7 @@
                         parents.map(|p| coalesce(
                           branchinfo(p),
                           quote(trunc(p.description().first_line()))
-                        )).join(" | ")
+                        )).join("󰜘 ")
                       ) 
                     ),
                     quote(trunc(description.first_line()))
@@ -74,7 +74,7 @@
                     parents.map(|p| coalesce(
                       branchinfo(p),
                       quote(trunc(p.description().first_line()))
-                    )).join(" | ")
+                    )).join("󰜘 ")
                 )
               '
             '';
