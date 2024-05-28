@@ -26,62 +26,81 @@
         time.format = "[$time]($style)";
         username.format = "[$user]($style) ";
         hostname.format = "[$ssh_symbol$hostname]($style) ";
-        custom = {
-          jjtrouble = {
-            when = "jj root";
-            require_repo = true;
-            command = ''
-              jj log -r@ -l1 --ignore-working-copy --no-graph --color always  -T '
-                separate(" ",
-                  if(conflict, " "),
-                  if(divergent, " "),
-                  if(hidden, " "),
+        custom =
+          let
+            templates = ''
+              [template-aliases]
+              "quote(x)" = """
+                surround("\\"","\\"",x)
+              """
+              "branchinfo(x)" = """
+                  separate(" ",
+                    x.branches().map(|y| trunc(y.name())).join(" "),
+                    x.tags().map(|y| trunc(y.name())).join(" "),
+                  )
+              """
+              "trunc(x)" = """
+                if(
+                   x.substr(0, 24).starts_with(x),
+                   x.substr(0, 24),
+                   x.substr(0, 23) ++ "…"
                 )
-              '
+              """
+              "parentinfo(x)" = """
+                  x.parents().map(|p| coalesce(
+                    branchinfo(p),
+                    quote(trunc(p.description().first_line()))
+                  )).join("󰜘 ")
+              """
             '';
-            style = "red";
-          };
-          jjstate = {
-            when = "jj root";
-            require_repo = true;
-            command = ''
-              jj log -r@ -l1 --no-graph -T "" --stat\
-                | tail -n1\
-                | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" " \''${1}󱇨 \''${2}+ \''${3}-"\
-                | sd " 0." ""
-            '';
-            style = "blue";
-          };
-          jj = {
-            when = "jj root";
-            require_repo = true;
-            command = ''
-              jj log -r@ -l1 --ignore-working-copy --no-graph --color always  -T '
-                coalesce(
-                  surround("󰜝 "," " ++ coalesce(
-                      branchinfo(self),
-                      surround("󰜘 ","",
-                        parents.map(|p| coalesce(
-                          branchinfo(p),
-                          quote(trunc(p.description().first_line()))
-                        )).join("󰜘 ")
-                      ) 
+          in
+          {
+            jjtrouble = {
+              when = "jj root";
+              require_repo = true;
+              command = ''
+                jj log -r@ -l1 --ignore-working-copy --no-graph --color always  -T '
+                  separate(" ",
+                    if(conflict, " "),
+                    if(divergent, " "),
+                    if(hidden, " "),
+                  )
+                '
+              '';
+              style = "red";
+            };
+            jjstate = {
+              when = "jj root";
+              require_repo = true;
+              command = ''
+                jj log -r@ -l1 --ignore-working-copy --no-graph -T "" --stat\
+                  | tail -n1\
+                  | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" " \''${1}󱇨 \''${2}+ \''${3}-"\
+                  | sd " 0." ""
+              '';
+              style = "blue";
+            };
+            jj = {
+              when = "jj root";
+              require_repo = true;
+              command = ''
+                jj log -r@ -l1 --config-toml='${templates}' --ignore-working-copy --no-graph --color always  -T '
+                  coalesce(
+                    surround("󰜝 ",
+                      " " ++ coalesce(
+                        branchinfo(self),
+                        surround("󰜘 ","",parentinfo(self))
+                      ),
+                      quote(trunc(description.first_line()))
                     ),
-                    quote(trunc(description.first_line()))
-                  ),
-                  surround("󰜝 ","", branchinfo(self)),
-                  "󰜘 " ++ 
-                    parents.map(|p| coalesce(
-                      branchinfo(p),
-                      quote(trunc(p.description().first_line()))
-                    )).join("󰜘 ")
-                )
-              '
-            '';
-            style = "white";
-            symbol = "";
+                    surround("󰜝 ","", branchinfo(self)),
+                    "󰜘 " ++ parentinfo(self)
+                  )
+                '
+              '';
+              style = "white";
+            };
           };
-        };
       };
     };
     zsh = {
