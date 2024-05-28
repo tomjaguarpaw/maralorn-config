@@ -105,6 +105,10 @@
     };
     zsh = {
       enable = true;
+      interactiveShellInit = ''
+        export MANPAGER='sh -c "col -bx | bat -l man -p"'
+        export MANROFFOPT="-c";
+      '';
       autosuggestions.enable = true;
       enableCompletion = true;
       syntaxHighlighting.enable = true;
