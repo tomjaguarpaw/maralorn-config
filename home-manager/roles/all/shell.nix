@@ -2,10 +2,17 @@
   programs = {
     zsh = {
       enable = true;
+      historySubstringSearch = {
+        enable = true;
+        searchDownKey = [ "$terminfo[kcud1]" ];
+        searchUpKey = [ "$terminfo[kcuu1]" ];
+      };
       history = {
         path = "$HOME/.persist/.zsh_history";
         extended = true;
         expireDuplicatesFirst = true;
+        save = 10000000;
+        size = 10000000;
       };
       initExtra = ''
         function set_terminal_title() {
@@ -20,7 +27,7 @@
         	cd "$(head -n1 ~/.chpwd-recent-dirs | sed s/\\$// | sed s/\'//g)"
         }
         fzf-history-search() {
-         LBUFFER=$( history | sed -E 's/ *[0-9]*\*? *//' | fzf +s --tac |  sed -E 's/\\/\\\\/g')
+         LBUFFER=$( fc -l -1000000 | sed -E 's/ *[0-9]*\*? *//' | fzf +s --tac |  sed -E 's/\\/\\\\/g')
          zle redisplay
         }
         zle -N fzf-history-search
