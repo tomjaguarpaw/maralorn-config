@@ -14,10 +14,10 @@
           email = "mail@maralorn.de";
         };
         ui.default-command = "log";
-        revsets.log = "@ | remotes() | ancestors(remotes().. ~ (::tags() | ::remote_branches() ~ ::branches()),2)";
+        revsets.log = "@ | trunks() | ancestors(trunks().. ~ (::tags() | ::remote_branches() ~ ::branches()),2)";
         revset-aliases = {
-          "remotes()" = "remote_branches(exact:main,exact:origin) | remote_branches(exact:master,exact:origin) | remote_branches(exact:develop,exact:origin) | remote_branches(exact:haskell-updates,exact:origin)";
-          "immutable_heads()" = "remotes() | (remotes().. & ::~mine()) | tags()";
+          "trunks()" = "remote_branches(exact:main,exact:origin) | remote_branches(exact:master,exact:origin) | remote_branches(exact:develop,exact:origin) | remote_branches(exact:converts,exact:origin) | remote_branches(exact:haskell-updates,exact:origin)";
+          "immutable_heads()" = "trunks() | tags()";
           short = "@ | remotes() | ancestors(heads(trunks()..) ~ (remote_branches() ~ branches()),2)";
         };
         template-aliases."format_short_change_id(id)" = "id.shortest()";
