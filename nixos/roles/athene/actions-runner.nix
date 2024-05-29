@@ -51,4 +51,12 @@
       };
     };
   };
+  # Mainly to override faulty restart from upstream
+  systemd.services.gitea-runner-athene = {
+    serviceConfig = {
+      Restart = "on-failure";
+      RestartSec = 2;
+    };
+    unitConfig.StartLimitIntervalSec = 15;
+  };
 }
