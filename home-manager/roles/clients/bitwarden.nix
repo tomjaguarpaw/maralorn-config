@@ -56,7 +56,7 @@ in
       set -x
       ${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd SSH_AUTH_SOCK
       echo "Ensuring unlock …"
-      if ! rbw unlocked; then 
+      if ! rbw unlocked; then
         killall rbw-agent;
         rbw unlock
       fi
