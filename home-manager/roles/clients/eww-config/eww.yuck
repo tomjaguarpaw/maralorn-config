@@ -11,7 +11,6 @@
 (deflisten idle_state        :initial "{\"at\":1000000000000000,\"idle\":false}" "bash scripts/listen.sh idle_state")
 
 (defpoll alerts :interval "1m" :initial "[]" `curl https://alerts.maralorn.de/api/v2/alerts | jq 'map(select(.status.state != "suppressed"))'`)
-(defpoll config-state :interval "10m" :initial "unavailable" `curl https://code.maralorn.de/api/v1/repos/maralorn/config/commits/main/status | jq '.state' -r`)
 (defpoll rbw :interval "5s" :initial false "if rbw unlocked; then echo true; else echo false; fi")
 (defpoll host :interval "1440m" :initial "unknown" "cat /etc/hostname")
 (defvar disks '{"apollo":["/","/boot/EFI"],"hephaistos":["/nix","/efi"],"zeus":["/","/efi"],"unknown":[]}')
@@ -34,9 +33,6 @@
       ))
       (box :orientation "vertical" :space-evenly false (for alert in {mode != "Klausur" && arraylength(alerts) > 0 ? [1] : []}
         (box :space-evenly false (image :path "icons/cloud-alert.png") (label :text "${arraylength(alerts)}"))
-      ))
-      (box :orientation "vertical" :space-evenly false (for alert in {config-state != "pending" && config-state != "success" ? [1] : []}
-        (box :space-evenly false (image :path "icons/cloud-alert.png") (label :text "1"))
       ))
       (box :orientation "vertical" :space-evenly false (for rbwfile in {rbw ? [] : [1]}
         (box :space-evenly false (image :path "icons/lock-alert.png") (label :text "rbw"))
@@ -138,9 +134,6 @@
           ))
           (for alert in {alerts}
             (box :class "component" :spacing 10 :space-evenly false (image :path "icons/cloud-alert.png") (label :hexpand true :halign "center" :text {alert.annotations.description}))
-          )
-          (for c in {config-state != "success" ? [1] : []}
-            (box :class "component" :spacing 10 :space-evenly false (image :path "icons/cloud-alert.png") (label :hexpand true :halign "center" :text "maralorn/config/main state: ${config-state}"))
           )
           (for warning in {jq(warnings,"map(select(.description!=null))")}
             (box :class "component" :spacing 10 :space-evenly false
