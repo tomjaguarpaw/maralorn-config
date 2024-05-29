@@ -1,7 +1,7 @@
 { pkgs, ... }:
 {
   environment.systemPackages = [
-    (pkgs.writeShellScriptBin "launch-wayland" "XDG_CURRENT_DESKTOP=river exec river &>> /run/user/$UID/river.log")
+    (pkgs.writeShellScriptBin "launch-wayland" "XDG_CURRENT_DESKTOP=river exec river |& ts '[%Y-%m-%d %H:%M:%S]' >> /run/user/$UID/river.log")
     pkgs.ddcutil
   ];
   hardware.i2c.enable = true;
