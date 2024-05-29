@@ -1,10 +1,6 @@
 { pkgs, ... }:
 {
-  home.packages = [
-    pkgs.git-absorb
-    pkgs.glab
-    pkgs.lazyjj
-  ];
+  home.packages = builtins.attrValues { inherit (pkgs) glab lazyjj difftastic; };
   programs = {
     jujutsu = {
       enable = true;
@@ -13,7 +9,15 @@
           name = "maralorn";
           email = "mail@maralorn.de";
         };
-        ui.default-command = "log";
+        ui = {
+          default-command = "log";
+          diff.tool = [
+            "difft"
+            "--color=always"
+            "$left"
+            "$right"
+          ];
+        };
         revsets.log = "@ | trunks() | ancestors(trunks().. ~ (::tags() | ::remote_branches() ~ ::branches()),2)";
         revset-aliases = {
           "trunks()" = "remote_branches(exact:main,exact:origin) | remote_branches(exact:master,exact:origin) | remote_branches(exact:develop,exact:origin) | remote_branches(exact:converts,exact:origin) | remote_branches(exact:haskell-updates,exact:origin)";
