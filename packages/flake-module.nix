@@ -35,6 +35,7 @@ let
   selectHaskellPackages = attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages;
   myHaskellPackages = {
     wizards-dialog = cleanCabalPackage ./wizards-dialog { };
+    merge-bot = cleanCabalPackage ./merge-bot { };
     rssfeeds = cleanCabalPackage ./rssfeeds { };
     nixpkgs-bot = cleanCabalPackage ./nixpkgs-bot { };
     t = cleanCabalPackage ./t { };
