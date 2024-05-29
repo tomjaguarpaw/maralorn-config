@@ -53,10 +53,17 @@ in
       ssh-add <(${lib.getExe ssh-rbw-privkey} "$1")
     '';
     unlock-keys = pkgs.writeShellScriptBin "unlock-keys" ''
+      set -x
       ${lib.getBin pkgs.dbus}/bin/dbus-update-activation-environment --systemd SSH_AUTH_SOCK
-      if ! rbw unlocked; then killall rbw-agent; fi
-      rbw unlock
+      echo "Ensuring unlock …"
+      if ! rbw unlocked; then 
+        killall rbw-agent;
+        rbw unlock
+      fi
+      echo "Waiting until unlocked …"
+      until rbw unlocked; do sleep 1s; echo "Still waiting …"; done
 
+      echo "Loading keys …"
       ${lib.getExe ssh-rbw-add} code
       ${lib.getExe ssh-rbw-add} signing
       ${lib.getExe ssh-rbw-add} login

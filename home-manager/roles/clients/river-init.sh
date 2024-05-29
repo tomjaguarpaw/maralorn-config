@@ -128,7 +128,7 @@ riverctl default-layout riverguile
 #river-luatile &
 riverguile &
 
-riverctl spawn unlock-keys
-
 systemctl --user start river-session.target kanshi eww swayidle status-script
 kanshictl reload
+
+unlock-keys
