@@ -70,10 +70,10 @@
               style = "red";
             };
             jjstate = {
-              when = "jj root";
+              when = ''jj root && [ "$EUID" -ne 0 ]'';
               require_repo = true;
               command = ''
-                jj log -r@ -l1 --ignore-working-copy --no-graph -T "" --stat\
+                jj log -r@ -l1 --no-graph -T "" --stat\
                   | tail -n1\
                   | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" " \''${1}󱇨 \''${2}+ \''${3}-"\
                   | sd " 0." ""
