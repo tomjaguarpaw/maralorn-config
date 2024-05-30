@@ -22,12 +22,15 @@ in
       description = "merge-bot";
       path = [ pkgs.git ];
       serviceConfig = {
+        Restart = "always";
+        RestartSec = "15s";
         LoadCredential = [ "merge_bot_token:${config.age.secrets."merge-bot/forgejo_token".path}" ];
         WorkingDirectory = stateDirectory;
         ExecStart = "${lib.getExe pkgs.merge-bot} ${builtins.toFile "config.json" (builtins.toJSON configFile)}";
         DynamicUser = true;
         StateDirectory = "merge-bot";
       };
+      unitConfig.StartLimitIntervalSec = "90s";
     };
   };
 }
