@@ -18,8 +18,12 @@ in
         ROOT_URL = "https://code.maralorn.de";
         HTTP_PORT = 3787; # Default port was blocked
       };
-      service.DISABLE_REGISTRATION = true;
+      service = {
+        DISABLE_REGISTRATION = true;
+        ENABLE_NOTIFY_MAIL = true;
+      };
       ui.DEFAULT_THEME = "gitea-auto";
+      admin.DEFAULT_EMAIL_NOTIFICATIONS = "enabled";
       mailer = {
         ENABLED = true;
         FROM = "forgejo@code.maralorn.de"; # Could also be "Forgejo <...>" or "Git minion on Hera"
