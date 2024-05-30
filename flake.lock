@@ -388,11 +388,11 @@
         "nixpkgs": []
       },
       "locked": {
-        "lastModified": 1716551013,
-        "narHash": "sha256-+5DoVnUub3ayEQVCKhVj61FPfakKroee0ZjnA0tti7U=",
+        "lastModified": 1717031693,
+        "narHash": "sha256-fBk/5n1GWcz+SxFPGpbYHBHY+fRqKmE6AbnY+m1+ppM=",
         "ref": "refs/heads/main",
-        "rev": "8b2d03af8374ea3d134afc22f0e92a200873a9b8",
-        "revCount": 306,
+        "rev": "e8bc59c4db4161f99d9736306dac907b4366e1d0",
+        "revCount": 307,
         "type": "git",
         "url": "ssh://forgejo@code.maralorn.de/maralorn/config-secrets"
       },
