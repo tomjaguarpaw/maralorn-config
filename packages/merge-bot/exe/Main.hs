@@ -20,15 +20,13 @@ loadCredential name = do
 data PR = MkPR
   { repo :: Text
   , num :: Integer
-  , base :: Text
-  , head :: Text
-  , headCommit :: Text
   }
 
 data CIState = Pending | Success | Failure | Error deriving stock (Show)
 
 data Commit = MkCommit
-  { state :: CIState
+  { id :: Text
+  , state :: CIState
   , lastUpdate :: Text
   }
 
@@ -55,9 +53,7 @@ main = do
     prs <- fetchPRs config
     forM_ prs \pr -> do
       let num = pr.num
-          pr_head = pr.head
-          pr_base = pr.base
-      putText [i|\##{num}: From #{pr_head} into #{pr_base}: |]
+      putTextLn [i|Processing PR \##{num}|]
       commit <- fetchHeadCommit config pr
       case commit.state of
         Success -> do
@@ -79,7 +75,6 @@ mergePR config pr = do
       ( object
           [ "Do" .= ("fast-forward-only" :: Text)
           , "delete_branch_after_merge" .= True
-          , "head_commit_id" .= pr.headCommit
           ]
       )
   putTextLn "Merged."
@@ -98,11 +93,14 @@ hasRecentComments config pr timestamp = do
 
 fetchHeadCommit :: Config -> PR -> IO Commit
 fetchHeadCommit config pr = do
+  pr_state_resp <- getWith config.wreqOptions [i|#{prUrl config pr}|]
+  let commit_id = pr_state_resp ^?! lensVL responseBody % key "head" % key "ref" % _String
   commit_state_resp <- getWith config.wreqOptions [i|#{repoUrl config pr}/commits/#{commit_id}/status|]
   let commit_state_body = commit_state_resp ^. lensVL responseBody
   pure $
     MkCommit
-      { state =
+      { id = commit_id
+      , state =
           commit_state_body
             ^?! key "state"
             % _String
@@ -120,22 +118,16 @@ fetchHeadCommit config pr = do
           fromMaybe "updated at timestamp" $
             maximumOf (key "statuses" % values % key "updated_at" % _String) commit_state_body
       }
- where
-  commit_id = pr.headCommit
 
 fetchPRs :: Config -> IO [PR]
-fetchPRs config =
-  getWith config.wreqOptions [i|#{apiUrl config}/repos/issues/search?state=open&type=pulls&assigned=true|]
-    <&> toListOf
-      ( lensVL responseBody % values % to \pr ->
-          MkPR
-            { repo = pr ^?! key "repository" % key "full_name" % _String
-            , num = pr ^?! key "number" % _Integer
-            , base = pr ^?! key "base" % key "ref" % _String
-            , head = pr ^?! key "head" % key "ref" % _String
-            , headCommit = pr ^?! key "head" % key "sha" % _String
-            }
-      )
+fetchPRs config = do
+  resp <- getWith config.wreqOptions [i|#{apiUrl config}/repos/issues/search?state=open&type=pulls&assigned=true|]
+  pure $
+    resp ^.. lensVL responseBody % values % to \pr ->
+      MkPR
+        { repo = pr ^?! key "repository" % key "full_name" % _String
+        , num = pr ^?! key "number" % _Integer
+        }
 
 apiUrl :: Config -> Text
 apiUrl config = [i|#{url}/api/v1|]
@@ -143,16 +135,16 @@ apiUrl config = [i|#{url}/api/v1|]
   url = config.forgejoUrl
 
 repoUrl :: Config -> PR -> Text
-repoUrl config pr = [i|#{apiUrl config}/#{repo}|]
+repoUrl config pr = [i|#{apiUrl config}/repos/#{repo}|]
  where
   repo = pr.repo
 
 prUrl :: Config -> PR -> Text
-prUrl config pr = [i|#{prUrl config pr}/pulls/#{num}|]
+prUrl config pr = [i|#{repoUrl config pr}/pulls/#{num}|]
  where
   num = pr.num
 
 issueUrl :: Config -> PR -> Text
-issueUrl config pr = [i|#{prUrl config pr}/issues/#{num}|]
+issueUrl config pr = [i|#{repoUrl config pr}/issues/#{num}|]
  where
   num = pr.num
