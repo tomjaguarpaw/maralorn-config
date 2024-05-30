@@ -51,20 +51,49 @@ main = do
   forever do
     putTextLn [i|Fetching open PRs on #{forgejoUrl} assigned to token owner …|]
     prs <- fetchPRs config
-    forM_ prs \pr -> do
-      let num = pr.num
-      putTextLn [i|Processing PR \##{num}|]
-      commit <- fetchHeadCommit config pr
-      case commit.state of
-        Success -> do
-          putText "CI success, "
-          mergePR config pr
-        Pending -> putTextLn "CI pending."
-        x -> do
-          let msg = [i|CI #{x}.|]
-          putTextLn msg
-          unlessM (hasRecentComments config pr commit.lastUpdate) $ putComment config pr msg
+    forM_ prs (processPR config)
     threadDelay 60_000_000
+
+processPR :: Config -> PR -> IO ()
+processPR config pr = do
+  let num = pr.num
+  putTextLn [i|Processing PR \##{num}|]
+  stop <- ensureFastForward config pr
+  unless stop $ do
+    commit <- fetchHeadCommit config pr
+    case commit.state of
+      Success -> do
+        putText "CI success, "
+        mergePR config pr
+      Pending -> putTextLn "CI pending."
+      x -> do
+        let msg = [i|CI #{x}.|]
+        putTextLn msg
+        unlessM (hasRecentComments config pr commit.lastUpdate) $ putComment config pr msg
+
+ensureFastForward :: Config -> PR -> IO Bool
+ensureFastForward config pr = do
+  resp <-
+    postWith
+      (config.wreqOptions & lensVL checkResponse ?~ \_ _ -> pure ())
+      [i|#{prUrl config pr}/update?style=rebase|]
+      (object [])
+  case resp ^. lensVL responseStatus % lensVL statusCode of
+    x | x < 300 -> do
+      putStrLn "Rebase successful."
+      pure True
+    409 -> do
+      putStrLn "Rebase failed."
+      pure True
+    407 -> do
+      putStrLn "Branch is up-to-date."
+      pure False
+    500 -> do
+      putStrLn "Code 500: Assuming branch is up-to-date."
+      pure False
+    x -> do
+      putStrLn [i|Code: #{x}, message #{resp ^? lensVL responseBody % key "message"}|]
+      pure True
 
 mergePR :: Config -> PR -> IO ()
 mergePR config pr = do
@@ -72,11 +101,10 @@ mergePR config pr = do
     postWith
       config.wreqOptions
       [i|#{prUrl config pr}/merge|]
-      ( object
-          [ "Do" .= ("fast-forward-only" :: Text)
-          , "delete_branch_after_merge" .= True
-          ]
-      )
+      $ object
+        [ "Do" .= ("fast-forward-only" :: Text)
+        , "delete_branch_after_merge" .= True
+        ]
   putTextLn "Merged."
 
 putComment :: Config -> PR -> Text -> IO ()
