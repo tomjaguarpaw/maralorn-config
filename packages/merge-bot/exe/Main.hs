@@ -6,6 +6,7 @@ import Data.Aeson.Optics
 import Data.String.Interpolate
 import Data.Text qualified as Text
 import Network.Wreq
+import Network.Wreq qualified as Wreq
 import Optics
 import Optics.Operators.Unsafe
 import Relude
@@ -63,6 +64,7 @@ main = do
                   (object ["body" .= ("CI failed" :: Text)])
     threadDelay 60_000_000
 
+mergePR :: Wreq.Options -> Text -> Integer -> Text -> IO ()
 mergePR opts repo_api num head_commit = do
   _ <-
     postWith
