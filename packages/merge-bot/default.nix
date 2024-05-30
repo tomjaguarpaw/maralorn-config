@@ -10,6 +10,6 @@ mkDerivation {
   executableHaskellDepends = [
     aeson aeson-optics base optics relude string-interpolate wreq
   ];
-  license = lib.licenses.agpl3Plus;
+  license = "unknown";
   mainProgram = "merge-bot";
 }
