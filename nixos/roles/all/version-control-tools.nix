@@ -6,7 +6,6 @@
       tig
       jujutsu
       lazygit
-      merge-bot
       ;
   };
   programs.git.config.init.defaultBranch = "main";
