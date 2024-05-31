@@ -104,6 +104,12 @@ in
               "extend_to_line_bounds"
               ":reflow"
             ];
+            " ".e = [
+              "goto_next_diag"
+              ":yank-diagnostic"
+              ":vsplit-new"
+              "paste_clipboard_after"
+            ];
           };
           select = {
             "C-r" = [
