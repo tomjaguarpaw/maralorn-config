@@ -29,7 +29,7 @@
         nixpkgs.follows = "";
         blobs.follows = "";
       };
-      url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git?ref=master";
+      url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git?ref=nixos-24.05";
     };
     home-manager = {
       url = "home-manager/release-24.05";
