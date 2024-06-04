@@ -1,6 +1,13 @@
 { pkgs, ... }:
 {
-  home.packages = builtins.attrValues { inherit (pkgs) glab lazyjj difftastic; };
+  home.packages = builtins.attrValues {
+    inherit (pkgs)
+      glab
+      lazyjj
+      difftastic
+      meld
+      ;
+  };
   programs = {
     jujutsu = {
       enable = true;
@@ -11,6 +18,8 @@
         };
         ui = {
           default-command = "log";
+          merge-editor = "meld";
+          diff-editor = "meld-3";
           diff.tool = [
             "difft"
             "--color=always"

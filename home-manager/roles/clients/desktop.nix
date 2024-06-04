@@ -63,6 +63,7 @@
       ;
     inherit (pkgs.gnome) dconf-editor;
   };
+
   gtk = {
     enable = true;
     iconTheme = {
