@@ -8,6 +8,10 @@
       meld
       ;
   };
+  dconf.settings."org/gnome/meld" = {
+    highlight-syntax = true;
+    style-scheme = "cobalt";
+  };
   programs = {
     jujutsu = {
       enable = true;
