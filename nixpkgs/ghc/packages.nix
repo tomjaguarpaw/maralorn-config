@@ -2,6 +2,7 @@
   makeHaskellScriptPackages = p: {
     inherit (p)
       aeson
+      tidal
       shh
       string-interpolate
       relude
