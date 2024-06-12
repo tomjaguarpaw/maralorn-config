@@ -43,6 +43,7 @@
               "code"
               "lists"
               "matrix"
+              "matrix-syncv3"
               "rpg"
             ];
           };
@@ -56,6 +57,7 @@
               "rpg"
               "rspamd"
               "code"
+              "matrix-syncv3"
             ];
             athene = [
               "firefox-sync"

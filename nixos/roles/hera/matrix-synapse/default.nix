@@ -7,6 +7,7 @@
 let
   server_name = "maralorn.de";
   hostName = "matrix.${server_name}";
+  syncHostName = "matrix-syncv3.${server_name}";
 in
 {
   environment.systemPackages = [ pkgs.matrix-synapse-tools.rust-synapse-compress-state ];
@@ -62,7 +63,10 @@ in
             '';
           "/.well-known/matrix/client".extraConfig =
             let
-              client."m.homeserver".base_url = "https://${hostName}";
+              client = {
+                "m.homeserver".base_url = "https://${hostName}";
+                "org.matrix.msc3575.proxy".url = "https://${syncHostName}";
+              };
             in
             ''
               add_header Content-Type application/json;
@@ -71,7 +75,7 @@ in
             '';
         };
       };
-      virtualHosts."${hostName}" = {
+      virtualHosts.${hostName} = {
         forceSSL = true;
         enableACME = true;
         locations."/" = {
@@ -81,6 +85,23 @@ in
             proxy_set_header X-Forwarded-Proto https;'';
         };
       };
+      virtualHosts.${syncHostName} = {
+        forceSSL = true;
+        enableACME = true;
+
+        locations."~* ^/(client/|_matrix/client/unstable/org.matrix.msc3575/sync)" = {
+          proxyPass = "http://localhost:8007";
+        };
+      };
+    };
+
+    matrix-sliding-sync = {
+      enable = true;
+      settings = {
+        SYNCV3_SERVER = "https://matrix.maralorn.de";
+        SYNCV3_BINDADDR = "localhost:8007";
+      };
+      environmentFile = config.age.secrets."sliding-sync-secret".path;
     };
 
     # Postgres
