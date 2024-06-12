@@ -1,6 +1,6 @@
 { device, ... }:
 {
-  disko.devices.disk.system = {
+  disko.devices.disk.nixos-zeus = {
     type = "disk";
     inherit device;
     content = {
@@ -34,7 +34,7 @@
           content = {
             type = "luks";
             # LUKS2 defaults on nixos are sane and use argon2id
-            name = "system";
+            name = "crypted-root-fs";
             settings.allowDiscards = true;
             content = {
               type = "filesystem";
