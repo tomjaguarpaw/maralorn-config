@@ -22,22 +22,14 @@
       warn-dirty = false;
       trusted-users = [ "maralorn" ];
     };
-    nixPath = [ "nixpkgs=flake:pkgs" ];
 
     registry = {
-      pkgs = {
+      nixpkgs-unstable = {
         from = {
           type = "indirect";
-          id = "pkgs";
+          id = "nixpkgs-unstable";
         };
         flake = pkgs.flake-inputs.nixos-unstable;
-      };
-      stable-pkgs = {
-        from = {
-          type = "indirect";
-          id = "stable-pkgs";
-        };
-        flake = pkgs.flake-inputs.nixos-stable;
       };
     };
     optimise = {
