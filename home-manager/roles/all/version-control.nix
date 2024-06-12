@@ -1,17 +1,6 @@
 { pkgs, ... }:
 {
-  home.packages = builtins.attrValues {
-    inherit (pkgs)
-      glab
-      lazyjj
-      difftastic
-      meld
-      ;
-  };
-  dconf.settings."org/gnome/meld" = {
-    highlight-syntax = true;
-    style-scheme = "cobalt";
-  };
+  home.packages = builtins.attrValues { inherit (pkgs) glab lazyjj difftastic; };
   programs = {
     jujutsu = {
       enable = true;
@@ -22,8 +11,6 @@
         };
         ui = {
           default-command = "log";
-          merge-editor = "meld";
-          diff-editor = "meld-3";
           diff.tool = [
             "difft"
             "--color=always"
