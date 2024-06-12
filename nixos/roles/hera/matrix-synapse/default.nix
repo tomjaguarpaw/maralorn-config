@@ -18,80 +18,63 @@ in
       SYNAPSE_CACHE_FACTOR = "1.0";
       LimitNOFILE = "4096";
     };
-    synapse-cleanup = {
-      serviceConfig = {
-        ExecStart =
-          pkgs.writers.writeHaskell "synapse-cleanup"
-            { libraries = builtins.attrValues pkgs.myHaskellScriptPackages; }
-            (
-              builtins.replaceStrings
-                [
-                  "\"synapse_compress_state\" -- NIX_BIN"
-                  "\"cat\" -- NIX_BIN"
-                  "\"psql\" -- NIX_BIN"
-                  "\"rm\" -- NIX_BIN"
-                ]
-                [
-                  "\"${lib.getExe' pkgs.matrix-synapse-tools.rust-synapse-compress-state "synapse_compress_state"}\""
-                  "\"${lib.getExe' pkgs.coreutils "cat"}\""
-                  "\"${lib.getExe' config.services.postgresql.package "psql"}\""
-                  "\"${lib.getExe' pkgs.coreutils "rm"}\""
-                ]
+    synapse-cleanup.serviceConfig = {
+      ExecStart =
+        pkgs.writers.writeHaskell "synapse-cleanup"
+          { libraries = builtins.attrValues pkgs.myHaskellScriptPackages; }
+          (
+            builtins.replaceStrings
+              [
+                "\"synapse_compress_state\" -- NIX_BIN"
+                "\"cat\" -- NIX_BIN"
+                "\"psql\" -- NIX_BIN"
+                "\"rm\" -- NIX_BIN"
+              ]
+              [
+                "\"${lib.getExe' pkgs.matrix-synapse-tools.rust-synapse-compress-state "synapse_compress_state"}\""
+                "\"${lib.getExe' pkgs.coreutils "cat"}\""
+                "\"${lib.getExe' config.services.postgresql.package "psql"}\""
+                "\"${lib.getExe' pkgs.coreutils "rm"}\""
+              ]
 
-                (builtins.readFile ./synapse-cleanup.hs)
-            );
-        User = "matrix-synapse";
-        Type = "oneshot";
-      };
+              (builtins.readFile ./synapse-cleanup.hs)
+          );
+      User = "matrix-synapse";
+      Type = "oneshot";
     };
-    synapse-worker-1 = { };
   };
   services = {
-    nginx = {
-      enable = true;
-      virtualHosts."${server_name}" = {
-        enableACME = true;
-        forceSSL = true;
-        locations = {
-          "/.well-known/matrix/server".extraConfig =
-            let
-              server."m.server" = "${hostName}:443";
-            in
-            ''
-              add_header Content-Type application/json;
-              return 200 '${builtins.toJSON server}';
-            '';
-          "/.well-known/matrix/client".extraConfig =
-            let
-              client = {
-                "m.homeserver".base_url = "https://${hostName}";
-                "org.matrix.msc3575.proxy".url = "https://${syncHostName}";
-              };
-            in
-            ''
-              add_header Content-Type application/json;
-              add_header Access-Control-Allow-Origin *;
-              return 200 '${builtins.toJSON client}';
-            '';
-        };
+    nginx.virtualHosts = {
+      ${server_name}.locations = {
+        "/.well-known/matrix/server".extraConfig =
+          let
+            server."m.server" = "${hostName}:443";
+          in
+          ''
+            add_header Content-Type application/json;
+            return 200 '${builtins.toJSON server}';
+          '';
+        "/.well-known/matrix/client".extraConfig =
+          let
+            client = {
+              "m.homeserver".base_url = "https://${hostName}";
+              "org.matrix.msc3575.proxy".url = "https://${syncHostName}";
+            };
+          in
+          ''
+            add_header Content-Type application/json;
+            add_header Access-Control-Allow-Origin *;
+            return 200 '${builtins.toJSON client}';
+          '';
       };
-      virtualHosts.${hostName} = {
-        forceSSL = true;
-        enableACME = true;
-        locations."/" = {
-          proxyPass = "http://[::1]:8008";
-          extraConfig = ''
-            proxy_set_header X-Forwarded-For $remote_addr;
-            proxy_set_header X-Forwarded-Proto https;'';
-        };
+      ${hostName}.locations."/" = {
+        proxyPass = "http://[::1]:8008";
+        extraConfig = ''
+          proxy_set_header X-Forwarded-For $remote_addr;
+          proxy_set_header X-Forwarded-Proto https;'';
       };
-      virtualHosts.${syncHostName} = {
-        forceSSL = true;
-        enableACME = true;
-
-        locations."~* ^/(client/|_matrix/client/unstable/org.matrix.msc3575/sync)" = {
-          proxyPass = "http://localhost:8007";
-        };
+      ${syncHostName}.locations."~* ^/(client/|_matrix/client/unstable/org.matrix.msc3575/sync)" = {
+        proxyPass = "http://localhost:8007";
       };
     };
 
