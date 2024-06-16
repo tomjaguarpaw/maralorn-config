@@ -83,13 +83,15 @@
           check.enable = true;
           settings = {
             tools = {
-              nixfmt = lib.mkForce (lib.getBin pkgs.nixfmt-rfc-style);
               fourmolu = lib.mkForce (lib.getBin pkgs.unstableHaskellPackages.fourmolu);
             };
             excludes = [ "\\.zsh$" ] ++ generated_nix_files;
             hooks = {
               hlint.enable = true;
-              nixfmt.enable = true;
+              nixfmt = {
+                package = lib.getBin pkgs.nixfmt-rfc-style;
+                enable = true;
+              };
               cabal2nix.enable = true;
               nil.enable = true;
               editorconfig-checker = {
