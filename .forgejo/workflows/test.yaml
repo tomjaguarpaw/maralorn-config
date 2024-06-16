@@ -20,13 +20,6 @@ jobs:
       - name: Evaluate all jobs
         id: generate-matrix
         run: echo jobs="$(nix eval --json --log-format bar-with-logs -v -f ci.nix)" >> $GITHUB_OUTPUT
-  output-test:
-    runs-on: nix
-    needs:
-      - nix-eval
-    steps:
-      - name: Echo previous outputs
-        run: echo '${{ needs.nix-eval.outputs.jobs }}'
   nix-build:
     runs-on: nix
     needs:
@@ -49,6 +42,6 @@ jobs:
           mkdir -p ~/.config/nix
           cp $(builders-configurator) ~/.config/nix/machines
           echo "builders = @$(pwd)/.config/nix/machines" >> ~/.config/nix/nix.conf
-      - run: echo $(jq -r '."${{ matrix.job }}"' <<< '${{ needs.nix-eval.outputs.jobs }}')
-      - run: nix-build $(jq -r '."${{ matrix.job }}"' <<< '${{ needs.nix-eval.outputs.jobs }}')
+      - name: Running nix build
+        run: nix-build $(jq -r '."${{ matrix.job }}"' <<< '${{ needs.nix-eval.outputs.jobs }}')
       - run: archive-nix-path
