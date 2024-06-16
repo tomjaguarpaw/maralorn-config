@@ -7,6 +7,7 @@
       type = "gpt";
       partitions = {
         ESP = {
+          priority = 1;
           type = "EF00"; # EFI system partition
           size = "1G";
           content = {
@@ -20,21 +21,23 @@
           };
         };
         swap = {
+          priority = 2;
           type = "8200"; # Linux swap
           size = "32G";
-          priority = 2000; # This is between the default priority 1000 and the 100% priority 9001
           content = {
             type = "swap";
             randomEncryption = true;
           };
         };
         system-vault = {
+          priority = 3;
           type = "8309"; # Linux LUKS
           size = "100%"; # Uses rest of disk
           content = {
             type = "luks";
             # LUKS2 defaults on nixos are sane and use argon2id
             name = "crypted-root-fs";
+            extraOpenArgs = [ "--allow-discards" ];
             settings.allowDiscards = true;
             content = {
               type = "filesystem";

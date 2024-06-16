@@ -1,39 +1,43 @@
 { device, ... }:
 {
   disko.devices = {
-    disk.system = {
+    disk.nixos-athene = {
       type = "disk";
       inherit device;
       content = {
-        type = "table";
-        format = "gpt";
-        partitions = [
-          {
-            name = "ESP";
-            end = "1GiB";
-            fs-type = "fat32";
-            bootable = true;
+        type = "gpt";
+        partitions = {
+          ESP = {
+            priority = 1;
+            type = "EF00"; # EFI system partition
+            size = "1G";
             content = {
               type = "filesystem";
               format = "vfat";
               mountpoint = "/efi";
+              mountOptions = [
+                "defaults"
+                "noatime"
+              ];
             };
-          }
-          {
-            name = "swap";
-            start = "1GiB";
-            end = "17GiB";
+          };
+          swap = {
+            priority = 2;
+            type = "8200"; # Linux swap
+            size = "16G";
             content = {
               type = "swap";
               randomEncryption = true;
             };
-          }
-          {
-            name = "system-vault";
-            start = "17GiB";
+          };
+          system-vault = {
+            priority = 3;
+            type = "8309"; # Linux LUKS
+            size = "100%"; # Uses rest of disk
             content = {
               type = "luks";
-              name = "system";
+              # LUKS2 defaults on nixos are sane and use argon2id
+              name = "crypted-root-fs";
               extraOpenArgs = [ "--allow-discards" ];
               content = {
                 type = "btrfs";
@@ -57,8 +61,8 @@
                 };
               };
             };
-          }
-        ];
+          };
+        };
       };
     };
     nodev."/" = {
