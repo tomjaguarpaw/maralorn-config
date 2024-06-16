@@ -145,12 +145,16 @@ let
       Communication = [
         { Matrix = fork "element-desktop"; }
         {
-          Mail = {
-            Open = term "neomutt";
-            Inbox = term "neomutt -f ~/Maildir/hera/Inbox";
-            Inbox-Work = term "neomutt -f ~/Maildir/heilmann/Inbox";
-            Code = term "neomutt -f ~/Maildir/hera/Code";
-          };
+          Mail =
+            let
+              mail = param: term (shell "neomutt ${param}; notmuch new");
+            in
+            {
+              Open = mail "";
+              Inbox = mail "-f ~/Maildir/hera/Inbox";
+              Inbox-Work = mail "-f ~/Maildir/heilmann/Inbox";
+              Code = mail "-f ~/Maildir/hera/Code";
+            };
         }
         {
           Mumble = {
