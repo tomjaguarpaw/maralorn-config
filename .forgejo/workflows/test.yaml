@@ -19,7 +19,13 @@ jobs:
           echo "builders = @$(pwd)/.config/nix/machines" >> ~/.config/nix/nix.conf
       - name: Evaluate all jobs
         id: generate-matrix
-        run: echo jobs="$(nix eval --json --log-format bar-with-logs -v -f ci.nix)" >> $GITHUB_OUTPUT
+        run: |
+          echo jobs="$(nix eval --json -f ci.nix 2> error.log)" >> $GITHUB_OUTPUT
+          if grep -q '[a-z]' error.log; then
+            echo "Fail: Non empty error.log during eval:"
+            cat error.log
+            exit 1
+          fi
   nix-build:
     runs-on: nix
     needs:
