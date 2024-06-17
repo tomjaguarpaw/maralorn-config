@@ -28,7 +28,7 @@
 
       # Fix for: https://gitea.com/gitea/act_runner/issues/361
       settings = {
-        runner.capacity = 5;
+        runner.capacity = 4;
         host.workdir_parent = "/var/lib/gitea-runner/action-cache-dir";
       };
       hostPackages = builtins.attrValues {
