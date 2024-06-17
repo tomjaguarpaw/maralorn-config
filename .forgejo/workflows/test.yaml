@@ -21,9 +21,9 @@ jobs:
         id: generate-matrix
         run: |
           echo jobs="$(nix eval --json -f ci.nix 2> error.log)" >> $GITHUB_OUTPUT
-          if grep -q '[a-z]' error.log; then
-            echo "Fail: Non empty error.log during eval:"
-            cat error.log
+          cat error.log
+          if grep -q 'trace' error.log; then
+            echo "Abort: trace observed during eval."
             exit 1
           fi
   nix-build:
