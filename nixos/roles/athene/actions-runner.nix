@@ -23,13 +23,14 @@
       enable = true;
       name = config.networking.hostName;
       url = "https://code.maralorn.de";
-      # I am fine with leaking this secret, because it will be invalidated after
-      # first use.
-      token = "Kn0b5KM3YEzpXO2FDBW1N8op6w4Q0M8bkJpth2e2";
+      token = "";
       labels = [ "nix:host" ];
 
       # Fix for: https://gitea.com/gitea/act_runner/issues/361
-      settings.host.workdir_parent = "/var/lib/gitea-runner/action-cache-dir";
+      settings = {
+        runner.capacity = 5;
+        host.workdir_parent = "/var/lib/gitea-runner/action-cache-dir";
+      };
       hostPackages = builtins.attrValues {
         inherit (pkgs)
           archive-nix-path
