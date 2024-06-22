@@ -3,7 +3,7 @@ final: _prev: {
   unstableHaskellPackages = final.unstable.haskellPackages;
   nix-output-monitor = final.flake-inputs'.nix-output-monitor.packages.default;
   inherit (final.flake-inputs'.nixos-oldstable.legacyPackages) ddcutil;
-  inherit (final.unstable) jujujtsu;
+  inherit (final.unstable) jujutsu;
   helix =
     # PR https://github.com/helix-editor/helix/pull/6417
     (builtins.getFlake "github:helix-editor/helix/c2268bb7acd365e075c2718e6356c866f26cfc90")
