@@ -37,7 +37,12 @@
       automatic = true;
     };
     distributedBuilds = lib.mkDefault true;
-    gc.options = "-d";
+    gc = {
+      options = "-d";
+      persistent = true;
+      dates = "weekly";
+      randomizedDelaySec = "2h";
+    };
   };
 
   programs.ssh.knownHosts = {
