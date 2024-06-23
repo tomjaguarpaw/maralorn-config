@@ -23,53 +23,28 @@ in
         LISTEN_ADDR = address;
       };
     };
-    nginx.virtualHosts.${virtualHosts.rss} = {
-      locations = {
-        "/" = {
-          proxyPass = "http://${address}";
-          proxyWebsockets = true;
-        };
-        "/own/".alias = "/var/www/rss/";
+    nginx.virtualHosts.${virtualHosts.rss}.locations = {
+      "/" = {
+        proxyPass = "http://${address}";
+        proxyWebsockets = true;
       };
+      "/own/".alias = "/var/www/rss/";
     };
   };
-  systemd.services = {
-    mastodon-digest = {
-      script = ''
-        now=$(date "+%Y-%m-%d")
-        mkdir -p /var/www/rss/mastodon/$now-home-feed-highlights
-        mkdir -p /var/www/rss/mastodon/$now-read-all-list
-        mkdir -p /var/www/rss/mastodon/$now-tags
-        set -o allexport
-        source $CREDENTIALS_DIRECTORY/mastodon-auth-env
-        set +o allexport
-        ${lib.getExe pkgs.mastodon_digest} -o /var/www/rss/mastodon/$now-home-feed-highlights -n 24 -t normal
-        ${lib.getExe pkgs.mastodon_digest} -o /var/www/rss/mastodon/$now-read-all-list -n 24 -t all --theme no-boosts -f list:5581 || true
-        ${lib.getExe pkgs.mastodon_digest} -o /var/www/rss/mastodon/$now-tags -n 24 -t all -f list:5580
-        ${lib.getBin pkgs.rssfeeds}/bin/mastodon2rss /var/www/rss/mastodon.xml /var/www/rss/mastodon
-      '';
-      serviceConfig = {
-        Type = "oneshot";
-        LoadCredential = [ "mastodon-auth-env:${config.age.secrets.mastodon-auth-env.path}" ];
-      };
-    };
-    refresh-miniflux = {
-      script = ''
-        ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header https://${virtualHosts.rss}/v1/feeds/refresh
-        ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-watchfeeds https://${virtualHosts.rss}/v1/feeds/refresh
-        ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-softwareupdates https://${virtualHosts.rss}/v1/feeds/refresh
-      '';
-      after = [ "mastodon-digest.service" ];
-      requires = [ "mastodon-digest.service" ];
-      startAt = "19:00";
-      serviceConfig = {
-        Type = "oneshot";
-        LoadCredential = [
-          "auth-header:${config.age.secrets.miniflux-refresh-auth-header.path}"
-          "auth-header-watchfeeds:${config.age.secrets.miniflux-refresh-auth-header-watchfeeds.path}"
-          "auth-header-softwareupdates:${config.age.secrets.miniflux-refresh-auth-header-softwareupdates.path}"
-        ];
-      };
+  systemd.services.refresh-miniflux = {
+    script = ''
+      ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header https://${virtualHosts.rss}/v1/feeds/refresh
+      ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-watchfeeds https://${virtualHosts.rss}/v1/feeds/refresh
+      ${lib.getExe pkgs.curl} -X PUT -H @$CREDENTIALS_DIRECTORY/auth-header-softwareupdates https://${virtualHosts.rss}/v1/feeds/refresh
+    '';
+    startAt = "19:00";
+    serviceConfig = {
+      Type = "oneshot";
+      LoadCredential = [
+        "auth-header:${config.age.secrets.miniflux-refresh-auth-header.path}"
+        "auth-header-watchfeeds:${config.age.secrets.miniflux-refresh-auth-header-watchfeeds.path}"
+        "auth-header-softwareupdates:${config.age.secrets.miniflux-refresh-auth-header-softwareupdates.path}"
+      ];
     };
   };
 }
