@@ -5,13 +5,9 @@
     pkgs.ddcutil
   ];
   hardware.i2c.enable = true;
+  programs.river.enable = true;
   services.greetd = {
     enable = true;
     vt = 2;
-  };
-  programs.sway.enable = true; # For swaylock pam files …
-  xdg.portal = {
-    enable = true;
-    wlr.enable = true;
   };
 }
