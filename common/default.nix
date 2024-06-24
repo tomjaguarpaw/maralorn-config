@@ -11,6 +11,10 @@
         type = types.str;
         description = "External ipv6 prefix";
       };
+      hyprland = mkOption {
+        default = false;
+        type = types.bool;
+      };
       headscaleIPs = mkOption {
         type = types.listOf types.str;
         default = [
