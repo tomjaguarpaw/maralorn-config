@@ -1,1 +1,1 @@
-final: prev: { hyprslidr = final.callPackage ./package.nix { }; }
+final: _prev: { hyprslidr = final.callPackage ./package.nix { }; }
