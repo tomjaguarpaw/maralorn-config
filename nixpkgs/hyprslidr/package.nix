@@ -2,16 +2,17 @@
   stdenv,
   pkg-config,
   hyprland,
-  fetchFromGitLab,
+  fetchFromGitea,
 }:
 stdenv.mkDerivation rec {
   pname = "hyprslidr";
-  version = "b93e04a82978b0caa5ecbf21407fcba883fec0e4";
-  src = fetchFromGitLab {
-    owner = "magus";
+  version = "main";
+  src = fetchFromGitea {
+    owner = "maralorn";
     repo = "hyprslidr";
     rev = version;
-    hash = "sha256-AAbeW8AA1OcOh9gBK2Ae9EpWHwMRXMDdJ+hw2y/R/0Y=";
+    domain = "code.maralorn.de";
+    hash = "sha256-MQf8mW2JvYw4XwbOK9697B9dGiSVbEixQkTGPaqtS/U=";
   };
 
   nativeBuildInputs = [
