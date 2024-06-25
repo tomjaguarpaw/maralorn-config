@@ -11,7 +11,7 @@
     tcp.enable = true;
     zeroconf.discovery.enable = true;
   };
-  services.jack.jackd.enable = true;
+  # services.jack.jackd.enable = true;
   # support ALSA only programs via ALSA JACK PCM plugin
   # alsa.enable = false;
   # support ALSA only programs via loopback device (supports programs like Steam)
