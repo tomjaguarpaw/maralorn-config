@@ -56,8 +56,8 @@
   systemd.services.gitea-runner-athene = {
     serviceConfig = {
       Restart = "on-failure";
-      RestartSec = 2;
+      RestartSec = lib.mkForce 30;
     };
-    unitConfig.StartLimitIntervalSec = 15;
+    unitConfig.StartLimitIntervalSec = 300;
   };
 }
