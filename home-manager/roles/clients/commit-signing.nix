@@ -6,16 +6,17 @@ let
   '';
 in
 {
-  programs.git = {
-    signing = {
-      signByDefault = true;
-      key = "key::${signing-key}";
-    };
-    extraConfig = {
-      gpg.format = "ssh";
-      gpg.ssh.allowedSignersFile = file;
-    };
-  };
+  # Enabling signing might break ob thunk because of outdated git versions
+  # programs.git = {
+  #   signing = {
+  #     signByDefault = true;
+  #     key = "key::${signing-key}";
+  #   };
+  #   extraConfig = {
+  #     gpg.format = "ssh";
+  #     gpg.ssh.allowedSignersFile = file;
+  #   };
+  # };
   programs = {
     jujutsu = {
       settings.signing = {
