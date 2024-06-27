@@ -19,8 +19,6 @@
         kb_options = "altwin:swap_lalt_lwin";
       };
       general = {
-        gaps_in = 1;
-        gaps_out = 1;
         "col.inactive_border" = "0x00000000";
         layout = "slidr";
         animation = [
@@ -39,10 +37,11 @@
         "float,class:launcher"
         "pin,class:launcher"
       ];
-      exec = [
-        "systemctl --user restart wallpaper eww swayidle"
+      exec = [ "systemctl --user restart eww swayidle" ];
+      exec-once = [
         "unlock-keys"
         "hyprdim"
+        "swaybg -m fill -i ~/.config/wallpaper"
       ];
       bind = [
         "$mod, RETURN, exec, ${config.home.sessionVariables.TERMINAL}"
