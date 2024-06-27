@@ -33,7 +33,7 @@
   (if (eq? n 0) '() (cons x (repeat (- n 1) x)))
 )
 
-(define bar-offset 200)
+(define bar-offset 100)
 
 (define (rel width height startx starty w h)
   (list (* width startx) (* height starty) (* width w) (* height h)))

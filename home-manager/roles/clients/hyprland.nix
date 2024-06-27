@@ -18,6 +18,7 @@
         kb_variant = "neo";
         kb_options = "altwin:swap_lalt_lwin";
       };
+      decoration.blur.enabled = false;
       general = {
         "col.inactive_border" = "0x00000000";
         layout = "slidr";

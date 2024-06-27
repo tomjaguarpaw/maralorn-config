@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
     repo = "hyprslidr";
     rev = version;
     domain = "code.maralorn.de";
-    hash = "sha256-MQf8mW2JvYw4XwbOK9697B9dGiSVbEixQkTGPaqtS/U=";
+    hash = "sha256-oAJhuJ+QECpBfpF/+2O87R+2xpAxXbIoOWAp6XaKraE=";
   };
 
   nativeBuildInputs = [
