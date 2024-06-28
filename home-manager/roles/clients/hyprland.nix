@@ -7,7 +7,6 @@
   wayland.windowManager.hyprland = {
     enable = true;
     plugins = [
-      #pkgs.hyprscroller
       pkgs.hyprslidr
       pkgs.hyprlandPlugins.hyprexpo
     ];
@@ -18,7 +17,11 @@
         kb_variant = "neo";
         kb_options = "altwin:swap_lalt_lwin";
       };
-      decoration.blur.enabled = false;
+      decoration = {
+        blur.enabled = false;
+        rounding = 10;
+        drop_shadow = false;
+      };
       general = {
         "col.inactive_border" = "0x00000000";
         layout = "slidr";
@@ -52,13 +55,13 @@
         "$mod, right, slidr:movefocus, r"
         "$mod, up, slidr:movefocus, u"
         "$mod, down, slidr:movefocus, d"
-        "SUPER_SHIFT, left, movewindow, l"
-        "SUPER_SHIFT, right, movewindow, r"
-        "SUPER_SHIFT, up, movewindow, u"
-        "SUPER_SHIFT, down, movewindow, d"
+        "SUPER_SHIFT, left, slidr:movewindow, l"
+        "SUPER_SHIFT, right, slidr:movewindow, r"
+        "SUPER_SHIFT, up, slidr:movewindow, u"
+        "SUPER_SHIFT, down, slidr:movewindow, d"
         "$mod, f, fullscreen"
         "$mod, s, slidr:cyclesize"
-        "$mod, i, slidr:admitwindow"
+        "$mod, a, slidr:admitwindow"
         "$mod, e, slidr:expelwindow"
         "$mod, t, togglefloating"
         "$mod, o, hyprexpo:expo, toggle"
