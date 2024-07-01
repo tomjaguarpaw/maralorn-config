@@ -12,7 +12,7 @@
         description = "External ipv6 prefix";
       };
       hyprland = mkOption {
-        default = false;
+        default = true;
         type = types.bool;
       };
       headscaleIPs = mkOption {

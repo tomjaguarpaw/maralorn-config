@@ -21,48 +21,59 @@
 )
 
 (defwidget status []
-  (box :space-evenly false :vexpand false :orientation "vertical"
+  (box :space-evenly false :vexpand false :orientation "horizontal"
     (label :text "${alerts}${rbw}${mode}${warnings}${warninggroups}}${players}${uptime}${networks}" :visible false)
     (box :class "time" :halign "center" :space-evenly false {formattime(EWW_TIME, " ${host}   %F KW%V %a   %H:%M:%S")})
-    (box :space-evenly false :vexpand false
-      (box :orientation "vertical" :space-evenly false (for group in warninggroups
-        (box :space-evenly false (image :path "icons/${group.name}.png") {group.count})
-      ))
-      (box :orientation "vertical" :space-evenly false (for timer in timers
-        (box :class "${EWW_TIME >= timer.at ? "blink" :""}" :space-evenly false (image :path "icons/timer.png") (box :hexpand true :halign "center" :orientation "vertical" {timer.name} {formattime(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at,(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at) > 60*60 ? "%H:%M:%S": "%M:%S","UTC")}))
-      ))
-      (box :orientation "vertical" :space-evenly false (for alert in {mode != "Klausur" && arraylength(alerts) > 0 ? [1] : []}
-        (box :space-evenly false (image :path "icons/cloud-alert.png") (label :text "${arraylength(alerts)}"))
-      ))
-      (box :orientation "vertical" :space-evenly false (for rbwfile in {rbw ? [] : [1]}
-        (box :space-evenly false (image :path "icons/lock-alert.png") (label :text "rbw"))
-      ))
-      (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" && EWW_BATTERY.BAT0.status != "Charging" && (EWW_BATTERY.BAT0.status != "Not charging" || EWW_BATTERY.BAT0.capacity < 90) && EWW_BATTERY.BAT0.status != "Full"  ? [EWW_BATTERY.BAT0] : []}
-        (box :space-evenly false (image :path "icons/battery-alert.png") (label :text "${battery.capacity}%"))
-      ))
-      (box :orientation "vertical" :space-evenly false (for ramwarning in {EWW_RAM.used_mem_perc > 70 ? [1] : []}
-        (box :class " ${EWW_RAM.used_mem_perc > 85 ? "blink" : ""}" :space-evenly false (image :path "icons/memory.png") (label :text "${round(EWW_RAM.used_mem_perc,0)}%"))
-      ))
-    )
+    (box :orientation "vertical" :space-evenly false (for group in warninggroups
+      (box :space-evenly false (image :path "icons/${group.name}.png") {group.count})
+    ))
+    (box :orientation "vertical" :space-evenly false (for timer in timers
+      (box :class "${EWW_TIME >= timer.at ? "blink" :""}" :space-evenly false (image :path "icons/timer.png") (box :hexpand true :halign "center" :orientation "vertical" {timer.name} {formattime(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at,(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at) > 60*60 ? "%H:%M:%S": "%M:%S","UTC")}))
+    ))
+    (box :orientation "vertical" :space-evenly false (for alert in {mode != "Klausur" && arraylength(alerts) > 0 ? [1] : []}
+      (box :space-evenly false (image :path "icons/cloud-alert.png") (label :text "${arraylength(alerts)}"))
+    ))
+    (box :orientation "vertical" :space-evenly false (for rbwfile in {rbw ? [] : [1]}
+      (box :space-evenly false (image :path "icons/lock-alert.png") (label :text "rbw"))
+    ))
+    (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" && EWW_BATTERY.BAT0.status != "Charging" && (EWW_BATTERY.BAT0.status != "Not charging" || EWW_BATTERY.BAT0.capacity < 90) && EWW_BATTERY.BAT0.status != "Full"  ? [EWW_BATTERY.BAT0] : []}
+      (box :space-evenly false (image :path "icons/battery-alert.png") (label :text "${battery.capacity}%"))
+    ))
+    (box :orientation "vertical" :space-evenly false (for ramwarning in {EWW_RAM.used_mem_perc > 70 ? [1] : []}
+      (box :class " ${EWW_RAM.used_mem_perc > 85 ? "blink" : ""}" :space-evenly false (image :path "icons/memory.png") (label :text "${round(EWW_RAM.used_mem_perc,0)}%"))
+    ))
   )
 )
 
 (defwidget bottom []
-   (box :space-evenly false :valign "end"
-      (box :orientation "vertical" :space-evenly false (for x in {idle_state.tag != "Active" ? [""] : []}
-        (box :space-evenly false :orientation "horizontal"
-          (image :path "icons/${idle_state.tag == "Idle" ? "idle" : "no-idle"}.png")
-          (box :halign "center" :hexpand true "idle")
-          (box :halign "end" :hexpand true {idle_state.tag == "Idle" ? formattime(EWW_TIME - idle_state.contents,"%M:%S","UTC") : "off"})
-        )
-      ))
-      (box :orientation "vertical" :space-evenly false (for endpoint in audio
-        (box :class "${endpoint.mute ? "disabled" : ""}" :orientation "vertical" :space-evenly false
-          (box :orientation "horizontal" :space-evenly false
-            (for icon in {endpoint.icons} (image :image-width 14 :image-height 14 :path "icons/${icon}.png"))
-            (label :width 60 :wrap true :justify "center" :hexpand true :text {endpoint.name})
+  (box :space-evenly false :valign "end"
+    (box :space-evenly false (for x in {idle_state.tag != "Active" ? [""] : []}
+      (box :space-evenly false :orientation "horizontal"
+        (image :path "icons/${idle_state.tag == "Idle" ? "idle" : "no-idle"}.png")
+        (box :halign "center" :hexpand true "idle")
+        (box :halign "end" :hexpand true {idle_state.tag == "Idle" ? formattime(EWW_TIME - idle_state.contents,"%M:%S","UTC") : "off"})
+      )
+    ))
+    (box :orientation "vertical" :space-evenly false (for appointment in calendar
+      (box :orientation "vertical" :space-evenly false :spacing 10
+        (label :width 80 :wrap true :justify "center" :text {appointment.title})
+      )
+    ))
+  )
+)
+
+(defwidget sidebar []
+  (centerbox :class "tophud"
+    (box :space-evenly false
+      (box (for endpoint in audio
+        (box :class "${endpoint.mute ? "disabled" : ""}"
+          (box :orientation "vertical" :space-evenly false
+            (box :space-evenly false
+              (for icon in {endpoint.icons} (image :image-width 14 :image-height 14 :path "icons/${icon}.png"))
+              (label :width 60 :wrap true :justify "center" :hexpand true :text {endpoint.name})
+            )
+            (progress :value {endpoint.volume})
           )
-          (progress :value {endpoint.volume})
           (for client in {endpoint.clients}
             (box :class "lighter ${client.mute ? "disabled" : ""}" :orientation "vertical" :space-evenly false
               (label :width 60 :wrap true :justify "center" :hexpand true :text {client.name})
@@ -71,25 +82,16 @@
           )
         )
       ))
-      (box :orientation "vertical" :space-evenly false (for appointment in calendar
-        (box :orientation "vertical" :space-evenly false :spacing 10
-          (label :width 80 :wrap true :justify "center" :text {appointment.title})
+      (box (for player in {jq(players,"map(select(.status==\"Playing\"))")}
+        (box :space-evenly false :spacing 10
+          (box  :space-evenly false :spacing 10
+            (image :image-width 20 :image-height 20 :path "icons/${player.status}.png")
+            (label :justify "center" :wrap true :text "${player.name} | ${player.title}")
+          )
         )
       ))
-   )
-)
-
-(defwidget sidebar []
-  (centerbox :class "tophud" :orientation "vertical"
+    )
     (status)
-    (box :orientation "vertical" :space-evenly false (for player in {jq(players,"map(select(.status==\"Playing\"))")}
-      (box :orientation "vertical" :space-evenly false :spacing 10
-        (box  :space-evenly false :spacing 10
-          (image :image-width 20 :image-height 20 :path "icons/${player.status}.png")
-          (label :justify "center" :wrap true :text "${player.name} | ${player.title}")
-        )
-      )
-    ))
     (bottom)
   )
 )
@@ -200,10 +202,11 @@
 (defwindow topbar [screen]
   :monitor 0
   :focusable false
+  :exclusive true
   :geometry (geometry :x "0%"
                       :y "0%"
-                      :width { screen == "small" ? "41%" : "20%" }
-                      :height "100px"
-                      :anchor { screen == "small" ? "top right" : "top center"})
+                      :width "100%"
+                      :height "30px"
+                      :anchor "top center")
   (sidebar)
 )

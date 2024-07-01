@@ -8,7 +8,7 @@
     enable = true;
     plugins = [
       pkgs.hyprslidr
-      pkgs.hyprlandPlugins.hyprexpo
+      pkgs.Hyprspace
     ];
     settings = {
       "$mod" = "SUPER";
@@ -19,7 +19,6 @@
       };
       decoration = {
         blur.enabled = false;
-        rounding = 10;
         drop_shadow = false;
       };
       general = {
@@ -32,6 +31,11 @@
           "borderangle,1,10,default"
           "workspaces,1,2,default,slidevert"
         ];
+      };
+      plugin.overview = {
+        hideRealLayers = false;
+        affectStrut = false;
+        onBottom = true;
       };
       misc = {
         disable_hyprland_logo = true;
@@ -64,7 +68,6 @@
         "$mod, a, slidr:admitwindow"
         "$mod, e, slidr:expelwindow"
         "$mod, t, togglefloating"
-        "$mod, o, hyprexpo:expo, toggle"
         "$mod, Prior, exec, hyprnome --previous"
         "$mod, Next, exec, hyprnome"
         "SUPER_SHIFT, Prior, exec, hyprnome --previous --move"
@@ -72,6 +75,7 @@
         ", Print, execr, screenshot"
       ];
       bindr = [
+        "SUPER, SUPER_L, overview:toggle"
         "SUPER, SUPER_L, execr, (makoctl mode -r show; eww close overlay) || (eww open overlay; makoctl mode -a show)"
       ];
       binde = [
