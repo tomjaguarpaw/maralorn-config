@@ -20,7 +20,7 @@ default (String)
 -- Executables used.
 load
   Absolute
-  [ "lswt" -- NIX_BIN
+  [ "hyprctl" -- NIX_BIN
   , "jq" -- NIX_BIN
   , "arbtt-import" -- NIX_BIN
   ]
@@ -35,9 +35,10 @@ main = do
   let inactive = case idle_state of
         "Idle" -> "1"
         _ -> "0"
-  lswt "--json"
+  act <- hyprctl "activewindow" "-j" |> jq ".address" |> captureTrim
+  hyprctl "clients" "-j"
     |> jq
       ( id @String
-          [i|{date:now|strftime("%FT%TZ"),rate:#{sampleRateInSeconds * 1000},inactive:#{inactive},windows:.toplevels | map({title,program:."app-id",active:.activated}),desktop:""}|]
+          [i|{date:now|strftime("%FT%TZ"),rate:#{sampleRateInSeconds * 1000},inactive:#{inactive},windows:map({title,program:.class,active:(.address == #{act})}),desktop:""}|]
       )
     |> arbtt_import "-a" "-t" "JSON"

@@ -30,12 +30,12 @@ in
               (
                 builtins.replaceStrings
                   [
-                    "\"lswt\" -- NIX_BIN"
+                    "\"hyprctl\" -- NIX_BIN"
                     "\"jq\" -- NIX_BIN"
                     "\"arbtt-import\" -- NIX_BIN"
                   ]
                   [
-                    "\"${lib.getExe pkgs.lswt}\""
+                    "\"${lib.getExe' pkgs.hyprland "hyprctl"}\""
                     "\"${lib.getExe pkgs.jq}\""
                     "\"${lib.getExe' package "arbtt-import"}\""
                   ]
