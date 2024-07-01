@@ -33,6 +33,7 @@
           pkgs.nix
           pkgs.jaq
           pkgs.t
+          pkgs.hyprland
           config.programs.rbw.package
         ]
       }";

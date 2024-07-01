@@ -35,7 +35,7 @@ let
         Shutdown = "systemctl poweroff";
         Suspend = "systemctl suspend";
         Reboot = "systemctl reboot";
-        Logout = "riverctl exit";
+        Logout = "hyprctl dispatch exit";
         Lock = "swaylock";
         "Disable Idle daemon" = "systemctl --user stop swayidle";
         "Enable Idle daemon" = "systemctl --user start swayidle";

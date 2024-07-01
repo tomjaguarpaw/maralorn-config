@@ -45,6 +45,12 @@ $background-lighter: #152f6d;
   box-shadow: 0 0 10px #ffffff;
 }
 
+.workspace {
+  padding: 0.3em;
+  margin: 0.2em;
+  border: 1px solid #7eaafd;
+}
+
 .disabled {
   color: rgba(255,255,255,0.4);
 }

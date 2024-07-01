@@ -9,21 +9,33 @@
 (deflisten audio             :initial "[]" "bash scripts/listen.sh audio")
 (deflisten networks          :initial "[]" "bash scripts/listen.sh networks")
 (deflisten idle_state        :initial "{\"at\":1000000000000000,\"idle\":false}" "bash scripts/listen.sh idle_state")
+(deflisten workspaces        :initial "[]" "bash scripts/get-workspaces.sh")
+(deflisten current_workspace :initial "1" "bash scripts/get-active-workspace.sh")
+
 
 (defpoll alerts :interval "1m" :initial "[]" `curl https://alerts.maralorn.de/api/v2/alerts | jq 'map(select(.status.state != "suppressed"))'`)
 (defpoll rbw :interval "5s" :initial false "if rbw unlocked; then echo true; else echo false; fi")
 (defpoll host :interval "1440m" :initial "unknown" "cat /etc/hostname")
 (defvar disks '{"apollo":["/","/boot/EFI"],"hephaistos":["/nix","/efi"],"zeus":["/","/efi"],"unknown":[]}')
 
-(defwidget time []
-  (box :class "component time" :orientation "vertical" :valign "end" :space-evenly false
+
+
+(defwidget workspaces []
+  (box :orientation "horizontal"
+    (label :text "${workspaces}${current_workspace}" :visible false)
+    (for workspace in workspaces
+      (box :class "workspace ${workspace.id == current_workspace ? "current" : ""} ${workspace.windows > 0 ? "occupied" : "empty"}"
+        (label :text {workspace.windows})
+      )
+    )
   )
 )
 
 (defwidget status []
   (box :space-evenly false :vexpand false :orientation "horizontal"
     (label :text "${alerts}${rbw}${mode}${warnings}${warninggroups}}${players}${uptime}${networks}" :visible false)
-    (box :class "time" :halign "center" :space-evenly false {formattime(EWW_TIME, " ${host}   %F KW%V %a   %H:%M:%S")})
+    (workspaces)
+    (box :class "time" :halign "center" :space-evenly false {formattime(EWW_TIME, " ${host}   %F KW%V %a   %H:%M:%S ")})
     (box :orientation "vertical" :space-evenly false (for group in warninggroups
       (box :space-evenly false (image :path "icons/${group.name}.png") {group.count})
     ))
@@ -65,7 +77,7 @@
 (defwidget sidebar []
   (centerbox :class "tophud"
     (box :space-evenly false
-      (box (for endpoint in audio
+      (box :space-evenly false (for endpoint in audio
         (box :class "${endpoint.mute ? "disabled" : ""}"
           (box :orientation "vertical" :space-evenly false
             (box :space-evenly false
