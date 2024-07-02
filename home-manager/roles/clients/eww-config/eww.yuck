@@ -31,11 +31,13 @@
   )
 )
 
-(defwidget status []
-  (box :space-evenly false :vexpand false :orientation "horizontal"
+(defwidget time []
+  (box :class "time" :halign "center" :space-evenly false {formattime(EWW_TIME, " ${host}   %F KW%V %a   %H:%M:%S ")})
+)
+
+(defwidget icon-bar []
+  (box :space-evenly false :orientation "horizontal"
     (label :text "${alerts}${rbw}${mode}${warnings}${warninggroups}}${players}${uptime}${networks}" :visible false)
-    (workspaces)
-    (box :class "time" :halign "center" :space-evenly false {formattime(EWW_TIME, " ${host}   %F KW%V %a   %H:%M:%S ")})
     (box :orientation "vertical" :space-evenly false (for group in warninggroups
       (box :space-evenly false (image :path "icons/${group.name}.png") {group.count})
     ))
@@ -58,7 +60,7 @@
 )
 
 (defwidget bottom []
-  (box :space-evenly false :valign "end"
+  (box :space-evenly false :hexpand true :halign "end"
     (box :space-evenly false (for x in {idle_state.tag != "Active" ? [""] : []}
       (box :space-evenly false :orientation "horizontal"
         (image :path "icons/${idle_state.tag == "Idle" ? "idle" : "no-idle"}.png")
@@ -74,36 +76,48 @@
   )
 )
 
+(defwidget pipewire-bar []
+ (box :space-evenly false (for endpoint in audio
+   (box :space-evenly false :class "${endpoint.mute ? "disabled" : ""}"
+     (box :orientation "vertical" :space-evenly false
+       (box :space-evenly false
+         (for icon in {endpoint.icons} (image :image-width 14 :image-height 14 :path "icons/${icon}.png"))
+         (label :width 60 :wrap true :justify "center" :hexpand true :text {endpoint.name})
+       )
+       (progress :value {endpoint.volume})
+     )
+     (for client in {endpoint.clients}
+       (box :class "lighter ${client.mute ? "disabled" : ""}" :orientation "vertical" :space-evenly false
+         (label :width 60 :wrap true :justify "center" :hexpand true :text {client.name})
+         (progress :value {client.volume})
+       )
+     )
+   )
+ ))
+)
+
+(defwidget players-bar []
+  (box (for player in {jq(players,"map(select(.status==\"Playing\"))")}
+    (box :space-evenly false :spacing 10
+      (box  :space-evenly false :spacing 10
+        (image :image-width 20 :image-height 20 :path "icons/${player.status}.png")
+        (label :justify "center" :wrap true :text "${player.name} | ${player.title}")
+      )
+    )
+  ))
+)
+
 (defwidget sidebar []
   (centerbox :class "tophud"
     (box :space-evenly false
-      (box :space-evenly false (for endpoint in audio
-        (box :class "${endpoint.mute ? "disabled" : ""}"
-          (box :orientation "vertical" :space-evenly false
-            (box :space-evenly false
-              (for icon in {endpoint.icons} (image :image-width 14 :image-height 14 :path "icons/${icon}.png"))
-              (label :width 60 :wrap true :justify "center" :hexpand true :text {endpoint.name})
-            )
-            (progress :value {endpoint.volume})
-          )
-          (for client in {endpoint.clients}
-            (box :class "lighter ${client.mute ? "disabled" : ""}" :orientation "vertical" :space-evenly false
-              (label :width 60 :wrap true :justify "center" :hexpand true :text {client.name})
-              (progress :value {client.volume})
-            )
-          )
-        )
-      ))
-      (box (for player in {jq(players,"map(select(.status==\"Playing\"))")}
-        (box :space-evenly false :spacing 10
-          (box  :space-evenly false :spacing 10
-            (image :image-width 20 :image-height 20 :path "icons/${player.status}.png")
-            (label :justify "center" :wrap true :text "${player.name} | ${player.title}")
-          )
-        )
-      ))
+      (pipewire-bar)
+      (players-bar)
     )
-    (status)
+    (box :space-evenly false
+      (workspaces)
+      (time)
+      (icon-bar)
+    )
     (bottom)
   )
 )

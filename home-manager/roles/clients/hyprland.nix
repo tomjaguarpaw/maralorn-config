@@ -16,6 +16,7 @@
         kb_layout = "de";
         kb_variant = "neo";
         kb_options = "altwin:swap_lalt_lwin";
+        follow_mouse = 2;
       };
       decoration = {
         blur.enabled = false;
