@@ -216,6 +216,7 @@
 
 (defwindow overlay
   :monitor 0
+  :focusable false
   :stacking "overlay"
   :geometry (geometry :x "0%"
                       :y "0%"
@@ -225,7 +226,7 @@
   (info-overlay)
 )
 
-(defwindow topbar [screen]
+(defwindow topbar
   :monitor 0
   :focusable false
   :exclusive true
