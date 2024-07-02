@@ -15,6 +15,7 @@ import StatusScript.Env (Env (..))
 import StatusScript.Mode qualified as Mode
 import StatusScript.Modules.Audio qualified as Audio
 import StatusScript.Modules.Calendar qualified as Calendar
+import StatusScript.Modules.Hyprland (hyprlandWorkspaces)
 import StatusScript.Modules.IdleState qualified as IdleState
 import StatusScript.Modules.Mail qualified as Mail
 import StatusScript.Modules.Mako qualified as Mako
@@ -97,6 +98,8 @@ main = Notify.withManager \watch_manager -> do
     audio_event <- Audio.audioUpdateEvent env
     audio_info_event <- Audio.audioInfos audio_event
     PublishSocket.publishJson env "audio" audio_info_event
+    hyprland_workspaces <- hyprlandWorkspaces env
+    PublishSocket.publishJson' env "workspaces" hyprland_workspaces
     (end_event, trigger) <- R.newTriggerEvent
     let run_job_queue = do
           (job_name, job) <- atomically $ STM.readTQueue job_queue

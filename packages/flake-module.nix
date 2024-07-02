@@ -53,6 +53,7 @@ let
             playerctl
             notmuch
             iputils
+            hyprland
             tailscale
             pipewire
             mako

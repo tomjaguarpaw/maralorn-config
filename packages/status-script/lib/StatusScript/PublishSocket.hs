@@ -1,13 +1,15 @@
-module StatusScript.PublishSocket (publish, publishJson, socketsDir) where
+module StatusScript.PublishSocket (publish, publishJson, socketsDir, publishJson') where
 
 import Control.Exception qualified as Exception
+import Data.Aeson (ToJSON)
 import Data.Aeson qualified as Aeson
 import Maralorn.Prelude
 import Network.Socket qualified as Network
 import Network.Socket.ByteString qualified as Network
-import Reflex qualified as R
+import Reflex
+import Reflex.Host.Headless (MonadHeadlessApp)
 import Reflex.Host.Headless qualified as R
-import StatusScript.Env (Env (..))
+import StatusScript.Env
 
 mkSendToSocketCallback :: Env -> FilePath -> IO (ByteString -> IO ())
 mkSendToSocketCallback = \env socket_name -> do
@@ -45,20 +47,30 @@ publish
   :: R.MonadHeadlessApp t m
   => Env
   -> Text
-  -> R.Event t ByteString
+  -> Event t ByteString
   -> m ()
 publish = \env socket_name event -> do
   -- Listen socket
   callback <- liftIO $ mkSendToSocketCallback env [i|#{socketsDir}/#{socket_name}|]
-  R.performEvent_ $ event <&> (callback % env.fork [i|Publishing to socket #{socket_name}|] % liftIO)
+  performEvent_ $ event <&> (callback % env.fork [i|Publishing to socket #{socket_name}|] % liftIO)
 
 publishJson
   :: (R.MonadHeadlessApp t m, Aeson.ToJSON a)
   => Env
   -> Text
-  -> R.Event t a
+  -> Event t a
   -> m ()
 publishJson = \env name -> fmap (Aeson.encode % toStrict) % publish env name
+
+publishJson'
+  :: (MonadHeadlessApp t m, ToJSON a)
+  => Env
+  -> Text
+  -> Dynamic t a
+  -> m ()
+publishJson' env name dVal = do
+  pb <- getPostBuild
+  publish env name $ toStrict . Aeson.encode <$> leftmost [updated dVal, current dVal <@ pb]
 
 socketsDir :: FilePath
 socketsDir = "/run/user/1000/status"

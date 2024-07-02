@@ -30,6 +30,7 @@ common common-config
     NoFieldSelectors
     NoImplicitPrelude
     NoImplicitPrelude
+    OverloadedLabels
     OverloadedRecordDot
     OverloadedStrings
     PartialTypeSignatures
@@ -49,6 +50,8 @@ common common-config
     , filepath
     , fsnotify
     , network
+    , nonempty-containers
+    , optics
     , reflex
     , relude
     , say
@@ -62,7 +65,7 @@ common common-config
   default-language:   GHC2021
   ghc-options:
     -Wall -Wno-type-defaults -Wcompat -fno-show-valid-hole-fits
-    -fmax-relevant-binds=0
+    -fdefer-type-errors -fno-show-error-context -fmax-relevant-binds=0
 
 library
   import:          common-config
@@ -78,6 +81,7 @@ library
     StatusScript.Modules.Calendar
     StatusScript.Modules.ConfigPull
     StatusScript.Modules.Git
+    StatusScript.Modules.Hyprland
     StatusScript.Modules.IdleState
     StatusScript.Modules.Mail
     StatusScript.Modules.Mako
