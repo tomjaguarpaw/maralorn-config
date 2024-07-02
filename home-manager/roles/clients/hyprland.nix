@@ -8,7 +8,7 @@
     enable = true;
     plugins = [
       pkgs.hyprslidr
-      pkgs.Hyprspace
+      # pkgs.Hyprspace
     ];
     settings = {
       "$mod" = "SUPER";
@@ -75,7 +75,7 @@
         ", Print, execr, screenshot"
       ];
       bindr = [
-        "SUPER, SUPER_L, overview:toggle"
+        # "SUPER, SUPER_L, overview:toggle"
         "SUPER, SUPER_L, execr, (makoctl mode -r show; eww close overlay) || (eww open overlay; makoctl mode -a show)"
       ];
       binde = [

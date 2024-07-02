@@ -6,14 +6,14 @@
 }:
 stdenv.mkDerivation rec {
   pname = "hyprslidr";
-  version = "e5f54117a1db5ad1f66d33c70cd8dcf0b7cbdbac";
+  version = "02b10c786631df132e306f2cfc96fdd002d4a7dd";
 
   src = fetchFromGitea {
     owner = "maralorn";
     repo = "hyprslidr";
     rev = version;
     domain = "code.maralorn.de";
-    hash = "sha256-3PmrxnOtrt/JQiN3RPusR7eG6ONXfj7/xkD4hxUEEYs=";
+    hash = "sha256-euB6oaagyYqObPrmGxCuSGft+tX+lDU4MtU+5B3czLw=";
   };
 
   nativeBuildInputs = [
