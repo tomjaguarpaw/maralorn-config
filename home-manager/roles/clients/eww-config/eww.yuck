@@ -36,24 +36,24 @@
 )
 
 (defwidget icon-bar []
-  (box :space-evenly false :orientation "horizontal"
+  (box :space-evenly false
     (label :text "${alerts}${rbw}${mode}${warnings}${warninggroups}}${players}${uptime}${networks}" :visible false)
-    (box :orientation "vertical" :space-evenly false (for group in warninggroups
+    (box :space-evenly false (for group in warninggroups
       (box :space-evenly false (image :path "icons/${group.name}.png") {group.count})
     ))
-    (box :orientation "vertical" :space-evenly false (for timer in timers
+    (box :space-evenly false (for timer in timers
       (box :class "${EWW_TIME >= timer.at ? "blink" :""}" :space-evenly false (image :path "icons/timer.png") (box :hexpand true :halign "center" :orientation "vertical" {timer.name} {formattime(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at,(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at) > 60*60 ? "%H:%M:%S": "%M:%S","UTC")}))
     ))
-    (box :orientation "vertical" :space-evenly false (for alert in {mode != "Klausur" && arraylength(alerts) > 0 ? [1] : []}
+    (box :space-evenly false (for alert in {mode != "Klausur" && arraylength(alerts) > 0 ? [1] : []}
       (box :space-evenly false (image :path "icons/cloud-alert.png") (label :text "${arraylength(alerts)}"))
     ))
-    (box :orientation "vertical" :space-evenly false (for rbwfile in {rbw ? [] : [1]}
+    (box :space-evenly false (for rbwfile in {rbw ? [] : [1]}
       (box :space-evenly false (image :path "icons/lock-alert.png") (label :text "rbw"))
     ))
-    (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" && EWW_BATTERY.BAT0.status != "Charging" && (EWW_BATTERY.BAT0.status != "Not charging" || EWW_BATTERY.BAT0.capacity < 90) && EWW_BATTERY.BAT0.status != "Full"  ? [EWW_BATTERY.BAT0] : []}
+    (box :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" && EWW_BATTERY.BAT0.status != "Charging" && (EWW_BATTERY.BAT0.status != "Not charging" || EWW_BATTERY.BAT0.capacity < 90) && EWW_BATTERY.BAT0.status != "Full"  ? [EWW_BATTERY.BAT0] : []}
       (box :space-evenly false (image :path "icons/battery-alert.png") (label :text "${battery.capacity}%"))
     ))
-    (box :orientation "vertical" :space-evenly false (for ramwarning in {EWW_RAM.used_mem_perc > 70 ? [1] : []}
+    (box :space-evenly false (for ramwarning in {EWW_RAM.used_mem_perc > 70 ? [1] : []}
       (box :class " ${EWW_RAM.used_mem_perc > 85 ? "blink" : ""}" :space-evenly false (image :path "icons/memory.png") (label :text "${round(EWW_RAM.used_mem_perc,0)}%"))
     ))
   )
@@ -68,8 +68,8 @@
         (box :halign "end" :hexpand true {idle_state.tag == "Idle" ? formattime(EWW_TIME - idle_state.contents,"%M:%S","UTC") : "off"})
       )
     ))
-    (box :orientation "vertical" :space-evenly false (for appointment in calendar
-      (box :orientation "vertical" :space-evenly false :spacing 10
+    (box :space-evenly false (for appointment in calendar
+      (box :spacing 10
         (label :width 80 :wrap true :justify "center" :text {appointment.title})
       )
     ))
