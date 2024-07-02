@@ -1,12 +1,12 @@
 { pkgs, ... }:
 {
-  home.packages = builtins.attrValues { inherit (pkgs) meld; };
+  home.packages = builtins.attrValues { inherit (pkgs) meld diffedit3; };
   dconf.settings."org/gnome/meld" = {
     highlight-syntax = true;
     style-scheme = "cobalt";
   };
   programs.jujutsu.settings.ui = {
-    merge-editor = "meld";
-    diff-editor = "meld-3";
+    merge-editor = "diffedit3";
+    diff-editor = "diffedit3";
   };
 }
