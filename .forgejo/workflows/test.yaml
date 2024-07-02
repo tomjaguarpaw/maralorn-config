@@ -32,7 +32,7 @@ jobs:
       - nix-eval
     strategy:
        matrix:
-         job: 
+         job:
            - check-pre-commit
            - nixos-apollo
            - nixos-athene
