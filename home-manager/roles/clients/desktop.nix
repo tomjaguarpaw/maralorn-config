@@ -66,22 +66,6 @@
 
   gtk = {
     enable = true;
-    iconTheme = {
-      name = "Tela-circle";
-      package = pkgs.tela-circle-icon-theme;
-    };
-    cursorTheme = {
-      name = "Catppuccin-Mocha-Blue-Cursors";
-      package = pkgs.catppuccin-cursors.mochaBlue;
-    };
-    theme = {
-      name = "Catppuccin-Mocha-Compact-Blue-Dark";
-      package = pkgs.catppuccin-gtk.override {
-        variant = "mocha";
-        size = "compact";
-        tweaks = [ "rimless" ];
-      };
-    };
     gtk3.bookmarks = [ "ftp://athene.lo.m-0.eu" ];
   };
 }
