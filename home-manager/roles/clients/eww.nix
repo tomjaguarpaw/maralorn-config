@@ -37,6 +37,7 @@
         ]
       }";
       ExecStart = "${lib.getExe config.programs.eww.package} daemon --no-daemonize --restart";
+      ExecStartPost = "${lib.getExe config.programs.eww.package} open topbar";
       Restart = "always";
       RestartSec = "10s";
     };
