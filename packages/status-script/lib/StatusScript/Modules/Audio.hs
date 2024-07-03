@@ -97,6 +97,7 @@ aliases =
   , ("HDA ATI HDMI", "Monitor")
   , ("Audio Controller HDMI", "Monitor")
   , ("Audio Controller Speaker", "Intern")
+  , ("Audio Controller Digital Microphone", "Intern")
   ]
 
 mkInfos :: IntMap (Schema.Object PipeWireObject) -> [AudioEndPoint]
