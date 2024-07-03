@@ -1,36 +1,23 @@
 * {
   all: unset;
-  font-family: "Spleen 6x12";
+  font-family: "B612";
   font-size: 12px;
 }
 
-$background: #000040;
-$background-darker: #0d0f1c;
-$background-darker-80: #0d0f1ce0;
-$background-secondary: #323035;
-$background-lighter: #152f6d;
+$background: #eff1f5;
+$background-lighter: #ccced7;
+$foreground: #4c4f69;
 
 .time {
   font-weight: bold;
-  font-family: "Spleen 8x16";
   font-size: 16px;
 }
 
-.tophud {
-  color: #ffffff;
-  background: rgba($background,0.8);
-  padding: 0.3em;
-  margin-bottom: 3px;
-}
-
 .component {
-  color: #ffffff;
-  background: rgba($background,0.8);
-  border-radius: 0.7em;
-  border: 1px solid #7eaafd;
-  box-shadow: 0 0 8px #7eaafd;
+  color: $foreground;
+  background: $background;
   padding: 0.3em;
-  margin: 0.4em;
+  margin: 0.3em;
 }
 
 .lighter {

@@ -6,7 +6,7 @@
 }:
 let
   fork = cmd: "fork ${cmd}";
-  term = cmd: fork "foot ${cmd}";
+  term = cmd: fork "${config.home.sessionVariables.TERMINAL} ${cmd}";
   edit_dir = dir: term (shell "cd ${dir}; hx ${dir}");
   shell = cmd: "sh -c '${cmd}'";
   with-mic-check = cmd: fork (shell "${config.home.sessionVariables.TERMINAL} mic-check; ${cmd}");

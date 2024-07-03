@@ -14,11 +14,7 @@
           ];
         in
         {
-          monospace = [
-            "Symbols Nerd Font Mono"
-            "Spleen 6x12"
-            "Noto Sans Mono"
-          ] ++ unicode-fallback;
+          monospace = [ "JetBrainsMono Nerd Font" ] ++ unicode-fallback;
           sansSerif = [
             "B612"
             "Noto Sans"

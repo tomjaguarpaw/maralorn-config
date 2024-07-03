@@ -21,6 +21,7 @@
       enable = true;
       catppuccin.enable = true;
     };
+    kitty.catppuccin.enable = true;
     helix.catppuccin.enable = true;
     lazygit.catppuccin.enable = true;
     mpv.catppuccin.enable = true;

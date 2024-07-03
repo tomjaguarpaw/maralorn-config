@@ -22,10 +22,12 @@
       };
       decoration = {
         blur.enabled = false;
-        drop_shadow = false;
+        "col.shadow" = "0xEE1E66F5";
+        "col.shadow_inactive" = "0x00000000";
+        shadow_range = 20;
       };
       general = {
-        "col.inactive_border" = "0x00000000";
+        border_size = 0;
         layout = "slidr";
         animation = [
           "windows,1,3,default"
@@ -56,7 +58,7 @@
       ];
       bind = [
         "$mod, RETURN, exec, ${config.home.sessionVariables.TERMINAL}"
-        "$mod, space, exec, ${config.home.sessionVariables.TERMINAL} -oapp-id=launcher my-hotkeys"
+        "$mod, space, exec, ${config.home.sessionVariables.TERMINAL} --app-id=launcher my-hotkeys"
         "$mod, q, killactive"
         "$mod, left, slidr:movefocus, l"
         "$mod, right, slidr:movefocus, r"
