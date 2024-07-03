@@ -1,9 +1,11 @@
-{ config, pkgs, ... }:
 {
-  home.packages = [
-    pkgs.hyprnome
-    pkgs.hyprdim
-  ];
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+{
+  home.packages = [ pkgs.hyprnome ];
   wayland.windowManager.hyprland = {
     enable = true;
     plugins = [
@@ -49,8 +51,8 @@
       exec = [ "systemctl --user restart eww swayidle" ];
       exec-once = [
         "unlock-keys"
-        "hyprdim"
-        "swaybg -m fill -i ~/.config/wallpaper"
+        (lib.getExe pkgs.hyprdim)
+        "${lib.getExe pkgs.swaybg} -m fill -i ~/.config/wallpaper"
       ];
       bind = [
         "$mod, RETURN, exec, ${config.home.sessionVariables.TERMINAL}"
