@@ -1,6 +1,26 @@
 { pkgs, ... }:
+let
+  jjstat = pkgs.writeShellScript "jjstat" ''
+    jj git fetch --quiet 
+    echo
+    echo === JJ DIFF ===
+    echo
+    jj diff
+    echo
+    echo === JJ DIFF STATS ===
+    echo
+    jj diff --stat
+    echo
+    echo === JJ LOG == $PWD ======================================================
+    echo
+    jj log
+  '';
+in
 {
-  home.packages = builtins.attrValues { inherit (pkgs) glab lazyjj difftastic; };
+  home.packages = builtins.attrValues {
+    inherit (pkgs) glab lazyjj difftastic;
+    watchjj = pkgs.writeShellScriptBin "watchjj" "(jj files; ls .jj/* --absolute -1) | entr -c ${jjstat}";
+  };
   programs = {
     jujutsu = {
       enable = true;
