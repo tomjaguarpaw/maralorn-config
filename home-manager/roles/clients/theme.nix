@@ -13,8 +13,14 @@
   programs = {
     foot.catppuccin.enable = true;
     fzf.catppuccin.enable = true;
-    bat.catppuccin.enable = true;
-    btop.catppuccin.enable = true;
+    bat = {
+      enable = true;
+      catppuccin.enable = true;
+    };
+    btop = {
+      enable = true;
+      catppuccin.enable = true;
+    };
     helix.catppuccin.enable = true;
     lazygit.catppuccin.enable = true;
     mpv.catppuccin.enable = true;
