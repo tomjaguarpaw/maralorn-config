@@ -5,7 +5,7 @@
   ...
 }:
 {
-  home.packages = [ pkgs.hyprnome ];
+  home.packages = builtins.attrValues { inherit (pkgs) wlr-randr; };
   wayland.windowManager.hyprland = {
     enable = true;
     plugins = [
@@ -71,10 +71,10 @@
         "$mod, a, slidr:admitwindow"
         "$mod, e, slidr:expelwindow"
         "$mod, t, togglefloating"
-        "$mod, Prior, exec, hyprnome --previous"
-        "$mod, Next, exec, hyprnome"
-        "SUPER_SHIFT, Prior, exec, hyprnome --previous --move"
-        "SUPER_SHIFT, Next, exec, hyprnome --move"
+        "$mod, Prior, exec, ${lib.getExe pkgs.hyprnome} --previous"
+        "$mod, Next, exec, ${lib.getExe pkgs.hyprnome}"
+        "SUPER_SHIFT, Prior, exec, ${lib.getExe pkgs.hyprnome} --previous --move"
+        "SUPER_SHIFT, Next, exec, ${lib.getExe pkgs.hyprnome} --move"
         ", Print, execr, screenshot"
       ];
       bindr = [
