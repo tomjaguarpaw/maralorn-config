@@ -4,16 +4,16 @@
   hyprland,
   fetchFromGitea,
 }:
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "hyprslidr";
-  version = "02b10c786631df132e306f2cfc96fdd002d4a7dd";
+  version = "maralorn-fork";
 
   src = fetchFromGitea {
     owner = "maralorn";
     repo = "hyprslidr";
-    rev = version;
+    rev = "92c0ba20be6f266f12c2baf967333fec9cb9c84c";
     domain = "code.maralorn.de";
-    hash = "sha256-euB6oaagyYqObPrmGxCuSGft+tX+lDU4MtU+5B3czLw=";
+    hash = "sha256-DvimTs8HbvRAO04y5w5cF+DrOBVjBRhWLSest8HCMIQ=";
   };
 
   nativeBuildInputs = [
