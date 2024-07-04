@@ -32,7 +32,7 @@
 )
 
 (defwidget time []
-  (box :class "component time" :hexpand true :halign "center" :space-evenly false 
+  (box :class "component time" :hexpand true :space-evenly false 
     {formattime(EWW_TIME, " ${host}   %F KW%V %a   %H:%M:%S ")}
   )
 )
@@ -117,9 +117,7 @@
       (players-bar)
       (workspaces)
     )
-    (box :space-evenly false
-      (time)
-    )
+    (time)
     (box :space-evenly false :halign "start"
       (icon-bar)
       (idle-bar)
