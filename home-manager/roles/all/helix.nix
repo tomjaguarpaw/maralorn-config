@@ -69,25 +69,8 @@ in
   };
   programs.helix = {
     enable = true;
-    themes.mytheme = {
-      #"diagnostic.info".underline = {
-      #  color = "blue";
-      #  style = "curl";
-      #};
-      #"diagnostic.hint".underline = {
-      #  color = "green";
-      #  style = "curl";
-      #};
-      #"diagnostic.warning".underline = {
-      #  color = "peach";
-      #  style = "curl";
-      #};
-      #"diagnostic.error".underline = {
-      #  color = "maroon";
-      #  style = "curl";
-      #};
-    };
     settings = {
+      theme = "catppuccin_latte";
       keys =
         let
           common_keys = {
