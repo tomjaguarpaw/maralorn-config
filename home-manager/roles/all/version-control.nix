@@ -5,15 +5,15 @@ let
     echo
     echo === JJ DIFF ===
     echo
-    jj diff
+    jj diff --no-pager
     echo
     echo === JJ DIFF STATS ===
     echo
-    jj diff --stat
+    jj diff --stat --no-pager
     echo
     echo === JJ LOG == $PWD ======================================================
     echo
-    jj log
+    jj log --no-pager
   '';
 in
 {
