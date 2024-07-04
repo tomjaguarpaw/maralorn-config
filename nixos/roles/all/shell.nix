@@ -14,7 +14,7 @@
         right_format = "$cmd_duration$direnv$nix_shell$haskell$time";
         time.disabled = false;
         line_break.disabled = true;
-        nix_shell.format = "[$symbol]($style)";
+        nix_shell.disabled = true;
         character = {
           success_symbol = "[>](bold green)";
           error_symbol = "[>](bold red)";
