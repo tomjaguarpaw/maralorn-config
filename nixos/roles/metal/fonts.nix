@@ -16,7 +16,7 @@
         {
           monospace = [ "JetBrainsMono Nerd Font" ] ++ unicode-fallback;
           sansSerif = [
-            "B612"
+            "Iosevka Aile"
             "Noto Sans"
           ] ++ unicode-fallback;
           serif = [
@@ -32,6 +32,7 @@
         spleen # Great if you need 8 px font, also nice on 12px.
         b612 # sans font, very good for displays
         noto-fonts # for unicode fallback
+        iosevka
         nerdfonts
         ;
     };
