@@ -13,7 +13,7 @@ let
           ${lib.getExe' pkgs.systemd "systemctl"} --user restart eww
           sleep 0.1s;
         fi
-        ${lib.getExe config.programs.eww.package} open topbar --arg screen=${name}
+        ${lib.getExe config.programs.eww.package} open topbar
       '').outPath
     ];
   };
@@ -33,6 +33,7 @@ in
           {
             criteria = "Dell Inc. DELL S2721QS F9SJM43";
             status = "enable";
+            scale = 1.0;
           }
         ]
       ))
@@ -41,6 +42,7 @@ in
           {
             criteria = "Dell Inc. DELL S2721QS F9SJM43";
             status = "enable";
+            scale = 1.0;
           }
           {
             criteria = "eDP-1";
@@ -53,6 +55,7 @@ in
           {
             criteria = "Dell Inc. DELL S2721QS 77SJM43";
             status = "enable";
+            scale = 1.0;
           }
           {
             criteria = "eDP-1";
@@ -78,6 +81,7 @@ in
           {
             criteria = "eDP-1";
             status = "enable";
+            scale = 1.0;
           }
         ]
       ))
@@ -86,6 +90,7 @@ in
           {
             criteria = "eDP-1";
             status = "enable";
+            scale = 1.0;
           }
           {
             criteria = "*";
