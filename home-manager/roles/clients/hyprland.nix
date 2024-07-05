@@ -8,10 +8,7 @@
   home.packages = builtins.attrValues { inherit (pkgs) wlr-randr; };
   wayland.windowManager.hyprland = {
     enable = true;
-    plugins = [
-      pkgs.hyprslidr
-      # pkgs.Hyprspace
-    ];
+    plugins = [ pkgs.hyprslidr ];
     settings = {
       "$mod" = "SUPER";
       input = {
