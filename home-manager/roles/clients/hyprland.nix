@@ -5,7 +5,7 @@
   ...
 }:
 {
-  home.packages = builtins.attrValues { inherit (pkgs) wlr-randr; };
+  home.packages = builtins.attrValues { inherit (pkgs) wlr-randr kanshi; };
   wayland.windowManager.hyprland = {
     enable = true;
     plugins = [ pkgs.hyprslidr ];
@@ -19,19 +19,17 @@
       };
       decoration = {
         blur.enabled = false;
-        "col.shadow" = "0xEE1E66F5";
-        "col.shadow_inactive" = "0x00000000";
-        shadow_range = 20;
+        drop_shadow = false;
       };
       general = {
-        border_size = 0;
+        border_size = 1;
         layout = "slidr";
+        "col.active_border" = "0xffEA76CB";
+        "col.inactive_border" = "0xff1E66F5";
         animation = [
-          "windows,1,3,default"
-          "fade,1,3,default"
-          "border,1,10,default"
-          "borderangle,1,10,default"
-          "workspaces,1,2,default,slidevert"
+          "global,0"
+          "windows,1,1,default"
+          "workspaces,1,1,default,slidevert"
         ];
       };
       plugin.overview = {
@@ -47,7 +45,7 @@
         "float,class:launcher"
         "pin,class:launcher"
       ];
-      exec = [ "systemctl --user restart eww swayidle" ];
+      exec = [ "systemctl --user restart eww swayidle kanshi" ];
       exec-once = [
         "unlock-keys"
         (lib.getExe pkgs.hyprdim)
@@ -77,7 +75,6 @@
         ", Print, execr, screenshot"
       ];
       bindr = [
-        # "SUPER, SUPER_L, overview:toggle"
         "SUPER, SUPER_L, execr, (makoctl mode -r show; eww close overlay) || (eww open overlay; makoctl mode -a show)"
       ];
       binde = [
