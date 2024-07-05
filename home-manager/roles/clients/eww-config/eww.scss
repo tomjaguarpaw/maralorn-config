@@ -1,12 +1,26 @@
 * {
   all: unset;
-  font-family: "Iosevka Aile";
+  font-family: "B612";
   font-size: 12px;
 }
 
 $background: #eff1f5;
 $background-lighter: #ccced7;
 $foreground: #4c4f69;
+
+.topbar {
+  background: $background;
+}
+
+.window {
+  padding: 2px;
+  margin: 1px;
+  background: #1E66F5;
+}
+
+.active-window {
+  background: #EA76CB;
+}
 
 .time {
   font-weight: bold;
@@ -16,13 +30,17 @@ $foreground: #4c4f69;
 .component {
   color: $foreground;
   background: $background;
-  padding: 4px;
-  margin: 4px;
+  padding: 2px;
+  margin: 2px;
+}
+
+.workspace {
+  background: $background-lighter;
 }
 
 .lighter {
   background: $background-lighter;
-  padding: 4px;
+  padding: 2px;
   margin: 2px;
 }
 
@@ -30,12 +48,6 @@ $foreground: #4c4f69;
   background: $background-lighter;
   border: 1px solid #ffffff;
   box-shadow: 0 0 10px #ffffff;
-}
-
-.workspace {
-  padding: 0.3em;
-  margin: 0.2em;
-  border: 1px solid #7eaafd;
 }
 
 .disabled {

@@ -20,11 +20,12 @@
 
 (defwidget workspaces []
   (box :space-evenly false
-    (label :text "${workspaces}" :visible false)
     (for workspace in workspaces
       (box :class "component workspace"
         (for stack in {workspace.stacks}
-          (label :text "█")
+          (box :orientation "vertical" (for window in stack
+            (box :class "window ${window.active ? "active-window" : ""}")
+          ))
         )
       )
     )
@@ -110,8 +111,8 @@
   ))
 )
 
-(defwidget sidebar []
-  (centerbox
+(defwidget topbar []
+  (centerbox :class "topbar"
     (box :halign "end" :space-evenly false
       (pipewire-bar)
       (players-bar)
@@ -239,5 +240,5 @@
                       :width "100%"
                       :height "30px"
                       :anchor "top center")
-  (sidebar)
+  (topbar)
 )
