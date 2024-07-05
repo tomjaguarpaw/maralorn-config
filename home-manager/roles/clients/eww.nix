@@ -15,6 +15,7 @@
         "status-script.service"
         "graphical-session.target"
       ];
+      Before = [ "kanshi.service" ];
       PartOf = [ "graphical-session.target" ];
       Requires = [ "graphical-session.target" ];
       StartLimitIntervalSec = "60s";
@@ -37,7 +38,7 @@
         ]
       }";
       ExecStart = "${lib.getExe config.programs.eww.package} daemon --no-daemonize --restart";
-      ExecStartPost = "${lib.getExe config.programs.eww.package} open topbar";
+      ExecStartPost = [ "${lib.getExe' pkgs.kanshi "kanshictl"} reload" ];
       Restart = "always";
       RestartSec = "10s";
     };
