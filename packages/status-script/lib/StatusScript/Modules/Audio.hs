@@ -55,7 +55,7 @@ data AudioEndPoint = MkAudioEndPoint
   { name :: Text
   , volume :: Double
   , mute :: Bool
-  , icons :: [Text]
+  , icons :: [Char]
   , clients :: [AudioClient]
   }
   deriving stock (Generic, Eq)
@@ -153,32 +153,42 @@ mkInfos = \objects ->
    in
     endpoints
       <&> ( \endpoint ->
-              MkAudioEndPoint
-                { name = get_name endpoint
-                , volume = fromMaybe 0 (find_volume endpoint)
-                , mute = fromMaybe False (find_mute endpoint)
-                , -- TODO: Add mute and default icons
-                  icons =
-                    [ (if get_info endpoint ["props", "media.class"] == Just "Audio/Source" then "source" else "sink")
-                        <> (if fromMaybe False (find_mute endpoint) then "-mute" else "")
-                    ]
-                      <> ["bt-headset" | get_info endpoint ["props", "api.bluez5.profile"] == Just "headset-head-unit"]
-                      <> ["bt-music" | get_info endpoint ["props", "api.bluez5.profile"] == Just "a2dp-sink"]
-                      <> ["default" | get_info endpoint ["props", "node.name"] `elem` (defaults <&> Just)]
-                , clients =
-                    IntMap.lookup endpoint links
-                      & maybe [] IntSet.toList
-                      & mapMaybe
-                        ( \source ->
-                            get_info source ["props", "application.name"]
-                              <&> \source_name ->
-                                MkAudioClient
-                                  { name = source_name
-                                  , volume = fromMaybe 0 (find_volume source)
-                                  , mute = fromMaybe False (find_mute source)
-                                  }
-                        )
-                }
+              let mute = fromMaybe False (find_mute endpoint)
+               in MkAudioEndPoint
+                    { name = get_name endpoint
+                    , volume = fromMaybe 0 (find_volume endpoint)
+                    , mute
+                    , -- TODO: Add mute and default icons
+                      icons =
+                        [ case (get_info endpoint ["props", "media.class"] == Just "Audio/Source", mute) of
+                            (True, False) -> toEnum 984446 -- nf-md-volume_high
+                            (True, True) -> toEnum 984449 -- nf-md-volume_off
+                            (False, False) -> toEnum 983916 -- nf-md-microphone
+                            (False, True) -> toEnum 983917 -- nf-md-microphone_off
+                        ]
+                          <> [ toEnum 0xf0970 -- nf-md-headphones_bluetooth
+                             | get_info endpoint ["props", "api.bluez5.profile"] == Just "headset-head-unit"
+                             ]
+                          <> [ toEnum 0xf00b0 -- nf-md-bluetooth_audio
+                             | get_info endpoint ["props", "api.bluez5.profile"] == Just "a2dp-sink"
+                             ]
+                          <> [ toEnum 0xf05e1 -- nf-md-check_circle_outline
+                             | get_info endpoint ["props", "node.name"] `elem` (defaults <&> Just)
+                             ]
+                    , clients =
+                        IntMap.lookup endpoint links
+                          & maybe [] IntSet.toList
+                          & mapMaybe
+                            ( \source ->
+                                get_info source ["props", "application.name"]
+                                  <&> \source_name ->
+                                    MkAudioClient
+                                      { name = source_name
+                                      , volume = fromMaybe 0 (find_volume source)
+                                      , mute = fromMaybe False (find_mute source)
+                                      }
+                            )
+                    }
           )
       & filter \endpoint -> length endpoint.clients + length endpoint.icons > 1
 

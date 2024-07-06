@@ -35,7 +35,7 @@ Shh.load Shh.Absolute ["mkdir"]
 missingExecutables :: IO [FilePath]
 
 data WarningGroup = MkWarningGroup
-  { name :: Text
+  { name :: Char
   , count :: Int
   }
   deriving stock (Eq, Generic)

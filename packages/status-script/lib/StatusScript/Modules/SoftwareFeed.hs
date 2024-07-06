@@ -35,7 +35,7 @@ softwareFeed = \env _ -> do
             n ->
               [ MkWarning
                   { description = Just [i|Code Updates: #{n}|]
-                  , group = "warning"
+                  , group = toEnum 61729
                   , subgroup = Nothing
                   }
               ]

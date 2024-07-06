@@ -33,7 +33,7 @@ notifications = \env -> do
       % fromMaybe []
       %> const
         MkWarning
-          { group = "notification"
+          { group = toEnum 985604
           , subgroup = Nothing
           , description = Nothing
           }

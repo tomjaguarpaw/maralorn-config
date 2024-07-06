@@ -1,19 +1,24 @@
-* {
-  all: unset;
-  font-family: "B612";
-  font-size: 12px;
-}
-
 $background: #eff1f5;
 $background-lighter: #ccced7;
 $foreground: #4c4f69;
 
+* {
+  all: unset;
+  font-family: "B612";
+  font-weight: bold;
+  color: $foreground;
+}
+
 .topbar {
   background: $background;
+  font-size: 12px;
 }
 
 .window {
+  border-radius: 1px;
   padding: 2px;
+  padding-bottom: 1px;
+  padding-top: 1px;
   margin: 1px;
   background: #1E66F5;
 }
@@ -22,20 +27,23 @@ $foreground: #4c4f69;
   background: #EA76CB;
 }
 
-.time {
-  font-weight: bold;
-  font-size: 16px;
+.icon {
+  font-size: 18px;
+  margin-right: 4px;
+  margin-left: 2px;
 }
 
 .component {
-  color: $foreground;
+  font-size: 12px;
   background: $background;
   padding: 2px;
   margin: 2px;
 }
 
 .workspace {
+  border-radius: 1px;
   background: $background-lighter;
+  padding: 1px;
 }
 
 .lighter {
@@ -105,18 +113,4 @@ progressbar > trough {
 .blink {
   animation: blinking 1s infinite;
 }
-@keyframes nitroblinking {
-  0% {
-    background-color: rgba(255,255,255,0);
-  }
-  50% {
-    background-color: #0000ff;
-  }
-  100% {
-    background-color: rgba(255,255,255,0);
-  }
-}
 
-.nitro {
-  animation: nitroblinking 1s infinite;
-}

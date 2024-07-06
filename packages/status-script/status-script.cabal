@@ -79,8 +79,6 @@ library
     StatusScript.Modules.Alerts
     StatusScript.Modules.Audio
     StatusScript.Modules.Calendar
-    StatusScript.Modules.ConfigPull
-    StatusScript.Modules.Git
     StatusScript.Modules.Hyprland
     StatusScript.Modules.IdleState
     StatusScript.Modules.Mail

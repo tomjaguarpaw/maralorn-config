@@ -51,6 +51,11 @@ playerModule = \env -> do
                       { name = if name == "mpd" then name <> mpd_host else name
                       , title = cleanTitle title
                       , status = status
+                      , icon = case status of
+                          "Playing" -> toEnum 0xf040a -- nf-md-player
+                          "Paused" -> toEnum 0xf03e4 -- nf-md-pause
+                          "Stopped" -> toEnum 0xf04db -- nf-md-stop
+                          _ -> '?'
                       }
                 _ -> Nothing
             )
@@ -94,6 +99,7 @@ data PlayerState = MkPlayerState
   { name :: Text
   , status :: Text
   , title :: Text
+  , icon :: Char
   }
   deriving stock (Generic)
   deriving anyclass (Aeson.ToJSON, Aeson.FromJSON)

@@ -27,6 +27,6 @@ ping' = \env -> do
         <&> \host ->
           MkWarning
             { description = Just [i|No tunnel to #{host}|]
-            , group = "warning"
+            , group = toEnum 983387
             , subgroup = Nothing
             }

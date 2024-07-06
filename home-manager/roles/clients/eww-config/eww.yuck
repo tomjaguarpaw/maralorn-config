@@ -1,4 +1,3 @@
-(deflisten mode              :initial "warning" "bash scripts/listen.sh mode")
 (deflisten uptime            :initial "0" "bash scripts/listen.sh uptime")
 (deflisten warnings          :initial "[]" "bash scripts/listen.sh warnings")
 (deflisten warninggroups     :initial "[]" "bash scripts/listen.sh warninggroups")
@@ -33,39 +32,52 @@
 )
 
 (defwidget time []
-  (box :class "component time" :hexpand true :space-evenly false
-    {formattime(EWW_TIME, " ${host}   %F KW%V %a   %H:%M:%S ")}
-  )
+  (box {formattime(EWW_TIME, " ${host}   %F KW%V %a   %H:%M:%S ")})
+)
+
+(defwidget icon []
+  (box :class "icon" (children))
+)
+
+(defwidget when [if]
+  (box (for entry in {if ? [1] : []} (box (children))))
 )
 
 (defwidget icon-bar []
-  (box :class "component" :space-evenly false
-    (label :text "${alerts}${rbw}${mode}${warnings}${warninggroups}}${players}${uptime}${networks}" :visible false)
+  (box :space-evenly false
+    (label :text "${alerts}${rbw}${warnings}${warninggroups}}${players}${uptime}${networks}" :visible false)
     (box :space-evenly false (for group in warninggroups
-      (box :space-evenly false (image :path "icons/${group.name}.png") {group.count})
+      (box (icon {group.name}) {group.count})
     ))
     (box :space-evenly false (for timer in timers
-      (box :class "${EWW_TIME >= timer.at ? "blink" :""}" :space-evenly false (image :path "icons/timer.png") (box :hexpand true :halign "center" :orientation "vertical" {timer.name} {formattime(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at,(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at) > 60*60 ? "%H:%M:%S": "%M:%S","UTC")}))
+      (box :class "${EWW_TIME >= timer.at ? "blink" :""}" :space-evenly false
+        (icon "󰀠")
+        (box :hexpand true :halign "center" :orientation "vertical"
+          {timer.name}
+          {formattime(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at,(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at) > 60*60 ? "%H:%M:%S": "%M:%S","UTC")}
+        )
+      )
     ))
-    (box :space-evenly false (for alert in {mode != "Klausur" && arraylength(alerts) > 0 ? [1] : []}
-      (box :space-evenly false (image :path "icons/cloud-alert.png") (label :text "${arraylength(alerts)}"))
-    ))
-    (box :space-evenly false (for rbwfile in {rbw ? [] : [1]}
-      (box :space-evenly false (image :path "icons/lock-alert.png") (label :text "rbw"))
-    ))
+    (when :if {arraylength(alerts) > 0}
+      (icon "󰧠")
+      "${arraylength(alerts)}"
+    )
+    (when :if {!rbw} (icon "") "rbw")
     (box :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" && EWW_BATTERY.BAT0.status != "Charging" && (EWW_BATTERY.BAT0.status != "Not charging" || EWW_BATTERY.BAT0.capacity < 90) && EWW_BATTERY.BAT0.status != "Full"  ? [EWW_BATTERY.BAT0] : []}
-      (box :space-evenly false (image :path "icons/battery-alert.png") (label :text "${battery.capacity}%"))
+      (box (icon "󱊡") "${battery.capacity}%")
     ))
     (box :space-evenly false (for ramwarning in {EWW_RAM.used_mem_perc > 70 ? [1] : []}
-      (box :class " ${EWW_RAM.used_mem_perc > 85 ? "blink" : ""}" :space-evenly false (image :path "icons/memory.png") (label :text "${round(EWW_RAM.used_mem_perc,0)}%"))
+      (box :class " ${EWW_RAM.used_mem_perc > 85 ? "blink" : ""}" :space-evenly false
+        (box (icon "󰍛") "${round(EWW_RAM.used_mem_perc,0)}%")
+      )
     ))
   )
 )
 
 (defwidget idle-bar []
-  (box :class "component" :space-evenly false (for x in {idle_state.tag != "Active" ? [""] : []}
+  (box :space-evenly false (for x in {idle_state.tag != "Active" ? [""] : []}
     (box :space-evenly false :orientation "horizontal"
-      (image :path "icons/${idle_state.tag == "Idle" ? "idle" : "no-idle"}.png")
+      (icon {idle_state.tag == "Idle" ? "idle" : "no-idle"})
       (box :halign "center" :hexpand true "idle")
       (box :halign "end" :hexpand true {idle_state.tag == "Idle" ? formattime(EWW_TIME - idle_state.contents,"%M:%S","UTC") : "off"})
     )
@@ -73,7 +85,7 @@
 )
 
 (defwidget calendar-bar []
-  (box :class "component" :space-evenly false (for appointment in calendar
+  (box :space-evenly false (for appointment in calendar
     (box :spacing 10
       (label :width 80 :wrap true :justify "center" :text {appointment.title})
     )
@@ -82,10 +94,10 @@
 
 (defwidget pipewire-bar []
  (box :space-evenly false :vexpand true (for endpoint in audio
-   (box :space-evenly false :vexpand true :class "component ${endpoint.mute ? "disabled" : ""}"
+   (box :space-evenly false :vexpand true :class "${endpoint.mute ? "disabled" : ""}"
      (box :orientation "vertical" :vexpand true :space-evenly false
        (box :vexpand true :space-evenly false
-         (for icon in {endpoint.icons} (image :image-width 14 :image-height 14 :path "icons/${icon}.png"))
+         (icon {endpoint.icons})
          (label :width 60 :wrap true :justify "center" :hexpand true :text {endpoint.name})
        )
        (progress :value {endpoint.volume})
@@ -102,9 +114,9 @@
 
 (defwidget players-bar []
   (box (for player in {jq(players,"map(select(.status==\"Playing\"))")}
-    (box :class "component" :space-evenly false :spacing 10
+    (box :space-evenly false :spacing 10
       (box  :space-evenly false :spacing 10
-        (image :image-width 20 :image-height 20 :path "icons/${player.status}.png")
+        (icon {player.icon})
         (label :justify "center" :wrap true :text "${player.name} | ${player.title}")
       )
     )
@@ -135,7 +147,7 @@
         (box :halign "center" :orientation "vertical" :space-evenly false
           (for network in networks
             (box :class "component" :spacing 10 :space-evenly false
-              (image :path "icons/network.png")
+              (icon "network")
               network
             )
           )
@@ -143,7 +155,10 @@
         (box :halign "center" :class "component" (calendar))
         (box :halign "center" :orientation "vertical" :space-evenly false (for appointment in calendar
           (box :class "component" :orientation "vertical" :space-evenly false
-            (box :style "padding-bottom: 10px;" :space-evenly false (image :path "icons/calendar.png") (label :halign "center" :hexpand true :justify "left" :text {appointment.title}))
+            (box :style "padding-bottom: 10px;" :space-evenly false
+              (icon "calendar")
+              (label :halign "center" :hexpand true :justify "left" :text {appointment.title})
+            )
             (label :halign "start" :hexpand true :justify "left" :text
   "${appointment.start} → ${appointment.end}${appointment.location != "" ? "
   ${appointment.location}":""}${appointment.description != "" ? "
@@ -157,22 +172,31 @@
         ""
         (box :halign "center" :orientation "vertical" :space-evenly false (for player in players
           (box :class "component" :orientation "vertical" :space-evenly false :spacing 10
-            (box  :space-evenly false :spacing 10 (image :image-width 20 :image-height 20 :path "icons/${player.status}.png") (label :hexpand true :halign "center" :text {player.name}))
+            (box  :space-evenly false :spacing 10
+              (icon {player.icon})
+              (label :hexpand true :halign "center" :text {player.name})
+            )
             (label :justify "left" :hexpand true :halign "start" :text {player.title})
           )
         ))
         (box :halign "center" :orientation "vertical" :space-evenly false
           (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" ? [EWW_BATTERY.BAT0] : []}
-            (box :class "component" :space-evenly false (image :path "icons/battery-alert.png") (label :hexpand true :halign "center" :text "${battery.capacity}% ${battery.status}"))
+            (box :class "component" :space-evenly false
+              (icon "battery-alert")
+              (label :hexpand true :halign "center" :text "${battery.capacity}% ${battery.status}")
+            )
           ))
           (for alert in {alerts}
-            (box :class "component" :spacing 10 :space-evenly false (image :path "icons/cloud-alert.png") (label :hexpand true :halign "center" :text {alert.annotations.description}))
+            (box :class "component" :spacing 10 :space-evenly false
+              (icon "󰧠")
+              (label :hexpand true :halign "center" :text {alert.annotations.description})
+            )
           )
           (for warning in {jq(warnings,"map(select(.description!=null))")}
             (box :class "component" :spacing 10 :space-evenly false
-              (image :path "icons/${warning.group}.png")
-              (for subgroup in {(warning.subgroup ?: "") != "" ? [warning.subgroup] : []}
-                (image :path "icons/${subgroup}.png")
+              (icon {warning.group})
+              (when :if {(warning.subgroup ?: "") != ""}
+                (icon {warning.subgroup})
               )
               (label :hexpand true :halign "center" :text {warning.description}))
           )
@@ -182,7 +206,7 @@
         ""
         (box :halign "center" :orientation "vertical" :space-evenly false :valign "end"
           (box :class "component" :valign "end" :spacing 10 :space-evenly false
-            (image :path "icons/memory.png")
+            (icon "󰍛")
             "ram"
             "${round(EWW_RAM.used_mem/1024/1024/1024,1)}GB / ${round(EWW_RAM.total_mem/1024/1024/1024,1)}GB"
             (overlay :halign "end" :hexpand true
@@ -191,7 +215,7 @@
             )
           )
           (box :class "component" :valign "end" :spacing 10 :space-evenly false
-            (image :path "icons/disk.png")
+            (icon "")
             "swap"
             "${round((EWW_RAM.total_swap - EWW_RAM.free_swap)/1024/1024/1024,1)}GB / ${round(EWW_RAM.total_swap/1024/1024/1024,1)}GB"
             (overlay :halign "end" :hexpand true
@@ -202,7 +226,7 @@
           (box :orientation "vertical" :space-evenly false
             (for disk in {disks[host]}
               (box :class "component" :valign "end" :spacing 10 :space-evenly false
-                (image :path "icons/disk.png")
+                (icon "")
                 {disk}
                 "${round(EWW_DISK[disk].used/1024/1024/1024,1)}GB / ${round(EWW_DISK[disk].total/1024/1024/1024,1)}GB"
                 (overlay :halign "end" :hexpand true
@@ -238,7 +262,7 @@
   :geometry (geometry :x "0%"
                       :y "0%"
                       :width "100%"
-                      :height "30px"
+                      :height "10px"
                       :anchor "top center")
   (topbar)
 )
