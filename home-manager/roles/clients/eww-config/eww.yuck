@@ -157,7 +157,7 @@
         (box :halign "center" :orientation "vertical" :space-evenly false (for appointment in calendar
           (box :class "component" :orientation "vertical" :space-evenly false
             (box :style "padding-bottom: 10px;" :space-evenly false
-              (icon "calendar")
+              (icon "󰃭")
               (label :halign "center" :hexpand true :justify "left" :text {appointment.title})
             )
             (label :halign "start" :hexpand true :justify "left" :text
