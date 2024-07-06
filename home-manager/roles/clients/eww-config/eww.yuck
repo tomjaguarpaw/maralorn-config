@@ -33,7 +33,7 @@
 )
 
 (defwidget time []
-  (box :class "component time" :hexpand true :space-evenly false 
+  (box :class "component time" :hexpand true :space-evenly false
     {formattime(EWW_TIME, " ${host}   %F KW%V %a   %H:%M:%S ")}
   )
 )

@@ -1,7 +1,7 @@
 { pkgs, ... }:
 let
   jjstat = pkgs.writeShellScript "jjstat" ''
-    jj git fetch --quiet 
+    jj git fetch --quiet
     echo
     echo === JJ DIFF ===
     echo
