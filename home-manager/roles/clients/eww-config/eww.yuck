@@ -13,18 +13,19 @@
 (defpoll alerts :interval "1m" :initial "[]" `curl https://alerts.maralorn.de/api/v2/alerts | jq 'map(select(.status.state != "suppressed"))'`)
 (defpoll rbw :interval "5s" :initial false "if rbw unlocked; then echo true; else echo false; fi")
 (defpoll host :interval "1440m" :initial "unknown" "cat /etc/hostname")
-(defvar disks '{"apollo":["/","/boot/EFI"],"hephaistos":["/nix","/efi"],"zeus":["/","/efi"],"unknown":[]}')
-
-
+(defvar disks '{"apollo":["/","/efi"],"hephaistos":["/nix","/efi"],"zeus":["/","/efi"],"unknown":[]}')
 
 (defwidget workspaces []
   (box :space-evenly false
     (for workspace in workspaces
-      (box :class "component workspace"
+      (box :space-evenly false :class "workspace ${workspace.active ? "active-workspace" : ""}"
         (for stack in {workspace.stacks}
           (box :orientation "vertical" (for window in stack
             (box :class "window ${window.active ? "active-window" : ""}")
           ))
+        )
+        (when :if {arraylength(workspace.floating) > 0}
+          "+${arraylength(workspace.floating)}"
         )
       )
     )
@@ -47,7 +48,7 @@
   (box :space-evenly false
     (label :text "${alerts}${rbw}${warnings}${warninggroups}}${players}${uptime}${networks}" :visible false)
     (box :space-evenly false (for group in warninggroups
-      (box (icon {group.name}) {group.count})
+      (box (icon {group.name}) "${group.count > 1 ? group.count : "" }")
     ))
     (box :space-evenly false (for timer in timers
       (box :class "${EWW_TIME >= timer.at ? "blink" :""}" :space-evenly false

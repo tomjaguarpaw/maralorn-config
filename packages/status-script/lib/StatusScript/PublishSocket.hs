@@ -1,4 +1,4 @@
-module StatusScript.PublishSocket (publish, publishJson, socketsDir, publishJson') where
+module StatusScript.PublishSocket (publish, publish', publishJson, socketsDir, publishJson') where
 
 import Control.Exception qualified as Exception
 import Data.Aeson (ToJSON)
@@ -54,13 +54,23 @@ publish = \env socket_name event -> do
   callback <- liftIO $ mkSendToSocketCallback env [i|#{socketsDir}/#{socket_name}|]
   performEvent_ $ event <&> (callback % env.fork [i|Publishing to socket #{socket_name}|] % liftIO)
 
+publish'
+  :: R.MonadHeadlessApp t m
+  => Env
+  -> Text
+  -> Dynamic t ByteString
+  -> m ()
+publish' = \env socket_name d_val -> do
+  pb <- getPostBuild
+  publish env socket_name $ leftmost [updated d_val, current d_val <@ pb]
+
 publishJson
   :: (R.MonadHeadlessApp t m, Aeson.ToJSON a)
   => Env
   -> Text
   -> Event t a
   -> m ()
-publishJson = \env name -> fmap (Aeson.encode % toStrict) % publish env name
+publishJson = \env name -> publish env name . fmap (toStrict . Aeson.encode)
 
 publishJson'
   :: (MonadHeadlessApp t m, ToJSON a)
@@ -68,9 +78,7 @@ publishJson'
   -> Text
   -> Dynamic t a
   -> m ()
-publishJson' env name dVal = do
-  pb <- getPostBuild
-  publish env name $ toStrict . Aeson.encode <$> leftmost [updated dVal, current dVal <@ pb]
+publishJson' = \env name -> publish' env name . fmap (toStrict . Aeson.encode)
 
 socketsDir :: FilePath
 socketsDir = "/run/user/1000/status"

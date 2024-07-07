@@ -1,16 +1,17 @@
 $background: #eff1f5;
 $background-lighter: #ccced7;
 $foreground: #4c4f69;
+$accent: #1E66F5;
 
 * {
   all: unset;
   font-family: "B612";
   font-weight: bold;
-  color: $foreground;
 }
 
 .topbar {
   background: $background;
+  color: $foreground;
   font-size: 12px;
 }
 
@@ -20,31 +21,45 @@ $foreground: #4c4f69;
   padding-bottom: 1px;
   padding-top: 1px;
   margin: 1px;
-  background: #1E66F5;
+  background: $background;
+}
+
+.active-workspace > .window {
+  background: $background-lighter;
 }
 
 .active-window {
-  background: #EA76CB;
+  background: $accent;
+}
+
+.workspace {
+  background: $background-lighter;
+  border-radius: 1px;
+  min-width: 4px;
+  padding: 1px;
+  margin: 1px;
+}
+
+.active-workspace {
+  background: $accent;
+  color: $background;
 }
 
 .icon {
-  font-size: 18px;
-  margin-right: 4px;
-  margin-left: 2px;
+  font-size: 14px;
+  color: $accent;
+  margin-right: 6px;
+  margin-left: 6px;
 }
 
 .component {
   font-size: 12px;
+  color: $foreground;
   background: $background;
   padding: 2px;
   margin: 2px;
 }
 
-.workspace {
-  border-radius: 1px;
-  background: $background-lighter;
-  padding: 1px;
-}
 
 .lighter {
   background: $background-lighter;

@@ -24,8 +24,8 @@
       general = {
         border_size = 1;
         layout = "slidr";
-        "col.active_border" = "0xffEA76CB";
-        "col.inactive_border" = "0xff1E66F5";
+        "col.active_border" = "0xff1e66f5";
+        "col.inactive_border" = "0xffccced7";
         animation = [
           "global,0"
           "windows,1,1,default"

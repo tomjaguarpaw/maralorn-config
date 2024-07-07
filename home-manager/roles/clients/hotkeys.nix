@@ -12,6 +12,17 @@ let
   with-mic-check = cmd: fork (shell "${config.home.sessionVariables.TERMINAL} mic-check; ${cmd}");
   hotkeys = [
     {
+      Mode =
+        let
+          mode = mode: shell "echo ${mode} > ~/.mode";
+        in
+        {
+          DND = mode "DND";
+          Normal = mode "Normal";
+          Sort = mode "Sort";
+        };
+    }
+    {
       Orga = [
         { Kalendar = term "ikhal"; }
         { Habitica = fork "firefox https://habitica.com"; }

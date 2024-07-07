@@ -1,6 +1,6 @@
 module StatusScript.Modules.Hyprland (hyprlandWorkspaces) where
 
-import Data.Aeson (FromJSON, ToJSON, eitherDecode')
+import Data.Aeson (FromJSON, ToJSON, decode', eitherDecode')
 import Data.IntMap.Strict qualified as IntMap
 import Data.Sequence (Seq (..))
 import Data.Sequence qualified as Seq
@@ -43,15 +43,23 @@ hyprlandWorkspaces env = do
   mkInfo :: MonadIO m => m (Seq (HyprlandWorkspace HyprlandWindow))
   mkInfo = liftIO do
     active_bs <- hyprctl "activewindow" "-j" |> captureTrim
+    active_ws_bs <- hyprctl "activeworkspace" "-j" |> captureTrim
     all_windows_bs <- hyprctl "clients" "-j" |> captureTrim
-    active <- either (\s -> print s >> pure Nothing) pure $ eitherDecode' active_bs
+    let active = decode' active_bs
+        active_workspace = decode' active_ws_bs
     all_windows <- either (\s -> print s >> pure mempty) pure $ eitherDecode' all_windows_bs
-    pure $ calculateLayout active all_windows
+    pure $ calculateLayout active_workspace active all_windows
 
-calculateLayout :: (Maybe HyprctlClient) -> Seq HyprctlClient -> Seq (HyprlandWorkspace HyprlandWindow)
-calculateLayout active all_windows = Seq.fromList $ fmap (mkWindow active) <$> IntMap.elems workspaceMap
+calculateLayout
+  :: (Maybe HyprctlWorkspace) -> (Maybe HyprctlClient) -> Seq HyprctlClient -> Seq (HyprlandWorkspace HyprlandWindow)
+calculateLayout active_workspace active all_windows = Seq.fromList $ fmap (mkWindow active) <$> IntMap.elems workspaceMap
  where
-  workspaceMap = foldl' (flip addToWorkspaces) mempty all_windows
+  workspaceMap = foldl' (flip addToWorkspaces) initial_ws_map all_windows
+  initial_ws_map =
+    active_workspace
+      & maybe
+        mempty
+        (\s -> IntMap.singleton s.id $ MkHyprlandWorkspace True mempty mempty)
 
 mkWindow :: Maybe HyprctlClient -> HyprctlClient -> HyprlandWindow
 mkWindow active client =
@@ -65,7 +73,7 @@ addToWorkspaces
   :: HyprctlClient -> IntMap (HyprlandWorkspace HyprctlClient) -> IntMap (HyprlandWorkspace HyprctlClient)
 addToWorkspaces client =
   IntMap.alter
-    (Just . addToWorkspace client . fromMaybe (MkHyprlandWorkspace mempty mempty))
+    (Just . addToWorkspace client . fromMaybe (MkHyprlandWorkspace False mempty mempty))
     client.workspace.id
 
 addToWorkspace :: HyprctlClient -> HyprlandWorkspace HyprctlClient -> HyprlandWorkspace HyprctlClient
@@ -91,7 +99,7 @@ data HyprctlClient = MkHyprctlClient
   { address :: Text
   , at :: (Int, Int)
   , size :: (Natural, Natural)
-  , workspace :: HyprctlClientWorkspace
+  , workspace :: HyprctlWorkspace
   , initialClass :: Text
   , title :: Text
   , floating :: Bool
@@ -99,7 +107,7 @@ data HyprctlClient = MkHyprctlClient
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
-newtype HyprctlClientWorkspace = MkHyprctlClientWorkspace
+newtype HyprctlWorkspace = MkHyprctlWorkspace
   {id :: Int}
   deriving stock (Generic)
   deriving anyclass (FromJSON)
@@ -116,7 +124,8 @@ data HyprlandWindow = MkHyprlandWindow
   deriving anyclass (ToJSON)
 
 data HyprlandWorkspace a = MkHyprlandWorkspace
-  { floating :: Seq a
+  { active :: Bool
+  , floating :: Seq a
   , stacks :: Seq (NESeq a)
   }
   deriving stock (Generic, Functor)

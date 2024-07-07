@@ -43,13 +43,16 @@ mail env mode = do
   notmuch_update <-
     FileWatch.watchFile env (env.homeDir </> "Maildir/.notmuch/xapian") "flintlock"
   events <-
-    [ (const True, ["tag:unread and (not folder:/Archiv/ or folder:/Inbox/)"], toEnum 0xeb1c)
+    [
+      ( (>= Normal)
+      , ["tag:unread and folder:/Inbox/"]
+      , toEnum 0xeb1c -- nf-cod-mail
+      )
       ,
-        ( const True
-        , ["folder:hera/Inbox", "not", "tag:unread"]
+        ( (>= Sort)
+        , ["not tag:unread and folder:/Inbox/"]
         , toEnum 0xeb1b -- nf-cod-mail_read
         )
-      , (const True, ["folder:hera/Code"], toEnum 61729)
       ]
       & mapM \(on_mode, folder, subgroup) ->
         ReflexUtil.performEventThreaded

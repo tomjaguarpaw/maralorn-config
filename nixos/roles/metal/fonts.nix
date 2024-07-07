@@ -16,7 +16,7 @@
         {
           monospace = [ "JetBrainsMono Nerd Font" ] ++ unicode-fallback;
           sansSerif = [
-            "Iosevka Aile"
+            "B612"
             "Noto Sans"
           ] ++ unicode-fallback;
           serif = [

@@ -7,11 +7,13 @@ import Data.Aeson qualified as Aeson
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Time.Clock.POSIX qualified as Time
 import Maralorn.Prelude
+import Reflex (updated)
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
 import Shh (ExecReference (Absolute), load)
 import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
+import StatusScript.Mode
 import StatusScript.Mode qualified as Mode
 import StatusScript.Modules.Audio qualified as Audio
 import StatusScript.Modules.Calendar qualified as Calendar
@@ -26,7 +28,7 @@ import StatusScript.Modules.SoftwareFeed qualified as SoftwareFeed
 import StatusScript.Modules.Timer qualified as Timer
 import StatusScript.PublishSocket qualified as PublishSocket
 import StatusScript.ReflexUtil qualified as ReflexUtil
-import StatusScript.Warnings qualified as Warnings
+import StatusScript.Warnings
 import System.Environment qualified as Env
 import System.FSNotify qualified as Notify
 
@@ -62,12 +64,23 @@ main = Notify.withManager \watch_manager -> do
     software_feed_event <- SoftwareFeed.softwareFeed env mode
     mail_events <- Mail.mail env mode
     notification_events <- Mako.notifications env
+    let mode_warning =
+          updated mode
+            <&> ( modeIcon >>> maybe [] \m ->
+                    [ MkWarning
+                        { group = m
+                        , description = Nothing
+                        , subgroup = Nothing
+                        }
+                    ]
+                )
     warnings <-
       ReflexUtil.concatEvents
         [ ping_event
         , software_feed_event
         , mail_events
         , notification_events
+        , mode_warning
         , start $> []
         ]
     PublishSocket.publishJson env "warnings" warnings
@@ -84,7 +97,6 @@ main = Notify.withManager \watch_manager -> do
                   }
              )
       )
-    PublishSocket.publish env "mode" (ReflexUtil.taggedAndUpdated mode start <&> show)
     player_events <- Player.playerModule env
     PublishSocket.publishJson env "players" player_events
     appointments_event <- Calendar.calendar env
