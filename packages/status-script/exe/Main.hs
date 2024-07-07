@@ -7,8 +7,7 @@ import Data.Aeson qualified as Aeson
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Time.Clock.POSIX qualified as Time
 import Maralorn.Prelude
-import Reflex (updated)
-import Reflex qualified as R
+import Reflex
 import Reflex.Host.Headless qualified as R
 import Shh (ExecReference (Absolute), load)
 import StatusScript.CommandUtil qualified as CommandUtil
@@ -20,9 +19,9 @@ import StatusScript.Modules.Calendar qualified as Calendar
 import StatusScript.Modules.Hyprland (hyprlandWorkspaces)
 import StatusScript.Modules.IdleState qualified as IdleState
 import StatusScript.Modules.Mail qualified as Mail
-import StatusScript.Modules.Mako qualified as Mako
+import StatusScript.Modules.Mako
 import StatusScript.Modules.Network qualified as Network
-import StatusScript.Modules.Ping qualified as Ping
+import StatusScript.Modules.Ping
 import StatusScript.Modules.Player qualified as Player
 import StatusScript.Modules.SoftwareFeed qualified as SoftwareFeed
 import StatusScript.Modules.Timer qualified as Timer
@@ -55,17 +54,17 @@ main = Notify.withManager \watch_manager -> do
           }
   CommandUtil.reportMissing missingExecutables
   mkdir "-p" PublishSocket.socketsDir
-  now :: Int <- Time.getPOSIXTime <&> round
+  now' :: Int <- Time.getPOSIXTime <&> round
   R.runHeadlessApp do
-    start <- R.getPostBuild
-    PublishSocket.publishJson env "uptime" (start $> now)
+    start <- getPostBuild
+    PublishSocket.publishJson env "uptime" (start $> now')
     mode <- Mode.getMode env
-    ping_event <- Ping.ping' env
+    ping_dyn <- ping' env
     software_feed_event <- SoftwareFeed.softwareFeed env mode
     mail_events <- Mail.mail env mode
-    notification_events <- Mako.notifications env
+    notification_dyn <- notifications env mode
     let mode_warning =
-          updated mode
+          mode
             <&> ( modeIcon >>> maybe [] \m ->
                     [ MkWarning
                         { group = m
@@ -74,17 +73,17 @@ main = Notify.withManager \watch_manager -> do
                         }
                     ]
                 )
-    warnings <-
-      ReflexUtil.concatEvents
-        [ ping_event
-        , software_feed_event
-        , mail_events
-        , notification_events
-        , mode_warning
-        , start $> []
-        ]
-    PublishSocket.publishJson env "warnings" warnings
-    PublishSocket.publishJson
+    let warnings =
+          concat
+            <$> sequence
+              [ ping_dyn
+              , software_feed_event
+              , mail_events
+              , notification_dyn
+              , mode_warning
+              ]
+    PublishSocket.publishJson' env "warnings" warnings
+    PublishSocket.publishJson'
       env
       "warninggroups"
       ( warnings
@@ -112,7 +111,7 @@ main = Notify.withManager \watch_manager -> do
     PublishSocket.publishJson env "audio" audio_info_event
     hyprland_workspaces <- hyprlandWorkspaces env
     PublishSocket.publishJson' env "workspaces" hyprland_workspaces
-    (end_event, trigger) <- R.newTriggerEvent
+    (end_event, trigger) <- newTriggerEvent
     let run_job_queue = do
           (job_name, job) <- atomically $ STM.readTQueue job_queue
           Async.concurrently_

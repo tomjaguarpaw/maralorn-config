@@ -2,6 +2,7 @@ module StatusScript.Modules.Mail (mail) where
 
 import Data.Text qualified as Text
 import Maralorn.Prelude
+import Reflex
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
 import Shh qualified
@@ -37,7 +38,7 @@ mkWarning = \subgroup msg ->
     , subgroup = Just subgroup
     }
 
-mail :: R.MonadHeadlessApp t m => Env -> R.Dynamic t Mode -> m (R.Event t [Warning])
+mail :: R.MonadHeadlessApp t m => Env -> R.Dynamic t Mode -> m (Dynamic t [Warning])
 mail env mode = do
   CommandUtil.reportMissing missingExecutables
   notmuch_update <-
@@ -66,4 +67,5 @@ mail env mode = do
                     % Text.lines
                     %> mkWarning subgroup
             _ -> pure []
-  ReflexUtil.concatEvents events
+  dyns <- mapM (holdDyn []) events
+  pure $ fold dyns
