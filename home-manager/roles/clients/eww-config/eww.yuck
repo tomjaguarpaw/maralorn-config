@@ -77,7 +77,7 @@
 (defwidget idle-bar []
   (box :space-evenly false (for x in {idle_state.tag != "Active" ? [""] : []}
     (box :space-evenly false :orientation "horizontal"
-      (icon {idle_state.tag == "Idle" ? "idle" : "no-idle"})
+      (icon {idle_state.tag == "Idle" ? "󰔟" : "󱦠"})
       (box :halign "center" :hexpand true "idle")
       (box :halign "end" :hexpand true {idle_state.tag == "Idle" ? formattime(EWW_TIME - idle_state.contents,"%M:%S","UTC") : "off"})
     )
@@ -147,7 +147,7 @@
         (box :halign "center" :orientation "vertical" :space-evenly false
           (for network in networks
             (box :class "component" :spacing 10 :space-evenly false
-              (icon "network")
+              (icon "󰲝")
               network
             )
           )
@@ -182,7 +182,7 @@
         (box :halign "center" :orientation "vertical" :space-evenly false
           (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" ? [EWW_BATTERY.BAT0] : []}
             (box :class "component" :space-evenly false
-              (icon "battery-alert")
+              (icon "󰁹")
               (label :hexpand true :halign "center" :text "${battery.capacity}% ${battery.status}")
             )
           ))
