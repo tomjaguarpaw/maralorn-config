@@ -1,8 +1,10 @@
-module StatusScript.ReflexUtil (performEventThreaded, concatEvents, processLines, tickEvent, taggedAndUpdated, updatedAndStart) where
+module StatusScript.ReflexUtil (performEventThreaded, concatEvents, processLines, tickEvent, taggedAndUpdated, updatedAndStart, performDynThreaded) where
 
 import Control.Concurrent qualified as Conc
 import Maralorn.Prelude
+import Reflex
 import Reflex qualified as R
+import Reflex.Host.Headless (MonadHeadlessApp)
 import Reflex.Host.Headless qualified as R
 import Shh ((|>))
 import Shh qualified
@@ -39,6 +41,13 @@ processLines = \env command -> do
       )
     sayErr "A processLines command failed and will be restarted in a second."
   pure event
+
+performDynThreaded :: MonadHeadlessApp t m => Env -> Dynamic t a -> b -> (a -> IO b) -> m (Dynamic t b)
+performDynThreaded = \env dyn_in def' act -> do
+  pb <- getPostBuild
+  let trigger_event = leftmost [updated dyn_in, current dyn_in <@ pb]
+  ev <- performEventThreaded env trigger_event $ \x -> liftIO $ act x
+  holdDyn def' ev
 
 -- Call IO action in a separate thread. If multiple events fire never run two actions in parallel and if more than one action queues up, only run the latest.
 performEventThreaded :: R.MonadHeadlessApp t m => Env -> R.Event t a -> (a -> IO b) -> m (R.Event t b)
