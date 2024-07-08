@@ -25,21 +25,8 @@ let
     {
       Orga = [
         { Kalendar = term "ikhal"; }
-        { Habitica = fork "firefox https://habitica.com"; }
-        { Tasks = term "tasksh"; }
-        { Meditate = term "meditate"; }
-        { Pythia = term "pythia"; }
         { Notes = edit_dir "~/git/notes"; }
       ];
-    }
-    {
-      Research = {
-        Zotero = fork "zotero";
-        Open = fork "evince ~/git/promotion/out/thesis.pdf";
-        Build = term (shell "cd ~/git/promotion; nix run .# -- watch");
-        Directory = fork "${config.home.sessionVariables.TERMINAL} -D ~/git/promotion";
-        Edit = edit_dir "~/git/promotion";
-      };
     }
     {
       Power = {
@@ -164,7 +151,6 @@ let
               Open = mail "";
               Inbox = mail "-f ~/Maildir/hera/Inbox";
               Inbox-Work = mail "-f ~/Maildir/heilmann/Inbox";
-              Code = mail "-f ~/Maildir/hera/Code";
             };
         }
         {
