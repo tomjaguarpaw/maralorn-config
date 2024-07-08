@@ -170,16 +170,6 @@
         ))
       )
       (centerbox :orientation "vertical"
-        ""
-        (box :halign "center" :orientation "vertical" :space-evenly false (for player in players
-          (box :class "component" :orientation "vertical" :space-evenly false :spacing 10
-            (box  :space-evenly false :spacing 10
-              (icon {player.icon})
-              (label :hexpand true :halign "center" :text {player.name})
-            )
-            (label :justify "left" :hexpand true :halign "start" :text {player.title})
-          )
-        ))
         (box :halign "center" :orientation "vertical" :space-evenly false
           (box :orientation "vertical" :space-evenly false (for battery in {((EWW_BATTERY ?: {}).BAT0  ?: "") != "" ? [EWW_BATTERY.BAT0] : []}
             (box :class "component" :space-evenly false
@@ -202,6 +192,16 @@
               (label :hexpand true :halign "center" :text {warning.description}))
           )
         )
+        (box :halign "center" :orientation "vertical" :space-evenly false (for player in players
+          (box :class "component" :orientation "vertical" :space-evenly false :spacing 10
+            (box  :space-evenly false :spacing 10
+              (icon {player.icon})
+              (label :hexpand true :halign "center" :text {player.name})
+            )
+            (label :justify "left" :hexpand true :halign "start" :text {player.title})
+          )
+        ))
+        (systray)
       )
       (centerbox :orientation "vertical"
         ""
