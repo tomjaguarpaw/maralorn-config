@@ -21,19 +21,16 @@ $accent: #1E66F5;
   padding-bottom: 1px;
   padding-top: 1px;
   margin: 1px;
-  background: $background;
-}
-
-.active-workspace > .window {
   background: $background-lighter;
 }
 
 .active-window {
-  background: $accent;
+  background: $background;
 }
 
 .workspace {
-  background: $background-lighter;
+  background: $foreground;
+  color: $background;
   border-radius: 1px;
   min-width: 4px;
   padding: 1px;
@@ -42,7 +39,6 @@ $accent: #1E66F5;
 
 .active-workspace {
   background: $accent;
-  color: $background;
 }
 
 .icon {
