@@ -9,9 +9,10 @@ import Data.Foldable qualified as Foldable
 import Data.IntMap.Strict qualified as IntMap
 import Data.IntSet qualified as IntSet
 import Data.Text qualified as Text
-import Maralorn.Prelude hiding (get)
+import Reflex
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
+import Relude hiding (get, mapMaybe)
 import Shh qualified
 import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
@@ -24,7 +25,7 @@ audioUpdateEvent :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Aeson.Value])
 audioUpdateEvent = \env -> do
   CommandUtil.reportMissing missingExecutables
   line <- ReflexUtil.processLines env (pw_dump "-m")
-  (R.foldDyn foldJsonLines ([], Nothing) line <&> R.updated % R.mapMaybe snd)
+  R.mapMaybe snd . R.updated <$> R.foldDyn foldJsonLines ([], Nothing) line
 
 foldJsonLines :: ByteString -> ([ByteString], Maybe [Aeson.Value]) -> ([ByteString], Maybe [Aeson.Value])
 foldJsonLines = \next_line -> \case
@@ -33,9 +34,9 @@ foldJsonLines = \next_line -> \case
         ( []
         , (next_line : unparsed_lines)
             & reverse
-              %> fromStrict
-              % LazyByteStringChar.unlines
-              % Aeson.decode
+            & fmap fromStrict
+            & LazyByteStringChar.unlines
+            & Aeson.decode
         )
   (unparsed_lines, _) -> (next_line : unparsed_lines, Nothing)
 
@@ -79,7 +80,7 @@ type PipeWireObjectDelete =
 
 fromJSON :: Aeson.FromJSON a => Value -> Maybe a
 fromJSON =
-  Aeson.fromJSON % \case
+  Aeson.fromJSON >>> \case
     Aeson.Success x -> Just x
     _ -> Nothing
 
@@ -98,6 +99,7 @@ aliases =
   , ("Audio Controller HDMI", "Monitor")
   , ("Audio Controller Speaker", "Intern")
   , ("Audio Controller Digital Microphone", "Intern")
+  , ("Dock", "Dock")
   ]
 
 mkInfos :: IntMap (Schema.Object PipeWireObject) -> [AudioEndPoint]
@@ -106,50 +108,49 @@ mkInfos = \objects ->
     get_info :: Aeson.FromJSON a => Int -> [Aeson.Key] -> Maybe a
     get_info = \id' path ->
       IntMap.lookup id' objects
-        >>= [get|.info|]
-        % extractJSON path
+        >>= extractJSON path . [get|.info|]
     get_name :: Int -> Text
     get_name id' =
       let raw = get_info id' ["props", "node.description"] & fromMaybe "unknown"
-       in find (fst % (`Text.isInfixOf` raw)) aliases
-            & fmap snd
-              % fromMaybe raw
+       in find (fst >>> (`Text.isInfixOf` raw)) aliases
+            & maybe raw snd
     find_volume :: Int -> Maybe Double
     find_volume = \id' ->
       get_info id' ["params", "Props"]
         <&> mapMaybe (extractJSON ["channelVolumes"])
         >>= viaNonEmpty head
-        %> Foldable.maximum
-        -- Factors found at https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/blob/master/src/pulse/volume.c#L260
-        -- explained at https://www.robotplanet.dk/audio/audio_gui_design/
-        %> (/ 3.162278)
-        %> (** (1 / 3))
-        %> (* 100)
+        <&> ( Foldable.maximum
+                -- Factors found at https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/blob/master/src/pulse/volume.c#L260
+                -- explained at https://www.robotplanet.dk/audio/audio_gui_design/
+                >>> (/ 3.162278)
+                >>> (** (1 / 3))
+                >>> (* 100)
+            )
     find_mute :: Int -> Maybe Bool
     find_mute = \id' -> get_info id' ["params", "Props"] <&> mapMaybe (extractJSON ["mute"]) >>= viaNonEmpty head
     defaults :: [Text]
     defaults =
       objects
         & toList
-          % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Metadata")
-          % mapMaybe [get|.metadata|]
+        & filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Metadata")
+        & mapMaybe [get|.metadata|]
         & join
-          % filter (extractJSON ["key"] % (`elem` [Just "default.audio.sink", Just "default.audio.source"]))
-          % mapMaybe (extractJSON ["value", "name"])
+        & filter (extractJSON ["key"] >>> (`elem` [Just "default.audio.sink", Just "default.audio.source"]))
+        & mapMaybe (extractJSON ["value", "name"])
     links =
       objects
         & toList
-          % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Link")
-          %> [get|.info|]
-          % mapMaybe (\info -> (,) <$> extractJSON ["input-node-id"] info <*> extractJSON ["output-node-id"] info)
-          %> (second IntSet.singleton)
-          % IntMap.fromListWith (<>)
+        & filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Link")
+        & mapMaybe
+          ((\info -> (,) <$> extractJSON ["input-node-id"] info <*> extractJSON ["output-node-id"] info) . [get|.info|])
+        & fmap (second IntSet.singleton)
+        & IntMap.fromListWith (<>)
     endpoints =
       objects
         & toList
-          % filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Node")
-          % filter ([get|.info|] % extractJSON ["props", "media.class"] % (`elem` [Just "Audio/Sink", Just "Audio/Source"]))
-          %> [get|.id|]
+        & filter (\obj -> [get| obj.type |] == "PipeWire:Interface:Node")
+        & filter ([get|.info|] >>> extractJSON ["props", "media.class"] >>> (`elem` [Just "Audio/Sink", Just "Audio/Source"]))
+        & fmap [get|.id|]
    in
     endpoints
       <&> ( \endpoint ->
@@ -193,11 +194,11 @@ mkInfos = \objects ->
       & filter \endpoint -> length endpoint.clients + length endpoint.icons > 1
 
 audioInfos :: R.MonadHeadlessApp t m => R.Event t [Aeson.Value] -> m (R.Event t [AudioEndPoint])
-audioInfos = \trigger_event ->
-  R.foldDyn foldPipeWireEvents mempty trigger_event
-    <<&>> mkInfos
-    >>= R.holdUniqDyn
-    <&> R.updated
+audioInfos =
+  R.foldDyn foldPipeWireEvents mempty
+    >=> fmap updated
+    . R.holdUniqDyn
+    . fmap mkInfos
 
 foldPipeWireEvents :: [Aeson.Value] -> IntMap (Schema.Object PipeWireObject) -> IntMap (Schema.Object PipeWireObject)
 foldPipeWireEvents = \events start_objects -> foldl' (flip foldPipeWireEvent) start_objects events
