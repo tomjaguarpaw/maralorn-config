@@ -79,8 +79,7 @@
   (box :space-evenly false (for x in {idle_state.tag != "Active" ? [""] : []}
     (box :space-evenly false :orientation "horizontal"
       (icon {idle_state.tag == "Idle" ? "󰔟" : "󱦠"})
-      (box :halign "center" :hexpand true "idle")
-      (box :halign "end" :hexpand true {idle_state.tag == "Idle" ? formattime(EWW_TIME - idle_state.contents,"%M:%S","UTC") : "off"})
+      (box :halign "end" :hexpand true {idle_state.tag == "Idle" ? formattime(EWW_TIME - idle_state.contents,"%M:%S","UTC") : ""})
     )
   ))
 )
