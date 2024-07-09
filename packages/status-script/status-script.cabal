@@ -47,6 +47,7 @@ common common-config
     , bytestring
     , directory
     , exceptions
+    , extra
     , filepath
     , fsnotify
     , network
@@ -54,6 +55,7 @@ common common-config
     , optics
     , reflex
     , relude
+    , safe-exceptions
     , say
     , shh
     , stm

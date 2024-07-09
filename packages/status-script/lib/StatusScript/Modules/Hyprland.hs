@@ -1,6 +1,9 @@
 module StatusScript.Modules.Hyprland (hyprlandWorkspaces) where
 
+import Control.Concurrent (threadDelay)
+import Control.Exception.Safe (catchAny)
 import Data.Aeson (FromJSON, ToJSON, decode', eitherDecode')
+import Data.ByteString qualified as ByteString
 import Data.IntMap.Strict qualified as IntMap
 import Data.Sequence (Seq (..))
 import Data.Sequence qualified as Seq
@@ -17,9 +20,28 @@ import Shh (captureTrim, (|>))
 import Shh qualified
 import StatusScript.CommandUtil
 import StatusScript.Env
+import StatusScript.ReflexUtil
 import System.Environment (getEnv)
 
 Shh.load Shh.Absolute ["hyprctl"]
+
+watchHyprland :: IO () -> IO ()
+watchHyprland act = forever do
+  catchAny watch \err -> do
+    print err
+    threadDelay 2_000_000
+ where
+  watch = do
+    socket <- Network.socket Network.AF_UNIX Network.Stream Network.defaultProtocol
+    loadSystemdEnv "HYPRLAND_INSTANCE_SIGNATURE"
+    dir <- getEnv "XDG_RUNTIME_DIR"
+    hyprL <- getEnv "HYPRLAND_INSTANCE_SIGNATURE"
+    let socket_name = [i|#{dir}/hypr/#{hyprL}/.socket2.sock|]
+    Network.connect socket (Network.SockAddrUnix socket_name)
+    forever do
+      val <- Network.recv socket 1028
+      when (ByteString.null val) $ fail "Hyprland socket returned empty"
+      act
 
 missingExecutables :: IO [FilePath]
 hyprlandWorkspaces
@@ -28,20 +50,19 @@ hyprlandWorkspaces
   -> m (Dynamic t (Seq (HyprlandWorkspace HyprlandWindow)))
 hyprlandWorkspaces env = do
   reportMissing missingExecutables
-  socket <- liftIO $ Network.socket Network.AF_UNIX Network.Stream Network.defaultProtocol
-  dir <- liftIO $ getEnv "XDG_RUNTIME_DIR"
-  hyprL <- liftIO $ getEnv "HYPRLAND_INSTANCE_SIGNATURE"
-  let socket_name = [i|#{dir}/hypr/#{hyprL}/.socket2.sock|]
-  liftIO $ Network.connect socket (Network.SockAddrUnix socket_name)
   (event, trigger) <- newTriggerEvent
-  liftIO $ env.fork [i|Listening on socket #{socket_name}|] $ forever do
-    _ <- Network.recv socket 20
-    trigger =<< mkInfo
-  startInfo <- mkInfo
-  holdDyn startInfo event
+  ev <-
+    performEventThreaded env event \_ -> catchAny mkInfo \err -> do
+      print err
+      pure mempty
+  liftIO $ env.fork [i|Listening on Hyprland socket|] $ do
+    threadDelay 10_000
+    trigger ()
+    watchHyprland $ trigger ()
+  holdDyn mempty ev
  where
-  mkInfo :: MonadIO m => m (Seq (HyprlandWorkspace HyprlandWindow))
-  mkInfo = liftIO do
+  mkInfo :: IO (Seq (HyprlandWorkspace HyprlandWindow))
+  mkInfo = do
     active_bs <- hyprctl "activewindow" "-j" |> captureTrim
     active_ws_bs <- hyprctl "activeworkspace" "-j" |> captureTrim
     all_windows_bs <- hyprctl "clients" "-j" |> captureTrim

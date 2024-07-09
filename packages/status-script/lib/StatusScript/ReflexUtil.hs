@@ -11,8 +11,8 @@ import Shh qualified
 import StatusScript.Env (Env (..))
 
 tickEvent :: R.MonadHeadlessApp t m => Int -> m (R.Event t ())
-tickEvent delay =
-  R.tickLossyFromPostBuildTime (realToFrac delay)
+tickEvent wait_time =
+  R.tickLossyFromPostBuildTime (realToFrac wait_time)
     <&> void
 
 taggedAndUpdated :: R.Reflex t => R.Dynamic t a -> R.Event t b -> R.Event t a
