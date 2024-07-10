@@ -93,18 +93,18 @@
 )
 
 (defwidget pipewire-bar []
- (box :space-evenly false :vexpand true (for endpoint in audio
-   (box :space-evenly false :vexpand true :class "${endpoint.mute ? "disabled" : ""}"
-     (box :orientation "vertical" :vexpand true :space-evenly false
-       (box :vexpand true :space-evenly false
+ (box :space-evenly false (for endpoint in audio
+   (box :space-evenly false :class "${endpoint.mute ? "disabled" : ""}"
+     (box :orientation "vertical" :valign "center" :space-evenly false
+       (box :space-evenly false
          (icon {endpoint.icons})
-         (label :width 60 :wrap true :justify "center" :hexpand true :text {endpoint.name})
+         (label :text {endpoint.name})
        )
        (progress :value {endpoint.volume})
      )
      (for client in {endpoint.clients}
        (box :class "lighter ${client.mute ? "disabled" : ""}" :orientation "vertical" :space-evenly false
-         (label :width 60 :wrap true :justify "center" :hexpand true :text {client.name})
+         (label :text {client.name})
          (progress :value {client.volume})
        )
      )
@@ -114,10 +114,10 @@
 
 (defwidget players-bar []
   (box (for player in {jq(players,"map(select(.status==\"Playing\"))")}
-    (box :space-evenly false :spacing 10
-      (box  :space-evenly false :spacing 10
+    (box :space-evenly false :spacing 5
+      (box  :space-evenly false :spacing 5
         (icon {player.icon})
-        (label :justify "center" :wrap true :text "${player.name} | ${player.title}")
+        (label :wrap true :text "${player.name} | ${player.title}")
       )
     )
   ))
@@ -125,13 +125,13 @@
 
 (defwidget topbar []
   (centerbox :class "topbar"
-    (box :halign "end" :space-evenly false
+    (box :space-evenly false :halign "end" :spacing 5
       (pipewire-bar)
       (players-bar)
       (workspaces)
     )
     (time)
-    (box :space-evenly false :halign "start"
+    (box :space-evenly false :halign "start" :spacing 5
       (icon-bar)
       (idle-bar)
       (calendar-bar)
@@ -262,7 +262,7 @@
   :geometry (geometry :x "0%"
                       :y "0%"
                       :width "100%"
-                      :height "10px"
+                      :height "20px"
                       :anchor "top center")
   (topbar)
 )

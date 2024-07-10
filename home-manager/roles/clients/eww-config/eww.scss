@@ -44,8 +44,8 @@ $accent: #1E66F5;
 .icon {
   font-size: 12px;
   color: $accent;
-  padding-right: 8px;
-  padding-left: 5px;
+  padding-right: 6px;
+  padding-left: 3px;
 }
 
 .component {
@@ -56,29 +56,18 @@ $accent: #1E66F5;
   margin: 2px;
 }
 
-
 .lighter {
   background: $background-lighter;
-  padding: 2px;
-  margin: 2px;
-}
-
-.current {
-  background: $background-lighter;
-  border: 1px solid #ffffff;
-  box-shadow: 0 0 10px #ffffff;
+  padding: 1px;
+  margin: 1px;
 }
 
 .disabled {
-  color: rgba(255,255,255,0.4);
-}
-
-.disabled progress {
-  background: rgba(255,255,255,0.4);
+  color: rgba($foreground,0.6);
 }
 
 progress {
-  background: rgba(255,255,255,0.8);
+  background: $accent;
   min-height: 1px;
 }
 
@@ -88,24 +77,11 @@ progressbar {
 progressbar > trough {
   min-width: 10px;
   min-height: 1px;
-  background: rgba(255,255,255,0.2);
-}
-
-
-.empty {
-  color: #aaaaaa;
-}
-
-.bar {
-  background: transparent;
-}
-
-.comment {
-  color: #888888;
+  background: #ffffff;
 }
 
 .overlay {
-  background: rgba(#000000,0.1);
+  background: rgba($accent,0.2);
   padding: 100px;
 }
 
