@@ -32,9 +32,9 @@ $accent: #1E66F5;
   background: $foreground;
   color: $background;
   border-radius: 1px;
-  min-width: 4px;
+  min-width: 6px;
   padding: 1px;
-  margin: 1px;
+  margin: 1px 5px;
 }
 
 .active-workspace {
