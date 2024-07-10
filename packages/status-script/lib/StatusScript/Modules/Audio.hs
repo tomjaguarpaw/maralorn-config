@@ -162,10 +162,10 @@ mkInfos = \objects ->
                     , -- TODO: Add mute and default icons
                       icons =
                         [ case (get_info endpoint ["props", "media.class"] == Just "Audio/Source", mute) of
-                            (True, False) -> toEnum 984446 -- nf-md-volume_high
-                            (True, True) -> toEnum 984449 -- nf-md-volume_off
-                            (False, False) -> toEnum 983916 -- nf-md-microphone
-                            (False, True) -> toEnum 983917 -- nf-md-microphone_off
+                            (True, False) -> toEnum 983916 -- nf-md-microphone
+                            (True, True) -> toEnum 983917 -- nf-md-microphone_off
+                            (False, False) -> toEnum 984446 -- nf-md-volume_high
+                            (False, True) -> toEnum 984449 -- nf-md-volume_off
                         ]
                           <> [ toEnum 0xf0970 -- nf-md-headphones_bluetooth
                              | get_info endpoint ["props", "api.bluez5.profile"] == Just "headset-head-unit"
