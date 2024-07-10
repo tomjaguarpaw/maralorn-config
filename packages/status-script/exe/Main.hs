@@ -3,6 +3,7 @@ module Main (main) where
 import Control.Concurrent.Async qualified as Async
 import Control.Concurrent.STM qualified as STM
 import Control.Exception qualified as Exception
+import Control.Exception.Safe (catchAny)
 import Data.Aeson qualified as Aeson
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Time.Clock.POSIX qualified as Time
@@ -114,16 +115,11 @@ main = Notify.withManager \watch_manager -> do
     (end_event, trigger) <- newTriggerEvent
     let run_job_queue = do
           (job_name, job) <- atomically $ STM.readTQueue job_queue
-          Async.concurrently_
-            run_job_queue
-            ( Exception.catchJust
-                (\e -> if isJust (fromException @Async.AsyncCancelled e) then Nothing else Just e)
-                job
-                \e -> do
-                  sayErr [i|In async job "#{job_name}" error: #{e}|]
-                  Exception.throwIO e
-            )
-    void $ liftIO $ Async.async $ Exception.catch run_job_queue \(_ :: SomeException) -> trigger ()
+          Async.concurrently_ run_job_queue $
+            catchAny job \e -> do
+              sayErr [i|In async job "#{job_name}" error: #{e}|]
+              Exception.throwIO e
+    void $ liftIO $ Async.async $ catchAny run_job_queue \_ -> trigger ()
     pure end_event
   sayErr "Exiting because of previous errors."
   exitFailure

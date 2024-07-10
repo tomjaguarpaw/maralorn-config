@@ -1,5 +1,7 @@
-module StatusScript.CommandUtil (tryCmd, reportMissing, loadSystemdEnv) where
+module StatusScript.CommandUtil (reportMissing, loadSystemdEnv, retryWithBackoff) where
 
+import Control.Concurrent (threadDelay)
+import Control.Exception.Safe (catchAny)
 import Data.ByteString.Lazy qualified as LBS
 import Data.ByteString.Lazy.Char8 qualified as LBSC
 import Data.List.Extra (firstJust)
@@ -14,8 +16,16 @@ import System.Environment (setEnv)
 Shh.load Shh.Absolute ["systemctl"]
 
 missingExecutables :: IO [FilePath]
-tryCmd :: Shh.Proc a -> IO LBS.ByteString
-tryCmd x = Shh.ignoreFailure x |> Shh.captureTrim
+retryWithBackoff :: IO a -> IO a
+retryWithBackoff act = go 0
+ where
+  go cnt = do
+    catchAny act \err -> do
+      sayErr [i|Retrying in #{timeout} ms. Error: #{displayException err}|]
+      threadDelay (timeout * 1_000)
+      go (cnt + 1)
+   where
+    timeout = min 60_000 (2 ^ cnt)
 
 loadSystemdEnv :: Text -> IO ()
 loadSystemdEnv var = do

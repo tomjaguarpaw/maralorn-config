@@ -3,8 +3,9 @@ module StatusScript.Modules.Network where
 import Maralorn.Prelude
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
+import Shh ((|>))
 import Shh qualified
-import StatusScript.CommandUtil qualified as CommandUtil
+import StatusScript.CommandUtil
 import StatusScript.Env (Env (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
 
@@ -17,7 +18,7 @@ networkState = \env ->
     True -> do
       monitor_event <- ReflexUtil.processLines env (Shh.exe "nmcli" "monitor")
       ReflexUtil.performEventThreaded env monitor_event \_ -> do
-        CommandUtil.tryCmd (Shh.exe "nmcli" "-g" "name" "connection" "show" "--active")
+        retryWithBackoff (Shh.exe "nmcli" "-g" "name" "connection" "show" "--active" |> Shh.captureTrim)
           <&> decodeUtf8
           % lines
           % filter (/= "lo")

@@ -7,7 +7,9 @@ import Data.Text qualified as Text
 import Maralorn.Prelude
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
+import Shh ((|>))
 import Shh qualified
+import StatusScript.CommandUtil
 import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
@@ -25,8 +27,8 @@ playerModule = \env -> do
   player_event <-
     ReflexUtil.processLines env (playerctl "metadata" "-F" "-f" playerCTLFormat)
       >>= R.throttle 0.2
-  ReflexUtil.performEventThreaded env player_event $ const do
-    player_states <- CommandUtil.tryCmd (playerctl "metadata" "-a" "-f" playerCTLFormat)
+  ReflexUtil.performEventThreaded env player_event $ \_ -> do
+    player_states <- retryWithBackoff (playerctl "metadata" "-a" "-f" playerCTLFormat |> Shh.captureTrim)
     mpd_host <-
       [i|#{home}/.config/mpDris2/mpDris2.conf|]
         & readFileBS

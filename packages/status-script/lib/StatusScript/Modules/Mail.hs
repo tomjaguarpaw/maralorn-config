@@ -5,7 +5,9 @@ import Maralorn.Prelude
 import Reflex
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
+import Shh ((|>))
 import Shh qualified
+import StatusScript.CommandUtil
 import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
 import StatusScript.FileWatch qualified as FileWatch
@@ -62,7 +64,7 @@ mail env mode = do
           \case
             mode'
               | on_mode mode' ->
-                  CommandUtil.tryCmd (notmuch "search" folder)
+                  retryWithBackoff (notmuch "search" folder |> Shh.captureTrim)
                     <&> decodeUtf8
                     % Text.lines
                     %> mkWarning subgroup

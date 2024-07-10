@@ -7,7 +7,9 @@ import Data.Aeson.Schema qualified as Schema
 import Maralorn.Prelude hiding (get)
 import Reflex (Dynamic, holdDyn, zipDynWith)
 import Reflex.Host.Headless (MonadHeadlessApp)
+import Shh (captureTrim, (|>))
 import Shh qualified
+import StatusScript.CommandUtil
 import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
 import StatusScript.Mode
@@ -27,7 +29,7 @@ notifications = \env mode -> do
   CommandUtil.reportMissing missingExecutables
   tick <- ReflexUtil.tickEvent 5
   ev <- ReflexUtil.performEventThreaded env tick \_ ->
-    CommandUtil.tryCmd (makoctl "list")
+    retryWithBackoff (makoctl "list" |> captureTrim)
       <&> Aeson.decode @(Schema.Object MakoList)
       %> [get|.data|]
       %> join

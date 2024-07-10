@@ -1,7 +1,6 @@
 module StatusScript.Modules.Hyprland (hyprlandWorkspaces) where
 
-import Control.Concurrent (threadDelay)
-import Control.Exception.Safe (catchAny)
+import Control.Monad.Extra (untilJustM)
 import Data.Aeson (FromJSON, ToJSON, decode', eitherDecode')
 import Data.ByteString qualified as ByteString
 import Data.IntMap.Strict qualified as IntMap
@@ -25,11 +24,8 @@ import System.Environment (getEnv)
 
 Shh.load Shh.Absolute ["hyprctl"]
 
-watchHyprland :: IO () -> IO ()
-watchHyprland act = forever do
-  catchAny watch \err -> do
-    print err
-    threadDelay 2_000_000
+watchHyprland :: IO () -> IO Void
+watchHyprland cb = forever $ retryWithBackoff watch
  where
   watch = do
     socket <- Network.socket Network.AF_UNIX Network.Stream Network.defaultProtocol
@@ -38,10 +34,10 @@ watchHyprland act = forever do
     hyprL <- getEnv "HYPRLAND_INSTANCE_SIGNATURE"
     let socket_name = [i|#{dir}/hypr/#{hyprL}/.socket2.sock|]
     Network.connect socket (Network.SockAddrUnix socket_name)
-    forever do
-      val <- Network.recv socket 1028
-      when (ByteString.null val) $ fail "Hyprland socket returned empty"
-      act
+    untilJustM $
+      Network.recv socket 1028 >>= \case
+        x | ByteString.null x -> pure $ Just ()
+        _ -> cb >> pure Nothing
 
 missingExecutables :: IO [FilePath]
 hyprlandWorkspaces
@@ -51,14 +47,10 @@ hyprlandWorkspaces
 hyprlandWorkspaces env = do
   reportMissing missingExecutables
   (event, trigger) <- newTriggerEvent
-  ev <-
-    performEventThreaded env event \_ -> catchAny mkInfo \err -> do
-      print err
-      pure mempty
+  ev <- performEventThreaded env event \_ -> retryWithBackoff mkInfo
   liftIO $ env.fork [i|Listening on Hyprland socket|] $ do
-    threadDelay 10_000
     trigger ()
-    watchHyprland $ trigger ()
+    absurd <$> watchHyprland (trigger ())
   holdDyn mempty ev
  where
   mkInfo :: IO (Seq (HyprlandWorkspace HyprlandWindow))

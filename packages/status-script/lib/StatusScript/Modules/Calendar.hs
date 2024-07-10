@@ -5,7 +5,9 @@ import Data.Text qualified as Text
 import Maralorn.Prelude
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
+import Shh ((|>))
 import Shh qualified
+import StatusScript.CommandUtil
 import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
 import StatusScript.ReflexUtil qualified as ReflexUtil
@@ -25,34 +27,33 @@ data Appointment = MkAppointment
   deriving stock (Eq, Generic)
   deriving anyclass (Aeson.ToJSON)
 
+params :: [String]
+params =
+  [ "list"
+  , "-o"
+  , "-a"
+  , "Standard"
+  , "-a"
+  , "Planung"
+  , "-a"
+  , "Uni"
+  , "-a"
+  , "Maltaire"
+  , "now"
+  , "2h"
+  , "-df"
+  , ""
+  , "-f"
+  , "@=@{start}@@@{end}@@@{title}@@@{description}@@@{location}@@@{calendar}"
+  ]
+
 calendar :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Appointment])
 calendar = \env -> do
   CommandUtil.reportMissing missingExecutables
   tick <- ReflexUtil.tickEvent (5 * 60)
   start <- R.getPostBuild
   ReflexUtil.performEventThreaded env (start <> tick) $ const do
-    appointments <-
-      decodeUtf8
-        <$> CommandUtil.tryCmd
-          ( khal
-              [ "list"
-              , "-o"
-              , "-a"
-              , "Standard"
-              , "-a"
-              , "Planung"
-              , "-a"
-              , "Uni"
-              , "-a"
-              , "Maltaire"
-              , "now"
-              , "2h"
-              , "-df"
-              , ""
-              , "-f"
-              , "@=@{start}@@@{end}@@@{title}@@@{description}@@@{location}@@@{calendar}"
-              ]
-          )
+    appointments <- decodeUtf8 <$> retryWithBackoff (khal params |> Shh.captureTrim)
     pure $
       appointments
         & Text.splitOn "@=@"
