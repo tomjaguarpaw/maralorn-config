@@ -99,6 +99,7 @@ aliases =
   , ("Audio Controller HDMI", "Monitor")
   , ("Audio Controller Speaker", "Intern")
   , ("Audio Controller Digital Microphone", "Intern")
+  , ("Built-in Audio", "Intern")
   , ("Dock", "Dock")
   ]
 
