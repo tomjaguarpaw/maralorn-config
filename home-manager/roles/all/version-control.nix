@@ -19,7 +19,37 @@ in
 {
   home.packages = builtins.attrValues {
     inherit (pkgs) glab lazyjj difftastic;
-    watchjj = pkgs.writeShellScriptBin "watchjj" "(jj file list; find .jj -maxdepth 3) | entr -c ${jjstat}";
+    jjwatch = pkgs.writeShellScriptBin "jjwatch" "(jj file list; find .jj -maxdepth 3) | entr -c ${jjstat}";
+    jjpr = pkgs.writeShellScriptBin "jjpr" ''
+      if [[ "$1" == "" ]]; then
+        rev="@"
+      else
+        rev="$1"
+      fi
+
+      desc="$(jj log -T 'self.description()' -r "$rev" --no-graph)"
+
+      if [[ "$desc" == "" ]]; then
+        jj desc -r "$rev"
+        desc="$(jj log -T 'self.description()' -r "$rev" --no-graph)"
+      fi
+
+      branches=$(jj log -T 'self.branches()' -r "$rev" --no-graph)
+
+      if [[ "$branches" == "" ]]; then
+        jj git push -c "$rev"
+      else
+        jj git push -r "$rev"
+      fi
+
+      branches=$(jj log -T 'self.branches()' -r "$rev" --no-graph)
+
+      tea pr create --assignees marabot --head "$branches" --title "$desc"
+
+      if [[ "$rev" == "@" ]]; then
+        jj new
+      fi
+    '';
   };
   programs = {
     jujutsu = {
