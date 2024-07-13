@@ -19,7 +19,7 @@ in
 {
   home.packages = builtins.attrValues {
     inherit (pkgs) glab lazyjj difftastic;
-    watchjj = pkgs.writeShellScriptBin "watchjj" "(jj files; find .jj -maxdepth 3) | entr -c ${jjstat}";
+    watchjj = pkgs.writeShellScriptBin "watchjj" "(jj file list; find .jj -maxdepth 3) | entr -c ${jjstat}";
   };
   programs = {
     jujutsu = {
