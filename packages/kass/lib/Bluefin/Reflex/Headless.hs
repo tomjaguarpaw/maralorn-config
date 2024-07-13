@@ -3,17 +3,20 @@
 {-# HLINT ignore #-}
 module Bluefin.Reflex.Headless (runReflexHeadless) where
 
-import Bluefin.Internal (Eff (UnsafeMkEff), unsafeUnEff)
+import Bluefin.Compound
+import Bluefin.Eff
+import Bluefin.Internal qualified as Internal
 import Bluefin.Reflex
+import Bluefin.State
 import Control.Concurrent.Chan (newChan, readChan)
 import Control.Monad.Ref (readRef)
 import Data.Dependent.Sum (DSum (..), (==>))
 import Data.Traversable (for)
-import Maralude
 import Reflex hiding (Reflex, runRequesterT)
 import Reflex qualified
 import Reflex.Host.Class
 import Reflex.Spider.Internal (HasSpiderTimeline)
+import Relude hiding (Handle, runState)
 import Relude.Monad.Reexport qualified as MTL
 
 -- | Reflex Handler
@@ -21,7 +24,7 @@ runReflexHeadless
   :: (forall t er. Reflex.Reflex t => Reflex Headless t er -> Eff (er :& es) (Event t a))
   -> Eff es a
 runReflexHeadless network =
-  UnsafeMkEff $ runHeadlessApp $ inHeadlessApp network
+  Internal.UnsafeMkEff $ runHeadlessApp $ inHeadlessApp network
 
 inHeadlessApp
   :: HasSpiderTimeline x
@@ -38,7 +41,7 @@ inHeadlessApp network = do
   postBuild <- getPostBuild
   initialRequesterState <- lift . lift . PerformEventT . RequesterT $ MTL.get
   requesterSelector <- lift . lift . PerformEventT . RequesterT . lift $ ask
-  (ret, finalState) <- liftIO . unsafeUnEff $ runState initialRequesterState \requesterStateHandle ->
+  (ret, finalState) <- liftIO . Internal.unsafeUnEff $ runState initialRequesterState \requesterStateHandle ->
     let
       spiderData =
         MkSpiderData
@@ -54,7 +57,7 @@ inHeadlessApp network = do
           , runWithReplaceImpl = \(ReflexAction initial) ev ->
               reflexRunSpiderData spiderData $
                 runWithReplace
-                  (liftIO . unsafeUnEff $ initial r)
+                  (liftIO . Internal.unsafeUnEff $ initial r)
                   (ev <&> \(ReflexAction a) -> inHeadlessApp a)
           }
      in

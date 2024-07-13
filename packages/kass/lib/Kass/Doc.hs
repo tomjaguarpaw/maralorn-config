@@ -4,9 +4,11 @@ import Data.Aeson (FromJSON (..), ToJSON (..), Value (..), withObject, withText,
 import Data.Aeson.KeyMap (KeyMap)
 import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Map.Strict qualified as Map
+import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Data.Time (UTCTime)
-import Maralude
+import Relude
+import Witch (from)
 
 type Docs = Map Id Doc
 
@@ -75,7 +77,7 @@ newDoc =
 
 reservedFields :: Set Text
 reservedFields =
-  from @(List Text)
+  from @(_ Text)
     [ "_id"
     , "_rev"
     , "_deleted"

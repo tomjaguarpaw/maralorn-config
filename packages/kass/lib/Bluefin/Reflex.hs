@@ -21,16 +21,21 @@ module Bluefin.Reflex
   )
 where
 
-import Bluefin.Internal (Eff (UnsafeMkEff), unsafeUnEff, weakenEff)
-import Bluefin.Internal qualified as BF
+import Bluefin.Compound
+import Bluefin.Eff
+import Bluefin.IO
+import Bluefin.Internal qualified as Internal
+import Bluefin.State
+import Bluefin.Utils
 import Control.Concurrent (Chan)
+import Control.Monad.Fix (MonadFix)
 import Data.Dependent.Sum (DSum)
 import GHC.Base qualified as GHC
-import Maralude
 import Reflex hiding (Reflex, runRequesterT)
 import Reflex qualified
 import Reflex.Requester.Base.Internal (RequesterState)
 import Reflex.Spider.Internal (HasSpiderTimeline, SpiderHostFrame, runSpiderHostFrame, unEventM)
+import Relude hiding (Handle, State, get, put)
 
 deriving newtype instance MonadFix (Eff es)
 
@@ -73,7 +78,7 @@ dynEffEv = \r dyn' -> do
   ev <- dynEff r dyn'
   reflex r $ switchHold never ev
 
-data SpiderData t es where
+data SpiderData t (es :: Effects) where
   MkSpiderData
     :: HasSpiderTimeline x
     => { triggerChan :: Chan [DSum (EventTriggerRef (SpiderTimeline x)) TriggerInvocation]
@@ -91,7 +96,8 @@ instance Handle (a t) => Handle (Reflex a t) where
     ReflexHandle
       { spiderData = mapHandle spiderData
       , payload = mapHandle payload
-      , runWithReplaceImpl = \initial ev -> weakenEff (BF.bimap BF.has (BF.eq (# #))) $ runWithReplaceImpl initial ev
+      , runWithReplaceImpl = \initial ev ->
+          Internal.weakenEff (Internal.bimap Internal.has (Internal.eq (# #))) $ runWithReplaceImpl initial ev
       }
 
 withReflex :: Reflex h t es -> (Reflex.Reflex t => a) -> a
@@ -135,7 +141,7 @@ type MonadReflex t m =
   )
 
 performEffEvent :: er :> es => Reflex s t er -> Event t (Eff es a) -> Eff es (Event t a)
-performEffEvent r ev = reflexRunSpiderData r.spiderData $ performEvent (liftIO . unsafeUnEff <$> ev)
+performEffEvent r ev = reflexRunSpiderData r.spiderData $ performEvent (liftIO . Internal.unsafeUnEff <$> ev)
 
 reflex
   :: forall a t e es r
@@ -171,7 +177,7 @@ reflexRunSpiderData
 reflexRunSpiderData d@MkSpiderData{} act = do
   preState <- get d.requesterStateHandle
   (ret, postState) <-
-    UnsafeMkEff
+    Internal.UnsafeMkEff
       . runPerformEventT d.requesterSelector preState
       . flip runPostBuildT d.postBuild
       . flip runTriggerEventT d.triggerChan

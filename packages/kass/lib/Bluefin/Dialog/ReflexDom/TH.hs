@@ -1,6 +1,7 @@
 module Bluefin.Dialog.ReflexDom.TH (createCss) where
 
-import Maralude
+import Data.String.Interpolate (i)
+import Relude
 import System.Process.Typed (runProcess_)
 import UnliftIO (withTempDirectory)
 
@@ -15,4 +16,4 @@ createCss = liftIO do
     writeFileBS inputPath input
     writeFileBS configPath config
     runProcess_ [i|tailwindcss -i #{inputPath} -o #{outputPath} -c #{configPath} -m|]
-    readFile outputPath
+    decodeUtf8 <$> readFileBS outputPath

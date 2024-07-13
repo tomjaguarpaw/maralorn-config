@@ -2,14 +2,19 @@ module Bluefin.Dialog.ReflexDom (runDomDialog) where
 
 import Bluefin.Dialog hiding (text)
 import Bluefin.Dialog.ReflexDom.TH (createCss)
+import Bluefin.Eff
+import Bluefin.IO
 import Bluefin.Reflex
 import Bluefin.Reflex.Dom
+import Data.String.Interpolate (i)
+import Data.Text qualified as Text
 import Language.Haskell.TH (bindCode)
 import Language.Haskell.TH.Syntax (liftTyped)
-import Maralude
+import Optics
 import Reflex hiding (Reflex)
 import Reflex qualified
 import Reflex.Dom.Core hiding (Reflex, el, (.~))
+import Relude
 
 runDomDialog
   :: e :> es
@@ -106,11 +111,7 @@ domInput = \prompt default' -> mdo
                       & lensVL inputElementConfig_initialValue .~ default'
                       & lensVL inputElementConfig_elementConfig
                         % lensVL elementConfig_initialAttributes
-                        %~ ( <>
-                              "class"
-                                =: (buttonClss <> ["focus:bg-purple-900"])
-                                ^. re worded
-                           )
+                        %~ (<> "class" =: Text.unwords (buttonClss <> ["focus:bg-purple-900"]))
                   )
             ev <- domButton "OK"
             ev_hide <- domButton "X"
@@ -134,9 +135,8 @@ domButton = \label -> do
   (e, _) <-
     elAttr'
       "button"
-      ( "type"
-          =: "button"
-          <> "class" =: (buttonClss <> ["active:bg-purple-900"]) ^. re worded
+      ( "type" =: "button"
+          <> "class" =: Text.unwords (buttonClss <> ["active:bg-purple-900"])
       )
       $ text label
   pure $ domEvent Click e

@@ -1,8 +1,10 @@
 module Bluefin.Dialog where
 
+import Bluefin.Compound
+import Bluefin.Eff
 import Bluefin.Reflex
-import Maralude
 import Reflex hiding (Reflex)
+import Relude
 
 data Element t a where
   TextElement :: Text -> Element t ()

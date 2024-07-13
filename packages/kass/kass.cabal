@@ -93,7 +93,6 @@ library
     Kass.App
     Kass.DB
     Kass.Doc
-    Maralude
 
   -- Other library packages from which modules are imported.
   build-depends:
@@ -137,8 +136,11 @@ test-suite tests
     , data-default
     , falsify
     , kass
+    , optics
+    , relude
     , tasty
     , time
+    , witch
 
   hs-source-dirs: test
   main-is:        Main.hs

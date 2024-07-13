@@ -1,20 +1,27 @@
 module Bluefin.Reflex.Dom (Dom, runReflexDomServer, dom, BFWidget, withDom, elAttr, elClass, el, elClss) where
 
-import Bluefin.Internal (Eff (UnsafeMkEff), unsafeUnEff)
+import Bluefin.Compound
+import Bluefin.Eff
+import Bluefin.IO
+import Bluefin.Internal qualified as Internal
 import Bluefin.Reflex
+import Bluefin.State
 import Control.Concurrent (Chan)
 import Data.Dependent.Sum (DSum)
+import Data.String.Interpolate (i)
+import Data.Text qualified as Text
 import GHC.Base qualified as GHC
 import Language.Javascript.JSaddle (JSM)
 import Language.Javascript.JSaddle.Warp qualified as Warp
-import Maralude
 import Reflex hiding (Reflex)
 import Reflex qualified
 import Reflex.Dom.Core hiding (Reflex, el, elAttr, elClass)
 import Reflex.Dom.Core qualified as Dom
 import Reflex.Requester.Base.Internal (RequesterState)
 import Reflex.Spider.Internal (SpiderHostFrame)
+import Relude hiding (State, get, put, runState)
 import Relude.Monad.Reexport qualified as MTL
+import Say (say)
 import Unsafe.Coerce (unsafeCoerce)
 
 data Dom t (es :: Effects) where
@@ -56,7 +63,7 @@ elClass :: e :> es => Reflex Dom t e -> Text -> Text -> BFPartWidget t es a -> E
 elClass r t cls inner = elAttr r t ("class" =: cls) inner
 
 elClss :: e :> es => Reflex Dom t e -> Text -> [Text] -> BFPartWidget t es a -> Eff es a
-elClss r tg clss = elClass r tg (clss ^. re worded)
+elClss r tg clss = elClass r tg (Text.unwords clss)
 
 el :: e :> es => Reflex Dom t e -> Text -> BFWidget es a -> Eff es a
 el r t inner = elAttr r t mempty inner
@@ -86,9 +93,9 @@ inWidget = \act -> do
   domRequesterSelector <- unsafeHydrationDomBuilderT . lift . RequesterT . lift $ ask
   triggerChan <- unsafeHydrationDomBuilderT . lift . RequesterT . lift . lift . TriggerEventT $ ask
   postBuild <- getPostBuild
-  ((a, jsmRequesterPost), requesterPost) <- liftIO $ unsafeUnEff do
+  ((a, jsmRequesterPost), requesterPost) <- liftIO $ Internal.unsafeUnEff do
     runState requesterPre \requesterStateHandle -> runState jsmRequesterPre \jsmRequesterState ->
-      assoc1Eff $
+      Internal.assoc1Eff $
         let
           r =
             ReflexHandle
@@ -109,7 +116,7 @@ inWidget = \act -> do
               , runWithReplaceImpl = \(ReflexAction initial) ev ->
                   runWithDomData r $
                     runWithReplace
-                      (liftIO . unsafeUnEff $ initial r)
+                      (liftIO . Internal.unsafeUnEff $ initial r)
                       (ev <&> \(ReflexAction a) -> inWidget a)
               }
          in
@@ -160,7 +167,7 @@ runWithDomData
 runWithDomData ReflexHandle{spiderData, payload = d@(DomHandle env con _ _)} act = do
   modifyM @es d.jsmRequesterState \jsmPreState ->
     modifyM @es (spiderData.requesterStateHandle) \preState ->
-      UnsafeMkEff $
+      Internal.UnsafeMkEff $
         runWidget
           act
           spiderData.requesterSelector

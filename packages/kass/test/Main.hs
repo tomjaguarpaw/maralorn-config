@@ -6,16 +6,18 @@ import Data.Default (def)
 import Data.Map.Strict qualified as Map
 import Data.Maybe qualified as Unsafe
 import Data.Set qualified as Set
+import Data.Text qualified as Text
 import Data.Time (UTCTime)
 import Data.Time.Clock.POSIX (posixSecondsToUTCTime)
 import Kass.Doc
-import Maralude
+import Relude
 import Test.Falsify.Generator qualified as Gen
 import Test.Falsify.Predicate ((.$))
 import Test.Falsify.Predicate qualified as P
 import Test.Falsify.Range qualified as Range
 import Test.Tasty
 import Test.Tasty.Falsify
+import Witch (into)
 
 prop :: TestName -> Property' String () -> TestTree
 prop = testPropertyWith def{overrideNumTests = Just 1000}
@@ -37,7 +39,7 @@ text =
       (Gen.choose (Gen.inRange (Range.enum (' ', '~'))) (Gen.inRange (Range.enum ('°', 'ÿ'))))
 
 multilineText :: Gen Text
-multilineText = list text ^. mapping (re worded)
+multilineText = Text.unwords <$> list text
 
 list :: Gen a -> Gen [a]
 list = Gen.list (Range.between (0, 5))

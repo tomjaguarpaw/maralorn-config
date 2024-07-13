@@ -1,16 +1,25 @@
 module Bluefin.Dialog.Term (runTermDialog) where
 
+import Bluefin.Compound
 import Bluefin.Dialog
-import Bluefin.Internal (unsafeRemoveEff)
+import Bluefin.Eff
+import Bluefin.IO
+import Bluefin.Internal qualified as Internal
 import Bluefin.Reflex
+import Bluefin.State
+import Bluefin.Stream
+import Bluefin.Utils
 import Control.Concurrent.Async qualified as Async
 import Data.Char qualified as Char
 import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
+import Data.String.Interpolate (i)
 import Data.Text qualified as Text
-import Maralude
+import Optics
 import Reflex hiding (Reflex)
 import Reflex qualified
+import Relude hiding (Handle, State, execState, get, put, runState)
+import Say (say)
 import System.Console.ANSI
   ( Color (..)
   , ColorIntensity (Vivid)
@@ -19,6 +28,7 @@ import System.Console.ANSI
   , clearScreen
   , setSGRCode
   )
+import Witch (into)
 
 runTermDialog
   :: forall e1 e2 t es a s
@@ -32,13 +42,13 @@ runTermDialog = \io r act -> do
         :: Stream (Dynamic t (Seq (ElementData t))) e3
         -> Eff (e3 :& ((e1 :& e2) :& es)) a
       inner = \stream ->
-        assoc1Eff $
+        Internal.assoc1Eff $
           act $
             toDialogHandle (mapHandle stream) (mapHandle r)
   (elms, a) <-
     inContext'
       . inContext'
-      . assoc1Eff
+      . Internal.assoc1Eff
       $ yieldToList inner
   pageUpdate <- dynToEv r (distributeListOverDynWith fold elms)
 
@@ -64,7 +74,7 @@ toDialogHandle = go
     ReflexHandle
       { payload =
           DialogHandle $
-            unsafeRemoveEff @e'
+            Internal.unsafeRemoveEff @e'
               . \case
                 (x@TextElement{}) -> yield collector . constDyn . one $ SimpleElement x
                 (x@ButtonElement{}) -> do
@@ -81,7 +91,7 @@ toDialogHandle = go
           ((result, initial_dyn), later) <- runWithReplaceImpl (mapAction initial) (mapAction <$> ev)
           let (result_ev, dynEv) = splitE later
           collected <- reflex r $ join <$> holdDyn initial_dyn dynEv
-          unsafeRemoveEff @e' $ yield collector collected
+          Internal.unsafeRemoveEff @e' $ yield collector collected
           pure (result, result_ev)
       }
   mapAction
@@ -90,7 +100,7 @@ toDialogHandle = go
     -> ReflexAction h t eb (b, Dynamic t (Seq (ElementData t)))
   mapAction = \(ReflexAction act) -> ReflexAction \h -> do
     (collected, result) <- yieldToList \collector ->
-      inContext $ act $ go collector (mapHandle h)
+      Internal.inContext $ act $ go collector (mapHandle h)
     pure (result, distributeListOverDynWith fold collected)
 
 data ElementData t where
@@ -139,13 +149,13 @@ renderPage = \io page -> do
       ResponseElement (PromptElement prompt df) hook -> (<> " ") <$> mkBind prompt (PromptHook prompt df hook)
     effIO io $ say $ Text.intercalate "" $ into elms
 
-execState :: s -> (forall st. State s st -> Eff (st :& es) a) -> Eff es s
+execState :: s -> (forall (st :: Effects). State s st -> Eff (st :& es) a) -> Eff es s
 execState s act = snd <$> runState s act
 
 chooseHotkey :: Set Char -> Text -> Maybe Char
 chooseHotkey used =
   view $
-    isomorph
+    to into
       % to \label ->
         ( filter Char.isUpper label
             <> filter Char.isLower label

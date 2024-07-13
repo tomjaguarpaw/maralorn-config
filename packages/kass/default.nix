@@ -20,7 +20,8 @@ mkDerivation {
   ];
   executableHaskellDepends = [ base ];
   testHaskellDepends = [
-    aeson base containers data-default falsify tasty time
+    aeson base containers data-default falsify optics relude tasty time
+    witch
   ];
   license = lib.licenses.agpl3Plus;
   mainProgram = "kass";
