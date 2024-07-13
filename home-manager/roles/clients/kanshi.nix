@@ -63,9 +63,10 @@ in
           status = "disable";
         }
         {
-          criteria = "Panasonic Industry Company Panasonic-TV 0x00000101";
+          criteria = "Panasonic Industry Company Panasonic-TV 0x01010101";
           status = "enable";
           mode = "1920x1080";
+          scale = 1.0;
         }
       ]))
       (profile "default-single" (openbar [
@@ -84,6 +85,7 @@ in
         {
           criteria = "*";
           status = "enable";
+          scale = 1.0;
         }
       ]))
     ];
