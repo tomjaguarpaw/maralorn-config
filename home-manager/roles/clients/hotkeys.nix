@@ -42,7 +42,7 @@ let
     {
       SSH =
         let
-          ssh = host: term "ssh ${host}";
+          ssh = host: term "kitten ssh ${host}";
         in
         [
           { "hera via vpn" = ssh "hera.vpn.m-0.eu"; }
