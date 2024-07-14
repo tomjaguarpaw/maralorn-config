@@ -195,7 +195,7 @@ search = \entries r -> withReflex r do
   ev_list <-
     dynEffEv r $
       entries
-        <&> \docs -> ReflexAction (`showDocs` docs)
+        <&> \docs -> ReflexAction (`showDocs` (Witherable.filter (hasn't (#parent % _Just)) docs))
   pure $ ev_header <> ev_list
 
 nf :: Text -> Int -> Text
