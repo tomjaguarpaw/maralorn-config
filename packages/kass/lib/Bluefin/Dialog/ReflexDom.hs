@@ -13,7 +13,7 @@ import Language.Haskell.TH.Syntax (liftTyped)
 import Optics
 import Reflex hiding (Reflex)
 import Reflex qualified
-import Reflex.Dom.Core hiding (Reflex, el, (.~))
+import Reflex.Dom.Core hiding (Reflex, el, elAttr, (.~))
 import Relude
 
 runDomDialog
@@ -44,9 +44,11 @@ runDomDialogHead
    . (Reflex.Reflex t, er :> es)
   => Reflex Dom t er
   -> Eff es ()
-runDomDialogHead = \r -> el r "style" $ \r' ->
-  dom r' $
-    text [i|html, body { background: black; height: 100%; }\n#{css}|]
+runDomDialogHead = \r -> do
+  el r "style" $ \r' ->
+    dom r' $
+      text [i|html, body { background: white; height: 100%; }\n#{css}|]
+  elAttr r "link" (fromList [("rel", "manifest"), ("href", "/app.webmanifest")]) $ const pass
 
 css :: Text
 css = $$(bindCode createCss liftTyped)
@@ -65,15 +67,11 @@ runDomDialogBody = \r act ->
     , "lg:p-2"
     , "absolute"
     , "inset-0"
-    , "font-serif"
-    , "text-white"
-    , "text-xl"
+    , "text-3xl"
     , "lg:text-base"
     , "lg:my-2"
-    , "lg:rounded-lg"
     , "lg:max-w-screen-sm"
     , "lg:mx-auto"
-    , "bg-blue-950"
     ]
     $ \r' -> act $ domToDialogHandle r'
 
@@ -111,7 +109,7 @@ domInput = \prompt default' -> mdo
                       & lensVL inputElementConfig_initialValue .~ default'
                       & lensVL inputElementConfig_elementConfig
                         % lensVL elementConfig_initialAttributes
-                        %~ (<> "class" =: Text.unwords (buttonClss <> ["focus:bg-purple-900"]))
+                        %~ (<> "class" =: Text.unwords (buttonClss <> ["focus:bg-purple-100"]))
                   )
             ev <- domButton "OK"
             ev_hide <- domButton "X"
@@ -126,8 +124,7 @@ buttonClss =
   , "p-3"
   , "px-5"
   , "m-1"
-  , "rounded-lg"
-  , "bg-blue-800"
+  , "bg-blue-100"
   ]
 
 domButton :: DomBuilder t m => Text -> m (Event t ())
@@ -136,7 +133,7 @@ domButton = \label -> do
     elAttr'
       "button"
       ( "type" =: "button"
-          <> "class" =: Text.unwords (buttonClss <> ["active:bg-purple-900"])
+          <> "class" =: Text.unwords (buttonClss <> ["active:bg-purple-100"])
       )
       $ text label
   pure $ domEvent Click e
