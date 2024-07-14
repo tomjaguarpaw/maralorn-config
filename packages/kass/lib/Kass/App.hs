@@ -111,8 +111,8 @@ showDoc = \id' entries r -> withReflex r do
           Just doc -> ReflexAction \r -> do
             ev' <- case doc.status of
               Nothing -> pure never
-              Just Todo -> button r "☐" <&> fmap (const (one $ Save (doc & #status % _Just .~ Done)))
-              Just Done -> button r "☑" <&> fmap (const (one $ Save (doc & #status % _Just .~ Todo)))
+              Just Todo -> button r (nf "md-checkbox_blank_outline" 0xf0131) <&> fmap (const (one $ Save (doc & #status % _Just .~ Done)))
+              Just Done -> button r (nf "md-checkbox_outline" 0xf0c52) <&> fmap (const (one $ Save (doc & #status % _Just .~ Todo)))
               Just x -> do text r (show x); pure never
             new_content_ev <-
               input r doc.content doc.content
@@ -139,7 +139,7 @@ search = \entries r -> withReflex r do
     dynEffEv r $
       entries
         <&> \docs -> ReflexAction \r -> do
-          let list = Seq.sortOn (.priority) $ Seq.fromList (toList docs)
+          let list = Seq.sortOn (.priority) $ Seq.fromList $ filter (hasn't (#status % _Just % #_Done)) (toList docs)
           doc_evs <- forM list \e -> do
             newline r
             docItem r list e
