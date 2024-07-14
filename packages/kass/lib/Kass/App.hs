@@ -11,9 +11,13 @@ import Bluefin.Reflex
 import Bluefin.Reflex.Dom
 import Bluefin.Reflex.Headless
 import Data.Map.Strict qualified as M
+import Data.Sequence (Seq (..), (><))
+import Data.Sequence qualified as Seq
 import Data.String.Interpolate (i)
+import Data.Text qualified as Text
 import Kass.DB
 import Kass.Doc
+import Kass.Sort
 import Optics
 import Reflex hiding (Reflex)
 import Relude
@@ -135,19 +139,36 @@ search = \entries r -> withReflex r do
     dynEffEv r $
       entries
         <&> \docs -> ReflexAction \r -> do
-          doc_evs <- forM docs \e -> do
+          let list = Seq.sortOn (.priority) $ Seq.fromList (toList docs)
+          doc_evs <- forM list \e -> do
             newline r
-            docItem r e
+            docItem r list e
           newline r
-          pure $ fold (M.elems doc_evs)
+          pure $ fold doc_evs
   pure $ ev_header <> ev_list
 
-docItem :: e :> es => Reflex Dialog t e -> Doc -> Eff es (Event t (Seq Update))
-docItem = \r doc -> withReflex r do
+nf :: Text -> Int -> Text
+nf _ = Text.singleton . toEnum
+
+docItem :: e :> es => Reflex Dialog t e -> Seq Doc -> Doc -> Eff es (Event t (Seq Update))
+docItem r docs doc = withReflex r do
   ev' <- case doc.status of
     Nothing -> pure never
-    Just Todo -> button r "☐" <&> fmap (const (one $ Save (doc & #status % _Just .~ Done)))
-    Just Done -> button r "☑" <&> fmap (const (one $ Save (doc & #status % _Just .~ Todo)))
+    Just Todo -> button r (nf "md-checkbox_blank_outline" 0xf0131) <&> fmap (const (one $ Save (doc & #status % _Just .~ Done)))
+    Just Done -> button r (nf "md-checkbox_outline" 0xf0c52) <&> fmap (const (one $ Save (doc & #status % _Just .~ Todo)))
     Just x -> do text r (show x); pure never
   open_ev <- button r doc.content <&> fmap (const (one $ Next (Doc doc.id)))
-  pure $ leftmost [ev', open_ev]
+  up_ev <- case before of
+    rest :|> p -> do
+      let new = Seq.fromList . fmap Save . toList $ setPriorities (rest >< (doc <| p <| after))
+      button r (nf "md-arrow_up" 0xf005d) <&> fmap (const new)
+    _ -> pure never
+  down_ev <- case after of
+    p :<| rest -> do
+      let new = Seq.fromList . fmap Save . toList $ setPriorities (before >< (p <| doc <| rest))
+      button r (nf "md-arrow_down" 0xf0045) <&> fmap (const new)
+    _ -> pure never
+  pure $ leftmost [ev', open_ev, up_ev, down_ev]
+ where
+  (before, after') = Seq.breakl ((== doc.id) . (.id)) docs
+  after = Seq.drop 1 after'

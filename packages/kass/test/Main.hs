@@ -5,11 +5,14 @@ import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Default (def)
 import Data.Map.Strict qualified as Map
 import Data.Maybe qualified as Unsafe
+import Data.Sequence qualified as Seq
 import Data.Set qualified as Set
 import Data.Text qualified as Text
 import Data.Time (UTCTime)
 import Data.Time.Clock.POSIX (posixSecondsToUTCTime)
 import Kass.Doc
+import Kass.Sort
+import Numeric.Extra (intToDouble)
 import Relude
 import Test.Falsify.Generator qualified as Gen
 import Test.Falsify.Predicate ((.$))
@@ -30,6 +33,12 @@ main =
       "PropertyTests"
       [ prop "docRoundTrip" prop_docRoundTrip
       , prop "reservedFields" prop_reservedFields
+      , testGroup
+          "Sorting"
+          [ prop "sorts" prop_sortSorts
+          , prop "is idempotent" prop_sortIdempotent
+          , prop "leaves enough space" prop_sortSpacing
+          ]
       ]
 
 text :: Gen Text
@@ -42,7 +51,7 @@ multilineText :: Gen Text
 multilineText = Text.unwords <$> list text
 
 list :: Gen a -> Gen [a]
-list = Gen.list (Range.between (0, 5))
+list = Gen.list (Range.between (0, 10))
 
 genMaybe :: Gen a -> Gen (Maybe a)
 genMaybe g = Gen.choose (pure Nothing) (Just <$> g)
@@ -56,6 +65,11 @@ status = Gen.oneof $ (pure Todo) :| [pure Done, pure Checklist, Tag <$> text, Re
 
 time :: Gen UTCTime
 time = posixSecondsToUTCTime . fromInteger . toInteger <$> Gen.int (Range.between (0, 1000000000))
+
+priority :: Gen Double
+priority =
+  (/ (maxPrio * 10)) . intToDouble
+    <$> Gen.int (Range.withOrigin (round (minPrio * maxPrio * 10), round (maxPrio * maxPrio * 10)) 0)
 
 docWORest :: Gen Doc
 docWORest = do
@@ -72,7 +86,7 @@ docWORest = do
     <*> genMaybe time
     <*> genMaybe ((,) <$> time <*> Gen.int (Range.between (0, 1000)))
     <*> (into <$> list (MkId <$> text))
-    <*> (fromInteger . toInteger <$> Gen.int (Range.between (0, 10000000)))
+    <*> priority
     <*> pure mempty
 
 doc :: Gen Doc
@@ -99,3 +113,29 @@ prop_reservedFields = do
     P.relatedBy ("isSubsetOf", Set.isSubsetOf)
       .$ ("keysSet . knownFields $ doc", Map.keysSet . KeyMap.toMapText . knownFields $ d)
       .$ ("reservedFields", reservedFields)
+
+prop_sortSorts :: Property ()
+prop_sortSorts = do
+  d <- Seq.fromList <$> gen (list priority)
+  let sorted = fixPriorities d
+  assert $
+    P.eq
+      .$ ("Seq.sort . setPriorities", Seq.sort sorted)
+      .$ ("setPriorities", sorted)
+
+prop_sortIdempotent :: Property ()
+prop_sortIdempotent = do
+  d <- fixPriorities . Seq.fromList <$> gen (list priority)
+  assert $
+    P.eq
+      .$ ("fixPriorities . fixPriorities", fixPriorities d)
+      .$ ("fixPriorities", d)
+
+prop_sortSpacing :: Property ()
+prop_sortSpacing = do
+  d <- Seq.fromList <$> gen (list priority)
+  let sorted = fixPriorities d
+  info $ "sorted:" <> show sorted
+  assert $
+    P.satisfies ("all (> minDiff)", all (> minDiff))
+      .$ ("sorted_{i+1} - sorted_i", Seq.zipWith (-) (Seq.drop 1 sorted) sorted)
