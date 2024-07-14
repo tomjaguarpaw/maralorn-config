@@ -11,6 +11,7 @@ import Bluefin.Reflex
 import Bluefin.Reflex.Dom
 import Bluefin.Reflex.Headless
 import Data.Map.Strict qualified as M
+import Data.Map.Strict qualified as Map
 import Data.Sequence (Seq (..), (><))
 import Data.Sequence qualified as Seq
 import Data.String.Interpolate (i)
@@ -50,12 +51,37 @@ data NavState = Schedule | Doc Id | Sort | Search deriving stock (Eq)
 data Update = Next NavState | Save Doc
   deriving stock (Generic)
 
+type AppState = Map Id DocState
+
+data DocState = MkDocState
+  { doc :: Doc
+  , children :: Map Id DocState
+  , parent :: Maybe DocState
+  }
+  deriving stock (Generic)
+
+mkState :: Docs -> AppState
+mkState docs = app_state
+ where
+  children =
+    foldl' (Map.unionWith (<>)) mempty $
+      toList app_state <&> \ds -> case ds.doc.parent of
+        Just parent_id -> Map.singleton parent_id (Map.singleton ds.doc.id ds)
+        Nothing -> mempty
+  app_state =
+    docs <&> \doc ->
+      MkDocState
+        { doc
+        , children = fromMaybe mempty $ M.lookup doc.id children
+        , parent = (`M.lookup` app_state) =<< doc.parent
+        }
+
 nextState :: Seq Update -> Maybe NavState
 nextState = lastOf (folded % #_Next)
 
 app :: (e1 :> es, e2 :> es) => IOE e1 -> Reflex Dialog t e2 -> Eff es ()
 app = \io r -> withReflex r mdo
-  entries <- watchDB io r
+  entries <- watchDB io r <&> fmap mkState
   void $
     performEffEvent r $
       fmap (mapM_ (writeDoc io)) . Witherable.filter (not . null) . fmap (toListOf (folded % #_Save)) $
@@ -94,64 +120,89 @@ header = \nav_state r -> withReflex r do
       <> (one (Next Search) <$ ev_schedule)
       <> (one (Next Schedule) <$ ev_succeed)
 
-schedule :: Dynamic t Docs -> Reflex Dialog t ei -> Eff (ei :& es) (Event t (Seq Update))
+schedule :: Dynamic t AppState -> Reflex Dialog t ei -> Eff (ei :& es) (Event t (Seq Update))
 schedule = \_entries r -> do
   ev_header <- header Schedule r
   newline r
   text r "TBD"
   pure ev_header
 
-showDoc :: Id -> Dynamic t Docs -> Reflex Dialog t ei -> Eff (ei :& es) (Event t (Seq Update))
+showDoc :: Id -> Dynamic t AppState -> Reflex Dialog t ei -> Eff (ei :& es) (Event t (Seq Update))
 showDoc = \id' entries r -> withReflex r do
   ev_header <- header (Doc id') r
   ev_doc <-
     dynEffEv r $
       (M.lookup id' <$> entries)
         <&> \case
-          Just doc -> ReflexAction \r -> do
-            ev' <- case doc.status of
+          Just ds -> ReflexAction \r -> do
+            ev' <- case ds.doc.status of
               Nothing -> pure never
-              Just Todo -> button r (nf "md-checkbox_blank_outline" 0xf0131) <&> fmap (const (one $ Save (doc & #status % _Just .~ Done)))
-              Just Done -> button r (nf "md-checkbox_outline" 0xf0c52) <&> fmap (const (one $ Save (doc & #status % _Just .~ Todo)))
+              Just Todo -> button r (nf "md-checkbox_blank_outline" 0xf0131) <&> fmap (const (one $ Save (ds.doc & #status % _Just .~ Done)))
+              Just Done -> button r (nf "md-checkbox_outline" 0xf0c52) <&> fmap (const (one $ Save (ds.doc & #status % _Just .~ Todo)))
               Just x -> do text r (show x); pure never
             new_content_ev <-
-              input r doc.content doc.content
-                <&> fmap (\new_content -> (one $ Save (doc & #content .~ new_content)))
+              input r ds.doc.content ds.doc.content
+                <&> fmap (\new_content -> (one $ Save (ds.doc & #content .~ new_content)))
             newline r
-            ev2 <- button r "Delete" <&> fmap (const (Save (doc & #deleted .~ True) <| one (Next Schedule)))
-            pure $ leftmost [ev', ev2, new_content_ev]
+            ev2 <- button r "Delete" <&> fmap (const (Save (ds.doc & #deleted .~ True) <| one (Next Schedule)))
+            parent_ev <- case ds.parent of
+              Just parent -> do
+                text r "Parent:"
+                docItem r mempty parent
+              Nothing -> pure never
+
+            rec pick <- reflex r $ holdDyn Nothing $ Just <$> current entries <@ ffilter isNothing parent_set_ev
+                parent_set_ev <-
+                  dynEffEv r $
+                    pick <&> \case
+                      Just entr -> ReflexAction \r -> do
+                        text r "Pick parent:"
+                        fmap (fmap Just . leftmost) $ forM (toList entr) $ \ds -> do
+                          button r ds.doc.content <&> ($> ds.doc.id)
+                      Nothing -> ReflexAction \r -> button r "Pick parent" <&> ($> Nothing)
+            let new_parent_ev = Witherable.catMaybes parent_set_ev <&> \id -> one (Save $ ds.doc & #parent ?~ id)
+            childs_ev <-
+              if Map.null ds.children
+                then pure never
+                else do
+                  text r "Children:"
+                  showDocs r ds.children
+            pure $ leftmost [ev', ev2, new_content_ev, childs_ev, parent_ev, new_parent_ev]
           Nothing -> ReflexAction \r -> do
             text r [i|#{id'} missing|]
             pure never
   pure $ ev_doc <> ev_header
 
-sort' :: Dynamic t Docs -> Reflex Dialog t ei -> Eff (ei :& es) (Event t (Seq Update))
+sort' :: Dynamic t AppState -> Reflex Dialog t ei -> Eff (ei :& es) (Event t (Seq Update))
 sort' = \_entries r -> do
   ev_header <- header Sort r
   newline r
   text r "TBD"
   pure ev_header
 
-search :: Dynamic t Docs -> Reflex Dialog t ei -> Eff (ei :& es) (Event t (Seq Update))
+showDocs :: e :> es => Reflex Dialog t e -> Map Id DocState -> Eff es (Event t (Seq Update))
+showDocs r docs = withReflex r do
+  let list = Seq.sortOn (.doc.priority) $ Seq.fromList $ filter (hasn't (#doc % #status % _Just % #_Done)) (toList docs)
+  doc_evs <- forM list \e -> do
+    newline r
+    docItem r list e
+  newline r
+  pure $ fold doc_evs
+
+search :: Dynamic t AppState -> Reflex Dialog t ei -> Eff (ei :& es) (Event t (Seq Update))
 search = \entries r -> withReflex r do
   ev_header <- header Search r
   ev_list <-
     dynEffEv r $
       entries
-        <&> \docs -> ReflexAction \r -> do
-          let list = Seq.sortOn (.priority) $ Seq.fromList $ filter (hasn't (#status % _Just % #_Done)) (toList docs)
-          doc_evs <- forM list \e -> do
-            newline r
-            docItem r list e
-          newline r
-          pure $ fold doc_evs
+        <&> \docs -> ReflexAction (`showDocs` docs)
   pure $ ev_header <> ev_list
 
 nf :: Text -> Int -> Text
 nf _ = Text.singleton . toEnum
 
-docItem :: e :> es => Reflex Dialog t e -> Seq Doc -> Doc -> Eff es (Event t (Seq Update))
-docItem r docs doc = withReflex r do
+docItem :: e :> es => Reflex Dialog t e -> Seq DocState -> DocState -> Eff es (Event t (Seq Update))
+docItem r docs ds = withReflex r do
   ev' <- case doc.status of
     Nothing -> pure never
     Just Todo -> button r (nf "md-checkbox_blank_outline" 0xf0131) <&> fmap (const (one $ Save (doc & #status % _Just .~ Done)))
@@ -170,5 +221,6 @@ docItem r docs doc = withReflex r do
     _ -> pure never
   pure $ leftmost [ev', open_ev, up_ev, down_ev]
  where
-  (before, after') = Seq.breakl ((== doc.id) . (.id)) docs
+  doc = ds.doc
+  (before, after') = Seq.breakl ((== doc.id) . (.id)) $ (.doc) <$> docs
   after = Seq.drop 1 after'
