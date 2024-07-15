@@ -100,7 +100,7 @@ domInput = \prompt default' -> mdo
     dyn $
       active
         <&> \case
-          False -> domButton prompt <&> ($> Left True)
+          False -> domButton prompt <&> (\x -> (x $> True, never))
           _ -> do
             input' <-
               _inputElement_value
@@ -113,8 +113,9 @@ domInput = \prompt default' -> mdo
                   )
             ev <- domButton "OK"
             ev_hide <- domButton "X"
-            pure $ leftmost [Left False <$ ev_hide, Right <$> (current input' <@ ev)]
-  (eShow, eSend) <- fanEither <$> switchHold never ev'
+            pure (False <$ leftmost [ev_hide, ev], current input' <@ ev)
+  eShow <- switchHold never (fst <$> ev')
+  eSend <- switchHold never (snd <$> ev')
   pure eSend
 
 buttonClss :: [Text]
