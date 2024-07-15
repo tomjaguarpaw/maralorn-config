@@ -145,10 +145,13 @@ showDoc = \id' entries r -> withReflex r do
                 <&> fmap (\new_content -> (one $ Save (ds.doc & #content .~ new_content)))
             newline r
             ev2 <- button r "Delete" <&> fmap (const (Save (ds.doc & #deleted .~ True) <| one (Next Schedule)))
+            newline r
             parent_ev <- case ds.parent of
               Just parent -> do
                 text r "Parent:"
-                docItem r mempty parent
+                e <- docItem r mempty parent
+                newline r
+                pure e
               Nothing -> pure never
 
             rec pick <- reflex r $ holdDyn Nothing $ Just <$> current entries <@ ffilter isNothing parent_set_ev
@@ -160,14 +163,19 @@ showDoc = \id' entries r -> withReflex r do
                         fmap (fmap Just . leftmost) $ forM (toList entr) $ \ds -> do
                           button r ds.doc.content <&> ($> ds.doc.id)
                       Nothing -> ReflexAction \r -> button r "Pick parent" <&> ($> Nothing)
+            newline r
             let new_parent_ev = Witherable.catMaybes parent_set_ev <&> \id -> one (Save $ ds.doc & #parent ?~ id)
+            ev_new_child <-
+              input r "New Child" ""
+                <&> fmap (\t -> one $ Save (newDoc & #parent ?~ ds.doc.id & #content .~ t & #status ?~ Todo))
+            newline r
             childs_ev <-
               if Map.null ds.children
                 then pure never
                 else do
                   text r "Children:"
                   showDocs r ds.children
-            pure $ leftmost [ev', ev2, new_content_ev, childs_ev, parent_ev, new_parent_ev]
+            pure $ leftmost [ev', ev2, new_content_ev, childs_ev, parent_ev, new_parent_ev, ev_new_child]
           Nothing -> ReflexAction \r -> do
             text r [i|#{id'} missing|]
             pure never
