@@ -6,6 +6,6 @@ final: _prev: {
   inherit (final.unstable) jujutsu;
   helix =
     # PR https://github.com/helix-editor/helix/pull/6417
-    (builtins.getFlake "github:helix-editor/helix/c2268bb7acd365e075c2718e6356c866f26cfc90")
+    (builtins.getFlake "github:helix-editor/helix/107cdf3e43fef79d36a0bdc8b59327abe85472c9")
     .packages.x86_64-linux.default;
 }

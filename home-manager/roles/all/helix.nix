@@ -103,6 +103,8 @@ in
         };
       editor = {
         soft-wrap.enable = true;
+        inline-diagnostics.cursor-line = "hint";
+        end-of-line-diagnostics = "hint";
         whitespace.render = {
           space = "all";
           tab = "all";
