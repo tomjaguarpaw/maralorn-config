@@ -15,7 +15,6 @@
         "status-script.service"
         "graphical-session.target"
       ];
-      Before = [ "kanshi.service" ];
       PartOf = [ "graphical-session.target" ];
       Requires = [ "graphical-session.target" ];
       StartLimitIntervalSec = "60s";
@@ -34,11 +33,21 @@
           pkgs.jaq
           pkgs.t
           pkgs.hyprland
+          pkgs.wlr-randr
+          config.programs.eww.package
           config.programs.rbw.package
         ]
       }";
       ExecStart = "${lib.getExe config.programs.eww.package} daemon --no-daemonize --restart";
-      ExecStartPost = [ "${lib.getExe' pkgs.kanshi "kanshictl"} reload" ];
+      ExecStartPost = [
+        (pkgs.writeShellScript "open-bar" ''
+          if [[ "$(wlr-randr --json | jq 'map(select(.enabled)) | length')" == "2" ]]; then
+            eww open-many topbar-0 topbar-1
+          else
+            eww open topbar-0
+          fi
+        '')
+      ];
       Restart = "always";
       RestartSec = "10s";
     };

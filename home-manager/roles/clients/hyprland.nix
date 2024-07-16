@@ -4,8 +4,17 @@
   lib,
   ...
 }:
+let
+  toggle-overlay = pkgs.writeShellScript "toggle-overlay" ''
+    if [[ "$(wlr-randr --json | jq 'map(select(.enabled)) | length')" == "2" ]]; then
+      (makoctl mode -r show; eww close overlay-0 overlay-1) || (eww open-many overlay-0 overlay-1; makoctl mode -a show)
+    else
+    (makoctl mode -r show; eww close overlay-0) || (eww open overlay-0; makoctl mode -a show)
+    fi
+  '';
+in
 {
-  home.packages = builtins.attrValues { inherit (pkgs) wlr-randr kanshi; };
+  home.packages = builtins.attrValues { inherit (pkgs) wlr-randr; };
   wayland.windowManager.hyprland = {
     enable = true;
     plugins = [ pkgs.hyprslidr ];
@@ -45,7 +54,7 @@
         "float,class:launcher"
         "pin,class:launcher"
       ];
-      exec = [ "systemctl --user restart eww swayidle kanshi" ];
+      exec = [ "systemctl --user restart eww swayidle" ];
       exec-once = [
         "unlock-keys"
         (lib.getExe pkgs.hyprdim)
@@ -55,6 +64,9 @@
         "$mod, RETURN, exec, ${config.home.sessionVariables.TERMINAL}"
         "$mod, space, exec, ${config.home.sessionVariables.TERMINAL} --app-id=launcher my-hotkeys"
         "$mod, q, killactive"
+        "$mod, p, pin"
+        "$mod, m, focusmonitor, +1"
+        "SUPER_SHIFT, m, movecurrentworkspacetomonitor, +1"
         "$mod, left, slidr:movefocus, l"
         "$mod, right, slidr:movefocus, r"
         "$mod, up, slidr:movefocus, u"
@@ -74,9 +86,8 @@
         "SUPER_SHIFT, Next, exec, ${lib.getExe pkgs.hyprnome} --move"
         ", Print, execr, screenshot"
       ];
-      bindr = [
-        "SUPER, SUPER_L, execr, (makoctl mode -r show; eww close overlay) || (eww open overlay; makoctl mode -a show)"
-      ];
+      monitor = [ ",highres,auto,1" ];
+      bindr = [ "SUPER, SUPER_L, execr, ${toggle-overlay}" ];
       binde = [
         "SUPER_ALT, Left, resizeactive, -10 0"
         "SUPER_ALT, Right, resizeactive, 10 0"
