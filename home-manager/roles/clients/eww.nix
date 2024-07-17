@@ -4,6 +4,22 @@
   config,
   ...
 }:
+let
+  open-bars = pkgs.writeShellScript "open-bars" ''
+    open-bars () {
+      if [[ "$(wlr-randr --json | jq 'map(select(.enabled)) | length')" == "2" ]]; then
+        eww open-many topbar-0 topbar-1
+      else
+        eww open topbar-0
+      fi
+    }
+
+    open-bars
+    socat -u UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock - | rg monitoradded --line-buffered | while read; do
+      open-bars
+    done
+  '';
+in
 {
 
   systemd.user.services.eww = {
@@ -34,20 +50,16 @@
           pkgs.t
           pkgs.hyprland
           pkgs.wlr-randr
+          pkgs.ripgrep
           config.programs.eww.package
           config.programs.rbw.package
         ]
       }";
-      ExecStart = "${lib.getExe config.programs.eww.package} daemon --no-daemonize --restart";
-      ExecStartPost = [
-        (pkgs.writeShellScript "open-bar" ''
-          if [[ "$(wlr-randr --json | jq 'map(select(.enabled)) | length')" == "2" ]]; then
-            eww open-many topbar-0 topbar-1
-          else
-            eww open topbar-0
-          fi
-        '')
-      ];
+      ExecStart = pkgs.writeShellScript "run-eww-with-bars" ''
+        ${open-bars} &
+        ${lib.getExe config.programs.eww.package} daemon --no-daemonize --restart
+      '';
+      ExecStartPost = [ ];
       Restart = "always";
       RestartSec = "10s";
     };
