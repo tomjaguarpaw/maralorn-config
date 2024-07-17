@@ -15,10 +15,10 @@
 (defpoll host :interval "1440m" :initial "unknown" "cat /etc/hostname")
 (defvar disks '{"apollo":["/","/efi"],"hephaistos":["/nix","/efi"],"zeus":["/","/efi"],"unknown":[]}')
 
-(defwidget workspaces []
+(defwidget workspaces [monitor]
   (box :space-evenly false
     (for workspace in workspaces
-      (box :space-evenly false :class "workspace ${workspace.active ? "active-workspace" : ""}"
+      (box :space-evenly false :class "workspace ${workspace.monitor != monitor ? "off-screen" : (workspace.active ? "active-workspace" : "")}"
         (for stack in {workspace.stacks}
           (box :orientation "vertical" (for window in stack
             (box :class "window ${window.active ? "active-window" : ""}")
@@ -123,12 +123,12 @@
   ))
 )
 
-(defwidget topbar []
+(defwidget topbar [monitor]
   (centerbox :class "topbar"
     (box :space-evenly false :halign "end" :spacing 5
       (pipewire-bar)
       (players-bar)
-      (workspaces)
+      (workspaces :monitor monitor)
     )
     (time)
     (box :space-evenly false :halign "start" :spacing 5
@@ -264,7 +264,7 @@
                       :width "100%"
                       :height "20px"
                       :anchor "top center")
-  (topbar)
+  (topbar :monitor 0)
 )
 
 (defwindow overlay-1
@@ -288,5 +288,5 @@
                       :width "100%"
                       :height "20px"
                       :anchor "top center")
-  (topbar)
+  (topbar :monitor 1)
 )

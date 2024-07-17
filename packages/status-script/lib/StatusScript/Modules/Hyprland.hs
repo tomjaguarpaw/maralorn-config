@@ -72,7 +72,7 @@ calculateLayout active_workspace active all_windows = Seq.fromList $ fmap (mkWin
     active_workspace
       & maybe
         mempty
-        (\s -> IntMap.singleton s.id $ MkHyprlandWorkspace True mempty mempty)
+        (\s -> IntMap.singleton s.id $ MkHyprlandWorkspace True s.monitorID mempty mempty)
 
 mkWindow :: Maybe HyprctlClient -> HyprctlClient -> HyprlandWindow
 mkWindow active client =
@@ -86,7 +86,7 @@ addToWorkspaces
   :: HyprctlClient -> IntMap (HyprlandWorkspace HyprctlClient) -> IntMap (HyprlandWorkspace HyprctlClient)
 addToWorkspaces client =
   IntMap.alter
-    (Just . addToWorkspace client . fromMaybe (MkHyprlandWorkspace False mempty mempty))
+    (Just . addToWorkspace client . fromMaybe (MkHyprlandWorkspace False client.monitor mempty mempty))
     client.workspace.id
 
 addToWorkspace :: HyprctlClient -> HyprlandWorkspace HyprctlClient -> HyprlandWorkspace HyprctlClient
@@ -112,7 +112,8 @@ data HyprctlClient = MkHyprctlClient
   { address :: Text
   , at :: (Int, Int)
   , size :: (Natural, Natural)
-  , workspace :: HyprctlWorkspace
+  , monitor :: Int
+  , workspace :: HyprctlClientWorkspace
   , initialClass :: Text
   , title :: Text
   , floating :: Bool
@@ -120,8 +121,16 @@ data HyprctlClient = MkHyprctlClient
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
-newtype HyprctlWorkspace = MkHyprctlWorkspace
-  {id :: Int}
+newtype HyprctlClientWorkspace = MkHyprctlClientWorkspace
+  { id :: Int
+  }
+  deriving stock (Generic)
+  deriving anyclass (FromJSON)
+
+data HyprctlWorkspace = MkHyprctlWorkspace
+  { id :: Int
+  , monitorID :: Int
+  }
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
@@ -138,6 +147,7 @@ data HyprlandWindow = MkHyprlandWindow
 
 data HyprlandWorkspace a = MkHyprlandWorkspace
   { active :: Bool
+  , monitor :: Int
   , floating :: Seq a
   , stacks :: Seq (NESeq a)
   }
