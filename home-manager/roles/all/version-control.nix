@@ -27,11 +27,11 @@ in
         rev="$1"
       fi
 
-      desc="$(jj log -T 'self.description()' -r "$rev" --no-graph)"
+      desc="$(jj log -T 'self.description()' -r "$rev" --no-graph | head -n1)"
 
       if [[ "$desc" == "" ]]; then
         jj desc -r "$rev"
-        desc="$(jj log -T 'self.description()' -r "$rev" --no-graph)"
+        desc="$(jj log -T 'self.description()' -r "$rev" --no-graph | head -n1)"
       fi
 
       branches=$(jj log -T 'self.branches()' -r "$rev" --no-graph)
