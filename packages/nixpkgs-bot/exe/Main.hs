@@ -797,7 +797,7 @@ main = do
           . Persist.Sqlite.retryOnBusy
   first_next_batch <- runApp do
     Persist.Sqlite.runMigration migrateAll
-    watchRepo
+    void . catchAll $ watchRepo
     fmap sessionStateValue <$> Persist.get (SessionStateKey' "next_batch")
   userId <- unwrapMatrixError $ Matrix.getTokenOwner matrix_session
   filterId <- unwrapMatrixError $ Matrix.createFilter matrix_session userId Matrix.messageFilter
