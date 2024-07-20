@@ -523,7 +523,7 @@ sendMessageToUser user message = do
   case userQuery of
     Just queryPair -> do
       putText $ "To user " <> user <> " "
-      sendMessage (Matrix.RoomID $ queryRoom queryPair) message
+      void $ catchAll $ sendMessage (Matrix.RoomID $ queryRoom queryPair) message
     Nothing -> putTextLn $ "Not finding a query for " <> user <> " can‘t send message: " <> fst message
 
 data Command = MkCommand
