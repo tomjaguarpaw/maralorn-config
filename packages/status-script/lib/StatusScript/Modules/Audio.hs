@@ -103,6 +103,7 @@ aliases =
   , ("DP Audio Digital Stereo (HDMI 4)", "Monitor")
   , ("Built-in Audio", "Intern")
   , ("Dock", "Dock")
+  , ("Dummy Output", "No Output")
   ]
 
 mkInfos :: IntMap (Schema.Object PipeWireObject) -> [AudioEndPoint]
