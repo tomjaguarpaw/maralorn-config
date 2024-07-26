@@ -21,6 +21,8 @@ in
     inherit (pkgs) glab lazyjj difftastic;
     jjwatch = pkgs.writeShellScriptBin "jjwatch" "(jj file list; find .jj -maxdepth 3) | entr -c ${jjstat}";
     jjpr = pkgs.writeShellScriptBin "jjpr" ''
+      set -ex -o pipefail
+      shopt -s extglob
       if [[ "$1" == "" ]]; then
         rev="@"
       else
@@ -34,17 +36,21 @@ in
         desc="$(jj log -T 'self.description()' -r "$rev" --no-graph | head -n1)"
       fi
 
-      branches=$(jj log -T 'self.branches()' -r "$rev" --no-graph)
+      branch=$(jj log -T 'self.branches()' -r "$rev" --no-graph)
 
       if [[ "$branches" == "" ]]; then
-        jj git push -c "$rev"
-      else
-        jj git push -r "$rev"
+        branch=$(echo "''${desc//+([^[:alnum:]])/-}" | tr '[:upper:]' '[:lower:]')
+        jj branch set "$branch" -r "$rev"
       fi
 
-      branches=$(jj log -T 'self.branches()' -r "$rev" --no-graph)
+      jj git push -r "$rev"
 
-      tea pr create --assignees marabot --head "$branches" --title "$desc"
+      if glab repo view > /dev/null; then
+        git checkout "$branch"
+        glab mr create --reviewer spaunovic --title "$desc" --fill --no-editor --yes
+      else
+        tea pr create --assignees marabot --head "$branch" --title "$desc"
+      fi
 
       if [[ "$rev" == "@" ]]; then
         jj new
