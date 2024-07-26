@@ -48,6 +48,7 @@ in
       if glab repo view > /dev/null; then
         git checkout "$branch"
         glab mr create --reviewer spaunovic --title "$desc" --fill --no-editor --yes
+        jj new work
       else
         tea pr create --assignees marabot --head "$branch" --title "$desc"
       fi
