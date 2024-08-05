@@ -188,7 +188,7 @@
               (when :if {(warning.subgroup ?: "") != ""}
                 (icon {warning.subgroup})
               )
-              (label :hexpand true :halign "center" :text {warning.description}))
+              (label :wrap true :hexpand true :halign "center" :text {warning.description}))
           )
         )
         (box :halign "center" :orientation "vertical" :space-evenly false (for player in players
@@ -197,7 +197,7 @@
               (icon {player.icon})
               (label :hexpand true :halign "center" :text {player.name})
             )
-            (label :justify "left" :hexpand true :halign "start" :text {player.title})
+            (label :wrap true :hexpand true :halign "center" :text {player.title})
           )
         ))
         (systray)
