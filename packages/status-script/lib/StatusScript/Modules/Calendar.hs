@@ -2,9 +2,11 @@ module StatusScript.Modules.Calendar (calendar) where
 
 import Data.Aeson qualified as Aeson
 import Data.Text qualified as Text
-import Maralorn.Prelude
+import Data.Time (getCurrentTime)
+import Data.Time qualified as Time
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
+import Relude
 import Shh ((|>))
 import Shh qualified
 import StatusScript.CommandUtil
@@ -51,26 +53,28 @@ calendar :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Appointment])
 calendar = \env -> do
   CommandUtil.reportMissing missingExecutables
   tick <- ReflexUtil.tickEvent (5 * 60)
-  start <- R.getPostBuild
-  ReflexUtil.performEventThreaded env (start <> tick) $ const do
+  pb_ev <- R.getPostBuild
+  ReflexUtil.performEventThreaded env (pb_ev <> tick) $ const do
+    tdy <- toText . Time.formatTime Time.defaultTimeLocale "%F " <$> getCurrentTime
     appointments <- decodeUtf8 <$> retryWithBackoff (khal params |> Shh.captureTrim)
     pure $
-      appointments
-        & Text.splitOn "@=@"
-          %> Text.splitOn "@@@"
-          %>> cleanString
-          % mapMaybe \case
-            [start', end, title, description, location, calendar'] ->
-              Just $
-                MkAppointment
-                  { start = start'
-                  , end
-                  , title
-                  , description
-                  , location
-                  , calendar = calendar'
-                  }
-            _ -> Nothing
+      Text.splitOn "@=@" appointments
+        & mapMaybe
+          ( Text.splitOn "@@@"
+              >>> fmap cleanString
+              >>> \case
+                [start, end, title, description, location, calendar'] ->
+                  Just $
+                    MkAppointment
+                      { start = fromMaybe start $ Text.stripPrefix tdy start
+                      , end = fromMaybe start $ Text.stripPrefix tdy end
+                      , title
+                      , description
+                      , location
+                      , calendar = calendar'
+                      }
+                _ -> Nothing
+          )
 
 cleanString :: Text -> Text
 cleanString = Text.replace "\"" "" . Text.intercalate "\\n" . Text.lines . Text.strip
