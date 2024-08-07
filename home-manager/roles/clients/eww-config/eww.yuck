@@ -93,7 +93,7 @@
 )
 
 (defwidget pipewire-bar []
- (box :space-evenly false (for endpoint in audio
+ (box :halign "start" :space-evenly false (for endpoint in audio
    (box :space-evenly false :class "${endpoint.mute ? "disabled" : ""}"
      (box :orientation "vertical" :valign "center" :space-evenly false
        (box :space-evenly false
@@ -113,7 +113,7 @@
 )
 
 (defwidget players-bar []
-  (box (for player in {jq(players,"map(select(.status==\"Playing\"))")}
+  (box :halign "end" (for player in {jq(players,"map(select(.status==\"Playing\"))")}
     (box :space-evenly false :spacing 5
       (box  :space-evenly false :spacing 5
         (icon {player.icon})
@@ -125,17 +125,17 @@
 
 (defwidget topbar [monitor]
   (centerbox :class "topbar"
-    (box :space-evenly false :halign "end" :spacing 5
-      (pipewire-bar)
-      (players-bar)
+    (players-bar)
+    (centerbox
       (workspaces :monitor monitor)
+      (time)
+      (box :spacing 5
+        (icon-bar)
+        (idle-bar)
+        (calendar-bar)
+      )
     )
-    (time)
-    (box :space-evenly false :halign "start" :spacing 5
-      (icon-bar)
-      (idle-bar)
-      (calendar-bar)
-    )
+    (pipewire-bar)
   )
 )
 
