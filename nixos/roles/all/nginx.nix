@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (config.m-0) hosts;
   inherit (config.networking) hostName;
@@ -17,6 +22,10 @@ in
         value = {
           forceSSL = true;
           enableACME = true;
+          locations."= /robots.txt".alias = pkgs.fetchurl {
+            url = "https://raw.githubusercontent.com/healsdata/ai-training-opt-out/main/robots.txt";
+            hash = "sha256-B1bNJWbAh0yFt8iOP+jFsZyYqHIVEXLvd0VUC3RyFsE=";
+          };
           extraConfig = lib.mkIf (!(builtins.elem name (hosts.publicAliases.${hostName} or [ ]))) ''
             satisfy any;
             ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};") config.m-0.headscaleIPs}
