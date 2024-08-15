@@ -26,11 +26,22 @@ in
             url = "https://raw.githubusercontent.com/healsdata/ai-training-opt-out/main/robots.txt";
             hash = "sha256-B1bNJWbAh0yFt8iOP+jFsZyYqHIVEXLvd0VUC3RyFsE=";
           };
-          extraConfig = lib.mkIf (!(builtins.elem name (hosts.publicAliases.${hostName} or [ ]))) ''
-            satisfy any;
-            ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};") config.m-0.headscaleIPs}
-            deny all;
-          '';
+          extraConfig =
+            ''
+              if ($http_user_agent ~* "claudebot|facebook\.com|semrushbot|mj12bot|bytespider|amazonbot") {
+                return 403;
+              }
+            ''
+            + (
+              if (!(builtins.elem name (hosts.publicAliases.${hostName} or [ ]))) then
+                ''
+                  satisfy any;
+                  ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};") config.m-0.headscaleIPs}
+                  deny all;
+                ''
+              else
+                ""
+            );
         };
       }) config.m-0.virtualHosts;
       statusPage = true;
