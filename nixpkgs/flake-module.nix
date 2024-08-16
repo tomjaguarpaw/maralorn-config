@@ -17,7 +17,6 @@
               "factorio-alpha"
               "teamviewer"
             ];
-          permittedInsecurePackages = [ "pulsar-1.117.0" ];
         };
         overlays =
           [
