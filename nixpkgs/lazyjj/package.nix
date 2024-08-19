@@ -1,10 +1,11 @@
 { stdenv, fetchzip }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   name = "lazyjj";
+  version = "0.3.1";
   src = fetchzip {
-    url = "https://github.com/Cretezy/lazyjj/releases/download/v0.2.1/lazyjj-v0.2.1-x86_64-unknown-linux-musl.tar.gz";
-    hash = "sha256-yMfGWuzsl94elFxRvGaLA61KBopBnBT3j5pxbCrKl0w=";
+    url = "https://github.com/Cretezy/lazyjj/releases/download/v${version}/lazyjj-v${version}-x86_64-unknown-linux-musl.tar.gz";
+    hash = "sha256-6R4W6uyq8sns8WLoJxp06xAYaJ0Zn+pZLtwhVIPobmc=";
   };
   phases = [
     "unpackPhase"
