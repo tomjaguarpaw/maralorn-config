@@ -45,10 +45,18 @@ in
 
       jj git push -r "$rev"
 
-      if glab repo view > /dev/null; then
-        git checkout "$branch"
-        glab mr create --reviewer spaunovic --title "$desc" --fill --no-editor --yes --remove-source-branch
-        jj new work
+      ghorg = $(gh repo view --json owner --jq .owner.login 2> /dev/null)
+      if [[ $? == 0 ]]; then
+        reviewer=""
+        if [[ "$ghorg" == "heilmannsoftware" ]]; then
+          read -p "Review by: default: tobi, any input: slobi> " other
+          if [[ "$other" == "" ]]; then
+            reviewer="--reviewer TobiasPleyer"
+          else
+            reviewer="--reviewer bidigo"
+          fi
+        fi
+        gh pr create $reviewer --head "$branch" --fill
       else
         tea pr create --assignees marabot --head "$branch" --title "$desc"
       fi
