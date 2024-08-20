@@ -38,7 +38,7 @@ in
 
       branch=$(jj log -T 'self.branches()' -r "$rev" --no-graph)
 
-      if [[ "$branches" == "" ]]; then
+      if [[ "$branch" == "" ]]; then
         branch=$(echo "''${desc//+([^[:alnum:]])/-}" | tr '[:upper:]' '[:lower:]')
         jj branch set "$branch" -r "$rev"
       fi
