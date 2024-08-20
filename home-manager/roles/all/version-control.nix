@@ -45,8 +45,7 @@ in
 
       jj git push -r "$rev"
 
-      ghorg = $(gh repo view --json owner --jq .owner.login 2> /dev/null)
-      if [[ $? == 0 ]]; then
+      if gh repo view --json owner --jq .owner.login 2> /dev/null | read ghorg; then
         reviewer=""
         if [[ "$ghorg" == "heilmannsoftware" ]]; then
           read -p "Review by: default: tobi, any input: slobi> " other
