@@ -5,8 +5,5 @@
     highlight-syntax = true;
     style-scheme = "cobalt";
   };
-  programs.jujutsu.settings.ui = {
-    merge-editor = "kdiff3";
-    diff-editor = "kdiff3";
-  };
+  programs.jujutsu.settings.ui.merge-editor = "meld";
 }
