@@ -61,7 +61,7 @@
               command = ''
                 jj log -r@ -l1 --ignore-working-copy --no-graph --color always  -T '
                   separate(" ",
-                    if(conflict, " "),
+                    if(conflict, "× "),
                     if(divergent, " "),
                     if(hidden, " "),
                   )
@@ -86,15 +86,15 @@
               command = ''
                 jj log -r@ -l1 --config-toml='${templates}' --ignore-working-copy --no-graph --color always  -T '
                   coalesce(
-                    surround("󰜝 ",
+                    surround("@ ",
                       " " ++ coalesce(
                         branchinfo(self),
-                        surround("󰜘 ","",parentinfo(self))
+                        surround("○ ","",parentinfo(self))
                       ),
                       quote(trunc(description.first_line()))
                     ),
-                    surround("󰜝 ","", branchinfo(self)),
-                    "󰜘 " ++ parentinfo(self)
+                    surround("@ ","", branchinfo(self)),
+                    "○ " ++ parentinfo(self)
                   )
                 '
               '';
