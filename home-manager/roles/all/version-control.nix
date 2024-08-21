@@ -55,7 +55,7 @@ in
             reviewer="--reviewer bidigo"
           fi
         fi
-        gh pr create $reviewer --head "$branch" --fill
+        gh pr create $reviewer --head "$branch" --title "$desc"
       else
         tea pr create --assignees marabot --head "$branch" --title "$desc"
       fi
