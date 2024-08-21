@@ -24,11 +24,8 @@ in
       cd "$1"
       git config user.name "Malte Ott"
       git config user.email "mott@heilmannsoftware.de"
-      sd "https://github.com/heilmannsoftware" "ssh://git@github.com/heilmannsoftware" .git/config
-
     '')
     (pkgs.writeShellScriptBin "pack" ''
-      sd "ssh://git@github.com/heilmannsoftware" "https://github.com/heilmannsoftware" "$1/.git/config"
       ob --no-handoff thunk pack "$1"
     '')
     pkgs.remmina
