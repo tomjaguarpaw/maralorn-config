@@ -36,7 +36,7 @@ in
         desc="$(jj log -T 'self.description()' -r "$rev" --no-graph | head -n1)"
       fi
 
-      branch=$(jj log -T 'self.branches()' -r "$rev" --no-graph)
+      branch=$(jj log -T 'self.branches()' -r "$rev" --no-graph | sd "\*" "")
 
       if [[ "$branch" == "" ]]; then
         branch=$(echo "''${desc//+([^[:alnum:]])/-}" | tr '[:upper:]' '[:lower:]')
