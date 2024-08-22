@@ -10,7 +10,7 @@
       log.writer = "journald"; # to prevent redundant timestamps
     };
   };
-  environment.persistence.snapshoted.directories = lib.mkIf config.has-persistence [
-    "/var/lib/couchdb"
-  ];
+  environment = lib.mkIf config.has-persistence {
+    persistence.snapshoted.directories = [ "/var/lib/couchdb" ];
+  };
 }
