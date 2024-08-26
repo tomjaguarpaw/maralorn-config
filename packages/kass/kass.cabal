@@ -90,6 +90,7 @@ library
     Bluefin.Reflex.Dom
     Bluefin.Reflex.Headless
     Bluefin.Utils
+    GitHub.Notifications
     Kass.App
     Kass.DB
     Kass.Doc
