@@ -45,9 +45,9 @@ in
 
       jj git push -r "$rev"
 
-      if gh repo view --json owner --jq .owner.login 2> /dev/null | read ghorg; then
+      if gh repo view 2> /dev/null > /dev/null; then
         reviewer=""
-        if [[ "$ghorg" == "heilmannsoftware" ]]; then
+        if [[ "$(gh repo view --json owner --jq .owner.login)" == "heilmannsoftware" ]]; then
           read -p "Review by: default: tobi, any input: slobi> " other
           if [[ "$other" == "" ]]; then
             reviewer="--reviewer TobiasPleyer"
@@ -55,7 +55,7 @@ in
             reviewer="--reviewer bidigo"
           fi
         fi
-        gh pr create $reviewer --head "$branch" --title "$desc"
+        gh pr create $reviewer --head "$branch" --title "$desc" --fill
       else
         tea pr create --assignees marabot --head "$branch" --title "$desc"
       fi
