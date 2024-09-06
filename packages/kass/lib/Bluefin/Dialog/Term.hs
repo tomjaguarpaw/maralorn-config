@@ -11,6 +11,7 @@ import Bluefin.Stream
 import Bluefin.Utils
 import Control.Concurrent.Async qualified as Async
 import Data.Char qualified as Char
+import Data.Containers.ListUtils (nubOrd)
 import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
 import Data.String.Interpolate (i)
@@ -19,6 +20,7 @@ import Optics
 import Reflex hiding (Reflex)
 import Reflex qualified
 import Relude hiding (Handle, State, execState, get, put, runState)
+import Relude.Unsafe qualified as Unsafe
 import Say (say)
 import System.Console.ANSI
   ( Color (..)
@@ -112,7 +114,7 @@ runPage = \io page -> forever do
   effIO io do clearScreen; putStr resetColor
   keybinds <- renderPage io page
   effIO io do putStr [i|#{color Magenta}> |]; hFlush stdout
-  input' <- effIO io getLine <&> preview (ix 0 % to (`Map.lookup` keybinds) % _Just)
+  input' <- effIO io getLine <&> preview (to (`Map.lookup` keybinds) % _Just)
   whenJust input' $
     \case
       SimpleHook h -> effIO io h
@@ -130,18 +132,17 @@ resetColor = setSGRCode [SetDefaultColor Foreground]
 
 data Hook = SimpleHook (IO ()) | PromptHook Text Text (Text -> IO ())
 
-renderPage :: e :> es => IOE e -> Seq (ElementData t) -> Eff es (Map Char Hook)
+renderPage :: e :> es => IOE e -> Seq (ElementData t) -> Eff es (Map Text Hook)
 renderPage = \io page -> do
-  execState mempty $ \(st :: State (Map Char Hook) st) -> do
+  execState mempty $ \(st :: State (Map Text Hook) st) -> do
     let
       mkBind :: st :> es => Text -> Hook -> Eff es Text
       mkBind label update = do
         keybinds <- get st
-        chooseHotkey (Map.keysSet keybinds) label & maybe
-          (pure label)
-          \key -> do
+        chooseHotkey (Map.keysSet keybinds) label
+          & \key -> do
             put st $ Map.insert key update keybinds
-            pure [i|#{color Magenta}#{Char.toUpper key}: #{color Blue}#{label}#{resetColor}|]
+            pure [i|#{color Magenta}#{Text.toUpper key}: #{color Blue}#{label}#{resetColor}|]
     elms <- forM page \case
       SimpleElement (TextElement t) -> pure (t <> " ")
       SimpleElement BreakElement -> pure "\n"
@@ -152,16 +153,24 @@ renderPage = \io page -> do
 execState :: s -> (forall (st :: Effects). State s st -> Eff (st :& es) a) -> Eff es s
 execState s act = snd <$> runState s act
 
-chooseHotkey :: Set Char -> Text -> Maybe Char
-chooseHotkey used =
-  view $
-    to into
-      % to \label ->
-        ( filter Char.isUpper label
-            <> filter Char.isLower label
-            <> filter Char.isDigit label
-            <> "enaritudoschlgvfwkxqpmzbä,ö.üj"
-            <> ['a' .. 'z']
-            <> ['0' .. '9']
-        )
-          ^? pre (folded % to Char.toLower % filtered (`Set.notMember` used))
+chooseHotkey :: Set Text -> Text -> Text
+chooseHotkey used label = Unsafe.head . filter (`Set.notMember` used) $ candidate_keys
+ where
+  label_chars = into label
+  ichars = zip [0 :: Int ..] candidate_chars
+  candidate_keys = weight_sorted_product =<< [1 ..]
+  weight_sorted_product n =
+    fmap (toText . snd) $
+      sortOn fst $
+        fmap (\xs -> (sum (fst <$> xs), snd <$> xs)) $
+          sort $
+            replicateM n ichars
+
+  candidate_chars =
+    nubOrd $
+      Char.toLower
+        <$> filter Char.isUpper label_chars
+          <> filter Char.isLower label_chars
+          <> filter Char.isDigit label_chars
+          <> "enaritudoschlgvfwkxqpmzbjy"
+          <> ['0' .. '9']
