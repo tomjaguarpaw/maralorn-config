@@ -88,10 +88,7 @@
             excludes = [ "\\.zsh$" ] ++ generated_nix_files;
             hooks = {
               hlint.enable = true;
-              nixfmt = {
-                package = lib.getBin pkgs.nixfmt-rfc-style;
-                enable = true;
-              };
+              nixfmt-rfc-style.enable = true;
               cabal2nix.enable = true;
               nil.enable = true;
               editorconfig-checker = {

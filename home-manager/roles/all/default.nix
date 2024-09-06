@@ -47,9 +47,7 @@
         mpc_cli
         ncmpcpp
         magic-wormhole
-        matrix-commander
         upterm
-        tasksh
         ledger
         aqbanking
         ;

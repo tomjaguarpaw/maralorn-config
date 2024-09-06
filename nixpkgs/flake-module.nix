@@ -17,6 +17,7 @@
               "factorio-alpha"
               "teamviewer"
             ];
+          permittedInsecurePackages = [ "olm-3.2.16" ];
         };
         overlays =
           [
