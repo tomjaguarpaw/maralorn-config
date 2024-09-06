@@ -207,7 +207,7 @@ search = \entries r -> withReflex r do
   pure $ ev_header <> ev_list
 
 nf :: Text -> Int -> Text
-nf _ = Text.singleton . toEnum
+nf _ n = [i|#{Text.singleton (toEnum n)} |]
 
 docItem :: e :> es => Reflex Dialog t e -> Seq DocState -> DocState -> Eff es (Event t (Seq Update))
 docItem r docs ds = withReflex r do

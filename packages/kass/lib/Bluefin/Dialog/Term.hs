@@ -142,7 +142,7 @@ renderPage = \io page -> do
         chooseHotkey (Map.keysSet keybinds) label
           & \key -> do
             put st $ Map.insert key update keybinds
-            pure [i|#{color Magenta}#{Text.toUpper key}: #{color Blue}#{label}#{resetColor}|]
+            pure [i|#{color Blue}#{label}#{color Magenta}#{Text.toUpper key}#{resetColor}|]
     elms <- forM page \case
       SimpleElement (TextElement t) -> pure (t <> " ")
       SimpleElement BreakElement -> pure "\n"
