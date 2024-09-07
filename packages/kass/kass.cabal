@@ -107,6 +107,7 @@ library
     , containers
     , dependent-sum
     , exceptions
+    , haskeline
     , jsaddle
     , jsaddle-warp
     , optics

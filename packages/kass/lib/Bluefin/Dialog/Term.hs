@@ -28,8 +28,10 @@ import System.Console.ANSI
   , ConsoleLayer (..)
   , SGR (SetColor, SetDefaultColor)
   , clearScreen
+  , setCursorPosition
   , setSGRCode
   )
+import System.Console.Haskeline qualified as Haskeline
 import Witch (into)
 
 runTermDialog
@@ -111,12 +113,22 @@ data ElementData t where
 
 runPage :: e :> es => IOE e -> Seq (ElementData t) -> Eff es ()
 runPage = \io page -> forever do
-  effIO io do clearScreen; putStr resetColor
+  effIO io do clearScreen; setCursorPosition 0 0; putStr resetColor
   keybinds <- renderPage io page
-  effIO io do putStr [i|#{color Magenta}> |]; hFlush stdout
-  input' <- effIO io getLine <&> preview (to (`Map.lookup` keybinds) % _Just)
-  whenJust input' $
-    \case
+  let promptHotkey input'
+        | Just hook <- Map.lookup input' keybinds = pure hook
+        | any (Text.isPrefixOf input') (Map.keysSet keybinds) = do
+            char <-
+              effIO io $
+                Haskeline.runInputT Haskeline.defaultSettings $
+                  Haskeline.getInputChar [i|#{color Magenta}#{Text.toUpper input'}> |]
+            case char of
+              Just c -> promptHotkey (Text.snoc input' c)
+              Nothing -> promptHotkey ""
+        | otherwise = promptHotkey ""
+  input' <- promptHotkey ""
+  input'
+    & \case
       SimpleHook h -> effIO io h
       PromptHook prompt _ h -> do
         effIO io do
@@ -154,8 +166,15 @@ execState :: s -> (forall (st :: Effects). State s st -> Eff (st :& es) a) -> Ef
 execState s act = snd <$> runState s act
 
 chooseHotkey :: Set Text -> Text -> Text
-chooseHotkey used label = Unsafe.head . filter (`Set.notMember` used) $ candidate_keys
+chooseHotkey used label =
+  Unsafe.head
+    . filter (\x -> not $ any (`Text.isPrefixOf` x) used)
+    . at_least_two
+    $ candidate_keys
  where
+  at_least_two
+    | Set.size used >= 19 = filter (\x -> Text.length x >= 2)
+    | otherwise = id
   label_chars = into label
   ichars = zip [0 :: Int ..] candidate_chars
   candidate_keys = weight_sorted_product =<< [1 ..]
