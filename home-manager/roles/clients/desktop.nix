@@ -66,6 +66,6 @@
 
   gtk = {
     enable = true;
-    gtk3.bookmarks = [ "ftp://athene.lo.m-0.eu" ];
+    gtk3.bookmarks = [ "ftp://home.local.maralorn.de" ];
   };
 }

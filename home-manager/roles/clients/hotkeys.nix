@@ -55,7 +55,7 @@ let
           { shells = ssh "shells"; }
           { "bach (ved)" = ssh "bach.vocalensemble-darmstadt.de"; }
           { "nixbuild.net" = "${pkgs.rlwrap}/bin/rlwrap ssh eu.nixbuild.net shell"; }
-          { "athene via local network" = ssh "athene.lo.m-0.eu"; }
+          { "athene via local network" = ssh "home.local.maralorn.de"; }
           { "hera via public v4" = ssh "hera-v4"; }
           { "TU Tunnel" = "sshuttle --python python3.9 -r gw 130.83.0.0/16"; }
         ];
