@@ -26,7 +26,8 @@ import System.Console.ANSI
   ( Color (..)
   , ColorIntensity (Vivid)
   , ConsoleLayer (..)
-  , SGR (SetColor, SetDefaultColor)
+  , SGR (..)
+  , Underlining (..)
   , clearScreen
   , setCursorPosition
   , setSGRCode
@@ -121,7 +122,8 @@ runPage = \io page -> forever do
             char <-
               effIO io $
                 Haskeline.runInputT Haskeline.defaultSettings $
-                  Haskeline.getInputChar [i|#{color Magenta}#{Text.toUpper input'}> |]
+                  Haskeline.getInputChar $
+                    if Text.length input' > 0 then [i|#{color Magenta}#{Text.toUpper input'}_|] else ""
             case char of
               Just c -> promptHotkey (Text.snoc input' c)
               Nothing -> promptHotkey ""
@@ -139,8 +141,10 @@ runPage = \io page -> forever do
 color :: Color -> String
 color c = setSGRCode [SetColor Foreground Vivid c]
 
+underline = setSGRCode [SetUnderlining SingleUnderline]
+
 resetColor :: String
-resetColor = setSGRCode [SetDefaultColor Foreground]
+resetColor = setSGRCode [Reset]
 
 data Hook = SimpleHook (IO ()) | PromptHook Text Text (Text -> IO ())
 
@@ -154,13 +158,24 @@ renderPage = \io page -> do
         chooseHotkey (Map.keysSet keybinds) label
           & \key -> do
             put st $ Map.insert key update keybinds
-            pure [i|#{color Blue}#{label}#{color Magenta}#{Text.toUpper key}#{resetColor}|]
+            pure $ printLabel key label
     elms <- forM page \case
       SimpleElement (TextElement t) -> pure (t <> " ")
       SimpleElement BreakElement -> pure "\n"
       ResponseElement (ButtonElement label) hook -> (<> " ") <$> mkBind label (SimpleHook (hook ()))
       ResponseElement (PromptElement prompt df) hook -> (<> " ") <$> mkBind prompt (PromptHook prompt df hook)
     effIO io $ say $ Text.intercalate "" $ into elms
+
+printLabel :: Text -> Text -> Text
+printLabel key label
+  | (before, rest) <- Text.breakOn (Text.toUpper key) label
+  , Just after <- Text.stripPrefix (Text.toUpper key) rest =
+      [i|#{underline}#{color Blue}#{before}#{color Magenta}#{Text.toUpper key}#{color Blue}#{after}#{resetColor}|]
+  | (before, rest) <- Text.breakOn key label
+  , Just after <- Text.stripPrefix key rest =
+      [i|#{underline}#{color Blue}#{before}#{color Magenta}#{key}#{color Blue}#{after}#{resetColor}|]
+  | otherwise =
+      [i|#{underline}#{color Blue}#{label}#{color Magenta}#{Text.toUpper key}#{resetColor}|]
 
 execState :: s -> (forall (st :: Effects). State s st -> Eff (st :& es) a) -> Eff es s
 execState s act = snd <$> runState s act
