@@ -21,6 +21,7 @@ in
         POLLING_FREQUENCY = "525600"; # We don‘t want polling so we set this to a year.
         BATCH_SIZE = "1000"; # To make sure that all feeds can get refreshed. Default is 100, which is probably fine.
         LISTEN_ADDR = address;
+        CLEANUP_ARCHIVE_UNREAD_DAYS = "-1";
       };
     };
     nginx.virtualHosts.${virtualHosts.rss}.locations = {
