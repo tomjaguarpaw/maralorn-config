@@ -73,6 +73,7 @@
               "cache"
               "syncthing-athene"
               "5e"
+              "5e-2014"
               "graphs"
             ];
             zeus = [ "syncthing-zeus" ];
