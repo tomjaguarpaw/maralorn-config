@@ -5,28 +5,52 @@
   ...
 }:
 let
+  name = "five-e-tools";
+  stateDir = "/var/lib/${name}";
   inherit (config.m-0) virtualHosts;
 in
 {
-  environment.persistence.snapshoted.directories = [
-    "/var/www/5etools"
-    "/var/www/5etools-2014"
-  ];
+  environment.persistence.snapshoted.directories = [ "/var/lib/private/${name}" ];
+  systemd.services = {
 
-  services.nginx.virtualHosts.${virtualHosts."5e"}.locations."/".root = "/var/www/5etools";
-  services.nginx.virtualHosts.${virtualHosts."5e-2014"}.locations."/".root = "/var/www/5etools-2014";
+    "restart-${name}" = {
+      description = "Restart ${name}";
+      serviceConfig.ExecStart = "${lib.getExe' pkgs.systemd "systemctl"} restart ${name}";
+      startAt = "daily";
+    };
 
-  systemd.services.update-5etools = {
-    script = ''
-      cd /var/www/5etools
-      ${lib.getExe pkgs.git} pull -r
-      cd img
-      ${lib.getExe pkgs.git} pull
-      cd /var/www/5etools-2014
-      ${lib.getExe pkgs.git} pull -r
-      cd img
-      ${lib.getExe pkgs.git} pull
-    '';
-    startAt = "daily";
+    ${name} = {
+      wantedBy = [ "multi-user.target" ];
+      description = "5etools server";
+      path = [
+        pkgs.coreutils
+        pkgs.nodejs
+        pkgs.gnutar
+        pkgs.bash
+      ];
+      preStart = ''
+        if [[ ! -d ".git" ]]; then
+          echo "No ${name} app found. Please checkout mirror and img/ folder."
+          exit 1
+        fi
+        ${lib.getExe pkgs.git} pull -r
+        cd img
+        ${lib.getExe pkgs.git} pull
+        cd ..
+        ${lib.getExe' pkgs.nodejs "npm"} i
+        ${lib.getExe' pkgs.nodejs "npm"} run build:sw:prod
+      '';
+      serviceConfig = {
+        StateDirectory = "${name}";
+        WorkingDirectory = stateDir;
+        DynamicUser = true;
+        Restart = "always";
+        ExecStart = "${lib.getExe' pkgs.nodejs "npm"} run serve:dev";
+      };
+    };
   };
+  services.nginx.virtualHosts."${virtualHosts."5e"}".locations."/" = {
+    proxyPass = "http://127.0.0.1:${toString 5000}";
+  };
+
 }

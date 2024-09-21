@@ -20,6 +20,7 @@
         name = "firefox_syncserver";
         createLocally = true;
       };
+      settings.port = 5259;
       singleNode = {
         enable = true;
         hostname = config.m-0.virtualHosts.firefox-sync;
