@@ -74,7 +74,7 @@ in
             entities = [
               "switch.blaue_lichterkette"
               "switch.lichterkette_schrank"
-              "switch.lichterkette_fernseher"
+              "switch.lichterkette_kartenwand"
             ];
           };
           schlafzimmer_lights = {
