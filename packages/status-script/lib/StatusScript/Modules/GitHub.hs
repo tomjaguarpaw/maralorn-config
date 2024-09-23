@@ -5,7 +5,7 @@ import Data.Aeson (FromJSON, eitherDecode')
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Data.Time (NominalDiffTime)
-import Network.Wreq (checkResponse, defaults, header, responseHeader, responseStatus)
+import Network.Wreq (checkResponse, defaults, header, responseHeader)
 import Network.Wreq qualified as Wreq
 import Network.Wreq.Lens (responseBody)
 import Optics
@@ -60,20 +60,14 @@ getNotifications old_poll_interval = do
   token <- getToken
   response <-
     Wreq.getWith
-      ( defaults
-          & lensVL (header "Authorization") .~ [[i|Bearer #{token}|]]
-          --          & lensVL (param "all") .~ ["true"]
-          & lensVL checkResponse ?~ (\_ _ -> pure ())
-      )
+      (defaults & lensVL (header "Authorization") .~ [[i|Bearer #{token}|]])
       "https://api.github.com/notifications"
   let
     poll_interval = response ^? pre (foldVL (responseHeader "X-Poll-Interval")) % to decodeUtf8 % to readMaybe % _Just
-  let retval =
-        ( fromMaybe 60 $ (fromInteger <$> poll_interval) <|> old_poll_interval
-        , either (error . toText) id $ eitherDecode' $ response ^. lensVL responseBody
-        )
-  print (response ^. lensVL responseStatus, retval)
-  pure retval
+  pure
+    ( fromMaybe 60 $ (fromInteger <$> poll_interval) <|> old_poll_interval
+    , either (error . toText) id $ eitherDecode' $ response ^. lensVL responseBody
+    )
 
 watchNotifications :: ([Notification] -> IO ()) -> IO ()
 watchNotifications cb = go Nothing
