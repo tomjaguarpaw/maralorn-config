@@ -57,8 +57,9 @@ getToken =
 modifiedFormatString :: String
 modifiedFormatString = "%a, %d %b %Y %X GMT"
 
-getNotifications :: Maybe UTCTime -> IO (UTCTime, NominalDiffTime, Maybe [Notification])
-getNotifications start = do
+getNotifications :: Maybe UTCTime -> Maybe NominalDiffTime -> IO (Maybe UTCTime, NominalDiffTime, Maybe [Notification])
+getNotifications last_modified old_poll_interval = do
+  whenJust old_poll_interval $ threadDelay . floor . (* 1_000_000)
   token <- getToken
   response <-
     Wreq.getWith
@@ -72,31 +73,29 @@ getNotifications start = do
                 lensVL (header "If-Modified-Since")
                   .~ [encodeUtf8 (formatTime defaultTimeLocale modifiedFormatString ts)]
             )
-            start
+            last_modified
       )
       "https://api.github.com/notifications"
-  let last_mod =
+  let new_last_modified =
         response
           ^? pre (foldVL (responseHeader "Last-Modified"))
           % to decodeUtf8
           % to (parseTimeM True defaultTimeLocale modifiedFormatString)
           % _Just
       poll_interval = response ^? pre (foldVL (responseHeader "X-Poll-Interval")) % to decodeUtf8 % to readMaybe % _Just
-      nots =
-        if response ^. lensVL (responseStatus . statusCode) == 304
-          then Nothing
-          else either (error . toText) id $ eitherDecode' $ response ^. lensVL responseBody
+      not_modified = response ^. lensVL (responseStatus . statusCode) == 304
   pure
-    ( fromMaybe (error "Never got a Last-Modified") $ last_mod <|> start
-    , fromInteger $ fromMaybe (error "no X-Poll-Interval") poll_interval
-    , nots
+    ( if not_modified then last_modified else new_last_modified
+    , fromMaybe 60 $ (fromInteger <$> poll_interval) <|> old_poll_interval
+    , if not_modified
+        then Nothing
+        else either (error . toText) id $ eitherDecode' $ response ^. lensVL responseBody
     )
 
 watchNotifications :: ([Notification] -> IO ()) -> IO ()
-watchNotifications cb = go Nothing
+watchNotifications cb = go Nothing Nothing
  where
-  go prev_last = do
-    (last', wait, res) <- getNotifications prev_last
+  go prev_last prev_interv = do
+    (last', interv', res) <- getNotifications prev_last prev_interv
     whenJust res cb
-    threadDelay (floor . (* 1_000_000) $ wait)
-    go (Just last')
+    go last' (Just interv')
