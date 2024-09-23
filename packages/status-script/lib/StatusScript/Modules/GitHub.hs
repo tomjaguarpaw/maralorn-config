@@ -5,7 +5,7 @@ import Data.Aeson (FromJSON, eitherDecode')
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Data.Time (NominalDiffTime)
-import Network.Wreq (checkResponse, defaults, header, responseHeader)
+import Network.Wreq (defaults, header, responseHeader)
 import Network.Wreq qualified as Wreq
 import Network.Wreq.Lens (responseBody)
 import Optics
@@ -28,13 +28,30 @@ notifications env dMode = do
       dMode
       r
 
+parseIssueUrl :: Text -> Maybe (Text, Maybe Char, Text)
+parseIssueUrl =
+  Text.stripPrefix "https://api.github.com/repos/" >=> Text.splitOn "/" >>> \case
+    [org, repo, type', id'] -> Just ([i|#{org}/#{repo}|], typeChar type', id')
+    _ -> Nothing
+
+typeChar :: Text -> Maybe Char
+typeChar = \case
+  "pulls" -> Just $ toEnum 0xf41b -- nf-oct-issue_opened
+  "issues" -> Just $ toEnum 0xf04c2 -- nf-md-source_pull
+  _ -> Nothing
+
 mkWarning :: Notification -> Warning
 mkWarning n =
   MkWarning
-    { description = Just n.subject.title
+    { description = Just description
     , group = toEnum 0xf02a4 -- nf-md-github
-    , subgroup = Nothing
+    , subgroup
     }
+ where
+  title = n.subject.title
+  (description, subgroup) = case parseIssueUrl =<< n.subject.url of
+    Nothing -> (title, Nothing)
+    Just (repo, icon, num) -> ([i|#{repo} \##{num} #{title}|], icon)
 
 data Subject = MkSubject
   { title :: Text
