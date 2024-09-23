@@ -25,20 +25,19 @@ in
       path = [
         pkgs.coreutils
         pkgs.nodejs
-        pkgs.gnutar
         pkgs.bash
+        pkgs.git
       ];
       preStart = ''
         if [[ ! -d ".git" ]]; then
           echo "No ${name} app found. Please checkout mirror and img/ folder."
           exit 1
         fi
-        ${lib.getExe pkgs.git} pull -r
+        git pull -r
         cd img
-        ${lib.getExe pkgs.git} pull
+        git pull
         cd ..
-        ${lib.getExe' pkgs.nodejs "npm"} i
-        ${lib.getExe' pkgs.nodejs "npm"} run build:sw:prod
+        npm run build:sw:prod
       '';
       serviceConfig = {
         StateDirectory = "${name}";
