@@ -12,6 +12,7 @@ let
   jsonFormat = pkgs.formats.json { };
 in
 {
+  status-script.env = [ config.programs.rbw.package ];
   home.packages = builtins.attrValues rec {
     rbw-fzf = pkgs.runCommand "rbw-fzf" { } ''
       mkdir -p $out/bin

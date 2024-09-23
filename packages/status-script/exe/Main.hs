@@ -17,6 +17,7 @@ import StatusScript.Mode
 import StatusScript.Mode qualified as Mode
 import StatusScript.Modules.Audio qualified as Audio
 import StatusScript.Modules.Calendar qualified as Calendar
+import StatusScript.Modules.GitHub qualified as GitHub
 import StatusScript.Modules.Hyprland (hyprlandWorkspaces)
 import StatusScript.Modules.IdleState qualified as IdleState
 import StatusScript.Modules.Mail qualified as Mail
@@ -64,6 +65,7 @@ main = Notify.withManager \watch_manager -> do
     software_feed_event <- SoftwareFeed.softwareFeed env mode
     mail_events <- Mail.mail env mode
     notification_dyn <- notifications env mode
+    gh_notification_dyn <- GitHub.notifications env mode
     let mode_warning =
           mode
             <&> ( modeIcon >>> maybe [] \m ->
@@ -82,6 +84,7 @@ main = Notify.withManager \watch_manager -> do
               , mail_events
               , notification_dyn
               , mode_warning
+              , gh_notification_dyn
               ]
     PublishSocket.publishJson' env "warnings" warnings
     PublishSocket.publishJson'

@@ -62,7 +62,9 @@ common common-config
     , string-interpolate
     , template-haskell
     , time
+    , typed-process
     , uuid
+    , wreq
 
   default-language:   GHC2021
   ghc-options:
@@ -81,6 +83,7 @@ library
     StatusScript.Modules.Alerts
     StatusScript.Modules.Audio
     StatusScript.Modules.Calendar
+    StatusScript.Modules.GitHub
     StatusScript.Modules.Hyprland
     StatusScript.Modules.IdleState
     StatusScript.Modules.Mail

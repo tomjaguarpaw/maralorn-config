@@ -43,19 +43,10 @@ mkWarning = \subgroup msg ->
 mail :: R.MonadHeadlessApp t m => Env -> R.Dynamic t Mode -> m (Dynamic t [Warning])
 mail env mode = do
   CommandUtil.reportMissing missingExecutables
-  notmuch_update <-
-    FileWatch.watchFile env (env.homeDir </> "Maildir/.notmuch/xapian") "flintlock"
+  notmuch_update <- FileWatch.watchFile env (env.homeDir </> "Maildir/.notmuch/xapian") "flintlock"
   events <-
-    [
-      ( (>= Normal)
-      , ["tag:unread and folder:/Inbox/"]
-      , toEnum 0xeb1c -- nf-cod-mail
-      )
-      ,
-        ( (>= Sort)
-        , ["not tag:unread and folder:/Inbox/"]
-        , toEnum 0xeb1b -- nf-cod-mail_read
-        )
+    [ ((>= Normal), ["tag:unread and folder:/Inbox/"], toEnum 0xeb1c) -- nf-cod-mail
+      , ((>= Sort), ["not tag:unread and folder:/Inbox/"], toEnum 0xeb1b) -- nf-cod-mail_read
       ]
       & mapM \(on_mode, folder, subgroup) ->
         ReflexUtil.performEventThreaded

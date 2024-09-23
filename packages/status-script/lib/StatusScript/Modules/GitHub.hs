@@ -1,4 +1,4 @@
-module GitHub.Notifications where
+module StatusScript.Modules.GitHub (notifications) where
 
 import Control.Concurrent (threadDelay)
 import Data.Aeson (FromJSON, eitherDecode')
@@ -9,8 +9,32 @@ import Network.Wreq (checkResponse, defaults, header, responseHeader, responseSt
 import Network.Wreq qualified as Wreq
 import Network.Wreq.Lens (responseBody)
 import Optics
+import Reflex
+import Reflex.Host.Headless qualified as R
 import Relude
-import System.Process.Typed (readProcessStdout_)
+import Shh qualified
+import StatusScript.Env
+import StatusScript.Mode
+import StatusScript.Warnings
+
+notifications :: R.MonadHeadlessApp t m => Env -> Dynamic t Mode -> m (Dynamic t [Warning])
+notifications env dMode = do
+  (event, trigger) <- newTriggerEvent
+  liftIO $ env.fork "watchNotifications" (watchNotifications trigger)
+  r <- holdDyn mempty $ event <&> fmap mkWarning
+  pure $
+    zipDynWith
+      (\mode -> if mode >= Normal then id else const [])
+      dMode
+      r
+
+mkWarning :: Notification -> Warning
+mkWarning n =
+  MkWarning
+    { description = Just n.subject.title
+    , group = toEnum 0xf02a4 -- nf-md-github
+    , subgroup = Nothing
+    }
 
 data Subject = MkSubject
   { title :: Text
@@ -19,7 +43,7 @@ data Subject = MkSubject
   deriving stock (Show, Generic)
   deriving anyclass (FromJSON)
 
-data Notifications = MkNotifications
+data Notification = MkNotification
   { subject :: Subject
   , url :: Text
   }
@@ -28,12 +52,12 @@ data Notifications = MkNotifications
 
 getToken :: IO Text
 getToken =
-  Text.strip . decodeUtf8 <$> readProcessStdout_ "rbw get github.com -f kass"
+  Text.strip . decodeUtf8 <$> (Shh.exe "rbw" "get" "github.com" "-f" "kass" Shh.|> Shh.captureTrim)
 
 modifiedFormatString :: String
 modifiedFormatString = "%a, %d %b %Y %X GMT"
 
-getNotifications :: Maybe UTCTime -> IO (UTCTime, NominalDiffTime, Maybe [Notifications])
+getNotifications :: Maybe UTCTime -> IO (UTCTime, NominalDiffTime, Maybe [Notification])
 getNotifications start = do
   token <- getToken
   response <-
@@ -68,7 +92,7 @@ getNotifications start = do
     , nots
     )
 
-watchNotifications :: ([Notifications] -> IO ()) -> IO ()
+watchNotifications :: ([Notification] -> IO ()) -> IO ()
 watchNotifications cb = go Nothing
  where
   go prev_last = do
