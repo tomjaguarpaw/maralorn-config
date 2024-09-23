@@ -1,13 +1,12 @@
 module StatusScript.Modules.GitHub (notifications) where
 
 import Control.Concurrent (threadDelay)
-import Data.Aeson (FromJSON, eitherDecode')
+import Control.Exception.Safe (throwIO)
+import Data.ByteString.Char8 qualified as Bytestring
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
-import Data.Time (NominalDiffTime)
-import Network.Wreq (defaults, header, responseHeader)
-import Network.Wreq qualified as Wreq
-import Network.Wreq.Lens (responseBody)
+import GitHub (Auth (..), FetchCount (..), Notification (..), Subject (..), URL, getNotificationsR, getUrl, github)
+import GitHub.Internal.Prelude (Vector)
 import Optics
 import Reflex
 import Reflex.Host.Headless qualified as R
@@ -26,11 +25,11 @@ notifications env dMode = do
     zipDynWith
       (\mode -> if mode >= Normal then id else const [])
       dMode
-      r
+      (toList <$> r)
 
-parseIssueUrl :: Text -> Maybe (Text, Maybe Char, Text)
+parseIssueUrl :: URL -> Maybe (Text, Maybe Char, Text)
 parseIssueUrl =
-  Text.stripPrefix "https://api.github.com/repos/" >=> Text.splitOn "/" >>> \case
+  getUrl >>> Text.stripPrefix "https://api.github.com/repos/" >=> Text.splitOn "/" >>> \case
     [org, repo, type', id'] -> Just ([i|#{org}/#{repo}|], typeChar type', id')
     _ -> Nothing
 
@@ -48,48 +47,18 @@ mkWarning n =
     , subgroup
     }
  where
-  title = n.subject.title
-  (description, subgroup) = case parseIssueUrl =<< n.subject.url of
+  title = n.notificationSubject.subjectTitle
+  (description, subgroup) = case parseIssueUrl n.notificationSubject.subjectURL of
     Nothing -> (title, Nothing)
     Just (repo, icon, num) -> ([i|#{repo} \##{num} #{title}|], icon)
 
-data Subject = MkSubject
-  { title :: Text
-  , url :: Maybe Text
-  }
-  deriving stock (Show, Generic)
-  deriving anyclass (FromJSON)
-
-data Notification = MkNotification
-  { subject :: Subject
-  , url :: Text
-  }
-  deriving stock (Generic, Show)
-  deriving anyclass (FromJSON)
-
-getToken :: IO Text
+getToken :: IO ByteString
 getToken =
-  Text.strip . decodeUtf8 <$> (Shh.exe "rbw" "get" "github.com" "-f" "kass" Shh.|> Shh.captureTrim)
+  Bytestring.strip . toStrict <$> (Shh.exe "rbw" "get" "github.com" "-f" "kass" Shh.|> Shh.captureTrim)
 
-getNotifications :: Maybe NominalDiffTime -> IO (NominalDiffTime, [Notification])
-getNotifications old_poll_interval = do
-  whenJust old_poll_interval $ threadDelay . floor . (* 1_000_000)
+watchNotifications :: (Vector Notification -> IO ()) -> IO ()
+watchNotifications cb = forever $ do
   token <- getToken
-  response <-
-    Wreq.getWith
-      (defaults & lensVL (header "Authorization") .~ [[i|Bearer #{token}|]])
-      "https://api.github.com/notifications"
-  let
-    poll_interval = response ^? pre (foldVL (responseHeader "X-Poll-Interval")) % to decodeUtf8 % to readMaybe % _Just
-  pure
-    ( fromMaybe 60 $ (fromInteger <$> poll_interval) <|> old_poll_interval
-    , either (error . toText) id $ eitherDecode' $ response ^. lensVL responseBody
-    )
-
-watchNotifications :: ([Notification] -> IO ()) -> IO ()
-watchNotifications cb = go Nothing
- where
-  go prev_interv = do
-    (interv', res) <- getNotifications prev_interv
-    cb res
-    go (Just interv')
+  response <- github (OAuth token) (getNotificationsR FetchAll)
+  either throwIO cb response
+  threadDelay 60_000_000 -- one minute

@@ -27,9 +27,7 @@ let
         { Kalendar = term "ikhal"; }
         { Notes = edit_dir "~/git/notes"; }
         {
-          "GitHub: Next Notification" = fork (
-            shell "firefox $(gh api notifications | jq -r .[0].subject.url | sd \"api.github.com/repos\" \"github.com\")"
-          );
+          "GitHub: Next Notification" = fork (shell "firefox $(runhaskell ${./github-notification-link.hs})");
         }
       ];
     }

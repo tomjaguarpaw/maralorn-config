@@ -1,8 +1,8 @@
 { mkDerivation, aeson, aeson-schemas, async, base, bytestring
-, directory, exceptions, extra, filepath, fsnotify, lib, network
-, nonempty-containers, optics, reflex, relude, safe-exceptions, say
-, shh, stm, string-interpolate, template-haskell, time
-, typed-process, uuid, wreq
+, directory, exceptions, extra, filepath, fsnotify, github, lib
+, network, nonempty-containers, optics, reflex, relude
+, safe-exceptions, say, shh, stm, string-interpolate
+, template-haskell, time, typed-process, uuid, wreq
 }:
 mkDerivation {
   pname = "status-script";
@@ -12,14 +12,14 @@ mkDerivation {
   isExecutable = true;
   libraryHaskellDepends = [
     aeson aeson-schemas async base bytestring directory exceptions
-    extra filepath fsnotify network nonempty-containers optics reflex
-    relude safe-exceptions say shh stm string-interpolate
+    extra filepath fsnotify github network nonempty-containers optics
+    reflex relude safe-exceptions say shh stm string-interpolate
     template-haskell time typed-process uuid wreq
   ];
   executableHaskellDepends = [
     aeson aeson-schemas async base bytestring directory exceptions
-    extra filepath fsnotify network nonempty-containers optics reflex
-    relude safe-exceptions say shh stm string-interpolate
+    extra filepath fsnotify github network nonempty-containers optics
+    reflex relude safe-exceptions say shh stm string-interpolate
     template-haskell time typed-process uuid wreq
   ];
   license = lib.licenses.agpl3Plus;

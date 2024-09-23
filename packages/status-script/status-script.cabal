@@ -50,6 +50,7 @@ common common-config
     , extra
     , filepath
     , fsnotify
+    , github
     , network
     , nonempty-containers
     , optics
