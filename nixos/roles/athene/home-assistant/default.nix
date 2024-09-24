@@ -143,7 +143,6 @@ in
                         {
                           condition = "numeric_state";
                           entity_id = "sensor.openweathermap_darmstadt_hourly_temperature";
-                          attribute = "temperature";
                           below = 15;
                         }
                       ];
