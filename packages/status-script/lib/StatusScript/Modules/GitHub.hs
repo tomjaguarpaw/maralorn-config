@@ -35,8 +35,8 @@ parseIssueUrl =
 
 typeChar :: Text -> Maybe Char
 typeChar = \case
-  "pulls" -> Just $ toEnum 0xf41b -- nf-oct-issue_opened
-  "issues" -> Just $ toEnum 0xf04c2 -- nf-md-source_pull
+  "issues" -> Just $ toEnum 0xeb0c -- nf-cod-issues
+  "pulls" -> Just $ toEnum 0xf04c2 -- nf-md-source_pull
   _ -> Nothing
 
 mkWarning :: Notification -> Warning
