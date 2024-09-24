@@ -76,6 +76,7 @@ main = Notify.withManager \watch_manager -> do
                         }
                     ]
                 )
+    gh_runs_dyn <- GitHub.runs env mode
     let warnings =
           concat
             <$> sequence
@@ -86,7 +87,7 @@ main = Notify.withManager \watch_manager -> do
               , mode_warning
               , gh_notification_dyn
               ]
-    PublishSocket.publishJson' env "warnings" warnings
+    PublishSocket.publishJson' env "warnings" (concat <$> sequence [warnings, gh_runs_dyn])
     PublishSocket.publishJson'
       env
       "warninggroups"

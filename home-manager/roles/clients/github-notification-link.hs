@@ -22,6 +22,6 @@ main = do
 url :: Notification -> Text
 url notif =
   "https://github.com/"
-    <> Text.drop 29 (getUrl notif.notificationSubject.subjectURL)
+    <> Text.replace "pulls" "pull" (Text.drop 29 (getUrl notif.notificationSubject.subjectURL))
     <> "?notification_referrer_id=NT_"
     <> encodeBase64 ("\147\NUL\206\NUL\EM2}\179\&" <> encodeUtf8 (show (untagId notif.notificationId) <> ":1651325"))

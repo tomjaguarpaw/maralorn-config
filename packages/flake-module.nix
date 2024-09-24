@@ -31,7 +31,15 @@ let
       ))
       hpkgs.buildFromCabalSdist
     ];
-  haskellPackagesOverlay = final: _prev: lib.mapAttrs (_: package: package final) myHaskellPackages;
+  haskellPackagesOverlay =
+    final: prev:
+    {
+      github = unstable-pkgs.haskell.lib.compose.appendPatch (unstable-pkgs.fetchpatch {
+        url = "https://github.com/magthe/haskell-github/commit/3809dc7f56724e7ea336daeb67caf86f6c3efdb6.patch";
+        hash = "sha256-JH2deKDdmSR6r75FlEp9EHzn3RG/3R8zl/IHSmmLPZA=";
+      }) prev.github;
+    }
+    // lib.mapAttrs (_: package: package final) myHaskellPackages;
   selectHaskellPackages = attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages;
   myHaskellPackages = {
     wizards-dialog = cleanCabalPackage ./wizards-dialog { };

@@ -1,11 +1,30 @@
-module StatusScript.Modules.GitHub (notifications) where
+module StatusScript.Modules.GitHub (notifications, runs) where
 
 import Control.Concurrent (threadDelay)
 import Control.Exception.Safe (throwIO)
 import Data.ByteString.Char8 qualified as Bytestring
+import Data.Map.Strict qualified as M
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
-import GitHub (Auth (..), FetchCount (..), Notification (..), Subject (..), URL, getNotificationsR, getUrl, github)
+import Data.Time (NominalDiffTime, UTCTime, diffUTCTime, formatTime, getCurrentTime, nominalDay)
+import Data.Time.Clock (addUTCTime)
+import Data.Time.Format (defaultTimeLocale)
+import GitHub
+  ( Auth (..)
+  , FetchCount (..)
+  , Notification (..)
+  , Subject (..)
+  , URL
+  , WithTotalCount (..)
+  , WorkflowRun (..)
+  , getNotificationsR
+  , getUrl
+  , github
+  , mkName
+  , optionsWorkflowRunActor
+  , optionsWorkflowRunCreated
+  , workflowRunsR
+  )
 import GitHub.Internal.Prelude (Vector)
 import Optics
 import Reflex
@@ -20,12 +39,60 @@ notifications :: R.MonadHeadlessApp t m => Env -> Dynamic t Mode -> m (Dynamic t
 notifications env dMode = do
   (event, trigger) <- newTriggerEvent
   liftIO $ env.fork "watchNotifications" (watchNotifications trigger)
-  r <- holdDyn mempty $ event <&> fmap mkWarning
+  dNotifications <- holdDyn mempty $ event <&> fmap mkWarning
   pure $
     zipDynWith
       (\mode -> if mode >= Normal then id else const [])
       dMode
-      (toList <$> r)
+      (toList <$> dNotifications)
+
+runs :: R.MonadHeadlessApp t m => Env -> Dynamic t Mode -> m (Dynamic t [Warning])
+runs env _ = do
+  (eRun, triggerRun) <- newTriggerEvent
+  liftIO $ env.fork "watchRuns" (watchRuns triggerRun)
+  time <- liftIO getCurrentTime
+  holdDyn mempty $ eRun <&> mkRunWarnings time
+
+mkRunWarnings :: UTCTime -> Vector WorkflowRun -> [Warning]
+mkRunWarnings time =
+  toList
+    >>> fmap (\r -> (r.workflowRunHeadBranch, r))
+    >>> M.fromListWith (\a b -> if a.workflowRunCreatedAt >= b.workflowRunCreatedAt then a else b)
+    >>> toList
+    >>> fmap (runToWarning time)
+
+runToWarning :: UTCTime -> WorkflowRun -> Warning
+runToWarning time wfRun =
+  MkWarning
+    { description =
+        Just $
+          wfRun.workflowRunHeadBranch
+            <> " "
+            <> fromMaybe wfRun.workflowRunStatus wfRun.workflowRunConclusion
+            <> " "
+            <> printDuration
+              ( diffUTCTime (if isJust wfRun.workflowRunConclusion then wfRun.workflowRunUpdatedAt else time) wfRun.workflowRunStartedAt
+              )
+    , group = toEnum 0xeaff -- nf-cod-github_action
+    , subgroup = Nothing
+    }
+
+printDuration :: NominalDiffTime -> Text
+printDuration diff
+  | diff < hour = p "%Mm"
+  | diff < day = p "%Hh%Mm"
+  | otherwise = p "%dd%Hh%Mm"
+ where
+  p x = toText $ formatTime defaultTimeLocale x diff
+
+minute :: NominalDiffTime
+minute = 60
+
+hour :: NominalDiffTime
+hour = 60 * minute
+
+day :: NominalDiffTime
+day = 24 * hour
 
 parseIssueUrl :: URL -> Maybe (Text, Maybe Char, Text)
 parseIssueUrl =
@@ -48,7 +115,7 @@ mkWarning n =
     }
  where
   title = n.notificationSubject.subjectTitle
-  (description, subgroup) = case parseIssueUrl n.notificationSubject.subjectURL of
+  (description, subgroup) = case parseIssueUrl =<< n.notificationSubject.subjectURL of
     Nothing -> (title, Nothing)
     Just (repo, icon, num) -> ([i|#{repo} \##{num} #{title}|], icon)
 
@@ -56,9 +123,25 @@ getToken :: IO ByteString
 getToken =
   Bytestring.strip . toStrict <$> (Shh.exe "rbw" "get" "github.com" "-f" "kass" Shh.|> Shh.captureTrim)
 
+watchRuns :: (Vector WorkflowRun -> IO ()) -> IO ()
+watchRuns cb = forever $ do
+  token <- getToken
+  yesterday <- addUTCTime (-nominalDay) <$> getCurrentTime
+  response <-
+    github
+      (OAuth token)
+      ( workflowRunsR
+          (mkName Proxy "heilmannsoftware")
+          (mkName Proxy "connect")
+          (optionsWorkflowRunActor "maralorn" <> optionsWorkflowRunCreated [i|>=#{formatTime defaultTimeLocale "%F" yesterday}|])
+          FetchAll
+      )
+  either throwIO (cb . (.withTotalCountItems)) response
+  threadDelay 60_000_000 -- one minute
+
 watchNotifications :: (Vector Notification -> IO ()) -> IO ()
 watchNotifications cb = forever $ do
   token <- getToken
   response <- github (OAuth token) (getNotificationsR FetchAll)
-  either throwIO cb response
+  either (putStrLn . displayException) cb response
   threadDelay 60_000_000 -- one minute
