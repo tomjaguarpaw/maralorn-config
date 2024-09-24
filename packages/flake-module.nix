@@ -34,10 +34,18 @@ let
   haskellPackagesOverlay =
     final: prev:
     {
-      github = unstable-pkgs.haskell.lib.compose.appendPatch (unstable-pkgs.fetchpatch {
-        url = "https://github.com/magthe/haskell-github/commit/3809dc7f56724e7ea336daeb67caf86f6c3efdb6.patch";
-        hash = "sha256-JH2deKDdmSR6r75FlEp9EHzn3RG/3R8zl/IHSmmLPZA=";
-      }) prev.github;
+      github = unstable-pkgs.haskell.lib.compose.appendPatches [
+
+        (unstable-pkgs.fetchpatch {
+          url = "https://github.com/magthe/haskell-github/commit/3809dc7f56724e7ea336daeb67caf86f6c3efdb6.patch";
+          hash = "sha256-JH2deKDdmSR6r75FlEp9EHzn3RG/3R8zl/IHSmmLPZA=";
+        })
+        (unstable-pkgs.fetchpatch {
+          url = "https://github.com/haskell-github/github/pull/511/commits/c377abba74e62496c5adb1bfd81ce33cce7dfa71.patch";
+          hash = "sha256-QkD/h2npxuaskbG5CdSg86GdaQJFblvDXWWhvAZTKgU=";
+        })
+
+      ] prev.github;
     }
     // lib.mapAttrs (_: package: package final) myHaskellPackages;
   selectHaskellPackages = attrs: lib.mapAttrs (name: _: attrs.${name}) myHaskellPackages;
