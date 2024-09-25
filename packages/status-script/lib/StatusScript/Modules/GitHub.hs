@@ -68,14 +68,22 @@ runToWarning time wfRun =
         Just $
           wfRun.workflowRunHeadBranch
             <> " "
-            <> fromMaybe wfRun.workflowRunStatus wfRun.workflowRunConclusion
-            <> " "
+            <> (if isNothing subgroup then status <> " " else "")
             <> printDuration
-              ( diffUTCTime (if isJust wfRun.workflowRunConclusion then wfRun.workflowRunUpdatedAt else time) wfRun.workflowRunStartedAt
+              ( diffUTCTime
+                  (if isJust wfRun.workflowRunConclusion then wfRun.workflowRunUpdatedAt else time)
+                  wfRun.workflowRunStartedAt
               )
     , group = toEnum 0xeaff -- nf-cod-github_action
-    , subgroup = Nothing
+    , subgroup
     }
+ where
+  status = fromMaybe wfRun.workflowRunStatus wfRun.workflowRunConclusion
+  subgroup = case status of
+    "in_progress" -> Just (toEnum 0xf051f) -- nf-md-timer_send
+    "success" -> Just (toEnum 0xf0e1e) -- nf-md-check_bold
+    "failure" -> Just (toEnum 0xebfb) -- nf-cod-error_small
+    _ -> Nothing
 
 printDuration :: NominalDiffTime -> Text
 printDuration diff
