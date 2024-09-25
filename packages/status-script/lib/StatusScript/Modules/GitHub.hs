@@ -82,7 +82,7 @@ runToWarning time wfRun =
   subgroup = case status of
     "in_progress" -> Just (toEnum 0xf051f) -- nf-md-timer_send
     "success" -> Just (toEnum 0xf0e1e) -- nf-md-check_bold
-    "failure" -> Just (toEnum 0xebfb) -- nf-cod-error_small
+    "failure" -> Just (toEnum 0xe654) -- nf-seti-error
     _ -> Nothing
 
 printDuration :: NominalDiffTime -> Text
