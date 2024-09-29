@@ -11,6 +11,7 @@ let
     warn = "#ffbf00";
     alert = "#ff0000";
     dehumidifier = humidity;
+    wall = "#898989";
     heating = "#ff9021";
     temperature = "#7100ff";
     outside_temperature = "#d4b2ff";
@@ -33,12 +34,12 @@ let
   };
   humidity_threshold = {
     schlafzimmer = {
-      upper = 60;
-      lower = 59;
+      upper = 75;
+      lower = 70;
     };
     bad = {
       upper = 65;
-      lower = 64;
+      lower = 62;
     };
   };
   inherit (haLib) triggers actions;
@@ -104,7 +105,7 @@ in
             {
               alias = "Entfeuchtersteuerung Schlafzimmer";
               trigger = [
-                (triggers.stateTrigger "sensor.${sensor.schlafzimmer}_humidity")
+                (triggers.stateTrigger "sensor.wall_humidity_schlafzimmer")
                 (triggers.stateTrigger "binary_sensor.schlafzimmerfenster")
               ];
               action = [
@@ -117,7 +118,7 @@ in
                           conditions = [
                             {
                               condition = "numeric_state";
-                              entity_id = "sensor.${sensor.schlafzimmer}_humidity";
+                              entity_id = "sensor.wall_humidity_schlafzimmer";
                               below = humidity_threshold.schlafzimmer.lower;
                             }
                             {
@@ -137,13 +138,8 @@ in
                       conditions = [
                         {
                           condition = "numeric_state";
-                          entity_id = "sensor.${sensor.schlafzimmer}_humidity";
+                          entity_id = "sensor.wall_humidity_schlafzimmer";
                           above = humidity_threshold.schlafzimmer.upper;
-                        }
-                        {
-                          condition = "numeric_state";
-                          entity_id = "sensor.openweathermap_darmstadt_hourly_temperature";
-                          below = 15;
                         }
                       ];
                       sequence = {
@@ -568,6 +564,14 @@ in
             platform = "rmvtransport";
             next_departure = [ { station = "3024634"; } ];
           }
+          {
+            name = "wall_humidity_schlafzimmer";
+            platform = "mold_indicator";
+            indoor_temp_sensor = "sensor.${sensor.schlafzimmer}_temperature";
+            indoor_humidity_sensor = "sensor.${sensor.schlafzimmer}_humidity";
+            outdoor_temp_sensor = "sensor.openweathermap_darmstadt_hourly_temperature";
+            calibration_factor = 1.7;
+          }
         ];
         http = {
           use_x_forwarded_for = true;
@@ -979,6 +983,13 @@ in
                     show_fill = false;
                     color = colors.temperature;
                   }
+                  {
+                    entity = "sensor.wall_humidity_schlafzimmer";
+                    name = "geschätze Wandtemperatur";
+                    attribute = "estimated_critical_temp";
+                    show_fill = false;
+                    color = colors.wall;
+                  }
                   graph.outside.temperature
                   graph.outside.dew_point
                   {
@@ -1041,10 +1052,16 @@ in
                 type = "custom:mini-graph-card";
                 entities = [
                   {
+                    entity = "sensor.wall_humidity_schlafzimmer";
+                    name = "Wandfeuchtigkeit";
+                    show_fill = false;
+                    state_adaptive_color = true;
+                  }
+                  {
                     entity = "sensor.${sensor.schlafzimmer}_humidity";
                     name = "Luftfeuchtigkeit";
                     show_fill = false;
-                    state_adaptive_color = true;
+                    color = colors.humidity;
                   }
                   graph.outside.humidity
                   {
