@@ -34,8 +34,8 @@ let
   };
   humidity_threshold = {
     schlafzimmer = {
-      upper = 75;
-      lower = 70;
+      upper = 81;
+      lower = 79;
     };
     bad = {
       upper = 65;
@@ -570,7 +570,7 @@ in
             indoor_temp_sensor = "sensor.${sensor.schlafzimmer}_temperature";
             indoor_humidity_sensor = "sensor.${sensor.schlafzimmer}_humidity";
             outdoor_temp_sensor = "sensor.openweathermap_darmstadt_hourly_temperature";
-            calibration_factor = 1.7;
+            calibration_factor = 1.65;
           }
         ];
         http = {
@@ -612,12 +612,17 @@ in
                 lib.recursiveUpdate config {
                   line_width = 3;
                   font_size = 60;
+                  font_size_header = 12;
+                  align_header = "left";
                   height = 200;
+                  align_state = "right";
                   show = {
                     labels = true;
                     labels_secondary = "hover";
-                    state = false;
                     legend = false;
+                    name = true;
+                    icon = false;
+                    state = true;
                   };
                 }
               );
@@ -628,21 +633,14 @@ in
                 (mkConfig {
                   hours_to_show = 168;
                   points_per_hour = 1;
-                  name = "7d";
                 })
                 (mkConfig {
                   hours_to_show = 24;
                   points_per_hour = 3;
-                  name = "24h";
                 })
                 (mkConfig {
                   hours_to_show = 1;
                   points_per_hour = 60;
-                  show = {
-                    name = false;
-                    icon = false;
-                    state = true;
-                  };
                 })
               ];
             };
@@ -985,7 +983,7 @@ in
                   }
                   {
                     entity = "sensor.wall_humidity_schlafzimmer";
-                    name = "geschätze Wandtemperatur";
+                    name = "Geschätze Wandtemperatur";
                     attribute = "estimated_critical_temp";
                     show_fill = false;
                     color = colors.wall;
@@ -1053,7 +1051,7 @@ in
                 entities = [
                   {
                     entity = "sensor.wall_humidity_schlafzimmer";
-                    name = "Wandfeuchtigkeit";
+                    name = "Geschätzte Wandfeuchtigkeit";
                     show_fill = false;
                     state_adaptive_color = true;
                   }
