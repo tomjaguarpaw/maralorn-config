@@ -1,16 +1,7 @@
-cabal-version:   3.0
-name:            nixpkgs-bot
-version:         0.1.0.0
-synopsis:
-  A matrix bot which watches nixpkgs and informs about PR progress.
-
-homepage:        https://git.maralorn.de/nixpkgs-bot
-license:         AGPL-3.0-or-later
-license-file:    LICENSE
-author:          maralorn
-maintainer:      mail@maralorn.de
-build-type:      Simple
-extra-doc-files: CHANGELOG.md
+cabal-version: 3.4
+name:          nixpkgs-bot
+version:       0.1.0.0
+build-type:    Simple
 
 common common-config
   ghc-options:        -Wall

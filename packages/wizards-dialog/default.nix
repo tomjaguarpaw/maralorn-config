@@ -14,6 +14,6 @@ mkDerivation {
     aeson ansi-terminal base daemons haskeline process relude text
     witch wizards yaml
   ];
-  license = "AGPL";
+  license = "unknown";
   mainProgram = "hotkeys";
 }

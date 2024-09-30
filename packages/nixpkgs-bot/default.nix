@@ -21,8 +21,6 @@ mkDerivation {
     persistent persistent-sqlite random relude resourcet time
     typed-process yaml
   ];
-  homepage = "https://git.maralorn.de/nixpkgs-bot";
-  description = "A matrix bot which watches nixpkgs and informs about PR progress";
-  license = lib.licenses.agpl3Plus;
+  license = "unknown";
   mainProgram = "nixpkgs-bot";
 }

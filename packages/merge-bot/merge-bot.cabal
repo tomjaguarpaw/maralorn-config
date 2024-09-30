@@ -1,8 +1,6 @@
-cabal-version: 3.0
+cabal-version: 3.4
 name:          merge-bot
 version:       0.1.0.0
-author:        maralorn
-maintainer:    mail@maralorn.de
 
 common common
   ghc-options:
@@ -33,9 +31,6 @@ common common
 executable merge-bot
   import:         common
   main-is:        Main.hs
-
-  -- other-modules:
-  -- other-extensions:
   build-depends:
     , aeson
     , aeson-optics

@@ -10,6 +10,6 @@ mkDerivation {
   executableHaskellDepends = [
     aeson base optics relude string-interpolate text wreq
   ];
-  license = lib.licenses.agpl3Plus;
+  license = "unknown";
   mainProgram = "vikunja-tools";
 }

@@ -15,6 +15,6 @@ mkDerivation {
   executableHaskellDepends = [
     base directory filepath lens megaparsec relude time unix
   ];
-  license = lib.licenses.agpl3Plus;
+  license = "unknown";
   mainProgram = "t";
 }

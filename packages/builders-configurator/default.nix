@@ -11,6 +11,6 @@ mkDerivation {
     base containers effectful effectful-th relude req say
     string-interpolate text witch
   ];
-  license = lib.licenses.agpl3Plus;
+  license = "unknown";
   mainProgram = "builders-configurator";
 }

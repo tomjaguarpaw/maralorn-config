@@ -22,6 +22,6 @@ mkDerivation {
     reflex relude safe-exceptions say shh stm string-interpolate
     template-haskell time typed-process uuid wreq
   ];
-  license = lib.licenses.agpl3Plus;
+  license = "unknown";
   mainProgram = "status-script";
 }

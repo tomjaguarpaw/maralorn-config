@@ -1,18 +1,7 @@
-cabal-version: 3.0
+cabal-version: 3.4
 name:          status-script
 version:       0.1.0.0
-
--- synopsis:
--- description:
-license:       AGPL-3.0-or-later
-license-file:  LICENSE
-author:        maralorn
-maintainer:    mail@maralorn.de
-
--- copyright:
 build-type:    Simple
-
--- extra-source-files:
 
 common common-config
   default-extensions:

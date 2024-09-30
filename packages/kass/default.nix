@@ -23,6 +23,6 @@ mkDerivation {
     aeson base containers data-default extra falsify optics relude
     tasty time witch
   ];
-  license = lib.licenses.agpl3Plus;
+  license = "unknown";
   mainProgram = "kass";
 }
