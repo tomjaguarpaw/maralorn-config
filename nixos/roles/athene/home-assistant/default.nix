@@ -570,7 +570,7 @@ in
             indoor_temp_sensor = "sensor.${sensor.schlafzimmer}_temperature";
             indoor_humidity_sensor = "sensor.${sensor.schlafzimmer}_humidity";
             outdoor_temp_sensor = "sensor.openweathermap_darmstadt_hourly_temperature";
-            calibration_factor = 1.65;
+            calibration_factor = 2.7;
           }
         ];
         http = {
