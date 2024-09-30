@@ -42,7 +42,11 @@ notifications env dMode = do
   dNotifications <- holdDyn mempty $ event <&> fmap mkWarning
   pure $
     zipDynWith
-      (\mode -> if mode >= Normal then id else const [])
+      ( \case
+          DND -> const []
+          Normal -> filter (maybe False (Text.isPrefixOf "heilmann") . (.description))
+          Sort -> id
+      )
       dMode
       (toList <$> dNotifications)
 
