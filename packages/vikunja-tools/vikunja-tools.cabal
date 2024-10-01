@@ -36,11 +36,13 @@ executable vikunja-tools
   main-is:        Main.hs
   build-depends:
     , aeson
+    , aeson-optics
     , base                ^>=4.18.2.1
     , optics
     , relude
     , string-interpolate
     , text
+    , transformers
     , wreq
 
   hs-source-dirs: exe

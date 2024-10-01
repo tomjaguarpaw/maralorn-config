@@ -1,5 +1,5 @@
-{ mkDerivation, aeson, base, lib, optics, relude
-, string-interpolate, text, wreq
+{ mkDerivation, aeson, aeson-optics, base, lib, optics, relude
+, string-interpolate, text, transformers, wreq
 }:
 mkDerivation {
   pname = "vikunja-tools";
@@ -8,7 +8,8 @@ mkDerivation {
   isLibrary = false;
   isExecutable = true;
   executableHaskellDepends = [
-    aeson base optics relude string-interpolate text wreq
+    aeson aeson-optics base optics relude string-interpolate text
+    transformers wreq
   ];
   license = "unknown";
   mainProgram = "vikunja-tools";

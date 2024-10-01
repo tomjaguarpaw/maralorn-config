@@ -570,7 +570,7 @@ in
             name = "Smoothed Outside Temperature";
             filters = {
               filter = "lowpass";
-              time_constant = 25;
+              time_constant = 40;
             };
           }
           {
