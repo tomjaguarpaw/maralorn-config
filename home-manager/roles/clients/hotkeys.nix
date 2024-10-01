@@ -24,6 +24,8 @@ let
     }
     {
       Orga = [
+        { Tasks = "firefox https://todo.darmstadt.ccc.de/projects/33/kanban"; }
+        { Inbox = "firefox https://todo.darmstadt.ccc.de/projects/-2/list"; }
         { Kalendar = term "ikhal"; }
         { Notes = edit_dir "~/git/notes"; }
         {
