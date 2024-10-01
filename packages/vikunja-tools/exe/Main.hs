@@ -12,14 +12,18 @@ import Relude
 url :: Text
 url = "https://todo.darmstadt.ccc.de/api/v1"
 
-inboxLabel :: Label
+inboxLabel, parentLabel, blockedLabel, maybeLabel, shouldLabel, mustLabel, wantLabel :: Label
 inboxLabel = Label 11
-
-parentLabel :: Label
 parentLabel = Label 12
-
-blockedLabel :: Label
 blockedLabel = Label 13
+maybeLabel = undefined
+shouldLabel = undefined
+mustLabel = undefined
+wantLabel = undefined
+
+maybeBucket, waitBucket :: Int
+maybeBucket = undefined
+waitBucket = undefined
 
 getToken :: IO Text
 getToken = Text.strip . decodeUtf8 <$> readFileBS "/run/agenix/vikunja-token"
