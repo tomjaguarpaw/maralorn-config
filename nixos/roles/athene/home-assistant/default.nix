@@ -565,12 +565,21 @@ in
             next_departure = [ { station = "3024634"; } ];
           }
           {
-            name = "wall_humidity_schlafzimmer";
+            platform = "filter";
+            entity_id = "sensor.openweathermap_darmstadt_hourly_temperature";
+            name = "Smoothed Outside Temperature";
+            filters = {
+              filter = "lowpass";
+              time_constant = 25;
+            };
+          }
+          {
+            name = "Wall Humidity Schlafzimmer";
             platform = "mold_indicator";
             indoor_temp_sensor = "sensor.${sensor.schlafzimmer}_temperature";
             indoor_humidity_sensor = "sensor.${sensor.schlafzimmer}_humidity";
-            outdoor_temp_sensor = "sensor.openweathermap_darmstadt_hourly_temperature";
-            calibration_factor = 2.7;
+            outdoor_temp_sensor = "sensor.smoothed_outside_temperature";
+            calibration_factor = 2;
           }
         ];
         http = {
