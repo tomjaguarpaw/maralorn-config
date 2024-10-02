@@ -35,7 +35,7 @@ let
   humidity_threshold = {
     schlafzimmer = {
       upper = 80;
-      lower = 79;
+      lower = 80;
     };
     bad = {
       upper = 65;
@@ -579,7 +579,7 @@ in
             indoor_temp_sensor = "sensor.${sensor.schlafzimmer}_temperature";
             indoor_humidity_sensor = "sensor.${sensor.schlafzimmer}_humidity";
             outdoor_temp_sensor = "sensor.smoothed_outside_temperature";
-            calibration_factor = 2.2;
+            calibration_factor = 1.9;
           }
         ];
         http = {
