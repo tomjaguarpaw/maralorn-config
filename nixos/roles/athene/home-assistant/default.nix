@@ -34,8 +34,8 @@ let
   };
   humidity_threshold = {
     schlafzimmer = {
-      upper = 80;
-      lower = 80;
+      upper = 81;
+      lower = 79;
     };
     bad = {
       upper = 65;
