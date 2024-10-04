@@ -4,6 +4,7 @@ import Control.Concurrent (threadDelay)
 import Control.Monad.Trans.State.Strict (modifyM)
 import Data.Aeson (FromJSON, ToJSON, Value, eitherDecode', encode)
 import Data.Aeson.Optics
+import Data.Sequence qualified as Seq
 import Data.Set qualified as Set
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
@@ -15,37 +16,24 @@ import Relude
 url :: Text
 url = "https://todo.darmstadt.ccc.de/api/v1"
 
-inboxLabel
-  , parentLabel
-  , blockedLabel
-  , maybeLabel
-  , shouldLabel
-  , mustLabel
-  , wantLabel
-  , waitingLabel
-  , categoryLabel
-    :: Label
+inboxLabel, parentLabel, categoryLabel, unsortedLabel :: Label
 inboxLabel = Label 11
 parentLabel = Label 12
-blockedLabel = Label 13
-shouldLabel = Label 29
-mustLabel = Label 28
-wantLabel = Label 27
-maybeLabel = Label 14
-waitingLabel = Label 26
 categoryLabel = Label 15
+unsortedLabel = Label 30
 
 autoLabels :: Set Label
-autoLabels = Set.fromList [inboxLabel, wantLabel, mustLabel, shouldLabel]
+autoLabels = Set.fromList [inboxLabel, unsortedLabel]
 
 nonListLabels :: Set Label
-nonListLabels = autoLabels <> Set.fromList [parentLabel, blockedLabel, categoryLabel]
+nonListLabels = autoLabels <> Set.fromList [parentLabel, categoryLabel]
 
-maybeBucket, waitingBucket, inboxBucket, inactiveBucket, backlogBucket :: Int
+maybeBucket, awaitingBucket, inboxBucket, waitingBucket, projectBucket, backlogBucket :: Bucket
 maybeBucket = 52
-waitingBucket = 53
+awaitingBucket = 53
 inboxBucket = 55
-inactiveBucket = 56
+waitingBucket = 56
+projectBucket = 58
 backlogBucket = 42
 
 wantColor, mustColor, shouldColor :: Text
@@ -62,12 +50,15 @@ newtype Label = Label
   deriving anyclass (FromJSON)
   deriving stock (Generic, Show, Eq, Ord)
 
+newtype Bucket = Bucket Int
+  deriving newtype (Num, FromJSON, ToJSON, Show, Eq, Ord)
+
 data Task = Task
   { id :: Int
   , created :: Text
   , project_id :: Int
   , priority :: Int
-  , bucket_id :: Int
+  , bucket_id :: Bucket
   , labels :: Maybe (Set Label)
   , related_tasks :: RelatedTasks
   }
@@ -77,12 +68,14 @@ data Task = Task
 data RelatedTasks = RelatedTasks
   { subtask :: Maybe (Set RelatedTask)
   , blocked :: Maybe (Set RelatedTask)
+  , parenttask :: Maybe (Set RelatedTask)
   }
   deriving anyclass (FromJSON)
   deriving stock (Generic, Show, Eq, Ord)
 
-newtype RelatedTask = RelatedTask
+data RelatedTask = RelatedTask
   { done :: Bool
+  , bucket_id :: Bucket
   }
   deriving anyclass (FromJSON)
   deriving stock (Generic, Show, Eq, Ord)
@@ -108,8 +101,8 @@ ensureLabel opts task label should_exist = do
   label_id = label.id
   new_task = task & #labels % non mempty %~ (if should_exist then Set.insert else Set.delete) label
 
-ensureBucket :: Int -> Value -> Value
-ensureBucket bucket_id = set (key "bucket_id" % _Integral) bucket_id
+ensureBucket :: Bucket -> Value -> Value
+ensureBucket bucket_id = set (key "bucket_id" % _Integral) (coerce bucket_id :: Int)
 
 ensureColor :: Text -> Value -> Value
 ensureColor color = set (key "hex_color" % _String) color
@@ -122,11 +115,12 @@ ensureChange opts task f task_js = when (new_task /= task_js) $ do
   task_id = task.id
   new_task = f task_js
 
-chooseBucket :: Task -> Int
+chooseBucket :: Task -> Bucket
 chooseBucket t
   | inboxLabel `Set.member` task_labels = inboxBucket
-  | Set.isSubsetOf task_labels nonListLabels = inactiveBucket
-  | t.bucket_id `elem` [inboxBucket, inactiveBucket] = backlogBucket
+  | isWaiting t = waitingBucket
+  | isProject t, not (isMaybe t), not (isAwaiting t), Set.isSubsetOf task_labels nonListLabels = projectBucket
+  | t.bucket_id `elem` [inboxBucket, waitingBucket, projectBucket] = backlogBucket
   | otherwise = t.bucket_id
  where
   task_labels = fromMaybe mempty t.labels
@@ -137,20 +131,46 @@ chooseColor t = case t.priority of
   2 -> mustColor
   _ -> shouldColor
 
+fetchAll :: Options -> String -> IO (Seq (Value, Task))
+fetchAll opts path = go 1 mempty
+ where
+  go :: Int -> Seq (Value, Task) -> IO (Seq (Value, Task))
+  go n xs = do
+    newxs <- fetchPage n
+    ((xs <> newxs) <>)
+      <$> if length newxs == 50
+        then fetchPage (n + 1)
+        else pure mempty
+  fetchPage n = do
+    response <- Wreq.getWith (opts & lensVL (param "page") .~ [show n]) path
+    either (error . toText) pure $ taskAndJS $ response ^. lensVL responseBody
+
+parentIsNotIdle :: Task -> Bool
+parentIsNotIdle t =
+  any (\p -> not p.done && projectBucket /= p.bucket_id) . fromMaybe mempty $ t.related_tasks.parenttask
+
+relatedTodo :: Maybe (Set RelatedTask) -> Bool
+relatedTodo = not . all (.done) . fromMaybe mempty
+
+isAwaiting, inInbox, isWaiting, isPostponed, isBlocked, isProject, isMaybe, isCategory, isUnsorted :: Task -> Bool
+inInbox t = Set.isSubsetOf (fromMaybe mempty t.labels) autoLabels && not (isMaybe t || isAwaiting t || isWaiting t)
+isMaybe t = maybeBucket == t.bucket_id
+isAwaiting t = awaitingBucket == t.bucket_id
+isWaiting t = isBlocked t || parentIsNotIdle t || isPostponed t
+isPostponed _ = False -- TODO
+isBlocked t = relatedTodo t.related_tasks.blocked
+isProject t = relatedTodo t.related_tasks.subtask
+isCategory t = Set.member categoryLabel (fromMaybe mempty t.labels)
+isUnsorted t = not (isCategory t || relatedTodo t.related_tasks.parenttask)
+
 update :: Options -> IO ()
 update opts = do
-  response <- Wreq.getWith opts [i|#{url}/tasks/all|]
-  tasks <- either (error . toText) pure $ taskAndJS $ response ^. lensVL responseBody
+  tasks <- fetchAll opts [i|#{url}/projects/33/tasks|]
   putTextLn [i|Checking #{length tasks} tasks.|]
   forM_ tasks $ uncurry \value -> runStateT do
-    modifyM \t -> ensureLabel opts t shouldLabel (0 == t.priority)
-    modifyM \t -> ensureLabel opts t wantLabel (1 == t.priority)
-    modifyM \t -> ensureLabel opts t mustLabel (2 == t.priority)
-    modifyM \t -> ensureLabel opts t waitingLabel (waitingBucket == t.bucket_id)
-    modifyM \t -> ensureLabel opts t maybeLabel (maybeBucket == t.bucket_id)
-    modifyM \t -> ensureLabel opts t blockedLabel (not (all (.done) (fromMaybe mempty t.related_tasks.blocked)))
-    modifyM \t -> ensureLabel opts t parentLabel (not (all (.done) (fromMaybe mempty t.related_tasks.subtask)))
-    modifyM \t -> ensureLabel opts t inboxLabel (Set.isSubsetOf (fromMaybe mempty t.labels) autoLabels)
+    modifyM \t -> ensureLabel opts t parentLabel (isProject t)
+    modifyM \t -> ensureLabel opts t inboxLabel (inInbox t)
+    modifyM \t -> ensureLabel opts t unsortedLabel (isUnsorted t)
     get >>= \t -> lift $ ensureChange opts t (ensureBucket (chooseBucket t) . ensureColor (chooseColor t)) value
 
 main :: IO ()
@@ -160,6 +180,8 @@ main = do
         defaults
           & lensVL (header "Authorization") .~ [[i|Bearer #{token}|]]
           & lensVL (header "Content-Type") .~ ["application/json"]
+          & lensVL (param "filter_by") .~ ["done"]
+          & lensVL (param "filter_value") .~ ["false"]
   forever do
     update opts
     threadDelay 20_000_000
@@ -171,8 +193,8 @@ main = do
           & lensVL (param "filter_comparator") .~ ["greater"]
       threadDelay 20_000_000
 
-taskAndJS :: LByteString -> Either String [(Value, Task)]
+taskAndJS :: LByteString -> Either String (Seq (Value, Task))
 taskAndJS s = do
   js <- eitherDecode' s
   tasks <- eitherDecode' s
-  pure $ zip js tasks
+  pure $ Seq.zip js tasks
