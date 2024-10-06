@@ -26,10 +26,6 @@ in
         };
         dns_config = {
           base_domain = "m-0.eu";
-          nameservers = [
-            config.m-0.hosts.tailscale.hera.AAAA
-            "9.9.9.9"
-          ];
           domains = [ zone ];
           extra_records = lib.concatLists (
             lib.concatLists (

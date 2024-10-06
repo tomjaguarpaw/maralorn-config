@@ -40,7 +40,7 @@
       # have the job run this shell script
       script =
         let
-          options = ''--accept-routes --advertise-routes "${config.m-0.tailscale-routes}"'';
+          options = ''--accept-routes --advertise-routes "${config.m-0.tailscale-routes}" --accept-dns=false'';
         in
         ''
           # check if we are already authenticated to tailscale
