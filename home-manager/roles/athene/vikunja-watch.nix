@@ -3,7 +3,7 @@
 
   config.systemd.user.services.vikunja-watch = {
     Service = {
-      ExecStart = lib.getExe pkgs.vikunja-tools;
+      ExecStart = lib.getExe' pkgs.vikunja-tools "vikunja-watch";
       Restart = "always";
       RestartSec = "10s";
     };

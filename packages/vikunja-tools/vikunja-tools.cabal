@@ -23,17 +23,23 @@ common warnings
     OverloadedLabels
     OverloadedRecordDot
     OverloadedStrings
+    PackageImports
     PartialTypeSignatures
     QuasiQuotes
     RecordWildCards
     ScopedTypeVariables
     TemplateHaskell
+
   build-depends:
     , aeson
     , aeson-optics
     , base                ^>=4.18.2.1
+    , directory
+    , filepath
     , optics
+    , os-string
     , relude
+    , shh
     , string-interpolate
     , text
     , time
@@ -43,19 +49,18 @@ common warnings
   default-language:   GHC2021
 
 library
-  import:         warnings
+  import:          warnings
   exposed-modules: Vikunja
-  hs-source-dirs: lib
-
+  hs-source-dirs:  lib
 
 executable vikunja-watch
   import:         warnings
   main-is:        Main.hs
-  build-depends: vikunja-tools
+  build-depends:  vikunja-tools
   hs-source-dirs: exe
 
 executable vikunja-mail-import
   import:         warnings
   main-is:        Main.hs
-  build-depends: vikunja-tools
+  build-depends:  vikunja-tools
   hs-source-dirs: mail-exe

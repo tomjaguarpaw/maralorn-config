@@ -58,7 +58,9 @@ let
     kass = cleanCabalPackage ./kass {
       overrides = _: { buildDepends = builtins.attrValues { inherit (stable-pkgs) tailwindcss; }; };
     };
-    vikunja-tools = cleanCabalPackage ./vikunja-tools { };
+    vikunja-tools = cleanCabalPackage ./vikunja-tools {
+      overrides = _: { buildDepends = builtins.attrValues { inherit (stable-pkgs) mblaze; }; };
+    };
     builders-configurator = cleanCabalPackage ./builders-configurator { };
     status-script = cleanCabalPackage ./status-script {
       overrides = _: {
