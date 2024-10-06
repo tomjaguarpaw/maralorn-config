@@ -28,12 +28,6 @@ common warnings
     RecordWildCards
     ScopedTypeVariables
     TemplateHaskell
-
-  default-language:   GHC2021
-
-executable vikunja-tools
-  import:         warnings
-  main-is:        Main.hs
   build-depends:
     , aeson
     , aeson-optics
@@ -46,4 +40,22 @@ executable vikunja-tools
     , transformers
     , wreq
 
+  default-language:   GHC2021
+
+library
+  import:         warnings
+  exposed-modules: Vikunja
+  hs-source-dirs: lib
+
+
+executable vikunja-watch
+  import:         warnings
+  main-is:        Main.hs
+  build-depends: vikunja-tools
   hs-source-dirs: exe
+
+executable vikunja-mail-import
+  import:         warnings
+  main-is:        Main.hs
+  build-depends: vikunja-tools
+  hs-source-dirs: mail-exe
