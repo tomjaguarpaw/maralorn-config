@@ -2,12 +2,13 @@ module Main where
 
 import Control.Concurrent (threadDelay)
 import Control.Monad.Trans.State.Strict (modifyM)
-import Data.Aeson (FromJSON, ToJSON, Value, eitherDecode', encode)
+import Data.Aeson (FromJSON (..), ToJSON (..), Value (..), eitherDecode', encode, withText)
 import Data.Aeson.Optics
 import Data.Sequence qualified as Seq
 import Data.Set qualified as Set
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
+import Data.Time
 import Network.Wreq hiding (get)
 import Network.Wreq qualified as Wreq hiding (get)
 import Optics
@@ -53,9 +54,40 @@ newtype Label = Label
 newtype Bucket = Bucket Int
   deriving newtype (Num, FromJSON, ToJSON, Show, Eq, Ord)
 
+newtype Time = Time (Maybe ZonedTime)
+  deriving newtype (Show)
+  deriving stock (Generic)
+
+instance Eq Time where
+  Time (Just (ZonedTime a b)) == Time (Just (ZonedTime c d)) = a == c && b == d
+  Time Nothing == Time Nothing = True
+  _ == _ = False
+
+timeFormatString :: String
+timeFormatString = "%FT%T%Ez"
+
+defaultTime :: String
+defaultTime = "0001-01-01T00:00:00Z"
+
+instance FromJSON Time where
+  parseJSON =
+    withText "Datetime" $
+      fmap Time . \case
+        "0001-01-01T00:00:00Z" -> pure Nothing
+        x -> fmap Just . parseTimeM True defaultTimeLocale timeFormatString . toString $ x
+
+instance ToJSON Time where
+  toJSON =
+    String . toText . \case
+      Time Nothing -> defaultTime
+      Time (Just x) -> formatTime defaultTimeLocale timeFormatString x
+
 data Task = Task
   { id :: Int
-  , created :: Text
+  , created :: Time
+  , start_date :: Time
+  , repeat_after :: Int
+  , repeat_mode :: Int
   , project_id :: Int
   , priority :: Int
   , bucket_id :: Bucket
@@ -63,7 +95,7 @@ data Task = Task
   , related_tasks :: RelatedTasks
   }
   deriving anyclass (FromJSON)
-  deriving stock (Generic, Show, Eq, Ord)
+  deriving stock (Generic, Show, Eq)
 
 data RelatedTasks = RelatedTasks
   { subtask :: Maybe (Set RelatedTask)
@@ -81,11 +113,11 @@ data RelatedTask = RelatedTask
   deriving stock (Generic, Show, Eq, Ord)
 
 data SetLabel = SetLabel
-  { created :: Text
+  { created :: Time
   , label_id :: Int
   }
   deriving anyclass (ToJSON)
-  deriving stock (Generic, Show, Eq, Ord)
+  deriving stock (Generic, Show)
 
 ensureLabel :: Options -> Task -> Label -> Bool -> IO Task
 ensureLabel opts task label should_exist = do
@@ -101,6 +133,30 @@ ensureLabel opts task label should_exist = do
   label_id = label.id
   new_task = task & #labels % non mempty %~ (if should_exist then Set.insert else Set.delete) label
 
+ensureUncheckedDescription :: UTCTime -> Task -> Value -> Value
+ensureUncheckedDescription now t
+  | isPostponed now t =
+      over
+        (key "description" % _String)
+        ( Text.replace "data-checked=\"true\"" "data-checked=\"false\""
+            >>> Text.replace "checked=\"checked\"" ""
+        )
+  | otherwise = id
+
+ensureRecentRepetition :: UTCTime -> Task -> Value -> Value
+ensureRecentRepetition now t
+  | t.repeat_mode == 0
+  , t.repeat_after /= 0
+  , maybe
+      False
+      ((<= now) . addUTCTime (fromIntegral t.repeat_after) . zonedTimeToUTC)
+      (t.start_date ^? #_Time % _Just) =
+      over (key "start_date" % _JSON % timeLocaltime) (addLocalTime (fromIntegral t.repeat_after))
+  | otherwise = id
+
+timeLocaltime :: AffineTraversal' Time LocalTime
+timeLocaltime = #_Time % _Just % lens zonedTimeToLocalTime (\z l -> z{zonedTimeToLocalTime = l})
+
 ensureBucket :: Bucket -> Value -> Value
 ensureBucket bucket_id = set (key "bucket_id" % _Integral) (coerce bucket_id :: Int)
 
@@ -115,10 +171,10 @@ ensureChange opts task f task_js = when (new_task /= task_js) $ do
   task_id = task.id
   new_task = f task_js
 
-chooseBucket :: Task -> Bucket
-chooseBucket t
+chooseBucket :: UTCTime -> Task -> Bucket
+chooseBucket now t
   | inboxLabel `Set.member` task_labels = inboxBucket
-  | isWaiting t = waitingBucket
+  | isWaiting now t = waitingBucket
   | isProject t, not (isMaybe t), not (isAwaiting t), Set.isSubsetOf task_labels nonListLabels = projectBucket
   | t.bucket_id `elem` [inboxBucket, waitingBucket, projectBucket] = backlogBucket
   | otherwise = t.bucket_id
@@ -132,7 +188,10 @@ chooseColor t = case t.priority of
   _ -> shouldColor
 
 fetchAll :: Options -> String -> IO (Seq (Value, Task))
-fetchAll opts path = go 1 mempty
+fetchAll opts path = do
+  r <- go 1 mempty
+  putTextLn [i|Got #{length r} tasks from #{path}.|]
+  pure r
  where
   go :: Int -> Seq (Value, Task) -> IO (Seq (Value, Task))
   go n xs = do
@@ -152,26 +211,49 @@ parentIsNotIdle t =
 relatedTodo :: Maybe (Set RelatedTask) -> Bool
 relatedTodo = not . all (.done) . fromMaybe mempty
 
-isAwaiting, inInbox, isWaiting, isPostponed, isBlocked, isProject, isMaybe, isCategory, isUnsorted :: Task -> Bool
-inInbox t = Set.isSubsetOf (fromMaybe mempty t.labels) autoLabels && not (isMaybe t || isAwaiting t || isWaiting t)
+isAwaiting, isBlocked, isProject, isMaybe, isCategory, isUnsorted :: Task -> Bool
 isMaybe t = maybeBucket == t.bucket_id
 isAwaiting t = awaitingBucket == t.bucket_id
-isWaiting t = isBlocked t || parentIsNotIdle t || isPostponed t
-isPostponed _ = False -- TODO
 isBlocked t = relatedTodo t.related_tasks.blocked
 isProject t = relatedTodo t.related_tasks.subtask
 isCategory t = Set.member categoryLabel (fromMaybe mempty t.labels)
 isUnsorted t = not (isCategory t || relatedTodo t.related_tasks.parenttask)
 
-update :: Options -> IO ()
-update opts = do
+inInbox, isWaiting, isPostponed :: UTCTime -> Task -> Bool
+isPostponed now t = maybe False ((> now) . zonedTimeToUTC) (t.start_date ^? #_Time % _Just)
+inInbox now t = Set.isSubsetOf (fromMaybe mempty t.labels) autoLabels && not (isMaybe t || isAwaiting t || isWaiting now t)
+isWaiting now t = isBlocked t || parentIsNotIdle t || isPostponed now t
+
+updateDefaultProject :: Options -> IO ()
+updateDefaultProject opts = do
   tasks <- fetchAll opts [i|#{url}/projects/33/tasks|]
-  putTextLn [i|Checking #{length tasks} tasks.|]
+  now <- getCurrentTime
   forM_ tasks $ uncurry \value -> runStateT do
     modifyM \t -> ensureLabel opts t parentLabel (isProject t)
-    modifyM \t -> ensureLabel opts t inboxLabel (inInbox t)
+    modifyM \t -> ensureLabel opts t inboxLabel (inInbox now t)
     modifyM \t -> ensureLabel opts t unsortedLabel (isUnsorted t)
-    get >>= \t -> lift $ ensureChange opts t (ensureBucket (chooseBucket t) . ensureColor (chooseColor t)) value
+    get >>= \t ->
+      lift $
+        ensureChange
+          opts
+          t
+          ( ensureBucket (chooseBucket now t)
+              >>> ensureColor (chooseColor t)
+              >>> ensureRecentRepetition now t
+          )
+          value
+
+update :: Options -> IO ()
+update opts = do
+  updateCheckLists opts
+  updateDefaultProject opts
+
+updateCheckLists :: Options -> IO ()
+updateCheckLists opts = do
+  tasks <- fetchAll opts [i|#{url}/projects/40/tasks|]
+  now <- getCurrentTime
+  forM_ tasks $ \(value, t) ->
+    ensureChange opts t (ensureRecentRepetition now t >>> ensureUncheckedDescription now t) value
 
 main :: IO ()
 main = do

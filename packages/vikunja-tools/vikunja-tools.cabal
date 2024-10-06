@@ -42,6 +42,7 @@ executable vikunja-tools
     , relude
     , string-interpolate
     , text
+    , time
     , transformers
     , wreq
 
