@@ -36,7 +36,7 @@ in
         desc="$(jj log -T 'self.description()' -r "$rev" --no-graph | head -n1)"
       fi
 
-      branch=$(jj log -T 'self.branches()' -r "$rev" --no-graph | sd "\*" "")
+      branch=$(jj log -T 'self.bookmarks()' -r "$rev" --no-graph | sd "\*" "")
 
       if [[ "$branch" == "" ]]; then
         branch=$(echo "''${desc//+([^[:alnum:]])/-}" | tr '[:upper:]' '[:lower:]')
@@ -84,9 +84,9 @@ in
         };
         revsets.log = "@ | trunks() | ancestors(trunks()..active(),2)";
         revset-aliases = {
-          "trunks()" = "remote_branches(exact:main,exact:origin) | remote_branches(exact:master,exact:origin) | remote_branches(exact:develop,exact:origin) | remote_branches(exact:converts,exact:origin) | remote_branches(exact:haskell-updates,exact:origin)";
+          "trunks()" = "remote_bookmarks(exact:main,exact:origin) | remote_bookmarks(exact:master,exact:origin) | remote_bookmarks(exact:develop,exact:origin) | remote_bookmarks(exact:converts,exact:origin) | remote_bookmarks(exact:haskell-updates,exact:origin)";
           "immutable_heads()" = "trunks() | tags()";
-          "active()" = "heads(immutable_heads()..) ~ (remote_branches() ~ branches())";
+          "active()" = "heads(immutable_heads()..) ~ (remote_bookmarks() ~ bookmarks())";
         };
         template-aliases."format_short_change_id(id)" = "id.shortest()";
       };
