@@ -33,9 +33,11 @@ in
           echo "No ${name} app found. Please checkout mirror and img/ folder. References should be found at 5e.tools."
           exit 1
         fi
-        git pull -r
+        git fetch
+        git reset --hard origin/main
         cd img
-        git pull
+        git fetch
+        git reset --hard origin/main
         cd ..
         # We really should run `npm i` here, but it fails spuriously within systemd and I don’t know why.
 
