@@ -40,7 +40,7 @@ in
 
       if [[ "$branch" == "" ]]; then
         branch=$(echo "''${desc//+([^[:alnum:]])/-}" | tr '[:upper:]' '[:lower:]')
-        jj branch set "$branch" -r "$rev" --quiet
+        jj bookmark set "$branch" -r "$rev" --quiet
       fi
 
       jj git push -r "$rev"
