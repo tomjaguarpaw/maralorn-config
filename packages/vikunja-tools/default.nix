@@ -1,6 +1,6 @@
 { mkDerivation, aeson, aeson-optics, base, directory, filepath, lib
-, optics, os-string, relude, shh, string-interpolate, text, time
-, transformers, wreq
+, optics, os-string, relude, string-interpolate, text, time
+, transformers, typed-process, which, wreq
 }:
 mkDerivation {
   pname = "vikunja-tools";
@@ -10,11 +10,11 @@ mkDerivation {
   isExecutable = true;
   libraryHaskellDepends = [
     aeson aeson-optics base directory filepath optics os-string relude
-    shh string-interpolate text time transformers wreq
+    string-interpolate text time transformers typed-process which wreq
   ];
   executableHaskellDepends = [
     aeson aeson-optics base directory filepath optics os-string relude
-    shh string-interpolate text time transformers wreq
+    string-interpolate text time transformers typed-process which wreq
   ];
   license = "unknown";
 }

@@ -4,7 +4,10 @@ version:       0.1.0.0
 build-type:    Simple
 
 common warnings
-  ghc-options:        -Wall
+  ghc-options:
+    -Wall -Wno-type-defaults -Wcompat -fno-show-valid-hole-fits
+    -fdefer-type-errors -fno-show-error-context -fmax-relevant-binds=0
+
   default-extensions:
     BlockArguments
     DataKinds
@@ -39,11 +42,12 @@ common warnings
     , optics
     , os-string
     , relude
-    , shh
     , string-interpolate
     , text
     , time
     , transformers
+    , typed-process
+    , which
     , wreq
 
   default-language:   GHC2021

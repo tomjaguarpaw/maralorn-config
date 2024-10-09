@@ -1,4 +1,4 @@
-module Vikunja (updateLoop) where
+module Vikunja (updateLoop, url, defaultOptions, defaultProject) where
 
 import Control.Concurrent (threadDelay)
 import Control.Monad.Trans.State.Strict (modifyM)
@@ -84,6 +84,7 @@ instance ToJSON Time where
 
 data Task = Task
   { id :: Int
+  , done :: Bool
   , created :: Time
   , start_date :: Time
   , repeat_after :: Int
@@ -174,8 +175,8 @@ ensureChange opts task f task_js = when (new_task /= task_js) $ do
 chooseBucket :: UTCTime -> Task -> Bucket
 chooseBucket now t
   | inboxLabel `Set.member` task_labels = inboxBucket
-  | isWaiting now t = waitingBucket
-  | isProject t, not (isMaybe t), not (isAwaiting t), Set.isSubsetOf task_labels nonListLabels = projectBucket
+  | isWaiting now t, not t.done = waitingBucket
+  | isProject t, not (t.done || isMaybe t || isAwaiting t), Set.isSubsetOf task_labels nonListLabels = projectBucket
   | t.bucket_id `elem` [inboxBucket, waitingBucket, projectBucket] = backlogBucket
   | otherwise = t.bucket_id
  where
@@ -221,12 +222,17 @@ isUnsorted t = not (isCategory t || relatedTodo t.related_tasks.parenttask)
 
 inInbox, isWaiting, isPostponed :: UTCTime -> Task -> Bool
 isPostponed now t = maybe False ((> now) . zonedTimeToUTC) (t.start_date ^? #_Time % _Just)
-inInbox now t = Set.isSubsetOf (fromMaybe mempty t.labels) autoLabels && not (isMaybe t || isAwaiting t || isWaiting now t)
+inInbox now t =
+  Set.isSubsetOf (fromMaybe mempty t.labels) autoLabels
+    && not (isMaybe t || isAwaiting t || isWaiting now t || t.done)
 isWaiting now t = isBlocked t || parentIsNotIdle t || isPostponed now t
+
+defaultProject :: Int
+defaultProject = 33
 
 updateDefaultProject :: Options -> IO ()
 updateDefaultProject opts = do
-  tasks <- fetchAll opts [i|#{url}/projects/33/tasks|]
+  tasks <- fetchAll opts [i|#{url}/projects/#{defaultProject}/tasks|]
   now <- getCurrentTime
   forM_ tasks $ uncurry \value -> runStateT do
     modifyM \t -> ensureLabel opts t parentLabel (isProject t)
@@ -255,15 +261,20 @@ updateCheckLists opts = do
   forM_ tasks $ \(value, t) ->
     ensureChange opts t (ensureRecentRepetition now t >>> ensureUncheckedDescription now t) value
 
+defaultOptions :: IO Options
+defaultOptions = do
+  token <- getToken
+  pure $
+    defaults
+      & lensVL (header "Authorization") .~ [[i|Bearer #{token}|]]
+      & lensVL (header "Content-Type") .~ ["application/json"]
+
 updateLoop :: IO ()
 updateLoop = do
-  token <- getToken
-  let opts =
-        defaults
-          & lensVL (header "Authorization") .~ [[i|Bearer #{token}|]]
-          & lensVL (header "Content-Type") .~ ["application/json"]
-          & lensVL (param "filter_by") .~ ["done"]
-          & lensVL (param "filter_value") .~ ["false"]
+  opts <-
+    defaultOptions
+      <&> (lensVL (param "filter_by") .~ ["done"])
+        . (lensVL (param "filter_value") .~ ["false"])
   forever do
     update opts
     threadDelay 20_000_000

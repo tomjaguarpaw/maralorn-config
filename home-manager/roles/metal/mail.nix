@@ -16,12 +16,20 @@ let
     name
     alternates
     ;
+  sync = "PATH=${lib.makeBinPath [ pkgs.coreutils ]}:$PATH ${lib.getExe' pkgs.isync "mbsync"}";
   quick-mail-sync = pkgs.writeShellScriptBin "quick-mail-sync" ''
     ${pkgs.coreutils}/bin/mkdir -p ~/.cache/mutt
-    PATH=${
-      lib.makeBinPath [ pkgs.coreutils ]
-    }:$PATH ${pkgs.isync}/bin/mbsync hera:INBOX,Code heilmann-inbox
-    ${pkgs.notmuch}/bin/notmuch new
+    ${sync} hera:INBOX heilmann-inbox
+    ${
+      if config.m-0.hostName == "athene" then
+        ''
+          ${sync} hera:Move/todo
+          ${lib.getExe' pkgs.vikunja-tools "vikunja-mail-import"}
+        ''
+      else
+        ""
+    }
+    ${lib.getExe pkgs.notmuch} new
   '';
   maildir = config.accounts.email.maildirBasePath;
 in
