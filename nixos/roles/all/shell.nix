@@ -123,7 +123,7 @@
         s = "sudo systemctl";
         g = "set_terminal_title lazygit $(pwd); lazygit";
         j = "set_terminal_title lazyjj $(pwd); lazyjj";
-        jpush = ''f() { if [[ "$2" == "" ]]; then jj branch set $1; jj git push -b $1; else jj branch set $1 -r "$2"; jj git push -b $1; fi}; f'';
+        jpush = ''f() { if [[ "$2" == "" ]]; then jj bookmark set $1; jj git push -b $1; else jj bookmark set $1 -r "$2"; jj git push -b $1; fi}; f'';
         u = "systemctl --user";
         m = "man";
         h = ''f() { if [[ "$1" == "" ]]; then set_terminal_title hx $(pwd); hx .; else set_terminal_title hx $(pwd) $@; hx "$@"; fi}; f'';
