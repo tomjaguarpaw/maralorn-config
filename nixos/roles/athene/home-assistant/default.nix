@@ -975,6 +975,21 @@ in
                     entity = "button.restart_${esp.schlafzimmer}";
                     name = "Klimasensor Neustarten";
                   }
+                  { type = "divider"; }
+                  "sensor.${sensor.schlafzimmer}_temperature"
+                  {
+                    type = "attribute";
+                    entity = "sensor.wall_humidity_schlafzimmer";
+                    name = "Geschätzte Wandtemperatur";
+                    attribute = "estimated_critical_temp";
+                    icon = "mdi:home-thermometer";
+                    suffix = "°C";
+                  }
+                  {
+                    entity = "sensor.wall_humidity_schlafzimmer";
+                    name = "Geschätzte Wandfeuchtigkeit";
+                    icon = "mdi:water-percent";
+                  }
                   #{
                   #  entity = "button.${sensor.schlafzimmer}_force_calibration";
                   #  name = "CO2 Kalibrieren";
