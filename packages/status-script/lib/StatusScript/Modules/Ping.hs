@@ -26,7 +26,9 @@ ping' = \env -> do
       unreachable_hosts
         <&> \host ->
           MkWarning
-            { description = Just [i|No tunnel to #{host}|]
+            { description = [[i|No tunnel to #{host}|]]
+            , heading = "Ping"
+            , barDisplay = Count
             , group = toEnum 983387
             , subgroup = Nothing
             }

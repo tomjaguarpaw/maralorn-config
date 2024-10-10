@@ -1,4 +1,4 @@
-module Vikunja (updateLoop, url, defaultOptions, defaultProject) where
+module Vikunja (updateLoop, url, defaultOptions, defaultProject, fetchAll, Task (..)) where
 
 import Control.Concurrent (threadDelay)
 import Control.Monad.Trans.State.Strict (modifyM)
@@ -85,6 +85,8 @@ instance ToJSON Time where
 data Task = Task
   { id :: Int
   , done :: Bool
+  , title :: Text
+  , description :: Text
   , created :: Time
   , start_date :: Time
   , repeat_after :: Int
@@ -94,6 +96,7 @@ data Task = Task
   , bucket_id :: Bucket
   , labels :: Maybe (Set Label)
   , related_tasks :: RelatedTasks
+  , kanban_position :: Maybe Double
   }
   deriving anyclass (FromJSON)
   deriving stock (Generic, Show, Eq)

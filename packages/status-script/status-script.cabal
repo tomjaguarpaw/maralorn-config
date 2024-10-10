@@ -54,6 +54,7 @@ common common-config
     , time
     , typed-process
     , uuid
+    , vikunja-tools
     , wreq
 
   default-language:   GHC2021
@@ -83,6 +84,7 @@ library
     StatusScript.Modules.Player
     StatusScript.Modules.SoftwareFeed
     StatusScript.Modules.Timer
+    StatusScript.Modules.Vikunja
     StatusScript.PublishSocket
     StatusScript.ReflexUtil
     StatusScript.Warnings

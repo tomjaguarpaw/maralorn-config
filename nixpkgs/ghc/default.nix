@@ -6,22 +6,18 @@ let
   hpkgs = final.unstableHaskellPackages.override {
     overrides = self.overlays.haskellPackagesOverlay;
   };
-  shell = hpkgs.shellFor {
-    withHoogle = true;
-    packages = p: builtins.attrValues (self.lib.selectHaskellPackages p);
-    extraDependencies = p: {
-      libraryHaskellDepends = builtins.attrValues (
-        myPkgs.makeHaskellScriptPackages p
-        // selectHaskellPackages p
-        // {
-          inherit (p) ghc-debug-client doctest;
-        }
-      );
-    };
-  };
 in
 {
   myHaskellScriptPackages = myPkgs.makeHaskellScriptPackages final.haskellPackages;
-  ghcWithPackages = builtins.head shell.nativeBuildInputs;
+  ghcWithPackages = hpkgs.ghc.withHoogle (
+    p:
+    builtins.attrValues (
+      myPkgs.makeHaskellScriptPackages p
+      // selectHaskellPackages p
+      // {
+        inherit (p) ghc-debug-client doctest;
+      }
+    )
+  );
 }
 // selectHaskellPackages hpkgs

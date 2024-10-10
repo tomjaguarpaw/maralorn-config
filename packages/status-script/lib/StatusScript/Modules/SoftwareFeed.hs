@@ -10,7 +10,7 @@ import Shh qualified
 import StatusScript.Env (Env (..))
 import StatusScript.Mode (Mode (..))
 import StatusScript.ReflexUtil
-import StatusScript.Warnings (Warning (..))
+import StatusScript.Warnings
 
 softwareFeed
   :: MonadHeadlessApp t m
@@ -31,8 +31,10 @@ getUpdates =
     0 -> []
     n ->
       [ MkWarning
-          { description = Just [i|Code Updates: #{n}|]
-          , group = toEnum 987762
-          , subgroup = Just $ toEnum 0xf06b0 -- nf-md-update
+          { description = [[i|Code Updates: #{n}|]]
+          , heading = "Updates"
+          , barDisplay = Count
+          , group = toEnum 0xf4af -- nf-oct-code_review
+          , subgroup = Nothing
           }
       ]

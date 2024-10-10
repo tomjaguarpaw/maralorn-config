@@ -184,13 +184,19 @@
               (label :hexpand true :halign "center" :text {alert.annotations.description})
             )
           )
-          (for warning in {jq(warnings,"map(select(.description!=null))")}
-            (box :class "component" :spacing 10 :space-evenly false
-              (icon {warning.group})
-              (when :if {(warning.subgroup ?: "") != ""}
-                (icon {warning.subgroup})
+          (for warningsection in warnings
+            (box :class "component" :orientation "vertical" :space-evenly false
+              (label :hexpand true :halign "start" :text {warningsection[0].heading})
+              (for warning in {warningsection}
+                (box :spacing 10 :space-evenly false :hexpand true
+                  (box :valign "start" (icon {warning.group}))
+                  (when :if {(warning.subgroup ?: "") != ""} (box :valign "start" (icon {warning.subgroup})))
+                  (box :orientation "vertical" :space-evenly false
+                    (for line in {warning.description} (label :wrap true :hexpand true :halign "start" :text line))
+                  )
+                )
               )
-              (label :wrap true :hexpand true :halign "center" :text {warning.description}))
+            )
           )
         )
         (box :halign "center" :orientation "vertical" :space-evenly false (for player in players

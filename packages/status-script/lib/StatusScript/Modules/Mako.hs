@@ -37,8 +37,10 @@ notifications = \env mode -> do
       %> const
         MkWarning
           { group = toEnum 985604
+          , heading = "Benachrichtigungen"
           , subgroup = Nothing
-          , description = Nothing
+          , barDisplay = Count
+          , description = []
           }
   warning_dyn <- holdDyn [] ev
   pure $

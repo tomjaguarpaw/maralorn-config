@@ -7,7 +7,8 @@ import Control.Exception.Safe (catchAny)
 import Data.Aeson qualified as Aeson
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Time.Clock.POSIX qualified as Time
-import Maralorn.Prelude
+import Maralorn.Prelude hiding ((%))
+import Optics
 import Reflex
 import Reflex.Host.Headless qualified as R
 import Shh (ExecReference (Absolute), load)
@@ -27,6 +28,7 @@ import StatusScript.Modules.Ping
 import StatusScript.Modules.Player qualified as Player
 import StatusScript.Modules.SoftwareFeed qualified as SoftwareFeed
 import StatusScript.Modules.Timer qualified as Timer
+import StatusScript.Modules.Vikunja
 import StatusScript.PublishSocket qualified as PublishSocket
 import StatusScript.ReflexUtil qualified as ReflexUtil
 import StatusScript.Warnings
@@ -51,7 +53,7 @@ main = Notify.withManager \watch_manager -> do
   let env =
         MkEnv
           { homeDir
-          , fork = curry (STM.writeTQueue job_queue % atomically)
+          , fork = curry (STM.writeTQueue job_queue >>> atomically)
           , watch_manager
           }
   CommandUtil.reportMissing missingExecutables
@@ -70,34 +72,50 @@ main = Notify.withManager \watch_manager -> do
             <&> ( modeIcon >>> maybe [] \m ->
                     [ MkWarning
                         { group = m
-                        , description = Nothing
+                        , description = []
                         , subgroup = Nothing
+                        , barDisplay = Count
+                        , heading = "Mode"
                         }
                     ]
                 )
     gh_runs_dyn <- GitHub.runs env mode
+    task_dyn <- tasks env mode
     let warnings =
           concat
             <$> sequence
-              [ ping_dyn
-              , software_feed_event
-              , mail_events
+              [ mode_warning
+              , ping_dyn
               , notification_dyn
-              , mode_warning
+              , mail_events
+              , software_feed_event
+              , gh_runs_dyn
+              , task_dyn
               ]
-    PublishSocket.publishJson' env "warnings" (concat <$> sequence [warnings, gh_runs_dyn])
+    PublishSocket.publishJson'
+      env
+      "warnings"
+      ( warnings
+          <&> ( filter (has (#description % folded))
+                  >>> NonEmpty.groupBy (on (==) (.heading))
+              )
+      )
     PublishSocket.publishJson'
       env
       "warninggroups"
       ( warnings
-          <&> fmap (.group)
-          % NonEmpty.group
-          %> ( \group' ->
-                MkWarningGroup
-                  { name = head group'
-                  , count = length group'
-                  }
-             )
+          <&> ( filter (has (#barDisplay % #_Count))
+                  >>> fmap (.group)
+                  >>> sort
+                  >>> NonEmpty.group
+                  >>> fmap
+                    ( \group' ->
+                        MkWarningGroup
+                          { name = head group'
+                          , count = length group'
+                          }
+                    )
+              )
       )
     player_events <- Player.playerModule env
     PublishSocket.publishJson env "players" player_events
