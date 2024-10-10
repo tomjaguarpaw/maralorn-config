@@ -6,6 +6,7 @@
 }:
 let
   fork = cmd: "fork ${cmd}";
+  link = url: fork "firefox ${url}";
   term = cmd: fork "${config.home.sessionVariables.TERMINAL} ${cmd}";
   edit_dir = dir: term (shell "cd ${dir}; hx ${dir}");
   shell = cmd: "sh -c '${cmd}'";
@@ -24,11 +25,17 @@ let
     }
     {
       Orga = [
-        { Tasks = "firefox https://todo.darmstadt.ccc.de/projects/33/kanban"; }
-        { Checklisten = "firefox https://todo.darmstadt.ccc.de/projects/-4/list"; }
+        { Tasks = link "https://todo.darmstadt.ccc.de/projects/33/kanban"; }
+        { Checklisten = link "https://todo.darmstadt.ccc.de/projects/-4/list"; }
         { Kalendar = term "ikhal"; }
         { Notes = edit_dir "~/git/notes"; }
       ];
+    }
+    {
+      Heilmann = {
+        Chat = link "https://3.basecamp.com/3601168/projects";
+        Issueboard = link "https://github.com/orgs/heilmannsoftware/projects/17/views/5";
+      };
     }
     {
       Power = {
@@ -174,8 +181,8 @@ let
     { "Monitor" = "htop"; }
     {
       W17 = {
-        Strichliste = "firefox https://strichliste.cccda.de/#!/user/56";
-        Hub = "firefox https://hub.cccda.de";
+        Strichliste = link "https://strichliste.cccda.de/#!/user/56";
+        Hub = link "https://hub.cccda.de";
         Summer = "ssh door@burbon.cccda.de buzzer";
         Open = "ssh door@burbon.cccda.de open";
         Close = "ssh door@burbon.cccda.de close";
