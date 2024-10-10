@@ -13,27 +13,7 @@ let
     "nix-output-monitor"
     "config"
   ];
-  custom_configs = {
-    notes = [
-      {
-        name = "t";
-        auto-format = true;
-        scope = "text.t";
-        file-types = [ "t" ];
-        roots = [ "Inbox.t" ];
-        indent = {
-          tab-width = 2;
-          unit = "	";
-        };
-        formatter = {
-          command = "t";
-          args = [ "fmt" ];
-        };
-      }
-    ];
-  };
   project_configs = builtins.zipAttrsWith (_: lib.concatLists) [
-    custom_configs
     (lib.genAttrs format_haskell (_: [
       {
         name = "haskell";

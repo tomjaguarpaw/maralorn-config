@@ -54,10 +54,10 @@ let
     merge-bot = cleanCabalPackage ./merge-bot { };
     rssfeeds = cleanCabalPackage ./rssfeeds { };
     nixpkgs-bot = cleanCabalPackage ./nixpkgs-bot { };
-    t = cleanCabalPackage ./t { };
-    kass = cleanCabalPackage ./kass {
-      overrides = _: { buildDepends = builtins.attrValues { inherit (stable-pkgs) tailwindcss; }; };
-    };
+    # t = cleanCabalPackage ./t { };
+    # kass = cleanCabalPackage ./kass {
+    #   overrides = _: { buildDepends = builtins.attrValues { inherit (stable-pkgs) tailwindcss; }; };
+    # };
     vikunja-tools = cleanCabalPackage ./vikunja-tools {
       overrides = _: { buildDepends = builtins.attrValues { inherit (stable-pkgs) mblaze; }; };
     };

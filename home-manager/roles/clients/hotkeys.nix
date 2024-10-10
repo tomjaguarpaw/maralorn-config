@@ -25,12 +25,9 @@ let
     {
       Orga = [
         { Tasks = "firefox https://todo.darmstadt.ccc.de/projects/33/kanban"; }
-        { Inbox = "firefox https://todo.darmstadt.ccc.de/projects/-2/list"; }
+        { Checklisten = "firefox https://todo.darmstadt.ccc.de/projects/-4/list"; }
         { Kalendar = term "ikhal"; }
         { Notes = edit_dir "~/git/notes"; }
-        {
-          "GitHub: Next Notification" = fork (shell "firefox $(runhaskell ${./github-notification-link.hs})");
-        }
       ];
     }
     {

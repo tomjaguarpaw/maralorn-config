@@ -65,7 +65,6 @@ main = Notify.withManager \watch_manager -> do
     software_feed_event <- SoftwareFeed.softwareFeed env mode
     mail_events <- Mail.mail env mode
     notification_dyn <- notifications env mode
-    gh_notification_dyn <- GitHub.notifications env mode
     let mode_warning =
           mode
             <&> ( modeIcon >>> maybe [] \m ->
@@ -85,7 +84,6 @@ main = Notify.withManager \watch_manager -> do
               , mail_events
               , notification_dyn
               , mode_warning
-              , gh_notification_dyn
               ]
     PublishSocket.publishJson' env "warnings" (concat <$> sequence [warnings, gh_runs_dyn])
     PublishSocket.publishJson'

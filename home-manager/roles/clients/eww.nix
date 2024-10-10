@@ -47,7 +47,6 @@ in
           pkgs.gitMinimal
           pkgs.nix
           pkgs.jaq
-          pkgs.t
           pkgs.hyprland
           pkgs.wlr-randr
           pkgs.ripgrep
