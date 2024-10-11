@@ -219,7 +219,7 @@ isAwaiting, isBlocked, isProject, isMaybe, isCategory, isUnsorted :: Task -> Boo
 isMaybe t = maybeBucket == t.bucket_id
 isAwaiting t = awaitingBucket == t.bucket_id
 isBlocked t = relatedTodo t.related_tasks.blocked
-isProject t = relatedTodo t.related_tasks.subtask
+isProject t = relatedTodo t.related_tasks.subtask || isCategory t
 isCategory t = Set.member categoryLabel (fromMaybe mempty t.labels)
 isUnsorted t = not (isCategory t || relatedTodo t.related_tasks.parenttask)
 
