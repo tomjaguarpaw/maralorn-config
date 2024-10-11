@@ -2,7 +2,7 @@
 let
   stable-pkgs = inputs.nixos-stable.legacyPackages.x86_64-linux;
   unstable-pkgs = inputs.nixos-unstable.legacyPackages.x86_64-linux;
-  inherit (unstable-pkgs.haskell.lib.compose) overrideCabal;
+  inherit (unstable-pkgs.haskell.lib.compose) overrideCabal disableLibraryProfiling;
   includePatterns = [
     ".hs"
     ".cabal"
@@ -21,6 +21,7 @@ let
     in
     lib.pipe { } [
       (hpkgs.callPackage source)
+      disableLibraryProfiling
       (overrideCabal (
         old:
         {

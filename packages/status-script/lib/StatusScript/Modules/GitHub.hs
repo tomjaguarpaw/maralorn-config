@@ -24,7 +24,6 @@ import Optics
 import Reflex
 import Reflex.Host.Headless qualified as R
 import Relude
-import Shh qualified
 import StatusScript.Env
 import StatusScript.Mode
 import StatusScript.Warnings
@@ -78,18 +77,13 @@ printDuration diff
  where
   p x = toText $ formatTime defaultTimeLocale x diff
 
-minute :: NominalDiffTime
+minute, hour, day :: NominalDiffTime
 minute = 60
-
-hour :: NominalDiffTime
 hour = 60 * minute
-
-day :: NominalDiffTime
 day = 24 * hour
 
 getToken :: IO ByteString
-getToken =
-  Bytestring.strip . toStrict <$> (Shh.exe "rbw" "get" "github.com" "-f" "kass" Shh.|> Shh.captureTrim)
+getToken = Bytestring.strip <$> readFileBS "/run/agenix/github-read-workflow-token"
 
 watchRuns :: (Vector WorkflowRun -> IO ()) -> IO ()
 watchRuns cb = forever $ do
