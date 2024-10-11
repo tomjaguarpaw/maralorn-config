@@ -11,9 +11,9 @@ stdenv.mkDerivation {
   src = fetchFromGitea {
     owner = "maralorn";
     repo = "hyprslidr";
-    rev = "bb58ceb336e6e6ea2d1f05f628bfcca1f6d616e1";
+    rev = "bcd59e070828b185a8d9185f8fb514155575e954";
     domain = "code.maralorn.de";
-    hash = "sha256-w8DPflSDLQ9XMVnOh8tOPECE9R48PZdsIetpzY0m9UQ=";
+    hash = "sha256-q1MWSUKhzCpkVRiAc6n0R/elLjIPbbytu2hXRaCR+3g=";
   };
 
   nativeBuildInputs = [
