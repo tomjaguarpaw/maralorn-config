@@ -53,10 +53,7 @@
     (box :space-evenly false (for timer in timers
       (box :class "${EWW_TIME >= timer.at ? "blink" :""}" :space-evenly false
         (icon "󰀠")
-        (box :hexpand true :halign "center" :orientation "vertical"
-          {timer.name}
-          {formattime(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at,(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at) > 60*60 ? "%H:%M:%S": "%M:%S","UTC")}
-        )
+        {"${timer.name} ${formattime(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at,(EWW_TIME < timer.at ? timer.at - EWW_TIME : EWW_TIME - timer.at) > 60*60 ? "%H:%M:%S": "%M:%S","UTC")}"}
       )
     ))
     (when :if {arraylength(alerts) > 0}
