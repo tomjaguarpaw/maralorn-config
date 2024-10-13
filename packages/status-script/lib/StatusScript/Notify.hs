@@ -74,9 +74,9 @@ mkNotification m w =
   notification_icon
     | elemOf (folded % #subgroup % _Just) unreadChar w = "mdi:new-box"
     | m == Sort = "mdi:sort-bool-ascending-variant"
-    | elemOf (folded % #heading) "Checklisten" w = "mdi:list-status"
-    | null warnings = "mdi:inbox-outline"
-    | otherwise = "mdi:checkbox-blank-outline"
+    | elemOf (folded % #heading) "Checklisten" w = "mdi:clipbourd-list-outline"
+    | null warnings = "mdi:check-all"
+    | otherwise = "mdi:format-list-checks"
 
 notifyHomeAssistant :: MonadHeadlessApp t m => Dynamic t (Mode, [Warning]) -> m ()
 notifyHomeAssistant warnings = do

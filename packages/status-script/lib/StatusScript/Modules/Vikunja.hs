@@ -44,7 +44,7 @@ getTasks mode = do
   on_mode f x = if f mode then x else pure mempty
 
 checklistChar, taskChar, inboxChar :: Char
-checklistChar = toEnum 0xf4a0 -- nf-oct-tasklist
+checklistChar = toEnum 0xf10d5 -- nf-md-clipboard_list_outline
 taskChar = toEnum 0xe640 -- nf-seti-checkbox_unchecked
 inboxChar = toEnum 987762
 

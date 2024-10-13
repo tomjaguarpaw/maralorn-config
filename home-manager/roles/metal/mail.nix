@@ -48,10 +48,12 @@ in
     hera = {
       passwordCommand = "${pkgs.coreutils}/bin/cat /run/agenix/mail-password";
       imapnotify.onNotify = lib.getExe quick-mail-sync;
+      imapnotify.extraConfig.onDeletedMail = lib.getExe quick-mail-sync;
     };
     heilmann = {
       passwordCommand = "${pkgs.coreutils}/bin/cat /run/agenix/heilmann-mail-password";
       imapnotify.onNotify = lib.getExe quick-mail-sync;
+      imapnotify.extraConfig.onDeletedMail = lib.getExe quick-mail-sync;
     };
   };
 
