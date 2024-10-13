@@ -55,6 +55,7 @@ common common-config
     , typed-process
     , uuid
     , vikunja-tools
+    , which
     , wreq
 
   default-language:   GHC2021
@@ -67,6 +68,7 @@ library
   hs-source-dirs:  lib
   exposed-modules:
     Maralorn.Prelude
+    StatusScript.App
     StatusScript.CommandUtil
     StatusScript.Env
     StatusScript.FileWatch
@@ -85,6 +87,7 @@ library
     StatusScript.Modules.SoftwareFeed
     StatusScript.Modules.Timer
     StatusScript.Modules.Vikunja
+    StatusScript.Notify
     StatusScript.PublishSocket
     StatusScript.ReflexUtil
     StatusScript.Warnings
@@ -94,4 +97,11 @@ executable status-script
   main-is:        Main.hs
   build-depends:  status-script
   hs-source-dirs: exe
+  ghc-options:    -threaded -with-rtsopts=-maxN4
+
+executable status-notify
+  import:         common-config
+  main-is:        Main.hs
+  build-depends:  status-script
+  hs-source-dirs: notify-exe
   ghc-options:    -threaded -with-rtsopts=-maxN4

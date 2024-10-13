@@ -1,4 +1,4 @@
-module StatusScript.Modules.Mail (mail) where
+module StatusScript.Modules.Mail (mail, unreadChar) where
 
 import Data.Aeson (FromJSON, eitherDecode')
 import Data.Text qualified as Text
@@ -38,11 +38,11 @@ mkWarning mode info
   | mode == Sort || isUnread =
       Just $
         MkWarning
-          { description = [info.authors <> ": " <> info.subject]
+          { description = [fst (Text.breakOn "|" info.authors) <> ": " <> info.subject]
           , heading
           , barDisplay = Count
           , group = group'
-          , subgroup = if isUnread then Just $ toEnum 0xf52b else Nothing -- nf-oct-unread
+          , subgroup = if isUnread then Just unreadChar else Nothing
           }
   | otherwise = Nothing
  where
@@ -52,6 +52,9 @@ mkWarning mode info
     | Text.isInfixOf "heilmannsoftware" (fst info.query) = ("HS GitHub", toEnum 0xf10ca) -- nf-md-account_tie_outline
     | Text.isInfixOf "github.com" (fst info.query) = ("GitHub", toEnum 0xea84) -- nf-cod-github
     | otherwise = ("E-Mail", toEnum 0xeb1c) -- nf-cod-mail
+
+unreadChar :: Char
+unreadChar = toEnum 0xf0394 -- nf-md-new_box
 
 mail :: R.MonadHeadlessApp t m => Env -> R.Dynamic t Mode -> m (Dynamic t [Warning])
 mail env mode = do

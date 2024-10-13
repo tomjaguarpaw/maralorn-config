@@ -8,7 +8,7 @@
 
   options.status-script.env = lib.mkOption {
     type = lib.types.listOf lib.types.package;
-    default = [ ];
+    default = [ pkgs.mako ];
     description = lib.mdDoc "Packages in the status-script environment.";
   };
 
@@ -16,7 +16,7 @@
     Unit.Description = "status-script";
     Service = {
       Environment = "PATH=${lib.makeBinPath config.status-script.env}";
-      ExecStart = lib.getExe pkgs.status-script;
+      ExecStart = lib.getExe' pkgs.status-script "status-script";
       Restart = "always";
       RestartSec = "10s";
     };

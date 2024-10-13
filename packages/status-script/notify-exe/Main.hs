@@ -4,4 +4,4 @@ import Relude
 import StatusScript.App
 
 main :: IO ()
-main = publishSockets
+main = notify

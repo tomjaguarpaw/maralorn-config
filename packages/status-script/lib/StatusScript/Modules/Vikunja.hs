@@ -1,4 +1,4 @@
-module StatusScript.Modules.Vikunja (tasks) where
+module StatusScript.Modules.Vikunja (tasks, taskChar) where
 
 import Data.Sequence qualified as Seq
 import Data.String.Interpolate (i)

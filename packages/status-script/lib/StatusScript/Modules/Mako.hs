@@ -5,7 +5,7 @@ import Data.Aeson qualified as Aeson
 import Data.Aeson.Schema (get, schema)
 import Data.Aeson.Schema qualified as Schema
 import Maralorn.Prelude hiding (get)
-import Reflex (Dynamic, holdDyn, zipDynWith)
+import Reflex
 import Reflex.Host.Headless (MonadHeadlessApp)
 import Shh (captureTrim, (|>))
 import Shh qualified
@@ -13,8 +13,10 @@ import StatusScript.CommandUtil
 import StatusScript.CommandUtil qualified as CommandUtil
 import StatusScript.Env (Env (..))
 import StatusScript.Mode
+import StatusScript.ReflexUtil (taggedAndUpdated)
 import StatusScript.ReflexUtil qualified as ReflexUtil
 import StatusScript.Warnings
+import System.Which (which)
 
 type MakoList =
   [schema|{
@@ -28,7 +30,11 @@ notifications :: MonadHeadlessApp t m => Env -> Dynamic t Mode -> m (Dynamic t [
 notifications = \env mode -> do
   CommandUtil.reportMissing missingExecutables
   tick <- ReflexUtil.tickEvent 5
-  ev <- ReflexUtil.performEventThreaded env tick \_ ->
+  trigger_ev <-
+    liftIO (which "makoctl") <&> \case
+      Nothing -> never
+      Just _ -> taggedAndUpdated mode tick
+  ev <- ReflexUtil.performEventThreaded env trigger_ev \_ ->
     retryWithBackoff (makoctl "list" |> captureTrim)
       <&> Aeson.decode @(Schema.Object MakoList)
       %> [get|.data|]

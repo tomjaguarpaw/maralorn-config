@@ -25,7 +25,7 @@ modeIcon :: Mode -> Maybe Char
 modeIcon = \case
   DND -> Just $ toEnum 0xf15e2 -- nf-md-comment_off_outline
   Normal -> Nothing
-  Sort -> Just $ toEnum 0xeb86 -- nf-cod-list_tree
+  Sort -> Just $ toEnum 0xf1386 -- nf-md-sort_bool_ascending_variant
 
 modes :: [Mode]
 modes = enumFrom DND
