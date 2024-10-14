@@ -54,12 +54,15 @@ taskWarnings t c d = fmap (taskWarning t c d . snd) . Seq.sortOn (view (_2 % #ka
 taskWarning :: Text -> Char -> BarDisplay -> Task -> Warning
 taskWarning heading group' barDisplay t =
   MkWarning
-    { description = t.title : ((toText [taskChar, ' ', ' '] <>) <$> parseChecklist t.description)
+    { description = t.title : (truncateSubTask <$> parseChecklist t.description)
     , heading
     , barDisplay
     , group = group'
     , subgroup = Nothing
     }
+
+truncateSubTask :: Text -> Text
+truncateSubTask t = [i|#{taskChar}  #{Text.take 30 t}#{if Text.length t > 30 then "…" else ""}|]
 
 parseChecklist :: Text -> [Text]
 parseChecklist =

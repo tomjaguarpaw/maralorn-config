@@ -74,7 +74,7 @@ mkNotification m w =
   notification_icon
     | elemOf (folded % #subgroup % _Just) unreadChar w = "mdi:new-box"
     | m == Sort = "mdi:sort-bool-ascending-variant"
-    | elemOf (folded % #heading) "Checklisten" w = "mdi:clipbourd-list-outline"
+    | elemOf (folded % #heading) "Checklisten" w = "mdi:clipboard-list-outline"
     | null warnings = "mdi:check-all"
     | otherwise = "mdi:format-list-checks"
 
