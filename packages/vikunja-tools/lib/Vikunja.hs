@@ -153,10 +153,13 @@ ensureRecentRepetition now t
   , t.repeat_after /= 0
   , maybe
       False
-      ((<= now) . addUTCTime (fromIntegral t.repeat_after) . zonedTimeToUTC)
+      ((<= now) . addUTCTime oneDay . zonedTimeToUTC)
       (t.start_date ^? #_Time % _Just) =
-      over (key "start_date" % _JSON % timeLocaltime) (addLocalTime (fromIntegral t.repeat_after))
+      over (key "start_date" % _JSON % timeLocaltime) (addLocalTime oneDay)
   | otherwise = id
+
+oneDay :: NominalDiffTime
+oneDay = 86400
 
 timeLocaltime :: AffineTraversal' Time LocalTime
 timeLocaltime = #_Time % _Just % lens zonedTimeToLocalTime (\z l -> z{zonedTimeToLocalTime = l})

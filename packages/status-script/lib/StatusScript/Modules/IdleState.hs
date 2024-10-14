@@ -27,14 +27,14 @@ idleState = \env -> do
         line | "Started" `BS.isInfixOf` line -> Just True
         _ -> Nothing
       <&> R.mapMaybe id
-      >>= R.holdDyn True
+        >>= R.holdDyn True
   file_dyn <-
     FileWatch.watchFileContents env env.homeDir ".idle_state"
       <&> R.updated
-      % R.mapMaybe id
-      % fmap encodeUtf8
-      % R.mapMaybe Aeson.decode'
-      >>= R.holdDyn Active
+        % R.mapMaybe id
+        % fmap encodeUtf8
+        % R.mapMaybe Aeson.decode'
+        >>= R.holdDyn Active
   R.holdUniqDyn (liftA2 combine service_running_dyn file_dyn)
 
 combine :: Bool -> IdleState -> IdleState

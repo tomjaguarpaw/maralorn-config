@@ -12,6 +12,7 @@ respectful: false
 fixities:
   - infixr 0 $
   - infixl 1 &
+  - infixl 1 <&>
   - infixr 9 .
 reexports:
   - module Maralude exports Data.Functor

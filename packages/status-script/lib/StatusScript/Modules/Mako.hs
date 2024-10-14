@@ -37,17 +37,17 @@ notifications = \env mode -> do
   ev <- ReflexUtil.performEventThreaded env trigger_ev \_ ->
     retryWithBackoff (makoctl "list" |> captureTrim)
       <&> Aeson.decode @(Schema.Object MakoList)
-      %> [get|.data|]
-      %> join
-      % fromMaybe []
-      %> const
-        MkWarning
-          { group = toEnum 985604
-          , heading = "Benachrichtigungen"
-          , subgroup = Nothing
-          , barDisplay = Count
-          , description = []
-          }
+        %> [get|.data|]
+        %> join
+        % fromMaybe []
+        %> const
+          MkWarning
+            { group = toEnum 985604
+            , heading = "Benachrichtigungen"
+            , subgroup = Nothing
+            , barDisplay = Count
+            , description = []
+            }
   warning_dyn <- holdDyn [] ev
   pure $
     zipDynWith
