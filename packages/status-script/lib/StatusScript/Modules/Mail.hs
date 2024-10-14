@@ -48,7 +48,8 @@ mkWarning mode info
  where
   isUnread = "unread" `elem` info.tags
   (heading, group')
-    | Text.isInfixOf "basecamp.com" (fst info.query) = ("HS Chat", toEnum 0xf1309) -- nf-md-account_tie_voice_outline
+    | Text.isInfixOf "Basecamp" info.authors || Text.isInfixOf "basecamp.com" (fst info.query) =
+        ("HS Chat", toEnum 0xf1309) -- nf-md-account_tie_voice_outline
     | Text.isInfixOf "heilmannsoftware" (fst info.query) = ("HS GitHub", toEnum 0xf10ca) -- nf-md-account_tie_outline
     | Text.isInfixOf "github.com" (fst info.query) = ("GitHub", toEnum 0xea84) -- nf-cod-github
     | otherwise = ("E-Mail", toEnum 0xeb1c) -- nf-cod-mail
