@@ -10,7 +10,7 @@ import Reflex.Host.Headless qualified as R
 import Relude
 import StatusScript.Env
 import StatusScript.Mode
-import StatusScript.ReflexUtil (performEventThreaded, tickEvent)
+import StatusScript.ReflexUtil
 import StatusScript.Warnings
 import Vikunja (Task (..), defaultOptions, defaultProject, fetchAll, url)
 
@@ -72,6 +72,6 @@ parseChecklist =
 
 tasks :: R.MonadHeadlessApp t m => Env -> Dynamic t Mode -> m (Dynamic t [Warning])
 tasks env mode = do
-  tick <- tag (current mode) <$> tickEvent 60
-  ev <- performEventThreaded env (leftmost [updated mode, tick]) getTasks
+  tick <- taggedAndUpdated mode <$> tickEvent 60
+  ev <- performEventThreaded env tick getTasks
   holdDyn mempty (toList <$> ev)
