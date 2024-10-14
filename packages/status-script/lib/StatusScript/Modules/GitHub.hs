@@ -20,7 +20,6 @@ import GitHub
   , workflowRunsR
   )
 import GitHub.Internal.Prelude (Vector)
-import Optics
 import Reflex
 import Reflex.Host.Headless qualified as R
 import Relude
@@ -32,8 +31,7 @@ runs :: R.MonadHeadlessApp t m => Env -> Dynamic t Mode -> m (Dynamic t [Warning
 runs env _ = do
   (eRun, triggerRun) <- newTriggerEvent
   liftIO $ env.fork "watchRuns" (watchRuns triggerRun)
-  time <- liftIO getCurrentTime
-  holdDyn mempty $ eRun <&> mkRunWarnings time
+  holdDyn mempty eRun
 
 mkRunWarnings :: UTCTime -> Vector WorkflowRun -> [Warning]
 mkRunWarnings time =
@@ -85,7 +83,7 @@ day = 24 * hour
 getToken :: IO ByteString
 getToken = Bytestring.strip <$> readFileBS "/run/agenix/github-read-workflow-token"
 
-watchRuns :: (Vector WorkflowRun -> IO ()) -> IO ()
+watchRuns :: ([Warning] -> IO ()) -> IO ()
 watchRuns cb = forever $ do
   token <- getToken
   yesterday <- addUTCTime (-nominalDay) <$> getCurrentTime
@@ -98,5 +96,6 @@ watchRuns cb = forever $ do
           (optionsWorkflowRunActor "maralorn" <> optionsWorkflowRunCreated [i|>=#{formatTime defaultTimeLocale "%F" yesterday}|])
           FetchAll
       )
-  either throwIO (cb . (.withTotalCountItems)) response
+  time <- liftIO getCurrentTime
+  either throwIO (cb . mkRunWarnings time . (.withTotalCountItems)) response
   threadDelay 60_000_000 -- one minute
