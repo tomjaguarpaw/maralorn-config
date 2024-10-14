@@ -17,9 +17,6 @@
     Service = {
       Environment = "PATH=${lib.makeBinPath config.status-script.env}";
       ExecStart = lib.getExe' pkgs.status-script "status-script";
-      Restart = "always";
-      RestartSec = "10s";
     };
-    Unit.StartLimitIntervalSec = "60s";
   };
 }

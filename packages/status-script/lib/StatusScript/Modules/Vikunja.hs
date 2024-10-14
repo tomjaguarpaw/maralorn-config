@@ -8,6 +8,7 @@ import Optics
 import Reflex
 import Reflex.Host.Headless qualified as R
 import Relude
+import StatusScript.CommandUtil
 import StatusScript.Env
 import StatusScript.Mode
 import StatusScript.ReflexUtil
@@ -27,19 +28,20 @@ bucketOpts bucket =
 getTasks :: Mode -> IO (Seq Warning)
 getTasks mode = do
   opts <- defaultOptions
-  fold
-    [ on_mode (== Sort) $
-        (taskWarnings "Inbox" inboxChar Count <$> fetchAll opts [i|#{url}/projects/-2/tasks|])
-          <> (taskWarnings "Unsortiert" inboxChar Count <$> fetchAll opts [i|#{url}/projects/-3/tasks|])
-    , on_mode (/= DND) $ taskWarnings "Checklisten" checklistChar Count <$> fetchAll opts [i|#{url}/projects/-4/tasks|]
-    , taskWarnings "In Bearbeitung" taskChar Text
-        <$> fetchAll (bucketOpts doingBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
-    , taskWarnings "Heute" taskChar None
-        <$> fetchAll (bucketOpts todayBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
-    , on_mode (/= DND) $
-        taskWarnings "Woche" taskChar None
-          <$> fetchAll (bucketOpts weekBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
-    ]
+  retryWithBackoff $
+    fold
+      [ on_mode (== Sort) $
+          (taskWarnings "Inbox" inboxChar Count <$> fetchAll opts [i|#{url}/projects/-2/tasks|])
+            <> (taskWarnings "Unsortiert" inboxChar Count <$> fetchAll opts [i|#{url}/projects/-3/tasks|])
+      , on_mode (/= DND) $ taskWarnings "Checklisten" checklistChar Count <$> fetchAll opts [i|#{url}/projects/-4/tasks|]
+      , taskWarnings "In Bearbeitung" taskChar Text
+          <$> fetchAll (bucketOpts doingBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
+      , taskWarnings "Heute" taskChar None
+          <$> fetchAll (bucketOpts todayBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
+      , on_mode (/= DND) $
+          taskWarnings "Woche" taskChar None
+            <$> fetchAll (bucketOpts weekBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
+      ]
  where
   on_mode f x = if f mode then x else pure mempty
 

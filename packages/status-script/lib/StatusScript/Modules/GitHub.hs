@@ -23,6 +23,7 @@ import GitHub.Internal.Prelude (Vector)
 import Reflex
 import Reflex.Host.Headless qualified as R
 import Relude
+import StatusScript.CommandUtil
 import StatusScript.Env
 import StatusScript.Mode
 import StatusScript.Warnings
@@ -88,14 +89,15 @@ watchRuns cb = forever $ do
   token <- getToken
   yesterday <- addUTCTime (-nominalDay) <$> getCurrentTime
   response <-
-    github
-      (OAuth token)
-      ( workflowRunsR
-          (mkName Proxy "heilmannsoftware")
-          (mkName Proxy "connect")
-          (optionsWorkflowRunActor "maralorn" <> optionsWorkflowRunCreated [i|>=#{formatTime defaultTimeLocale "%F" yesterday}|])
-          FetchAll
-      )
+    retryWithBackoff $
+      github
+        (OAuth token)
+        ( workflowRunsR
+            (mkName Proxy "heilmannsoftware")
+            (mkName Proxy "connect")
+            (optionsWorkflowRunActor "maralorn" <> optionsWorkflowRunCreated [i|>=#{formatTime defaultTimeLocale "%F" yesterday}|])
+            FetchAll
+        )
   time <- liftIO getCurrentTime
   either throwIO (cb . mkRunWarnings time . (.withTotalCountItems)) response
   threadDelay 60_000_000 -- one minute

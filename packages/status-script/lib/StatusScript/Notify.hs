@@ -1,5 +1,6 @@
 module StatusScript.Notify (notifyHomeAssistant) where
 
+import Control.Exception.Safe (catch)
 import Data.Aeson (Options (..), ToJSON (..), defaultOptions, encode, genericToJSON)
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
@@ -9,6 +10,7 @@ import Optics
 import Reflex
 import Reflex.Host.Headless (MonadHeadlessApp)
 import Relude
+import StatusScript.CommandUtil
 import StatusScript.Mode
 import StatusScript.Modules.Mail
 import StatusScript.Modules.Vikunja
@@ -85,6 +87,7 @@ notifyHomeAssistant warnings = do
   performEvent_ $
     void
       . liftIO
+      . retryWithBackoff
       . postWith opts "https://home.maralorn.de/api/services/notify/mobile_app_pegasus"
       . encode
       <$> notify_ev
