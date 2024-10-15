@@ -63,7 +63,7 @@ runWithEnv w = Notify.withManager \watch_manager -> do
   sayErr "Exiting because of previous errors."
   exitFailure
 
-warnings :: MonadHeadlessApp t m => Env -> m (Dynamic t (Mode, [Warning]))
+warnings :: MonadHeadlessApp t m => Env -> m (Dynamic t [Warning])
 warnings env = do
   mode <- Mode.getMode env
   ping_dyn <- ping' env
@@ -84,18 +84,17 @@ warnings env = do
               )
   gh_runs_dyn <- GitHub.runs env mode
   task_dyn <- tasks env mode
-  let messages =
-        concat
-          <$> sequence
-            [ mode_warning
-            , ping_dyn
-            , notification_dyn
-            , mail_events
-            , software_feed_event
-            , gh_runs_dyn
-            , task_dyn
-            ]
-  pure $ zipDyn mode messages
+  pure $
+    concat
+      <$> sequence
+        [ mode_warning
+        , ping_dyn
+        , notification_dyn
+        , mail_events
+        , software_feed_event
+        , gh_runs_dyn
+        , task_dyn
+        ]
 
 prepareSocketsDir :: MonadIO m => m ()
 prepareSocketsDir = do
@@ -107,15 +106,15 @@ uptime = liftIO $ constDyn . round <$> Time.getPOSIXTime
 
 notify :: IO ()
 notify = runWithEnv \env -> do
-  notifyHomeAssistant =<< warnings env
+  notifyHomeAssistant env =<< warnings env
 
 publishSockets :: IO ()
 publishSockets = runWithEnv \env -> do
   prepareSocketsDir
   publishJson' env "uptime" =<< uptime
   warnings_dyn <- warnings env
-  publishJson' env "warnings" (warningSections . snd <$> warnings_dyn)
-  publishJson' env "warninggroups" (warningGroups . snd <$> warnings_dyn)
+  publishJson' env "warnings" (warningSections <$> warnings_dyn)
+  publishJson' env "warninggroups" (warningGroups <$> warnings_dyn)
   publishJson env "players" =<< Player.playerModule env
   publishJson env "calendar" =<< Calendar.calendar env
   publishJson' env "idle_state" =<< IdleState.idleState env

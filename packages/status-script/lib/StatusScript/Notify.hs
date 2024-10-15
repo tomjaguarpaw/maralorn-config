@@ -1,7 +1,6 @@
 module StatusScript.Notify (notifyHomeAssistant) where
 
 import Data.Aeson (Options (..), ToJSON (..), defaultOptions, encode, genericToJSON)
-import Data.Sequence qualified as Seq
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Network.Wreq (defaults, header, postWith)
@@ -11,9 +10,10 @@ import Reflex
 import Reflex.Host.Headless (MonadHeadlessApp)
 import Relude
 import StatusScript.CommandUtil
-import StatusScript.Mode
+import StatusScript.Env
 import StatusScript.Modules.Mail
 import StatusScript.Modules.Vikunja
+import StatusScript.ReflexUtil
 import StatusScript.Warnings
 
 data Notification = MkNotification
@@ -50,8 +50,8 @@ wreqOptions = do
   token <- getToken
   pure $ defaults & lensVL (header "Authorization") .~ [[i|Bearer #{token}|]]
 
-mkNotification :: Mode -> [Warning] -> Notification
-mkNotification m w =
+mkNotification :: Bool -> [Warning] -> Notification
+mkNotification with_unread w' =
   MkNotification
     { message =
         Text.unlines $
@@ -73,25 +73,25 @@ mkNotification m w =
     }
  where
   warnings = warningSections w
+  w
+    | with_unread = w'
+    | otherwise = filter (hasn't (#subgroup % _Just % only unreadChar)) w'
   notification_icon
     | elemOf (folded % #subgroup % _Just) unreadChar w = "mdi:new-box"
-    | m == Sort = "mdi:sort-bool-ascending-variant"
     | elemOf (folded % #heading) "Checklisten" w = "mdi:clipboard-list-outline"
     | null warnings = "mdi:check-all"
     | otherwise = "mdi:format-list-checks"
 
-devices :: Seq Text
-devices = Seq.fromList ["pegasus"]
-
-notifyHomeAssistant :: MonadHeadlessApp t m => Dynamic t (Mode, [Warning]) -> m ()
-notifyHomeAssistant warnings = do
+notifyHomeAssistant :: MonadHeadlessApp t m => Env -> Dynamic t [Warning] -> m ()
+notifyHomeAssistant env warnings = do
   opts <- liftIO wreqOptions
-  notify_ev <- updated <$> holdUniqDyn (uncurry mkNotification <$> warnings)
-  performEvent_ $ liftIO . sendNotification opts <$> notify_ev
+  forM_ [("pegasus", True), ("kalliope", False)] \(device, with_unread) -> do
+    notify_ev <- updated <$> holdUniqDyn (mkNotification with_unread <$> warnings)
+    performEventThreaded env notify_ev $ liftIO . sendNotification opts device
 
-sendNotification :: ToJSON p => Wreq.Options -> p -> IO ()
-sendNotification opts n = do
-  forM_ devices \device ->
+sendNotification :: Wreq.Options -> Text -> Notification -> IO ()
+sendNotification opts device n = do
+  void $
     retryTimeout 2 5 $
       postWith opts [i|https://home.maralorn.de/api/services/notify/mobile_app_#{device}|] d
  where
