@@ -1,6 +1,5 @@
 module StatusScript.Notify (notifyHomeAssistant) where
 
-import Control.Exception.Safe (catch)
 import Data.Aeson (Options (..), ToJSON (..), defaultOptions, encode, genericToJSON)
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text

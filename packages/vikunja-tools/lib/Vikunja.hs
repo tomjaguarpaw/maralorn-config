@@ -196,16 +196,16 @@ chooseColor t = case t.priority of
 
 fetchAll :: Options -> String -> IO (Seq (Value, Task))
 fetchAll opts path = do
-  r <- go 1 mempty
+  r <- go 1
   putTextLn [i|Got #{length r} tasks from #{path}.|]
   pure r
  where
-  go :: Int -> Seq (Value, Task) -> IO (Seq (Value, Task))
-  go n xs = do
+  go :: Int -> IO (Seq (Value, Task))
+  go n = do
     newxs <- fetchPage n
-    ((xs <> newxs) <>)
+    (newxs <>)
       <$> if length newxs == 50
-        then fetchPage (n + 1)
+        then go (n + 1)
         else pure mempty
   fetchPage n = do
     response <- Wreq.getWith (opts & lensVL (param "page") .~ [show n]) path
@@ -218,15 +218,15 @@ parentIsNotIdle t =
 relatedTodo :: Maybe (Set RelatedTask) -> Bool
 relatedTodo = not . all (.done) . fromMaybe mempty
 
-isAwaiting, isBlocked, isProject, isMaybe, isCategory, isUnsorted :: Task -> Bool
+isAwaiting, isBlocked, isProject, isMaybe, isCategory :: Task -> Bool
 isMaybe t = maybeBucket == t.bucket_id
 isAwaiting t = awaitingBucket == t.bucket_id
 isBlocked t = relatedTodo t.related_tasks.blocked
 isProject t = relatedTodo t.related_tasks.subtask || isCategory t
 isCategory t = Set.member categoryLabel (fromMaybe mempty t.labels)
-isUnsorted t = not (isCategory t || relatedTodo t.related_tasks.parenttask)
 
-inInbox, isWaiting, isPostponed :: UTCTime -> Task -> Bool
+inInbox, isWaiting, isUnsorted, isPostponed :: UTCTime -> Task -> Bool
+isUnsorted now t = not (inInbox now t || isCategory t || relatedTodo t.related_tasks.parenttask)
 isPostponed now t = maybe False ((> now) . zonedTimeToUTC) (t.start_date ^? #_Time % _Just)
 inInbox now t =
   Set.isSubsetOf (fromMaybe mempty t.labels) autoLabels
@@ -243,7 +243,7 @@ updateDefaultProject opts = do
   forM_ tasks $ uncurry \value -> runStateT do
     modifyM \t -> ensureLabel opts t parentLabel (isProject t)
     modifyM \t -> ensureLabel opts t inboxLabel (inInbox now t)
-    modifyM \t -> ensureLabel opts t unsortedLabel (isUnsorted t)
+    modifyM \t -> ensureLabel opts t unsortedLabel (isUnsorted now t)
     get >>= \t ->
       lift $
         ensureChange

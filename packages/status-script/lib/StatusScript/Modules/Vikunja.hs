@@ -32,7 +32,7 @@ getTasks mode = do
     fold
       [ on_mode (== Sort) $
           (taskWarnings "Inbox" inboxChar Count <$> fetchAll opts [i|#{url}/projects/-2/tasks|])
-            <> (taskWarnings "Unsortiert" inboxChar Count <$> fetchAll opts [i|#{url}/projects/-3/tasks|])
+            <> (taskWarnings "Unsortiert" unsortedChar Count <$> fetchAll opts [i|#{url}/projects/-3/tasks|])
       , on_mode (/= DND) $ taskWarnings "Checklisten" checklistChar Count <$> fetchAll opts [i|#{url}/projects/-4/tasks|]
       , taskWarnings "In Bearbeitung" taskChar Text
           <$> fetchAll (bucketOpts doingBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
@@ -45,10 +45,11 @@ getTasks mode = do
  where
   on_mode f x = if f mode then x else pure mempty
 
-checklistChar, taskChar, inboxChar :: Char
+checklistChar, taskChar, unsortedChar, inboxChar :: Char
 checklistChar = toEnum 0xf10d5 -- nf-md-clipboard_list_outline
 taskChar = toEnum 0xe640 -- nf-seti-checkbox_unchecked
-inboxChar = toEnum 987762
+inboxChar = toEnum 0xf1272 -- nf-md-inbox_full
+unsortedChar = toEnum 0xebba -- nf-cod-type_hierarchy_sub
 
 taskWarnings :: Text -> Char -> BarDisplay -> Seq (a, Task) -> Seq Warning
 taskWarnings t c d = fmap (taskWarning t c d . snd) . Seq.sortOn (view (_2 % #kanban_position))
