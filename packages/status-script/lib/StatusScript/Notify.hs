@@ -81,7 +81,7 @@ mkNotification m w =
     | otherwise = "mdi:format-list-checks"
 
 devices :: Seq Text
-devices = Seq.fromList ["pegasus", "kalliope"]
+devices = Seq.fromList ["pegasus"]
 
 notifyHomeAssistant :: MonadHeadlessApp t m => Dynamic t (Mode, [Warning]) -> m ()
 notifyHomeAssistant warnings = do
