@@ -1,6 +1,7 @@
 module StatusScript.Notify (notifyHomeAssistant) where
 
 import Data.Aeson (Options (..), ToJSON (..), defaultOptions, encode, genericToJSON)
+import Data.Sequence qualified as Seq
 import Data.String.Interpolate (i)
 import Data.Text qualified as Text
 import Network.Wreq (defaults, header, postWith)
@@ -58,8 +59,8 @@ mkNotification m w =
             Text.filter (/= taskChar) $
               "<b>"
                 <> (head ws).heading
-                <> "</b>: "
-                <> Text.intercalate " | " (foldMap (take 1 . (.description)) ws)
+                <> ":</b> "
+                <> Text.intercalate " <b>|</b> " (foldMap (take 1 . (.description)) ws)
     , data' =
         MkNotificationData
           { notification_icon
@@ -79,14 +80,19 @@ mkNotification m w =
     | null warnings = "mdi:check-all"
     | otherwise = "mdi:format-list-checks"
 
+devices :: Seq Text
+devices = Seq.fromList ["pegasus", "kalliope"]
+
 notifyHomeAssistant :: MonadHeadlessApp t m => Dynamic t (Mode, [Warning]) -> m ()
 notifyHomeAssistant warnings = do
   opts <- liftIO wreqOptions
   notify_ev <- updated <$> holdUniqDyn (uncurry mkNotification <$> warnings)
-  performEvent_ $
-    void
-      . liftIO
-      . retryWithBackoff
-      . postWith opts "https://home.maralorn.de/api/services/notify/mobile_app_pegasus"
-      . encode
-      <$> notify_ev
+  performEvent_ $ liftIO . sendNotification opts <$> notify_ev
+
+sendNotification :: ToJSON p => Wreq.Options -> p -> IO ()
+sendNotification opts n = do
+  forM_ devices \device ->
+    retryWithBackoff $
+      postWith opts [i|https://home.maralorn.de/api/services/notify/mobile_app_#{device}|] d
+ where
+  d = encode n
