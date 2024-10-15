@@ -59,7 +59,7 @@ mkNotification m w =
               "<b>"
                 <> (head ws).heading
                 <> "</b>: "
-                <> Text.intercalate ", " (foldMap (take 1 . (.description)) ws)
+                <> Text.intercalate " | " (foldMap (take 1 . (.description)) ws)
     , data' =
         MkNotificationData
           { notification_icon
