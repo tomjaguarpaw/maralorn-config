@@ -28,7 +28,7 @@ bucketOpts bucket =
 getTasks :: Mode -> IO (Seq Warning)
 getTasks mode = do
   opts <- defaultOptions
-  retryWithBackoff $
+  retryIndefinite 60 $
     fold
       [ on_mode (== Sort) $
           (taskWarnings "Inbox" inboxChar Count <$> fetchAll opts [i|#{url}/projects/-2/tasks|])

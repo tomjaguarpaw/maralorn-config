@@ -14,18 +14,19 @@ import Network.Socket.ByteString qualified as Network
 import Optics (has, only, over, view, (%), (^.), _1, _2)
 import Reflex (Dynamic, TriggerEvent (..), holdDyn)
 import Reflex.Host.Headless (MonadHeadlessApp)
-import Relude
+import Relude hiding (catMaybes)
 import Shh (captureTrim, (|>))
 import Shh qualified
 import StatusScript.CommandUtil
 import StatusScript.Env
 import StatusScript.ReflexUtil
 import System.Environment (getEnv)
+import Witherable (catMaybes)
 
 Shh.load Shh.Absolute ["hyprctl"]
 
 watchHyprland :: IO () -> IO Void
-watchHyprland cb = forever $ retryWithBackoff watch
+watchHyprland cb = forever $ retryIndefinite 2 watch
  where
   watch = do
     socket <- Network.socket Network.AF_UNIX Network.Stream Network.defaultProtocol
@@ -47,7 +48,7 @@ hyprlandWorkspaces
 hyprlandWorkspaces env = do
   reportMissing missingExecutables
   (event, trigger) <- newTriggerEvent
-  ev <- performEventThreaded env event \_ -> retryWithBackoff mkInfo
+  ev <- catMaybes <$> performEventThreaded env event \_ -> retryTimeout 5 10 mkInfo
   liftIO $ env.fork [i|Listening on Hyprland socket|] $ do
     trigger ()
     absurd <$> watchHyprland (trigger ())

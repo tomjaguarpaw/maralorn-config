@@ -3,7 +3,7 @@
 , network, nonempty-containers, optics, reflex, relude
 , safe-exceptions, say, shh, stm, string-interpolate
 , template-haskell, time, typed-process, uuid, vikunja-tools, which
-, wreq
+, witherable, wreq
 }:
 mkDerivation {
   pname = "status-script";
@@ -15,13 +15,15 @@ mkDerivation {
     aeson aeson-schemas async base bytestring directory exceptions
     extra filepath fsnotify github network nonempty-containers optics
     reflex relude safe-exceptions say shh stm string-interpolate
-    template-haskell time typed-process uuid vikunja-tools which wreq
+    template-haskell time typed-process uuid vikunja-tools which
+    witherable wreq
   ];
   executableHaskellDepends = [
     aeson aeson-schemas async base bytestring directory exceptions
     extra filepath fsnotify github network nonempty-containers optics
     reflex relude safe-exceptions say shh stm string-interpolate
-    template-haskell time typed-process uuid vikunja-tools which wreq
+    template-haskell time typed-process uuid vikunja-tools which
+    witherable wreq
   ];
   license = "unknown";
 }

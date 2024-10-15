@@ -1,4 +1,4 @@
-module StatusScript.CommandUtil (reportMissing, loadSystemdEnv, retryWithBackoff) where
+module StatusScript.CommandUtil (reportMissing, loadSystemdEnv, retryIndefinite, retryTimeout) where
 
 import Control.Concurrent (threadDelay)
 import Control.Exception.Safe (catchAny)
@@ -16,16 +16,42 @@ import System.Environment (setEnv)
 Shh.load Shh.Absolute ["systemctl"]
 
 missingExecutables :: IO [FilePath]
-retryWithBackoff :: IO a -> IO a
-retryWithBackoff act = go 0
+
+-- | Retries starting at 1ms with exponential backoff to the given limit.
+retryIndefinite
+  :: Int
+  -- ^ Retry maximally every _ seconds
+  -> IO a
+  -> IO a
+retryIndefinite max_sec act = either absurd id <$> retry (const Nothing) max_sec 0 act
+
+{- | Retries starting at 1ms with exponential backoff to the given limit.
+| Fails with last exception after given timeout.
+-}
+retryTimeout
+  :: Int
+  -- ^ Retry maximally every _ seconds
+  -> Int
+  -- ^ Give up after _ seconds
+  -> IO a
+  -> IO (Maybe a)
+retryTimeout max_sec timeout_sec act = either (const Nothing) Just <$> retry Just max_sec timeout_sec act
+
+retry :: (SomeException -> Maybe b) -> Int -> Int -> IO a -> IO (Either b a)
+retry f max_sec timeout_sec act = go 0
  where
-  go cnt = do
-    catchAny act \err -> do
-      sayErr [i|Retrying in #{timeout} ms. Error: #{displayException err}|]
-      threadDelay (timeout * 1_000)
-      go (cnt + 1)
+  go cnt = catchAny (Right <$> act) \err -> do
+    case f err of
+      Just b | waited_sec > timeout_sec -> do
+        sayErr [i|Giving up after #{waited_sec} s. Error: #{displayException err}|]
+        pure (Left b)
+      _ -> do
+        sayErr [i|Retrying in #{timeout_milli cnt} ms. Error: #{displayException err}|]
+        threadDelay (timeout_milli cnt * 1_000)
+        go (cnt + 1)
    where
-    timeout = min 60_000 (2 ^ cnt)
+    timeout_milli c = min (1000 * max_sec) (2 ^ c)
+    waited_sec = sum (timeout_milli <$> [0 .. cnt - 1]) `div` 1000
 
 loadSystemdEnv :: Text -> IO ()
 loadSystemdEnv var = do
@@ -37,4 +63,6 @@ loadSystemdEnv var = do
     =<< (systemctl "--user" "show-environment" |> Shh.captureTrim)
 
 reportMissing :: MonadIO m => IO [FilePath] -> m ()
-reportMissing missing = whenJustM (nonEmpty <$> liftIO missing) \missing' -> sayErr [i|Missing executables: #{Text.intercalate "," (toList missing' <&> toText)}|]
+reportMissing missing = whenJustM
+  (nonEmpty <$> liftIO missing)
+  \missing' -> sayErr [i|Missing executables: #{Text.intercalate "," (toList missing' <&> toText)}|]

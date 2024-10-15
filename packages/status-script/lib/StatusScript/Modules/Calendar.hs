@@ -56,7 +56,7 @@ calendar = \env -> do
   pb_ev <- R.getPostBuild
   ReflexUtil.performEventThreaded env (pb_ev <> tick) $ const do
     tdy <- toText . Time.formatTime Time.defaultTimeLocale "%F " <$> getCurrentTime
-    appointments <- decodeUtf8 <$> retryWithBackoff (khal params |> Shh.captureTrim)
+    appointments <- decodeUtf8 <$> retryIndefinite 10 (khal params |> Shh.captureTrim)
     pure $
       Text.splitOn "@=@" appointments
         & mapMaybe

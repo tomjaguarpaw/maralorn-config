@@ -92,7 +92,7 @@ notifyHomeAssistant warnings = do
 sendNotification :: ToJSON p => Wreq.Options -> p -> IO ()
 sendNotification opts n = do
   forM_ devices \device ->
-    retryWithBackoff $
+    retryTimeout 2 5 $
       postWith opts [i|https://home.maralorn.de/api/services/notify/mobile_app_#{device}|] d
  where
   d = encode n

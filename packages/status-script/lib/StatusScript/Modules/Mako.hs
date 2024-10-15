@@ -35,7 +35,7 @@ notifications = \env mode -> do
       Nothing -> never
       Just _ -> taggedAndUpdated mode tick
   ev <- ReflexUtil.performEventThreaded env trigger_ev \_ ->
-    retryWithBackoff (makoctl "list" |> captureTrim)
+    retryIndefinite 5 (makoctl "list" |> captureTrim)
       <&> Aeson.decode @(Schema.Object MakoList)
         %> [get|.data|]
         %> join

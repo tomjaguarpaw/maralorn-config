@@ -64,6 +64,6 @@ mail env mode = do
   events <- performEventThreaded env (taggedAndUpdated mode notmuch_update) \case
     DND -> pure mempty
     mode' ->
-      retryWithBackoff (notmuch "search" "--format=json" "folder:/Inbox/" |> Shh.captureTrim)
+      retryIndefinite 5 (notmuch "search" "--format=json" "folder:/Inbox/" |> Shh.captureTrim)
         <&> (eitherDecode' >>> either (error . toText) id >>> fmapMaybe (mkWarning mode') >>> sortOn (.heading))
   holdDyn [] events
