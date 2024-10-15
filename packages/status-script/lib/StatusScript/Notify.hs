@@ -64,7 +64,7 @@ mkNotification m w =
         MkNotificationData
           { notification_icon
           , tag = "status"
-          , subject = ""
+          , subject = Text.unwords $ warnings <&> \ws -> (head ws).heading <> " " <> show (length ws)
           , color = "white"
           , persistent = True
           , sticky = True
