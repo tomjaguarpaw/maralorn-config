@@ -19,15 +19,9 @@ let
   sync = "PATH=${lib.makeBinPath [ pkgs.coreutils ]}:$PATH ${lib.getExe' pkgs.isync "mbsync"}";
   quick-mail-sync = pkgs.writeShellScriptBin "quick-mail-sync" ''
     ${pkgs.coreutils}/bin/mkdir -p ~/.cache/mutt
-    ${sync} hera:INBOX heilmann-inbox
+    ${sync} hera:INBOX hera:Move/todo hera:Move/readlater hera:Junk heilmann-inbox
     ${
-      if config.m-0.hostName == "athene" then
-        ''
-          ${sync} hera:Move/todo
-          ${lib.getExe' pkgs.vikunja-tools "vikunja-mail-import"}
-        ''
-      else
-        ""
+      if config.m-0.hostName == "athene" then lib.getExe' pkgs.vikunja-tools "vikunja-mail-import" else ""
     }
     ${lib.getExe pkgs.notmuch} new
   '';
