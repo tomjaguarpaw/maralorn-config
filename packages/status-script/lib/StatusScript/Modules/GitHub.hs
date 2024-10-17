@@ -90,16 +90,17 @@ watchRuns cb = forever $ do
   yesterday <- addUTCTime (-nominalDay) <$> getCurrentTime
   response <-
     retryTimeout 10 30 $
-      github
-        (OAuth token)
-        ( workflowRunsR
-            (mkName Proxy "heilmannsoftware")
-            (mkName Proxy "connect")
-            ( optionsWorkflowRunActor "maralorn"
-                <> optionsWorkflowRunCreated [i|>=#{formatTime defaultTimeLocale "%F" yesterday}|]
-            )
-            FetchAll
-        )
+      either throwIO pure
+        =<< github
+          (OAuth token)
+          ( workflowRunsR
+              (mkName Proxy "heilmannsoftware")
+              (mkName Proxy "connect")
+              ( optionsWorkflowRunActor "maralorn"
+                  <> optionsWorkflowRunCreated [i|>=#{formatTime defaultTimeLocale "%F" yesterday}|]
+              )
+              FetchAll
+          )
   time <- liftIO getCurrentTime
-  whenJust response (either throwIO (cb . mkRunWarnings time . (.withTotalCountItems)))
+  whenJust response (cb . mkRunWarnings time . (.withTotalCountItems))
   threadDelay 60_000_000 -- one minute
