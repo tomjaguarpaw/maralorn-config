@@ -122,8 +122,9 @@
         o = "xdg-open";
         s = "sudo systemctl";
         g = "set_terminal_title lazygit $(pwd); lazygit";
+        jco = "jj git fetch && jj new";
         j = "set_terminal_title lazyjj $(pwd); lazyjj";
-        jpush = ''f() { if [[ "$2" == "" ]]; then jj bookmark set $1; jj git push -b $1; else jj bookmark set $1 -r "$2"; jj git push -b $1; fi}; f'';
+        jp = ''f() { if [[ "$2" == "" ]]; then jj bookmark set $1; jj git push -b $1; else jj bookmark set $1 -r "$2"; jj git push -b $1; fi}; f'';
         u = "systemctl --user";
         m = "man";
         h = ''f() { if [[ "$1" == "" ]]; then set_terminal_title hx $(pwd); hx .; else set_terminal_title hx $(pwd) $@; hx "$@"; fi}; f'';

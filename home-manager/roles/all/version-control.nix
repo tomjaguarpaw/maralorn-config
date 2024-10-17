@@ -19,8 +19,8 @@ in
 {
   home.packages = builtins.attrValues {
     inherit (pkgs) glab lazyjj difftastic;
-    jjwatch = pkgs.writeShellScriptBin "jjwatch" "(jj file list; find .jj -maxdepth 3) | entr -c ${jjstat}";
-    jjpr = pkgs.writeShellScriptBin "jjpr" ''
+    jw = pkgs.writeShellScriptBin "jjwatch" "(jj file list; find .jj -maxdepth 3) | entr -c ${jjstat}";
+    jpr = pkgs.writeShellScriptBin "jjpr" ''
       set -ex -o pipefail
       shopt -s extglob
       if [[ "$1" == "" ]]; then
