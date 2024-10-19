@@ -37,10 +37,11 @@ waitingBucket = 56
 projectBucket = 58
 backlogBucket = 42
 
-wantColor, mustColor, shouldColor :: Text
+wantColor, mustColor, shouldColor, urgentColor :: Text
 wantColor = "1a5fb4"
 mustColor = "ffbe6f"
 shouldColor = ""
+urgentColor = "ff0000"
 
 getToken :: IO Text
 getToken = Text.strip . decodeUtf8 <$> readFileBS "/run/agenix/vikunja-token"
@@ -192,6 +193,7 @@ chooseColor :: Task -> Text
 chooseColor t = case t.priority of
   1 -> wantColor
   2 -> mustColor
+  3 -> urgentColor
   _ -> shouldColor
 
 fetchAll :: Options -> String -> IO (Seq (Value, Task))
