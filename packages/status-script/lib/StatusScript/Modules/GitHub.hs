@@ -66,6 +66,7 @@ runToWarning time wfRun =
     "in_progress" -> Just (toEnum 0xf051f) -- nf-md-timer_send
     "success" -> Just (toEnum 0xf0e1e) -- nf-md-check_bold
     "failure" -> Just (toEnum 0xe654) -- nf-seti-error
+    "queued" -> Just (toEnum 0xf1571) -- nf-md-human_queue
     _ -> Nothing
 
 printDuration :: NominalDiffTime -> Text
