@@ -25,6 +25,7 @@ common common-config
     PartialTypeSignatures
     QuasiQuotes
     RecordWildCards
+    RecursiveDo
     ScopedTypeVariables
     TemplateHaskell
 

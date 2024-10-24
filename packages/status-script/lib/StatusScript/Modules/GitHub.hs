@@ -1,6 +1,5 @@
 module StatusScript.Modules.GitHub (runs) where
 
-import Control.Concurrent (threadDelay)
 import Control.Exception.Safe (throwIO)
 import Data.ByteString.Char8 qualified as Bytestring
 import Data.Map.Strict qualified as M
@@ -10,56 +9,74 @@ import Data.Time.Clock (addUTCTime)
 import Data.Time.Format (defaultTimeLocale)
 import GitHub
   ( Auth (..)
+  , Branch (..)
+  , Error
   , FetchCount (..)
   , WithTotalCount (..)
   , WorkflowRun (..)
+  , branchesForR
   , github
   , mkName
   , optionsWorkflowRunActor
   , optionsWorkflowRunCreated
   , workflowRunsR
   )
-import GitHub.Internal.Prelude (Vector)
 import Reflex
 import Reflex.Host.Headless qualified as R
 import Relude
 import StatusScript.CommandUtil
 import StatusScript.Env
 import StatusScript.Mode
+import StatusScript.ReflexUtil
 import StatusScript.Warnings
+
+data IsActive = IsActive
+
+repos :: [(Text, Text)]
+repos = [("heilmannsoftware", "connect")]
+
+user :: Text
+user = "maralorn"
 
 runs :: R.MonadHeadlessApp t m => Env -> Dynamic t Mode -> m (Dynamic t [Warning])
 runs env _ = do
-  (eRun, triggerRun) <- newTriggerEvent
-  liftIO $ env.fork "watchRuns" (watchRuns triggerRun)
-  holdDyn mempty eRun
+  token <- liftIO getToken
+  ev <- flexiblePoll env (fetchRuns token <&> second (maybe 300_000_000 (const 60_000_000)))
+  holdDyn mempty ev
 
-mkRunWarnings :: UTCTime -> Vector WorkflowRun -> [Warning]
+mkRunWarnings :: UTCTime -> [WorkflowRun] -> ([Warning], Maybe IsActive)
 mkRunWarnings time =
   toList
     >>> fmap (\r -> (r.workflowRunHeadBranch, r))
     >>> M.fromListWith (\a b -> if a.workflowRunCreatedAt >= b.workflowRunCreatedAt then a else b)
     >>> toList
     >>> fmap (runToWarning time)
+    >>> unzip
+    >>> second (getFirst . foldMap First)
 
-runToWarning :: UTCTime -> WorkflowRun -> Warning
+runToWarning :: UTCTime -> WorkflowRun -> (Warning, Maybe IsActive)
 runToWarning time wfRun =
-  MkWarning
-    { description =
-        [ wfRun.workflowRunHeadBranch
-            <> " "
-            <> (if isNothing subgroup then status <> " " else "")
-            <> printDuration
-              ( diffUTCTime
-                  (if isJust wfRun.workflowRunConclusion then wfRun.workflowRunUpdatedAt else time)
-                  wfRun.workflowRunStartedAt
-              )
-        ]
-    , heading = "GitHub Actions"
-    , barDisplay = None
-    , group = toEnum 0xeaff -- nf-cod-github_action
-    , subgroup
-    }
+  ( MkWarning
+      { description =
+          [ wfRun.workflowRunHeadBranch
+              <> " "
+              <> (if isNothing subgroup then status <> " " else "")
+              <> printDuration
+                ( diffUTCTime
+                    (if isJust wfRun.workflowRunConclusion then wfRun.workflowRunUpdatedAt else time)
+                    wfRun.workflowRunStartedAt
+                )
+          ]
+      , heading = "GitHub Actions"
+      , barDisplay = None
+      , group = toEnum 0xeaff -- nf-cod-github_action
+      , subgroup
+      }
+  , case status of
+      "in_progress" -> Just IsActive
+      "queued" -> Just IsActive
+      _ -> Nothing
+  )
  where
   status = fromMaybe wfRun.workflowRunStatus wfRun.workflowRunConclusion
   subgroup = case status of
@@ -82,26 +99,42 @@ minute = 60
 hour = 60 * minute
 day = 24 * hour
 
-getToken :: IO ByteString
-getToken = Bytestring.strip <$> readFileBS "/run/agenix/github-read-workflow-token"
+getToken :: IO Auth
+getToken = OAuth . Bytestring.strip <$> readFileBS "/run/agenix/github-read-workflow-token"
 
-watchRuns :: ([Warning] -> IO ()) -> IO ()
-watchRuns cb = forever $ do
-  token <- getToken
+fetchRuns :: Auth -> IO ([Warning], Maybe IsActive)
+fetchRuns token = do
   yesterday <- addUTCTime (-nominalDay) <$> getCurrentTime
-  response <-
-    retryTimeout 10 30 $
-      either throwIO pure
-        =<< github
-          (OAuth token)
-          ( workflowRunsR
-              (mkName Proxy "heilmannsoftware")
-              (mkName Proxy "connect")
-              ( optionsWorkflowRunActor "maralorn"
-                  <> optionsWorkflowRunCreated [i|>=#{formatTime defaultTimeLocale "%F" yesterday}|]
-              )
-              FetchAll
-          )
+  response <- forM repos \(owner, repo) -> retryTimeout 10 30 $ do
+    response <-
+      fmap (toList . (.withTotalCountItems)) $
+        unpackError
+          =<< github
+            token
+            ( workflowRunsR
+                (mkName Proxy owner)
+                (mkName Proxy repo)
+                ( optionsWorkflowRunActor user
+                    <> optionsWorkflowRunCreated [i|>=#{formatTime defaultTimeLocale "%F" yesterday}|]
+                )
+                FetchAll
+            )
+    if null response
+      then pure response
+      else do
+        branches <-
+          fmap (fmap (.branchName) . toList) $
+            unpackError
+              =<< github
+                token
+                ( branchesForR
+                    (mkName Proxy owner)
+                    (mkName Proxy repo)
+                    FetchAll
+                )
+        pure $ filter (\r -> r.workflowRunHeadBranch `elem` branches) response
   time <- liftIO getCurrentTime
-  whenJust response (cb . mkRunWarnings time . (.withTotalCountItems))
-  threadDelay 60_000_000 -- one minute
+  pure $ mkRunWarnings time . fold . catMaybes $ response
+
+unpackError :: Either Error a -> IO a
+unpackError = either throwIO pure

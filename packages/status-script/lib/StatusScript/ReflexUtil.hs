@@ -1,5 +1,16 @@
-module StatusScript.ReflexUtil (performEventThreaded, concatEvents, processLines, tickEvent, taggedAndUpdated, updatedAndStart, performDynThreaded) where
+module StatusScript.ReflexUtil
+  ( performEventThreaded
+  , concatEvents
+  , processLines
+  , tickEvent
+  , taggedAndUpdated
+  , updatedAndStart
+  , performDynThreaded
+  , flexiblePoll
+  )
+where
 
+import Control.Concurrent (threadDelay)
 import Control.Concurrent qualified as Conc
 import Maralorn.Prelude
 import Reflex
@@ -14,6 +25,13 @@ tickEvent :: R.MonadHeadlessApp t m => Int -> m (R.Event t ())
 tickEvent wait_time =
   R.tickLossyFromPostBuildTime (realToFrac wait_time)
     <&> void
+
+flexiblePoll :: MonadHeadlessApp t m => Env -> IO (a, Int) -> m (Event t a)
+flexiblePoll env act = do
+  pb <- getPostBuild
+  rec ev_res <- performEventThreaded env (leftmost [ev_timeout, pb]) (const act)
+      ev_timeout <- performEventThreaded env (snd <$> ev_res) threadDelay
+  pure $ fst <$> ev_res
 
 taggedAndUpdated :: R.Reflex t => R.Dynamic t a -> R.Event t b -> R.Event t a
 taggedAndUpdated = \dynamic event -> R.leftmost [R.updated dynamic, R.tag (R.current dynamic) event]
