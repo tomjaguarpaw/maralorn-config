@@ -579,7 +579,7 @@ in
             indoor_temp_sensor = "sensor.${sensor.schlafzimmer}_temperature";
             indoor_humidity_sensor = "sensor.${sensor.schlafzimmer}_humidity";
             outdoor_temp_sensor = "sensor.smoothed_outside_temperature";
-            calibration_factor = 1.8;
+            calibration_factor = 1.9;
           }
         ];
         http = {
