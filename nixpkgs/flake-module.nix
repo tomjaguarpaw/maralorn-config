@@ -14,7 +14,6 @@
               "steam"
               "steam-run"
               "steam-original"
-              "factorio-alpha"
               "teamviewer"
             ];
           permittedInsecurePackages = [ "olm-3.2.16" ];
