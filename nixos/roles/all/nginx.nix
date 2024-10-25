@@ -36,7 +36,13 @@ in
               if (!(builtins.elem name (hosts.publicAliases.${hostName} or [ ]))) then
                 ''
                   satisfy any;
-                  ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};") config.m-0.headscaleIPs}
+                  ${lib.concatMapStringsSep "\n" (ip_range: "allow ${ip_range};") (
+                    [
+                      "127.0.0.1/30"
+                      "::1/128"
+                    ]
+                    ++ config.m-0.headscaleIPs
+                  )}
                   deny all;
                 ''
               else
