@@ -199,6 +199,7 @@ let
         "Clear Timers" = shell "echo [] > ~/.timers";
       };
     }
+    { Emoji = lib.getExe pkgs.emote; }
   ];
   my-hotkeys = pkgs.writeShellScriptBin "my-hotkeys" "${lib.getBin pkgs.wizards-dialog}/bin/hotkeys ${pkgs.writeText "hotkeys.yaml" (builtins.toJSON hotkeys)}";
 in

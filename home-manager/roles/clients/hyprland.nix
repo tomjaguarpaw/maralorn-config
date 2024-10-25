@@ -56,6 +56,7 @@ in
       ];
       exec = [ "systemctl --user restart eww swayidle" ];
       exec-once = [
+        (lib.getExe pkgs.emote)
         "unlock-keys"
         (lib.getExe pkgs.hyprdim)
         "${lib.getExe pkgs.swaybg} -m fill -i ~/.config/wallpaper"
