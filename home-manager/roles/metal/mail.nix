@@ -147,7 +147,7 @@ in
       {
         ".neomuttrc".text = ''
           set editor = "hx"
-          alternative_order text/plain text/html
+          alternative_order text/html text/plain
           auto_view text/*
           auto_view message/*
           set wait_key = false
