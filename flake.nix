@@ -3,7 +3,7 @@
 
   inputs = {
     nixos-unstable.url = "nixpkgs/nixos-unstable";
-    nixos-stable.url = "nixpkgs/nixos-24.05";
+    nixos-stable.url = "nixpkgs/nixos-24.11";
     nixos-oldstable.url = "nixpkgs/nixos-23.11";
     disko = {
       url = "github:nix-community/disko";
@@ -32,7 +32,7 @@
       url = "git+https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git?ref=nixos-24.05";
     };
     home-manager = {
-      url = "home-manager/release-24.05";
+      url = "home-manager/release-24.11";
       inputs = {
         nixpkgs.follows = "";
       };
