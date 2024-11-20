@@ -7,6 +7,6 @@
       typst
       parallel
       ;
-    inherit (pkgs.texlive.combined) scheme-full;
+    #inherit (pkgs.texlive.combined) scheme-full;
   };
 }
