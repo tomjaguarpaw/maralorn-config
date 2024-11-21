@@ -65,7 +65,7 @@ groups:
 
         # postfix (mail queue)
         - alert: mailq
-          expr: postfix_showq_message_age_seconds_sum > 1800
+          expr: postfix_showq_message_age_seconds_sum{name!~"bach.ved"} > 1800
           for: 5m
           labels:
             severity: warning

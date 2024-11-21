@@ -20,27 +20,27 @@ let
   '';
 in
 {
-  systemd.services.setup-accounting-db = {
-    script = ''
-      set -ex
-      pw=$(cat ${config.age.secrets."grafana-postgres-pw".path})
-      ${config.services.postgresql.package}/bin/psql -d accounting << EOF
-      CREATE TABLE IF NOT EXISTS balances (account text, date date, amount numeric(11,2));
-      CREATE TABLE IF NOT EXISTS flat_balances (account text, date date, amount numeric(11,2));
-      GRANT ALL ON balances TO maralorn;
-      GRANT SELECT ON balances TO grafana;
-      GRANT ALL ON flat_balances TO maralorn;
-      GRANT SELECT ON flat_balances TO grafana;
-      ALTER ROLE grafana PASSWORD '$pw';
-      EOF
-    '';
-    serviceConfig = {
-      Type = "oneshot";
-      User = "postgres";
-    };
-    after = [ "postgresql.service" ];
-    wantedBy = [ "default.target" ];
-  };
+  # systemd.services.setup-accounting-db = {
+  #   script = ''
+  #     set -ex
+  #     pw=$(cat ${config.age.secrets."grafana-postgres-pw".path})
+  #     ${config.services.postgresql.package}/bin/psql -d accounting << EOF
+  #     CREATE TABLE IF NOT EXISTS balances (account text, date date, amount numeric(11,2));
+  #     CREATE TABLE IF NOT EXISTS flat_balances (account text, date date, amount numeric(11,2));
+  #     GRANT ALL ON balances TO maralorn;
+  #     GRANT SELECT ON balances TO grafana;
+  #     GRANT ALL ON flat_balances TO maralorn;
+  #     GRANT SELECT ON flat_balances TO grafana;
+  #     ALTER ROLE grafana PASSWORD '$pw';
+  #     EOF
+  #   '';
+  #   serviceConfig = {
+  #     Type = "oneshot";
+  #     User = "postgres";
+  #   };
+  #   after = [ "postgresql.service" ];
+  #   wantedBy = [ "default.target" ];
+  # };
 
   services = {
     postgresql = {
