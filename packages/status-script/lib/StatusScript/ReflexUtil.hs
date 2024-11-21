@@ -21,6 +21,7 @@ import Shh ((|>))
 import Shh qualified
 import StatusScript.Env (Env (..))
 
+-- Period in seconds.
 tickEvent :: R.MonadHeadlessApp t m => Int -> m (R.Event t ())
 tickEvent wait_time =
   R.tickLossyFromPostBuildTime (realToFrac wait_time)

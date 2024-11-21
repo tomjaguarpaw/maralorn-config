@@ -2,10 +2,13 @@ module StatusScript.Modules.Mail (mail, unreadChar) where
 
 import Data.Aeson (FromJSON, eitherDecode')
 import Data.Text qualified as Text
-import Maralorn.Prelude
+import Data.Time (NominalDiffTime, addUTCTime, getCurrentTime)
+import Data.Time.Clock (UTCTime (..))
+import Optics hiding ((|>))
 import Reflex
 import Reflex qualified as R
 import Reflex.Host.Headless qualified as R
+import Relude hiding (catMaybes)
 import Shh ((|>))
 import Shh qualified
 import StatusScript.CommandUtil
@@ -16,6 +19,7 @@ import StatusScript.Mode (Mode (..))
 import StatusScript.ReflexUtil
 import StatusScript.Warnings
 import System.FilePath ((</>))
+import Witherable (catMaybes)
 
 Shh.load Shh.Absolute ["notmuch"]
 
@@ -68,4 +72,42 @@ mail env mode = do
     mode' ->
       retryIndefinite 5 (notmuch "search" "--format=json" "folder:/Inbox/" |> Shh.captureTrim)
         <&> (eitherDecode' >>> either (error . toText) id >>> fmapMaybe (mkWarning mode') >>> sortOn (.heading))
-  holdDyn [] events
+  warnings <- holdDyn [] events
+  set_timeout_ev <- performEvent $ updated $ zipDynWith calcTimeout mode warnings
+  next_timeout <- foldDyn ($) (Just $ UTCTime (toEnum 0) 0) set_timeout_ev
+  let warning_throttle =
+        zipDynWith
+          ( maybe
+              (const $ pure Nothing)
+              \next w -> liftIO getCurrentTime <&> \now' -> if now' >= next then (Just w) else Nothing
+          )
+          next_timeout
+          warnings
+  tick_minutes <- tickEvent 60
+  holdDyn [] . catMaybes
+    =<< performEvent (leftmost [updated warning_throttle, tag (current warning_throttle) tick_minutes])
+
+calcTimeout :: MonadIO m => Mode -> [Warning] -> m (Maybe UTCTime -> Maybe UTCTime)
+calcTimeout m ws = do
+  now' <- liftIO getCurrentTime
+  pure case m of
+    _ | null ws -> (const Nothing)
+    Normal -> minMaybe $ flip addUTCTime now' <$> timeouts ws
+    _ -> minMaybe (Just now')
+ where
+  minMaybe = maybe id (\new -> Just . maybe new (min new))
+
+timeouts :: [Warning] -> Maybe NominalDiffTime
+timeouts = fmap timeout >>> maximumOf folded
+
+timeout :: Warning -> NominalDiffTime
+timeout = (.heading) >>> headingTimeout
+
+headingTimeout :: Text -> NominalDiffTime
+headingTimeout = \case
+  "HS Chat" -> 30 * minute
+  "HS GitHub" -> 60 * minute
+  _ -> 120 * minute
+
+minute :: NominalDiffTime
+minute = 60
