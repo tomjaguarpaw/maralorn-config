@@ -154,13 +154,11 @@ let
         {
           Mail =
             let
-              mail = param: term (shell "neomutt ${param}; notmuch new");
+              mail = param: "neomutt ${param}; notmuch new";
             in
-            {
-              Open = mail "";
-              Inbox = mail "-f ~/Maildir/hera/Inbox";
-              Inbox-Work = mail "-f ~/Maildir/heilmann/Inbox";
-            };
+            term (shell ''
+              case "$(cat ~/.mode || echo Normal)" in Normal) ${mail "-f \"notmuch://?type=threads&query=tag:unread and folder:/Inbox/\""};; DND) ${mail ""};; *) ${mail "-f \"notmuch://?type=threads&query=folder:/Inbox/\""};; esac
+            '');
         }
         {
           Mumble = {

@@ -140,13 +140,19 @@ in
           audio/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
         '';
         # See: https://unix.stackexchange.com/questions/44358/mutt-mark-as-read-and-delete
-        move-message-macro =
-          account: key: dir:
-          ''folder-hook ${account} "macro index,pager ${key} \":set confirmappend=no resolve=no\n<clear-flag>N<save-message>=${account}/${dir}\n:set confirmappend=yes resolve=yes\n<next-undeleted>\" \"move message to ${account}/${dir}\""'';
+        move-message-folder-hook = account: key: dir: ''
+          folder-hook ${account} "macro index ${key} \":set confirmappend=no resolve=no\n<tag-thread><clear-flag>N<save-message>=${account}/${dir}\n:set confirmappend=yes resolve=yes\n<next-undeleted>\" \"move message to ${account}/${dir}\""
+          folder-hook ${account} "macro pager ${key} \":set confirmappend=no resolve=no\n<clear-flag>N<save-message>=${account}/${dir}\n:set confirmappend=yes resolve=yes\n<next-undeleted>\" \"move message to ${account}/${dir}\""
+        '';
+        move-message-macro = account: key: dir: ''
+          macro index ${key} ":set confirmappend=no resolve=no\n<tag-thread><clear-flag>N<save-message>=${account}/${dir}\n:set confirmappend=yes resolve=yes\n<next-undeleted>" "move message to ${account}/${dir}"
+          macro pager ${key} ":set confirmappend=no resolve=no\n<clear-flag>N<save-message>=${account}/${dir}\n:set confirmappend=yes resolve=yes\n<next-undeleted>" "move message to ${account}/${dir}"
+        '';
       in
       {
         ".neomuttrc".text = ''
           set editor = "hx"
+          set auto_tag = yes
           alternative_order text/html text/plain
           auto_view text/*
           auto_view message/*
@@ -154,11 +160,15 @@ in
           color normal default default
 
           ${move-message-macro "hera" "a" "Archiv/unsortiert"}
-          ${move-message-macro "heilmann" "a" "Archive"}
           ${move-message-macro "hera" "s" "Junk"}
-          ${move-message-macro "heilmann" "s" "Spam"}
           ${move-message-macro "hera" "t" "Move/todo"}
           ${move-message-macro "hera" "l" "Move/readlater"}
+          ${move-message-folder-hook "hera" "a" "Archiv/unsortiert"}
+          ${move-message-folder-hook "heilmann" "a" "Archive"}
+          ${move-message-folder-hook "hera" "s" "Junk"}
+          ${move-message-folder-hook "heilmann" "s" "Spam"}
+          ${move-message-folder-hook "hera" "t" "Move/todo"}
+          ${move-message-folder-hook "hera" "l" "Move/readlater"}
           macro attach 'V' "<shell-escape>mkdir -p ~/.cache/mutt<enter><pipe-entry>iconv -c --to-code=UTF8 > ~/.cache/mutt/mail.html<enter><shell-escape>firefox ~/.cache/mutt/mail.html<enter>"
 
           macro index,pager <F6> "<shell-escape>${pkgs.zsh}/bin/zsh -c '${pkgs.sieve-connect}/bin/sieve-connect -s ${
