@@ -20,7 +20,6 @@
       echo "Continuing …"
     '';
 
-    inherit (pkgs.gnome) nautilus;
     inherit (pkgs.xorg) xbacklight;
     inherit (pkgs)
       # web
@@ -44,6 +43,7 @@
       zbar
       graphia
       pdfpc
+      nautilus
 
       # media
       deluge
@@ -58,10 +58,8 @@
       shotcut
       audacity
       wl-clipboard
-      dconf2nix
       chrysalis
       ;
-    inherit (pkgs.gnome) dconf-editor;
   };
 
   gtk = {

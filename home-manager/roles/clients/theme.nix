@@ -1,7 +1,7 @@
 {
   imports =
     let
-      cpFlake = builtins.getFlake "github:catppuccin/nix/9345073d27d91ab66c1b6ab65df322906992aa59";
+      cpFlake = builtins.getFlake "github:catppuccin/nix/32359bf226fe874d3b7a0a5753d291a4da9616fe";
     in
     [ cpFlake.homeManagerModules.catppuccin ];
   catppuccin = {
@@ -23,7 +23,7 @@
     };
     kitty.catppuccin.enable = true;
     lazygit.catppuccin.enable = true;
-    helix.catppuccin.enable = false;
+    helix.catppuccin.enable = true;
     mpv.catppuccin.enable = true;
     newsboat.catppuccin.enable = true;
     starship.catppuccin.enable = true;
