@@ -14,6 +14,7 @@
               "steam"
               "steam-run"
               "steam-original"
+              "steam-unwrapped"
               "factorio-space-age"
               "teamviewer"
             ];

@@ -13,11 +13,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1718371084,
-        "narHash": "sha256-abpBi61mg0g+lFFU0zY4C6oP6fBwPzbHPKBGw676xsA=",
+        "lastModified": 1723293904,
+        "narHash": "sha256-b+uqzj+Wa6xgMS9aNbX4I+sXeb5biPDi39VgvSFqFvU=",
         "owner": "ryantm",
         "repo": "agenix",
-        "rev": "3a56735779db467538fb2e577eda28a9daacaca6",
+        "rev": "f6291c5935fdc4e0bef208cfc0dcab7e3f7a1c41",
         "type": "github"
       },
       "original": {
@@ -29,11 +29,11 @@
     "cdarknet-hosts": {
       "flake": false,
       "locked": {
-        "lastModified": 1716880442,
-        "narHash": "sha256-O3TW+hKytaHBgc1OOR3o3AEVUUtfJ4vM/+Rl0DAUnRk=",
+        "lastModified": 1721225385,
+        "narHash": "sha256-cTvy6EB/74RXGv4FmoWZIZQUarcXoG77K8ehJECngbk=",
         "ref": "refs/heads/master",
-        "rev": "ded12fcfd4323a2846ba27dc366378043362c319",
-        "revCount": 255,
+        "rev": "d1283bdb76fd910f083aeeff703d0e24c7c9d686",
+        "revCount": 257,
         "type": "git",
         "url": "ssh://git@git.darmstadt.ccc.de/cdark.net/hosts.git"
       },
@@ -216,11 +216,11 @@
     "nixdark": {
       "flake": false,
       "locked": {
-        "lastModified": 1622585364,
-        "narHash": "sha256-XcPtucllbbB9p9HGkvKbaP5ep1pJ1FCFlb8cXmyIkMg=",
+        "lastModified": 1732213359,
+        "narHash": "sha256-IlEHZ28jfpHhJuCki21gsynTlBV8iMmol0XOsImbRY8=",
         "ref": "refs/heads/master",
-        "rev": "4003f84e73e65ec3ee96803eae3b7015c4a13b4f",
-        "revCount": 14,
+        "rev": "e471b43c517a186cae44bc36df36f5467384e659",
+        "revCount": 15,
         "type": "git",
         "url": "ssh://git@git.darmstadt.ccc.de/cdark.net/nixdark.git"
       },
@@ -280,21 +280,6 @@
         "ref": "nixos-24.05",
         "type": "git",
         "url": "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver.git"
-      }
-    },
-    "nixos-oldstable": {
-      "locked": {
-        "lastModified": 1720535198,
-        "narHash": "sha256-zwVvxrdIzralnSbcpghA92tWu2DV2lwv89xZc8MTrbg=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "205fd4226592cc83fd4c0885a3e4c9c400efabb5",
-        "type": "github"
-      },
-      "original": {
-        "id": "nixpkgs",
-        "ref": "nixos-23.11",
-        "type": "indirect"
       }
     },
     "nixos-stable": {
@@ -390,7 +375,6 @@
         "nixos-hardware": "nixos-hardware",
         "nixos-infra": "nixos-infra",
         "nixos-mailserver": "nixos-mailserver",
-        "nixos-oldstable": "nixos-oldstable",
         "nixos-stable": "nixos-stable",
         "nixos-unstable": "nixos-unstable",
         "pre-commit-hooks": "pre-commit-hooks",
@@ -405,11 +389,11 @@
         "nixpkgs": []
       },
       "locked": {
-        "lastModified": 1729758815,
-        "narHash": "sha256-uPUqAT+kF88Iy1rFCCPhMDfcH+wNtwAGz4eQNLaNOuY=",
+        "lastModified": 1732223534,
+        "narHash": "sha256-K/Hw6dhtPfB6j2ru/zzooY4nCAQpyj/zlFqZa3pYm0A=",
         "ref": "refs/heads/main",
-        "rev": "d369a249d2ccdfccf9a1aff36b578fc00d041a88",
-        "revCount": 322,
+        "rev": "257d0ca2e5014ac5f9b75c319ebdee3861bece4e",
+        "revCount": 323,
         "type": "git",
         "url": "ssh://forgejo@code.maralorn.de/maralorn/config-secrets"
       },
