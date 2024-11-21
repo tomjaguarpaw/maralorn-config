@@ -134,10 +134,10 @@ in
         '';
         mailcap = pkgs.writeText "mailcap" ''
           text/html; ${pkgs.lynx}/bin/lynx -assume_charset=%{charset} -display_charset=utf-8 -collapse_br_tags -dump %s; nametemplate=%s.html; copiousoutput
-          application/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
-          image/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
-          video/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
-          audio/*; ${pkgs.xdg_utils}/bin/xdg-open %s > /dev/null
+          application/*; ${pkgs.xdg-utils}/bin/xdg-open %s > /dev/null
+          image/*; ${pkgs.xdg-utils}/bin/xdg-open %s > /dev/null
+          video/*; ${pkgs.xdg-utils}/bin/xdg-open %s > /dev/null
+          audio/*; ${pkgs.xdg-utils}/bin/xdg-open %s > /dev/null
         '';
         # See: https://unix.stackexchange.com/questions/44358/mutt-mark-as-read-and-delete
         move-message-folder-hook = account: key: dir: ''

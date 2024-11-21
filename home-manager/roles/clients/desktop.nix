@@ -53,7 +53,7 @@
 
       lm_sensors
       xwayland
-      xdg_utils
+      xdg-utils
       libnotify
       shotcut
       audacity
