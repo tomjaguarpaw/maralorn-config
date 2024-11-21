@@ -2,12 +2,7 @@
 {
   home = {
     packages = builtins.attrValues {
-      inherit (pkgs.nodePackages)
-        typescript-language-server
-        vscode-json-languageserver-bin
-        vscode-html-languageserver-bin
-        vscode-css-languageserver-bin
-        ;
+      inherit (pkgs.nodePackages) typescript-language-server;
       inherit (pkgs.python3Packages) python-lsp-server;
       inherit (pkgs)
         rust-analyzer # rust language server
