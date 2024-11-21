@@ -12,7 +12,6 @@
       experimental-features = [
         "nix-command"
         "flakes"
-        "repl-flake"
       ];
       fallback = true;
       auto-optimise-store = true;
