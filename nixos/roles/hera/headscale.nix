@@ -24,9 +24,9 @@ in
           };
           urls = [ ];
         };
-        dns_config = {
+        dns = {
           base_domain = "m-0.eu";
-          domains = [ zone ];
+          search_domains = [ zone ];
           extra_records = lib.concatLists (
             lib.concatLists (
               lib.mapAttrsToList (

@@ -6,8 +6,8 @@ in
 
   services.forgejo = {
     enable = true;
-    mailerPasswordFile = "/run/credentials/forgejo.service/forgejo-mail-password";
     database.type = "postgres";
+    secrets.mailer.PASSWD = "/run/credentials/forgejo.service/forgejo-mail-password";
     settings = {
       actions = {
         DEFAULT_ACTIONS_URL = "https://github.com";

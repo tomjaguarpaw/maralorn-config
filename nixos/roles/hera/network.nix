@@ -12,8 +12,8 @@ in
       "${hosts.hera.AAAA}/128"
     ];
     routes = [
-      { routeConfig.Gateway = "213.136.94.1"; }
-      { routeConfig.Gateway = "fe80::1"; }
+      { Gateway = "213.136.94.1"; }
+      { Gateway = "fe80::1"; }
     ];
   };
   networking = {
