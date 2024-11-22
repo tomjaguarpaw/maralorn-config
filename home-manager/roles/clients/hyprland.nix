@@ -26,9 +26,12 @@ in
         kb_options = "altwin:swap_lalt_lwin";
         follow_mouse = 2;
       };
-      decoration.blur.enabled = false;
+      decoration = {
+        blur.enabled = false;
+        shadow.enabled = false;
+      };
       general = {
-        border_size = 1;
+        border_size = 2;
         gaps_in = 0;
         gaps_out = 0;
         layout = "scroller";
@@ -89,6 +92,7 @@ in
         "SUPER_SHIFT, down, scroller:movewindow, d"
         "$mod, f, fullscreen"
         "$mod, s, scroller:cyclesize, next"
+        "$mod, c, scroller:alignwindow, c"
         "$mod, a, scroller:admitwindow"
         "$mod, a, scroller:setmode, col"
         "$mod, a, scroller:fitsize, all"
