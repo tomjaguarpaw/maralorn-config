@@ -7,7 +7,7 @@ in
   services.forgejo = {
     enable = true;
     database.type = "postgres";
-    secrets.mailer.PASSWD = "/run/credentials/forgejo.service/forgejo-mail-password";
+    secrets.mailer.PASSWD = config.age.secrets.forgejo-mail-password.path;
     settings = {
       actions = {
         DEFAULT_ACTIONS_URL = "https://github.com";
@@ -35,9 +35,6 @@ in
       session.SESSION_LIFE_TIME = 2419200; # 2 weeks
     };
   };
-  systemd.services.forgejo.serviceConfig.LoadCredential = [
-    "forgejo-mail-password:${config.age.secrets.forgejo-mail-password.path}"
-  ];
   services.nginx.virtualHosts.${virtualHosts."code"} = {
     locations."/".proxyPass = "http://localhost:${toString config.services.forgejo.settings.server.HTTP_PORT}";
     extraConfig = ''
