@@ -157,7 +157,7 @@ let
               mail = param: "neomutt ${param}; notmuch new";
             in
             term (shell ''
-              case "$(cat ~/.mode || echo Normal)" in Normal) ${mail "-f \"notmuch://?type=threads&query=tag:unread and folder:/Inbox/\""};; DND) ${mail ""};; *) ${mail "-f \"notmuch://?type=threads&query=folder:/Inbox/\""};; esac
+              case "$(cat ~/.mode || echo Normal)" in Normal) ${mail "-f \"notmuch://?type=threads&query=tag:unread and folder:/Inbox/\""};; DND) ${mail ""};; *) ${mail "-f \"notmuch://?query=folder:/Inbox/\""};; esac
             '');
         }
         {
