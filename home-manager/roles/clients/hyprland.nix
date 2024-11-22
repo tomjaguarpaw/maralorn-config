@@ -32,8 +32,8 @@ in
       };
       general = {
         border_size = 2;
-        gaps_in = 0;
-        gaps_out = 0;
+        gaps_in = -2;
+        gaps_out = -2;
         layout = "scroller";
         "col.active_border" = "0xff1e66f5";
         "col.inactive_border" = "0xffccced7";
