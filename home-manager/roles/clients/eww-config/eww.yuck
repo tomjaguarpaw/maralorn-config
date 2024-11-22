@@ -158,7 +158,7 @@
               (icon "󰃭")
               (label :halign "center" :hexpand true :justify "left" :text {appointment.title})
             )
-            (label :halign "start" :hexpand true :justify "left" :text
+            (label :wrap true :halign "start" :hexpand true :justify "left" :text
   "${appointment.start} → ${appointment.end}${appointment.location != "" ? "
   ${appointment.location}":""}${appointment.description != "" ? "
   ${appointment.description}":""}"
