@@ -2,8 +2,21 @@
 {
   perSystem =
     { inputs', system, ... }:
+    let
+      setupPkgs = inputs'.nixos-unstable.legacyPackages;
+      patchedNixpkgs = setupPkgs.applyPatches {
+        src = inputs.nixos-stable;
+        name = "patched-nixos-stable";
+        patches = [
+          (setupPkgs.fetchpatch {
+            url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/358404.patch";
+            hash = "sha256-Twd4sWDS8FToatRrepmAWEoeIQHO7Qxm9/yBWh0El9k=";
+          })
+        ];
+      };
+    in
     {
-      _module.args.pkgs = import inputs.nixos-stable {
+      _module.args.pkgs = import patchedNixpkgs {
         inherit system;
         config = {
           allowUnfreePredicate =

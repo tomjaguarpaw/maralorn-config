@@ -32,8 +32,8 @@ in
       };
       general = {
         border_size = 2;
-        gaps_in = -2;
-        gaps_out = -2;
+        gaps_in = 0;
+        gaps_out = 0;
         layout = "scroller";
         "col.active_border" = "0xff1e66f5";
         "col.inactive_border" = "0xffccced7";
@@ -46,7 +46,7 @@ in
       plugin.scroller = {
         column_default_width = "onefourth";
         focus_wrap = false;
-        column_widths = "onefourth onethird onehalf";
+        column_widths = "onefourth onethird onehalf twothirds one";
       };
       misc = {
         disable_hyprland_logo = true;
@@ -71,41 +71,25 @@ in
         "$mod, m, focusmonitor, +1"
         "SUPER_SHIFT, m, movecurrentworkspacetomonitor, +1"
         "$mod, left, scroller:movefocus, l"
-        "$mod, left, scroller:setmode, col"
-        "$mod, left, scroller:fitsize, all"
-        "$mod, left, scroller:setmode, row"
         "$mod, right, scroller:movefocus, r"
-        "$mod, right, scroller:setmode, col"
-        "$mod, right, scroller:fitsize, all"
-        "$mod, right, scroller:setmode, row"
         "$mod, up, scroller:movefocus, u"
-        "$mod, up, scroller:setmode, col"
-        "$mod, up, scroller:fitsize, all"
-        "$mod, up, scroller:setmode, row"
         "$mod, down, scroller:movefocus, d"
-        "$mod, down, scroller:setmode, col"
-        "$mod, down, scroller:fitsize, all"
-        "$mod, down, scroller:setmode, row"
         "SUPER_SHIFT, left, scroller:movewindow, l"
         "SUPER_SHIFT, right, scroller:movewindow, r"
         "SUPER_SHIFT, up, scroller:movewindow, u"
         "SUPER_SHIFT, down, scroller:movewindow, d"
         "$mod, f, fullscreen"
+        "$mod, c, exec, hyprctl keyword general:col.active_border 0xffff00ff"
+        "$mod, c, scroller:setmode, col"
+        "$mod, i, scroller:fitsize, all"
+        "$mod, r, exec, hyprctl keyword general:col.active_border 0xff1e66f5"
+        "$mod, r, scroller:setmode, row"
         "$mod, s, scroller:cyclesize, next"
-        "$mod, c, scroller:alignwindow, c"
+        "$mod, z, scroller:alignwindow, c"
         "$mod, a, scroller:admitwindow"
-        "$mod, a, scroller:setmode, col"
-        "$mod, a, scroller:fitsize, all"
-        "$mod, a, scroller:setmode, row"
         "$mod, e, scroller:expelwindow"
-        "$mod, e, scroller:setmode, col"
-        "$mod, e, scroller:fitsize, all"
-        "$mod, e, scroller:setmode, row"
         "$mod, o, scroller:toggleoverview"
         "$mod, t, togglefloating"
-        "$mod, t, scroller:setmode, col"
-        "$mod, t, scroller:fitsize, all"
-        "$mod, t, scroller:setmode, row"
         "$mod, Prior, exec, ${lib.getExe pkgs.hyprnome} --previous"
         "$mod, Next, exec, ${lib.getExe pkgs.hyprnome}"
         "SUPER_SHIFT, Prior, exec, ${lib.getExe pkgs.hyprnome} --previous --move"

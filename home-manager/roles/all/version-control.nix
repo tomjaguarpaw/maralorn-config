@@ -19,7 +19,7 @@ in
 {
   home.packages = builtins.attrValues {
     inherit (pkgs) glab lazyjj difftastic;
-    jw = pkgs.writeShellScriptBin "jwatch" "(jj file list; find .jj -maxdepth 3) | entr -c ${jjstat}";
+    jwatch = pkgs.writeShellScriptBin "jwatch" "(jj file list; find .jj -maxdepth 3) | entr -c ${jjstat}";
     jpr = pkgs.writeShellScriptBin "jpr" ''
       set -ex -o pipefail
       shopt -s extglob
