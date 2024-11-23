@@ -46,7 +46,7 @@ in
       plugin.scroller = {
         column_default_width = "onefourth";
         focus_wrap = false;
-        column_widths = "onefourth onethird onehalf twothirds one";
+        column_widths = "onefourth threeeighths onehalf fiveeighths one";
       };
       misc = {
         disable_hyprland_logo = true;
