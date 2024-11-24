@@ -21,6 +21,7 @@
       ".contacts" # Cache synced addressbook
       ".factorio" # Factorio save games and login
       ".gnupg"
+      ".local/share/Emote" # To avoid first-start popup on every reboot for pkgs.emote
       ".local/share/Mumble"
       ".local/share/PrismLauncher"
       ".local/share/Steam"
