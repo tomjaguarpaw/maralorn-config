@@ -18,8 +18,6 @@
 
   time.timeZone = "Europe/Berlin";
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-
   security.acme = {
     defaults = {
       dnsProvider = "inwx";
