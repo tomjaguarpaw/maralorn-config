@@ -40,7 +40,8 @@
               name = "crypted-root-fs";
               extraOpenArgs = [ "--allow-discards" ];
               content = {
-                type = "btrfs";
+                type = "zfs";
+                pool = "zroot";
                 subvolumes = {
                   "/persist" = {
                     mountOptions = [ "compress=zstd" ];
@@ -64,12 +65,33 @@
         };
       };
     };
-    nodev."/" = {
-      fsType = "tmpfs";
-      mountOptions = [
-        "defaults"
-        "mode=755"
-      ];
+    zpool.zroot = {
+      type = "zpool";
+      options.cachefile = "none";
+      rootFsOptions = {
+        compression = "zstd";
+        "com.sun:auto-snapshot" = "false";
+      };
+
+      mountpoint = "/";
+      postCreateHook = "zfs list -t snapshot -H -o name | grep -E '^zroot@blank$' || zfs snapshot zroot@blank";
+
+      datasets = {
+        zfs_nix = {
+          type = "zfs_fs";
+          mountpoint = "/nix";
+        };
+        zfs_persist = {
+          type = "zfs_fs";
+          mountpoint = "/disk/persist";
+          options."com.sun:auto-snapshot" = "true";
+        };
+        zfs_volatile = {
+          type = "zfs_fs";
+          mountpoint = "/disk/volatile";
+        };
+      };
+
     };
   };
 }
