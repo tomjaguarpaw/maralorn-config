@@ -15,7 +15,10 @@ flake-inputs:
       ../../roles/new-sync
     ];
 
-  networking.hostName = "hephaistos";
+  networking = {
+    hostName = "hephaistos";
+    hostId = "f593e579";
+  };
 
   system.stateVersion = "23.05";
 }

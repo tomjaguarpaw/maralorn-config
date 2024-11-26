@@ -1,9 +1,12 @@
-{ device, ... }:
 {
+  fileSystems = {
+    "/disk/persist".neededForBoot = true;
+    "/disk/volatile".neededForBoot = true;
+  };
   disko.devices = {
     disk.nixos-hephaistos = {
       type = "disk";
-      inherit device;
+      device = "/dev/disk/by-id/nvme-KXG8AZNV1T02_LA_KIOXIA_84UFC2O5FV6P";
       content = {
         type = "gpt";
         partitions = {
@@ -42,23 +45,6 @@
               content = {
                 type = "zfs";
                 pool = "zroot";
-                subvolumes = {
-                  "/persist" = {
-                    mountOptions = [ "compress=zstd" ];
-                    mountpoint = "/disk/persist";
-                  };
-                  "/volatile" = {
-                    mountOptions = [ "compress=zstd" ];
-                    mountpoint = "/disk/volatile";
-                  };
-                  "/nix" = {
-                    mountpoint = "/nix";
-                    mountOptions = [
-                      "compress=zstd"
-                      "noatime"
-                    ];
-                  };
-                };
               };
             };
           };
@@ -67,6 +53,7 @@
     };
     zpool.zroot = {
       type = "zpool";
+      mode = "mirror";
       options.cachefile = "none";
       rootFsOptions = {
         compression = "zstd";
