@@ -7,7 +7,7 @@
 let
   stateDirectory = "/var/lib/nixpkgs-bot";
   releases = [
-    "23.11"
+    "24.11"
     "24.05"
   ];
   configFile = {
