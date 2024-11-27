@@ -101,6 +101,7 @@ aliases =
   , ("Audio Controller Digital Microphone", "Intern")
   , ("DP Audio Digital Stereo (HDMI)", "TV")
   , ("DP Audio Digital Stereo (HDMI 4)", "Monitor")
+  , ("Headphones", "Kopfhörer Klinke")
   , ("Built-in Audio", "Intern")
   , ("Dock", "Dock")
   , ("Dummy Output", "No Output")
