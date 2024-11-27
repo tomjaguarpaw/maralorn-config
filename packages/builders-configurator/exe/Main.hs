@@ -25,8 +25,8 @@ nix run pkgs#sysbench -- cpu run
 Host    events/s
 ----------------
 Builders    9545
+Hephaistos  5902
 Zeus        5249
-Hephaistos  3777
 Athene      1672
 Apollo      1112
 Remote       767
