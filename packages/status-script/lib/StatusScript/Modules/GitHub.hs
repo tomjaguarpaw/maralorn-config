@@ -75,6 +75,7 @@ runToWarning time wfRun =
   , case status of
       "in_progress" -> Just IsActive
       "queued" -> Just IsActive
+      "pending" -> Just IsActive
       _ -> Nothing
   )
  where
@@ -84,6 +85,8 @@ runToWarning time wfRun =
     "success" -> Just (toEnum 0xf0e1e) -- nf-md-check_bold
     "failure" -> Just (toEnum 0xe654) -- nf-seti-error
     "queued" -> Just (toEnum 0xf1571) -- nf-md-human_queue
+    "pending" -> Just (toEnum 0xf051f) -- nf-md-timer_sand
+    "cancelled" -> Just (toEnum 0xf073a) -- nf-md-cancel
     _ -> Nothing
 
 printDuration :: NominalDiffTime -> Text
