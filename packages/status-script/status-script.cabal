@@ -63,7 +63,7 @@ common common-config
   default-language:   GHC2021
   ghc-options:
     -Wall -Wno-type-defaults -Wcompat -fno-show-valid-hole-fits
-    -fdefer-type-errors -fno-show-error-context -fmax-relevant-binds=0
+    -fno-show-error-context -fmax-relevant-binds=0
 
 library
   import:          common-config

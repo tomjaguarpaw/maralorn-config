@@ -19,7 +19,8 @@ Shh.load Shh.Absolute ["khal"]
 missingExecutables :: IO [FilePath]
 
 data Appointment = MkAppointment
-  { start :: Text
+  { start_date :: Text
+  , start_time :: Text
   , end :: Text
   , title :: Text
   , description :: Text
@@ -46,7 +47,7 @@ params =
   , "-df"
   , ""
   , "-f"
-  , "@=@{start}@@@{end}@@@{title}@@@{description}@@@{location}@@@{calendar}"
+  , "@=@{start-date}@@@{start-time}@@@{end}@@@{title}@@@{description}@@@{location}@@@{calendar}"
   ]
 
 calendar :: R.MonadHeadlessApp t m => Env -> m (R.Event t [Appointment])
@@ -63,11 +64,12 @@ calendar = \env -> do
           ( Text.splitOn "@@@"
               >>> fmap cleanString
               >>> \case
-                [start, end, title, description, location, calendar'] ->
+                [start_date, start_time, end, title, description, location, calendar'] ->
                   Just $
                     MkAppointment
-                      { start = fromMaybe start $ Text.stripPrefix tdy start
-                      , end = fromMaybe start $ Text.stripPrefix tdy end
+                      { start_time
+                      , start_date = fromMaybe start_date $ Text.stripPrefix tdy start_date
+                      , end = fromMaybe end $ Text.stripPrefix tdy end
                       , title
                       , description
                       , location
