@@ -39,15 +39,15 @@ in
 
   systemd.services =
     {
-      pg_backup = {
-        script = lib.concatMapStringsSep "\n" (
-          name: "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}"
-        ) config.services.postgresql.ensureDatabases;
-        serviceConfig = {
-          User = "postgres";
-          Type = "oneshot";
-        };
-      };
+      #pg_backup = {
+      #  script = lib.concatMapStringsSep "\n" (
+      #    name: "${config.services.postgresql.package}/bin/pg_dump ${name} > /var/lib/db-backup-dumps/${name}"
+      #  ) config.services.postgresql.ensureDatabases;
+      #  serviceConfig = {
+      #    User = "postgres";
+      #    Type = "oneshot";
+      #  };
+      #};
       night-routines = {
         script =
           let
@@ -57,9 +57,9 @@ in
           ''
             set -x
             set +e
-            ${start} pg_backup
+            #${start} pg_backup
             ${lib.concatMapStringsSep "\n" (name: "${start} ${name}") backupJobNames}
-            ${pkgs.coreutils}/bin/rm -rf /var/lib/db-backup-dumps/*
+            #${pkgs.coreutils}/bin/rm -rf /var/lib/db-backup-dumps/*
             ${start} synapse-cleanup
             ${start} nix-gc
             ${start} nix-optimise
