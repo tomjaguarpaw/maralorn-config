@@ -9,8 +9,8 @@
         name = "patched-nixos-stable";
         patches = [
           (setupPkgs.fetchpatch {
-            url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/358404.patch";
-            hash = "sha256-Twd4sWDS8FToatRrepmAWEoeIQHO7Qxm9/yBWh0El9k=";
+            url = "https://github.com/NixOS/nixpkgs/commit/df4fb1f5c98cb946e0d9d3b638bc42d10a578324.diff";
+            hash = "sha256-22YoRu9+MdxDmTyxB55iDenhv45vEgAlkdGTE8nJET8=";
           })
         ];
       };
