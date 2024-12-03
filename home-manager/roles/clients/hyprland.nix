@@ -63,7 +63,15 @@ in
         (lib.getExe pkgs.hyprdim)
         "${lib.getExe pkgs.swaybg} -m fill -i ~/.config/wallpaper"
       ];
+      bindel = [
+        ", XF86AudioRaiseVolume, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 ; wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 2%+"
+        ", XF86AudioLowerVolume, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 ; wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 2%-"
+        ", XF86MonBrightnessUp, exec, brillo -q -A 10% -u 100000"
+        ", XF86MonBrightnessDown, exec, brillo -q -U 10% -u 100000"
+      ];
       bind = [
+        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
         "$mod, RETURN, exec, ${config.home.sessionVariables.TERMINAL}"
         "$mod, space, exec, ${config.home.sessionVariables.TERMINAL} --app-id=launcher my-hotkeys"
         "$mod, q, killactive"

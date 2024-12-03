@@ -52,6 +52,7 @@
       esptool # provides esptool.py
 
       lm_sensors
+      brillo
       xwayland
       xdg-utils
       libnotify

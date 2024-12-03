@@ -44,8 +44,11 @@ let
         Reboot = "systemctl reboot";
         Logout = "hyprctl dispatch exit";
         Lock = "swaylock";
-        "Disable Idle daemon" = "systemctl --user stop swayidle";
-        "Enable Idle daemon" = "systemctl --user start swayidle";
+        "Idle-Daemon" = {
+          Disable = "systemctl --user stop swayidle";
+          Enable = "systemctl --user start swayidle";
+        };
+        "Reset Graphics-Driver" = "sudo cat /sys/kernel/debug/dri/1/amdgpu_gpu_recover";
       };
     }
     {
