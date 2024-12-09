@@ -107,7 +107,10 @@ in
         "SUPER_SHIFT, Next, exec, ${lib.getExe pkgs.hyprnome} --move"
         ", Print, execr, screenshot"
       ];
-      monitor = [ ",highres,auto,1" ];
+      monitor = [
+        "eDP-1, 2880x1800@60,auto,1"
+        ",highres,auto,1"
+      ];
       bindr = [ "SUPER, SUPER_L, execr, ${toggle-overlay}" ];
       binde = [
         "SUPER_ALT, Left, resizeactive, -10 0"
