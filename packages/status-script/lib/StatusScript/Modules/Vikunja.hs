@@ -33,9 +33,13 @@ getTasks mode = do
       [ on_mode (== Sort) $
           (taskWarnings "Inbox" inboxChar Count <$> fetchAll opts [i|#{url}/projects/-2/tasks|])
             <> (taskWarnings "Unsortiert" unsortedChar Count <$> fetchAll opts [i|#{url}/projects/-3/tasks|])
-      , on_mode (/= DND) $ taskWarnings "Checklisten" checklistChar Count <$> fetchAll opts [i|#{url}/projects/-4/tasks|]
-      , taskWarnings "In Bearbeitung" taskChar Text
-          <$> fetchAll (bucketOpts doingBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
+      , injectOnEmpty mode nothingThere $
+          fold
+            [ on_mode (/= DND) $
+                taskWarnings "Checklisten" checklistChar Count <$> fetchAll opts [i|#{url}/projects/-4/tasks|]
+            , taskWarnings "In Bearbeitung" taskChar Text
+                <$> fetchAll (bucketOpts doingBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
+            ]
       , taskWarnings "Heute" taskChar None
           <$> fetchAll (bucketOpts todayBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
       , on_mode (/= DND) $
@@ -45,11 +49,17 @@ getTasks mode = do
  where
   on_mode f x = if f mode then x else pure mempty
 
-checklistChar, taskChar, unsortedChar, inboxChar :: Char
+injectOnEmpty :: Mode -> Warning -> IO (Seq Warning) -> IO (Seq Warning)
+injectOnEmpty m w act = do
+  ws <- act
+  pure if null ws && m /= DND then Seq.singleton w else ws
+
+checklistChar, taskChar, unsortedChar, inboxChar, missingChar :: Char
 checklistChar = toEnum 0xf10d5 -- nf-md-clipboard_list_outline
 taskChar = toEnum 0xe640 -- nf-seti-checkbox_unchecked
 inboxChar = toEnum 0xf1272 -- nf-md-inbox_full
 unsortedChar = toEnum 0xebba -- nf-cod-type_hierarchy_sub
+missingChar = toEnum 0xf12ed -- nf-md-checkbox_blank_off_outline
 
 taskWarnings :: Text -> Char -> BarDisplay -> Seq (a, Task) -> Seq Warning
 taskWarnings t c d = fmap (taskWarning t c d . snd) . Seq.sortOn (view (_2 % #kanban_position))
@@ -61,6 +71,16 @@ taskWarning heading group' barDisplay t =
     , heading
     , barDisplay
     , group = group'
+    , subgroup = Nothing
+    }
+
+nothingThere :: Warning
+nothingThere =
+  MkWarning
+    { description = ["Kein Task aktiv"]
+    , heading = "In Bearbeitung"
+    , barDisplay = Text
+    , group = missingChar
     , subgroup = Nothing
     }
 

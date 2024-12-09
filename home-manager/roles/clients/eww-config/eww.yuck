@@ -50,6 +50,17 @@
     (box :space-evenly false (for group in warninggroups
       (box (icon {group.name}) "${group.count > 1 ? group.count : "" }")
     ))
+    (box :space-evenly false (for warningsection in warnings
+      (box :space-evenly false (for warning in warningsection
+        (when :if {warning.barDisplay == "Text"}
+          (box :spacing 2 :space-evenly false
+            (box :space-evenly false :valign "start" (icon {warning.group}))
+            (when :if {(warning.subgroup ?: "") != ""} (box :valign "start" (icon {warning.subgroup})))
+            {warning.description[0]}
+          )
+        )
+      ))
+    ))
     (box :space-evenly false (for timer in timers
       (box :class "${EWW_TIME >= timer.at ? "blink" :""}" :space-evenly false
         (icon "󰀠")
