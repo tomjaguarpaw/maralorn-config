@@ -37,7 +37,7 @@ getTasks mode = do
           fold
             [ on_mode (/= DND) $
                 taskWarnings "Checklisten" checklistChar Count <$> fetchAll opts [i|#{url}/projects/-4/tasks|]
-            , taskWarnings "In Bearbeitung" taskChar Text
+            , taskWarnings "In Bearbeitung" activeChar Text
                 <$> fetchAll (bucketOpts doingBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
             ]
       , taskWarnings "Heute" taskChar None
@@ -54,12 +54,13 @@ injectOnEmpty m w act = do
   ws <- act
   pure if null ws && m /= DND then Seq.singleton w else ws
 
-checklistChar, taskChar, unsortedChar, inboxChar, missingChar :: Char
+checklistChar, taskChar, unsortedChar, inboxChar, missingChar, activeChar :: Char
 checklistChar = toEnum 0xf10d5 -- nf-md-clipboard_list_outline
 taskChar = toEnum 0xe640 -- nf-seti-checkbox_unchecked
 inboxChar = toEnum 0xf1272 -- nf-md-inbox_full
 unsortedChar = toEnum 0xebba -- nf-cod-type_hierarchy_sub
 missingChar = toEnum 0xf12ed -- nf-md-checkbox_blank_off_outline
+activeChar = toEnum 0xf070e -- nf-md-run
 
 taskWarnings :: Text -> Char -> BarDisplay -> Seq (a, Task) -> Seq Warning
 taskWarnings t c d = fmap (taskWarning t c d . snd) . Seq.sortOn (view (_2 % #kanban_position))
