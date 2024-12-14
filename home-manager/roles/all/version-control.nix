@@ -84,7 +84,8 @@ in
         };
         revsets.log = "@ | trunks() | ancestors(trunks()..active(),2)";
         revset-aliases = {
-          "trunks()" = "remote_bookmarks(exact:main,exact:origin) | remote_bookmarks(exact:master,exact:origin) | remote_bookmarks(exact:develop,exact:origin) | remote_bookmarks(exact:converts,exact:origin) | remote_bookmarks(exact:haskell-updates,exact:origin)";
+          "trunks()" =
+            "remote_bookmarks(exact:main,exact:origin) | remote_bookmarks(exact:master,exact:origin) | remote_bookmarks(exact:develop,exact:origin) | remote_bookmarks(exact:converts,exact:origin) | remote_bookmarks(exact:haskell-updates,exact:origin)";
           "immutable_heads()" = "trunks() | tags()";
           "active()" = "heads(immutable_heads()..) ~ (remote_bookmarks() ~ bookmarks())";
         };

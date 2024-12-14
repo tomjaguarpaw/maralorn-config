@@ -37,6 +37,7 @@
     };
     nginx.virtualHosts.${
       config.m-0.virtualHosts."syncthing-${config.networking.hostName}"
-    }.locations."/".proxyPass = "http://127.0.0.1:8384";
+    }.locations."/".proxyPass =
+      "http://127.0.0.1:8384";
   };
 }
