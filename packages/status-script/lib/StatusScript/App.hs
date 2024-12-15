@@ -83,7 +83,7 @@ warnings env = do
                   ]
               )
   gh_runs_dyn <- GitHub.runs env mode
-  task_dyn <- tasks env mode
+  -- task_dyn <- tasks env mode
   pure $
     concat
       <$> sequence
@@ -93,7 +93,7 @@ warnings env = do
         , mail_events
         , software_feed_event
         , gh_runs_dyn
-        , task_dyn
+        --        , task_dyn
         ]
 
 prepareSocketsDir :: MonadIO m => m ()
