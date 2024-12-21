@@ -13,7 +13,7 @@ import StatusScript.Env
 import StatusScript.Mode
 import StatusScript.ReflexUtil
 import StatusScript.Warnings
-import Vikunja (Task (..), defaultOptions, defaultProject, fetchAll, url)
+import Vikunja
 
 todayBucket, weekBucket, doingBucket :: Int
 todayBucket = 49
@@ -21,9 +21,7 @@ weekBucket = 48
 doingBucket = 50
 
 bucketOpts :: Int -> Options -> Options
-bucketOpts bucket =
-  (set (lensVL (param "filter_by")) ["bucket_id"])
-    >>> set (lensVL (param "filter_value")) [show bucket]
+bucketOpts bucket = (set (lensVL (param "filter")) ["bucket_id=" <> show bucket])
 
 getTasks :: Mode -> IO (Seq Warning)
 getTasks mode = do
@@ -31,20 +29,23 @@ getTasks mode = do
   retryIndefinite 60 $
     fold
       [ on_mode (== Sort) $
-          (taskWarnings "Inbox" inboxChar Count <$> fetchAll opts [i|#{url}/projects/-2/tasks|])
-            <> (taskWarnings "Unsortiert" unsortedChar Count <$> fetchAll opts [i|#{url}/projects/-3/tasks|])
+          (taskWarnings "Inbox" inboxChar Count <$> fetchAll (MkQuery opts [i|#{url}/projects/-2/tasks|] False))
+            <> (taskWarnings "Unsortiert" unsortedChar Count <$> fetchAll (MkQuery opts [i|#{url}/projects/-3/tasks|] False))
       , injectOnEmpty mode nothingThere $
           fold
             [ on_mode (/= DND) $
-                taskWarnings "Checklisten" checklistChar Count <$> fetchAll opts [i|#{url}/projects/-4/tasks|]
+                taskWarnings "Checklisten" checklistChar Count <$> fetchAll (MkQuery opts [i|#{url}/projects/-4/tasks|] False)
             , taskWarnings "In Bearbeitung" activeChar Text
-                <$> fetchAll (bucketOpts doingBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
+                <$> fetchAll
+                  (MkQuery (bucketOpts doingBucket opts) [i|#{url}/projects/#{defaultProject}/views/#{defaultKanban}/tasks|] False)
             ]
       , taskWarnings "Heute" taskChar None
-          <$> fetchAll (bucketOpts todayBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
+          <$> fetchAll
+            (MkQuery (bucketOpts todayBucket opts) [i|#{url}/projects/#{defaultProject}/views/#{defaultKanban}/tasks|] False)
       , on_mode (/= DND) $
           taskWarnings "Woche" taskChar None
-            <$> fetchAll (bucketOpts weekBucket opts) [i|#{url}/projects/#{defaultProject}/tasks|]
+            <$> fetchAll
+              (MkQuery (bucketOpts weekBucket opts) [i|#{url}/projects/#{defaultProject}/views/#{defaultKanban}/tasks|] False)
       ]
  where
   on_mode f x = if f mode then x else pure mempty
@@ -63,7 +64,7 @@ missingChar = toEnum 0xf12ed -- nf-md-checkbox_blank_off_outline
 activeChar = toEnum 0xf070e -- nf-md-run
 
 taskWarnings :: Text -> Char -> BarDisplay -> Seq (a, Task) -> Seq Warning
-taskWarnings t c d = fmap (taskWarning t c d . snd) . Seq.sortOn (view (_2 % #kanban_position))
+taskWarnings t c d = fmap (taskWarning t c d . snd) . Seq.sortOn (view (_2 % #position))
 
 taskWarning :: Text -> Char -> BarDisplay -> Task -> Warning
 taskWarning heading group' barDisplay t =

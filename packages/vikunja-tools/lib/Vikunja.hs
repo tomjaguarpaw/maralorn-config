@@ -1,9 +1,10 @@
-module Vikunja (updateLoop, url, defaultOptions, defaultProject, fetchAll, Task (..)) where
+module Vikunja (updateLoop, url, defaultOptions, defaultProject, fetchAll, Task (..), defaultKanban, Query (..)) where
 
 import Control.Concurrent (threadDelay)
 import Control.Monad.Trans.State.Strict (modifyM)
-import Data.Aeson (FromJSON (..), ToJSON (..), Value (..), eitherDecode', encode, withText)
+import Data.Aeson (FromJSON (..), ToJSON (..), Value (..), encode, fromJSON, withText)
 import Data.Aeson.Optics
+import Data.Map.Optics (toMapOf)
 import Data.Sequence qualified as Seq
 import Data.Set qualified as Set
 import Data.String.Interpolate (i)
@@ -55,6 +56,12 @@ newtype Label = Label
 newtype Bucket = Bucket Int
   deriving newtype (Num, FromJSON, ToJSON, Show, Eq, Ord)
 
+newtype View = View Int
+  deriving newtype (Num, FromJSON, ToJSON, Show, Eq, Ord)
+
+newtype Project = Project Int
+  deriving newtype (Num, FromJSON, ToJSON, Show, Eq, Ord)
+
 newtype Time = Time (Maybe ZonedTime)
   deriving newtype (Show)
   deriving stock (Generic)
@@ -92,12 +99,12 @@ data Task = Task
   , start_date :: Time
   , repeat_after :: Int
   , repeat_mode :: Int
-  , project_id :: Int
+  , project_id :: Project
   , priority :: Int
   , bucket_id :: Bucket
   , labels :: Maybe (Set Label)
   , related_tasks :: RelatedTasks
-  , kanban_position :: Maybe Double
+  , position :: Double
   }
   deriving anyclass (FromJSON)
   deriving stock (Generic, Show, Eq)
@@ -112,7 +119,7 @@ data RelatedTasks = RelatedTasks
 
 data RelatedTask = RelatedTask
   { done :: Bool
-  , bucket_id :: Bucket
+  , id :: Int
   }
   deriving anyclass (FromJSON)
   deriving stock (Generic, Show, Eq, Ord)
@@ -120,6 +127,12 @@ data RelatedTask = RelatedTask
 data SetLabel = SetLabel
   { created :: Time
   , label_id :: Int
+  }
+  deriving anyclass (ToJSON)
+  deriving stock (Generic, Show)
+
+newtype SetBucket = SetBucket
+  { task_id :: Int
   }
   deriving anyclass (ToJSON)
   deriving stock (Generic, Show)
@@ -137,6 +150,16 @@ ensureLabel opts task label should_exist = do
   task_id = task.id
   label_id = label.id
   new_task = task & #labels % non mempty %~ (if should_exist then Set.insert else Set.delete) label
+
+ensureBucket :: Options -> Task -> Project -> View -> Bucket -> IO Task
+ensureBucket opts task project view' bucket = do
+  when (new_task /= task) $ do
+    putTextLn [i|Setting bucket #{bucket} for #{task}|]
+    void $
+      Wreq.postWith opts [i|#{url}/projects/#{project}/views/#{view'}/buckets/#{bucket}/tasks|] (encode $ SetBucket task.id)
+  pure new_task
+ where
+  new_task = task & #bucket_id .~ bucket
 
 ensureUncheckedDescription :: UTCTime -> Task -> Value -> Value
 ensureUncheckedDescription now t
@@ -165,9 +188,6 @@ oneDay = 86400
 timeLocaltime :: AffineTraversal' Time LocalTime
 timeLocaltime = #_Time % _Just % lens zonedTimeToLocalTime (\z l -> z{zonedTimeToLocalTime = l})
 
-ensureBucket :: Bucket -> Value -> Value
-ensureBucket bucket_id = set (key "bucket_id" % _Integral) (coerce bucket_id :: Int)
-
 ensureColor :: Text -> Value -> Value
 ensureColor color = set (key "hex_color" % _String) color
 
@@ -179,10 +199,10 @@ ensureChange opts task f task_js = when (new_task /= task_js) $ do
   task_id = task.id
   new_task = f task_js
 
-chooseBucket :: UTCTime -> Task -> Bucket
-chooseBucket now t
+chooseBucket :: UTCTime -> Map Int Task -> Task -> Bucket
+chooseBucket now ts t
   | inboxLabel `Set.member` task_labels = inboxBucket
-  | isWaiting now t, not t.done = waitingBucket
+  | isWaiting now ts t, not t.done = waitingBucket
   | isProject t, not (t.done || isMaybe t || isAwaiting t), Set.isSubsetOf task_labels nonListLabels = projectBucket
   | t.bucket_id `elem` [inboxBucket, waitingBucket, projectBucket] = backlogBucket
   | otherwise = t.bucket_id
@@ -196,8 +216,14 @@ chooseColor t = case t.priority of
   3 -> urgentColor
   _ -> shouldColor
 
-fetchAll :: Options -> String -> IO (Seq (Value, Task))
-fetchAll opts path = do
+data Query = MkQuery
+  { opts :: Options
+  , path :: String
+  , inBuckets :: Bool
+  }
+
+fetchAll :: Query -> IO (Seq (Value, Task))
+fetchAll query@MkQuery{path} = do
   r <- go 1
   putTextLn [i|Got #{length r} tasks from #{path}.|]
   pure r
@@ -206,16 +232,17 @@ fetchAll opts path = do
   go n = do
     newxs <- fetchPage n
     (newxs <>)
-      <$> if length newxs == 50
+      <$> if length newxs >= 50
         then go (n + 1)
         else pure mempty
   fetchPage n = do
-    response <- Wreq.getWith (opts & lensVL (param "page") .~ [show n]) path
-    either (error . toText) pure $ taskAndJS $ response ^. lensVL responseBody
+    response <- Wreq.getWith (query.opts & lensVL (param "page") .~ [show n]) path
+    pure $ Seq.fromList $ (if query.inBuckets then taskAndJSBucket else taskAndJS) $ response ^. lensVL responseBody
 
-parentIsNotIdle :: Task -> Bool
-parentIsNotIdle t =
-  any (\p -> not p.done && projectBucket /= p.bucket_id) . fromMaybe mempty $ t.related_tasks.parenttask
+parentIsNotIdle :: Map Int Task -> Task -> Bool
+parentIsNotIdle ts t =
+  any (\p -> not p.done && notElemOf (ix p.id % #bucket_id) projectBucket ts) . fromMaybe mempty $
+    t.related_tasks.parenttask
 
 relatedTodo :: Maybe (Set RelatedTask) -> Bool
 relatedTodo = not . all (.done) . fromMaybe mempty
@@ -227,34 +254,39 @@ isBlocked t = relatedTodo t.related_tasks.blocked
 isProject t = relatedTodo t.related_tasks.subtask || isCategory t
 isCategory t = Set.member categoryLabel (fromMaybe mempty t.labels)
 
-inInbox, isWaiting, isUnsorted, isPostponed :: UTCTime -> Task -> Bool
-isUnsorted now t = not (inInbox now t || isCategory t || relatedTodo t.related_tasks.parenttask)
+isPostponed :: UTCTime -> Task -> Bool
 isPostponed now t = maybe False ((> now) . zonedTimeToUTC) (t.start_date ^? #_Time % _Just)
-inInbox now t =
-  Set.isSubsetOf (fromMaybe mempty t.labels) autoLabels
-    && not (isMaybe t || isAwaiting t || isWaiting now t || t.done)
-isWaiting now t = isBlocked t || parentIsNotIdle t || isPostponed now t
 
-defaultProject :: Int
+isUnsorted, inInbox, isWaiting :: UTCTime -> Map Int Task -> Task -> Bool
+isWaiting now ts t = isBlocked t || parentIsNotIdle ts t || isPostponed now t
+isUnsorted now ts t = not (inInbox now ts t || isCategory t || relatedTodo t.related_tasks.parenttask)
+inInbox now ts t =
+  Set.isSubsetOf (fromMaybe mempty t.labels) autoLabels
+    && not (isMaybe t || isAwaiting t || isWaiting now ts t || t.done)
+
+defaultProject :: Project
 defaultProject = 33
+
+defaultKanban :: View
+defaultKanban = 32
 
 updateDefaultProject :: Options -> IO ()
 updateDefaultProject opts = do
-  tasks <- fetchAll opts [i|#{url}/projects/#{defaultProject}/tasks|]
+  tasks <-
+    fetchAll MkQuery{opts, path = [i|#{url}/projects/#{defaultProject}/views/#{defaultKanban}/tasks|], inBuckets = True}
+  let taskMap = toMapOf (folded % _2 % reindexed (.id) selfIndex) tasks
   now <- getCurrentTime
   forM_ tasks $ uncurry \value -> runStateT do
     modifyM \t -> ensureLabel opts t parentLabel (isProject t)
-    modifyM \t -> ensureLabel opts t inboxLabel (inInbox now t)
-    modifyM \t -> ensureLabel opts t unsortedLabel (isUnsorted now t)
+    modifyM \t -> ensureLabel opts t inboxLabel (inInbox now taskMap t)
+    modifyM \t -> ensureLabel opts t unsortedLabel (isUnsorted now taskMap t)
+    modifyM \t -> ensureBucket opts t defaultProject defaultKanban (chooseBucket now taskMap t)
     get >>= \t ->
       lift $
         ensureChange
           opts
           t
-          ( ensureBucket (chooseBucket now t)
-              >>> ensureColor (chooseColor t)
-              >>> ensureRecentRepetition now t
-          )
+          (ensureColor (chooseColor t) >>> ensureRecentRepetition now t)
           value
 
 update :: Options -> IO ()
@@ -264,7 +296,7 @@ update opts = do
 
 updateCheckLists :: Options -> IO ()
 updateCheckLists opts = do
-  tasks <- fetchAll opts [i|#{url}/projects/40/tasks|]
+  tasks <- fetchAll MkQuery{opts, path = [i|#{url}/projects/40/tasks|], inBuckets = False}
   now <- getCurrentTime
   forM_ tasks $ \(value, t) ->
     ensureChange opts t (ensureRecentRepetition now t >>> ensureUncheckedDescription now t) value
@@ -294,8 +326,8 @@ updateLoop = do
           & lensVL (param "filter_comparator") .~ ["greater"]
       threadDelay 20_000_000
 
-taskAndJS :: LByteString -> Either String (Seq (Value, Task))
-taskAndJS s = do
-  js <- eitherDecode' s
-  tasks <- eitherDecode' s
-  pure $ Seq.zip js tasks
+taskAndJS :: LByteString -> [(Value, Task)]
+taskAndJS = itoListOf (_Array % folded % selfIndex % to fromJSON % folded)
+
+taskAndJSBucket :: LByteString -> [(Value, Task)]
+taskAndJSBucket = itoListOf (_Array % folded % key "tasks" % _Array % folded % selfIndex % to fromJSON % folded)
