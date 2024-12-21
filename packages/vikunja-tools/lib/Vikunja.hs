@@ -38,6 +38,15 @@ waitingBucket = 56
 projectBucket = 58
 backlogBucket = 42
 
+scheduleBuckets :: Set Bucket
+scheduleBuckets =
+  fromList
+    [ 50 -- Doing,
+    , 49 -- Heute,
+    , 48 -- Diese Woche,
+    , 42 -- Backlog
+    ]
+
 wantColor, mustColor, shouldColor, urgentColor :: Text
 wantColor = "1a5fb4"
 mustColor = "ffbe6f"
@@ -247,12 +256,13 @@ parentIsNotIdle ts t =
 relatedTodo :: Maybe (Set RelatedTask) -> Bool
 relatedTodo = not . all (.done) . fromMaybe mempty
 
-isAwaiting, isBlocked, isProject, isMaybe, isCategory :: Task -> Bool
+isAwaiting, isBlocked, isProject, isMaybe, isCategory, isScheduled :: Task -> Bool
 isMaybe t = maybeBucket == t.bucket_id
 isAwaiting t = awaitingBucket == t.bucket_id
 isBlocked t = relatedTodo t.related_tasks.blocked
 isProject t = relatedTodo t.related_tasks.subtask || isCategory t
 isCategory t = Set.member categoryLabel (fromMaybe mempty t.labels)
+isScheduled t = t.bucket_id `Set.member` scheduleBuckets
 
 isPostponed :: UTCTime -> Task -> Bool
 isPostponed now t = maybe False ((> now) . zonedTimeToUTC) (t.start_date ^? #_Time % _Just)
@@ -262,7 +272,7 @@ isWaiting now ts t = isBlocked t || parentIsNotIdle ts t || isPostponed now t
 isUnsorted now ts t = not (inInbox now ts t || isCategory t || relatedTodo t.related_tasks.parenttask)
 inInbox now ts t =
   Set.isSubsetOf (fromMaybe mempty t.labels) autoLabels
-    && not (isMaybe t || isAwaiting t || isWaiting now ts t || t.done)
+    && not (isScheduled t || isMaybe t || isAwaiting t || isWaiting now ts t || t.done)
 
 defaultProject :: Project
 defaultProject = 33
