@@ -1,4 +1,4 @@
-platform: bme280
+platform: bme280_i2c
 temperature:
   name: ${macsuffix}_bme280_temperature
   id: bme280_temperature

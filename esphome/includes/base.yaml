@@ -15,7 +15,10 @@ api:
 
 # https://esphome.io/components/ota.html
 ota:
-  safe_mode: true
+  - platform: esphome
+
+# https://esphome.io/components/safe_mode
+safe_mode:
 
 # https://esphome.io/components/web_server.html
 web_server:
