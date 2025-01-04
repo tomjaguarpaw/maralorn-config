@@ -35,7 +35,7 @@ let
       Heilmann = {
         Chat = link "https://3.basecamp.com/3601168/projects";
         Issueboard = link "https://github.com/orgs/heilmannsoftware/projects/17/views/5";
-        Support = link "https://github.com/heilmannsoftware/support/issues/assigned/maralorn";
+        Support = link "https://github.com/orgs/heilmannsoftware/projects/18/views/6";
         Actions = link "https://github.com/heilmannsoftware/connect/actions?query=actor%3Amaralorn";
       };
     }
