@@ -15,7 +15,7 @@ in
 
     "restart-${name}" = {
       description = "Restart ${name}";
-      serviceConfig.ExecStart = "${lib.getExe' pkgs.systemd "systemctl"} restart ${name}";
+      serviceConfig.ExecStart = "${lib.getExe' pkgs.systemd "systemctl"} --no-block restart ${name}";
       startAt = "daily";
     };
 
