@@ -4,7 +4,6 @@
   inputs = {
     nixos-unstable.url = "nixpkgs/nixos-unstable";
     nixos-stable.url = "nixpkgs/nixos-24.11";
-    #nixos-oldstable.url = "nixpkgs/nixos-23.11";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixos-stable";
@@ -33,9 +32,7 @@
     };
     home-manager = {
       url = "home-manager/release-24.11";
-      inputs = {
-        nixpkgs.follows = "";
-      };
+      inputs.nixpkgs.follows = "";
     };
     hexa-nur-packages = {
       url = "github:mweinelt/nur-packages";
