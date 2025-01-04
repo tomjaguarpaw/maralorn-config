@@ -269,7 +269,15 @@ isPostponed now t = maybe False ((> now) . zonedTimeToUTC) (t.start_date ^? #_Ti
 
 isUnsorted, inInbox, isWaiting :: UTCTime -> Map Int Task -> Task -> Bool
 isWaiting now ts t = isBlocked t || parentIsNotIdle ts t || isPostponed now t
-isUnsorted now ts t = not (inInbox now ts t || isCategory t || relatedTodo t.related_tasks.parenttask)
+isUnsorted now ts t =
+  diffUTCTime now (t ^. #created % coerced % to (fmap zonedTimeToUTC) % non now)
+    > (2 * 24 * 60 * 60)
+    && not
+      ( t.done
+          || inInbox now ts t
+          || isCategory t
+          || relatedTodo t.related_tasks.parenttask
+      )
 inInbox now ts t =
   Set.isSubsetOf (fromMaybe mempty t.labels) autoLabels
     && not (isScheduled t || isMaybe t || isAwaiting t || isWaiting now ts t || t.done)
