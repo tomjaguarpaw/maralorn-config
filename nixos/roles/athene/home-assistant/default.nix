@@ -896,8 +896,7 @@ in
                     name = "Geschätzte Wandtemperatur";
                     attribute = "estimated_critical_temp";
                     icon = "mdi:home-thermometer";
-                    unit = "°C";
-                    format = "precision1";
+                    suffix = "°C";
                   }
                   {
                     entity = "sensor.wall_humidity_schlafzimmer";
