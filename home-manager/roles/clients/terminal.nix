@@ -8,6 +8,7 @@
       "ctrl+minus" = "change_font_size all -0.25";
       "ctrl+shift+e" = "kitten hints --hints-background-color blue --hints-foreground-color #ffffff";
     };
+    themeFile = "Catppuccin-Latte";
     extraConfig = ''
       modify_font cell_height -2px
       modify_font baseline +2px
