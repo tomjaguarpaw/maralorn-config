@@ -21,7 +21,7 @@ let
       # --no-block will wait for the unit to be created but not for it to signal succesful start
       # -G remove the unit immediately after exit, even if it fails
       ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block -G \
-        ${lib.getExe pkgs.kitty} -D "${video_dir}" \
+        ${lib.getExe pkgs.kitty} -d "${video_dir}" \
         /bin/sh -c \
         "${lib.getExe pkgs.yt-dlp} --embed-subs --embed-metadata --embed-chapters \"$1\""
     else
