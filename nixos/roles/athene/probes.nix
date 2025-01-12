@@ -42,10 +42,13 @@ in
       configFile = ./blackbox_rules.yml;
     };
     scrapeConfigs = [
-      (makeProbe "tls_connect" [ "hera.m-0.eu:993" ])
+      (makeProbe "tls_connect" [
+        "hera.m-0.eu:993"
+        "bach.vocalensemble-darmstadt.de:993"
+      ])
       (makeProbe "smtp_starttls" [
         "hera.m-0.eu:587"
-        "bach.vocalensemble-darmstadt.de:25"
+        "bach.vocalensemble-darmstadt.de:587"
         "hera.m-0.eu:25"
       ])
       (makeProbe "http" (
@@ -59,9 +62,7 @@ in
         [
           "https://hera.m-0.eu"
 
-          "https://wiki.vocalensemble-darmstadt.de"
           "https://lists.vocalensemble-darmstadt.de"
-          "https://cloud.vocalensemble-darmstadt.de"
           "https://www.vocalensemble-darmstadt.de"
         ]
         ++ lib.pipe (config.m-0.hosts.aliases.athene ++ config.m-0.hosts.aliases.hera) [
