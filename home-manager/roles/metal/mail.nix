@@ -25,6 +25,9 @@ let
     }
     ${lib.getExe pkgs.notmuch} new
   '';
+  unsubscribe-github = pkgs.writeShellScript "unsubscribe-github" ''
+    mshow -N -h "list-unsubscribe" -q - | rg 'https://github.com/notifications/unsubscribe/one-click/[A-Z0-9=]+' -o | (read url;  curl -d List-Unsubscribe=One-Click -L "$url")
+  '';
   maildir = config.accounts.email.maildirBasePath;
 in
 {
@@ -159,6 +162,7 @@ in
           set wait_key = false
           color normal default default
 
+          macro index,pager u '<pipe-message>${unsubscribe-github}<return>a'
           ${move-message-macro "hera" "a" "Archiv/unsortiert"}
           ${move-message-macro "hera" "s" "Junk"}
           ${move-message-macro "hera" "t" "Move/todo"}
