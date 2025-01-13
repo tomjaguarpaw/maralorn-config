@@ -54,7 +54,6 @@ let
         host = "code.maralorn.de";
       }
     ]
-    ++ hostJobs "apollo" true
     ++ hostJobs "hephaistos" true
     ++ hostJobs "zeus" true
     ++ [

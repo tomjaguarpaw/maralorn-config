@@ -1,1 +1,0 @@
-{ nix.distributedBuilds = false; }

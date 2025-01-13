@@ -100,7 +100,6 @@ builderConfigs :: Map.Map Text [(BuilderGroup, Reachable)]
 builderConfigs =
   Map.fromList
     [ ("hera", mkConfig False)
-    , ("apollo", mkConfig False)
     , ("hephaistos", mkConfig False)
     , ("athene", mkConfig False)
     , ("zeus", mkConfig True)

@@ -35,7 +35,6 @@ in
       key = config.age.secrets."syncthing/zeus/key.pem".path;
       settings = syncthing.declarativeWith [
         "hera"
-        "apollo"
         "pegasus"
         "hephaistos"
         "athene"

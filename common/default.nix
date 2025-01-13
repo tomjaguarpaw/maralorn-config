@@ -73,7 +73,6 @@
               "graphs"
             ];
             zeus = [ "syncthing-zeus" ];
-            apollo = [ "syncthing-apollo" ];
             hephaistos = [ "syncthing-hephaistos" ];
           };
         };

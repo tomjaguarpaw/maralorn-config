@@ -14,11 +14,6 @@ let
   };
 in
 {
-  apollo = makeConfig "apollo" [
-    "clients"
-    "metal"
-    "laptops"
-  ];
   athene = makeConfig "athene" [
     "impermanent"
     "metal"

@@ -92,7 +92,6 @@ in
       cert = config.age.secrets."syncthing/hera/cert.pem".path;
       key = config.age.secrets."syncthing/hera/key.pem".path;
       settings = syncthing.declarativeWith [
-        "apollo"
         "zeus"
         "pegasus"
         "hephaistos"

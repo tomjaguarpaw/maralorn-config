@@ -34,7 +34,6 @@ jobs:
        matrix:
          job:
            - check-pre-commit
-           - nixos-apollo
            - nixos-athene
            - nixos-hephaistos
            - nixos-hera

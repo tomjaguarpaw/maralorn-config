@@ -13,7 +13,7 @@
 (defpoll alerts :interval "1m" :initial "[]" `curl https://alerts.maralorn.de/api/v2/alerts | jq 'map(select(.status.state != "suppressed"))'`)
 (defpoll rbw :interval "5s" :initial false "if rbw unlocked; then echo true; else echo false; fi")
 (defpoll host :interval "1440m" :initial "unknown" "cat /etc/hostname")
-(defvar disks '{"apollo":["/","/efi"],"hephaistos":["/nix","/efi"],"zeus":["/","/efi"],"unknown":[]}')
+(defvar disks '{"hephaistos":["/","/efi"],"zeus":["/","/efi"],"unknown":[]}')
 
 (defwidget workspaces [monitor]
   (box :space-evenly false
