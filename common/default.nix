@@ -71,6 +71,7 @@
               "syncthing-athene"
               "5e"
               "graphs"
+              "athene.id"
             ];
             zeus = [ "syncthing-zeus" ];
             hephaistos = [ "syncthing-hephaistos" ];

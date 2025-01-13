@@ -32,7 +32,6 @@ in
       inherit interface;
       peers = builtins.attrValues (builtins.removeAttrs peers [ hostName ]);
     };
-
   };
   networking.firewall.allowedUDPPorts = [
     port

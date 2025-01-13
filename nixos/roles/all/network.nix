@@ -43,7 +43,11 @@ in
             ${(replaceLocalHost host ips).A} = name;
           }
         ) config.m-0.hosts.tailscale
-      );
+      )
+      // {
+        "172.30.77.1" = [ "athene.id.maralorn.de" ];
+        "172.30.77.3" = [ "hera.id.maralorn.de" ];
+      };
   };
   systemd.network.wait-online.anyInterface = true;
   m-0.virtualHosts = lib.genAttrs (hosts.aliases.${hostName} or [ ]) (name: "${name}.maralorn.de");
