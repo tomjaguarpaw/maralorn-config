@@ -17,13 +17,14 @@ let
         ];
       }
       ''
-        interval = 5
+        interval = 5 * 60 * 1000000 -- 5 minutes
 
         main = forever $ do
            time <- getZonedTime
            let tod = localTimeOfDay . zonedTimeToLocalTime$ time
                hour = todHour tod
                minute = todMin tod
+               secs = (todSec tod + fromInteger (60 * toInteger minute)) * 1000000
                evening = hour > 22
                night = (hour == 23 && minute >= 30)
                action
@@ -31,7 +32,7 @@ let
                 | night = systemctl "poweroff"
                 | otherwise = set_timer "Shutdown"
            action
-           threadDelay $ (interval - (minute `mod` interval)) * 60 * 1000000
+           threadDelay $ interval - (floor secs `mod` interval)
       '';
 in
 {
