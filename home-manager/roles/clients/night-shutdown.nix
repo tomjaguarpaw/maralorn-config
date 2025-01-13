@@ -5,9 +5,8 @@ let
       {
         name = "night-shutdown";
         imports = [
-          "Data.Time.LocalTime"
-          "Data.Time.Format"
-          "Data.Time.Clock"
+          "Data.Time"
+          "Data.Fixed"
           "Control.Concurrent"
           "Data.Functor"
         ];
@@ -17,22 +16,20 @@ let
         ];
       }
       ''
-        interval = 5 * 60 * 1000000 -- 5 minutes
+        interval = 5 * 60 -- 5 minutes
 
         main = forever $ do
            time <- getZonedTime
-           let tod = localTimeOfDay . zonedTimeToLocalTime$ time
+           let tod = localTimeOfDay . zonedTimeToLocalTime $ time
                hour = todHour tod
                minute = todMin tod
-               secs = (todSec tod + fromInteger (60 * toInteger minute)) * 1000000
-               evening = hour > 22
-               night = (hour == 23 && minute >= 30)
+               secs = todSec tod + fromInteger (60 * toInteger minute)
                action
-                | evening = set_timer "Shutdown" "23:30"
-                | night = systemctl "poweroff"
+                | hour == 23 && minute >= 30 = systemctl "poweroff"
+                | hour >= 22 = set_timer "Shutdown" "23:30"
                 | otherwise = set_timer "Shutdown"
            action
-           threadDelay $ interval - (floor secs `mod` interval)
+           threadDelay $ ceiling $ (interval - (secs `mod'` interval)) * 1000000
       '';
 in
 {
