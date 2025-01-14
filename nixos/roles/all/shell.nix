@@ -106,9 +106,8 @@
     zsh = {
       enable = true;
       interactiveShellInit = ''
-        export MANPAGER='sh -c "col -bx | bat -l man -p"'
-        export BAT_THEME='Catppuccin Latte'
-        export MANROFFOPT="-c";
+        export BAT_THEME="ansi"
+        export MANROFFOPT="-c"
       '';
       shellInit = ''
         function set_terminal_title() {
@@ -167,6 +166,9 @@
       shellAliases = {
         nom-build-remote = "nom build --builders @$(builders-configurator $(hostname) --force)";
         nix-build-remote = "nix build --builders @$(builders-configurator $(hostname) --force)";
+        man = "batman";
+        less = "batpipe";
+        rg = "batgrep";
         nb = "nom build";
         nbr = "nom-build-remote";
         sj = "journalctl -efu";

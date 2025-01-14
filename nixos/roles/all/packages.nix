@@ -61,6 +61,14 @@
       whois
       wireguard-tools
       ;
+    inherit (pkgs.bat-extras)
+      prettybat
+      batwatch
+      batpipe
+      batman
+      batgrep
+      batdiff
+      ;
     inherit (pkgs.python3Packages) qrcode;
     inherit (pkgs.matrix-synapse-tools) synadm;
   };
