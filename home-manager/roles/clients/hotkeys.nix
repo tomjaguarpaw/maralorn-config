@@ -37,6 +37,8 @@ let
         Issueboard = link "https://github.com/orgs/heilmannsoftware/projects/17/views/5";
         Support = link "https://github.com/orgs/heilmannsoftware/projects/18/views/6";
         Actions = link "https://github.com/heilmannsoftware/connect/actions?query=actor%3Amaralorn";
+        "Pull Requests" =
+          link "https://github.com/pulls?q=is%3Aopen+is%3Apr+author%3Amaralorn+archived%3Afalse+user%3Aheilmannsoftware";
       };
     }
     {
