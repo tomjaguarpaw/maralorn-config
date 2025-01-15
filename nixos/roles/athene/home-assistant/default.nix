@@ -360,7 +360,7 @@ in
             trigger = [
               {
                 platform = "time";
-                at = "08:30:00";
+                at = "07:30:00";
               }
               {
                 platform = "time";
