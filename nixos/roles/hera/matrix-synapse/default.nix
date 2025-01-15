@@ -78,15 +78,6 @@ in
       };
     };
 
-    # matrix-sliding-sync = {
-    #   enable = true;
-    #   settings = {
-    #     SYNCV3_SERVER = "https://matrix.maralorn.de";
-    #     SYNCV3_BINDADDR = "localhost:8007";
-    #   };
-    #   environmentFile = config.age.secrets."sliding-sync-secret".path;
-    # };
-
     # Postgres
     postgresql = {
       enable = true;
