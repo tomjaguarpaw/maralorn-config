@@ -89,6 +89,17 @@ in
         homeassistant = pkgs.privateValue { } "homeassistant-home";
         frontend.themes.ourdefault.modes.dark.primary-color = colors.primary;
         timer.block_heating_schlafzimmer = { };
+        input_select.presence = {
+          name = "Anwesenheit";
+          icon = "mdi:home-account";
+          options = [
+            "Urlaub"
+            "Niemand Home-Office"
+            "Claire Home-Office"
+            "Malte Home-Office"
+            "Alle Home-Office"
+          ];
+        };
         automation = [
           {
             alias = "Set theme at startup'";
@@ -282,36 +293,87 @@ in
           #      ];
           #  action = [ (actions.notify "{{ trigger.to_state.name }} ist {{ trigger.to_state.state }} ppm.") ];
           #}
-          #{
-          #  alias = "Aufwachen";
-          #  trigger = [
-          #    {
-          #      platform = "time";
-          #      at = "07:00:00";
-          #    }
-          #  ];
-          #  action = [
-          #    {
-          #      service = "switch.turn_on";
-          #      target.entity_id = "group.schlafzimmer_lights";
-          #    }
-          #  ];
-          #}
-          #{
-          #  alias = "Wach";
-          #  trigger = [
-          #    {
-          #      platform = "time";
-          #      at = "08:00:00";
-          #    }
-          #  ];
-          #  action = [
-          #    {
-          #      service = "switch.turn_off";
-          #      target.entity_id = "group.schlafzimmer_lights";
-          #    }
-          #  ];
-          #}
+          {
+            alias = "Heizung morgens";
+            trigger = [
+              {
+                platform = "time";
+                at = "06:30:00";
+              }
+            ];
+            conditions = [
+              {
+                not = [
+                  {
+                    condition = "state";
+                    entity_id = "input_select.presence";
+                    state = "Urlaub";
+                  }
+                ];
+              }
+            ];
+            action = [
+              {
+                service = "climate.set_temperature";
+                target.area_id = "schlafzimmer";
+                data.temperature = "23";
+              }
+            ];
+          }
+          {
+            alias = "Heizung morgens aus";
+            trigger = [
+              {
+                platform = "time";
+                at = "09:00:00";
+              }
+            ];
+            action = [
+              {
+                service = "climate.set_temperature";
+                target.area_id = "schlafzimmer";
+                data.temperature = "16";
+              }
+            ];
+          }
+          {
+            alias = "Aufwachen";
+            trigger = [
+              {
+                platform = "time";
+                at = "07:00:00";
+              }
+              {
+                platform = "time";
+                at = "08:30:00";
+              }
+            ];
+            action = [
+              {
+                service = "switch.turn_on";
+                target.entity_id = "group.schlafzimmer_lights";
+              }
+            ];
+          }
+          {
+            alias = "Wach";
+            trigger = [
+              {
+                platform = "time";
+                at = "08:30:00";
+              }
+              {
+                platform = "time";
+                at = "10:00:00";
+              }
+            ];
+            action = [
+              {
+                service = "switch.turn_off";
+                target.entity_id = "group.schlafzimmer_lights";
+              }
+            ];
+          }
         ]
         #++ (map
         #  (minutes: {
@@ -562,6 +624,9 @@ in
                 title = "Wohnzimmer";
                 entities = [
                   {
+                    entity = "input_select.presence";
+                  }
+                  {
                     entity = "climate.wohnzimmer";
                     name = "Heizung";
                   }
@@ -735,6 +800,9 @@ in
                 title = "Küche";
                 entities = [
                   {
+                    entity = "input_select.presence";
+                  }
+                  {
                     entity = "climate.kueche";
                     name = "Heizung";
                   }
@@ -867,6 +935,9 @@ in
                 type = "entities";
                 title = "Schlafzimmer";
                 entities = [
+                  {
+                    entity = "input_select.presence";
+                  }
                   {
                     entity = "climate.schlafzimmer";
                     name = "Heizung";
@@ -1091,6 +1162,9 @@ in
                 type = "entities";
                 title = "Bad";
                 entities = [
+                  {
+                    entity = "input_select.presence";
+                  }
                   {
                     entity = "button.restart_${esp.bad}";
                     name = "Klimasensor Neustarten";
