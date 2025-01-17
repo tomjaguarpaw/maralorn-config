@@ -27,6 +27,7 @@
               "steam-unwrapped"
               "factorio-space-age"
               "teamviewer"
+              "outline"
             ];
           permittedInsecurePackages = [ "olm-3.2.16" ];
         };

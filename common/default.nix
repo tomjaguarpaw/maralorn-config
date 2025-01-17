@@ -66,6 +66,7 @@
               "rss"
               "home"
               "monitoring"
+              "notes"
               "alerts"
               "cache"
               "syncthing-athene"

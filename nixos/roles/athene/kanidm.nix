@@ -11,7 +11,11 @@ in
       clientSettings.uri = "https://${domain}";
       provision = {
         enable = true;
-        persons.maralorn.displayName = "maralorn";
+        persons.maralorn = {
+          mailAddresses = [ "mail@maralorn.de" ];
+          displayName = "maralorn";
+        };
+        groups.outline_users.members = [ "maralorn" ];
       };
       serverSettings = {
         origin = "https://${domain}";
