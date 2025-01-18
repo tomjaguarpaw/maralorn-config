@@ -67,6 +67,7 @@
               "home"
               "monitoring"
               "notes"
+              "grist"
               "alerts"
               "cache"
               "syncthing-athene"

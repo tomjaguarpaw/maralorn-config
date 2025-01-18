@@ -33,6 +33,7 @@ in
         {
           authUrl = "${authHost}/ui/oauth2";
           inherit clientId;
+          inherit scopes;
           clientSecretFile = config.age.secrets."outline-oauth2-client-secret".path;
           displayName = "id.maralorn.de";
           tokenUrl = "${authHost}/oauth2/token";

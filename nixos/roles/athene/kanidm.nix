@@ -16,6 +16,7 @@ in
           displayName = "maralorn";
         };
         groups.outline_users.members = [ "maralorn" ];
+        groups.grist_users.members = [ "maralorn" ];
       };
       serverSettings = {
         origin = "https://${domain}";
