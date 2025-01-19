@@ -24,12 +24,6 @@ parentLabel = Label 12
 categoryLabel = Label 15
 unsortedLabel = Label 30
 
-autoLabels :: Set Label
-autoLabels = Set.fromList [inboxLabel, unsortedLabel]
-
-nonListLabels :: Set Label
-nonListLabels = autoLabels <> Set.fromList [parentLabel, categoryLabel]
-
 maybeBucket, awaitingBucket, inboxBucket, waitingBucket, projectBucket, backlogBucket :: Bucket
 maybeBucket = 52
 awaitingBucket = 53
@@ -212,7 +206,7 @@ chooseBucket :: UTCTime -> Map Int Task -> Task -> Bucket
 chooseBucket now ts t
   | inboxLabel `Set.member` task_labels = inboxBucket
   | isWaiting now ts t, not t.done = waitingBucket
-  | isProject t, not (t.done || isMaybe t || isAwaiting t), Set.isSubsetOf task_labels nonListLabels = projectBucket
+  | isProject t, not (t.done || isMaybe t || isAwaiting t || isScheduled t) = projectBucket
   | t.bucket_id `elem` [inboxBucket, waitingBucket, projectBucket] = backlogBucket
   | otherwise = t.bucket_id
  where
@@ -279,8 +273,7 @@ isUnsorted now ts t =
           || relatedTodo t.related_tasks.parenttask
       )
 inInbox now ts t =
-  Set.isSubsetOf (fromMaybe mempty t.labels) autoLabels
-    && not (isScheduled t || isMaybe t || isAwaiting t || isWaiting now ts t || t.done)
+  not (isProject t || isCategory t || isScheduled t || isMaybe t || isAwaiting t || isWaiting now ts t || t.done)
 
 defaultProject :: Project
 defaultProject = 33
