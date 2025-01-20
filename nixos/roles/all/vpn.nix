@@ -3,7 +3,7 @@ let
   interface = "wg-mesh";
   port = 53077;
   inherit (config.networking) hostName;
-  prefix = "172.30.77";
+  prefix = "10.0.77";
   peers = {
     athene = {
       pubkey = "atheMO5T0C1EHJGgXaR9EUIf93idHUEIIF2HC1/pBRk=";
