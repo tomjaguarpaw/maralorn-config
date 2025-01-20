@@ -6,20 +6,20 @@ let
   prefix = "172.30.77";
   peers = {
     athene = {
-      pubkey = "0BCfRqYER62NtSx1tYYTXvR7n20cKKIB3NKAA9sM72U=";
+      pubkey = "atheMO5T0C1EHJGgXaR9EUIf93idHUEIIF2HC1/pBRk=";
       address = "${prefix}.1";
     };
     hephaistos = {
-      pubkey = "Vu3tcouiruqLz0D6M60h7drP2qSiSWRA7roeaUjKQic=";
+      pubkey = "hephOehqoB1bm3Go2mTo92fzlI133N4lxROG8X7x3Wo=";
       address = "${prefix}.2";
     };
     hera = {
-      pubkey = "+1s5MDauFG6MdX/k518x/+KAaglJbqC19NB2pzmz8U8=";
+      pubkey = "hera2vGWsXZTNhHB3awPvv0mrrKlg54uvLDWlyMQkEc=";
       endpoint = "hera.maralorn.de:${toString port}";
       address = "${prefix}.3";
     };
     zeus = {
-      pubkey = "iNxbk3ZtsGuZKyWTwZLN2olid/9K3/EkaD7kCNIJr2c=";
+      pubkey = "zeusu/Qu/8pTCi81IeCmCs7Og9CLfivqbQs+I+RELmc=";
       address = "${prefix}.4";
     };
   };
