@@ -34,7 +34,7 @@ let
     {
       Heilmann = {
         Chat = link "https://3.basecamp.com/3601168/projects";
-        Issueboard = link "https://github.com/orgs/heilmannsoftware/projects/17/views/5?groupedBy%5BcolumnId%5D=126215311&filterQuery=assignee%3A%40me+-status%3ADone";
+        Issueboard = link "https://github.com/orgs/heilmannsoftware/projects/17/views/5?groupedBy%5BcolumnId%5D=126215311\\&filterQuery=assignee%3A%40me+-status%3ADone";
         Support = link "https://github.com/orgs/heilmannsoftware/projects/18/views/6";
         Actions = link "https://github.com/heilmannsoftware/connect/actions?query=actor%3Amaralorn";
         "Pull Requests" =
