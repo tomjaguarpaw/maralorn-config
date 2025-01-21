@@ -8,12 +8,14 @@ import Network.Wreq (putWith)
 import Relude
 import Relude.Unsafe (fromJust)
 import System.Directory.OsPath (listDirectory)
+import System.FileLock (SharedExclusive (..), withFileLock)
 import System.OsPath (OsPath, decodeUtf, osp, (</>))
 import System.Process.Typed (byteStringInput, proc, readProcessStdout_, runProcess_, setStdin)
 import System.Which (staticWhich)
 import Vikunja
 
-mailDir, outBox, inBox :: OsPath
+lockFile, mailDir, outBox, inBox :: OsPath
+lockFile = [osp|/home/maralorn/Maildir/.vikunja-lock|]
 mailDir = [osp|/home/maralorn/Maildir/hera|]
 inBox = mailDir </> [osp|Move/todo|]
 outBox = mailDir </> [osp|Archiv/unsortiert|]
@@ -32,7 +34,7 @@ mshow :: [String] -> IO Text
 mshow args = fmap (Text.strip . toStrict . decodeUtf8) . readProcessStdout_ $ proc $(staticWhich "mshow") args
 
 main :: IO ()
-main = do
+main = withFileLock (unsafeToString lockFile) Exclusive \_ -> do
   let dirPath = inBox </> [osp|cur|]
   opts <- defaultOptions
   files <- listDirectory dirPath
@@ -42,7 +44,7 @@ main = do
     let from = maybe "" (Text.strip . Text.takeWhile (/= '<')) (stripPrefix "From: " =<< viaNonEmpty head header)
         subject = fromMaybe "" $ stripPrefix "Subject: " =<< viaNonEmpty head (drop 1 header)
         title = [i|Mail: #{from}: #{subject}|] :: Text
-    msg <- mshow ["-h", "from:subject:to:cc:date:message-id", filepath]
+    msg <- mshow ["-h", "from:subject:to:cc:date", "-A", "text/html:text/plain", "-N", filepath]
     putTextLn [i|Creating task #{title}|]
     _ <-
       putWith

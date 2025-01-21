@@ -38,6 +38,7 @@ common warnings
     , aeson-optics
     , base                ^>=4.18.2.1
     , directory
+    , filelock
     , filepath
     , optics
     , os-string
