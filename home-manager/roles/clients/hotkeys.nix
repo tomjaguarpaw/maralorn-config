@@ -28,7 +28,7 @@ let
         { Tasks = link "https://todo.darmstadt.ccc.de/projects/33/kanban"; }
         { Checklisten = link "https://todo.darmstadt.ccc.de/projects/-4/list"; }
         { Kalendar = term "ikhal"; }
-        { Notes = edit_dir "~/git/notes"; }
+        { Notes = link "https://notes.maralorn.de/doc/scratchpad-VEtvbVwIAT"; }
       ];
     }
     {
