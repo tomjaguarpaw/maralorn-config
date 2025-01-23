@@ -1,6 +1,10 @@
 { pkgs, ... }:
 {
-  home.packages = [ pkgs.firefox ];
+  programs.firefox = {
+    enable = true;
+    nativeMessagingHosts = [ pkgs.firefoxpwa ];
+  };
+
   home.sessionVariables = {
     # So that electron can open firefox links. See
     # Issue: https://github.com/electron/electron/issues/28436
