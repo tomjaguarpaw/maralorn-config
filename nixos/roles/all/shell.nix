@@ -118,7 +118,7 @@
         add-zsh-hook chpwd chpwd_recent_dirs
         zstyle ':chpwd:*' recent-dirs-max 100
 
-        if [[ $PWD == "$HOME" ]] {
+        if [[ $PWD == "$HOME" && -e ~/.chpwd-recent-dirs ]] {
         	cd "$(head -n1 ~/.chpwd-recent-dirs | sed s/\\$// | sed s/\'//g)"
         }
         fzf-history-search() {
