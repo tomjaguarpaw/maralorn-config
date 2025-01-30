@@ -18,7 +18,6 @@
         ".config/tea" # Save user login
         ".config/teamviewer" # Save user login
         ".config/remmina" # RDP Client
-        ".config/vscodium"
         ".contacts" # Cache synced addressbook
         ".factorio" # Factorio save games and login
         ".gnupg"
@@ -65,6 +64,7 @@
         ".cache/ghcide"
         ".cache/nix-output-monitor"
         ".local/state/wireplumber" # For volume levels
+        ".config/chromium" # Save state for connect app
       ];
     };
 
