@@ -52,6 +52,7 @@ in
   };
   environment = lib.mkIf config.has-persistence {
     persistence.snapshoted.directories = [ "/var/lib/grist" ];
+    persistence.unsnapshoted.directories = [ "/var/lib/docker" ];
   };
 
 }
