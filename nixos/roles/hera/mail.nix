@@ -73,7 +73,6 @@ in
         "[${config.m-0.prefix}::]/64"
         "10.0.0.0/24"
       ];
-      transport = "email2matrix.maralorn.de smtp:[::1]:2525";
       virtual = lib.mkForce (pkgs.privateValue "" "mail/virtual-regex");
       virtualMapType = "regexp";
       config = {
