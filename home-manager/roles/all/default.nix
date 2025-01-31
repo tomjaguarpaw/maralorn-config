@@ -60,11 +60,7 @@
         fi
       '';
     };
-    sessionVariables = {
-      PATH = "$HOME/.nix-profile/bin:$PATH";
-      BROWSER = "firefox";
-      SSH_AUTH_SOCK = "/run/user/1000/ssh-agent";
-    };
+    sessionVariables.SSH_AUTH_SOCK = "/run/user/1000/ssh-agent";
   };
 
   systemd.user = {
@@ -78,35 +74,4 @@
     maxCacheTtl = 31536000; # 1year
   };
 
-  xdg = {
-    configFile."mimeapps.list".force = true;
-    enable = true;
-    mime.enable = true;
-    mimeApps = {
-      enable = true;
-      defaultApplications = {
-        "application/pdf" = [ "org.gnome.Evince.desktop" ];
-        "x-scheme-handler/http" = [ "firefox.desktop" ];
-        "x-scheme-handler/https" = [ "firefox.desktop" ];
-        "x-scheme-handler/chrome" = [ "firefox.desktop" ];
-        "text/html" = [ "firefox.desktop" ];
-        "application/x-extension-htm" = [ "firefox.desktop" ];
-        "application/x-extension-html" = [ "firefox.desktop" ];
-        "application/x-extension-shtml" = [ "firefox.desktop" ];
-        "application/xhtml+xml" = [ "firefox.desktop" ];
-        "application/x-extension-xhtml" = [ "firefox.desktop" ];
-        "application/x-extension-xht" = [ "firefox.desktop" ];
-      };
-    };
-    userDirs = {
-      enable = true;
-      createDirectories = false;
-      desktop = "$HOME";
-      download = "$HOME";
-      documents = "$HOME/media/documents/aktuell/";
-      music = "$HOME/media/audio";
-      pictures = "$HOME/media/images";
-      videos = "$HOME/media/video";
-    };
-  };
 }
