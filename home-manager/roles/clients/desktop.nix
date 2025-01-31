@@ -9,9 +9,26 @@
     configFile."mimeapps.list".force = true;
     enable = true;
     mime.enable = true;
+    desktopEntries.neomutt =
+      let
+        handler = pkgs.writeShellScript "mailto-handler" ''
+          exec ${lib.getExe config.programs.neomutt.package} "''${1/mailto:\?/mailto:read@maralorn.de?}"
+        '';
+      in
+      {
+        name = "Neomutt";
+        genericName = "Mail client";
+        exec = "${config.home.sessionVariables.TERMINAL} ${handler} %U";
+        categories = [
+          "Network"
+          "Email"
+        ];
+        mimeType = [ "x-scheme-handler/mailto" ];
+      };
     mimeApps = {
       enable = true;
       defaultApplications = {
+        "x-scheme-handler/mailto" = [ "neomutt.desktop" ];
         "application/pdf" = [ "org.gnome.Evince.desktop" ];
         "x-scheme-handler/http" = [ "firefox.desktop" ];
         "x-scheme-handler/https" = [ "firefox.desktop" ];
