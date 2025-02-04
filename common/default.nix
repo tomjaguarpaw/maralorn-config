@@ -71,6 +71,7 @@
               "alerts"
               "cache"
               "syncthing-athene"
+              "rss-bridge"
               "5e"
               "graphs"
               "athene.id"

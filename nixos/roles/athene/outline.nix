@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, ... }:
 let
   domain = config.m-0.virtualHosts."notes";
   clientId = "outline";
@@ -55,7 +55,5 @@ in
       '';
     };
   };
-  environment = lib.mkIf config.has-persistence {
-    persistence.snapshoted.directories = [ "/var/lib/outline" ];
-  };
+  environment.persistence.snapshoted.directories = [ "/var/lib/outline" ];
 }
