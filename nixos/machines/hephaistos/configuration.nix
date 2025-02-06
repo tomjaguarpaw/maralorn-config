@@ -2,7 +2,10 @@ flake-inputs:
 { mylib, ... }:
 {
   imports =
-    [ flake-inputs.nixos-hardware.nixosModules.lenovo-thinkpad ]
+    [
+      flake-inputs.nixos-hardware.nixosModules.lenovo-thinkpad
+      (flake-inputs.secrets.lib.vpn "hephaistos")
+    ]
     ++ mylib.nixFromDirs [
       ../../roles/hephaistos
       ../../roles/clients
