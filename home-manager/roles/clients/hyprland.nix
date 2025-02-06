@@ -35,8 +35,8 @@ in
         gaps_in = 0;
         gaps_out = 0;
         layout = "scroller";
-        "col.active_border" = "0xffCDD6F4";
-        "col.inactive_border" = "0xff0d0077";
+        "col.active_border" = "0xff1e66f5";
+        "col.inactive_border" = "0xffccced7";
         animation = [
           "global,0"
           "windows,1,1,default"

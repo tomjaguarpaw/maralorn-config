@@ -50,7 +50,7 @@ in
   programs.helix = {
     enable = true;
     settings = {
-      theme = "catppuccin_mocha";
+      theme = "catppuccin_latte";
       keys =
         let
           common_keys = {
