@@ -7,29 +7,49 @@
 let
   rbw-unwrapped = config.programs.rbw.package;
   rbw = pkgs.writeShellScript "rbw" "PATH=${lib.makeBinPath [ rbw-unwrapped ]} rbw \"$@\"";
-  video_dir = "${config.home.homeDirectory}/Videos";
   download-and-watch = pkgs.writeShellScriptBin "download-and-watch" ''
     set -euo pipefail
-    cd "${video_dir}"
+    video_dir="${config.home.homeDirectory}/Videos"
+    cd "$video_dir"
 
-    link="''${1:-`${lib.getBin pkgs.wl-clipboard}/bin/wl-paste`}"
+    link="''${1:-`${lib.getExe' pkgs.wl-clipboard "wl-paste"}`}"
+    download_cmd="${lib.getExe pkgs.yt-dlp} --restrict-filenames --trim-filenames 128"
 
-    filename="`${lib.getExe pkgs.yt-dlp} -j $link | ${lib.getExe pkgs.jq} -r .filename`"
-    if [[ ! -f "$filename" ]]; then
-      echo "Prefetching file …"
-      # --user to use the user daemon
-      # --no-block will wait for the unit to be created but not for it to signal succesful start
-      # -G remove the unit immediately after exit, even if it fails
-      ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block -G \
-        ${lib.getExe pkgs.kitty} -d "${video_dir}" \
-        /bin/sh -c \
-        "${lib.getExe pkgs.yt-dlp} --embed-subs --embed-metadata --embed-chapters \"$1\""
-    else
-      echo "File already fetched. Playing …"
+    play_downloaded() {
       ${lib.getExe config.programs.mpv.finalPackage} "$filename"
       echo "Enter 'y' to delete $filename:"
       read delete
       if [[ "$delete" == "y" ]] then ${lib.getExe' pkgs.coreutils "rm"} "$filename"; fi
+    }
+
+    filename="`$download_cmd $link --get-filename`"
+    if [[ ! -f "$filename" ]]; then
+      echo "'p': play directly, 'd': download, 'c': download and play"
+      read command
+
+      if [[ "$command" == "p" ]]; then ${lib.getExe config.programs.mpv.finalPackage} $link; fi
+      if [[ "$command" == "d" || "$command" == "c" ]]; then
+        echo "Launching prefetch …"
+        # --user to use the user daemon
+        # --no-block will wait for the unit to be created but not for it to signal succesful start
+        # -G remove the unit immediately after exit, even if it fails
+        ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block -G \
+          ${lib.getExe pkgs.kitty} -d "$video_dir" \
+          /bin/sh -c \
+          "$download_cmd --embed-subs --embed-metadata --embed-chapters \"$link\""
+      fi
+      if [[ "$command" == "c" ]]; then
+         echo "Waiting for $filename to appear …"
+         while [[ ! -f "$filename" ]]; do
+           ${lib.getExe' pkgs.coreutils "sleep"} 1s;
+           echo -n "."
+         done
+         echo " File found."
+         play_downloaded
+      fi
+    else
+      echo "File already fetched. Playing …"
+      play_downloaded
     fi
   '';
   commands =
