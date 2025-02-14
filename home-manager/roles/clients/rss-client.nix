@@ -7,13 +7,19 @@
 let
   rbw-unwrapped = config.programs.rbw.package;
   rbw = pkgs.writeShellScript "rbw" "PATH=${lib.makeBinPath [ rbw-unwrapped ]} rbw \"$@\"";
-  dl_cmd = "${lib.getExe pkgs.yt-dlp} --restrict-filenames --trim-filenames 128 --no-part -f 'bv*[width<=1920]+ba/bv*+ba/b' --embed-subs --embed-chapters --embed-metadata --downloader ffmpeg";
+  dl_cmd = "${lib.getExe pkgs.yt-dlp} --restrict-filenames --trim-filenames 128 --no-part -f 'bv*[width<=1920]+ba/bv*+ba/b' --embed-subs --embed-chapters --embed-metadata";
   download-and-watch = pkgs.writeShellScriptBin "download-and-watch" ''
     set -euo pipefail
     video_dir="${config.home.homeDirectory}/Videos"
     cd "$video_dir"
 
     link="''${1:-`${lib.getExe' pkgs.wl-clipboard "wl-paste"}`}"
+
+    linkfile=".$(echo "$link" | ${lib.getExe pkgs.sd} "[^a-zA-Z0-9]" "").json"
+
+    if [[ ! -f "$linkfile" ]]; then
+      ${dl_cmd} -j $link | jq '{filename, format_id, title}'> $linkfile
+    fi
 
     play_downloaded() {
       ${lib.getExe config.programs.mpv.finalPackage} "$filename"
@@ -22,34 +28,41 @@ let
       if [[ "$delete" == "y" ]] then ${lib.getExe' pkgs.coreutils "rm"} "$filename"; fi
     }
 
-    filename="`${dl_cmd} $link --get-filename`"
-    if [[ ! -f "$filename" ]]; then
-      echo "'p': play directly, 'd': download, 'c': download and play"
-      read command
+    filename="$(jq .filename $linkfile)"
+    formatplus="$(jq .format_id $linkfile | ${lib.getExe pkgs.sd} "[0-9]" "")"
 
-      if [[ "$command" == "p" ]]; then ${lib.getExe config.programs.mpv.finalPackage} $link; fi
-      if [[ "$command" == "d" || "$command" == "c" ]]; then
-        echo "Launching prefetch …"
-        # --user to use the user daemon
-        # --no-block will wait for the unit to be created but not for it to signal succesful start
-        # -G remove the unit immediately after exit, even if it fails
-        ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block -G \
-          ${lib.getExe pkgs.kitty} -d "$video_dir" \
-          /bin/sh -c \
-          "${dl_cmd} \"$link\""
-      fi
-      if [[ "$command" == "c" ]]; then
-         echo "Waiting for $filename to appear …"
-         while [[ ! -f "$filename" ]]; do
-           ${lib.getExe' pkgs.coreutils "sleep"} 3s;
-           echo -n "."
-         done
-         echo " File found."
-         play_downloaded
-      fi
+    if [[ -f "$filename" ]]; then
+      command="c"
     else
-      echo "File already fetched. Playing …"
-      play_downloaded
+      echo "'p': play directly, 'd': download, 'c': download and play"
+    fi
+    read command
+
+    if [[ "$command" == "p" ]]; then ${lib.getExe config.programs.mpv.finalPackage} $link; fi
+    if [[ "$command" == "d" || "$command" == "c" ]]; then
+      echo "Launching prefetch …"
+      # --user to use the user daemon
+      # --no-block will wait for the unit to be created but not for it to signal succesful start
+      # -G remove the unit immediately after exit, even if it fails
+      if [[ "+" == "$formatplus" ]]; then
+        extraargs="--downloader ffmpeg"
+      else
+        extraargs=""
+      fi
+      ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block -G \
+        ${lib.getExe pkgs.kitty} -d "$video_dir" \
+        /bin/sh -c \
+        "${dl_cmd} "$extraargs" \"$link\""
+    fi
+    if [[ "$command" == "c" ]]; then
+       echo "Waiting for $filename to appear …"
+       while [[ ! -f "$filename" ]]; do
+         ${lib.getExe' pkgs.coreutils "sleep"} 1s;
+         echo -n "."
+       done
+       ${lib.getExe' pkgs.coreutils "sleep"} 5s;
+       echo " File found."
+       play_downloaded
     fi
   '';
   commands =
