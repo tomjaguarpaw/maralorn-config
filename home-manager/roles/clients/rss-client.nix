@@ -7,13 +7,13 @@
 let
   rbw-unwrapped = config.programs.rbw.package;
   rbw = pkgs.writeShellScript "rbw" "PATH=${lib.makeBinPath [ rbw-unwrapped ]} rbw \"$@\"";
+  dl_cmd = "${lib.getExe pkgs.yt-dlp} --restrict-filenames --trim-filenames 128 --no-part -f 'bv*[width<=1920]+ba/bv*+ba/b' --embed-subs --embed-chapters --embed-metadata --downloader ffmpeg";
   download-and-watch = pkgs.writeShellScriptBin "download-and-watch" ''
     set -euo pipefail
     video_dir="${config.home.homeDirectory}/Videos"
     cd "$video_dir"
 
     link="''${1:-`${lib.getExe' pkgs.wl-clipboard "wl-paste"}`}"
-    download_cmd="${lib.getExe pkgs.yt-dlp} --restrict-filenames --trim-filenames 128"
 
     play_downloaded() {
       ${lib.getExe config.programs.mpv.finalPackage} "$filename"
@@ -22,7 +22,7 @@ let
       if [[ "$delete" == "y" ]] then ${lib.getExe' pkgs.coreutils "rm"} "$filename"; fi
     }
 
-    filename="`$download_cmd $link --get-filename`"
+    filename="`${dl_cmd} $link --get-filename`"
     if [[ ! -f "$filename" ]]; then
       echo "'p': play directly, 'd': download, 'c': download and play"
       read command
@@ -36,12 +36,12 @@ let
         ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block -G \
           ${lib.getExe pkgs.kitty} -d "$video_dir" \
           /bin/sh -c \
-          "$download_cmd --embed-subs --embed-metadata --embed-chapters \"$link\""
+          "${dl_cmd} \"$link\""
       fi
       if [[ "$command" == "c" ]]; then
          echo "Waiting for $filename to appear …"
          while [[ ! -f "$filename" ]]; do
-           ${lib.getExe' pkgs.coreutils "sleep"} 1s;
+           ${lib.getExe' pkgs.coreutils "sleep"} 3s;
            echo -n "."
          done
          echo " File found."
