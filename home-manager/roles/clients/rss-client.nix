@@ -18,7 +18,7 @@ let
     linkfile=".$(echo "$link" | ${lib.getExe pkgs.sd} "[^a-zA-Z0-9]" "").json"
 
     if [[ ! -f "$linkfile" ]]; then
-      ${dl_cmd} -j $link | jq '{filename, format_id, title}'> $linkfile
+      ${dl_cmd} -j $link | ${lib.getExe pkgs.jq} '{filename, format_id, title, original_url, state: "pending"}'> $linkfile
     fi
 
     play_downloaded() {
@@ -28,40 +28,44 @@ let
       if [[ "$delete" == "y" ]] then ${lib.getExe' pkgs.coreutils "rm"} "$filename"; fi
     }
 
-    filename="$(jq .filename $linkfile)"
-    formatplus="$(jq .format_id $linkfile | ${lib.getExe pkgs.sd} "[0-9]" "")"
+    filename="$(${lib.getExe pkgs.jq} -r .filename $linkfile)"
+    formatplus="$(${lib.getExe pkgs.jq} -r .format_id $linkfile | ${lib.getExe pkgs.sd} "[0-9]" "")"
 
     if [[ -f "$filename" ]]; then
       command="c"
     else
       echo "'p': play directly, 'd': download, 'c': download and play"
+      read command
     fi
-    read command
 
     if [[ "$command" == "p" ]]; then ${lib.getExe config.programs.mpv.finalPackage} $link; fi
-    if [[ "$command" == "d" || "$command" == "c" ]]; then
-      echo "Launching prefetch …"
+    if [[ ("$command" == "d" || "$command" == "c") && "$(${lib.getExe pkgs.jq} -r '.state' $linkfile)" != "finished" ]]; then
+      echo "Launching fetch …"
       # --user to use the user daemon
       # --no-block will wait for the unit to be created but not for it to signal succesful start
       # -G remove the unit immediately after exit, even if it fails
-      if [[ "+" == "$formatplus" ]]; then
+      if [[ "+" == "$formatplus" && "$command" == "c" ]]; then
         extraargs="--downloader ffmpeg"
+        echo "Optimizing for instant replay"
       else
         extraargs=""
       fi
+      ${lib.getExe pkgs.jq} '.state = "finished"' $linkfile > $linkfile.finished
       ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block -G \
         ${lib.getExe pkgs.kitty} -d "$video_dir" \
         /bin/sh -c \
-        "${dl_cmd} "$extraargs" \"$link\""
+        "${dl_cmd} "$extraargs" \"$link\" && mv $linkfile.finished $linkfile" 
     fi
     if [[ "$command" == "c" ]]; then
-       echo "Waiting for $filename to appear …"
        while [[ ! -f "$filename" ]]; do
+         echo "Waiting for $filename to appear …"
          ${lib.getExe' pkgs.coreutils "sleep"} 1s;
          echo -n "."
        done
-       ${lib.getExe' pkgs.coreutils "sleep"} 5s;
-       echo " File found."
+       if [[ "$(${lib.getExe pkgs.jq} -r '.state' $linkfile)" != "finished" ]]; then
+         echo "Waiting 5 seconds because download is still running."
+         ${lib.getExe' pkgs.coreutils "sleep"} 5s;
+       fi
        play_downloaded
     fi
   '';
