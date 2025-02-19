@@ -7,7 +7,7 @@
 let
   rbw-unwrapped = config.programs.rbw.package;
   rbw = pkgs.writeShellScript "rbw" "PATH=${lib.makeBinPath [ rbw-unwrapped ]} rbw \"$@\"";
-  dl_cmd = "${lib.getExe pkgs.yt-dlp} --restrict-filenames --trim-filenames 128 --no-part -f 'bv*[width<=1920]+ba/bv*+ba/b' --embed-subs --embed-chapters --embed-metadata";
+  dl_cmd = "${lib.getExe pkgs.yt-dlp} --restrict-filenames --trim-filenames 128 --no-part -f 'bv*[vbr<=3000]+ba/wv*[vbr>=3000]+ba/b' --embed-subs --embed-chapters --embed-metadata";
   download-and-watch = pkgs.writeShellScriptBin "download-and-watch" ''
     set -euo pipefail
     video_dir="${config.home.homeDirectory}/Videos"
@@ -25,7 +25,7 @@ let
       ${lib.getExe config.programs.mpv.finalPackage} "$filename"
       echo "Enter 'y' to delete $filename:"
       read delete
-      if [[ "$delete" == "y" ]] then ${lib.getExe' pkgs.coreutils "rm"} "$filename"; fi
+      if [[ "$delete" == "y" ]] then ${lib.getExe' pkgs.coreutils "rm"} "$filename" "$linkfile"; fi
     }
 
     filename="$(${lib.getExe pkgs.jq} -r .filename $linkfile)"
