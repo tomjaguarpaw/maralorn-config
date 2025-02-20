@@ -61,7 +61,8 @@ warnings env _ = do
 getRecords :: IO [Warning]
 getRecords = do
   entries <-
-    Shh.exe "klog" "json" "-n" |> captureTrim
+    Shh.exe "klog" "json" "-n"
+      |> captureTrim
       <&> (Aeson.decode @KlogLog >>> maybe Empty (.records) >>> toList >>> fmap (\x -> (x.date, x)) >>> Map.fromList)
   today <- localDay . zonedTimeToLocalTime <$> getZonedTime
   let last_7_days = MkDate . flip addDays today <$> [-6 .. 0]
@@ -95,7 +96,7 @@ intervals today =
   , (pred today, pred today, "Gestern")
   , (weekFirstDay Sunday today, today, "Diese Woche")
   , (addDays (-7) $ weekFirstDay Sunday today, addDays (-7) today, "Letzte Woche")
-  , (addGregorianMonthsClip (-1) today, today, "Monat")
-  , (addGregorianMonthsClip (-6) today, today, "Halbjahr")
-  , (addGregorianMonthsClip (-12) today, today, "Jahr")
+  , (addGregorianMonthsClip (-1) today, today, "1 Monat")
+  , (addGregorianMonthsClip (-6) today, today, "1 Halbjahr")
+  , (addGregorianMonthsClip (-12) today, today, "1 Jahr")
   ]
