@@ -1,4 +1,6 @@
+{ config, ... }:
 {
+  status-script.env = [ config.services.mako.package ];
   services.mako = {
     enable = true;
     anchor = "top-right";
