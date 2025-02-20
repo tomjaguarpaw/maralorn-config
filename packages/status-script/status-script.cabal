@@ -81,6 +81,7 @@ library
     StatusScript.Modules.GitHub
     StatusScript.Modules.Hyprland
     StatusScript.Modules.IdleState
+    StatusScript.Modules.Klog
     StatusScript.Modules.Mail
     StatusScript.Modules.Mako
     StatusScript.Modules.Network

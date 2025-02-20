@@ -22,6 +22,7 @@ import StatusScript.Modules.Calendar qualified as Calendar
 import StatusScript.Modules.GitHub qualified as GitHub
 import StatusScript.Modules.Hyprland (hyprlandWorkspaces)
 import StatusScript.Modules.IdleState qualified as IdleState
+import StatusScript.Modules.Klog qualified as Klog
 import StatusScript.Modules.Mail qualified as Mail
 import StatusScript.Modules.Mako
 import StatusScript.Modules.Network qualified as Network
@@ -70,6 +71,7 @@ warnings env = do
   software_feed_event <- SoftwareFeed.softwareFeed env mode
   mail_events <- Mail.mail env mode
   notification_dyn <- notifications env mode
+  klog_dyn <- Klog.warnings env mode
   let mode_warning =
         mode
           <&> ( modeIcon >>> maybe [] \m ->
@@ -94,6 +96,7 @@ warnings env = do
         , software_feed_event
         , gh_runs_dyn
         , task_dyn
+        , klog_dyn
         ]
 
 prepareSocketsDir :: MonadIO m => m ()

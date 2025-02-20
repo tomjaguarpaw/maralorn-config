@@ -18,7 +18,11 @@ let
   ];
 in
 {
+  status-script.env = [
+    pkgs.klog-time-tracker
+  ];
   home.packages = [
+    pkgs.klog-time-tracker
     (pkgs.writeShellScriptBin "unpack" ''
       ob --no-handoff thunk unpack "$1"
       cd "$1"

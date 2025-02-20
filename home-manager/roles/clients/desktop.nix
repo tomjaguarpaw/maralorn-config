@@ -83,7 +83,6 @@
       acpi
 
       # tools & office
-      klog-time-tracker
       feh
       gimp
       imagemagick
