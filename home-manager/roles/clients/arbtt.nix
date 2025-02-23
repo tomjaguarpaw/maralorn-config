@@ -38,29 +38,43 @@ in
       Install.WantedBy = [ "timers.target" ];
     };
     services = {
-      my-arbtt-capture = {
-        Unit.Description = "Capture active window list for arbtt";
+      arbtt-graph = {
         Service = {
-          ExecStart =
-            pkgs.writers.writeHaskell "my-arbtt-capture"
-              { libraries = builtins.attrValues pkgs.myHaskellScriptPackages; }
-              (
-                builtins.replaceStrings
-                  [
-                    "\"hyprctl\" -- NIX_BIN"
-                    "\"jq\" -- NIX_BIN"
-                    "\"arbtt-import\" -- NIX_BIN"
-                  ]
-                  [
-                    "\"${lib.getExe' pkgs.hyprland "hyprctl"}\""
-                    "\"${lib.getExe pkgs.jq}\""
-                    "\"${lib.getExe' package "arbtt-import"}\""
-                  ]
-                  (builtins.readFile ./my-arbtt-capture.hs)
-              );
-          Type = "oneshot";
+          Environment = "PATH=${
+            lib.makeBinPath [
+              pkgs.python3
+              package
+            ]
+          }";
+          ExecStart = pkgs.writeShellScript "serve-arbtt-graph" ''
+            cd ~/git/arbtt-graph
+            python3 arbtt-serve.py
+          '';
         };
+        Install.WantedBy = [ "default.target" ];
+      };
+
+      my-arbtt-capture.Service = {
+        ExecStart =
+          pkgs.writers.writeHaskell "my-arbtt-capture"
+            { libraries = builtins.attrValues pkgs.myHaskellScriptPackages; }
+            (
+              builtins.replaceStrings
+                [
+                  "\"hyprctl\" -- NIX_BIN"
+                  "\"jq\" -- NIX_BIN"
+                  "\"arbtt-import\" -- NIX_BIN"
+                ]
+                [
+                  "\"${lib.getExe' pkgs.hyprland "hyprctl"}\""
+                  "\"${lib.getExe pkgs.jq}\""
+                  "\"${lib.getExe' package "arbtt-import"}\""
+                ]
+                (builtins.readFile ./my-arbtt-capture.hs)
+            );
+        Type = "oneshot";
       };
     };
+
   };
 }

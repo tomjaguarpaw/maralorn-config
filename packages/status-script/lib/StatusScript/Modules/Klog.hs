@@ -1,3 +1,5 @@
+{-# LANGUAGE PatternSynonyms #-}
+
 module StatusScript.Modules.Klog (warnings) where
 
 import Data.Aeson (FromJSON (parseJSON), withText)
@@ -9,7 +11,7 @@ import Data.Time
   ( Day
   , DayOfWeek (..)
   , addDays
-  , addGregorianMonthsClip
+  , dayOfWeek
   , defaultTimeLocale
   , getZonedTime
   , localDay
@@ -17,6 +19,8 @@ import Data.Time
   , weekFirstDay
   , zonedTimeToLocalTime
   )
+import Data.Time.Calendar.Month (addMonths, pattern MonthDay)
+import Data.Time.Format (formatTime)
 import Numeric.Extra (intToDouble)
 import Optics hiding ((|>))
 import Reflex hiding (mapMaybe)
@@ -73,11 +77,16 @@ getRecords = do
           Just e | e.should_total /= "0m!" && e.total_mins == 0 -> Just $ mkWarning Count [i|Keine Zeiteinträge für #{day}|]
           _ -> Nothing
       sums =
-        intervals today <&> \(f, t, name) ->
-          let
-            c = sum $ (.diff_mins) <$> Map.filter (\e -> f <= e.date.un && t >= e.date.un) entries
-           in
-            mkWarning None [i|#{name}: #{intToDouble ((c * 10) `div` 60) / 10}|]
+        intervals today
+          <&> mkWarning None
+            . Text.intercalate " "
+            . fmap
+              ( \(f, t, name) ->
+                  let
+                    c = sum $ (.diff_mins) <$> Map.filter (\e -> f <= e.date.un && t >= e.date.un) entries
+                   in
+                    [i|#{name}: #{intToDouble ((c * 10) `div` 60) / 10}|]
+              )
   pure (missing <> sums)
 
 mkWarning :: BarDisplay -> Text -> Warning
@@ -90,13 +99,24 @@ mkWarning warn desc =
     , subgroup = Nothing
     }
 
-intervals :: Day -> [(Day, Day, Text)]
+intervals :: Day -> [[(Day, Day, Text)]]
 intervals today =
-  [ (today, today, "Heute")
-  , (pred today, pred today, "Gestern")
-  , (weekFirstDay Sunday today, today, "Diese Woche")
-  , (addDays (-7) $ weekFirstDay Sunday today, addDays (-7) today, "Letzte Woche")
-  , (addGregorianMonthsClip (-1) today, today, "1 Monat")
-  , (addGregorianMonthsClip (-6) today, today, "1 Halbjahr")
-  , (addGregorianMonthsClip (-12) today, today, "1 Jahr")
+  [ ( reverse
+        [ sunday
+        .. today
+        ]
+        <&> \x -> (x, x, toText $ formatTime defaultTimeLocale "%a" (dayOfWeek x))
+    )
+  ,
+    [ (sunday, today, "Diese Woche")
+    , (addDays (-7) sunday, pred sunday, "Letzte Woche")
+    ]
+  , [0 .. 3] <&> \d ->
+      ( MonthDay (addMonths (-d) mnth) 1
+      , min today (pred $ MonthDay (addMonths (1 - d) mnth) 1)
+      , toText $ formatTime defaultTimeLocale "%b" (MonthDay (addMonths (-d) mnth) 1)
+      )
   ]
+ where
+  MonthDay mnth _ = today
+  sunday = weekFirstDay Sunday today

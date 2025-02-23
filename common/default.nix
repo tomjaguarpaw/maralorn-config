@@ -77,7 +77,10 @@
               "athene.id"
             ];
             zeus = [ "syncthing-zeus" ];
-            hephaistos = [ "syncthing-hephaistos" ];
+            hephaistos = [
+              "syncthing-hephaistos"
+              "arbtt"
+            ];
           };
         };
       };
