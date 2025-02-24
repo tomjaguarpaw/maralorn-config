@@ -28,9 +28,11 @@ import Reflex.Host.Headless qualified as R
 import Relude
 import Shh hiding ((>>>))
 import StatusScript.Env
+import StatusScript.FileWatch qualified as FileWatch
 import StatusScript.Mode
 import StatusScript.ReflexUtil
 import StatusScript.Warnings
+import System.FilePath (takeDirectory, takeFileName)
 import System.Which (which)
 
 newtype KlogLog = MkKlogLog
@@ -58,7 +60,12 @@ warnings env _ = do
   tick <-
     liftIO (which "klog") >>= \case
       Nothing -> pure never
-      Just _ -> tickEvent 60
+      Just _ -> do
+        bkmrk <- liftIO $ decodeUtf8 <$> (Shh.exe "klog" "bk" "info" "@default" |> captureTrim)
+        update <- FileWatch.watchFile env (takeDirectory bkmrk) (takeFileName bkmrk)
+        hourly <- tickEvent 3600
+        pb <- getPostBuild
+        pure $ leftmost [update, hourly, pb]
   ev <- performEventThreaded env tick (const getRecords)
   holdDyn Empty ev
 
