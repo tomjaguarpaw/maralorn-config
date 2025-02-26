@@ -63,7 +63,7 @@ warnings env _ = do
       Just _ -> do
         bkmrk <- liftIO $ decodeUtf8 <$> (Shh.exe "klog" "bk" "info" "@default" |> captureTrim)
         update <- FileWatch.watchFile env (takeDirectory bkmrk) (takeFileName bkmrk)
-        hourly <- tickEvent 3600
+        hourly <- tickEvent 360 -- Every 6 minutes is one decile of an hour
         pb <- getPostBuild
         pure $ leftmost [update, hourly, pb]
   ev <- performEventThreaded env tick (const getRecords)
