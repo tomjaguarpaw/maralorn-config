@@ -4,23 +4,11 @@ import Control.Exception.Safe (throwIO)
 import Data.ByteString.Char8 qualified as Bytestring
 import Data.Map.Strict qualified as M
 import Data.String.Interpolate (i)
+import Data.Text qualified as Text
 import Data.Time (NominalDiffTime, UTCTime, diffUTCTime, formatTime, getCurrentTime, nominalDay)
 import Data.Time.Clock (addUTCTime)
 import Data.Time.Format (defaultTimeLocale)
 import GitHub
-  ( Auth (..)
-  , Branch (..)
-  , Error
-  , FetchCount (..)
-  , WithTotalCount (..)
-  , WorkflowRun (..)
-  , branchesForR
-  , github
-  , mkName
-  , optionsWorkflowRunActor
-  , optionsWorkflowRunCreated
-  , workflowRunsR
-  )
 import Reflex
 import Reflex.Host.Headless qualified as R
 import Relude
@@ -44,18 +32,18 @@ runs env _ = do
   ev <- flexiblePoll env (fetchRuns token <&> second (maybe 300_000_000 (const 60_000_000)))
   holdDyn mempty ev
 
-mkRunWarnings :: UTCTime -> [WorkflowRun] -> ([Warning], Maybe IsActive)
+mkRunWarnings :: UTCTime -> [(WorkflowRun, [Job])] -> ([Warning], Maybe IsActive)
 mkRunWarnings time =
   toList
-    >>> fmap (\r -> (r.workflowRunHeadBranch, r))
-    >>> M.fromListWith (\a b -> if a.workflowRunCreatedAt >= b.workflowRunCreatedAt then a else b)
+    >>> fmap (\t@(r, _) -> (r.workflowRunHeadBranch, t))
+    >>> M.fromListWith (\a@(ra, _) b@(rb, _) -> if ra.workflowRunCreatedAt >= rb.workflowRunCreatedAt then a else b)
     >>> toList
     >>> fmap (runToWarning time)
     >>> unzip
     >>> second (getFirst . foldMap First)
 
-runToWarning :: UTCTime -> WorkflowRun -> (Warning, Maybe IsActive)
-runToWarning time wfRun =
+runToWarning :: UTCTime -> (WorkflowRun, [Job]) -> (Warning, Maybe IsActive)
+runToWarning time (wfRun, wfJobs) =
   ( MkWarning
       { description =
           [ wfRun.workflowRunHeadBranch
@@ -66,6 +54,7 @@ runToWarning time wfRun =
                     (if isJust wfRun.workflowRunConclusion then wfRun.workflowRunUpdatedAt else time)
                     wfRun.workflowRunStartedAt
                 )
+              <> (if null step_msgs then "" else " (" <> Text.intercalate ", " step_msgs <> ")")
           ]
       , heading = "GitHub Actions"
       , barDisplay = None
@@ -79,6 +68,14 @@ runToWarning time wfRun =
       _ -> Nothing
   )
  where
+  steps = foldMap ((.jobSteps) >>> toList) wfJobs
+  runningSteps =
+    filter (\s -> s.jobStepStatus == "in_progress") steps <&> \step ->
+      (untagName step.jobStepName <> " running for " <> printDuration (diffUTCTime time step.jobStepStartedAt))
+  failedSteps =
+    filter (\s -> s.jobStepConclusion == "failure") steps <&> \step ->
+      (untagName step.jobStepName <> " failed")
+  step_msgs = failedSteps <> runningSteps
   status = fromMaybe wfRun.workflowRunStatus wfRun.workflowRunConclusion
   subgroup = case status of
     "in_progress" -> Just (toEnum 0xf051f) -- nf-md-timer_send
@@ -123,7 +120,7 @@ fetchRuns token = do
                 FetchAll
             )
     if null response
-      then pure response
+      then pure []
       else do
         branches <-
           fmap (fmap (.branchName) . toList) $
@@ -135,7 +132,16 @@ fetchRuns token = do
                     (mkName Proxy repo)
                     FetchAll
                 )
-        pure $ filter (\r -> r.workflowRunHeadBranch `elem` branches) response
+        forM (filter (\r -> r.workflowRunHeadBranch `elem` branches) response) $ \r ->
+          fmap ((r,) . toList . (.withTotalCountItems)) . unpackError
+            =<< github
+              token
+              ( jobsForWorkflowRunR
+                  (mkName Proxy owner)
+                  (mkName Proxy repo)
+                  r.workflowRunWorkflowRunId
+                  FetchAll
+              )
   time <- liftIO getCurrentTime
   pure $ mkRunWarnings time . fold . catMaybes $ response
 
