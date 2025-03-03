@@ -39,8 +39,8 @@ let
         unstable-pkgs.haskell.lib.compose.appendPatch
 
           (unstable-pkgs.fetchpatch {
-            url = "https://github.com/haskell-github/github/commit/bc3cf9ff81695c07d3be3bd424ddc6fb22c1ec87.patch";
-            hash = "sha256-raRErVkXuuIWmY15OZUVen9Xmd+EhxXilTWOdgmn24U=";
+            url = "https://github.com/haskell-github/github/commit/d4225755fc986a4185747fd06648fdf3683773c1.patch";
+            hash = "sha256-Ljh+bDjNpTc8WXVg3DTfra9nyautUkweGXePUUG5Vpk=";
           })
           prev.github;
     }

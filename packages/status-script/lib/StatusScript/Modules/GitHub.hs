@@ -71,9 +71,11 @@ runToWarning time (wfRun, wfJobs) =
   steps = foldMap ((.jobSteps) >>> toList) wfJobs
   runningSteps =
     filter (\s -> s.jobStepStatus == "in_progress") steps <&> \step ->
-      (untagName step.jobStepName <> " running for " <> printDuration (diffUTCTime time step.jobStepStartedAt))
+      untagName step.jobStepName
+        <> " running"
+        <> maybe "" ((" for " <>) . printDuration . diffUTCTime time) step.jobStepStartedAt
   failedSteps =
-    filter (\s -> s.jobStepConclusion == "failure") steps <&> \step ->
+    filter (\s -> s.jobStepConclusion == Just "failure") steps <&> \step ->
       (untagName step.jobStepName <> " failed")
   step_msgs = failedSteps <> runningSteps
   status = fromMaybe wfRun.workflowRunStatus wfRun.workflowRunConclusion
