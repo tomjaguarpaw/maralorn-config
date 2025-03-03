@@ -156,8 +156,12 @@
         zle -N fzf-git-checkout
         bindkey '^G' fzf-git-checkout
 
-        jw() {
-          jj rebase -s work -d "all:heads(develop..work- $1)"
+        jwadd() {
+          jj rebase -s work -d "all:heads(develop..work- | $1)"
+        }
+
+        jwsub() {
+          jj rebase -s work -d "all:heads(develop..work- ~ develop+::($1))"
         }
       '';
       autosuggestions.enable = true;
