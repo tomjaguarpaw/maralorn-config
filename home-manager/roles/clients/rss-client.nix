@@ -54,7 +54,7 @@ let
       ${lib.getBin pkgs.systemd}/bin/systemd-run --user --no-block -G \
         ${lib.getExe pkgs.kitty} -d "$video_dir" \
         /bin/sh -c \
-        "${dl_cmd} $extraargs \"$link\" && mv $linkfile.finished $linkfile" 
+        "${dl_cmd} $extraargs \"$link\" && mv $linkfile.finished $linkfile"
     fi
     if [[ "$command" == "c" ]]; then
        while [[ ! -f "$filename" ]]; do
