@@ -51,6 +51,7 @@
       socat
       sshuttle
       sysbench
+      synadm
       tcpdump
       tmux
       tree
@@ -70,6 +71,5 @@
       batdiff
       ;
     inherit (pkgs.python3Packages) qrcode;
-    inherit (pkgs.matrix-synapse-tools) synadm;
   };
 }

@@ -10,7 +10,7 @@ let
   syncHostName = "matrix-syncv3.${server_name}";
 in
 {
-  environment.systemPackages = [ pkgs.matrix-synapse-tools.rust-synapse-compress-state ];
+  environment.systemPackages = [ pkgs.rust-synapse-state-compress ];
   systemd.services = {
     # use jemalloc to improve the memory situation with synapse
     matrix-synapse.environment = {
@@ -31,7 +31,7 @@ in
                 "\"rm\" -- NIX_BIN"
               ]
               [
-                "\"${lib.getExe' pkgs.matrix-synapse-tools.rust-synapse-compress-state "synapse_compress_state"}\""
+                "\"${lib.getExe' pkgs.rust-synapse-state-compress "synapse_compress_state"}\""
                 "\"${lib.getExe' pkgs.coreutils "cat"}\""
                 "\"${lib.getExe' config.services.postgresql.package "psql"}\""
                 "\"${lib.getExe' pkgs.coreutils "rm"}\""
