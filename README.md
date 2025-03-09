@@ -1,3 +1,9 @@
+Note
+====
+
+Created in response to
+<https://github.com/tomjaguarpaw/bluefin/discussions/36#discussioncomment-12439674>
+
 Configuration
 =============
 
