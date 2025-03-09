@@ -5,6 +5,7 @@ import Bluefin.Eff
 import Bluefin.IO
 import Bluefin.Internal qualified as Internal
 import Bluefin.Reflex
+import Bluefin.Utils
 import Bluefin.State
 import Control.Concurrent (Chan)
 import Data.Dependent.Sum (DSum)
@@ -118,6 +119,7 @@ inWidget = \act -> do
                     , requesterSelector = domRequesterSelector
                     }
               , runWithReplaceImpl = \(ReflexAction initial) ev ->
+                  comEff $ 
                   runWithDomData r $
                     runWithReplace
                       (liftIO . Internal.unsafeUnEff $ initial r)

@@ -26,7 +26,6 @@ import Bluefin.Eff
 import Bluefin.IO
 import Bluefin.Internal qualified as Internal
 import Bluefin.State
-import Bluefin.Utils
 import Control.Concurrent (Chan)
 import Control.Monad.Fix (MonadFix)
 import Data.Dependent.Sum (DSum)
@@ -48,7 +47,7 @@ data Reflex a t (es :: Effects) where
           :: forall e r b
            . ReflexAction a t e r
           -> (Event t (ReflexAction a t e b))
-          -> Eff (es :& e) (r, Event t b)
+          -> Eff (e :& es) (r, Event t b)
        }
     -> Reflex a t es
 
@@ -60,7 +59,7 @@ runWithReplaceEff
   -> ReflexAction h t es r
   -> (Event t (ReflexAction h t es b))
   -> Eff es (r, Event t b)
-runWithReplaceEff = \ReflexHandle{runWithReplaceImpl} -> fmap inContext' <$> runWithReplaceImpl
+runWithReplaceEff = \ReflexHandle{runWithReplaceImpl} -> useImplIn <$> runWithReplaceImpl
 
 dynEff :: e :> es => Reflex h t e -> Dynamic t (ReflexAction h t es b) -> Eff es (Event t b)
 dynEff = \r dyn' -> do
@@ -102,7 +101,7 @@ instance Handle (a t) => Handle (Reflex a t) where
       { spiderData = mapHandle spiderData
       , payload = mapHandle payload
       , runWithReplaceImpl = \initial ev ->
-          Internal.weakenEff (Internal.bimap Internal.has (Internal.eq (# #))) $ runWithReplaceImpl initial ev
+          useImplUnder $ runWithReplaceImpl initial ev
       }
 
 withReflex :: Reflex h t es -> (Reflex.Reflex t => a) -> a
