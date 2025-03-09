@@ -33,6 +33,10 @@ data Dom t (es :: Effects) where
        }
     -> Dom (SpiderTimeline Global) es
 
+instance Bluefin.Compound.Handle (Dom t) where
+  mapHandle DomHandle {env, jsContext, jsmRequesterState, requesterSelector} =
+    DomHandle { env, jsContext, jsmRequesterState = mapHandle jsmRequesterState, requesterSelector }
+
 type BFWidget es a = forall t e. Reflex.Reflex t => Reflex Dom t e -> Eff (e :& es) a
 
 type BFPartWidget t es a = forall e. Reflex.Reflex t => Reflex Dom t e -> Eff (e :& es) a
