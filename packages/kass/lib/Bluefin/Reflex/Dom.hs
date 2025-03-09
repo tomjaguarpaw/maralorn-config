@@ -5,7 +5,6 @@ import Bluefin.Eff
 import Bluefin.IO
 import Bluefin.Internal qualified as Internal
 import Bluefin.Reflex
-import Bluefin.Utils
 import Bluefin.State
 import Control.Concurrent (Chan)
 import Data.Dependent.Sum (DSum)
@@ -74,7 +73,8 @@ el :: e :> es => Reflex Dom t e -> Text -> BFWidget es a -> Eff es a
 el r t inner = elAttr r t mempty inner
 
 inWidget
-  :: BFWidgetIntern es a
+  :: forall es a.
+     BFWidgetIntern es a
   -> (forall x. Widget x a)
 inWidget = \act -> do
   env <- unsafeHydrationDomBuilderT ask
@@ -98,35 +98,36 @@ inWidget = \act -> do
   domRequesterSelector <- unsafeHydrationDomBuilderT . lift . RequesterT . lift $ ask
   triggerChan <- unsafeHydrationDomBuilderT . lift . RequesterT . lift . lift . TriggerEventT $ ask
   postBuild <- getPostBuild
-  ((a, jsmRequesterPost), requesterPost) <- liftIO $ Internal.unsafeUnEff do
+  ((a, jsmRequesterPost), requesterPost) <- liftIO $ Internal.unsafeUnEff @es do
     runState requesterPre \requesterStateHandle -> runState jsmRequesterPre \jsmRequesterState ->
-      Internal.assoc1Eff $
         let
+          r :: _
           r =
             ReflexHandle
               { spiderData =
+                mapHandle $
                   MkSpiderData
                     { postBuild
-                    , requesterStateHandle = mapHandle requesterStateHandle
+                    , requesterStateHandle = requesterStateHandle
                     , triggerChan
                     , requesterSelector = reflexRequesterSelector
                     }
               , payload =
+                mapHandle $
                   DomHandle
                     { env
-                    , jsmRequesterState = mapHandle jsmRequesterState
+                    , jsmRequesterState = jsmRequesterState
                     , jsContext
                     , requesterSelector = domRequesterSelector
                     }
               , runWithReplaceImpl = \(ReflexAction initial) ev ->
-                  comEff $ 
                   runWithDomData r $
                     runWithReplace
                       (liftIO . Internal.unsafeUnEff $ initial r)
                       (ev <&> \(ReflexAction a) -> inWidget a)
               }
          in
-          act r
+          useImplIn act r
   unsafeHydrationDomBuilderT . lift . RequesterT $ MTL.put jsmRequesterPost
   unsafeHydrationDomBuilderT
     . lift
