@@ -51,7 +51,7 @@ runDomDialogHead = \r -> do
   elAttr r "link" (fromList [("rel", "manifest"), ("href", "/app.webmanifest")]) $ const pass
 
 css :: Text
-css = $$(bindCode createCss liftTyped)
+css = mempty
 
 runDomDialogBody
   :: forall er es t
