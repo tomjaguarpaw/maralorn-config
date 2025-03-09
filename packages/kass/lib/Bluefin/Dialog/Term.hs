@@ -70,17 +70,16 @@ toDialogHandle
 toDialogHandle = go
  where
   go
-    :: forall h t e e'
+    :: forall h t e
      . (Reflex.Reflex t, Handle (h t))
-    => Stream (Dynamic t (Seq (ElementData t))) e'
+    => Stream (Dynamic t (Seq (ElementData t))) e
     -> Reflex h t e
     -> Reflex Dialog t e
   go = \collector r@ReflexHandle{runWithReplaceImpl} ->
     ReflexHandle
       { payload =
           DialogHandle $
-            Internal.unsafeRemoveEff @e'
-              . \case
+              \case
                 (x@TextElement{}) -> yield collector . constDyn . one $ SimpleElement x
                 (x@ButtonElement{}) -> do
                   (ev, hook) <- reflex r newTriggerEvent
@@ -96,7 +95,7 @@ toDialogHandle = go
           ((result, initial_dyn), later) <- runWithReplaceImpl (mapAction initial) (mapAction <$> ev)
           let (result_ev, dynEv) = splitE later
           collected <- reflex r $ join <$> holdDyn initial_dyn dynEv
-          Internal.unsafeRemoveEff @e' $ yield collector collected
+          yield collector collected
           pure (result, result_ev)
       }
   mapAction
@@ -105,7 +104,7 @@ toDialogHandle = go
     -> ReflexAction h t eb (b, Dynamic t (Seq (ElementData t)))
   mapAction = \(ReflexAction act) -> ReflexAction \h -> do
     (collected, result) <- yieldToList \collector ->
-      Internal.inContext $ act $ go collector (mapHandle h)
+      Internal.inContext $ act $ go (mapHandle collector) (mapHandle h)
     pure (result, distributeListOverDynWith fold collected)
 
 data ElementData t where
