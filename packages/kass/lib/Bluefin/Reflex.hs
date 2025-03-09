@@ -89,7 +89,12 @@ data SpiderData t (es :: Effects) where
     -> SpiderData (SpiderTimeline x) es
 
 instance Handle (SpiderData t) where
-  mapHandle = \d@MkSpiderData{} -> d{requesterStateHandle = mapHandle d.requesterStateHandle}
+  mapHandle = \MkSpiderData{triggerChan=t, postBuild=p, requesterStateHandle=rsh, requesterSelector=rs} -> MkSpiderData{
+    triggerChan = t,
+    postBuild = p,
+    requesterStateHandle = mapHandle rsh,
+    requesterSelector = rs
+    }
 
 instance Handle (a t) => Handle (Reflex a t) where
   mapHandle = \ReflexHandle{spiderData, payload, runWithReplaceImpl} ->
