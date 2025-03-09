@@ -4,7 +4,6 @@ import Bluefin.Compound
 import Bluefin.Dialog
 import Bluefin.Eff
 import Bluefin.IO
-import Bluefin.Internal qualified as Internal
 import Bluefin.Reflex
 import Bluefin.State
 import Bluefin.Stream
@@ -101,7 +100,7 @@ toDialogHandle = go
     -> ReflexAction h t eb (b, Dynamic t (Seq (ElementData t)))
   mapAction = \(ReflexAction act) -> ReflexAction \h -> do
     (collected, result) <- yieldToList \collector ->
-      Internal.inContext $ act $ go (mapHandle collector) (mapHandle h)
+      useImplIn act (go (mapHandle collector) (mapHandle h))
     pure (result, distributeListOverDynWith fold collected)
 
 data ElementData t where
