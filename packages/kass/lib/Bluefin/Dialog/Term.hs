@@ -45,16 +45,13 @@ runTermDialog
 runTermDialog = \io r act -> do
   let inner
         :: Stream (Dynamic t (Seq (ElementData t))) e3
-        -> Eff (e3 :& ((e1 :& e2) :& es)) a
+        -> Eff (e3 :& es) a
       inner = \stream ->
-        Internal.assoc1Eff $
-          act $
-            toDialogHandle (mapHandle stream) (mapHandle r)
+        useImplIn
+          act
+            (toDialogHandle (mapHandle stream) (mapHandle r))
   (elms, a) <-
-    inContext'
-      . inContext'
-      . Internal.assoc1Eff
-      $ yieldToList inner
+      yieldToList inner
   pageUpdate <- dynToEv r (distributeListOverDynWith fold elms)
 
   _ <- runState Nothing $ \thread ->
