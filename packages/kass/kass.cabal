@@ -5,7 +5,7 @@ build-type:    Simple
 
 common common
   ghc-options:
-    -Wall -fdefer-type-errors -fno-show-valid-hole-fits
+    -Wall
     -fmax-relevant-binds=0
 
   default-extensions:
